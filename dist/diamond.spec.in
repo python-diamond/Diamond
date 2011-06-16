@@ -1,0 +1,86 @@
+#
+# Spec file for diamond
+#i
+%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%define _topdir @topdir@
+%define diamond_site_dir %{python_sitelib}/diamond
+%define diamond_conf_dir @diamond-conf-dir@ 
+%define diamond_lib_dir @diamond-lib-dir@
+%define diamond_log_dir @diamond-log-dir@ 
+%define diamond_data_dir @diamond-data-dir@ 
+
+Name: diamond
+Summary: A system system statistics collector for graphite. 
+Version: @build-version@.@build-number@
+Release: @build-release@
+License: MIT License 
+Group: Brightcove/Syseng
+Source: diamond-%{version}.tar.gz
+BuildRoot: %{_topdir}/%{name}-%{version}-%{release}-root
+BuildArch: noarch
+Requires: python-configobj
+Requires: pyasn1
+Requires: pysnmp 
+
+%description
+Diamond is a daemon and toolset for gather system statistics and pushing them to graphite.
+
+%prep
+%setup
+
+%build
+
+%install
+rm -rf $RPM_BUILD_ROOT
+%{__python} dist/setup.py install -O1 --root %{buildroot}
+install -m 755 -d %{buildroot}%{diamond_conf_dir}/
+install -m 755 -d %{buildroot}%{diamond_lib_dir}/collectors/
+install -m 755 -d %{buildroot}%{diamond_log_dir}/archive/
+install -m 755 -d %{buildroot}%{diamond_data_dir}/examples/
+install -m 755 -d %{buildroot}%{_initrddir}
+install -m 644 src/collectors/*.py %{buildroot}%{diamond_lib_dir}/collectors/
+install -m 644 conf/diamond.cfg %{buildroot}%{diamond_conf_dir}
+install -m 644 examples/* %{buildroot}%{diamond_data_dir}/examples/
+install -m 755 dist/diamond.init %{buildroot}%{_initrddir}/
+ 
+#install -m 755 -d $RPM_BUILD_ROOT/%{_libdir}/diamond
+#install -m 644 src/diamond/*.py $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/diamond/
+#install -m 755 -d $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/collectors/
+#install -m 644 src/collectors/*.py $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/collectors/
+#install -m 755 -d $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/conf/
+#install -m 644 conf/diamond.cfg $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/conf/
+#install -m 755 -d $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/archive/
+#install -m 755 -d $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/tmp/
+#install -m 755 -d $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/examples/
+
+%pre
+if [ -x /etc/init.d/diamond ]; then
+    /etc/init.d/diamond stop
+fi
+
+%post
+# Redhat/Centos
+[ -f /etc/redhat-release ] && /sbin/chkconfig --add diamond
+# Ubuntu/Debian
+[ -f /etc/debian_version ] && /usr/sbin/update-rc.d diamond defaults
+/etc/init.d/diamond start
+
+%preun
+# Will only match if the command passed in was delete/erase/remove
+if [ "$1" == "0" ]; then
+    /etc/init.d/diamond stop
+    /sbin/chkconfig --del diamond
+fi
+
+%files
+%defattr(-, root, root, 0755)
+%{diamond_site_dir}
+%{diamond_conf_dir}
+%{diamond_lib_dir}
+%{diamond_log_dir}
+%{diamond_data_dir}
+%{_initrddir}
+
+%changelog
+* Wed Jun 15 2011 Andy Kipp <akipp@brightcove.com>
+- Initial version

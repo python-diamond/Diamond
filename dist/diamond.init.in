@@ -1,0 +1,125 @@
+#!/bin/bash
+#
+# diamond init script. 
+#
+# chkconfig: 2345 70 30
+# description: Diamond is a tool for gathering system metrics.
+#
+### BEGIN INIT INFO
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Diamond is a tool for gathering system metrics.
+# Description: Diamond is a tool for gathering system metrics.
+
+PROG="diamond"
+DIR="/usr/local/brightcove/diamond"
+COMMAND="/usr/bin/python diamond/server.py"
+ARGS="-v"
+PIDFILE="${DIR}/tmp/diamond.pid"
+RETVAL=0
+
+if [ -f /etc/redhat-release ]; then
+    DIST="redhat"
+elif [ -f /etc/debian_version ]; then
+    DIST="debian"
+else
+    DIST="unknown"
+fi
+
+[ "${DIST}" == "redhat" ] && . /etc/init.d/functions
+[ "${DIST}" == "debian" ] && . /lib/lsb/init-functions
+
+usage() {
+	echo "Usage: service $PROG {start|stop|restart|condrestart}"
+	exit 1
+}
+
+start_debian() {
+    log_daemon_msg "Starting Diamond metrics collection" "diamond"
+    if start-stop-daemon --start --chdir "${DIR}" --verbose --oknodo --pidfile ${PIDFILE} --exec ${COMMAND} -- "${ARGS}"; then
+        log_end_msg 0
+    else
+        log_end_msg 1
+    fi
+}
+
+start_redhat() {
+	echo -n "Starting ${PROG}"
+    cd ${DIR}
+	daemon "${COMMAND} ${ARGS}" --pidfile=${PIDFILE}
+	ret=$?
+	[ $ret -eq "0" ] && touch /var/lock/subsys/$PROG
+	echo
+	return $ret
+}
+
+start() {
+    [ "${DIST}" == "redhat" ] && start_redhat
+    [ "${DIST}" == "debian" ] && start_debian
+    [ "${DIST}" == "unknown" ] && { echo "Unknown distribution, dunno how to start up"; exit 1; }
+}
+
+stop_debian() {
+    log_daemon_msg "Stopping Diamond metrics collection" "diamond"
+    if start-stop-daemon --stop --quiet --oknodo --pidfile ${PIDFILE}; then
+        log_end_msg 0
+    else
+        log_end_msg 1
+    fi
+}
+
+stop_redhat() {
+	[ -f /var/lock/subsys/$PROG ] || return 0
+	echo -n "Killing $PROG: "
+	killproc -p ${PIDFILE} $PROG
+    rm -rf ${PIDFILE} > /dev/null 2>&1
+	echo
+	rm -f /var/lock/subsys/$PROG
+}
+
+stop() {
+    [ "${DIST}" == "redhat" ] && stop_redhat
+    [ "${DIST}" == "debian" ] && stop_debian
+    [ "${DIST}" == "unknown" ] && { echo "Unknown distribution, unable to stop"; exit 1; }
+}
+
+restart() {
+    stop
+    start
+}
+
+condrestart () {
+    if [ "${DIST}" == "redhat" ]; then
+        [ -e /var/lock/subsys/$PROG ] && restart || return 0
+    else
+        echo "condrestart is only supported on redhat-based systems"
+        exit 0
+    fi
+}
+
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	status)
+		status diamond 
+		RETVAL=$?
+		;;
+	restart|reload)
+		stop
+		start
+		RETVAL=$?
+		;;
+	condrestart)
+		condrestart
+		;;
+	*)
+		usage
+		;;
+esac
+
+exit $RETVAL

@@ -1,0 +1,190 @@
+<project name="diamond" default="dist" basedir=".">
+	<description>
+		Build file for diamond. 
+	</description>
+
+	<!-- set global properties -->
+	<property name="src" location="src" />
+	<property name="conf" location="conf" />
+	<property name="dist" location="dist" />
+	<property name="test" location="test" />
+	<property name="build" location="build" />
+    <property name="tmp" location="tmp"/>
+
+    <property name="build-version" value="2.0"/>
+    <property name="build-number" value="0"/> 
+    <property name="build-release" value="0"/>
+        
+    <!-- check if platform is windows -->
+    <condition property="is.windows" value="false">
+       <os family="windows" />
+    </condition>	
+        
+    <target name="check-diamond-prefix">
+        <condition property="diamond-prefix-isset" value="true">
+            <isset property="diamond-prefix"/>
+        </condition>
+        <echo message="diamond-prefix: ${diamond-prefix}"/> 
+    </target>    
+    
+    <target name="setup-install-paths" depends="setup-prefix-install-paths,setup-system-install-paths">
+        <!-- output install paths -->
+        <echo message="diamond-lib-dir: ${diamond-lib-dir}"/> 
+        <echo message="diamond-conf-dir: ${diamond-conf-dir}"/> 
+        <echo message="diamond-log-dir: ${diamond-log-dir}"/> 
+        <echo message="diamond-data-dir: ${diamond-data-dir}"/>
+    </target>
+
+    <target name="setup-prefix-install-paths" depends="check-diamond-prefix" if="diamond-prefix-isset">
+        <!-- set install paths -->
+        <property name="diamond-lib-dir" value="${diamond-prefix}/lib"/>
+        <property name="diamond-conf-dir" value="${diamond-prefix}/etc"/>
+        <property name="diamond-log-dir" value="${diamond-prefix}/var/log"/>
+        <property name="diamond-data-dir" value="${diamond-prefix}/share"/>
+    </target>
+
+    <target name="setup-system-install-paths" depends="check-diamond-prefix" unless="diamond-prefix-isset">
+        <!-- evaluate install locations -->
+        <exec executable="rpm" outputproperty="diamond-lib-dir">   
+            <arg line="--eval '%{_libdir}'/diamond"/>
+        </exec>
+        <exec executable="rpm" outputproperty="diamond-conf-dir">   
+            <arg line="--eval '%{_sysconfdir}'/diamond"/>
+        </exec>
+        <exec executable="rpm" outputproperty="diamond-log-dir">   
+            <arg line="--eval '%{_localstatedir}'/log/diamond"/>
+        </exec>
+        <exec executable="rpm" outputproperty="diamond-data-dir">   
+            <arg line="--eval '%{_datadir}'/diamond"/>
+        </exec>
+    </target>
+
+    <!-- Target: Create tarball -->
+    <target name="build" depends="clean">
+        
+        <!-- create build directory and structure -->
+        <mkdir dir="${build}" />
+        <mkdir dir="${build}/tmp" />
+		<mkdir dir="${build}/BUILD" />
+		<mkdir dir="${build}/SPECS" />
+		<mkdir dir="${build}/SOURCES" />
+		<mkdir dir="${build}/SRPMS" />
+		<mkdir dir="${build}/RPMS" />
+        
+        <!-- Setup Filters -->
+        <filter token="topdir" value="${build}"/>
+        <filter token="build-version" value="${build-version}"/>
+        <filter token="build-number" value="${build-number}"/>
+        <filter token="build-release" value="${build-release}"/>
+        <filter token="diamond-lib-dir" value="${diamond-lib-dir}"/>
+        <filter token="diamond-conf-dir" value="${diamond-conf-dir}"/>
+        <filter token="diamond-log-dir" value="${diamond-log-dir}"/>
+        <filter token="diamond-data-dir" value="${diamond-data-dir}"/>
+
+        <!-- create the source package directory structure -->
+        <mkdir dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/" />
+        <mkdir dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/src/" />
+        <mkdir dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/examples/" />
+        <mkdir dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/conf/" />
+        <mkdir dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/dist/" />
+        <mkdir dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/test/" />
+        <mkdir dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/archive/" />
+	
+		<!-- Copy the source files -->
+		<copy todir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/src/" verbose="true">
+			<fileset dir="${src}/">
+                <exclude name="**/*.pyc"/> 
+                <exclude name="**/*.pyo"/> 
+            </fileset>
+		</copy>
+		
+        <!-- Copy the test files -->
+        <copy todir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/test/" verbose="true">
+			<fileset dir="${test}/">
+                <exclude name="**/*.pyc"/> 
+                <exclude name="**/*.pyo"/> 
+            </fileset>
+		</copy>
+
+        <!-- Copy the example files -->
+        <copy todir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/examples/" verbose="true">
+			<fileset dir="examples/">
+                <exclude name="**/*.pyc"/> 
+                <exclude name="**/*.pyo"/> 
+            </fileset>
+		</copy>
+        
+        <!-- Copy the setup file -->
+		<copy file="${dist}/setup.py.in" 
+			tofile="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/dist/setup.py"
+            verbose="true"
+			filtering="true"/>
+		
+		<!-- Copy the conf files -->
+        <copy file="dist/diamond.cfg.in"
+            tofile="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/conf/diamond.cfg"
+            verbose="true"
+			filtering="true"/>
+		
+        <!-- Copy the dist package files -->
+        <copy todir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/dist/" verbose="true">
+			<fileset file="${dist}/diamond.init.in"/>
+		</copy>
+		
+		<!-- Copy the spec file replacing the spec file tokens -->
+		<copy file="${dist}/${ant.project.name}.spec.in" 
+			tofile="${build}/SPECS/${ant.project.name}.spec" 
+            verbose="true"
+			filtering="true" />
+    </target>
+
+    <target name="tar" depends="build">
+        <!-- Create the tar file under the RPM build root -->
+		<tar destfile="${build}/SOURCES/${ant.project.name}-${build-version}.${build-number}.tar.gz" longfile="gnu" compression="gzip">
+			<tarfileset dir="${build}/tmp" preserveLeadingSlashes="false" />
+		</tar>
+    </target>
+	
+    <!-- Target: create an RPM package -->
+    <target name="rpm" depends="tar">
+        <!-- fail on windows. --> 
+        <fail if="is.windows" message="You appear to be building an RPM on windows.  Naughty naughty." />
+
+        <!-- Create the RPM -->
+		<rpm specFile="${ant.project.name}.spec" 
+			topDir="${build}/" 
+			cleanBuildDir="true" 
+			failOnError="true" 
+			/>
+    </target>
+    
+    <!-- Target: alias for "rpm" target -->
+    <target name="dist" depends="rpm"/>
+
+    <!-- Target: Install -->
+    <target name="install-libs" depends="build">
+        <exec executable="python" dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/">
+            <arg line="dist/setup.py install"/>
+        </exec>
+    </target>   
+ 
+    <!-- Target: run diamond server -->
+    <target name="run">
+        <exec executable="python">
+            <arg line="${src}/diamond/server.py -f -v"/>
+        </exec>
+    </target>   
+	
+	<target name="clean">
+        <!-- clean up directories -->
+		<delete includeemptydirs="true" failonerror="false" verbose="true">
+			<fileset dir="${build}" />
+		</delete>
+	</target>
+
+ 
+    <target name="test">
+        <!-- run unit tests -->
+    </target> 
+    
+</project>

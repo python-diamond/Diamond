@@ -1,0 +1,125 @@
+#
+# DIAMOND Configuration File
+#
+# Copyright (C) 2009 Brightcove, Inc. All Rights Reserved. No use,
+# copying or distribution of this work may be made except in
+# accordance with a valid license agreement from Brightcove, Inc. This
+# notice must be included on all copies, modifications and derivatives
+# of this work.
+#
+# Brightcove, Inc MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE
+# SUITABILITY OF THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING
+# BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. Brightcove
+# SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT
+# OF USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
+# DERIVATIVES.
+#
+# "Brightcove" is a trademark of Brightcove, Inc.
+
+[server]
+### Options for the server
+
+# Handlers to load
+handlers = diamond.handler.GraphitePickleHandler, diamond.handler.ArchiveHandler
+
+# Directory to load collector modules from
+collectors_path = @diamond-lib-dir@/collectors/ 
+
+# Directory to load collector config from 
+collectors_config_path = @diamond-conf-dir@/conf/
+
+# Interval to reload collectors 
+collectors_reload_interval = 300 
+
+[handlers]
+[[default]]
+### Defaults options for all Handlers 
+
+[[ArchiveHandler]]
+
+# File to write archive log files
+log_path = @diamond-log-dir@/archive/archive.log
+
+# Number of days to keep archive log files
+days = 7
+
+[[GraphiteHandler]] 
+### Options for GraphiteHandler 
+
+# Graphtie server host
+host = diamond 
+
+# Port to send metrics to
+port = 2003
+
+# Socket timeout (seconds)
+timeout = 15
+
+[[GraphitePickleHandler]] 
+### Options for GraphitePickleHandler 
+
+# Graphtie server host
+host = diamond 
+
+# Port to send metrics to
+port = 2004
+
+# Socket timeout (seconds)
+timeout = 15
+
+# Batch size for pickled metrics
+batch = 250
+
+[collectors]
+[[default]]
+### Defaults options for all Collectors
+
+# Path Prefix
+path_prefix = systems
+
+# Default splay time (seconds)
+splay = 1
+
+# Default Poll Interval (seconds)
+interval = 60 
+
+[[NetworkCollector]]
+### Options for the NetworkCollector
+
+# Path for network metrics
+path = network
+
+# Interface types to collect metrics on
+interfaces = eth,bond
+
+[[CPUCollector]]
+### Options for the CPUCollector 
+
+# Path for cpu metrics
+path = cpu
+
+[[MemoryCollector]]
+### Options for the MemoryCollector
+path = memory
+
+[[LoadAverageCollector]]
+### Options for the LoadAverageCollector
+path = loadavg
+
+[[IOCollector]]
+## Options for the IO Stats collector
+path = iostat
+
+[[VMStatCollector]]
+## Options for the VMStat collector
+path = vmstat
+
+[[DiskSpaceCollector]]
+## Options for the Disk Space Collector
+path = diskspace
+filesystems = ext2, ext3, xfs, glusterfs, nfs
+
+[[TCPStatsCollector]]
+## Options for the TCP Stats Collector
+path = tcp
