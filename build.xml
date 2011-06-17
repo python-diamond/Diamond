@@ -1,20 +1,21 @@
 <project name="diamond" default="dist" basedir=".">
-	<description>
-		Build file for diamond. 
-	</description>
-
-	<!-- set global properties -->
-	<property name="src" location="src" />
-	<property name="conf" location="conf" />
-	<property name="dist" location="dist" />
-	<property name="test" location="test" />
-	<property name="examples" location="examples" />
-    <property name="tmp" location="tmp"/>
-
+    <description>
+        Build file for diamond. 
+    </description>
+    
+    <!-- set global properties -->
     <property name="build-version" value="2.0"/>
     <property name="build-number" value="0"/> 
     <property name="build-release" value="0"/>
 
+    <property name="src" location="src" />
+    <property name="conf" location="conf" />
+    <property name="dist" location="dist" />
+    <property name="test" location="test" />
+    <property name="examples" location="examples" />
+    <property name="tmp" location="tmp"/>
+
+    <!-- target: set os properties -->
     <target name="check-os">
         <echo message="os.name: ${os.name}"/>
         <echo message="os.name: ${os.version}"/>
@@ -37,6 +38,7 @@
         <echo message="is.readhat: ${is.redhat}"/>
     </target>
  
+    <!-- target: setup diamond install dirs -->
     <target name="setup-install-paths" depends="check-os,setup-debian-install-paths,setup-redhat-install-paths">
         <!-- output install paths -->
         <echo message="diamond-lib-dir: ${diamond-lib-dir}"/> 
@@ -45,6 +47,7 @@
         <echo message="diamond-data-dir: ${diamond-data-dir}"/>
     </target>
 
+    <!-- target: setup diamond install dirs for debian -->
     <target name="setup-debian-install-paths" if="is.debian">
         <!-- setup build dir -->
         <property name="build" location="build-debian"/>
@@ -61,6 +64,7 @@
         <property name="diamond-data-dir" value="/usr/share/diamond"/>
     </target>
 
+    <!-- target: setup diamond install dirs for redhat -->
     <target name="setup-redhat-install-paths" if="is.redhat">
         <!-- setup build dir -->
         <property name="build" location="build-redhat"/>
@@ -108,97 +112,96 @@
         <mkdir dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/conf/" />
         <mkdir dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/dist/" />
         <mkdir dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/test/" />
-        <mkdir dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/archive/" />
-		
-		<!-- Copy the source files -->
-		<copy todir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/src/" verbose="true">
-			<fileset dir="${src}/">
+        
+        <!-- Copy the source files -->
+        <copy todir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/src/" verbose="true">
+            <fileset dir="${src}/">
                 <exclude name="**/*.pyc"/> 
                 <exclude name="**/*.pyo"/> 
             </fileset>
-		</copy>
-		
+        </copy>
+        
         <!-- Copy the test files -->
         <copy todir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/test/" verbose="true">
-			<fileset dir="${test}/">
+            <fileset dir="${test}/">
                 <exclude name="**/*.pyc"/> 
                 <exclude name="**/*.pyo"/> 
             </fileset>
-		</copy>
+        </copy>
 
         <!-- Copy the example files -->
         <copy todir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/examples/" verbose="true">
-			<fileset dir="${examples}">
+            <fileset dir="${examples}">
                 <exclude name="**/*.pyc"/> 
                 <exclude name="**/*.pyo"/> 
             </fileset>
-		</copy>
+        </copy>
         
         <!-- Copy the dist files -->
         <copy todir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/dist/" verbose="true" filtering="true">
-			<fileset dir="${dist}/">
+            <fileset dir="${dist}/">
                 <exclude name="**/*.pyc"/> 
                 <exclude name="**/*.pyo"/> 
             </fileset>
             <filterset refid="diamond-filters"/>
             <globmapper from="*.in" to="*"/>
-		</copy>
+        </copy>
         
         <!-- Copy other files -->
-		<copy todir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/" verbose="true">
-			<fileset dir=".">
+        <copy todir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/" verbose="true">
+            <fileset dir=".">
                 <include name="LICENSE"/> 
                 <include name="README"/> 
             </fileset>
-		</copy>
-	
+        </copy>
+    
     </target>
 
     <target name="tar" depends="dist">
         <!-- Create the tar file under the RPM build root -->
-		<tar destfile="${build}/SOURCES/${ant.project.name}-${build-version}.${build-number}.tar.gz" longfile="gnu" compression="gzip">
-			<tarfileset dir="${build}/tmp" preserveLeadingSlashes="false" />
-		</tar>
+        <tar destfile="${build}/SOURCES/${ant.project.name}-${build-version}.${build-number}.tar.gz" longfile="gnu" compression="gzip">
+            <tarfileset dir="${build}/tmp" preserveLeadingSlashes="false" />
+        </tar>
     </target>
-	
+    
     <!-- Target: create an rpm package -->
     <target name="rpm" depends="tar" if="is.redhat">
-		<!-- setup rpm dirs -->
+        <!-- setup rpm dirs -->
         <mkdir dir="${build}/BUILD" />
-		<mkdir dir="${build}/SPECS" />
-		<mkdir dir="${build}/SOURCES" />
-		<mkdir dir="${build}/SRPMS" />
-		<mkdir dir="${build}/RPMS" />
-		
+        <mkdir dir="${build}/SPECS" />
+        <mkdir dir="${build}/SOURCES" />
+        <mkdir dir="${build}/SRPMS" />
+        <mkdir dir="${build}/RPMS" />
+        
         <!-- Copy the spec file replacing the spec file tokens -->
-		<copy file="${dist}/${ant.project.name}.spec.in" 
-			tofile="${build}/SPECS/${ant.project.name}.spec" 
+        <copy file="${dist}/${ant.project.name}.spec.in" 
+            tofile="${build}/SPECS/${ant.project.name}.spec" 
             verbose="true"
-			filtering="true">
+            filtering="true">
             <filterset refid="diamond-filters"/>
         </copy>
 
         <!-- Create the rpm -->
-		<rpm specFile="${ant.project.name}.spec" 
-			topDir="${build}/" 
-			cleanBuildDir="true" 
-			failOnError="true"/>
+        <rpm specFile="${ant.project.name}.spec" 
+            topDir="${build}/" 
+            cleanBuildDir="true" 
+            failOnError="true"/>
     </target>
     
-    <!-- Target: create a deb package -->
+    <!-- target: create a deb package -->
     <target name="deb" depends="dist" if="is.debian">
         <property name="stage" location="${build}/${ant.project.name}-${build-version}.${build-number}/debian"/>
         
         <!-- setup stage structure -->
-		<mkdir dir="${stage}/"/>
-		<mkdir dir="${stage}/DEBIAN"/>
-		<mkdir dir="${stage}${diamond-lib-dir}"/>
-		<mkdir dir="${stage}${diamond-lib-dir}/collectors/"/>
-		<mkdir dir="${stage}${diamond-conf-dir}"/>
-		<mkdir dir="${stage}${diamond-log-dir}"/>
-		<mkdir dir="${stage}${diamond-log-dir}/archive/"/>
-		<mkdir dir="${stage}${diamond-data-dir}"/>
-		<mkdir dir="${stage}${diamond-data-dir}/examples/"/>
+        <mkdir dir="${stage}/"/>
+        <mkdir dir="${stage}/DEBIAN"/>
+        <mkdir dir="${stage}${diamond-lib-dir}"/>
+        <mkdir dir="${stage}${diamond-lib-dir}/collectors/"/>
+        <mkdir dir="${stage}${diamond-conf-dir}"/>
+        <mkdir dir="${stage}${diamond-log-dir}"/>
+        <mkdir dir="${stage}${diamond-log-dir}/archive/"/>
+        <mkdir dir="${stage}${diamond-data-dir}"/>
+        <mkdir dir="${stage}${diamond-data-dir}/examples/"/>
 
         <!-- run setup.py to install libs -->    
         <exec executable="python" dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/">
@@ -208,49 +211,49 @@
         <!-- copy collectors -->
         <copy todir="${stage}/${diamond-lib-dir}/collectors/"
             verbose="true">
-			<fileset dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/src/collectors/">
+            <fileset dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/src/collectors/">
                 <exclude name="**/*.pyc"/> 
                 <exclude name="**/*.pyo"/> 
                 <exclude name="snmp/*"/> 
             </fileset>
-		</copy>
+        </copy>
         
-        <!-- examples config -->
+        <!-- copy examples -->
         <copy todir="${stage}/${diamond-data-dir}/examples/"
             verbose="true">
-			<fileset dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/examples/">
+            <fileset dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/examples/">
                 <exclude name="**/*.pyc"/> 
                 <exclude name="**/*.pyo"/> 
             </fileset>
-		</copy>
+        </copy>
 
         <!-- copy config -->
         <copy todir="${stage}/${diamond-conf-dir}/"
             file="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/dist/diamond.cfg"
             verbose="true">
-		</copy>
+        </copy>
         
         <!-- copy init -->
         <copy tofile="${stage}/etc/init.d/diamond"
             file="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/dist/diamond.init"
             verbose="true">
-		</copy>
+        </copy>
         <chmod file="${stage}/etc/init.d/diamond" perm="755"/>   
      
         <!-- Copy debian control files -->
-		<copy todir="${stage}/DEBIAN/" 
+        <copy todir="${stage}/DEBIAN/" 
             verbose="true">
-			<fileset dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/dist/debian"/>
-		</copy>
+            <fileset dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/dist/debian"/>
+        </copy>
         
         <!-- Copy other files -->
-		<copy todir="${stage}/${diamond-data-dir}/" 
+        <copy todir="${stage}/${diamond-data-dir}/" 
             verbose="true">
-			<fileset dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/">
+            <fileset dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/">
                 <include name="LICENSE"/> 
                 <include name="README"/> 
             </fileset>
-		</copy>
+        </copy>
         
         <!-- build dpkg -->    
         <exec executable="dpkg-deb" dir="${stage}">
@@ -272,24 +275,24 @@
  
     <!-- target: run diamond server -->
     <target name="run" depends="clean">
-		<mkdir dir="tmp/"/>
+        <mkdir dir="${tmp}"/>
         <exec executable="python">
             <arg line="${src}/diamond/server.py -c conf/diamond.cfg -f -v"/>
         </exec>
     </target>   
-	
+    
     <!-- target: clean up directories -->
-	<target name="clean">
-		<delete includeemptydirs="true" failonerror="false" verbose="true">
-			<fileset dir="tmp" />
-		</delete>
-		<delete includeemptydirs="true" failonerror="false" verbose="true">
-			<fileset dir="build-redhat" />
-		</delete>
-		<delete includeemptydirs="true" failonerror="false" verbose="true">
-			<fileset dir="build-debian" />
-		</delete>
-	</target>
+    <target name="clean">
+        <delete includeemptydirs="true" failonerror="false" verbose="true">
+            <fileset dir="${tmp}" />
+        </delete>
+        <delete includeemptydirs="true" failonerror="false" verbose="true">
+            <fileset dir="build-redhat" />
+        </delete>
+        <delete includeemptydirs="true" failonerror="false" verbose="true">
+            <fileset dir="build-debian" />
+        </delete>
+    </target>
  
     <target name="test">
         <!-- run unit tests -->
