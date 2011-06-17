@@ -12,10 +12,11 @@
 # Description: Diamond is a tool for gathering system metrics.
 
 PROG="diamond"
-DIR="/usr/local/brightcove/diamond"
-COMMAND="/usr/bin/python diamond/server.py"
-ARGS="-v"
-PIDFILE="${DIR}/tmp/diamond.pid"
+PYTHONLIB=$(/usr/bin/env python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
+DIAMOND_COMMAND="/usr/bin/env python ${PYTHONLIB}/diamond/server.py"
+DIAMOND_ARGS="-v"
+DIAMOND_PIDFILE="/var/run/${PROG}.pid"
+
 RETVAL=0
 
 if [ -f /etc/redhat-release ]; then
@@ -35,8 +36,8 @@ usage() {
 }
 
 start_debian() {
-    log_daemon_msg "Starting Diamond metrics collection" "diamond"
-    if start-stop-daemon --start --chdir "${DIR}" --verbose --oknodo --pidfile ${PIDFILE} --exec ${COMMAND} -- "${ARGS}"; then
+    log_daemon_msg "Starting ${PROG}" "diamond"
+    if start-stop-daemon --start --verbose --oknodo --pidfile ${DIAMOND_PIDFILE} --exec ${DIAMOND_COMMAND} -- "${DIAMOND_ARGS}"; then
         log_end_msg 0
     else
         log_end_msg 1
@@ -45,8 +46,7 @@ start_debian() {
 
 start_redhat() {
 	echo -n "Starting ${PROG}"
-    cd ${DIR}
-	daemon "${COMMAND} ${ARGS}" --pidfile=${PIDFILE}
+	daemon "${DIAMOND_COMMAND} ${DIAMOND_ARGS}" --pidfile=${DIAMOND_PIDFILE}
 	ret=$?
 	[ $ret -eq "0" ] && touch /var/lock/subsys/$PROG
 	echo
@@ -60,8 +60,8 @@ start() {
 }
 
 stop_debian() {
-    log_daemon_msg "Stopping Diamond metrics collection" "diamond"
-    if start-stop-daemon --stop --quiet --oknodo --pidfile ${PIDFILE}; then
+    log_daemon_msg "Stopping ${PROG}" "diamond"
+    if start-stop-daemon --stop --quiet --oknodo --pidfile ${DIAMOND_PIDFILE}; then
         log_end_msg 0
     else
         log_end_msg 1
@@ -71,8 +71,8 @@ stop_debian() {
 stop_redhat() {
 	[ -f /var/lock/subsys/$PROG ] || return 0
 	echo -n "Killing $PROG: "
-	killproc -p ${PIDFILE} $PROG
-    rm -rf ${PIDFILE} > /dev/null 2>&1
+	killproc -p ${DIAMODN_PIDFILE} $PROG
+    rm -rf ${DIAMOND_PIDFILE} > /dev/null 2>&1
 	echo
 	rm -f /var/lock/subsys/$PROG
 }
