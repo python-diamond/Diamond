@@ -18,7 +18,7 @@ pid_file = /var/run/diamond.pid
 collectors_path = @diamond-lib-dir@/collectors/ 
 
 # Directory to load collector config from 
-collectors_config_path = @diamond-conf-dir@/conf/
+collectors_config_path = @diamond-conf-dir@/
 
 # Interval to reload collectors 
 collectors_reload_interval = 300 

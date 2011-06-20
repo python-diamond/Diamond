@@ -364,10 +364,11 @@ if __name__ == "__main__":
         options.logfile = str(config['server']['log_file'])
 
     # Configure Log File handler
-    fileHandler = logging.FileHandler(options.logfile)
+    fileHandler = logging.FileHandler(options.logfile, 'w')
     fileHandler.setFormatter(formatter)
     fileHandler.setLevel(logging.DEBUG)
     log.addHandler(fileHandler)
+
     
     # Configure Logging Verbosity
     if options.verbose:
@@ -434,11 +435,11 @@ if __name__ == "__main__":
     if not options.foreground and not options.collector:  
         # Write pid file
         pid = str(os.getpid())
-        pf = file(pidfile,'w+')
+        pf = file(options.pidfile,'w+')
         pf.write("%s\n" % pid)
         pf.close()
         # Log
-        log.debug("Wrote PID file: %s" % (pidfile))
+        log.debug("Wrote PID file: %s" % (options.pidfile))
 
     # Initialize Server 
     server = Server(config)

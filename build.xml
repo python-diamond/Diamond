@@ -205,7 +205,7 @@
 
         <!-- run setup.py to install libs -->    
         <exec executable="python" dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/">
-            <arg line="dist/setup.py install -O1 --root ${stage}"/>
+            <arg line="dist/setup.py install -O1 --install-layout=deb --prefix=/usr --root ${stage}"/>
         </exec>
 
         <!-- copy collectors -->
