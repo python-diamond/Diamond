@@ -1,18 +1,22 @@
-# Copyright (C) 2009 Brightcove, Inc. All Rights Reserved. No use,
-# copying or distribution of this work may be made except in
-# accordance with a valid license agreement from Brightcove, Inc. This
-# notice must be included on all copies, modifications and derivatives
-# of this work.
+# Copyright (C) 2010-2011 by Brightcove Inc. 
 #
-# Brightcove, Inc MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE
-# SUITABILITY OF THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING
-# BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. Brightcove
-# SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT
-# OF USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
-# DERIVATIVES.
-#
-# "Brightcove" is a trademark of Brightcove, Inc.
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 
 import os
 import sys
@@ -23,9 +27,6 @@ import traceback
 import configobj
 import socket
 import re 
-
-# Fix Path    
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"../../")))
 
 from diamond.collector import SNMPCollector
 from diamond.metric import Metric
@@ -168,28 +169,3 @@ class SNMPInterfaceCollector(SNMPCollector):
                     metric = Metric(metricPath, self.derivative(metricPath, metricValue, 18446744073709600000), timestamp, 0)
                     # Publish Metric
                     self.publish_metric(metric)
-
-if __name__ == "__main__":
-
-    import diamond.handler
-    import logging
-    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-
-    # Create Handler
-    handler = diamond.handler.NullHandler()
-
-    config={}
-    config['server']={}
-    config['server']['collectors_config_path']=""
-    config['collectors']={}
-    config['collectors']['default']={}
-    config['collectors']['default']['interval'] = 60
-    config['collectors']['default']['splay'] = 0 
-
-    # Load Collector
-    collector = SNMPInterfaceCollector(config, [handler])
-
-    # Collect
-    #collector.collect_snmp("hardcore", "hardcore.arc", 161, "PebblesSlaghoople")
-    #collector.collect_snmp("fls3", "fls3.arc", 161, "PebblesSlaghoople")
-    #collector.collect_snmp("routers.jun1", "jun1a.arc", 161, "PebblesSlaghoople")
