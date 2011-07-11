@@ -28,6 +28,7 @@ The *run* task will invoke diamond in debug mode for testing.
 Ant can also build packages for CentOS and Ubuntu.
 
 > ant package
+
 > sudo dpkg -i build-debian/diamond-2.0.0/diamond-2.0.0-0.deb
 
 The *package* task will detect Ubuntu or CentOS and build .debs or .rpms. 
@@ -72,22 +73,22 @@ Diamond collectors run within the diamond process under the diamond server proce
 
 Collectors are subclasses of diamond.collector.Collector. In their simplest form, they need to implement a single method called "collect".
 
-> import diamond.collector
->
-> class ExampleCollector(diamond.collector.Collector):
->    
->    def collect(self):
->        """
->        Overrides the Collector.collect method
->        """
->        # Set Metric Name
->        metric_name = "my.example.metric"
->
->        # Set Metric Value
->        metric_value = 42
->
->        # Publish Metric
->        self.publish(metric_name, metric_value)
+    import diamond.collector
+
+    class ExampleCollector(diamond.collector.Collector):
+       
+        def collect(self):
+        """
+        Overrides the Collector.collect method
+        """
+            # Set Metric Name
+            metric_name = "my.example.metric"
+
+            # Set Metric Value
+            metric_value = 42
+
+            # Publish Metric
+            self.publish(metric_name, metric_value)
 
 To run this collector in test mode you can invoke the diamond server with the -r option and specify the collector path.
 
