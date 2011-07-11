@@ -9,12 +9,12 @@ Installation
 =====
 
 **Dependencies**
-- CentOS or Ubuntu
-- Python 2.4+
-- python-configobj
-- pysnmp
-- pyasn1
-- ant (for packaging)
+-   CentOS or Ubuntu
+-   Python 2.4+
+-   python-configobj
+-   pysnmp
+-   pyasn1
+-   ant (for packaging)
 
 Usage 
 =====
@@ -96,7 +96,7 @@ To run this collector in test mode you can invoke the diamond server with the -r
 Diamond supports dynamic addition of collectors. Its configured to scan for new collectors on a regular interval (configured in diamond.cfg). 
 If diamond detects a new collector, or that a collectors module has changed (based on the file's last modified timestamp), it will be reloaded.
 
-Diamond looks for collectors in /usr/lib/diamond/collectors/ (on Ubuntu). By default a collector will run the "collect" method every 60 seconds. 
+Diamond looks for collectors in /usr/lib/diamond/collectors/ (on Ubuntu). By default diamond will invoke the "collect" method every 60 seconds. 
 
 Diamond collectors that require a separate configuration file should place a .cfg file in /etc/diamond/. 
 The configuration file name should match the name of the diamond collector class.  For example, a collector called 
