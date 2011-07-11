@@ -28,10 +28,11 @@ import optparse
 import signal
 import inspect
 
-# Fix Path    
+# Path Fix
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"../")))
 
 import diamond
+
 from diamond.collector import Collector
 from diamond.handler import Handler
 from diamond.scheduler import *
@@ -326,12 +327,13 @@ if __name__ == "__main__":
 
     # Initialize Options
     parser = optparse.OptionParser(usage="diamond [options]")
-    parser.add_option("-c", "--configfile", dest="configfile", default="conf/diamond.cfg", help="config file.")
-    parser.add_option("-l", "--logfile", dest="logfile", default="tmp/diamond.log", help="log file.")
-    parser.add_option("-f", "--foreground", dest="foreground", default=False, action="store_true", help="run in foreground.")
-    parser.add_option("-p", "--pidfile", dest="pidfile", default="tmp/diamond.pid", help="pid file.")
-    parser.add_option("-v", "--verbose", dest="verbose", default=False, action="store_true", help="verbose.")
+    parser.add_option("-c", "--configfile", dest="configfile", default="/etc/diamond/diamond.cfg", help="config file")
+    parser.add_option("-l", "--logfile", dest="logfile", default=None, help="log file")
+    parser.add_option("-f", "--foreground", dest="foreground", default=False, action="store_true", help="run in foreground")
+    parser.add_option("-p", "--pidfile", dest="pidfile", default=None, help="pid file")
+    parser.add_option("-v", "--verbose", dest="verbose", default=False, action="store_true", help="verbose")
     parser.add_option("-r", "--run", dest="collector", default=None, help="run a given collector once and exit")
+
     # Parse Command Line Args
     (options, args) = parser.parse_args()
 
@@ -345,38 +347,51 @@ if __name__ == "__main__":
 
     # Initialize Logging
     log = logging.getLogger('diamond')
+    log.setLevel(logging.INFO)
+
+    # Configure Logging Format
+    formatter = logging.Formatter('[%(asctime)s] [%(threadName)s] %(message)s')
+    
+    # Configure Log Stream Handler
+    if options.foreground:
+        streamHandler = logging.StreamHandler(sys.stdout)
+        streamHandler.setFormatter(formatter)
+        streamHandler.setLevel(logging.DEBUG)
+        log.addHandler(streamHandler)
+
+    # Got Log File Handler log file 
+    if not options.logfile:
+        options.logfile = str(config['server']['log_file'])
+
+    # Configure Log File handler
+    fileHandler = logging.FileHandler(options.logfile, 'w')
+    fileHandler.setFormatter(formatter)
+    fileHandler.setLevel(logging.DEBUG)
+    log.addHandler(fileHandler)
+
+    
     # Configure Logging Verbosity
     if options.verbose:
         log.setLevel(logging.DEBUG)
-    else:
-        log.setLevel(logging.INFO)
-    # Configure Logging Handler
-    if not options.foreground:
-        handler = logging.FileHandler(options.logfile)
-        handler.setLevel(logging.DEBUG)
-    else:
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setLevel(logging.DEBUG)
-    # Configure Logging Format
-    formatter = logging.Formatter('[%(asctime)s] [%(threadName)s] %(message)s')
-    handler.setFormatter(formatter)
-    log.addHandler(handler)
         
     # Initialize Pid file
-    pidfile = options.pidfile
+    if not options.pidfile:
+        options.pidfile = str(config['server']['pid_file']) 
+
     # Read existing pid file
     try:
-        pf = file(pidfile,'r')
+        pf = file(options.pidfile,'r')
         pid = int(pf.read().strip())
         pf.close()
     except IOError:
         pid = None
+
     # Check existing pid file
     if pid:
         # Check if pid is real
         if not os.path.exists("/".join(["/proc", str(pid), "cmdline"])):
             # Pid is not real
-            os.unlink(pidfile)
+            os.unlink(options.pidfile)
             pid = None
             print >> sys.stderr, "WARN: Bogus pid file was found. I deleted it."
         else:
@@ -420,11 +435,11 @@ if __name__ == "__main__":
     if not options.foreground and not options.collector:  
         # Write pid file
         pid = str(os.getpid())
-        pf = file(pidfile,'w+')
+        pf = file(options.pidfile,'w+')
         pf.write("%s\n" % pid)
         pf.close()
         # Log
-        log.debug("Wrote PID file: %s" % (pidfile))
+        log.debug("Wrote PID file: %s" % (options.pidfile))
 
     # Initialize Server 
     server = Server(config)
@@ -432,15 +447,13 @@ if __name__ == "__main__":
     def sigint_handler(signum, frame):
             # Log
             log.debug("Signal Received: %d" % (signum))
-
             # Stop Server
             server.stop()
-            
             # Delete Pidfile
-            if os.path.exists(pidfile):
-                os.remove(pidfile)
+            if os.path.exists(options.pidfile):
+                os.remove(options.pidfile)
                 # Log
-                log.debug("Removed PID file: %s" % (pidfile))
+                log.debug("Removed PID file: %s" % (options.pidfile))
 
     # Set the signal handler 
     signal.signal(signal.SIGINT, sigint_handler)

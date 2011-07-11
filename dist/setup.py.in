@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='diamond',
-    version='1.6.1',
+    version='@build-version@.@build-number@-@build-release@',
     description='A system system statistics collector for graphite.',
     license="See LICENSE",
     url='http://github.com/brightcoveOS/diamond',

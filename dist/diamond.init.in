@@ -13,7 +13,7 @@
 
 PROG="diamond"
 PYTHONLIB=$(/usr/bin/env python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
-DIAMOND_COMMAND="/usr/bin/env python ${PYTHONLIB}/diamond/server.py"
+DIAMOND_COMMAND="/usr/bin/python ${PYTHONLIB}/diamond/server.py"
 DIAMOND_ARGS="-v"
 DIAMOND_PIDFILE="/var/run/${PROG}.pid"
 
@@ -36,8 +36,8 @@ usage() {
 }
 
 start_debian() {
-    log_daemon_msg "Starting ${PROG}" "diamond"
-    if start-stop-daemon --start --verbose --oknodo --pidfile ${DIAMOND_PIDFILE} --exec ${DIAMOND_COMMAND} -- "${DIAMOND_ARGS}"; then
+    log_daemon_msg "Starting" "${PROG}"
+    if start-stop-daemon --start --oknodo --pidfile ${DIAMOND_PIDFILE} --exec ${DIAMOND_COMMAND} -- "${DIAMOND_ARGS}"; then
         log_end_msg 0
     else
         log_end_msg 1
@@ -60,7 +60,7 @@ start() {
 }
 
 stop_debian() {
-    log_daemon_msg "Stopping ${PROG}" "diamond"
+    log_daemon_msg "Stopping" "${PROG}"
     if start-stop-daemon --stop --quiet --oknodo --pidfile ${DIAMOND_PIDFILE}; then
         log_end_msg 0
     else

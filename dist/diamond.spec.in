@@ -10,7 +10,7 @@
 %define diamond_data_dir @diamond-data-dir@ 
 
 Name: diamond
-Summary: A system system statistics collector for graphite. 
+Summary: A system statistics collector for graphite. 
 Version: @build-version@.@build-number@
 Release: @build-release@
 License: MIT License 
@@ -23,7 +23,7 @@ Requires: pyasn1
 Requires: pysnmp 
 
 %description
-Diamond is a daemon and toolset for gather system statistics and pushing them to graphite.
+Diamond is a daemon and toolset for gather system statistics and publishing them to graphite.
 
 %prep
 %setup
@@ -39,19 +39,11 @@ install -m 755 -d %{buildroot}%{diamond_log_dir}/archive/
 install -m 755 -d %{buildroot}%{diamond_data_dir}/examples/
 install -m 755 -d %{buildroot}%{_initrddir}
 install -m 644 src/collectors/*.py %{buildroot}%{diamond_lib_dir}/collectors/
-install -m 644 conf/diamond.cfg %{buildroot}%{diamond_conf_dir}
 install -m 644 examples/* %{buildroot}%{diamond_data_dir}/examples/
+install -m 644 LICENSE %{buildroot}%{diamond_data_dir}/
+install -m 644 README %{buildroot}%{diamond_data_dir}/
+install -m 644 dist/diamond.cfg %{buildroot}%{diamond_conf_dir}
 install -m 755 dist/diamond.init %{buildroot}%{_initrddir}/
- 
-#install -m 755 -d $RPM_BUILD_ROOT/%{_libdir}/diamond
-#install -m 644 src/diamond/*.py $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/diamond/
-#install -m 755 -d $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/collectors/
-#install -m 644 src/collectors/*.py $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/collectors/
-#install -m 755 -d $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/conf/
-#install -m 644 conf/diamond.cfg $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/conf/
-#install -m 755 -d $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/archive/
-#install -m 755 -d $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/tmp/
-#install -m 755 -d $RPM_BUILD_ROOT/usr/local/brightcove/diamond-%{version}/examples/
 
 %pre
 if [ -x /etc/init.d/diamond ]; then

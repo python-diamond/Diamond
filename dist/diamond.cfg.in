@@ -6,13 +6,19 @@
 ### Options for the server
 
 # Handlers to load
-handlers = diamond.handler.GraphitePickleHandler, diamond.handler.ArchiveHandler
+handlers = diamond.handler.GraphiteHandler, diamond.handler.ArchiveHandler
+
+# Log file
+log_file = @diamond-log-dir@/diamond.log
+
+# Pid file
+pid_file = /var/run/diamond.pid
 
 # Directory to load collector modules from
 collectors_path = @diamond-lib-dir@/collectors/ 
 
 # Directory to load collector config from 
-collectors_config_path = @diamond-conf-dir@/conf/
+collectors_config_path = @diamond-conf-dir@/
 
 # Interval to reload collectors 
 collectors_reload_interval = 300 
@@ -24,7 +30,7 @@ collectors_reload_interval = 300
 [[ArchiveHandler]]
 
 # File to write archive log files
-log_path = @diamond-log-dir@/archive/archive.log
+log_file = @diamond-log-dir@/archive/archive.log
 
 # Number of days to keep archive log files
 days = 7

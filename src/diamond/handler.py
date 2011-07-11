@@ -26,7 +26,7 @@ import cPickle as pickle
 import struct
 from collections import deque
 
-from diamond.metric import Metric 
+from metric import Metric 
 
 class Handler(object):
     """
@@ -68,7 +68,7 @@ class ArchiveHandler(Handler):
         # Create Archive Log Formatter        
         formatter = logging.Formatter('%(message)s')
         # Create Archive Log Handler
-        handler = logging.handlers.TimedRotatingFileHandler(self.config['log_path'], 'midnight', 1, backupCount=int(self.config['days']))
+        handler = logging.handlers.TimedRotatingFileHandler(self.config['log_file'], 'midnight', 1, backupCount=int(self.config['days']))
         handler.setFormatter(formatter)
         handler.setLevel(logging.DEBUG)
         self.archive.addHandler(handler)

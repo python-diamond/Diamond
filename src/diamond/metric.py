@@ -21,7 +21,7 @@
 import time
 import re
 
-from diamond.error import *
+from error import *
 
 class Metric(object):
 

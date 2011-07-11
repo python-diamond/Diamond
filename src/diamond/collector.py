@@ -31,7 +31,7 @@ import re
 import pysnmp.entity.rfc3413.oneliner.cmdgen 
 import pysnmp.debug
 
-from diamond.metric import Metric
+from metric import Metric
 
 class Collector(object):
     """
