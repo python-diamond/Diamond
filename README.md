@@ -56,14 +56,14 @@ Collectors
 System Collectors
 ======
 
--NetworkCollector
--CPUCollector
--MemoryCollector
--LoadAverageCollector
--IOCollector
--VMStatCollector
--DiskSpaceCollector
--TCPStatsCollector
+-   NetworkCollector
+-   CPUCollector
+-   MemoryCollector
+-   LoadAverageCollector
+-   IOCollector
+-   VMStatCollector
+-   DiskSpaceCollector
+-   TCPStatsCollector
 
 Custom Collectors
 ======
