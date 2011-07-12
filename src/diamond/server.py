@@ -348,6 +348,7 @@ if __name__ == "__main__":
         print >> sys.stderr, parser.usage
         sys.exit(1)
    
+    # Switch user to specified user/group if required
     if not options.noswitchuser:     
         try:
             # Get UID
@@ -486,8 +487,9 @@ if __name__ == "__main__":
                 # Log
                 log.debug("Removed PID file: %s" % (options.pidfile))
 
-    # Set the signal handler 
+    # Set the signal handlers 
     signal.signal(signal.SIGINT, sigint_handler)
+    signal.signal(signal.SIGTERM, sigint_handler)
 
     if options.collector:
         # Run Server with one collector
