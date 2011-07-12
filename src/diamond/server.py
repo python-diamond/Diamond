@@ -27,6 +27,8 @@ import configobj
 import optparse
 import signal
 import inspect
+import pwd
+import grp 
 
 # Path Fix
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"../")))
@@ -333,6 +335,7 @@ if __name__ == "__main__":
     parser.add_option("-p", "--pidfile", dest="pidfile", default=None, help="pid file")
     parser.add_option("-v", "--verbose", dest="verbose", default=False, action="store_true", help="verbose")
     parser.add_option("-r", "--run", dest="collector", default=None, help="run a given collector once and exit")
+    parser.add_option("-s", "--noswitchuser", dest="noswitchuser", default=False, action="store_true", help="dont switch user")
 
     # Parse Command Line Args
     (options, args) = parser.parse_args()
@@ -344,6 +347,24 @@ if __name__ == "__main__":
         print >> sys.stderr, "ERROR: Config file: %s does not exist." % (options.configfile)
         print >> sys.stderr, parser.usage
         sys.exit(1)
+   
+    if not options.noswitchuser:     
+        try:
+            # Get UID
+            uid = pwd.getpwnam(config['server']['user']).pw_uid       
+            # Get GID
+            gid = grp.getgrnam(config['server']['group']).gr_gid
+        
+            if os.getuid() != uid:
+                # Set GID 
+                os.setgid(gid)
+
+            if os.getgid() != gid:
+                # Set UID 
+                os.setuid(uid)
+        except Exception, e:
+            print >> sys.stderr, "ERROR: Failed to set UID/GID. %s" % (e)
+            sys.exit(1)
 
     # Initialize Logging
     log = logging.getLogger('diamond')
@@ -363,17 +384,25 @@ if __name__ == "__main__":
     if not options.logfile:
         options.logfile = str(config['server']['log_file'])
 
+    # Attempt to Log File Directory
+    logdir = os.path.abspath(os.path.dirname(options.logfile)) 
+    if not os.path.exists(logdir):
+        os.mkdir(logdir)
+    
     # Configure Log File handler
     fileHandler = logging.FileHandler(options.logfile, 'w')
     fileHandler.setFormatter(formatter)
     fileHandler.setLevel(logging.DEBUG)
     log.addHandler(fileHandler)
-
     
     # Configure Logging Verbosity
     if options.verbose:
         log.setLevel(logging.DEBUG)
-        
+    
+    if not options.noswitchuser:     
+        # Log 
+        log.info('Changed UID: %d (%s) GID: %d (%s).' % (uid, config['server']['user'], gid, config['server']['group']))
+            
     # Initialize Pid file
     if not options.pidfile:
         options.pidfile = str(config['server']['pid_file']) 
@@ -400,8 +429,10 @@ if __name__ == "__main__":
 
     # Detatch Process
     if not options.foreground and not options.collector:
+
         # Double fork to serverize process
         log.info('Deatching Process.')
+
         # Fork 1 
         try: 
             pid = os.fork() 

@@ -49,30 +49,40 @@ install -m 755 dist/diamond.init %{buildroot}%{_initrddir}/
 if [ -x /etc/init.d/diamond ]; then
     /etc/init.d/diamond stop
 fi
+# Look for user
+/usr/bin/getent passwd diamond > /dev/null; HASUSER=$?;
+if [ ${HASUSER} -ne 0 ]; then
+    /usr/sbin/useradd -r -M -s /sbin/nologin -d /var/run/diamond @diamond-user@ 
+fi 
 
 %post
-# Redhat/Centos
-[ -f /etc/redhat-release ] && /sbin/chkconfig --add diamond
-# Ubuntu/Debian
-[ -f /etc/debian_version ] && /usr/sbin/update-rc.d diamond defaults
-/etc/init.d/diamond start
+/sbin/chkconfig --add diamond
 
 %preun
 # Will only match if the command passed in was delete/erase/remove
 if [ "$1" == "0" ]; then
     /etc/init.d/diamond stop
     /sbin/chkconfig --del diamond
+    # Look for user
+    /usr/bin/getent passwd diamond > /dev/null; HASUSER=$?;
+    if [ ${HASUSER} -ne 0 ]; then
+        /usr/sbin/userdel diamond
+        /usr/sbin/groupdel diamond
+    fi 
 fi
 
 %files
 %defattr(-, root, root, 0755)
 %{diamond_site_dir}
 %{diamond_conf_dir}
-%{diamond_lib_dir}
-%{diamond_log_dir}
+%attr(755, @diamond-user@, @diamond-group@) %{diamond_lib_dir}
+%attr(755, @diamond-user@, @diamond-group@) %{diamond_log_dir}
 %{diamond_data_dir}
 %{_initrddir}
 
 %changelog
+* Wed July 12 2011 Andy Kipp <akipp@brightcove.com>
+- Added support for adding diamond user
+
 * Wed Jun 15 2011 Andy Kipp <akipp@brightcove.com>
 - Initial version

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Fix Diamond Directory Permissions
+/bin/chown -R @diamond-user@:@diamond-group@ @diamond-log-dir@
+/bin/chown -R @diamond-user@:@diamond-group@ @diamond-lib-dir@
+
+# Set Diamond to start on boot
+/usr/sbin/update-rc.d diamond defaults
+
+# Start Diamond
+/etc/init.d/diamond start

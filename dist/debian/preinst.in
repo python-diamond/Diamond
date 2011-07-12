@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Stop diamond, if installed
+if [ -x /etc/init.d/diamond ]; then
+    /etc/init.d/diamond stop
+fi
+
+# Create user, if necessary 
+/usr/bin/getent passwd @diamond-user@ > /dev/null; HASUSER=$?;
+if [ ${HASUSER} -ne 0 ]; then
+    /usr/sbin/useradd -r -s /usr/sbin/nologin -d /var/run/diamond -U @diamond-user@ 
+    echo "Added user @diamond-user@"
+else
+    echo "User @diamond-user@ already exists"
+fi 

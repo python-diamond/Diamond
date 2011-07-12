@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Check if upgrade
+if [ "$1" != "upgrade" ]; then
+
+    # Delete user, if necessary 
+    /usr/bin/getent passwd @diamond-user@ > /dev/null; HASUSER=$?;
+    if [ ${HASUSER} -eq 0 ]; then
+        /usr/sbin/userdel @diamond-user@ 
+        echo "Removed user @diamond-user@"
+    fi 
+
+    # Delete group, if necessary 
+    /usr/bin/getent group @diamond-group@ > /dev/null; HASGROUP=$?;
+    if [ ${HASGROUP} -eq 0 ]; then
+        /usr/sbin/groupdel @diamond-group@
+        echo "Removed group @diamond-group@"
+    fi 
+
+fi

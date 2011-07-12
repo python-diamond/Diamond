@@ -7,6 +7,8 @@
     <property name="build-version" value="2.0"/>
     <property name="build-number" value="0"/> 
     <property name="build-release" value="0"/>
+    <property name="diamond-user" value="diamond"/>
+    <property name="diamond-group" value="diamond"/>
 
     <property name="src" location="src" />
     <property name="conf" location="conf" />
@@ -91,6 +93,8 @@
             <filter token="build-version" value="${build-version}"/>
             <filter token="build-number" value="${build-number}"/>
             <filter token="build-release" value="${build-release}"/>
+            <filter token="diamond-user" value="${diamond-user}"/>
+            <filter token="diamond-group" value="${diamond-group}"/>
             <filter token="diamond-lib-dir" value="${diamond-lib-dir}"/>
             <filter token="diamond-conf-dir" value="${diamond-conf-dir}"/>
             <filter token="diamond-log-dir" value="${diamond-log-dir}"/>
@@ -202,6 +206,10 @@
         <mkdir dir="${stage}${diamond-log-dir}/archive/"/>
         <mkdir dir="${stage}${diamond-data-dir}"/>
         <mkdir dir="${stage}${diamond-data-dir}/examples/"/>
+        <!--<chown type="dir" file="${stage}${diamond-lib-dir}" owner="${diamond-user}:${diamond-group}"/>
+        <chown type="dir" file="${stage}${diamond-lib-dir}/collectors/" owner="${diamond-user}:${diamond-group}"/>
+        <chown type="dir" file="${stage}${diamond-log-dir}" owner="${diamond-user}:${diamond-group}"/>
+        <chown type="dir" file="${stage}${diamond-log-dir}/archive/" owner="${diamond-user}:${diamond-group}"/>-->
 
         <!-- run setup.py to install libs -->    
         <exec executable="python" dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/">
@@ -245,7 +253,12 @@
             verbose="true">
             <fileset dir="${build}/tmp/${ant.project.name}-${build-version}.${build-number}/dist/debian"/>
         </copy>
-        
+       
+        <chmod file="${stage}/DEBIAN/preinst" perm="755"/>
+        <chmod file="${stage}/DEBIAN/postinst" perm="755"/>
+        <chmod file="${stage}/DEBIAN/prerm" perm="755"/>
+        <chmod file="${stage}/DEBIAN/postrm" perm="755"/>
+ 
         <!-- Copy other files -->
         <copy todir="${stage}/${diamond-data-dir}/" 
             verbose="true">

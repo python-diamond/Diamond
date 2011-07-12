@@ -6,6 +6,9 @@
 # description: Diamond is a tool for gathering system metrics.
 #
 ### BEGIN INIT INFO
+# Provides:          diamond
+# Required-Start:    $network 
+# Required-Stop:         
 # Default-Start: 2 3 4 5
 # Default-Stop: 0 1 6
 # Short-Description: Diamond is a tool for gathering system metrics.

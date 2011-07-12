@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Stop diamond, if installed
+if [ -x /etc/init.d/diamond ]; then
+    /etc/init.d/diamond stop
+fi
+
+    # Check if upgrade
+if [ "$1" != "upgrade" ]; then
+    # Remove from
+    /usr/sbin/update-rc.d -f diamond remove
+fi
