@@ -9,6 +9,7 @@ Installation
 =====
 
 **Dependencies**
+
 -   CentOS or Ubuntu
 -   Python 2.4+
 -   python-configobj
@@ -51,10 +52,7 @@ systems.<hostname>.<metrics>.<metric>
 
 You can override the "systems" portion of the metric path by changing the "path_prefix" setting in the configuration file. 
 
-Collectors
-===== 
-
-System Collectors
+Built-In Collectors
 ======
 
 -   NetworkCollector
