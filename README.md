@@ -42,7 +42,7 @@ Configuration
 =====
 
 If you've installed diamond via a package, the configuration file is /etc/diamond/diamond.cfg. By default, diamond 
-will push to a graphite server host "diamond". You should probably change this to point to your own graphite server.
+will push to a graphite server host "graphite". You should probably change this to point to your own graphite server.
 
 Other configuration should not be necessary.
 

@@ -45,7 +45,7 @@ days = 7
 ### Options for GraphiteHandler 
 
 # Graphtie server host
-host = diamond 
+host = graphite 
 
 # Port to send metrics to
 port = 2003
@@ -57,7 +57,7 @@ timeout = 15
 ### Options for GraphitePickleHandler 
 
 # Graphtie server host
-host = diamond 
+host = graphite
 
 # Port to send metrics to
 port = 2004
