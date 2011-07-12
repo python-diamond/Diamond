@@ -44,7 +44,7 @@ Configuration
 If you've installed diamond via a package, the configuration file is /etc/diamond/diamond.cfg. By default, diamond 
 will push to a graphite server host "diamond". You should probably change this to point to your own graphite server.
 
-Other configuration should not be necessary but feel free to so.
+Other configuration should not be necessary.
 
 By default diamond publishes metrics using the following form:
 
@@ -93,10 +93,10 @@ To run this collector in test mode you can invoke the diamond server with the -r
 > python src/diamond/server.py -f -v -r examples/examplecollector.py
 
 Diamond supports dynamic addition of collectors. Its configured to scan for new collectors on a regular interval (configured in diamond.cfg). 
-If diamond detects a new collector, or that a collectors module has changed (based on the file's last modified timestamp), it will be reloaded.
+If diamond detects a new collector, or that a collectors module has changed (based on the file's mtime), it will be reloaded.
 
-Diamond looks for collectors in /usr/lib/diamond/collectors/ (on Ubuntu). By default diamond will invoke the "collect" method every 60 seconds. 
+Diamond looks for collectors in /usr/lib/diamond/collectors/ (on Ubuntu). By default diamond will invoke the *collect* method every 60 seconds. 
 
 Diamond collectors that require a separate configuration file should place a .cfg file in /etc/diamond/. 
 The configuration file name should match the name of the diamond collector class.  For example, a collector called 
-"examplecollector.ExampleCollector" could have its configuration file placed in /etc/diamond/ExampleCollector.cfg.
+*examplecollector.ExampleCollector* could have its configuration file placed in /etc/diamond/ExampleCollector.cfg.
