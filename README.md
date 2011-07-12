@@ -48,7 +48,7 @@ Other configuration should not be necessary.
 
 By default diamond publishes metrics using the following form:
 
-systems.<hostname>.<metrics>.<metric>
+    systems.<hostname>.<metrics>.<metric>
 
 You can override the "systems" portion of the metric path by changing the "path_prefix" setting in the configuration file. 
 
