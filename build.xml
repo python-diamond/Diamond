@@ -290,7 +290,7 @@
     <target name="run" depends="clean">
         <mkdir dir="${tmp}"/>
         <exec executable="python">
-            <arg line="${src}/diamond/server.py -c conf/diamond.cfg -f -v"/>
+            <arg line="${src}/diamond/server.py -c conf/diamond.cfg -f -v -s"/>
         </exec>
     </target>   
     

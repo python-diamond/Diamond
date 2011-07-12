@@ -115,7 +115,7 @@ path = vmstat
 [[DiskSpaceCollector]]
 ## Options for the Disk Space Collector
 path = diskspace
-filesystems = ext2, ext3, xfs, glusterfs, nfs
+filesystems = ext2, ext3, ext4, xfs, glusterfs, nfs
 
 [[TCPStatsCollector]]
 ## Options for the TCP Stats Collector
