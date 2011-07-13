@@ -245,13 +245,15 @@
             failOnError="true"/>
     </target>
 
-    <target name="setup-install-root">
+    <!-- target: create a deb package -->
+    <target name="deb" depends="stage" if="is.debian">   
+
+        <!-- setup install root -->
         <property name="install-root" location="${build}/root"/>
         <echo message="install-root: ${install-root}"/>
-    </target>
- 
-    <!-- target: create a deb package -->
-    <target name="deb" depends="setup-install-root,install" if="is.debian">   
+        
+        <!-- do install target now -->
+        <antcall target="install"/>
  
         <!-- make debian directory -->
         <mkdir dir="${install-root}/DEBIAN"/>
