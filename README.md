@@ -104,3 +104,9 @@ Diamond looks for collectors in /usr/lib/diamond/collectors/ (on Ubuntu). By def
 Diamond collectors that require a separate configuration file should place a .cfg file in /etc/diamond/. 
 The configuration file name should match the name of the diamond collector class.  For example, a collector called 
 *examplecollector.ExampleCollector* could have its configuration file placed in /etc/diamond/ExampleCollector.cfg.
+
+
+Contacts
+=====
+
+**Maintainer:** [Andy Kipp](akipp@brightove.com "Andy Kipp") 
