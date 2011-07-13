@@ -109,4 +109,4 @@ The configuration file name should match the name of the diamond collector class
 Contacts
 =====
 
-**Maintainer:** [Andy Kipp](akipp@brightove.com "Andy Kipp") 
+**Maintainer:** [Andy Kipp](mailto:akipp@brightove.com "Andy Kipp") 
