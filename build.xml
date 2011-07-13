@@ -244,9 +244,14 @@
             cleanBuildDir="true" 
             failOnError="true"/>
     </target>
-    
+
+    <target name="setup-install-root">
+        <property name="install-root" location="${build}/root"/>
+        <echo message="install-root: ${install-root}"/>
+    </target>
+ 
     <!-- target: create a deb package -->
-    <target name="deb" depends="install" if="is.debian">   
+    <target name="deb" depends="setup-install-root,install" if="is.debian">   
  
         <!-- make debian directory -->
         <mkdir dir="${install-root}/DEBIAN"/>
@@ -280,11 +285,7 @@
     </target>
 
     <!-- Target: create packege depending on os -->
-    <target name="package">
-        <property name="install-root" location="${build}/root"/>
-        <echo message="install-root: ${install-root}"/>
-        <antcall target="deb"/>
-        <antcall target="rpm"/>
+    <target name="package" depends="rpm,deb">
     </target>
 
     <!-- target: run diamond server -->
