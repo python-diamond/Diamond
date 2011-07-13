@@ -24,7 +24,7 @@ To install diamond, use ant:
 
     ant install
 
-For testing, diamond can be invoked via ant: 
+For testing, diamond can also be started directly via ant without installing: 
 
     ant run
 
@@ -34,7 +34,7 @@ Ant can also build packages for CentOS and Ubuntu.
 
     ant package
 
-    sudo dpkg -i build-debian/diamond-2.0.0/diamond-2.0.0-0.deb
+    sudo dpkg -i build/diamond-2.0.1-0.deb
 
 The *package* task will detect Ubuntu or CentOS and build .debs or .rpms. 
  
