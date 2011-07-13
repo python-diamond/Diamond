@@ -20,21 +20,25 @@ Installation
 Usage 
 =====
 
+To install diamond, use ant:
+
+    ant install
+
 For testing, diamond can be invoked via ant: 
 
-> ant run
+    ant run
 
 The *run* task will invoke diamond in debug mode for testing.
 
 Ant can also build packages for CentOS and Ubuntu.
 
-> ant package
+    ant package
 
-> sudo dpkg -i build-debian/diamond-2.0.0/diamond-2.0.0-0.deb
+    sudo dpkg -i build-debian/diamond-2.0.0/diamond-2.0.0-0.deb
 
 The *package* task will detect Ubuntu or CentOS and build .debs or .rpms. 
  
-> ant tar
+    ant tar
 
 The *tar* task will build a tarball if thats your thing.
 
@@ -67,7 +71,7 @@ Built-In Collectors
 Custom Collectors
 ======
 
-Diamond collectors run within the diamond process under the diamond server process and collect metrics that can be published to a graphite server.
+Diamond collectors run within the diamond process and collect metrics that can be published to a graphite server.
 
 Collectors are subclasses of diamond.collector.Collector. In their simplest form, they need to implement a single method called "collect".
 
