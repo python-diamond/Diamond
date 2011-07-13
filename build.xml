@@ -16,7 +16,7 @@
     <property name="test" location="test" />
     <property name="tmp" location="tmp"/>
     <property name="build" location="build"/>
-    <property name="stage" location="${build}/stage/${ant.project.name}-${build-version}.${build-number}-${build-release}/"/>
+    <property name="stage" location="${build}/stage/${ant.project.name}-${build-version}.${build-number}"/>
     <property name="examples" location="examples" />
 
     <!-- target: set os properties -->
@@ -26,16 +26,12 @@
 
         <!-- check if platform is ubuntu -->
         <condition property="is.debian" value="true">
-            <resourceexists>
-              <file file="/etc/debian_version"/>
-            </resourceexists> 
+            <available file="/etc/debian_version"/>
         </condition>
         
         <!-- check if platform is redhat -->
         <condition property="is.redhat" value="true">
-            <resourceexists>
-              <file file="/etc/redhat-release"/>
-            </resourceexists> 
+            <available file="/etc/redhat-release"/>
         </condition>
         
         <echo message="is.debian: ${is.debian}"/>
@@ -164,7 +160,7 @@
     <target name="tar" depends="stage">
         <!-- Create the tar file under the RPM build root -->
         <tar destfile="${build}/${ant.project.name}-${build-version}.${build-number}.tar.gz" longfile="gnu" compression="gzip">
-            <tarfileset dir="${stage}" preserveLeadingSlashes="false" />
+            <tarfileset dir="${build}/stage" preserveLeadingSlashes="false" />
         </tar>
     </target>
     
@@ -223,6 +219,10 @@
     
     <!-- Target: create an rpm package -->
     <target name="rpm" depends="tar" if="is.redhat">
+
+        <!-- move tar file to rpm dir -->
+        <move file="${build}/${ant.project.name}-${build-version}.${build-number}.tar.gz" todir="${build}/SOURCES"/>
+
         <!-- setup rpm dirs -->
         <mkdir dir="${build}/BUILD" />
         <mkdir dir="${build}/SPECS" />
@@ -283,8 +283,8 @@
     <target name="package">
         <property name="install-root" location="${build}/root"/>
         <echo message="install-root: ${install-root}"/>
-        <antcall target="rpm"/>
         <antcall target="deb"/>
+        <antcall target="rpm"/>
     </target>
 
     <!-- target: run diamond server -->

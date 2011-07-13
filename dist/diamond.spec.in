@@ -41,33 +41,38 @@ install -m 755 -d %{buildroot}%{_initrddir}
 install -m 644 src/collectors/*.py %{buildroot}%{diamond_lib_dir}/collectors/
 install -m 644 examples/* %{buildroot}%{diamond_data_dir}/examples/
 install -m 644 LICENSE %{buildroot}%{diamond_data_dir}/
-install -m 644 README %{buildroot}%{diamond_data_dir}/
+install -m 644 README.md %{buildroot}%{diamond_data_dir}/
 install -m 644 dist/diamond.cfg %{buildroot}%{diamond_conf_dir}
-install -m 755 dist/diamond.init %{buildroot}%{_initrddir}/
+install -m 755 dist/diamond.init %{buildroot}%{_initrddir}/diamond
 
 %pre
 if [ -x /etc/init.d/diamond ]; then
     /etc/init.d/diamond stop
 fi
 # Look for user
-/usr/bin/getent passwd diamond > /dev/null; HASUSER=$?;
+/usr/bin/getent passwd @diamond-user@ > /dev/null; HASUSER=$?;
 if [ ${HASUSER} -ne 0 ]; then
     /usr/sbin/useradd -r -M -s /sbin/nologin -d /var/run/diamond @diamond-user@ 
 fi 
 
 %post
 /sbin/chkconfig --add diamond
+/etc/init.d/diamond start 
 
 %preun
 # Will only match if the command passed in was delete/erase/remove
 if [ "$1" == "0" ]; then
     /etc/init.d/diamond stop
     /sbin/chkconfig --del diamond
-    # Look for user
-    /usr/bin/getent passwd diamond > /dev/null; HASUSER=$?;
+    # Remove User 
+    /usr/bin/getent passwd @diamond-user@ > /dev/null; HASUSER=$?;
     if [ ${HASUSER} -ne 0 ]; then
-        /usr/sbin/userdel diamond
-        /usr/sbin/groupdel diamond
+        /usr/sbin/userdel @diamond-user@ 
+    fi 
+    # Remove User 
+    /usr/bin/getent group @diamond-group@ > /dev/null; HASGROUP=$?;
+    if [ ${HASGROUP} -ne 0 ]; then
+        /usr/sbin/groupdel @diamond-group@
     fi 
 fi
 
@@ -81,7 +86,7 @@ fi
 %{_initrddir}
 
 %changelog
-* Wed July 12 2011 Andy Kipp <akipp@brightcove.com>
+* Wed Jul 13 2011 Andy Kipp <akipp@brightcove.com>
 - Added support for adding diamond user
 
 * Wed Jun 15 2011 Andy Kipp <akipp@brightcove.com>
