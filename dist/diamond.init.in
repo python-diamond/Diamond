@@ -74,7 +74,7 @@ stop_debian() {
 stop_redhat() {
 	[ -f /var/lock/subsys/$PROG ] || return 0
 	echo -n "Killing $PROG: "
-	killproc -p ${DIAMODN_PIDFILE} $PROG
+	killproc -p ${DIAMOND_PIDFILE} $PROG
     rm -rf ${DIAMOND_PIDFILE} > /dev/null 2>&1
 	echo
 	rm -f /var/lock/subsys/$PROG
