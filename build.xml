@@ -2,14 +2,11 @@
     <description>
         Build file for diamond. 
     </description>
-    
-    <!-- set global properties -->
-    <property name="build-version" value="2.0"/>
-    <property name="build-number" value="2"/> 
-    <property name="build-release" value="0"/>
-    <property name="diamond-user" value="diamond"/>
-    <property name="diamond-group" value="diamond"/>
 
+    <!-- load properties file -->
+    <property file="build.properties"/> 
+ 
+    <!-- set global properties -->
     <property name="src" location="src" />
     <property name="conf" location="conf" />
     <property name="dist" location="dist" />
