@@ -140,7 +140,7 @@ class Collector(object):
             old = self.last_values[path]
             # Check for rollover
             if new < old:
-                old = old + max_value
+                old = old - max_value
             # Get Change in X (value)
             dy = new - old
             # Get Change in Y (time)

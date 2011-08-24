@@ -28,9 +28,20 @@ import random
 import urllib2
 import base64
 import csv
+import platform
 from urlparse import urlparse
 
 import diamond.collector
+
+# Detect the architecture of the system
+# and set the counters for MAX_VALUES
+# appropriately. Otherwise, rolling over
+# counters will cause incorrect or
+# negative values.
+if platform.architecture()[0] == '64bit':
+    counter = (2 ** 64) - 1
+else:
+    counter = (2 ** 32) - 1
 
 class TCPStatsCollector(diamond.collector.Collector):
     """
@@ -80,22 +91,22 @@ class NetworkCollector(diamond.collector.Collector):
     PROC = '/proc/net/dev'
 
     MAX_VALUES = {
-        'rx_bytes': 18446744073709600000, 
-        'rx_packets': 18446744073709600000, 
-        'rx_errors': 18446744073709600000,
-        'rx_drop': 18446744073709600000,
-        'rx_fifo': 18446744073709600000,
-        'rx_frame': 18446744073709600000,
-        'rx_compressed': 18446744073709600000,
-        'rx_multicast': 18446744073709600000,
-        'tx_bytes': 18446744073709600000,
-        'tx_packets': 18446744073709600000,
-        'tx_errors': 18446744073709600000,
-        'tx_drop': 18446744073709600000,
-        'tx_fifo': 18446744073709600000,
-        'tx_frame': 18446744073709600000,
-        'tx_compressed': 18446744073709600000,
-        'tx_multicast': 18446744073709600000,
+        'rx_bytes': counter, 
+        'rx_packets': counter, 
+        'rx_errors': counter,
+        'rx_drop': counter,
+        'rx_fifo': counter,
+        'rx_frame': counter,
+        'rx_compressed': counter,
+        'rx_multicast': counter,
+        'tx_bytes': counter,
+        'tx_packets': counter,
+        'tx_errors': counter,
+        'tx_drop': counter,
+        'tx_fifo': counter,
+        'tx_frame': counter,
+        'tx_compressed': counter,
+        'tx_multicast': counter,
         }
         
     def convert_to_mbit(self, value):
@@ -234,11 +245,11 @@ class CPUCollector(diamond.collector.Collector):
 
     PROC = '/proc/stat'
     MAX_VALUES = {
-        'user': 18446744073709551615,
-        'nice': 18446744073709551615,
-        'system': 18446744073709551615,
-        'idle': 18446744073709551615,
-        'iowait': 18446744073709551615,
+        'user': counter,
+        'nice': counter,
+        'system': counter,
+        'idle': counter,
+        'iowait': counter,
     }
 
     def collect(self):
@@ -278,13 +289,13 @@ class IOCollector(diamond.collector.Collector):
     MAX_VALUES = {
         'reads': 4294967295,
         'reads_merged': 4294967295,
-        'reads_sectors': 18446744073709551615,
-        'reads_kilobytes': 9223372036854775808,
+        'reads_sectors': counter,
+        'reads_kilobytes': (((counter + 1) / 2) - 1),
         'reads_milliseconds': 4294967295,
         'writes': 4294967295,
         'writes_merged': 4294967295,
-        'writes_sectors': 18446744073709551615,
-        'writes_kilobytes': 9223372036854775808,
+        'writes_sectors': counter,
+        'writes_kilobytes': (((counter + 1) / 2) - 1),
         'writes_milliseconds': 4294967295,
         'io_milliseconds': 4294967295,
         'weighted_io_milliseconds': 4294967295
@@ -374,10 +385,10 @@ class VMStatCollector(diamond.collector.Collector):
 
     PROC = '/proc/vmstat'
     MAX_VALUES = {
-        'pgpgin': 18446744073709551615,
-        'pgpgout': 18446744073709551615,
-        'pswpin': 18446744073709551615,
-        'pswpout': 18446744073709551615,
+        'pgpgin': counter,
+        'pgpgout': counter,
+        'pswpin': counter,
+        'pswpout': counter,
     }
 
     def collect(self):
