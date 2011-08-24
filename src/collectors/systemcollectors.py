@@ -410,6 +410,29 @@ class DiskSpaceCollector(diamond.collector.Collector):
     # Call os.statvfs to get filesystme stats
     STATVFS= [ 'block_size', 'block_size', 'blocks_used', 'blocks_free', 'blocks_avail', 'inodes_used', 'inodes_free', 'inodes_avail' ]
 
+    def is_filtered(self, mountpoint):
+        """
+        Checks whether a given filesystem should be filtered from having metrics 
+        gathered.
+
+        Returns True if the filesystem should be ignored.
+
+        Returns False if the filesystem should be considered.
+        """
+        if 'exclude_filters' in self.config and len(self.config['exclude_filters']) > 0:
+            
+            # Catch the most likely error, giving a string value in the config instead of a list
+            if isinstance(self.config['exclude_filters'], str):
+                self.config['exclude_filters'] = [ self.config['exclude_filters'] ]
+
+            # Loop through the list of filters, and for each check if the given mountpoint matches. Return True if so.
+            for f in self.config['exclude_filters']:
+                if re.search(f, mountpoint):
+                    return True
+
+        # Return False if no filters matched, or no filters are defined
+        return False
+
     def get_filesystem_list(self):
         """
         Create a list of the mounted filesystems on the machine
@@ -420,7 +443,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
         fd = open('/proc/mounts', 'r')
         for line in fd:
             l = line.split()
-            if l[2] in self.config['filesystems']: 
+            if l[2] in self.config['filesystems'] and not self.is_filtered(l[1]): 
                 s = os.stat(l[1])
                 major = str(os.major(s.st_dev))
                 minor = str(os.minor(s.st_dev))

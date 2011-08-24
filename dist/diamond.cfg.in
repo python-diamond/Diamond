@@ -115,7 +115,21 @@ path = vmstat
 [[DiskSpaceCollector]]
 ## Options for the Disk Space Collector
 path = diskspace
+
+# filesystems
+#   A list of file systems types to examine
+#   A filesystem type not in this list will be excluded from the disk space collector
 filesystems = ext2, ext3, ext4, xfs, glusterfs, nfs
+
+# exclude_filters
+#   A list of regex patterns
+#   A filesystem matching any of these patterns will be excluded from the disk space collector
+# 
+# Examples:
+#       exclude_filters = ,                 # no exclude filters at all
+#       exclude_filters = ^/boot, ^/mnt     # exclude everything that begins /boot or /mnt
+#       exclude_filters = m,                # exclude everything that includes the letter "m"
+exclude_filters = '^/export/home',
 
 [[TCPStatsCollector]]
 ## Options for the TCP Stats Collector
