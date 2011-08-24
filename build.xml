@@ -5,7 +5,7 @@
     
     <!-- set global properties -->
     <property name="build-version" value="2.0"/>
-    <property name="build-number" value="1"/> 
+    <property name="build-number" value="2"/> 
     <property name="build-release" value="0"/>
     <property name="diamond-user" value="diamond"/>
     <property name="diamond-group" value="diamond"/>
