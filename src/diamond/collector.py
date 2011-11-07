@@ -92,21 +92,24 @@ class Collector(object):
             prefix = self.config['path_prefix']
         else:
             prefix = 'systems'
+
         if 'hostname' in self.config:
             hostname = self.config['hostname']
         else:
-            hostname = os.uname()[1].split('.')[0]
+            hostname = socket.getfqdn().split('.')[0]
+
         if 'path' in self.config:
             path = self.config['path']
         else:
             path = self.__class__.__name__
+
         return '.'.join([prefix, hostname, path, name])
 
     def collect(self):
         """
         Default collector method
         """
-        pass 
+        raise NotImplementedError()
  
     def publish(self, name, value, precision=0):
         """
