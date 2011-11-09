@@ -1,6 +1,3 @@
 build/
-build-debian/
-build-redhat/
-archive/
 tmp/
 *.pyc
