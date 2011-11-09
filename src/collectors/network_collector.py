@@ -1,0 +1,116 @@
+# Copyright (C) 2011-2012 by Ivan Pouzyrevsky.
+# Copyright (C) 2010-2011 by Brightcove Inc. 
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+from diamond import *
+import diamond.collector
+
+class NetworkCollector(diamond.collector.Collector):
+    """
+    The NetworkCollector class collects metrics on network interface usage
+    using /proc/net/dev.
+    """
+
+    PROC = '/proc/net/dev'
+
+    MAX_VALUES = {
+        'rx_bytes': diamond.collector.MAX_COUNTER, 
+        'rx_packets': diamond.collector.MAX_COUNTER, 
+        'rx_errors': diamond.collector.MAX_COUNTER,
+        'rx_drop': diamond.collector.MAX_COUNTER,
+        'rx_fifo': diamond.collector.MAX_COUNTER,
+        'rx_frame': diamond.collector.MAX_COUNTER,
+        'rx_compressed': diamond.collector.MAX_COUNTER,
+        'rx_multicast': diamond.collector.MAX_COUNTER,
+        'tx_bytes': diamond.collector.MAX_COUNTER,
+        'tx_packets': diamond.collector.MAX_COUNTER,
+        'tx_errors': diamond.collector.MAX_COUNTER,
+        'tx_drop': diamond.collector.MAX_COUNTER,
+        'tx_fifo': diamond.collector.MAX_COUNTER,
+        'tx_frame': diamond.collector.MAX_COUNTER,
+        'tx_compressed': diamond.collector.MAX_COUNTER,
+        'tx_multicast': diamond.collector.MAX_COUNTER,
+        }
+        
+    def convert_to_mbit(self, value):
+        """
+        Convert bytes to megabits.
+        """
+        return ((float(value) / 1024.0 / 1024.0) * 8.0 )
+
+    def convert_to_kbit(self, value):
+        """
+        Convert bytes to kilobits.
+        """
+        return ((float(value) / 1024.0 ) * 8.0 )
+
+    def convert_to_mbyte(self, value):
+        """
+        Convert bytes to megabytes.
+        """
+        return (float(value) / 1024.0 / 1024.0)
+
+    def convert_to_kbyte(self, value):
+        """
+        Convert bytes to kilobytes.
+        """
+        return (float(value) / 1024.0 ) 
+
+    def collect(self):
+        """
+        Collect network interface stats.
+        """
+        # Initialize Units
+        units = {
+            'mbit': self.convert_to_mbit, 
+            'kbit': self.convert_to_kbit,
+            'mbyte': self.convert_to_mbyte,
+            'kbyte': self.convert_to_kbyte,
+            }
+        # Initialize results
+        results = {}
+        # Open File
+        file = open(self.PROC, 'r')
+        # Build Regular Expression
+        exp = '^(?:\s*)([%s0-9]+):(?:\s*)(?P<rx_bytes>\d+)(?:\s*)(?P<rx_packets>\w+)(?:\s*)(?P<rx_errors>\d+)(?:\s*)(?P<rx_drop>\d+)(?:\s*)(?P<rx_fifo>\d+)(?:\s*)(?P<rx_frame>\d+)(?:\s*)(?P<rx_compressed>\d+)(?:\s*)(?P<rx_multicast>\d+)(?:\s*)(?P<tx_bytes>\d+)(?:\s*)(?P<tx_packets>\w+)(?:\s*)(?P<tx_errors>\d+)(?:\s*)(?P<tx_drop>\d+)(?:\s*)(?P<tx_fifo>\d+)(?:\s*)(?P<tx_frame>\d+)(?:\s*)(?P<tx_compressed>\d+)(?:\s*)(?P<tx_multicast>\d+)(?:.*)$' % ( '|'.join(self.config['interfaces']) )
+        reg = re.compile(exp)
+        # Match Interfaces
+        for line in file:
+            match = reg.match(line)
+            if match:
+                device = match.group(1)
+                results[device] = match.groupdict()
+        # Close File
+        file.close()
+
+        for device in results:
+            stats = results[device]
+            for s,v in stats.items():
+                # Get Metric Name 
+                metric_name = '.'.join([device, s])
+                # Get Metric Value
+                metric_value = self.derivative(metric_name, long(v), self.MAX_VALUES[s])
+                # Publish Metric Derivative
+                self.publish(metric_name, metric_value) 
+                # Convert rx_bytes and tx_bytes
+                if s == 'rx_bytes' or s == 'tx_bytes':
+                    for u in units: 
+                        # Public Converted Metric  
+                        self.publish(metric_name.replace('bytes', u), units[u](metric_value))

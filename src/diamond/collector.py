@@ -19,17 +19,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import os
-import sys
-import string
-import logging
-import time
-import traceback
-import configobj
-import socket
-import re 
+from diamond import *
+from diamond.metric import Metric
 
-from metric import Metric
+# Detect the architecture of the system and set the counters for MAX_VALUES
+# appropriately. Otherwise, rolling over counters will cause incorrect or
+# negative values.
+
+if platform.architecture()[0] == '64bit':
+    MAX_COUNTER = (2 ** 64) - 1
+else:
+    MAX_COUNTER = (2 ** 32) - 1
+
+from diamond.metric import Metric
 
 class Collector(object):
     """
@@ -168,4 +170,3 @@ class Collector(object):
         except Exception, e:
             # Log Error 
             self.log.error(traceback.format_exc())
-    
