@@ -1,9 +1,12 @@
-watch('test/.*') { test }
+watch('src/(.*)\.py')     { go }
+watch('test/(.*)\.py')    { go }
+watch('test/fixtures/.*') { go }
 
-Signal.trap('QUIT') { test }
+Signal.trap('QUIT') { go }
 Signal.trap('INT')  { abort("\n") }
 
-def test()
-  puts "*** Running..."
-  %x{nosetests -v}
+def go()
+  puts '*** Running...'
+  %x{find . -name '*.pyc' -delete}
+  %x{nosetests-2.7 -v}
 end

@@ -1,0 +1,12 @@
+rootfs / rootfs rw 0 0
+none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+none /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+none /dev devtmpfs rw,relatime,size=24769364k,nr_inodes=6192341,mode=755 0 0
+none /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000 0 0
+fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0
+/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba / ext3 rw,relatime,errors=continue,barrier=0,data=ordered 0 0
+none /sys/kernel/debug debugfs rw,relatime 0 0
+none /sys/kernel/security securityfs rw,relatime 0 0
+none /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0
+none /var/run tmpfs rw,nosuid,relatime,mode=755 0 0
+none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
