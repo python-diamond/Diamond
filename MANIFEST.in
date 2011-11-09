@@ -5,3 +5,5 @@ include bin/*
 include examples/*
 include conf/*.example
 exclude conf/*.conf
+include test/common.py
+include test/fixtures/*

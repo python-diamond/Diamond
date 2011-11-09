@@ -17,7 +17,7 @@ setup(
     author='Ivan Pouzyrevsky',
     author_email='ivan.pouzyrevsky@gmail.com',
     license='MIT License',
-    description='Smart producer for graphite graphing package',
+    description='Smart data producer for graphite graphing package',
     package_dir={'' : 'src'},
     packages=['diamond'],
     scripts=glob('bin/*'),
