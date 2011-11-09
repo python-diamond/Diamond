@@ -40,7 +40,7 @@ class TestDiskUsageCollector(CollectorTestCase):
         ):
             self.collector.collect()
 
-        publish_mock.reset_mock()
+        self.assertPublishedMany(publish_mock, {})
 
         with nested(
             patch('disk.get_file_systems', return_value = file_systems),
@@ -58,10 +58,7 @@ class TestDiskUsageCollector(CollectorTestCase):
             'sda.writes_kilobytes' : 18.8,
             'sda.writes_milliseconds' : 10.0,
             'sda.io_milliseconds' : 9.0,
-            'sda.weighted_io_milliseconds' : 14.0
-        })
-
-        self.assertPublishedMany(publish_mock, {
+            'sda.weighted_io_milliseconds' : 14.0,
             'md0.reads' : 0.0,
             'md0.reads_merged' : 0.0,
             'md0.reads_kilobytes' : 0.0,
@@ -73,8 +70,6 @@ class TestDiskUsageCollector(CollectorTestCase):
             'md0.io_milliseconds' : 0.0,
             'md0.weighted_io_milliseconds' : 0.0,
         })
-
-        publish_mock.reset_mock()        
 
 ################################################################################
 if __name__ == "__main__":

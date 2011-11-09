@@ -19,9 +19,9 @@ class TestSockstatCollector(CollectorTestCase):
     @patch('__builtin__.open')
     @patch.object(Collector, 'publish')
     def test_should_open_proc_net_sockstat(self, publish_mock, open_mock):
-        open_mock.return_value.__iter__.return_value = iter([])
+        open_mock.return_value = StringIO('')
         self.collector.collect()
-        open_mock.assert_called_once_with('/proc/net/sockstat', 'r')
+        open_mock.assert_called_once_with('/proc/net/sockstat')
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):

@@ -45,10 +45,6 @@ class DiskUsageCollector(diamond.collector.Collector):
     }
 
     def collect(self):
-        """
-        Collect IO stats
-        """
-
         for key, info in disk.get_disk_statistics().iteritems():
             name = info.device
 

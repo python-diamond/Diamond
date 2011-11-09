@@ -42,7 +42,7 @@ class CPUCollector(diamond.collector.Collector):
         """
         results = {}
         # Open file
-        file = open(self.PROC, 'r')
+        file = open(self.PROC)
         # Build Regex
         exp = '^(cpu[0-9]*)\s+(?P<user>\d+)\s+(?P<nice>\d+)\s+(?P<system>\d+)\s+(?P<idle>\d+)\s+(?P<iowait>\d+).*$'
         reg = re.compile(exp)

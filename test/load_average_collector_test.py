@@ -18,10 +18,10 @@ class TestLoadAverageCollector(CollectorTestCase):
 
     @patch('__builtin__.open')
     @patch.object(Collector, 'publish')
-    def test_should_open_proc_fs(self, publish_mock, open_mock):
-        open_mock.return_value.__iter__.return_value = iter([])
+    def test_should_open_proc_loadavg(self, publish_mock, open_mock):
+        open_mock.return_value = StringIO('')
         self.collector.collect()
-        open_mock.assert_called_once_with('/proc/loadavg', 'r')
+        open_mock.assert_called_once_with('/proc/loadavg')
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
@@ -29,13 +29,12 @@ class TestLoadAverageCollector(CollectorTestCase):
         self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
-            '01' : '0.00',
-            '05' : '0.32',
-            '15' : '0.56',
-            'processes.running' : '1',
-            'processes.total': '235'
+            '01' : (0.00, 2),
+            '05' : (0.32, 2),
+            '15' : (0.56, 2),
+            'processes_running' : 1,
+            'processes_total'   : 235
         })
-        publish_mock.reset_mock()        
 
 ################################################################################
 if __name__ == "__main__":

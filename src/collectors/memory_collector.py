@@ -46,13 +46,11 @@ class MemoryCollector(diamond.collector.Collector):
     
     PROC = '/proc/meminfo'
 
-
-
     def collect(self):
         """
         Collect memory stats
         """
-        file = open(self.PROC, 'r')
+        file = open(self.PROC)
         for line in file:
             try:
                 name, value, units = line.split()

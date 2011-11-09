@@ -18,10 +18,10 @@ class TestCPUCollector(CollectorTestCase):
 
     @patch('__builtin__.open')
     @patch.object(Collector, 'publish')
-    def test_should_open_proc_fs(self, publish_mock, open_mock):
+    def test_should_open_proc_stat(self, publish_mock, open_mock):
         open_mock.return_value = StringIO('')
         self.collector.collect()
-        open_mock.assert_called_once_with('/proc/stat', 'r')
+        open_mock.assert_called_once_with('/proc/stat')
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
@@ -30,7 +30,7 @@ class TestCPUCollector(CollectorTestCase):
         )):
             self.collector.collect()
 
-        publish_mock.reset_mock()
+        self.assertPublishedMany(publish_mock, {})
 
         with patch('__builtin__.open', return_value = StringIO(
             'cpu 110 220 330 440 550 0 0 0 0 0'
@@ -45,14 +45,12 @@ class TestCPUCollector(CollectorTestCase):
             'total.user'   : 1.0
         })
 
-        publish_mock.reset_mock()
-
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         CPUCollector.PROC = get_fixture_path('proc_stat_1')
         self.collector.collect()
 
-        publish_mock.reset_mock()
+        self.assertPublishedMany(publish_mock, {})
 
         CPUCollector.PROC = get_fixture_path('proc_stat_2')
         self.collector.collect()

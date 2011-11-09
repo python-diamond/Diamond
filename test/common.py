@@ -58,3 +58,5 @@ class CollectorTestCase(unittest.TestCase):
     def assertPublishedMany(self, mock, dict):
         for key, value in dict.iteritems():
             self.assertPublished(mock, key, value)
+
+        mock.reset_mock()

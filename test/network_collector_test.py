@@ -19,23 +19,17 @@ class TestNetworkCollector(CollectorTestCase):
     
     @patch('__builtin__.open')
     @patch.object(Collector, 'publish')
-    def test_should_open_proc_fs(self, publish_mock, open_mock):
-        open_mock.return_value.__iter__.return_value = iter([])
+    def test_should_open_proc_net_dev(self, publish_mock, open_mock):
+        open_mock.return_value = StringIO('')
         self.collector.collect()
-        open_mock.assert_called_once_with('/proc/net/dev', 'r')
+        open_mock.assert_called_once_with('/proc/net/dev')
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         NetworkCollector.PROC = get_fixture_path('proc_net_dev_1')
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
-            'lo.rx_bytes'   : 0.0,
-            'lo.tx_bytes'   : 0.0,
-            'eth0.rx_bytes' : 0.0,
-            'eth0.tx_bytes' : 0.0
-        })
-        publish_mock.reset_mock()
+        self.assertPublishedMany(publish_mock, {})
 
         NetworkCollector.PROC = get_fixture_path('proc_net_dev_2')
         self.collector.collect()
@@ -46,7 +40,6 @@ class TestNetworkCollector(CollectorTestCase):
             'eth0.rx_bytes' : 33.2,
             'eth0.tx_bytes' : 317.4
         })
-        publish_mock.reset_mock()
         
 
 ################################################################################

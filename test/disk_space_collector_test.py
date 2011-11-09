@@ -38,10 +38,10 @@ class TestDiskSpaceCollector(CollectorTestCase):
             patch('os.minor', return_value = 0),
             patch('__builtin__.open', return_value = get_fixture('proc_mounts'))
         ):
-            file_systems = disk.get_file_systems()
+            file_systems_mock = disk.get_file_systems()
 
         with nested(
-            patch('disk.get_file_systems', return_value = file_systems),
+            patch('disk.get_file_systems', return_value = file_systems_mock),
             patch('os.statvfs', return_value = statvfs_mock)
         ):
             self.collector.collect()
@@ -54,8 +54,6 @@ class TestDiskSpaceCollector(CollectorTestCase):
             'root.inodes_free'  : 91229495,
             'root.inodes_avail' : 91229495
         })
-
-        publish_mock.reset_mock()        
 
 ################################################################################
 if __name__ == "__main__":

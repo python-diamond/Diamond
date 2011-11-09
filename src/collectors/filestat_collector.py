@@ -22,7 +22,7 @@
 from diamond import *
 import diamond.collector
 
-_RE = re.compile(r'(\d+) (\d+) (\d+)')
+_RE = re.compile(r'(\d+)\s+(\d+)\s+(\d+)')
 
 class FilestatCollector(diamond.collector.Collector):
     """

@@ -31,16 +31,12 @@ class TCPCollector(diamond.collector.Collector):
     PROC='/proc/net/netstat'
 
     def collect(self):
-        """
-        Collect TCP data
-        """
         lines = []
-        file = open(self.PROC, 'r')
 
+        file = open(self.PROC)
         for line in file:
             if line.startswith("TcpExt:"):
                 lines.append(line[7:].split())
-
         file.close()
 
         if len(lines) == 0:
@@ -52,5 +48,5 @@ class TCPCollector(diamond.collector.Collector):
         # There are two lines in lines: names and values, space-separated.
         names, values = lines
 
-        for k, v in zip(names, values):
-            self.publish(k, v, 0)
+        for key, value in zip(names, values):
+            self.publish(key, value, 0)

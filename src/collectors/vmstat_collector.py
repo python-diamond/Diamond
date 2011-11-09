@@ -41,7 +41,7 @@ class VMStatCollector(diamond.collector.Collector):
         """
         results = {}
         # open file
-        file = open(self.PROC, 'r')
+        file = open(self.PROC)
         exp = '^(pgpgin|pgpgout|pswpin|pswpout)\s(\d+)'
         reg = re.compile(exp) 
         # Build regex
@@ -50,7 +50,7 @@ class VMStatCollector(diamond.collector.Collector):
             if match:
                 metric_name = match.group(1)
                 metric_value = match.group(2)
-                results[metric_name] = self.derivative(metric_name, long(metric_value), self.MAX_VALUES[metric_name])
+                results[metric_name] = self.derivative(metric_name, int(metric_value), self.MAX_VALUES[metric_name])
             
         # Close file
         file.close()

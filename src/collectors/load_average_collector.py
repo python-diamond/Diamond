@@ -22,6 +22,8 @@
 from diamond import *
 import diamond.collector
 
+_RE = re.compile(r'([\d.]+) ([\d.]+) ([\d.]+) (\d+)/(\d+)')
+
 class LoadAverageCollector(diamond.collector.Collector):
     """
     Uses /proc/loadavg to collect data on load average
@@ -30,25 +32,13 @@ class LoadAverageCollector(diamond.collector.Collector):
     PROC = '/proc/loadavg'
 
     def collect(self):
-        """
-        Collect load average stats
-        """
-        results = {}
-        # open file
-        file = open(self.PROC, 'r')
-        # Build regex
-        exp = '^([0-9\.]+)\s*([0-9\.]+)\s*([0-9\.]+)\s*([0-9]+)\/([0-9]+)'
-        reg = re.compile(exp)
+        file = open(self.PROC)
         for line in file:
-            match = reg.match(line)
+            match = _RE.match(line)
             if match:
-                results['01'] = match.group(1)
-                results['05'] = match.group(2)
-                results['15'] = match.group(3)
-                results['processes.running'] = match.group(4)
-                results['processes.total'] = match.group(5)
-        # Close file
+                self.publish('01', float(match.group(1)), 2)
+                self.publish('05', float(match.group(2)), 2)
+                self.publish('15', float(match.group(3)), 2)
+                self.publish('processes_running', int(match.group(4)))
+                self.publish('processes_total',   int(match.group(5)))
         file.close()
-
-        for k in results.keys():
-            self.publish(k, results[k], 2)

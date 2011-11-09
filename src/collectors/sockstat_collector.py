@@ -38,7 +38,7 @@ class SockstatCollector(diamond.collector.Collector):
     def collect(self):
         result = {}
 
-        file = open(self.PROC, 'r')
+        file = open(self.PROC)
         for line in file:
             match = _RE.match(line)
             if match:

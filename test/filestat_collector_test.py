@@ -18,8 +18,8 @@ class TestFilestatCollector(CollectorTestCase):
 
     @patch('__builtin__.open')
     @patch.object(Collector, 'publish')
-    def test_should_open_proc_fs(self, publish_mock, open_mock):
-        open_mock.return_value.__iter__.return_value = iter([])
+    def test_should_open_proc_sys_fs_file_nr(self, publish_mock, open_mock):
+        open_mock.return_value = StringIO('')
         self.collector.collect()
         open_mock.assert_called_once_with('/proc/sys/fs/file-nr')
 
