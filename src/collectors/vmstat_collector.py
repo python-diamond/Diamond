@@ -29,16 +29,13 @@ class VMStatCollector(diamond.collector.Collector):
 
     PROC = '/proc/vmstat'
     MAX_VALUES = {
-        'pgpgin': diamond.collector.MAX_COUNTER,
+        'pgpgin' : diamond.collector.MAX_COUNTER,
         'pgpgout': diamond.collector.MAX_COUNTER,
-        'pswpin': diamond.collector.MAX_COUNTER,
+        'pswpin' : diamond.collector.MAX_COUNTER,
         'pswpout': diamond.collector.MAX_COUNTER,
     }
 
     def collect(self):
-        """
-        Collect vm stats
-        """
         results = {}
         # open file
         file = open(self.PROC)
@@ -48,12 +45,12 @@ class VMStatCollector(diamond.collector.Collector):
         for line in file:
             match = reg.match(line)
             if match:
-                metric_name = match.group(1)
-                metric_value = match.group(2)
-                results[metric_name] = self.derivative(metric_name, int(metric_value), self.MAX_VALUES[metric_name])
+                name = match.group(1)
+                value = match.group(2)
+                results[name] = self.derivative(name, int(value), self.MAX_VALUES[name])
             
         # Close file
         file.close()
 
-        for k in results.keys():
-            self.publish(k, results[k], 2)
+        for key, value in results.items():
+            self.publish(key, value, 2)
