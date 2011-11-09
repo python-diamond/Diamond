@@ -26,7 +26,7 @@ import cPickle as pickle
 import struct
 from collections import deque
 
-from metric import Metric 
+from diamond.metric import Metric
 
 class Handler(object):
     """

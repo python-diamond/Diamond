@@ -33,6 +33,7 @@ import grp
 # Path Fix
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"../")))
 
+from diamond import *
 import diamond
 
 from diamond.collector import Collector
