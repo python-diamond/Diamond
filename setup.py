@@ -23,9 +23,9 @@ setup(
     scripts=glob('bin/*'),
     data_files=[
         ('conf', glob('conf/*')),
+        ('conf/collectors', []),
         ('collectors', glob('src/collectors/*.py')),
-        ('storage/log', []),
-        ('storage/archive', []),
+        ('storage', []),
     ],
     **setup_kwargs
 )

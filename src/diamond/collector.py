@@ -66,7 +66,7 @@ class Collector(object):
             self.config.merge(config['collectors'][cls.__name__])
 
         # Check for config file in config directory 
-        configfile = os.path.join(config['server']['collectors_config_path'], cls.__name__) + '.cfg'            
+        configfile = os.path.join(config['server']['collectors_config_path'], cls.__name__) + '.conf'
         if os.path.exists(configfile):
             # Merge Collector config file
             self.config.merge(configobj.ConfigObj(configfile))

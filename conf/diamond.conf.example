@@ -1,11 +1,12 @@
-#
-# DIAMOND Configuration File
-#
+################################################################################
+# Diamond Configuration File
+################################################################################
 
-[server]
+################################################################################
 ### Options for the server
+[server]
 
-# Handlers to load
+# Handlers for published metrics.
 handlers = diamond.handler.NullHandler, diamond.handler.GraphiteHandler, diamond.handler.ArchiveHandler
 
 # User diamond will run as
@@ -15,28 +16,31 @@ user = diamond
 group = diamond
 
 # Log file
-log_file = tmp/diamond.log
+log_file = /opt/diamond/storage/diamond.log
 
 # Pid file
-pid_file = tmp/diamond.pid
+pid_file = /opt/diamond/storage/diamond.pid
 
 # Directory to load collector modules from
-collectors_path = src/collectors/
+collectors_path = /opt/diamond/collectors/
  
 # Directory to load collector config from 
-collectors_config_path = conf/
+collectors_config_path = /opt/diamond/conf/collectors/
 
 # Interval to reload collectors 
 collectors_reload_interval = 300 
 
+################################################################################
+### Options for handlers
 [handlers]
-[[default]]
+
 ### Defaults options for all Handlers 
+[[default]]
 
 [[ArchiveHandler]]
 
 # File to write archive log files
-log_file = tmp/archive.log
+log_file = /opt/diamond/storage/archive.log
 
 # Number of days to keep archive log files
 days = 7
@@ -66,9 +70,12 @@ port = 2004
 timeout = 15
 
 # Batch size for pickled metrics
-batch = 25
+batch = 256
 
+################################################################################
+### Options for collectors
 [collectors]
+
 [[default]]
 ### Defaults options for all Collectors
 
