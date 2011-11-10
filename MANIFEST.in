@@ -3,6 +3,7 @@ include README.md
 include MANIFEST.in
 include bin/*
 include examples/*
+include debian/*
 include conf/*.example
 exclude conf/*.conf
 include test/common.py

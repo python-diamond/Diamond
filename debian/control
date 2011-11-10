@@ -1,0 +1,16 @@
+Source: diamond
+Section: misc
+Priority: extra
+Maintainer: Ivan Pouzyrevsky <sandello@yandex-team.ru>
+Homepage: https://github.com/sandello/Diamond
+Vcs-Git: git://github.com/sandello/Diamond.git
+Vcs-Browser: https://github.com/sandello/Diamond
+Build-Depends: debhelper (>= 7), python (>= 2.4), python-support
+Standards-Version: 3.9.1
+
+Package: diamond
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.4), python-configobj
+Description: System statistics collector for Graphite.
+ Diamond is a daemon and toolset for gathering system statistics
+ and publishing them to graphite.
