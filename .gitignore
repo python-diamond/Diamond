@@ -1,5 +1,5 @@
+dist/
 build/
-dist/diamond-*.tar.gz
 tmp/
 *.pyc
 *.sublime-*

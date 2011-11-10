@@ -27,7 +27,10 @@ builddeb: source
 
 clean:
 	python setup.py clean
-	rm -rf build MANIFEST
+	rm -rf dist build MANIFEST
 	find . -name '*.pyc' -delete
+
+cleanws:
+	find . -name '*.py' -exec sed -i '' -e 's/[ \t]*$//' {} \;
 
 .PHONY: source install buildrpm builddeb clean
