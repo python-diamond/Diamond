@@ -13,4 +13,4 @@ Architecture: all
 Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.4), python-configobj
 Description: System statistics collector for Graphite.
  Diamond is a daemon and toolset for gathering system statistics
- and publishing them to graphite.
+ and publishing them to Graphite.

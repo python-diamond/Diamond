@@ -5,22 +5,22 @@
 # Required-Stop:     $network $local_fs $remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: <Enter a short description of the sortware>
-# Description:       <Enter a long description of the software>
-#                    <...>
-#                    <...>
+# Short-Description: System statistics collector for Graphite.
+# Description:       Diamond is a daemon and toolset for gathering system statistics
+#                    and publishing them to Graphite.
+
 ### END INIT INFO
 
 # Author: Ivan Pouzyrevsky <sandello@yandex-team.ru>
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC=diamond             # Introduce a short description here
-NAME=diamond             # Introduce the short server's name here
-DAEMON=/usr/sbin/diamond # Introduce the server's location here
-DAEMON_ARGS=""             # Arguments to run the daemon with
-PIDFILE=/var/run/$NAME.pid
-SCRIPTNAME=/etc/init.d/$NAME
+DESC=diamond
+NAME=diamond
+DAEMON=/opt/diamond/bin/diamond
+DAEMON_ARGS="-p /var/run/diamond.pid"
+PIDFILE=/var/run/diamond.pid
+SCRIPTNAME=/etc/init.d/diamond
 
 # Exit if the package is not installed
 [ -x $DAEMON ] || exit 0
