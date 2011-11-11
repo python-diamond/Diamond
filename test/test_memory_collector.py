@@ -35,11 +35,12 @@ class TestMemoryCollector(CollectorTestCase):
             'cached'      : '10726736',
             'active'      : '10022168',
             'inactive'    : '2524928',
-            'swap.total'  : '262143996',
-            'swap.free'   : '262143996',
-            'swap.cached' : '0',
-            'vm.total'    : '34359738367',
-            'vm.used'     : '445452',
+            'swap_total'  : '262143996',
+            'swap_free'   : '262143996',
+            'swap_cached' : '0',
+            'vm_total'    : '34359738367',
+            'vm_used'     : '445452',
+            'vm_chunk'    : '34311049240'
         })
 
 ################################################################################

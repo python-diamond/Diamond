@@ -30,11 +30,12 @@ _KEY_MAPPING = {
     'Cached'       : 'cached',
     'Active'       : 'active',
     'Inactive'     : 'inactive',
-    'SwapTotal'    : 'swap.total',
-    'SwapFree'     : 'swap.free',
-    'SwapCached'   : 'swap.cached',
-    'VmallocTotal' : 'vm.total',
-    'VmallocUsed'  : 'vm.used',
+    'SwapTotal'    : 'swap_total',
+    'SwapFree'     : 'swap_free',
+    'SwapCached'   : 'swap_cached',
+    'VmallocTotal' : 'vm_total',
+    'VmallocUsed'  : 'vm_used',
+    'VmallocChunk' : 'vm_chunk'
 }
 
 class MemoryCollector(diamond.collector.Collector):

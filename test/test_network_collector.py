@@ -35,10 +35,10 @@ class TestNetworkCollector(CollectorTestCase):
         self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
-            'lo.rx_bytes'   : 0.0,
-            'lo.tx_bytes'   : 0.0,
-            'eth0.rx_bytes' : 33.2,
-            'eth0.tx_bytes' : 317.4
+            'lo.rx_mbytes'   : (0.0, 2),
+            'lo.tx_mbytes'   : (0.0, 2),
+            'eth0.rx_mbytes' : (2.504, 2),
+            'eth0.tx_mbytes' : (4.707, 2)
         })
         
 

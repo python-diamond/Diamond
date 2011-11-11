@@ -31,29 +31,29 @@ class DiskUsageCollector(diamond.collector.Collector):
     MAX_VALUES = {
         'reads': 4294967295,
         'reads_merged': 4294967295,
-        'reads_sectors': diamond.collector.MAX_COUNTER,
-        'reads_kilobytes': (((diamond.collector.MAX_COUNTER + 1) / 2) - 1),
+        'reads_kbytes': (((diamond.collector.MAX_COUNTER + 1) / 2) - 1),
         'reads_milliseconds': 4294967295,
         'writes': 4294967295,
         'writes_merged': 4294967295,
-        'writes_sectors': diamond.collector.MAX_COUNTER,
-        'writes_kilobytes': (((diamond.collector.MAX_COUNTER + 1) / 2) - 1),
+        'writes_kbytes': (((diamond.collector.MAX_COUNTER + 1) / 2) - 1),
         'writes_milliseconds': 4294967295,
-        'iops_in_progress' : diamond.collector.MAX_COUNTER,
         'io_milliseconds': 4294967295,
-        'weighted_io_milliseconds': 4294967295
+        'io_milliseconds_weighted': 4294967295
     }
 
     def collect(self):
         for key, info in disk.get_disk_statistics().iteritems():
             name = info.device
 
+            if not re.match(r'md[0-9]$|sd[a-z]$', name):
+                continue
+
             for key, value in info._asdict().iteritems():
                 if key == 'device' or key == 'iops_in_progress':
                     continue
 
                 if key.endswith('sectors'):
-                    key = key.replace('sectors', 'kilobytes')
+                    key = key.replace('sectors', 'kbytes')
                     value = value / 2
 
                 metric_name = '.'.join([info.device, key])

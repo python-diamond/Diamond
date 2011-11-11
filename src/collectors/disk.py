@@ -31,7 +31,7 @@ _DiskStatistics = namedtuple('DiskStatistics', '''
     device,
     reads, reads_merged, reads_sectors,  reads_milliseconds,
     writes, writes_merged, writes_sectors, writes_milliseconds,
-    iops_in_progress, io_milliseconds, weighted_io_milliseconds
+    iops_in_progress, io_milliseconds, io_milliseconds_weighted
 ''')
 
 # iostat(1): Each sector has size of 512 bytes.

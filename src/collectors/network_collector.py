@@ -79,10 +79,8 @@ class NetworkCollector(diamond.collector.Collector):
         """
         # Initialize Units
         units = {
-            'mbit': self.convert_to_mbit, 
-            'kbit': self.convert_to_kbit,
-            'mbyte': self.convert_to_mbyte,
-            'kbyte': self.convert_to_kbyte,
+            'mbits': self.convert_to_mbit, 
+            'mbytes': self.convert_to_mbyte,
             }
         # Initialize results
         results = {}
@@ -107,10 +105,11 @@ class NetworkCollector(diamond.collector.Collector):
                 metric_name = '.'.join([device, s])
                 # Get Metric Value
                 metric_value = self.derivative(metric_name, long(v), self.MAX_VALUES[s])
-                # Publish Metric Derivative
-                self.publish(metric_name, metric_value) 
                 # Convert rx_bytes and tx_bytes
                 if s == 'rx_bytes' or s == 'tx_bytes':
                     for u in units: 
                         # Public Converted Metric  
                         self.publish(metric_name.replace('bytes', u), units[u](metric_value))
+                else:
+                    # Publish Metric Derivative
+                    self.publish(metric_name, metric_value) 

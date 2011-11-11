@@ -47,6 +47,8 @@ class TCPCollector(diamond.collector.Collector):
 
         # There are two lines in lines: names and values, space-separated.
         names, values = lines
+        allowed_names = self.config['allowed_names']
 
         for key, value in zip(names, values):
-            self.publish(key, value, 0)
+            if key in allowed_names:
+                self.publish(key, value, 0)

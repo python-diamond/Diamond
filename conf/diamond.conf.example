@@ -139,6 +139,7 @@ exclude_filters = '^/export/home',
 [[TCPCollector]]
 ## Options for the TCP Stats Collector
 path = tcp
+allowed_names = ListenOverflows, ListenDrops, TCPLoss, TCPTimeouts
 
 [[FilestatCollector]]
 path = files
