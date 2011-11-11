@@ -25,6 +25,9 @@
 import os
 import sys
 
+import pwd
+import grp
+
 for path in [
     os.path.join('opt', 'diamond', 'lib'),
     os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src'))

@@ -45,7 +45,7 @@ class DiskUsageCollector(diamond.collector.Collector):
         for key, info in disk.get_disk_statistics().iteritems():
             name = info.device
 
-            if not re.match(r'md[0-9]$|sd[a-z]$', name):
+            if not re.match(r'md[0-9]$|sd[a-z]+$', name):
                 continue
 
             for key, value in info._asdict().iteritems():
