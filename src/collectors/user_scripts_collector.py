@@ -30,7 +30,7 @@ class UserScriptsCollector(diamond.collector.Collector):
     Uses /proc/mounts and os.statvfs() to get disk space usage
     """    
     def collect(self):
-        scripts_path = '/opt/diamond/user_scripts/'
+        scripts_path = self.config['scripts_path']
         for script in os.listdir(scripts_path):
             if not os.access(fpath, os.X_OK)
                 continue
