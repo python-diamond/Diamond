@@ -1,3 +1,9 @@
+diamond (0.2.0.1) natty; urgency=low
+
+  * Added meta-collector, which can handle non-python metric scripts.
+
+ -- Pavel Potapenkov <oxcd8o@yandex-team.ru>  Wed, 30 Nov 2011 01:55:32 +0400
+
 diamond (0.2.0) unstable; urgency=low
 
   * Initial release.
