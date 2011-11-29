@@ -26,6 +26,7 @@ setup(
         ('conf/collectors', []),
         ('collectors', glob('src/collectors/*.py')),
         ('storage', []),
+        ('user_scripts', []),
     ],
     **setup_kwargs
 )
