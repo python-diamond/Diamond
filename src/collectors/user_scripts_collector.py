@@ -32,11 +32,11 @@ class UserScriptsCollector(diamond.collector.Collector):
     def collect(self):
         scripts_path = self.config['scripts_path']
         for script in os.listdir(scripts_path):
-            if not os.access(script, os.X_OK):
+            if not os.access('/'.join([scripts_path, script]), os.X_OK):
                 continue
             stat, out = commands.getstatusoutput('/'.join([scripts_path, script]))
             if stat != 0:
                 continue
             for line in out.split('\n'):
-                self.publish(script, line)
+                self.publish(script, int(line.strip()))
 
