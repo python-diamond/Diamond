@@ -38,5 +38,6 @@ class UserScriptsCollector(diamond.collector.Collector):
             if stat != 0:
                 continue
             for line in out.split('\n'):
-                self.publish(script, int(line.strip()))
+                name, value = line.split()
+                self.publish(name, value)
 
