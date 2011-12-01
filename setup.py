@@ -12,7 +12,7 @@ else:
 
 setup(
     name='diamond',
-    version='0.2.0',
+    version='0.2.1',
     url='https://github.com/sandello/Diamond',
     author='Ivan Pouzyrevsky',
     author_email='ivan.pouzyrevsky@gmail.com',
@@ -26,6 +26,7 @@ setup(
         ('conf/collectors', []),
         ('collectors', glob('src/collectors/*.py')),
         ('storage', []),
+        ('user_scripts', []),
     ],
     **setup_kwargs
 )

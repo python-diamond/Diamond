@@ -103,7 +103,10 @@ class Collector(object):
         else:
             path = self.__class__.__name__
 
-        return '.'.join([prefix, hostname, path, name])
+        if path == '.':
+            return '.'.join([prefix, hostname, name])
+        else:
+            return '.'.join([prefix, hostname, path, name])
 
     def collect(self):
         """
