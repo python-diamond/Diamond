@@ -1,4 +1,4 @@
-diamond (0.2.0.1) natty; urgency=low
+diamond (0.2.1) unstable; urgency=low
 
   * Added meta-collector, which can handle non-python metric scripts.
 
