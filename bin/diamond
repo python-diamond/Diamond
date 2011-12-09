@@ -45,7 +45,7 @@ import signal
 def main():
     # Initialize Options
     parser = optparse.OptionParser()
-    parser.add_option("-c", "--configfile", dest="configfile", default="/opt/diamond/conf/diamond.conf", help="config file")
+    parser.add_option("-c", "--configfile", dest="configfile", default="/etc/diamond/diamond.conf", help="config file")
     parser.add_option("-l", "--logfile", dest="logfile", default=None, help="log file")
     parser.add_option("-f", "--foreground", dest="foreground", default=False, action="store_true", help="run in foreground")
     parser.add_option("-p", "--pidfile", dest="pidfile", default=None, help="pid file")

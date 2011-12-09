@@ -17,7 +17,7 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=diamond
 NAME=diamond
-DAEMON=/opt/diamond/bin/diamond
+DAEMON=/usr/bin/diamond
 DAEMON_ARGS="-p /var/run/diamond.pid"
 PIDFILE=/var/run/diamond.pid
 SCRIPTNAME=/etc/init.d/diamond

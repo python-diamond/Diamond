@@ -21,7 +21,8 @@ set -e
 
 case "$1" in
     purge)
-        [ -d /opt/diamond ] && rm -rf /opt/diamond
+        [ -d /var/log/diamond ] && rm -rf /var/log/diamond
+        [ -d /etc/diamond ] && rm -rf /etc/diamond
     ;;
 
     purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)

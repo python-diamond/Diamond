@@ -20,6 +20,9 @@ set -e
 
 case "$1" in
     configure)
+        if ! getent passwd diamond >/dev/null; then
+            adduser --quiet --system --no-create-home --home /var/log/diamond --shell /usr/sbin/nologin diamond
+        fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
