@@ -18,16 +18,16 @@ user = diamond
 group = diamond
 
 # Log file
-log_file = /opt/diamond/storage/diamond.log
+log_file = /var/log/diamond/diamond.log
 
 # Pid file
-pid_file = /opt/diamond/storage/diamond.pid
+pid_file = /var/run/diamond.pid
 
 # Directory to load collector modules from
-collectors_path = /opt/diamond/collectors/
+collectors_path = /usr/share/diamond/collectors/
 
 # Directory to load collector config from
-collectors_config_path = /opt/diamond/conf/collectors/
+collectors_config_path = /etc/diamond/collectors/
 
 # Interval to reload collectors
 collectors_reload_interval = 300
@@ -42,7 +42,7 @@ collectors_reload_interval = 300
 [[ArchiveHandler]]
 
 # File to write archive log files
-log_file = /opt/diamond/storage/archive.log
+log_file = /var/log/diamond/archive.log
 
 # Number of days to keep archive log files
 days = 7
