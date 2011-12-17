@@ -197,7 +197,7 @@ class Server(object):
         # Return collector
         return collector
 
-    def schedule_collector(self, c):
+    def schedule_collector(self, c, interval_task=True):
         """
         Schedule collector
         """
@@ -218,7 +218,10 @@ class Server(object):
                 self.log.debug("Canceled task: %s" % (name))
 
             # Schedule Collector
-            task = self.scheduler.add_interval_task(func, name, splay, interval, diamond.scheduler.method.sequential, args, None, True)
+            if interval_task:
+                task = self.scheduler.add_interval_task(func, name, splay, interval, diamond.scheduler.method.sequential, args, None, True)
+            else:
+                task = self.scheduler.add_single_task(func, name, splay, diamond.scheduler.method.sequential, args, None)
 
             # Log
             self.log.debug("Scheduled task: %s" % (name))
@@ -271,7 +274,7 @@ class Server(object):
             c = self.init_collector(cls)
 
             # Schedule collector
-            self.schedule_collector(c)
+            self.schedule_collector(c, False)
 
         # Start main loop
         self.mainloop(False)
@@ -307,6 +310,10 @@ class Server(object):
 
                 # Reset reload timer
                 time_since_reload = 0
+
+            # Is the queue empty and we won't attempt to reload it? Exit
+            if not reload and len(self.scheduler.sched._queue) == 0:
+                self.running = False
 
         # Log
         self.log.debug('Stopping task scheduler.')
