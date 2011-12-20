@@ -22,7 +22,7 @@ watch:
 	watchr test.watchr
 
 test:
-    python tests/run_tests.py
+	python tests/run_tests.py
 
 sdist:
 	python setup.py sdist --prune
