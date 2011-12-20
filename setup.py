@@ -12,10 +12,10 @@ else:
 
 setup(
     name='diamond',
-    version='0.2.1',
-    url='https://github.com/sandello/Diamond',
-    author='Ivan Pouzyrevsky',
-    author_email='ivan.pouzyrevsky@gmail.com',
+    version='0.2.0',
+    url='https://github.com/BrightcoveOS/Diamond',
+    author='The Diamond Team',
+    author_email='',
     license='MIT License',
     description='Smart data producer for graphite graphing package',
     package_dir={'' : 'src'},
