@@ -27,7 +27,7 @@ import commands
 
 class UserScriptsCollector(diamond.collector.Collector):
     """
-    Uses /proc/mounts and os.statvfs() to get disk space usage
+    Runs third party scripts and collects their output
     """    
     def collect(self):
         scripts_path = self.config['scripts_path']
