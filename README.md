@@ -114,10 +114,12 @@ Testing
 =====
 
 Requirements:
+
 -   python-mock
 -   python-configobj
 
 To run the tests
+
     make test
 
 Contacts
