@@ -23,7 +23,7 @@ import subprocess
 
 import diamond.collector
 
-class Ping(diamond.collector.Collector):
+class PingCollector(diamond.collector.Collector):
     """
     Collect icmp round trip times
     Only valid for ipv4 hosts currently
