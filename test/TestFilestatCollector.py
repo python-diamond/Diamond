@@ -4,39 +4,34 @@
 from common import *
 
 from diamond.collector import Collector
-from sockstat_collector import SockstatCollector
+from FilestatCollector import FilestatCollector
 
 ################################################################################
 
-class TestSockstatCollector(CollectorTestCase):
+class TestFilestatCollector(CollectorTestCase):
     def setUp(self):
-        config = get_collector_config('SockstatCollector', {
+        config = get_collector_config('FilestatCollector', {
             'interval': 10
         })
 
-        self.collector = SockstatCollector(config, None)
+        self.collector = FilestatCollector(config, None)
 
     @patch('__builtin__.open')
     @patch.object(Collector, 'publish')
-    def test_should_open_proc_net_sockstat(self, publish_mock, open_mock):
+    def test_should_open_proc_sys_fs_file_nr(self, publish_mock, open_mock):
         open_mock.return_value = StringIO('')
         self.collector.collect()
-        open_mock.assert_called_once_with('/proc/net/sockstat')
+        open_mock.assert_called_once_with('/proc/sys/fs/file-nr')
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        SockstatCollector.PROC = get_fixture_path('proc_net_sockstat')
+        FilestatCollector.PROC = get_fixture_path('proc_sys_fs_file-nr')
         self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
-            'used'       : 118,
-            'tcp_inuse'  : 10,
-            'tcp_orphan' : 0,
-            'tcp_tw'     : 1,
-            'tcp_alloc'  : 13,
-            'tcp_mem'    : 1,
-            'udp_inuse'  : 0,
-            'udp_mem'    : 0
+            'assigned' : 576,
+            'unused'   : 0,
+            'max'      : 4835852
         })
 
 ################################################################################

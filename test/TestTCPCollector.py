@@ -4,7 +4,7 @@
 from common import *
 
 from diamond.collector import Collector
-from tcp_collector import TCPCollector
+from TCPCollector import TCPCollector
 
 ################################################################################
 

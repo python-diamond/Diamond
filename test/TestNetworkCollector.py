@@ -4,7 +4,7 @@
 from common import *
 
 from diamond.collector import Collector
-from network_collector import NetworkCollector
+from NetworkCollector import NetworkCollector
 
 ################################################################################
 

@@ -4,7 +4,7 @@
 from common import *
 
 from diamond.collector import Collector
-from memory_collector import MemoryCollector
+from MemoryCollector import MemoryCollector
 
 ################################################################################
 

@@ -4,7 +4,7 @@
 from common import *
 
 from diamond.collector import Collector
-from cpu_collector import CPUCollector
+from CPUCollector import CPUCollector
 
 ################################################################################
 
