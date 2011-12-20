@@ -51,7 +51,6 @@ def main():
     parser.add_option("-p", "--pidfile", dest="pidfile", default=None, help="pid file")
     parser.add_option("-v", "--verbose", dest="verbose", default=False, action="store_true", help="verbose")
     parser.add_option("-r", "--run", dest="collector", default=None, help="run a given collector once and exit")
-    parser.add_option("-s", "--noswitchuser", dest="noswitchuser", default=False, action="store_true", help="dont switch user")
 
     # Parse Command Line Args
     (options, args) = parser.parse_args()
@@ -65,23 +64,27 @@ def main():
         sys.exit(1)
 
     # Switch user to specified user/group if required
-    if not options.noswitchuser:
-        try:
+    try:
+
+        if len(config['server']['user']) :
             # Get UID
             uid = pwd.getpwnam(config['server']['user']).pw_uid
+
+            if os.getuid() != uid:
+                # Set UID
+                os.setuid(uid)
+
+        if len(config['server']['group']) :
             # Get GID
             gid = grp.getgrnam(config['server']['group']).gr_gid
 
-            if os.getuid() != uid:
+            if os.getgid() != gid:
                 # Set GID
                 os.setgid(gid)
 
-            if os.getgid() != gid:
-                # Set UID
-                os.setuid(uid)
-        except Exception, e:
-            print >> sys.stderr, "ERROR: Failed to set UID/GID. %s" % (e)
-            sys.exit(1)
+    except Exception, e:
+        print >> sys.stderr, "ERROR: Failed to set UID/GID. %s" % (e)
+        sys.exit(1)
 
     # Initialize Logging
     log = logging.getLogger('diamond')
@@ -116,9 +119,8 @@ def main():
     if options.verbose:
         log.setLevel(logging.DEBUG)
 
-    if not options.noswitchuser:
-        # Log
-        log.info('Changed UID: %d (%s) GID: %d (%s).' % (uid, config['server']['user'], gid, config['server']['group']))
+    # Log
+    log.info('Changed UID: %d (%s) GID: %d (%s).' % (os.getuid(), config['server']['user'], os.getgid(), config['server']['group']))
 
     # Initialize Pid file
     if not options.pidfile:
