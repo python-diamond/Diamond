@@ -6,5 +6,6 @@ include examples/*
 include debian/*
 include conf/*.example
 exclude conf/*.conf
+include conf/collectors/*.conf
 include test/common.py
 include test/fixtures/*
