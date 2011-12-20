@@ -10,9 +10,11 @@
 handlers = diamond.handler.NullHandler, diamond.handler.GraphiteHandler, diamond.handler.ArchiveHandler
 
 # User diamond will run as
+# Leave empty to use the current user
 user = diamond
 
 # Group diamond will run as
+# Leave empty to use the current group
 group = diamond
 
 # Log file
