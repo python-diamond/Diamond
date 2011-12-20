@@ -148,10 +148,10 @@ class Collector(object):
             if new < old:
                 old = old - max_value
             # Get Change in X (value)
-            dy = new - old
+            dx = new - old
             # Get Change in Y (time)
-            dx = int(self.config['interval'])
-            result =  float(dy) / float(dx)
+            dy = int(self.config['interval'])
+            result =  float(dx) / float(dy)
         else:
             result = 0
 
