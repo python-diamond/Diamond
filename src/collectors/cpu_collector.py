@@ -1,5 +1,5 @@
 # Copyright (C) 2011-2012 by Ivan Pouzyrevsky.
-# Copyright (C) 2010-2011 by Brightcove Inc. 
+# Copyright (C) 2010-2011 by Brightcove Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -7,10 +7,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -42,7 +42,7 @@ class CPUCollector(diamond.collector.Collector):
         """
         if not os.access(self.PROC, os.R_OK):
             return None
-        
+
         results = {}
         # Open file
         file = open(self.PROC)
@@ -60,11 +60,11 @@ class CPUCollector(diamond.collector.Collector):
                 results[cpu] = match.groupdict()
         # Close File
         file.close()
-        
+
         for cpu in results.keys():
             stats = results[cpu]
             for s in stats.keys():
-                # Get Metric Name 
+                # Get Metric Name
                 metric_name = '.'.join([cpu, s])
                 # Publish Metric Derivative
                 self.publish(metric_name, self.derivative(metric_name, long(stats[s]), self.MAX_VALUES[s]))

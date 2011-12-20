@@ -36,7 +36,7 @@ class TestCPUCollector(CollectorTestCase):
             'cpu 110 220 330 440 550 0 0 0 0 0'
         )):
             self.collector.collect()
-        
+
         self.assertPublishedMany(publish_mock, {
             'total.idle'   : 4.0,
             'total.iowait' : 5.0,

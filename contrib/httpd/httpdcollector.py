@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011 by Brightcove Inc. 
+# Copyright (C) 2010-2011 by Brightcove Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -6,10 +6,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,19 +24,19 @@ import re
 import httplib
 import urlparse
 
-import diamond.collector 
+import diamond.collector
 
 class HttpdCollector(diamond.collector.Collector):
     """
     Collect stats from Apache HTTPD server using mod_status
     """
- 
+
     def collect(self):
         # Parse Url
         parts = urlparse.urlparse(self.config['url'])
 
         # Parse host and port
-        endpoint = parts[1].split(':') 
+        endpoint = parts[1].split(':')
         if len(endpoint) > 1:
             service_host = endpoint[0]
             service_port = int(endpoint[1])
@@ -47,11 +47,11 @@ class HttpdCollector(diamond.collector.Collector):
         # Parse path
         service_path = parts[2]
 
-        metrics = ['ReqPerSec', 'BytesPerSec', 'BytesPerReq', 'BusyWorkers', 'IdleWorkers'] 
-        
-        # Setup Connection 
+        metrics = ['ReqPerSec', 'BytesPerSec', 'BytesPerReq', 'BusyWorkers', 'IdleWorkers']
+
+        # Setup Connection
         connection = httplib.HTTPConnection(service_host, service_port)
-        
+
         try:
             connection.request("GET", "%s?%s" % (parts[2], parts[4]))
         except Exception, e:

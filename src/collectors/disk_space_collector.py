@@ -1,5 +1,5 @@
 # Copyright (C) 2011-2012 by Ivan Pouzyrevsky.
-# Copyright (C) 2010-2011 by Brightcove Inc. 
+# Copyright (C) 2010-2011 by Brightcove Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -7,10 +7,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,7 +28,7 @@ import disk
 class DiskSpaceCollector(diamond.collector.Collector):
     """
     Uses /proc/mounts and os.statvfs() to get disk space usage
-    """    
+    """
     def collect(self):
         for key, info in disk.get_file_systems().iteritems():
             name = info.mount_point.replace('/', '_')

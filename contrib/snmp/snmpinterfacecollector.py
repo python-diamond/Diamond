@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011 by Brightcove Inc. 
+# Copyright (C) 2010-2011 by Brightcove Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -6,10 +6,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,7 +26,7 @@ import time
 import traceback
 import configobj
 import socket
-import re 
+import re
 
 from diamond.collector import SNMPCollector
 from diamond.metric import Metric
@@ -37,29 +37,29 @@ class SNMPInterfaceCollector(SNMPCollector):
     """
 
     # IF-MIB OID
-    IF_MIB_INDEX_OID = "1.3.6.1.2.1.2.2.1.1" 
+    IF_MIB_INDEX_OID = "1.3.6.1.2.1.2.2.1.1"
     IF_MIB_NAME_OID = "1.3.6.1.2.1.31.1.1.1.1"
     IF_MIB_TYPE_OID = "1.3.6.1.2.1.2.2.1.3"
 
     # A list of IF-MIB the 32bit counters to walk
-    IF_MIB_GAUGE_OID_TABLE = {'ifInDiscards': "1.3.6.1.2.1.2.2.1.13", 
+    IF_MIB_GAUGE_OID_TABLE = {'ifInDiscards': "1.3.6.1.2.1.2.2.1.13",
                                 'ifInErrors': "1.3.6.1.2.1.2.2.1.14",
-                                'ifOutDiscards': "1.3.6.1.2.1.2.2.1.19", 
+                                'ifOutDiscards': "1.3.6.1.2.1.2.2.1.19",
                                 'ifOutErrors': "1.3.6.1.2.1.2.2.1.20"}
 
-    # A list of IF-MIB 64bit counters to talk 
-    IF_MIB_COUNTER_OID_TABLE = {'ifInOctets': "1.3.6.1.2.1.31.1.1.1.6", 
-                                'ifInUcastPkts': "1.3.6.1.2.1.31.1.1.1.7", 
-                                'ifInMulticastPkts': "1.3.6.1.2.1.31.1.1.1.8", 
+    # A list of IF-MIB 64bit counters to talk
+    IF_MIB_COUNTER_OID_TABLE = {'ifInOctets': "1.3.6.1.2.1.31.1.1.1.6",
+                                'ifInUcastPkts': "1.3.6.1.2.1.31.1.1.1.7",
+                                'ifInMulticastPkts': "1.3.6.1.2.1.31.1.1.1.8",
                                 'ifInBroadcastPkts': "1.3.6.1.2.1.31.1.1.1.9",
-                                'ifOutOctets': "1.3.6.1.2.1.31.1.1.1.10", 
-                                'ifOutUcastPkts': "1.3.6.1.2.1.31.1.1.1.11", 
-                                'ifOutMulticastPkts': "1.3.6.1.2.1.31.1.1.1.12", 
+                                'ifOutOctets': "1.3.6.1.2.1.31.1.1.1.10",
+                                'ifOutUcastPkts': "1.3.6.1.2.1.31.1.1.1.11",
+                                'ifOutMulticastPkts': "1.3.6.1.2.1.31.1.1.1.12",
                                 'ifOutBroadcastPkts': "1.3.6.1.2.1.31.1.1.1.13"}
 
     # A list of interface types we care about
-    IF_TYPES = ["6"] 
-    
+    IF_TYPES = ["6"]
+
     def get_default_config(self):
         """
         Override SNMPCollector.get_default_config method to provide default_config for the SNMPInterfaceCollector
@@ -67,7 +67,7 @@ class SNMPInterfaceCollector(SNMPCollector):
         default_config = SNMPCollector.get_default_config(self)
         default_config['path'] = 'interface'
         return default_config
-    
+
     def convert_to_mbit(self, value):
         """
         Convert bytes to megabits.
@@ -89,7 +89,7 @@ class SNMPInterfaceCollector(SNMPCollector):
 
         # Initialize Units
         units = {
-            'Mbit': self.convert_to_mbit, 
+            'Mbit': self.convert_to_mbit,
             'Mbyte': self.convert_to_mbyte,
             }
 
@@ -98,7 +98,7 @@ class SNMPInterfaceCollector(SNMPCollector):
         # Define a list of interface indexes
         ifIndexes = []
 
-        # Get Interface Indexes 
+        # Get Interface Indexes
         ifIndexOid = '.'.join([self.IF_MIB_INDEX_OID])
         ifIndexData = self.walk(ifIndexOid, host, port, community)
         ifIndexes = [v for v in ifIndexData.values()]
@@ -110,7 +110,7 @@ class SNMPInterfaceCollector(SNMPCollector):
             if ifTypeData[ifTypeOid] not in self.IF_TYPES:
                 # Skip Interface
                 continue
-            # Get Interface Name 
+            # Get Interface Name
             ifNameOid = '.'.join([self.IF_MIB_NAME_OID, ifIndex])
             ifNameData = self.get(ifNameOid, host, port, community)
             ifName=ifNameData[ifNameOid]
@@ -124,7 +124,7 @@ class SNMPInterfaceCollector(SNMPCollector):
                 ifGaugeValue = ifGaugeData[ifGaugeOid]
                 if not ifGaugeValue:
                     continue
- 
+
                 # Get Metric Name and Value
                 metricIfDescr = re.sub(r'\W', '_', ifName)
                 metricName = '.'.join([metricIfDescr, gaugeName])
@@ -135,7 +135,7 @@ class SNMPInterfaceCollector(SNMPCollector):
                 metric = Metric(metricPath, metricValue, None, 0)
                 # Publish Metric
                 self.publish_metric(metric)
-            
+
             # Get counters (64bit)
             for counterName, counterOid in self.IF_MIB_COUNTER_OID_TABLE.items():
                 ifCounterOid = '.'.join([self.IF_MIB_COUNTER_OID_TABLE[counterName], ifIndex])
@@ -147,9 +147,9 @@ class SNMPInterfaceCollector(SNMPCollector):
                 # Get Metric Name and Value
                 metricIfDescr = re.sub(r'\W', '_', ifName)
 
-                if counterName in ['ifInOctets', 'ifOutOctets']: 
+                if counterName in ['ifInOctets', 'ifOutOctets']:
                     for u in units:
-                        # Convert Metric  
+                        # Convert Metric
                         metricName = '.'.join([metricIfDescr, counterName.replace('Octets', u)])
                         metricValue = units[u](int(ifCounterValue))
 

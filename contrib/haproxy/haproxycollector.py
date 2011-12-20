@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011 by Brightcove Inc. 
+# Copyright (C) 2010-2011 by Brightcove Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -6,10 +6,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,27 +26,27 @@ import csv
 import logging
 from urlparse import urlparse
 
-import diamond.collector 
+import diamond.collector
 
 class HAProxyCollector(diamond.collector.Collector):
     """
     Collect HAProxy Stats
     """
-    
+
     def get_csv_data(self):
         """
         Request stats from HAProxy Server
         """
         metrics = []
         req  = urllib2.Request(self.config['url'])
-        try: 
+        try:
             handle = urllib2.urlopen(req)
             metrics = handle.readlines()
         except Exception, e:
             if not hasattr(e, 'code') or e.code != 401:
                 self.log.error("Error retrieving HAProxy stats. %s", e)
                 return metrics
-        
+
         # get the www-authenticate line from the headers
         # which has the authentication scheme and realm in it
         authline = e.headers['www-authenticate']
@@ -84,14 +84,14 @@ class HAProxyCollector(diamond.collector.Collector):
     def collect(self):
         """
         Collect HAProxy Stats
-        """     
+        """
         csv_data = self.get_csv_data()
         data = csv.reader(csv_data)
         rownum = 0
 
         for row in data:
             if rownum == 0:
-                pass 
+                pass
             else:
                 metric_name =  '%s.%s' % (row[0].lower(), row[1].lower())
                 #create dictionary

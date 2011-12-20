@@ -1,5 +1,5 @@
 # Copyright (C) 2011-2012 by Ivan Pouzyrevsky.
-# Copyright (C) 2010-2011 by Brightcove Inc. 
+# Copyright (C) 2010-2011 by Brightcove Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -7,10 +7,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -46,9 +46,9 @@ class Collector(object):
         self.log = logging.getLogger('diamond')
         # Initialize Members
         self.name = self.__class__.__name__
-        self.handlers = handlers 
+        self.handlers = handlers
         self.last_values = {}
-        
+
         # Get Collector class
         cls = self.__class__
 
@@ -60,17 +60,17 @@ class Collector(object):
         if self.get_default_config() is not None:
             # Merge default config
             self.config.merge(self.get_default_config())
-        # Check if Collector config section exists 
+        # Check if Collector config section exists
         if cls.__name__ in config['collectors']:
             # Merge Collector config section
             self.config.merge(config['collectors'][cls.__name__])
 
-        # Check for config file in config directory 
+        # Check for config file in config directory
         configfile = os.path.join(config['server']['collectors_config_path'], cls.__name__) + '.conf'
         if os.path.exists(configfile):
             # Merge Collector config file
             self.config.merge(configobj.ConfigObj(configfile))
- 
+
     def get_default_config(self):
         """
         Return the default config for the collector
@@ -81,13 +81,13 @@ class Collector(object):
         """
         Return schedule for the collector
         """
-        # Return a dict of tuples containing (collector function, collector function args, splay, interval) 
+        # Return a dict of tuples containing (collector function, collector function args, splay, interval)
         return {self.__class__.__name__: (self._run, None, int(self.config['splay']), int(self.config['interval']))}
 
     def get_metric_path(self, name):
         """
-        Get metric path  
-        """ 
+        Get metric path
+        """
         if 'path_prefix' in self.config:
             prefix = self.config['path_prefix']
         else:
@@ -113,21 +113,21 @@ class Collector(object):
         Default collector method
         """
         raise NotImplementedError()
- 
+
     def publish(self, name, value, precision=0):
         """
         Publish a metric with the given name
         """
         # Get metric Path
-        path = self.get_metric_path(name) 
-        
+        path = self.get_metric_path(name)
+
         # Create Metric
         metric = Metric(path, value, None, precision)
-        
+
         # Publish Metric
         self.publish_metric(metric)
 
-    def publish_metric(self, metric): 
+    def publish_metric(self, metric):
         """
         Publish a Metric object
         """
@@ -138,7 +138,7 @@ class Collector(object):
     def derivative(self, name, new, max_value=0):
         """
         Calculate the derivative of the metric.
-        """ 
+        """
         # Format Metric Path
         path = self.get_metric_path(name)
 
@@ -155,9 +155,9 @@ class Collector(object):
         else:
             result = 0
 
-        # Store Old Value 
+        # Store Old Value
         self.last_values[path] = new
-        
+
         # Return result
         return result
 
@@ -168,8 +168,8 @@ class Collector(object):
         # Log
         self.log.debug("Collecting data from: %s" % (self.__class__.__name__))
         try:
-            # Collect Data 
-            self.collect()  
+            # Collect Data
+            self.collect()
         except Exception, e:
-            # Log Error 
+            # Log Error
             self.log.error(traceback.format_exc())

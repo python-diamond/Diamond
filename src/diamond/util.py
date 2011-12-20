@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011 by Brightcove Inc. 
+# Copyright (C) 2010-2011 by Brightcove Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -6,10 +6,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,10 +21,10 @@
 import os
 import sys
 import inspect
-    
+
 def load_modules_from_path(path):
     """
-    Import all modules from the given directory 
+    Import all modules from the given directory
     """
     # Check and fix the path
     if path[-1:] != '/':
@@ -33,7 +33,7 @@ def load_modules_from_path(path):
     # Get a list of files in the directory, if the directory exists
     if not os.path.exists(path):
         raise OSError, "Directory does not exist: %s" % (path)
-        
+
     # Add path to the system path
     sys.path.append(path)
     # Load all the files in path

@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011 by Brightcove Inc. 
+# Copyright (C) 2010-2011 by Brightcove Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -6,10 +6,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,7 +28,7 @@ class Metric(object):
     def __init__(self, path, value, timestamp = None, precision = 0):
         """
         Create new instance of the Metric class
-        
+
         Takes:
             path=string: string the specifies the path of the metric
             value=[float|int]: the value to be submitted
@@ -41,7 +41,7 @@ class Metric(object):
             raise DiamondException, "Invalid parameter."
 
         # If no timestamp was passed in, set it to the current time
-        if timestamp is None: 
+        if timestamp is None:
             timestamp = int(time.time())
         else:
             # If the timestamp isn't an int, then make it one
@@ -72,7 +72,7 @@ class Metric(object):
         """
         # Set the format string
         fstring = "%%s %%0.%if %%i\n" % (self.precision)
- 
+
         # Return formated string
         return fstring % (self.path, self.value, self.timestamp)
 

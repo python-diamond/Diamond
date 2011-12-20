@@ -1,5 +1,5 @@
 # Copyright (C) 2011-2012 by Ivan Pouzyrevsky.
-# Copyright (C) 2010-2011 by Brightcove Inc. 
+# Copyright (C) 2010-2011 by Brightcove Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -7,10 +7,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,9 +27,9 @@ import time
 import traceback
 import configobj
 import socket
-import re 
+import re
 
-import pysnmp.entity.rfc3413.oneliner.cmdgen 
+import pysnmp.entity.rfc3413.oneliner.cmdgen
 import pysnmp.debug
 
 from metric import Metric
@@ -38,7 +38,7 @@ class SNMPCollector(Collector):
     """
     SNMPCollector is a special collector for collecting data from using SNMP
     """
-   
+
     def __init__(self, config, handlers):
         """
         Create a new instance of the SNMPCollector class
@@ -60,7 +60,7 @@ class SNMPCollector(Collector):
 
     def get_schedule(self):
         """
-        Override SNMPCollector.get_schedule  
+        Override SNMPCollector.get_schedule
         """
         schedule = {}
         if 'devices' in self.config:
@@ -72,8 +72,8 @@ class SNMPCollector(Collector):
                 # Check if task is already in schedule
                 if task in schedule:
                     raise KeyError, "Duplicate device scheduled"
-                schedule[task] = (self.collect_snmp, (device, c['host'], int(c['port']), c['community']), int(self.config['splay']), int(self.config['interval'])) 
-        return schedule 
+                schedule[task] = (self.collect_snmp, (device, c['host'], int(c['port']), c['community']), int(self.config['splay']), int(self.config['interval']))
+        return schedule
 
     def _convert_to_oid(self, s):
         d = s.split(".")
@@ -86,7 +86,7 @@ class SNMPCollector(Collector):
         """
         Perform SNMP get for a given OID
         """
-        # Initialize return value 
+        # Initialize return value
         ret = {}
 
         # Convert OID to tuple if necessary
@@ -106,9 +106,9 @@ class SNMPCollector(Collector):
         errorIndication, errorStatus, errorIndex, varBind = self.snmpCmdGen.getCmd(snmpAuthData, snmpTransportData, oid )
 
         # TODO: Error check
- 
+
         for o, v in varBind:
-            ret[o.prettyPrint()] = v.prettyPrint()                
+            ret[o.prettyPrint()] = v.prettyPrint()
 
         return ret
 
@@ -116,7 +116,7 @@ class SNMPCollector(Collector):
         """
         Perform an SNMP walk on a given OID
         """
-        # Initialize return value 
+        # Initialize return value
         ret = {}
 
         # Convert OID to tuple if necessary
@@ -139,6 +139,6 @@ class SNMPCollector(Collector):
 
         for varBindTableRow in varBindTable:
             for o, v in varBindTableRow:
-                ret[o.prettyPrint()] = v.prettyPrint()                
+                ret[o.prettyPrint()] = v.prettyPrint()
 
         return ret

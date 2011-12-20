@@ -1,5 +1,5 @@
 # Copyright (C) 2011-2012 by Ivan Pouzyrevsky.
-# Copyright (C) 2010-2011 by Brightcove Inc. 
+# Copyright (C) 2010-2011 by Brightcove Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -7,10 +7,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,7 +24,7 @@ import diamond.collector
 
 class VMStatCollector(diamond.collector.Collector):
     """
-    Uses /proc/vmstat to collect data on virtual memory manager 
+    Uses /proc/vmstat to collect data on virtual memory manager
     """
 
     PROC = '/proc/vmstat'
@@ -38,12 +38,12 @@ class VMStatCollector(diamond.collector.Collector):
     def collect(self):
         if not os.access(self.PROC, os.R_OK):
             return None
-        
+
         results = {}
         # open file
         file = open(self.PROC)
         exp = '^(pgpgin|pgpgout|pswpin|pswpout)\s(\d+)'
-        reg = re.compile(exp) 
+        reg = re.compile(exp)
         # Build regex
         for line in file:
             match = reg.match(line)
@@ -51,7 +51,7 @@ class VMStatCollector(diamond.collector.Collector):
                 name = match.group(1)
                 value = match.group(2)
                 results[name] = self.derivative(name, int(value), self.MAX_VALUES[name])
-            
+
         # Close file
         file.close()
 

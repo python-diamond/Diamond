@@ -39,7 +39,7 @@ class TestVMStatCollector(CollectorTestCase):
             'pswpin'  : 0.0,
             'pswpout' : 0.0,
         })
-        
+
 
 ################################################################################
 if __name__ == "__main__":

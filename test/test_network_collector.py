@@ -16,7 +16,7 @@ class TestNetworkCollector(CollectorTestCase):
         })
 
         self.collector = NetworkCollector(config, None)
-    
+
     @patch('__builtin__.open')
     @patch.object(Collector, 'publish')
     def test_should_open_proc_net_dev(self, publish_mock, open_mock):
@@ -40,7 +40,7 @@ class TestNetworkCollector(CollectorTestCase):
             'eth0.rx_mbytes' : (2.504, 2),
             'eth0.tx_mbytes' : (4.707, 2)
         })
-        
+
 
 ################################################################################
 if __name__ == "__main__":

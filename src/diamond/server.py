@@ -1,5 +1,5 @@
 # Copyright (C) 2011-2012 by Ivan Pouzyrevsky.
-# Copyright (C) 2010-2011 by Brightcove Inc. 
+# Copyright (C) 2010-2011 by Brightcove Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -7,10 +7,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,7 +29,7 @@ import optparse
 import signal
 import inspect
 import pwd
-import grp 
+import grp
 
 # Path Fix
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"../")))
@@ -40,7 +40,7 @@ import diamond
 from diamond.collector import Collector
 from diamond.handler import Handler
 from diamond.scheduler import *
-from diamond.util import * 
+from diamond.util import *
 
 class Server(object):
     """
@@ -50,12 +50,12 @@ class Server(object):
     def __init__(self, config):
         # Initialize Logging
         self.log = logging.getLogger('diamond')
-        # Initialize Members 
+        # Initialize Members
         self.config = config
         self.running = False
         self.handlers = []
-        self.modules = {} 
-        self.tasks = {} 
+        self.modules = {}
+        self.tasks = {}
         # Initialize Scheduler
         self.scheduler = ThreadedScheduler()
 
@@ -67,8 +67,8 @@ class Server(object):
         cls = load_class_from_name(fqcn)
         # Check if cls is subclass of Handler
         if cls == Handler or not issubclass(cls, Handler):
-            raise TypeError, "%s is not a vaild Handler" % (fqcn)          
-        # Log 
+            raise TypeError, "%s is not a vaild Handler" % (fqcn)
+        # Log
         self.log.debug("Loaded Handler: %s" % (fqcn))
         return cls
 
@@ -80,16 +80,16 @@ class Server(object):
             try:
                 # Load Handler Class
                 cls = self.load_handler(h)
-                        
-                # Initialize Handler config 
+
+                # Initialize Handler config
                 handler_config = configobj.ConfigObj()
                 # Merge default Handler default config
                 handler_config.merge(self.config['handlers']['default'])
-                # Check if Handler config exists 
+                # Check if Handler config exists
                 if cls.__name__ in self.config['handlers']:
                     # Merge Handler config section
                     handler_config.merge(self.config['handlers'][cls.__name__])
-                 
+
                 # Initialize Handler class
                 self.handlers.append(cls(handler_config))
 
@@ -100,7 +100,7 @@ class Server(object):
 
     def load_collector(self, fqcn):
         """
-        Load Collector class named fqcn 
+        Load Collector class named fqcn
         """
         # Load class
         cls = load_class_from_name(fqcn)
@@ -113,10 +113,10 @@ class Server(object):
 
     def load_collectors(self, path, filter=None):
         """
-        Scan for collectors to load from path 
+        Scan for collectors to load from path
         """
-        # Initialize return value 
-        collectors = {}    
+        # Initialize return value
+        collectors = {}
 
         # Get a list of files in the directory, if the directory exists
         if not os.path.exists(path):
@@ -124,7 +124,7 @@ class Server(object):
 
         # Log
         self.log.debug("Loading Collectors from: %s" % (path))
-            
+
         # Add path to the system path
         sys.path.append(path)
         # Load all the files in path
@@ -156,8 +156,8 @@ class Server(object):
                     # Log error
                     self.log.error("Failed to import module: %s. %s" % (modname, traceback.format_exc()))
                     continue
- 
-                # Update module mtime 
+
+                # Update module mtime
                 self.modules[modname] = mtime
                 # Log
                 self.log.debug("Loaded Module: %s" % (modname))
@@ -181,14 +181,14 @@ class Server(object):
 
         # Return Collector classes
         return collectors
-    
+
     def init_collector(self, cls):
         """
         Initialize collector
         """
         collector = None
         try:
-            # Initialize Collector 
+            # Initialize Collector
             collector = cls(self.config, self.handlers)
             # Log
             self.log.debug("Initialized Collector: %s" % (cls.__name__))
@@ -203,11 +203,11 @@ class Server(object):
         """
         Schedule collector
         """
-        # Check collector is for realz 
-        if c is None: 
+        # Check collector is for realz
+        if c is None:
             self.log.warn("Skipped loading invalid Collector: %s" % (c.__class__.__name__))
-            return 
-            
+            return
+
         # Get collector schedule
         for name,schedule in c.get_schedule().items():
             # Get scheduler args
@@ -227,17 +227,17 @@ class Server(object):
 
             # Log
             self.log.debug("Scheduled task: %s" % (name))
-            # Add task to list 
+            # Add task to list
             self.tasks[name] = task
- 
+
     def run(self):
         """
         Load handler and collector classes and then start collectors
         """
-        
+
         # Set Running Flag
         self.running = True
-            
+
         # Load handlers
         self.load_handlers()
 
@@ -256,20 +256,20 @@ class Server(object):
 
     def run_one(self, file):
         """
-        Run given collector once and then exit 
+        Run given collector once and then exit
         """
         # Set Running Flag
         self.running = True
-       
+
         # Load handlers
         self.load_handlers()
 
         # Overrides collector config dir
         self.config['server']['collectors_config_path'] = os.path.abspath(os.path.dirname(file))
- 
+
         # Load collectors
         collectors = self.load_collectors(os.path.dirname(file), file)
-        
+
         # Setup Collectors
         for cls in collectors.values():
             # Initialize Collector
@@ -280,26 +280,26 @@ class Server(object):
 
         # Start main loop
         self.mainloop(False)
-            
+
     def mainloop(self, reload=True):
-        
+
         # Start scheduler
-        self.scheduler.start()      
- 
+        self.scheduler.start()
+
         # Log
         self.log.info('Started task scheduler.')
 
         # Initialize reload timer
-        time_since_reload = 0 
+        time_since_reload = 0
 
-        # Main Loop 
+        # Main Loop
         while self.running:
             time.sleep(1)
             time_since_reload += 1
 
             # Check if its time to reload collectors
             if reload and time_since_reload > int(self.config['server']['collectors_reload_interval']):
-                # Log 
+                # Log
                 self.log.debug("Reloading collectors.")
                 # Load collectors
                 collectors = self.load_collectors(self.config['server']['collectors_path'])
@@ -320,12 +320,12 @@ class Server(object):
         # Log
         self.log.debug('Stopping task scheduler.')
         # Stop scheduler
-        self.scheduler.stop() 
+        self.scheduler.stop()
         # Log
         self.log.info('Stopped task scheduler.')
         # Log
         self.log.debug("Exiting.")
-        
+
 
     def stop(self):
         """

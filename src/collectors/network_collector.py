@@ -1,5 +1,5 @@
 # Copyright (C) 2011-2012 by Ivan Pouzyrevsky.
-# Copyright (C) 2010-2011 by Brightcove Inc. 
+# Copyright (C) 2010-2011 by Brightcove Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -7,10 +7,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -31,8 +31,8 @@ class NetworkCollector(diamond.collector.Collector):
     PROC = '/proc/net/dev'
 
     MAX_VALUES = {
-        'rx_bytes': diamond.collector.MAX_COUNTER, 
-        'rx_packets': diamond.collector.MAX_COUNTER, 
+        'rx_bytes': diamond.collector.MAX_COUNTER,
+        'rx_packets': diamond.collector.MAX_COUNTER,
         'rx_errors': diamond.collector.MAX_COUNTER,
         'rx_drop': diamond.collector.MAX_COUNTER,
         'rx_fifo': diamond.collector.MAX_COUNTER,
@@ -48,7 +48,7 @@ class NetworkCollector(diamond.collector.Collector):
         'tx_compressed': diamond.collector.MAX_COUNTER,
         'tx_multicast': diamond.collector.MAX_COUNTER,
         }
-        
+
     def convert_to_mbit(self, value):
         """
         Convert bytes to megabits.
@@ -71,7 +71,7 @@ class NetworkCollector(diamond.collector.Collector):
         """
         Convert bytes to kilobytes.
         """
-        return (float(value) / 1024.0 ) 
+        return (float(value) / 1024.0 )
 
     def collect(self):
         """
@@ -79,10 +79,10 @@ class NetworkCollector(diamond.collector.Collector):
         """
         if not os.access(self.PROC, os.R_OK):
             return None
-        
+
         # Initialize Units
         units = {
-            'mbits': self.convert_to_mbit, 
+            'mbits': self.convert_to_mbit,
             'mbytes': self.convert_to_mbyte,
             }
         # Initialize results
@@ -104,15 +104,15 @@ class NetworkCollector(diamond.collector.Collector):
         for device in results:
             stats = results[device]
             for s,v in stats.items():
-                # Get Metric Name 
+                # Get Metric Name
                 metric_name = '.'.join([device, s])
                 # Get Metric Value
                 metric_value = self.derivative(metric_name, long(v), self.MAX_VALUES[s])
                 # Convert rx_bytes and tx_bytes
                 if s == 'rx_bytes' or s == 'tx_bytes':
-                    for u in units: 
-                        # Public Converted Metric  
+                    for u in units:
+                        # Public Converted Metric
                         self.publish(metric_name.replace('bytes', u), units[u](metric_value))
                 else:
                     # Publish Metric Derivative
-                    self.publish(metric_name, metric_value) 
+                    self.publish(metric_name, metric_value)

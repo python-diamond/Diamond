@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011 by Brightcove Inc. 
+# Copyright (C) 2010-2011 by Brightcove Inc.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -6,10 +6,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -45,15 +45,15 @@ class Handler(object):
 
     def process(self, metric):
         """
-        Process a metric 
+        Process a metric
 
         Should be overridden in subclasses
         """
-        raise NotImplementedException 
+        raise NotImplementedException
 
 class ArchiveHandler(Handler):
     """
-    Implements the Handler abstract class, archiving data to a log file 
+    Implements the Handler abstract class, archiving data to a log file
     """
     def __init__(self, config):
         """
@@ -65,7 +65,7 @@ class ArchiveHandler(Handler):
         # Create Archive Logger
         self.archive = logging.getLogger('archive')
         self.archive.setLevel(logging.DEBUG)
-        # Create Archive Log Formatter        
+        # Create Archive Log Formatter
         formatter = logging.Formatter('%(message)s')
         # Create Archive Log Handler
         handler = logging.handlers.TimedRotatingFileHandler(self.config['log_file'], 'midnight', 1, backupCount=int(self.config['days']))
@@ -75,9 +75,9 @@ class ArchiveHandler(Handler):
 
     def process(self, metric):
         """
-        Send a Metric to the Archive. 
+        Send a Metric to the Archive.
         """
-        # Acquire Lock    
+        # Acquire Lock
         self.lock.acquire()
         # Archive Metric
         self.archive.info(str(metric).strip())
@@ -92,7 +92,7 @@ class GraphiteHandler(Handler):
 
     def __init__(self, config=None):
         """
-        Create a new instance of the GraphiteHandler class 
+        Create a new instance of the GraphiteHandler class
         """
         # Initialize Handler
         Handler.__init__(self, config)
@@ -100,36 +100,36 @@ class GraphiteHandler(Handler):
         # Initialize Data
         self.socket = None
 
-        # Initialize Options 
-        self.host = self.config['host'] 
-        self.port = int(self.config['port']) 
+        # Initialize Options
+        self.host = self.config['host']
+        self.port = int(self.config['port'])
         self.timeout = int(self.config['timeout'])
 
-        # Connect 
+        # Connect
         self._connect()
 
     def __del__(self):
         """
         Destroy instance of the GraphiteHandler class
         """
-        self._close() 
+        self._close()
 
     def process(self, metric):
         """
-        Process a metric by sending it to graphite 
+        Process a metric by sending it to graphite
         """
-        # Acquire lock    
+        # Acquire lock
         self.lock.acquire()
         # Just send the data as a string
         self._send(str(metric))
-        # Release lock 
+        # Release lock
         self.lock.release()
 
     def _send(self, data):
         """
-        Send data to graphite. Data that can not be sent will be queued.  
+        Send data to graphite. Data that can not be sent will be queued.
         """
-        retry = self.RETRY 
+        retry = self.RETRY
         # Attempt to send any data in the queue
         while retry > 0:
             # Check socket
@@ -153,7 +153,7 @@ class GraphiteHandler(Handler):
                 # Attempt to restablish connection
                 self._close()
                 # Decrement retry
-                retry -= 1 
+                retry -= 1
                 # try again
                 continue
 
@@ -177,7 +177,7 @@ class GraphiteHandler(Handler):
             # Log
             self.log.debug("Established connection to graphite server %s:%d" % (self.host, self.port))
         except Exception, ex:
-            # Log Error 
+            # Log Error
             self.log.error("GraphiteHandler: Failed to connect to %s:%i. %s" % (self.host, self.port, ex))
             # Close Socket
             self._close()
@@ -197,7 +197,7 @@ class GraphitePickleHandler(GraphiteHandler):
     """
     def __init__(self, config=None):
         """
-        Create a new instance of the GraphitePickleHandler 
+        Create a new instance of the GraphitePickleHandler
         """
         # Initialize GraphiteHandler
         GraphiteHandler.__init__(self, config)
@@ -207,7 +207,7 @@ class GraphitePickleHandler(GraphiteHandler):
         self.batch_size = int(self.config['batch'])
 
     def process(self, metric):
-        # Acquire lock    
+        # Acquire lock
         self.lock.acquire()
         # Convert metric to pickle format
         m = (metric.path, (metric.timestamp, metric.value) )
@@ -223,16 +223,16 @@ class GraphitePickleHandler(GraphiteHandler):
             self._send(data)
             # Clear Batch
             self.batch = []
-        # Release lock 
+        # Release lock
         self.lock.release()
 
     def _pickle_batch(self):
         """
         Pickle the metrics into a form that can be understood by the graphite pickle connector.
         """
-        # Pickle 
+        # Pickle
         payload = pickle.dumps(self.batch)
-        
+
         # Pack Message
         header = struct.pack("!L", len(payload))
         message = header + payload
@@ -242,11 +242,11 @@ class GraphitePickleHandler(GraphiteHandler):
 
 class NullHandler(Handler):
     """
-    Implements the abstract Handler class, doing nothing except log 
+    Implements the abstract Handler class, doing nothing except log
     """
     def process(self, metric):
         """
-        Process a metric by doing nothing 
+        Process a metric by doing nothing
         """
-        self.log.debug("Process: %s" % (str(metric).rstrip())) 
+        self.log.debug("Process: %s" % (str(metric).rstrip()))
 

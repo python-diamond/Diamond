@@ -89,7 +89,7 @@ none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
         result = disk.get_disk_statistics()
 
         open_mock.assert_called_once_with('/proc/diskstats')
-        
+
         self.assertItemsEqual(
             result.keys(),
             [ (8,  0), (8,  1), (8, 16), (8, 17), (8, 32), (8, 33), (8, 48), (8, 49), (9,  0) ]
