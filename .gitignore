@@ -1,6 +1,6 @@
+dist/
 build/
-build-debian/
-build-redhat/
-archive/
 tmp/
 *.pyc
+*.sublime-*
+MANIFEST
