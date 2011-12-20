@@ -129,6 +129,9 @@ Contributors
 =====
 
 [Ivan Pouzyrevsky](https://github.com/sandello)
+
 [ooshlablu](https://github.com/ooshlablu)
+
 [oxcd8o](https://github.com/oxcd8o)
+
 [Rob Smith](https://github.com/kormoc)
