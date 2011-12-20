@@ -8,39 +8,40 @@ it features an API for implementing custom collectors for gathering metrics from
 Installation
 =====
 
-**Dependencies**
+** Core Dependencies**
 
 -   CentOS or Ubuntu
 -   Python 2.4+
 -   python-configobj
--   pysnmp
 -   pyasn1
--   ant (for packaging)
+
+** Optional Dependencies**
+-   pysnmp
 
 Usage 
 =====
 
-To install diamond, use ant:
+To install diamond:
 
-    ant install
+    make install
 
 For testing, diamond can also be started directly via ant without installing: 
 
-    ant run
+    cp conf/diamond.conf.example conf/diamond.conf
+    edit conf/diamond.conf
+    make run
 
 The *run* task will invoke diamond in debug mode for testing.
 
 Ant can also build packages for CentOS and Ubuntu.
-
-    ant package
+    
+    make buildrpm
+    
+    sudo yum localinstall --nogpgcheck build/
+    
+    make builddeb
 
     sudo dpkg -i build/diamond-2.0.1-0.deb
-
-The *package* task will detect Ubuntu or CentOS and build .debs or .rpms. 
- 
-    ant tar
-
-The *tar* task will build a tarball if thats your thing.
 
 Configuration
 =====
@@ -59,14 +60,17 @@ You can override the "systems" portion of the metric path by changing the "path_
 Built-In Collectors
 ======
 
--   NetworkCollector
 -   CPUCollector
--   MemoryCollector
--   LoadAverageCollector
--   IOCollector
--   VMStatCollector
 -   DiskSpaceCollector
--   TCPStatsCollector
+-   DiskUsageCollector
+-   FilestatCollector
+-   LoadAverageCollector
+-   MemoryCollector
+-   NetworkCollector
+-   SockstatCollector
+-   TCPCollector
+-   UserScriptsCollector
+-   VMStatCollector
 
 Custom Collectors
 ======

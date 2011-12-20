@@ -12,6 +12,9 @@ all:
 	@echo "make clean    - Get rid of scratch and byte files"
 	@echo "make cleanws  - Strip trailing whitespaces from files"
 
+run:
+	./bin/diamond --configfile=conf/diamond.conf --foreground --verbose
+
 watch:
 	watchr test.watchr
 
@@ -42,4 +45,4 @@ clean:
 cleanws:
 	find . -name '*.py' -exec sed -i '' -e 's/[ \t]*$//' {} \;
 
-.PHONY: source install buildrpm builddeb clean
+.PHONY: source install buildrpm builddeb clean run
