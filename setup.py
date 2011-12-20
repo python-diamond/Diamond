@@ -23,7 +23,7 @@ setup(
     scripts=glob('bin/*'),
     data_files=[
         ('conf', glob('conf/*')),
-        ('conf/collectors', []),
+        ('conf/collectors', glob('conf/collectors/*')),
         ('collectors', glob('src/collectors/*.py')),
         ('storage', []),
         ('user_scripts', []),
