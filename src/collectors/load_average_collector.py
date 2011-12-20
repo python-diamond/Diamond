@@ -32,6 +32,9 @@ class LoadAverageCollector(diamond.collector.Collector):
     PROC = '/proc/loadavg'
 
     def collect(self):
+        if not os.access(self.PROC, os.R_OK):
+            return None
+        
         file = open(self.PROC)
         for line in file:
             match = _RE.match(line)

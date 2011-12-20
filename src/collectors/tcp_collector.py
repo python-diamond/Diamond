@@ -31,6 +31,9 @@ class TCPCollector(diamond.collector.Collector):
     PROC='/proc/net/netstat'
 
     def collect(self):
+        if not os.access(self.PROC, os.R_OK):
+            return None
+        
         lines = []
 
         file = open(self.PROC)

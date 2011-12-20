@@ -43,8 +43,9 @@ def get_file_systems():
     Returns:
       (major, minor) -> FileSystem(device, mount_point)
     '''
-
     result = {}
+    if not os.access('/proc/mounts', os.R_OK):
+        return result
     file = open('/proc/mounts')
     for line in file:
         try:
@@ -72,8 +73,9 @@ def get_disk_statistics():
     Returns:
       (major, minor) -> DiskStatistics(device, ...)
     '''
-
     result = {}
+    if not os.access('/proc/diskstats', os.R_OK):
+        return result
     file = open('/proc/diskstats')
 
     for line in file:

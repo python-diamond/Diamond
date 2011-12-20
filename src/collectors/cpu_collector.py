@@ -40,6 +40,9 @@ class CPUCollector(diamond.collector.Collector):
         """
         Collector cpu stats
         """
+        if not os.access(self.PROC, os.R_OK):
+            return None
+        
         results = {}
         # Open file
         file = open(self.PROC)

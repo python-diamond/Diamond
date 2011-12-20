@@ -36,6 +36,9 @@ class VMStatCollector(diamond.collector.Collector):
     }
 
     def collect(self):
+        if not os.access(self.PROC, os.R_OK):
+            return None
+        
         results = {}
         # open file
         file = open(self.PROC)

@@ -51,6 +51,9 @@ class MemoryCollector(diamond.collector.Collector):
         """
         Collect memory stats
         """
+        if not os.access(self.PROC, os.R_OK):
+            return None
+        
         file = open(self.PROC)
         for line in file:
             try:

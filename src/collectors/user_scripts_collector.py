@@ -31,6 +31,8 @@ class UserScriptsCollector(diamond.collector.Collector):
     """    
     def collect(self):
         scripts_path = self.config['scripts_path']
+        if not os.access(scripts_path, os.R_OK):
+            return None
         for script in os.listdir(scripts_path):
             if not os.access(os.path.join(scripts_path, script), os.X_OK):
                 continue

@@ -36,6 +36,9 @@ class SockstatCollector(diamond.collector.Collector):
     PROC = '/proc/net/sockstat'
 
     def collect(self):
+        if not os.access(self.PROC, os.R_OK):
+            return None
+        
         result = {}
 
         file = open(self.PROC)

@@ -77,6 +77,9 @@ class NetworkCollector(diamond.collector.Collector):
         """
         Collect network interface stats.
         """
+        if not os.access(self.PROC, os.R_OK):
+            return None
+        
         # Initialize Units
         units = {
             'mbits': self.convert_to_mbit, 
