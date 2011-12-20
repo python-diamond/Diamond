@@ -37,6 +37,8 @@ builddeb: sdist
 	tar -C build -zxf dist/$(PROJECT)-$(VERSION).tar.gz
 	(cd build/$(PROJECT)-$(VERSION) && debuild -us -uc)
 
+tar: sdist
+
 clean:
 	python setup.py clean
 	rm -rf dist build MANIFEST
