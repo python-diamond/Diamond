@@ -22,7 +22,7 @@ setup(
     packages=['diamond'],
     scripts=glob('bin/*'),
     data_files=[
-        ('conf', glob('conf/*')),
+        ('conf', glob('conf/*.conf*')),
         ('conf/collectors', glob('conf/collectors/*')),
         ('collectors', glob('src/collectors/*.py')),
         ('storage', []),
