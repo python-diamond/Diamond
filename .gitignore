@@ -4,3 +4,6 @@ tmp/
 *.pyc
 *.sublime-*
 MANIFEST
+conf/diamond.conf
+storage
+
