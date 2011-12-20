@@ -3,12 +3,15 @@ PROJECT=diamond
 VERSION=0.2.0
 
 all:
+    @echo "make run      - Run Diamond from this directory"
 	@echo "make watch    - Watch and continuously run tests"
+    @echo "make test     - Run tests"
 	@echo "make sdist    - Create source package"
 	@echo "make bdist    - Create binary package"
 	@echo "make install  - Install on local system"
 	@echo "make buildrpm - Generate a rpm package"
 	@echo "make builddeb - Generate a deb package"
+    @echo "make tar      - Generate a tar ball"
 	@echo "make clean    - Get rid of scratch and byte files"
 	@echo "make cleanws  - Strip trailing whitespaces from files"
 
@@ -17,6 +20,9 @@ run:
 
 watch:
 	watchr test.watchr
+
+test:
+    python tests/run_tests.py
 
 sdist:
 	python setup.py sdist --prune
@@ -47,4 +53,4 @@ clean:
 cleanws:
 	find . -name '*.py' -exec sed -i'' -e 's/[ \t]*$$//' {} \;
 
-.PHONY: source install buildrpm builddeb clean run
+.PHONY: run watch test sdist bdist install buildrpm builddeb tar clean cleanws

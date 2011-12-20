@@ -110,6 +110,15 @@ Diamond collectors that require a separate configuration file should place a .cf
 The configuration file name should match the name of the diamond collector class.  For example, a collector called
 *examplecollector.ExampleCollector* could have its configuration file placed in /etc/diamond/ExampleCollector.cfg.
 
+Testing
+=====
+
+Requirements:
+-   python-mock
+-   python-configobj
+
+To run the tests
+    make test
 
 Contacts
 =====
