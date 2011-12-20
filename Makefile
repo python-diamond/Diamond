@@ -45,6 +45,6 @@ clean:
 	find . -name '*.pyc' -delete
 
 cleanws:
-	find . -name '*.py' -exec sed -i '' -e 's/[ \t]*$//' {} \;
+	find . -name '*.py' -exec sed -i'' -e 's/[ \t]*$$//' {} \;
 
 .PHONY: source install buildrpm builddeb clean run
