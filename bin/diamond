@@ -61,7 +61,7 @@ def main():
         config = configobj.ConfigObj(os.path.abspath(options.configfile))
     else:
         print >> sys.stderr, "ERROR: Config file: %s does not exist." % (options.configfile)
-        print >> sys.stderr, parser.usage
+        parser.print_help(sys.stderr)
         sys.exit(1)
 
     # Switch user to specified user/group if required
