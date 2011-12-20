@@ -22,11 +22,10 @@ setup(
     packages=['diamond'],
     scripts=glob('bin/*'),
     data_files=[
-        ('conf', glob('conf/*.conf*')),
-        ('conf/collectors', glob('conf/collectors/*')),
-        ('collectors', glob('src/collectors/*.py')),
-        ('storage', []),
-        ('user_scripts', []),
+        ('/etc/diamond',                           glob('conf/*.conf*') ),
+        ('/etc/diamond/collectors',                glob('conf/collectors/*') ),
+        ('share/diamond/collectors',               glob('src/collectors/*.py') ),
+        ('share/diamond/collectors/user_scripts',  [] ),
     ],
     **setup_kwargs
 )
