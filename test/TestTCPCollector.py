@@ -35,8 +35,8 @@ TcpExt: 0 1 2
 
         self.assertEqual(len(publish_mock.call_args_list), 2)
         self.assertEqual(publish_mock.call_args_list, [
-            call('A', '0', 0),
-            call('C', '2', 0)
+            (('A', '0', 0), {}),
+            (('C', '2', 0), {})
         ])
 
     @patch.object(Collector, 'publish')
