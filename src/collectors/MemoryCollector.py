@@ -56,13 +56,17 @@ class MemoryCollector(diamond.collector.Collector):
 
         file = open(self.PROC)
         for line in file:
-            try:
-                name, value, units = line.split()
-                name = _KEY_MAPPING[name.rstrip(':')]
+            name, value, units = line.split()
+            name = name.rstrip(':')
+            
+            if _KEY_MAPPING.has_key(name):
+                name = _KEY_MAPPING[name]
+            elif not self.config.has_key('detailed'):
+                continue
+            
+            if self.config.has_key('convert_to_bytes') :
+                if units == 'kB':
+                    value *= 1024
 
-                self.publish(name, value)
-            except KeyError:
-                continue
-            except ValueError:
-                continue
+            self.publish(name, value)
         file.close()
