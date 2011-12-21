@@ -59,6 +59,7 @@ class MemoryCollector(diamond.collector.Collector):
             try:
                 name, value, units = line.split()
                 name = name.rstrip(':')
+                value = int(value)
                 
                 if _KEY_MAPPING.has_key(name):
                     name = _KEY_MAPPING[name]
