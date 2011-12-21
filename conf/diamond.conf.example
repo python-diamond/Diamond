@@ -82,7 +82,7 @@ batch = 256
 ### Defaults options for all Collectors
 
 # Path Prefix
-path_prefix = nodes
+path_prefix = servers
 
 # Default splay time (seconds)
 splay = 1
