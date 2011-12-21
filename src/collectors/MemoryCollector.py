@@ -55,7 +55,10 @@ class MemoryCollector(diamond.collector.Collector):
             return None
 
         file = open(self.PROC)
-        for line in file:
+        data = file.read()
+        file.close()
+        
+        for line in data.splitlines():
             try:
                 name, value, units = line.split()
                 name = name.rstrip(':')
@@ -73,4 +76,3 @@ class MemoryCollector(diamond.collector.Collector):
                 self.publish(name, value)
             except ValueError:
                 continue
-        file.close()
