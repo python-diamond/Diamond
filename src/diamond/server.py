@@ -218,12 +218,20 @@ class Server(object):
                 self.scheduler.cancel(self.tasks[name])
                 # Log
                 self.log.debug("Canceled task: %s" % (name))
+                
+            method = diamond.scheduler.method.sequential
+            
+            if c.config.has_key('method'):
+                if c.config['method'] == 'Threaded':
+                    method = diamond.scheduler.method.threaded
+                elif c.config['method'] == 'Forked':
+                    method = diamond.scheduler.method.forked
 
             # Schedule Collector
             if interval_task:
-                task = self.scheduler.add_interval_task(func, name, splay, interval, diamond.scheduler.method.sequential, args, None, True)
+                task = self.scheduler.add_interval_task(func, name, splay, interval, method, args, None, True)
             else:
-                task = self.scheduler.add_single_task(func, name, splay, diamond.scheduler.method.sequential, args, None)
+                task = self.scheduler.add_single_task(func, name, splay, method, args, None)
 
             # Log
             self.log.debug("Scheduled task: %s" % (name))
