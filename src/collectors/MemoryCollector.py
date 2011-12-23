@@ -23,7 +23,7 @@ from diamond import *
 import diamond.collector
 import diamond.convertor
 
-_KEY_MAPPING = {
+_KEY_MAPPING = [
     'MemTotal'     ,
     'MemFree'      ,
     'Buffers'      ,
@@ -37,7 +37,7 @@ _KEY_MAPPING = {
     'VmallocTotal' ,
     'VmallocUsed'  ,
     'VmallocChunk'
-}
+]
 
 class MemoryCollector(diamond.collector.Collector):
     """
@@ -65,7 +65,7 @@ class MemoryCollector(diamond.collector.Collector):
                 name = name.rstrip(':')
                 value = int(value)
                 
-                if _KEY_MAPPING.has_key(name) and not self.config.has_key('detailed'):
+                if name in _KEY_MAPPING and not self.config.has_key('detailed'):
                     continue
                 
                 value = diamond.convertor.bytes(value, units, self.config['byte_unit'])
