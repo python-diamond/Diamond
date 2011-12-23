@@ -18,7 +18,7 @@ data_files=[
     ('share/diamond/collectors/contrib',       glob('contrib/*.py') ),
 ]
 for path in glob('contrib/*/'):
-    data_files.append(('share/diamond/collectors'+path, glob(path+'/*')))
+    data_files.append(('share/diamond/collectors/'+path, glob(path+'/*')))
 
 setup(
     name            = 'diamond',

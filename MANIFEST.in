@@ -9,3 +9,6 @@ exclude conf/*.conf
 include conf/collectors/*.conf
 include test/common.py
 include test/fixtures/*
+include contrib/*
+include contrib/*/*
+
