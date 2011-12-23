@@ -30,9 +30,13 @@ class DiskSpaceCollector(diamond.collector.Collector):
     Uses /proc/mounts and os.statvfs() to get disk space usage
     """
     def collect(self):
+        labels = disk.get_disk_labels()
         for key, info in disk.get_file_systems().iteritems():
-            name = info.mount_point.replace('/', '_')
-            name = 'root' if name == '_' else name
+            if labels.has_key(info.device):
+                name = labels[info.device]
+            else:
+                name = info.mount_point.replace('/', '_')
+                name = 'root' if name == '_' else name
 
             data = os.statvfs(info.mount_point)
             block_size = data.f_bsize

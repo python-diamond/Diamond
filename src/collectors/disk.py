@@ -21,6 +21,7 @@
 
 from diamond import *
 import diamond.collector
+import os
 
 from collections import namedtuple
 
@@ -33,6 +34,22 @@ _DiskStatistics = namedtuple('DiskStatistics', '''
     writes, writes_merged, writes_sectors, writes_milliseconds,
     iops_in_progress, io_milliseconds, io_milliseconds_weighted
 ''')
+
+def get_disk_labels():
+    '''
+    Creates a mapping of device nodes to filesystem labels
+    '''
+    path = '/dev/disk/by-label/'
+    labels = {}
+    if not os.path.isdir(path):
+        return labels
+    
+    for label in os.listdir(path):
+        device = os.path.realpath(path+'/'+label)
+        labels[device] = label
+        
+    return labels
+        
 
 # iostat(1): Each sector has size of 512 bytes.
 
