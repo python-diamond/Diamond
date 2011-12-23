@@ -29,15 +29,15 @@ class DiskUsageCollector(diamond.collector.Collector):
     Collect IO Stats
     """
     MAX_VALUES = {
-        'reads': 4294967295,
-        'reads_merged': 4294967295,
-        'reads_kbytes': (((diamond.collector.MAX_COUNTER + 1) / 2) - 1),
-        'reads_milliseconds': 4294967295,
-        'writes': 4294967295,
-        'writes_merged': 4294967295,
-        'writes_kbytes': (((diamond.collector.MAX_COUNTER + 1) / 2) - 1),
-        'writes_milliseconds': 4294967295,
-        'io_milliseconds': 4294967295,
+        'reads':                    4294967295,
+        'reads_merged':             4294967295,
+        'reads_kbytes':             (((diamond.collector.MAX_COUNTER + 1) / 2) - 1),
+        'reads_milliseconds':       4294967295,
+        'writes':                   4294967295,
+        'writes_merged':            4294967295,
+        'writes_kbytes':            (((diamond.collector.MAX_COUNTER + 1) / 2) - 1),
+        'writes_milliseconds':      4294967295,
+        'io_milliseconds':          4294967295,
         'io_milliseconds_weighted': 4294967295
     }
 
