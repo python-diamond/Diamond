@@ -24,18 +24,19 @@ import diamond.collector
 import diamond.convertor
 
 _KEY_MAPPING = {
-    'MemTotal'     : 'total',
-    'MemFree'      : 'free',
-    'Buffers'      : 'buffers',
-    'Cached'       : 'cached',
-    'Active'       : 'active',
-    'Inactive'     : 'inactive',
-    'SwapTotal'    : 'swap_total',
-    'SwapFree'     : 'swap_free',
-    'SwapCached'   : 'swap_cached',
-    'VmallocTotal' : 'vm_total',
-    'VmallocUsed'  : 'vm_used',
-    'VmallocChunk' : 'vm_chunk'
+    'MemTotal'     ,
+    'MemFree'      ,
+    'Buffers'      ,
+    'Cached'       ,
+    'Active'       ,
+    'Dirty'        ,
+    'Inactive'     ,
+    'SwapTotal'    ,
+    'SwapFree'     ,
+    'SwapCached'   ,
+    'VmallocTotal' ,
+    'VmallocUsed'  ,
+    'VmallocChunk'
 }
 
 class MemoryCollector(diamond.collector.Collector):
@@ -64,9 +65,7 @@ class MemoryCollector(diamond.collector.Collector):
                 name = name.rstrip(':')
                 value = int(value)
                 
-                if _KEY_MAPPING.has_key(name):
-                    name = _KEY_MAPPING[name]
-                elif not self.config.has_key('detailed'):
+                if _KEY_MAPPING.has_key(name) and not self.config.has_key('detailed'):
                     continue
                 
                 if self.config.has_key('convert_to_bytes') :
