@@ -29,11 +29,32 @@ def camelcase_to_underscore(name):
         _RE_FIND_FIRST_CAP.sub(r'\1_\2', name)
     ).lower()
 
-def bytes_to_kbytes(value):
-    return (float(value) / 1024.0)
-
-def bytes_to_mbytes(value):
-    return (float(value) / 1024.0 / 1024.0)
-
-def bytes_to_gbytes(value):
-    return (float(value) / 1024.0 / 1024.0 / 1024.0)
+def bytes(value, oldUnits, newUnits):
+    '''
+    Convert a byte value to another form
+    '''
+    value = float(value)
+    
+    # Convert to Bytes
+    
+    if oldUnits == 'kB' or oldUnits == 'KiB':
+        value = value * 1024
+    elif oldUnits == 'MB' or oldUnits == 'MiB':
+        value = value * 1024 * 1024
+    elif oldUnits == 'GB' or oldUnits == 'GiB':
+        value = value * 1024 * 1024 * 1024
+    elif oldUnits == 'TB' or oldUnits == 'TiB':
+        value = value * 1024 * 1024 * 1024 * 1024
+        
+    # Convert to new units
+    
+    if newUnits == 'kB' or newUnits == 'KiB':
+        value = value / 1024.0
+    elif newUnits == 'MB' or newUnits == 'MiB':
+        value = value / 1024.0 / 1024.0
+    elif newUnits == 'GB' or newUnits == 'GiB':
+        value = value / 1024.0 / 1024.0 / 1024.0
+    elif newUnits == 'TB' or newUnits == 'TiB':
+        value = value / 1024.0 / 1024.0 / 1024.0 / 1024.0
+        
+    return value

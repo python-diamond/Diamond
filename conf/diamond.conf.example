@@ -89,3 +89,9 @@ splay = 1
 
 # Default Poll Interval (seconds)
 interval = 5
+
+# Default collector threading model
+method = Sequential
+
+# Default numeric output
+byte_unit = b

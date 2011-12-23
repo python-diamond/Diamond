@@ -68,9 +68,7 @@ class MemoryCollector(diamond.collector.Collector):
                 if _KEY_MAPPING.has_key(name) and not self.config.has_key('detailed'):
                     continue
                 
-                if self.config.has_key('convert_to_bytes') :
-                    if units == 'kB':
-                        value *= 1024
+                value = diamond.convertor.bytes(value, units, self.config['byte_unit'])
     
                 self.publish(name, value)
             except ValueError:
