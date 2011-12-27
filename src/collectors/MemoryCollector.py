@@ -58,18 +58,19 @@ class MemoryCollector(diamond.collector.Collector):
         file = open(self.PROC)
         data = file.read()
         file.close()
-        
+
         for line in data.splitlines():
             try:
                 name, value, units = line.split()
                 name = name.rstrip(':')
                 value = int(value)
-                
-                if name in _KEY_MAPPING and not self.config.has_key('detailed'):
+
+                if name not in _KEY_MAPPING and not self.config.has_key('detailed'):
                     continue
-                
-                value = diamond.convertor.bytes(value, units, self.config['byte_unit'])
-    
+
+                if 'byte_unit' in self.config:
+                    value = diamond.convertor.bytes(value, units, self.config['byte_unit'])
+
                 self.publish(name, value)
             except ValueError:
                 continue
