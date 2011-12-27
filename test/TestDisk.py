@@ -10,6 +10,8 @@ import disk
 
 class TestDisk(unittest.TestCase):
     @patch('__builtin__.open')
+    @patch('os.access', Mock(return_value=True))
+
     def test_get_file_systems(self, open_mock):
         result = None
         open_mock.return_value = StringIO("""
@@ -48,6 +50,8 @@ none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
         return result
 
     @patch('__builtin__.open')
+    @patch('os.access', Mock(return_value=True))
+
     def test_get_disk_statistics(self, open_mock):
         result = None
         open_mock.return_value = StringIO("""

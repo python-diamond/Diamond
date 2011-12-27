@@ -17,6 +17,8 @@ class TestMemoryCollector(CollectorTestCase):
         self.collector = MemoryCollector(config, None)
 
     @patch('__builtin__.open')
+    @patch('os.access', Mock(return_value=True))
+    
     @patch.object(Collector, 'publish')
     def test_should_open_proc_meminfo(self, publish_mock, open_mock):
         open_mock.return_value = StringIO('')
@@ -29,18 +31,19 @@ class TestMemoryCollector(CollectorTestCase):
         self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
-            'total'       : '49554212',
-            'free'        : '35194496',
-            'buffers'     : '1526304',
-            'cached'      : '10726736',
-            'active'      : '10022168',
-            'inactive'    : '2524928',
-            'swap_total'  : '262143996',
-            'swap_free'   : '262143996',
-            'swap_cached' : '0',
-            'vm_total'    : '34359738367',
-            'vm_used'     : '445452',
-            'vm_chunk'    : '34311049240'
+            'MemTotal'      : 49554212,
+            'MemFree'       : 35194496,
+            'Buffers'       : 1526304,
+            'Cached'        : 10726736,
+            'Active'        : 10022168,
+            'Dirty'         : 24748,
+            'Inactive'      : 2524928,
+            'SwapTotal'     : 262143996,
+            'SwapFree'      : 262143996,
+            'SwapCached'    : 0,
+            'VmallocTotal'  : 34359738367,
+            'VmallocUsed'   : 445452,
+            'VmallocChunk'  : 34311049240
         })
 
 ################################################################################

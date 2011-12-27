@@ -18,6 +18,7 @@ class TestDiskSpaceCollector(CollectorTestCase):
 
         self.collector = DiskSpaceCollector(config, None)
 
+    @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         statvfs_mock = Mock()
@@ -34,15 +35,15 @@ class TestDiskSpaceCollector(CollectorTestCase):
 
         with nested(
             patch('os.stat'),
-            patch('os.major', return_value = 9),
-            patch('os.minor', return_value = 0),
-            patch('__builtin__.open', return_value = get_fixture('proc_mounts'))
+            patch('os.major', Mock(return_value = 9)),
+            patch('os.minor', Mock(return_value = 0)),
+            patch('__builtin__.open', Mock(return_value = get_fixture('proc_mounts')))
         ):
             file_systems_mock = disk.get_file_systems()
 
         with nested(
-            patch('disk.get_file_systems', return_value = file_systems_mock),
-            patch('os.statvfs', return_value = statvfs_mock)
+            patch('disk.get_file_systems', Mock(return_value = file_systems_mock)),
+            patch('os.statvfs', Mock(return_value = statvfs_mock))
         ):
             self.collector.collect()
 
