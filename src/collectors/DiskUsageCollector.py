@@ -37,6 +37,7 @@ class DiskUsageCollector(diamond.collector.Collector):
         'writes_merged':            4294967295,
         'writes_kbytes':            (((diamond.collector.MAX_COUNTER + 1) / 2) - 1),
         'writes_milliseconds':      4294967295,
+        'iops_in_progress':         diamond.collector.MAX_COUNTER,
         'io_milliseconds':          4294967295,
         'io_milliseconds_weighted': 4294967295
     }
@@ -49,7 +50,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                 continue
 
             for key, value in info._asdict().iteritems():
-                if key == 'device' or key == 'iops_in_progress':
+                if key == 'device':
                     continue
 
                 if key.endswith('sectors'):
@@ -60,4 +61,3 @@ class DiskUsageCollector(diamond.collector.Collector):
                 metric_value = self.derivative(metric_name, value, self.MAX_VALUES[key])
 
                 self.publish(metric_name, metric_value)
-
