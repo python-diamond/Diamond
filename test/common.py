@@ -44,14 +44,14 @@ class CollectorTestCase(unittest.TestCase):
 
         actual_value = calls[0][0][1]
         expected_value = value
-        precision = None
+        precision = 0
 
         if isinstance(value, tuple):
             expected_value, precision = expected_value
 
         message = '%s: actual %r, expected %r' % (key, actual_value, expected_value)
 
-        if precision:
+        if precision is not None:
             self.assertAlmostEqual(actual_value, expected_value, places = precision, msg = message)
         else:
             self.assertEqual(actual_value, expected_value, message)
