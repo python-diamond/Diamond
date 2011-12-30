@@ -21,6 +21,7 @@
 
 from diamond import *
 import diamond.collector
+import diamond.convertor
 
 class NetworkCollector(diamond.collector.Collector):
     """
@@ -31,60 +32,34 @@ class NetworkCollector(diamond.collector.Collector):
     PROC = '/proc/net/dev'
 
     MAX_VALUES = {
-        'rx_bytes': diamond.collector.MAX_COUNTER,
-        'rx_packets': diamond.collector.MAX_COUNTER,
-        'rx_errors': diamond.collector.MAX_COUNTER,
-        'rx_drop': diamond.collector.MAX_COUNTER,
-        'rx_fifo': diamond.collector.MAX_COUNTER,
-        'rx_frame': diamond.collector.MAX_COUNTER,
+        'rx_bytes':      diamond.collector.MAX_COUNTER,
+        'rx_packets':    diamond.collector.MAX_COUNTER,
+        'rx_errors':     diamond.collector.MAX_COUNTER,
+        'rx_drop':       diamond.collector.MAX_COUNTER,
+        'rx_fifo':       diamond.collector.MAX_COUNTER,
+        'rx_frame':      diamond.collector.MAX_COUNTER,
         'rx_compressed': diamond.collector.MAX_COUNTER,
-        'rx_multicast': diamond.collector.MAX_COUNTER,
-        'tx_bytes': diamond.collector.MAX_COUNTER,
-        'tx_packets': diamond.collector.MAX_COUNTER,
-        'tx_errors': diamond.collector.MAX_COUNTER,
-        'tx_drop': diamond.collector.MAX_COUNTER,
-        'tx_fifo': diamond.collector.MAX_COUNTER,
-        'tx_frame': diamond.collector.MAX_COUNTER,
+        'rx_multicast':  diamond.collector.MAX_COUNTER,
+        'tx_bytes':      diamond.collector.MAX_COUNTER,
+        'tx_packets':    diamond.collector.MAX_COUNTER,
+        'tx_errors':     diamond.collector.MAX_COUNTER,
+        'tx_drop':       diamond.collector.MAX_COUNTER,
+        'tx_fifo':       diamond.collector.MAX_COUNTER,
+        'tx_frame':      diamond.collector.MAX_COUNTER,
         'tx_compressed': diamond.collector.MAX_COUNTER,
-        'tx_multicast': diamond.collector.MAX_COUNTER,
+        'tx_multicast':  diamond.collector.MAX_COUNTER,
         }
-
-    def convert_to_mbit(self, value):
-        """
-        Convert bytes to megabits.
-        """
-        return ((float(value) / 1024.0 / 1024.0) * 8.0 )
-
-    def convert_to_kbit(self, value):
-        """
-        Convert bytes to kilobits.
-        """
-        return ((float(value) / 1024.0 ) * 8.0 )
-
-    def convert_to_mbyte(self, value):
-        """
-        Convert bytes to megabytes.
-        """
-        return (float(value) / 1024.0 / 1024.0)
-
-    def convert_to_kbyte(self, value):
-        """
-        Convert bytes to kilobytes.
-        """
-        return (float(value) / 1024.0 )
 
     def collect(self):
         """
         Collect network interface stats.
         """
+
         if not os.access(self.PROC, os.R_OK):
             return None
 
-        # Initialize Units
-        units = {
-            'mbits': self.convert_to_mbit,
-            'mbytes': self.convert_to_mbyte,
-            }
+        convertor = diamond.convertor.binary()
+
         # Initialize results
         results = {}
         # Open File
@@ -108,11 +83,14 @@ class NetworkCollector(diamond.collector.Collector):
                 metric_name = '.'.join([device, s])
                 # Get Metric Value
                 metric_value = self.derivative(metric_name, long(v), self.MAX_VALUES[s])
+
                 # Convert rx_bytes and tx_bytes
                 if s == 'rx_bytes' or s == 'tx_bytes':
-                    for u in units:
+                    convertor.set(value = metric_value, unit = 'Byte')
+
+                    for u in self.config['byte_unit'].split():
                         # Public Converted Metric
-                        self.publish(metric_name.replace('bytes', u), units[u](metric_value))
+                        self.publish(metric_name.replace('bytes', u), convertor.convert(unit = u))
                 else:
                     # Publish Metric Derivative
                     self.publish(metric_name, metric_value)

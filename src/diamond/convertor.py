@@ -34,9 +34,9 @@ def bytes(value, oldUnits, newUnits):
     Convert a byte value to another form
     '''
     value = float(value)
-    
+
     # Convert to Bytes
-    
+
     if oldUnits == 'kB' or oldUnits == 'KiB':
         value = value * 1024
     elif oldUnits == 'MB' or oldUnits == 'MiB':
@@ -45,9 +45,9 @@ def bytes(value, oldUnits, newUnits):
         value = value * 1024 * 1024 * 1024
     elif oldUnits == 'TB' or oldUnits == 'TiB':
         value = value * 1024 * 1024 * 1024 * 1024
-        
+
     # Convert to new units
-    
+
     if newUnits == 'kB' or newUnits == 'KiB':
         value = value / 1024.0
     elif newUnits == 'MB' or newUnits == 'MiB':
@@ -56,5 +56,169 @@ def bytes(value, oldUnits, newUnits):
         value = value / 1024.0 / 1024.0 / 1024.0
     elif newUnits == 'TB' or newUnits == 'TiB':
         value = value / 1024.0 / 1024.0 / 1024.0 / 1024.0
-        
+
     return value
+
+class binary:
+    '''
+    Store the value in bits so we can convert between things easily
+    '''
+    value = None
+
+    def __init__(self, value = None, unit = None):
+        self.convert(value = value, unit = unit)
+
+    def set( self, value = None, unit = None):
+        return self.convert( value = value, unit = unit)
+
+    def convert( self, value = None, unit = None):
+        if not unit:
+            return self.bit(value = value)
+
+        if unit in [ 'bit', 'b']:
+            return self.bit(value = value)
+        if unit in [ 'kilobit', 'kbit', 'Kibit']:
+            return self.kilobit(value = value)
+        if unit in [ 'megabit', 'Mbit', 'Mibit']:
+            return self.megabit(value = value)
+        if unit in [ 'gigabit', 'Gbit', 'Gibit']:
+            return self.gigabit(value = value)
+        if unit in [ 'terabit', 'Tbit', 'Tibit']:
+            return self.terabit(value = value)
+        if unit in [ 'petabit', 'Pbit', 'Pibit']:
+            return self.petabit(value = value)
+        if unit in [ 'exabit', 'Ebit', 'Eibit']:
+            return self.exabit(value = value)
+        if unit in [ 'zettabit', 'Zbit', 'Zibit']:
+            return self.zettabit(value = value)
+        if unit in [ 'yottabit', 'Ybit', 'Yibit']:
+            return self.yottabit(value = value)
+
+        if unit in [ 'Byte', 'B']:
+            return self.byte(value = value)
+        if unit in [ 'kilobyte', 'kB', 'KiB']:
+            return self.kilobyte(value = value)
+        if unit in [ 'megabyte', 'MB', 'MiB']:
+            return self.megabyte(value = value)
+        if unit in [ 'gigabyte', 'GB', 'GiB']:
+            return self.gigabyte(value = value)
+        if unit in [ 'terabyte', 'TB', 'TiB']:
+            return self.terabyte(value = value)
+        if unit in [ 'petabyte', 'PB', 'PiB']:
+            return self.petabyte(value = value)
+        if unit in [ 'exabyte', 'EB', 'EiB']:
+            return self.exabyte(value = value)
+        if unit in [ 'zettabyte', 'ZB', 'ZiB']:
+            return self.zettabyte(value = value)
+        if unit in [ 'yottabyte', 'YB', 'YiB']:
+            return self.yottabyte(value = value)
+
+        raise NotImplementedError()
+
+    def bit(self, value = None):
+        if value is None:
+            return self.value
+        else:
+            self.value = float(value)
+
+    def kilobit(self, value = None):
+        if value is None:
+            return self.bit() / 1024
+        else:
+            self.bit(value * 1024)
+
+    def megabit(self, value = None):
+        if value is None:
+            return self.kilobit() / 1024
+        else:
+            self.kilobit(value * 1024)
+
+    def gigabit(self, value = None):
+        if value is None:
+            return self.megabit() / 1024
+        else:
+            self.megabit(value * 1024)
+
+    def terabit(self, value = None):
+        if value is None:
+            return self.gigabit() / 1024
+        else:
+            self.gigabit(value * 1024)
+
+    def petabit(self, value = None):
+        if value is None:
+            return self.terabit() / 1024
+        else:
+            self.terabit(value * 1024)
+
+    def exabit(self, value = None):
+        if value is None:
+            return self.petabit() / 1024
+        else:
+            self.petabit(value * 1024)
+
+    def zettabit(self, value = None):
+        if value is None:
+            return self.exabit() / 1024
+        else:
+            self.exabit(value * 1024)
+
+    def yottabit(self, value = None):
+        if value is None:
+            return self.zettabit() / 1024
+        else:
+            self.zettabit(value * 1024)
+
+    def byte(self, value = None):
+        if value is None:
+            return self.value / 8
+        else:
+            self.value = value * 8
+
+    def kilobyte(self, value = None):
+        if value is None:
+            return self.byte() / 1024
+        else:
+            self.byte(value * 1024)
+
+    def megabyte(self, value = None):
+        if value is None:
+            return self.kilobyte() / 1024
+        else:
+            self.kilobyte(value * 1024)
+
+    def gigabyte(self, value = None):
+        if value is None:
+            return self.megabyte() / 1024
+        else:
+            self.megabyte(value * 1024)
+
+    def terabyte(self, value = None):
+        if value is None:
+            return self.gigabyte() / 1024
+        else:
+            self.gigabyte(value * 1024)
+
+    def petabyte(self, value = None):
+        if value is None:
+            return self.terabyte() / 1024
+        else:
+            self.terabyte(value * 1024)
+
+    def exabyte(self, value = None):
+        if value is None:
+            return self.petabyte() / 1024
+        else:
+            self.petabyte(value * 1024)
+
+    def zettabyte(self, value = None):
+        if value is None:
+            return self.exabyte() / 1024
+        else:
+            self.exabyte(value * 1024)
+
+    def yottabyte(self, value = None):
+        if value is None:
+            return self.zettabyte() / 1024
+        else:
+            self.zettabyte(value * 1024)
