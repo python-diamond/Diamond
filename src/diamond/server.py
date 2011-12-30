@@ -208,6 +208,11 @@ class Server(object):
             self.log.warn("Skipped loading invalid Collector: %s" % (c.__class__.__name__))
             return
 
+        # Disabled?
+        if c.config.has_key('disabled'):
+            self.log.warn("Skipped loading disabled Collector: %s" % (c.__class__.__name__))
+            return
+
         # Get collector schedule
         for name,schedule in c.get_schedule().items():
             # Get scheduler args
@@ -218,9 +223,9 @@ class Server(object):
                 self.scheduler.cancel(self.tasks[name])
                 # Log
                 self.log.debug("Canceled task: %s" % (name))
-                
+
             method = diamond.scheduler.method.sequential
-            
+
             if c.config.has_key('method'):
                 if c.config['method'] == 'Threaded':
                     method = diamond.scheduler.method.threaded
