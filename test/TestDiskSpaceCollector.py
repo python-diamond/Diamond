@@ -13,7 +13,8 @@ import disk
 class TestDiskSpaceCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('DiskSpaceCollector', {
-            'interval': 10
+            'interval'  : 10,
+            'byte_unit' : 'gigabyte'
         })
 
         self.collector = DiskSpaceCollector(config, None)
@@ -48,12 +49,12 @@ class TestDiskSpaceCollector(CollectorTestCase):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
-            'root.gbytes_used'  : ( 284.525, 2),
-            'root.gbytes_free'  : (1090.826, 2),
-            'root.gbytes_avail' : (1020.962, 2),
-            'root.inodes_used'  : 348873,
-            'root.inodes_free'  : 91229495,
-            'root.inodes_avail' : 91229495
+            'root.gigabyte_used'  : ( 284.525, 2),
+            'root.gigabyte_free'  : (1090.826, 2),
+            'root.gigabyte_avail' : (1020.962, 2),
+            'root.inodes_used'    : 348873,
+            'root.inodes_free'    : 91229495,
+            'root.inodes_avail'   : 91229495
         })
 
 ################################################################################

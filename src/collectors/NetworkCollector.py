@@ -58,7 +58,7 @@ class NetworkCollector(diamond.collector.Collector):
         if not os.access(self.PROC, os.R_OK):
             return None
 
-        convertor = diamond.convertor.binary()
+
 
         # Initialize results
         results = {}
@@ -86,11 +86,11 @@ class NetworkCollector(diamond.collector.Collector):
 
                 # Convert rx_bytes and tx_bytes
                 if s == 'rx_bytes' or s == 'tx_bytes':
-                    convertor.set(value = metric_value, unit = 'Byte')
+                    convertor = diamond.convertor.binary(value = metric_value, unit = 'Byte')
 
                     for u in self.config['byte_unit'].split():
                         # Public Converted Metric
-                        self.publish(metric_name.replace('bytes', u), convertor.convert(unit = u))
+                        self.publish(metric_name.replace('bytes', u), convertor.get(unit = u))
                 else:
                     # Publish Metric Derivative
                     self.publish(metric_name, metric_value)

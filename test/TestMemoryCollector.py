@@ -11,14 +11,15 @@ from MemoryCollector import MemoryCollector
 class TestMemoryCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MemoryCollector', {
-            'interval': 10
+            'interval'  : 10,
+            'byte_unit' : 'kilobyte'
         })
 
         self.collector = MemoryCollector(config, None)
 
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
-    
+
     @patch.object(Collector, 'publish')
     def test_should_open_proc_meminfo(self, publish_mock, open_mock):
         open_mock.return_value = StringIO('')
