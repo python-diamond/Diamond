@@ -36,17 +36,20 @@ class binary:
     value = None
 
     def __init__(self, value = None, unit = None):
-        self.get(value = value, unit = unit)
+        self.do(value = value, unit = unit)
 
     @staticmethod
-    def convert ( value = None, oldUnit = None, newUnit = None):
+    def convert(value = None, oldUnit = None, newUnit = None):
         convertor = binary(value = value, unit = oldUnit)
         return convertor.get(unit = newUnit)
 
-    def set( self, value = None, unit = None):
-        return self.get( value = value, unit = unit)
+    def set(self, value, unit = None):
+        return self.do( value = value, unit = unit )
 
-    def get( self, value = None, unit = None):
+    def get(self, unit = None):
+        return self.do(unit = unit)
+
+    def do(self, value = None, unit = None):
         if not unit:
             return self.bit(value = value)
 
