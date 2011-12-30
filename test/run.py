@@ -6,6 +6,7 @@ from TestCPUCollector import *
 from TestDisk import *
 from TestDiskSpaceCollector import *
 from TestDiskUsageCollector import *
+from TestExampleCollector import *
 from TestFilestatCollector import *
 from TestLoadAverageCollector import *
 from TestMemoryCollector import *
