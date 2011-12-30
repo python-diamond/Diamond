@@ -105,8 +105,6 @@ class DiskUsageCollector(diamond.collector.Collector):
                 metrics['concurrent_io']                = round((metrics['reads_per_second'] + metrics['writes_per_second']) * (metrics['service_time'] / 1000), 1);
 
                 # Only publish when we have io figures
-                print
                 for key in metrics:
                     metric_name = '.'.join([info.device, key])
                     self.publish(metric_name, metrics[key])
-                    print "'%s' : %s," % (metric_name, str(metrics[key]))
