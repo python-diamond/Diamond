@@ -32,7 +32,7 @@ _DiskStatistics = namedtuple('DiskStatistics', '''
     device,
     reads, reads_merged, reads_sectors,  reads_milliseconds,
     writes, writes_merged, writes_sectors, writes_milliseconds,
-    iops_in_progress, io_milliseconds, io_milliseconds_weighted
+    io_in_progress, io_milliseconds, io_milliseconds_weighted
 ''')
 
 def get_disk_labels():
@@ -43,13 +43,13 @@ def get_disk_labels():
     labels = {}
     if not os.path.isdir(path):
         return labels
-    
+
     for label in os.listdir(path):
         device = os.path.realpath(path+'/'+label)
         labels[device] = label
-        
+
     return labels
-        
+
 
 # iostat(1): Each sector has size of 512 bytes.
 

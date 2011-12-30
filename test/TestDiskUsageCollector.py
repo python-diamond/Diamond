@@ -58,7 +58,7 @@ class TestDiskUsageCollector(CollectorTestCase):
             'sda.writes_merged'            : 1.3,
             'sda.writes_kbytes'            : 18.8,
             'sda.writes_milliseconds'      : 10.0,
-            'sda.iops_in_progress'         : 0.0,
+            'sda.io_in_progress'           : 0.0,
             'sda.io_milliseconds'          : 9.0,
             'sda.io_milliseconds_weighted' : 14.0,
 
@@ -70,7 +70,7 @@ class TestDiskUsageCollector(CollectorTestCase):
             'sdb.writes_merged'            : 1.3,
             'sdb.writes_kbytes'            : 16.4,
             'sdb.writes_milliseconds'      : 6.0,
-            'sdb.iops_in_progress'         : 0.0,
+            'sdb.io_in_progress'           : 0.0,
             'sdb.io_milliseconds'          : 8.0,
             'sdb.io_milliseconds_weighted' : 21.0,
 
@@ -82,7 +82,7 @@ class TestDiskUsageCollector(CollectorTestCase):
             'sdc.writes_merged'            : 2.3,
             'sdc.writes_kbytes'            : 20.0,
             'sdc.writes_milliseconds'      : 9.0,
-            'sdc.iops_in_progress'         : 0.0,
+            'sdc.io_in_progress'           : 0.0,
             'sdc.io_milliseconds'          : 10.0,
             'sdc.io_milliseconds_weighted' : 20.0,
 
@@ -94,7 +94,7 @@ class TestDiskUsageCollector(CollectorTestCase):
             'sdd.writes_merged'            : 3.5,
             'sdd.writes_kbytes'            : 27.2,
             'sdd.writes_milliseconds'      : 5.0,
-            'sdd.iops_in_progress'         : 0.0,
+            'sdd.io_in_progress'           : 0.0,
             'sdd.io_milliseconds'          : 9.0,
             'sdd.io_milliseconds_weighted' : 20.0,
 
@@ -106,7 +106,7 @@ class TestDiskUsageCollector(CollectorTestCase):
             'md0.writes_merged'            : 0.0,
             'md0.writes_kbytes'            : 34.4,
             'md0.writes_milliseconds'      : 0.0,
-            'md0.iops_in_progress'         : 0.0,
+            'md0.io_in_progress'           : 0.0,
             'md0.io_milliseconds'          : 0.0,
             'md0.io_milliseconds_weighted' : 0.0,
         })
