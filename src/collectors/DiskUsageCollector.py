@@ -31,11 +31,9 @@ class DiskUsageCollector(diamond.collector.Collector):
     MAX_VALUES = {
         'reads':                    4294967295,
         'reads_merged':             4294967295,
-        'reads_kbytes':             (((diamond.collector.MAX_COUNTER + 1) / 2) - 1),
         'reads_milliseconds':       4294967295,
         'writes':                   4294967295,
         'writes_merged':            4294967295,
-        'writes_kbytes':            (((diamond.collector.MAX_COUNTER + 1) / 2) - 1),
         'writes_milliseconds':      4294967295,
         'io_in_progress':           diamond.collector.MAX_COUNTER,
         'io_milliseconds':          4294967295,
@@ -44,8 +42,10 @@ class DiskUsageCollector(diamond.collector.Collector):
 
     def collect(self):
         for key, info in disk.get_disk_statistics().iteritems():
-            name = info.device
+            metrics = {}
 
+            name = info.device
+            # TODO: Make this configurable
             if not re.match(r'md[0-9]$|sd[a-z]+$|xvd[a-z]+$', name):
                 continue
 
@@ -54,10 +54,59 @@ class DiskUsageCollector(diamond.collector.Collector):
                     continue
 
                 if key.endswith('sectors'):
-                    key = key.replace('sectors', 'kbytes')
+                    key = key.replace('sectors', self.config['byte_unit'])
+                    # Assume 512 byte sectors
+                    # TODO: Fix me to be detectable
                     value = value / 2
+                    value = diamond.convertor.binary.convert(value = value, oldUnit = 'kB', newUnit = self.config['byte_unit'])
+                    self.MAX_VALUES[key] = diamond.convertor.binary.convert(value = diamond.collector.MAX_COUNTER, oldUnit = 'Byte', newUnit = self.config['byte_unit'])
 
                 metric_name = '.'.join([info.device, key])
                 metric_value = self.derivative(metric_name, value, self.MAX_VALUES[key])
 
-                self.publish(metric_name, metric_value)
+                metrics[key] = metric_value
+
+            # TODO: Make this correct!
+            time_delta = self.config['interval']
+
+            metrics['read_requests_merged_per_second']  = metrics['reads_merged'] / time_delta
+            metrics['write_requests_merged_per_second'] = metrics['writes_merged'] / time_delta
+            metrics['reads_per_second']                 = metrics['reads'] / time_delta
+            metrics['writes_per_second']                = metrics['writes'] / time_delta
+
+            metric_name = 'read_%s_per_second' % (self.config['byte_unit'])
+            key = 'reads_%s' % (self.config['byte_unit'])
+            metrics[metric_name]                        = metrics[key] / time_delta
+
+            metric_name = 'write_%s_per_second' % (self.config['byte_unit'])
+            key = 'writes_%s' % (self.config['byte_unit'])
+            metrics[metric_name]                        = metrics[key] / time_delta
+
+            metric_name = 'average_request_size_%s' % (self.config['byte_unit'])
+            metrics[metric_name]                        = 0
+            metrics['average_queue_length']             = metrics['io_milliseconds'] / time_delta * 1000
+            metrics['await']                            = 0
+            metrics['service_time']                     = 0
+            metrics['util_percentage']                  = (metrics['io_milliseconds'] / (time_delta * 1000)) * 100
+            metrics['iops']                             = (metrics['reads'] + metrics['writes']) / time_delta
+            metrics['io']                               = metrics['reads'] + metrics['writes']
+            metrics['concurrent_io']                    = 0
+
+            if metrics['io'] > 0:
+                rkey = 'reads_%s' % (self.config['byte_unit'])
+                wkey = 'writes_%s' % (self.config['byte_unit'])
+                metric_name = 'average_request_size_%s' % (self.config['byte_unit'])
+
+                metrics[metric_name]                    = (metrics[rkey] + metrics[wkey] ) / metrics['io']
+                metrics['service_time']                 = metrics['io_milliseconds'] / metrics['io']
+                metrics['await']                        = metrics['io_milliseconds_weighted'] / metrics['io']
+
+                # http://www.scribd.com/doc/15013525/Your-Disk-Array-is-Slower-Than-it-Should-Be Page 28
+                metrics['concurrent_io']                = round((metrics['reads_per_second'] + metrics['writes_per_second']) * (metrics['service_time'] / 1000), 1);
+
+                # Only publish when we have io figures
+                print
+                for key in metrics:
+                    metric_name = '.'.join([info.device, key])
+                    self.publish(metric_name, metrics[key])
+                    print "'%s' : %s," % (metric_name, str(metrics[key]))
