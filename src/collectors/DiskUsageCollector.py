@@ -35,7 +35,6 @@ class DiskUsageCollector(diamond.collector.Collector):
         'writes':                   4294967295,
         'writes_merged':            4294967295,
         'writes_milliseconds':      4294967295,
-        'io_in_progress':           diamond.collector.MAX_COUNTER,
         'io_milliseconds':          4294967295,
         'io_milliseconds_weighted': 4294967295
     }
@@ -62,12 +61,14 @@ class DiskUsageCollector(diamond.collector.Collector):
                     self.MAX_VALUES[key] = diamond.convertor.binary.convert(value = diamond.collector.MAX_COUNTER, oldUnit = 'Byte', newUnit = self.config['byte_unit'])
 
                 metric_name = '.'.join([info.device, key])
-                metric_value = self.derivative(metric_name, value, self.MAX_VALUES[key])
+                # io_in_progress is a point in time counter, don't derivative
+                if key != 'io_in_progress':
+                    metric_value = self.derivative(metric_name, value, self.MAX_VALUES[key])
 
                 metrics[key] = metric_value
 
             # TODO: Make this correct!
-            time_delta = self.config['interval']
+            time_delta = float(self.config['interval'])
 
             metrics['read_requests_merged_per_second']  = metrics['reads_merged'] / time_delta
             metrics['write_requests_merged_per_second'] = metrics['writes_merged'] / time_delta
@@ -84,12 +85,12 @@ class DiskUsageCollector(diamond.collector.Collector):
 
             metric_name = 'average_request_size_%s' % (self.config['byte_unit'])
             metrics[metric_name]                        = 0
-            metrics['average_queue_length']             = metrics['io_milliseconds'] / time_delta * 1000
+            metrics['average_queue_length']             = metrics['io_milliseconds'] / time_delta * 1000.0
             metrics['await']                            = 0
             metrics['service_time']                     = 0
-            metrics['util_percentage']                  = (metrics['io_milliseconds'] / (time_delta * 1000)) * 100
             metrics['iops']                             = (metrics['reads'] + metrics['writes']) / time_delta
             metrics['io']                               = metrics['reads'] + metrics['writes']
+            metrics['util_percentage']                  = 0
             metrics['concurrent_io']                    = 0
 
             if metrics['io'] > 0:
@@ -100,9 +101,10 @@ class DiskUsageCollector(diamond.collector.Collector):
                 metrics[metric_name]                    = (metrics[rkey] + metrics[wkey] ) / metrics['io']
                 metrics['service_time']                 = metrics['io_milliseconds'] / metrics['io']
                 metrics['await']                        = metrics['io_milliseconds_weighted'] / metrics['io']
+                metrics['util_percentage']              = (metrics['io'] * metrics['service_time'] / 1000.0) * 100.0
 
                 # http://www.scribd.com/doc/15013525/Your-Disk-Array-is-Slower-Than-it-Should-Be Page 28
-                metrics['concurrent_io']                = round((metrics['reads_per_second'] + metrics['writes_per_second']) * (metrics['service_time'] / 1000), 1);
+                metrics['concurrent_io']                = (metrics['reads_per_second'] + metrics['writes_per_second']) * (metrics['service_time'] / 1000.0)
 
                 # Only publish when we have io figures
                 for key in metrics:
