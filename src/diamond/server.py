@@ -146,10 +146,6 @@ class Server(object):
 
                 modname = f[:-3]
                 
-                # If the master config has this module disabled, don't load at all
-                if self.config['collectors'].has_key(modname) and self.config['collectors'][modname].has_key('disabled'):
-                    self.log.debug("Module %s is disabled." % (modname))
-                    continue
                 # Stat module file to get mtime
                 st = os.stat(os.path.join(path, f))
                 mtime = st.st_mtime
@@ -222,7 +218,7 @@ class Server(object):
             return
 
         # Disabled?
-        if c.config.has_key('disabled'):
+        if c.config['enabled'] != "True":
             self.log.warn("Skipped loading disabled Collector: %s" % (c.__class__.__name__))
             return
 
