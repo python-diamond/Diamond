@@ -2,13 +2,9 @@ include LICENSE
 include README.md
 include MANIFEST.in
 include bin/*
-include examples/*
 include debian/*
 include conf/*.example
 exclude conf/*.conf
 include conf/collectors/*.conf
-include test/common.py
-include test/fixtures/*
-include contrib/*
-include contrib/*/*
+include test.py
 
