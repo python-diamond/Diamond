@@ -1,6 +1,5 @@
 watch('src/(.*)\.py')     { go }
-watch('test/(.*)\.py')    { go }
-watch('test/fixtures/.*') { go }
+watch('src/(.*)/fixtures/.*') { go }
 
 Signal.trap('QUIT') { go }
 Signal.trap('INT')  { abort("\n") }
