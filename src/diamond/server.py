@@ -129,14 +129,27 @@ class Server(object):
         sys.path.append(path)
         # Load all the files in path
         for f in os.listdir(path):
+            
+            # Are we a directory? If so process down the stack
+            fpath = os.path.join(path, f)
+            if os.path.isdir(fpath):
+                subcollectors = self.load_collectors(fpath)
+                for key in subcollectors:
+                    collectors[key] = subcollectors[key]
+            
             # Ignore anything that isn't a .py file
-            if len(f) > 3 and f[-3:] == '.py':
+            elif os.path.isfile(fpath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'Test':
 
                 # Check filter
                 if filter and os.path.join(path, f) != filter:
                     continue
 
                 modname = f[:-3]
+                
+                # If the master config has this module disabled, don't load at all
+                if self.config['collectors'].has_key(modname) and self.config['collectors'][modname].has_key('disabled'):
+                    self.log.debug("Module %s is disabled." % (modname))
+                    continue
                 # Stat module file to get mtime
                 st = os.stat(os.path.join(path, f))
                 mtime = st.st_mtime

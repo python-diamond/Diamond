@@ -19,6 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import inspect
+
 from diamond import *
 from diamond.metric import Metric
 
@@ -64,13 +66,22 @@ class Collector(object):
         if cls.__name__ in config['collectors']:
             # Merge Collector config section
             self.config.merge(config['collectors'][cls.__name__])
-
+        
+        # Check for config file in collector directory
+        configfile = os.path.join(os.path.dirname(inspect.getfile(self.__class__)), cls.__name__) + '.conf'
+        if os.path.exists(configfile):
+            # Merge Collector config file
+            try:
+                self.config.merge(configobj.ConfigObj(configfile))
+            except TypeError:
+                pass
+        
         # Check for config file in config directory
         configfile = os.path.join(config['server']['collectors_config_path'], cls.__name__) + '.conf'
         if os.path.exists(configfile):
             # Merge Collector config file
             self.config.merge(configobj.ConfigObj(configfile))
-
+        
     def get_default_config(self):
         """
         Return the default config for the collector

@@ -95,3 +95,30 @@ method = Sequential
 
 # Default numeric output
 byte_unit = b
+
+[[ExampleCollector]]
+disabled =
+
+[[HAProxyCollector]]
+disabled =
+
+[[HttpdCollector]]
+disabled =
+
+[[InterruptCollector]]
+disabled =
+
+[[MySQLCollector]]
+disabled =
+
+[[NginxCollector]]
+disabled =
+
+[[PingCollector]]
+disabled =
+
+[[SNMPInterfaceCollector]]
+disabled =
+
+[[UserScriptsCollector]]
+disabled =
