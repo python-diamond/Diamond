@@ -30,7 +30,7 @@ collectors_path = /usr/share/diamond/collectors/
 collectors_config_path = /etc/diamond/collectors/
 
 # Interval to reload collectors
-collectors_reload_interval = 300
+collectors_reload_interval = 3600
 
 ################################################################################
 ### Options for handlers
@@ -81,6 +81,9 @@ batch = 256
 [[default]]
 ### Defaults options for all Collectors
 
+# All collectors are disabled by default
+enabled = False
+
 # Path Prefix
 path_prefix = servers
 
@@ -95,30 +98,3 @@ method = Sequential
 
 # Default numeric output
 byte_unit = b
-
-[[ExampleCollector]]
-disabled =
-
-[[HAProxyCollector]]
-disabled =
-
-[[HttpdCollector]]
-disabled =
-
-[[InterruptCollector]]
-disabled =
-
-[[MySQLCollector]]
-disabled =
-
-[[NginxCollector]]
-disabled =
-
-[[PingCollector]]
-disabled =
-
-[[SNMPInterfaceCollector]]
-disabled =
-
-[[UserScriptsCollector]]
-disabled =
