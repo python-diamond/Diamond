@@ -19,6 +19,8 @@ data_files=[
 ]
 
 def pkgPath(root, path, rpath="/"):
+    if not os.path.exists(root):
+        return
     print (root+rpath, glob(path+'/*'))
     data_files.append((root+rpath, glob(path+'/*')))
     for spath in os.listdir(path):
