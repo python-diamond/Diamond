@@ -13,7 +13,7 @@ else:
 data_files=[
     ('/etc/diamond',                           glob('conf/*.conf*') ),
     ('/etc/diamond/collectors',                glob('conf/collectors/*') ),
-    ('share/diamond',                          glob('test.py') ),
+    ('share/diamond',                          ['test.py', 'LICENSE', 'README.md'] ),
     ('share/diamond/user_scripts',             [] ),
 ]
 
