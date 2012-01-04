@@ -19,7 +19,7 @@ data_files=[
 ]
 
 def pkgPath(root, path, rpath="/"):
-    if not os.path.exists(root):
+    if not os.path.exists(path):
         return
     print (root+rpath, glob(path+'/*'))
     data_files.append((root+rpath, glob(path+'/*')))
