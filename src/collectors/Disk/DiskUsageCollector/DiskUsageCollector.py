@@ -66,6 +66,8 @@ class DiskUsageCollector(diamond.collector.Collector):
                 # io_in_progress is a point in time counter, don't derivative
                 if key != 'io_in_progress':
                     metric_value = self.derivative(metric_name, value, self.MAX_VALUES[key])
+                else:
+                    metric_value = value;
 
                 metrics[key] = metric_value
 

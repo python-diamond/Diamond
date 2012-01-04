@@ -55,6 +55,7 @@ class CollectorTestCase(unittest.TestCase):
             expected_value, precision = expected_value
 
         message = '%s: actual %r, expected %r' % (key, actual_value, expected_value)
+        #print message
 
         if precision is not None:
             self.assertAlmostEqual(float(actual_value), float(expected_value), places = precision, msg = message)
