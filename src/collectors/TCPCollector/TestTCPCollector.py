@@ -47,10 +47,10 @@ TcpExt: 0 1 2
         self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
-            'ListenOverflows'  : '0',
-            'ListenDrops'      : '0',
-            'TCPLoss'          : '188',
-            'TCPTimeouts'      : '15265'
+            'ListenOverflows'  : 0,
+            'ListenDrops'      : 0,
+            'TCPLoss'          : 188,
+            'TCPTimeouts'      : 15265
         })
 
 ################################################################################

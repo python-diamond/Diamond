@@ -33,11 +33,11 @@ class CollectorTestCase(unittest.TestCase):
         if not os.access(file, os.R_OK):
             print "Missing Fixture "+file
         return file
-    
+
     def getFixture(self, fixture_name):
         with open(self.getFixturePath(fixture_name), 'r') as file:
             return StringIO(file.read())
-    
+
     def assertPublished(self, mock, key, value):
         calls = filter(lambda x: x[0][0] == key, mock.call_args_list)
 
@@ -57,7 +57,7 @@ class CollectorTestCase(unittest.TestCase):
         message = '%s: actual %r, expected %r' % (key, actual_value, expected_value)
 
         if precision is not None:
-            self.assertAlmostEqual(actual_value, expected_value, places = precision, msg = message)
+            self.assertAlmostEqual(float(actual_value), float(expected_value), places = precision, msg = message)
         else:
             self.assertEqual(actual_value, expected_value, message)
 
@@ -71,7 +71,7 @@ collectorTests = {}
 def getCollectorTests(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
-        
+
         if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] == 'Test':
             sys.path.append(os.path.dirname(cPath))
             modname = f[:-3]
@@ -82,12 +82,12 @@ def getCollectorTests(path):
             except Exception, e:
                 print "Failed to import module: %s. %s" % (modname, traceback.format_exc())
                 continue
-            
+
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
         if os.path.isdir(cPath):
             getCollectorTests(cPath)
-            
+
 cPath = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'collectors'))
 getCollectorTests(cPath)
 
