@@ -42,7 +42,7 @@ TcpExt: 0 1 2
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        self.setUp([ 'DelayedACKs', 'DelayedACKLocked', 'DelayedACKLost' ])
+        self.setUp([ 'ListenOverflows', 'ListenDrops', 'TCPLoss', 'TCPTimeouts' ])
         TCPCollector.PROC = self.getFixturePath('proc_net_netstat')
         self.collector.collect()
 
