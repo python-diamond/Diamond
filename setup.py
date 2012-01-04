@@ -13,10 +13,18 @@ else:
 data_files=[
     ('/etc/diamond',                           glob('conf/*.conf*') ),
     ('/etc/diamond/collectors',                glob('conf/collectors/*') ),
-    ('share/diamond/collectors',               glob('test.py') ),
+    ('share/diamond',                          glob('test.py') ),
     ('share/diamond/collectors',               glob('src/collectors/*.py') ),
-    ('share/diamond/collectors/user_scripts',  [] ),
+    ('share/diamond/user_scripts',             [] ),
 ]
+
+def pkgPath(root, path):
+    data_files.append((root+path, glob(path+'/*')))
+    for subpath in os.listdir(path):
+        subpath = os.path.join(path, subpath)
+        if os.path.isdir(subpath):
+            pkgPath(root, subpath)
+pkgPath('share/diamond/collectors', 'src/collectors')
 
 setup(
     name            = 'diamond',
