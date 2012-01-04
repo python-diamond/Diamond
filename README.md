@@ -8,14 +8,23 @@ it features an API for implementing custom collectors for gathering metrics from
 Installation
 =====
 
-** Core Dependencies**
+** Installation/Building Dependencies **
+-   make
+-   rpm-build
+
+** Core Dependencies **
 
 -   CentOS or Ubuntu
 -   Python 2.4+
 -   python-configobj
 -   pyasn1
 
-** Optional Dependencies**
+** Unit Test Dependencies **
+-   Mock - http://www.voidspace.org.uk/python/mock/ 
+
+** Collector Dependencies**
+
+*** SNMPInterfaceCollector ***
 -   pysnmp
 
 Usage
