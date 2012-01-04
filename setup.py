@@ -21,13 +21,22 @@ data_files=[
 def pkgPath(root, path, rpath="/"):
     if not os.path.exists(path):
         return
-    print (root+rpath, glob(path+'/*'))
-    data_files.append((root+rpath, glob(path+'/*')))
+    files = []
+    for spath in os.listdir(path):
+        subpath = os.path.join(path, spath)
+        spath = os.path.join(rpath, spath)
+        if os.path.isfile(subpath):
+            files.append(subpath)
+            
+    print root+rpath, files
+    
+    data_files.append((root+rpath, files))
     for spath in os.listdir(path):
         subpath = os.path.join(path, spath)
         spath = os.path.join(rpath, spath)
         if os.path.isdir(subpath):
             pkgPath(root, subpath, spath)
+            
 pkgPath('share/diamond/collectors', 'src/collectors')
 
 setup(
