@@ -18,12 +18,14 @@ data_files=[
     ('share/diamond/user_scripts',             [] ),
 ]
 
-def pkgPath(root, path):
-    data_files.append((root+path, glob(path+'/*')))
-    for subpath in os.listdir(path):
-        subpath = os.path.join(path, subpath)
+def pkgPath(root, path, rpath="/"):
+    print (root+rpath, glob(path+'/*'))
+    data_files.append((root+rpath, glob(path+'/*')))
+    for spath in os.listdir(path):
+        subpath = os.path.join(path, spath)
+        spath = os.path.join(rpath, spath)
         if os.path.isdir(subpath):
-            pkgPath(root, subpath)
+            pkgPath(root, subpath, spath)
 pkgPath('share/diamond/collectors', 'src/collectors')
 
 setup(
