@@ -17,7 +17,6 @@ Installation
 -   CentOS or Ubuntu
 -   Python 2.4+
 -   python-configobj
--   pyasn1
 
 ** Unit Test Dependencies **
 -   Mock - http://www.voidspace.org.uk/python/mock/ 
