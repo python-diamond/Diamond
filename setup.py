@@ -19,6 +19,7 @@ data_files=[
 ]
 
 def pkgPath(root, path, rpath="/"):
+    global data_files
     if not os.path.exists(path):
         return
     files = []
