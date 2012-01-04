@@ -28,8 +28,6 @@ def pkgPath(root, path, rpath="/"):
         if os.path.isfile(subpath):
             files.append(subpath)
             
-    print root+rpath, files
-    
     data_files.append((root+rpath, files))
     for spath in os.listdir(path):
         subpath = os.path.join(path, spath)
