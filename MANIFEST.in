@@ -8,3 +8,6 @@ exclude conf/*.conf
 include conf/collectors/*.conf
 include test.py
 include src/collectors/*
+include src/collectors/*/*
+include src/collectors/*/*/*
+include src/collectors/*/*/*/*

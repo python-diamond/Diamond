@@ -14,7 +14,6 @@ data_files=[
     ('/etc/diamond',                           glob('conf/*.conf*') ),
     ('/etc/diamond/collectors',                glob('conf/collectors/*') ),
     ('share/diamond',                          glob('test.py') ),
-    ('share/diamond/collectors',               glob('src/collectors/*.py') ),
     ('share/diamond/user_scripts',             [] ),
 ]
 
