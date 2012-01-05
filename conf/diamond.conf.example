@@ -11,11 +11,11 @@ handlers = diamond.handler.NullHandler, diamond.handler.GraphiteHandler, diamond
 
 # User diamond will run as
 # Leave empty to use the current user
-user = diamond
+user = 
 
 # Group diamond will run as
 # Leave empty to use the current group
-group = diamond
+group = 
 
 # Log file
 log_file = /var/log/diamond/diamond.log
