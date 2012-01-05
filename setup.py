@@ -13,7 +13,7 @@ else:
 data_files=[
     ('/etc/diamond',                           glob('conf/*.conf*') ),
     ('/etc/diamond/collectors',                glob('conf/collectors/*') ),
-    ('share/diamond',                          ['test.py', 'LICENSE', 'README.md'] ),
+    ('share/diamond',                          ['LICENSE', 'README.md'] ),
     ('share/diamond/user_scripts',             [] ),
 ]
 
@@ -49,5 +49,6 @@ setup(
     packages        = ['diamond'],
     scripts         = glob('bin/*'),
     data_files      = data_files,
+    test_suite      = 'test.main',
     **setup_kwargs
 )
