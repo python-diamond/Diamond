@@ -38,7 +38,8 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         with nested(
             patch('disk.get_file_systems', Mock(return_value = file_systems)),
-            patch('disk.get_disk_statistics', Mock(return_value = disk_statistics_1))
+            patch('disk.get_disk_statistics', Mock(return_value = disk_statistics_1)),
+            patch('time.time', Mock(return_value = 10))
         ):
             self.collector.collect()
 
@@ -46,7 +47,8 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         with nested(
             patch('disk.get_file_systems', Mock(return_value = file_systems)),
-            patch('disk.get_disk_statistics', Mock(return_value = disk_statistics_2))
+            patch('disk.get_disk_statistics', Mock(return_value = disk_statistics_2)),
+            patch('time.time', Mock(return_value = 20))
         ):
             self.collector.collect()
 

@@ -3,6 +3,7 @@
 
 from diamond import *
 import diamond.collector
+import time
 
 import disk
 
@@ -20,8 +21,20 @@ class DiskUsageCollector(diamond.collector.Collector):
         'io_milliseconds':          4294967295,
         'io_milliseconds_weighted': 4294967295
     }
+    
+    LastCollectTime = None
 
     def collect(self):
+        
+        # Handle collection time intervals correctly
+        CollectTime = time.time()
+        time_delta = float(self.config['interval'])
+        if self.LastCollectTime:
+            time_delta = CollectTime-self.LastCollectTime
+        if time_delta == 0:
+            time_delta = float(self.config['interval'])
+        self.LastCollectTime = CollectTime
+        
         for key, info in disk.get_disk_statistics().iteritems():
             metrics = {}
 
@@ -50,9 +63,6 @@ class DiskUsageCollector(diamond.collector.Collector):
                     metric_value = value;
 
                 metrics[key] = metric_value
-
-            # TODO: Make this correct!
-            time_delta = float(self.config['interval'])
 
             metrics['read_requests_merged_per_second']  = metrics['reads_merged'] / time_delta
             metrics['write_requests_merged_per_second'] = metrics['writes_merged'] / time_delta
