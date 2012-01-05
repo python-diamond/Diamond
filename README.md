@@ -116,7 +116,7 @@ Collectors are subclasses of diamond.collector.Collector. In their simplest form
 
 To run this collector in test mode you can invoke the diamond server with the -r option and specify the collector path.
 
-> python src/diamond/server.py -f -v -r src/collectors/ExampleCollector/ExampleCollector.py
+>  python bin/diamond -f -v -r src/collectors/ExampleCollector/ExampleCollector.py -c conf/diamond.conf.example
 
 Diamond supports dynamic addition of collectors. Its configured to scan for new collectors on a regular interval (configured in diamond.cfg).
 If diamond detects a new collector, or that a collectors module has changed (based on the file's mtime), it will be reloaded.
