@@ -53,7 +53,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                     # TODO: Fix me to be detectable
                     value = value / 2
                     value = diamond.convertor.binary.convert(value = value, oldUnit = 'kB', newUnit = self.config['byte_unit'])
-                    self.MAX_VALUES[key] = diamond.convertor.binary.convert(value = diamond.collector.MAX_COUNTER, oldUnit = 'Byte', newUnit = self.config['byte_unit'])
+                    self.MAX_VALUES[key] = diamond.convertor.binary.convert(value = diamond.collector.MAX_COUNTER, oldUnit = 'byte', newUnit = self.config['byte_unit'])
 
                 metric_name = '.'.join([info.device, key])
                 # io_in_progress is a point in time counter, don't derivative

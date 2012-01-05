@@ -52,7 +52,7 @@ class binary:
         if unit in [ 'yottabit', 'Ybit', 'Yibit']:
             return self.yottabit(value = value)
 
-        if unit in [ 'Byte', 'B']:
+        if unit in [ 'byte', 'B']:
             return self.byte(value = value)
         if unit in [ 'kilobyte', 'kB', 'KiB']:
             return self.kilobyte(value = value)

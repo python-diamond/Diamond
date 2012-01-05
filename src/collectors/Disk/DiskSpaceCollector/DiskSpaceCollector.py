@@ -26,17 +26,17 @@ class DiskSpaceCollector(diamond.collector.Collector):
 
             metric_name = '%s.%s_used' % (name, self.config['byte_unit'])
             metric_value = float(block_size) * float(blocks_total - blocks_free)
-            metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'Byte', newUnit = self.config['byte_unit'])
+            metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = self.config['byte_unit'])
             self.publish(metric_name, metric_value, 2)
 
             metric_name = '%s.%s_free' % (name, self.config['byte_unit'])
             metric_value = float(block_size) * float(blocks_free)
-            metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'Byte', newUnit = self.config['byte_unit'])
+            metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = self.config['byte_unit'])
             self.publish(metric_name, metric_value, 2)
 
             metric_name = '%s.%s_avail' % (name, self.config['byte_unit'])
             metric_value = float(block_size) * float(blocks_avail)
-            metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'Byte', newUnit = self.config['byte_unit'])
+            metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = self.config['byte_unit'])
             self.publish(metric_name, metric_value, 2)
 
             self.publish('%s.inodes_used'  % name, inodes_total - inodes_free)
