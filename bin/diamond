@@ -88,7 +88,11 @@ def main():
         os.mkdir(logdir)
 
     # Configure Log File handler
-    fileHandler = logging.FileHandler(options.logfile, 'w')
+    if config['server'].has_key('log_file_days'):
+        fileHandler = logging.handlers.TimedRotatingFileHandler(options.logfile, 'midnight', 1, backupCount=int(config['server']['log_file_days']))
+    else:
+        fileHandler = logging.FileHandler(options.logfile, 'w')
+
     fileHandler.setFormatter(formatter)
     fileHandler.setLevel(logging.DEBUG)
     log.addHandler(fileHandler)

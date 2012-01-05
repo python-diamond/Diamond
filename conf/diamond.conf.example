@@ -11,14 +11,17 @@ handlers = diamond.handler.NullHandler, diamond.handler.GraphiteHandler, diamond
 
 # User diamond will run as
 # Leave empty to use the current user
-user = 
+user =
 
 # Group diamond will run as
 # Leave empty to use the current group
-group = 
+group =
 
 # Log file
 log_file = /var/log/diamond/diamond.log
+
+# Number of days to keep log files
+log_file_days = 7
 
 # Pid file
 pid_file = /var/run/diamond.pid
