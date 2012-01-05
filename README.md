@@ -33,7 +33,7 @@ To install diamond:
 
     make install
 
-For testing, diamond can also be started directly via ant without installing:
+For testing, diamond can also be started directly without installing:
 
     cp conf/diamond.conf.example conf/diamond.conf
     edit conf/diamond.conf
@@ -72,10 +72,19 @@ Built-In Collectors
 -   CPUCollector
 -   DiskSpaceCollector
 -   DiskUsageCollector
+-   ExampleCollector
 -   FilestatCollector
+-   HAProxyCollector
+-   HttpdCollector
+-   InterruptCollector
 -   LoadAverageCollector
 -   MemoryCollector
+-   MySQLCollector
 -   NetworkCollector
+-   NginxCollector
+-   PingCollector
+-   SNMPCollector
+-   SNMPInterfaceCollector
 -   SockstatCollector
 -   TCPCollector
 -   UserScriptsCollector
@@ -107,16 +116,16 @@ Collectors are subclasses of diamond.collector.Collector. In their simplest form
 
 To run this collector in test mode you can invoke the diamond server with the -r option and specify the collector path.
 
-> python src/diamond/server.py -f -v -r examples/examplecollector.py
+> python src/diamond/server.py -f -v -r src/collectors/ExampleCollector/ExampleCollector.py
 
 Diamond supports dynamic addition of collectors. Its configured to scan for new collectors on a regular interval (configured in diamond.cfg).
 If diamond detects a new collector, or that a collectors module has changed (based on the file's mtime), it will be reloaded.
 
 Diamond looks for collectors in /usr/lib/diamond/collectors/ (on Ubuntu). By default diamond will invoke the *collect* method every 60 seconds.
 
-Diamond collectors that require a separate configuration file should place a .cfg file in /etc/diamond/.
+Diamond collectors that require a separate configuration file should place a .cfg file in /etc/diamond/collectors/.
 The configuration file name should match the name of the diamond collector class.  For example, a collector called
-*examplecollector.ExampleCollector* could have its configuration file placed in /etc/diamond/ExampleCollector.cfg.
+*examplecollector.ExampleCollector* could have its configuration file placed in /etc/diamond/collectors/ExampleCollector.cfg.
 
 Testing
 =====
