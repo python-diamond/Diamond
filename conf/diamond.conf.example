@@ -97,4 +97,4 @@ interval = 300
 method = Sequential
 
 # Default numeric output
-byte_unit = b
+byte_unit = Byte
