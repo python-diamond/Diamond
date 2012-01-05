@@ -36,7 +36,8 @@ install:
 buildrpm: sdist
 	python setup.py bdist_rpm \
 		--post-install=rpm/postinstall \
-		--pre-uninstall=rpm/preuninstall
+		--pre-uninstall=rpm/preuninstall \
+		--install-script=rpm/install
 
 builddeb: sdist
 	mkdir -p build
