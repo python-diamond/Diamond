@@ -68,7 +68,7 @@ def main():
     log = logging.getLogger('diamond')
     log.setLevel(logging.INFO)
 
-    # Configure Logging Forma
+    # Configure Logging Format
     formatter = logging.Formatter('[%(asctime)s] [%(threadName)s] %(message)s')
 
     # Configure Log Stream Handler
