@@ -1,0 +1,10 @@
+Total Accesses: 100
+Total kBytes: 200
+CPULoad: .5
+Uptime: 20
+ReqPerSec: 10
+BytesPerSec: 20480
+BytesPerReq: 204.8
+BusyWorkers: 6
+IdleWorkers: 4
+Scoreboard: WKKRRR____.....
