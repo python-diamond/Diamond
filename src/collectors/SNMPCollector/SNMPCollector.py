@@ -12,9 +12,10 @@ import re
 import pysnmp.entity.rfc3413.oneliner.cmdgen
 import pysnmp.debug
 
-from metric import Metric
+import diamond.collector
+from diamond.metric import Metric
 
-class SNMPCollector(Collector):
+class SNMPCollector(diamond.collector.Collector):
     """
     SNMPCollector is a special collector for collecting data from using SNMP
     """
@@ -24,7 +25,7 @@ class SNMPCollector(Collector):
         Create a new instance of the SNMPCollector class
         """
         # Initialize base Class
-        Collector.__init__(self, config, handlers)
+        diamond.collector.Collector.__init__(self, config, handlers)
 
         # Initialize SNMP Command Generator
         self.snmpCmdGen = pysnmp.entity.rfc3413.oneliner.cmdgen.CommandGenerator()
