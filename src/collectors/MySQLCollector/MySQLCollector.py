@@ -10,7 +10,7 @@ class MySQLCollector(diamond.collector.Collector):
         if params.has_key('port'):
             params['port'] = int(params['port'])
 
-        for key in ('interval', 'splay', 'path_prefix', 'publish'):
+        for key in ('interval', 'splay', 'path_prefix', 'publish', 'byte_unit', 'enabled', 'method'):
             del params[key]
 
         try:
