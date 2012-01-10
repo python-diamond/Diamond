@@ -25,6 +25,10 @@ Installation
 
 ** Collector Dependencies**
 
+*** MongoDBCollector ***
+
+-   pymongo
+
 *** SNMPInterfaceCollector ***
 
 -   pysnmp
@@ -82,6 +86,7 @@ Built-In Collectors
 -   InterruptCollector
 -   LoadAverageCollector
 -   MemoryCollector
+-   MongoDBCollector
 -   MySQLCollector
 -   NetworkCollector
 -   NginxCollector
