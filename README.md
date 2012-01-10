@@ -162,3 +162,5 @@ Contributors
 [oxcd8o](https://github.com/oxcd8o)
 
 [Rob Smith](https://github.com/kormoc)
+
+[Philip Cristiano](https://github.com/philipcristiano)
