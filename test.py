@@ -35,8 +35,10 @@ class CollectorTestCase(unittest.TestCase):
         return file
 
     def getFixture(self, fixture_name):
-        with open(self.getFixturePath(fixture_name), 'r') as file:
-            return StringIO(file.read())
+        file = open(self.getFixturePath(fixture_name), 'r')
+        data = StringIO(file.read())
+        file.close()
+        return data
 
     def assertPublished(self, mock, key, value):
         calls = filter(lambda x: x[0][0] == key, mock.call_args_list)
