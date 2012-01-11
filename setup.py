@@ -10,12 +10,20 @@ else:
     from distutils.core import setup
     setup_kwargs = dict()
 
-data_files=[
-    ('/etc/diamond',                           glob('conf/*.conf*') ),
-    ('/etc/diamond/collectors',                glob('conf/collectors/*') ),
-    ('share/diamond',                          ['LICENSE', 'README.md'] ),
-    ('share/diamond/user_scripts',             [] ),
-]
+if os.getenv('VIRTUAL_ENV', False):
+    data_files=[
+        ('etc/diamond',                        glob('conf/*.conf.*') ),
+        ('etc/diamond/collectors',             glob('conf/collectors/*') ),
+        ('share/diamond',                      ['LICENSE', 'README.md'] ),
+        ('share/diamond/user_scripts',         [] ),
+    ]
+else:
+    data_files=[
+        ('/etc/diamond',                       glob('conf/*.conf.*') ),
+        ('/etc/diamond/collectors',            glob('conf/collectors/*') ),
+        ('share/diamond',                      ['LICENSE', 'README.md'] ),
+        ('share/diamond/user_scripts',         [] ),
+    ]
 
 def pkgPath(root, path, rpath="/"):
     global data_files
