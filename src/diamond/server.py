@@ -39,6 +39,37 @@ class Server(object):
         # Initialize Scheduler
         self.scheduler = ThreadedScheduler()
 
+    def load_config(self):
+        """
+        Load the full config, handling multiple overides
+        """
+        config = configobj.ConfigObj(os.path.abspath(self.config['configfile']))
+        config['configfile'] = self.config['configfile']
+
+        collectorConfigs = configobj.ConfigObj()
+        collectorConfigs['default'] = config['collectors']['default']
+
+        # Load the collector default configs
+        for root, dirs, files in os.walk(config['server']['collectors_path']):
+            for file in files:
+                if file[-5:] == ".conf":
+                    path = os.path.abspath(os.path.join(root, file))
+                    section = file[0:-5]
+                    if not collectorConfigs.has_key(section):
+                        collectorConfigs[section] = config['collectors']['default'].copy()
+                    collectorConfigs[section].merge(configobj.ConfigObj(path))
+        # Load the collector overrides
+        for root, dirs, files in os.walk(config['server']['collectors_config_path']):
+            for file in files:
+                if file[-5:] == ".conf":
+                    path = os.path.abspath(os.path.join(root, file))
+                    section = file[0:-5]
+                    if not collectorConfigs.has_key(section):
+                        collectorConfigs[section] = config['collectors']['default'].copy()
+                    collectorConfigs[section].merge(configobj.ConfigObj(path))
+        config['collectors'] = collectorConfigs
+        self.config = config
+
     def load_handler(self, fqcn):
         """
         Load Handler class named fqcn
@@ -109,14 +140,14 @@ class Server(object):
         sys.path.append(path)
         # Load all the files in path
         for f in os.listdir(path):
-            
+
             # Are we a directory? If so process down the stack
             fpath = os.path.join(path, f)
             if os.path.isdir(fpath):
                 subcollectors = self.load_collectors(fpath)
                 for key in subcollectors:
                     collectors[key] = subcollectors[key]
-            
+
             # Ignore anything that isn't a .py file
             elif os.path.isfile(fpath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'Test':
 
@@ -125,7 +156,12 @@ class Server(object):
                     continue
 
                 modname = f[:-3]
-                
+
+                # Are we disabled?
+                if not self.config['collectors'].has_key(modname) or self.config['collectors'][modname]['enabled'] != "True":
+                    self.log.debug("Skipped loading disabled Collector: %s" % (modname))
+                    continue
+
                 # Stat module file to get mtime
                 st = os.stat(os.path.join(path, f))
                 mtime = st.st_mtime
@@ -243,6 +279,9 @@ class Server(object):
         # Load handlers
         self.load_handlers()
 
+        # Load config
+        self.load_config()
+
         # Load collectors
         collectors = self.load_collectors(self.config['server']['collectors_path'])
 
@@ -268,6 +307,9 @@ class Server(object):
 
         # Overrides collector config dir
         self.config['server']['collectors_config_path'] = os.path.abspath(os.path.dirname(file))
+
+        # Load config
+        self.load_config()
 
         # Load collectors
         collectors = self.load_collectors(os.path.dirname(file), file)
@@ -301,6 +343,8 @@ class Server(object):
 
             # Check if its time to reload collectors
             if reload and time_since_reload > int(self.config['server']['collectors_reload_interval']):
+                self.log.debug("Reloading config.")
+                self.load_config()
                 # Log
                 self.log.debug("Reloading collectors.")
                 # Load collectors
