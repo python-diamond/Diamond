@@ -35,14 +35,14 @@ def pkgPath(root, path, rpath="/"):
         spath = os.path.join(rpath, spath)
         if os.path.isfile(subpath):
             files.append(subpath)
-            
+
     data_files.append((root+rpath, files))
     for spath in os.listdir(path):
         subpath = os.path.join(path, spath)
         spath = os.path.join(rpath, spath)
         if os.path.isdir(subpath):
             pkgPath(root, subpath, spath)
-            
+
 pkgPath('share/diamond/collectors', 'src/collectors')
 
 setup(
@@ -57,6 +57,6 @@ setup(
     packages        = ['diamond'],
     scripts         = glob('bin/*'),
     data_files      = data_files,
-    test_suite      = 'test.main',
+    #test_suite      = 'test.main',
     **setup_kwargs
 )
