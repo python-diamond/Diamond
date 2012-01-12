@@ -6,4 +6,4 @@ tmp/
 MANIFEST
 conf/diamond.conf
 storage
-
+conf/collectors
