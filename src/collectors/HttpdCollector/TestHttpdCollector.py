@@ -19,7 +19,8 @@ class TestHTTPResponse(httplib.HTTPResponse):
 class TestHttpdCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('HttpdCollector', {
-            'interval': 10
+            'interval': '10',
+            'url':      ''
         })
 
         self.collector = HttpdCollector(config, None)
