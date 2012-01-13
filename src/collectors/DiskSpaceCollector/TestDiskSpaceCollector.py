@@ -6,8 +6,6 @@ from test import *
 from diamond.collector import Collector
 from DiskSpaceCollector import DiskSpaceCollector
 
-import disk
-
 ################################################################################
 
 class TestDiskSpaceCollector(CollectorTestCase):
@@ -18,6 +16,46 @@ class TestDiskSpaceCollector(CollectorTestCase):
         })
 
         self.collector = DiskSpaceCollector(config, None)
+        
+    @patch('__builtin__.open')
+    @patch('os.access', Mock(return_value=True))
+
+    def test_get_file_systems(self, open_mock):
+        result = None
+        open_mock.return_value = StringIO("""
+rootfs / rootfs rw 0 0
+none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+none /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+none /dev devtmpfs rw,relatime,size=24769364k,nr_inodes=6192341,mode=755 0 0
+none /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000 0 0
+fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0
+/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba / ext3 rw,relatime,errors=continue,barrier=0,data=ordered 0 0
+none /sys/kernel/debug debugfs rw,relatime 0 0
+none /sys/kernel/security securityfs rw,relatime 0 0
+none /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0
+none /var/run tmpfs rw,nosuid,relatime,mode=755 0 0
+none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
+        """.strip())
+
+        with nested(
+            patch('os.stat'), patch('os.major'), patch('os.minor')
+        ) as (os_stat_mock, os_major_mock, os_minor_mock):
+            os_stat_mock.return_value.st_dev = 42
+            os_major_mock.return_value = 9
+            os_minor_mock.return_value = 0
+
+            result = self.collector.get_file_systems()
+
+            os_stat_mock.assert_called_once_with('/')
+            os_major_mock.assert_called_once_with(42)
+            os_minor_mock.assert_called_once_with(42)
+
+            self.assertEqual(result, {
+                (9, 0) : {'device' : '/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba', 'mount_point' : '/'}
+            })
+
+        open_mock.assert_called_once_with('/proc/mounts')
+        return result
 
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
@@ -38,12 +76,8 @@ class TestDiskSpaceCollector(CollectorTestCase):
             patch('os.stat'),
             patch('os.major', Mock(return_value = 9)),
             patch('os.minor', Mock(return_value = 0)),
-            patch('__builtin__.open', Mock(return_value = self.getFixture('proc_mounts')))
-        ):
-            file_systems_mock = disk.get_file_systems()
-
-        with nested(
-            patch('disk.get_file_systems', Mock(return_value = file_systems_mock)),
+            patch('os.path.isdir', Mock(return_value = False)),
+            patch('__builtin__.open', Mock(return_value = self.getFixture('proc_mounts'))),
             patch('os.statvfs', Mock(return_value = statvfs_mock))
         ):
             self.collector.collect()

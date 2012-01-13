@@ -4,8 +4,7 @@
 from diamond import *
 import diamond.collector
 import time
-
-import disk
+import os
 
 class DiskUsageCollector(diamond.collector.Collector):
     """
@@ -24,6 +23,48 @@ class DiskUsageCollector(diamond.collector.Collector):
     
     LastCollectTime = None
 
+    def get_disk_statistics(self):
+        '''
+        Create a map of disks in the machine.
+        
+        http://www.kernel.org/doc/Documentation/iostats.txt
+    
+        Returns:
+          (major, minor) -> DiskStatistics(device, ...)
+        '''
+        result = {}
+        if not os.access('/proc/diskstats', os.R_OK):
+            return result
+        file = open('/proc/diskstats')
+    
+        for line in file:
+            try:
+                columns = line.split()
+                major, minor, device = int(columns[0]), int(columns[1]), columns[2]
+    
+                if device.startswith('ram') or device.startswith('loop'):
+                    continue
+    
+                result[(major, minor)] = {
+                    'device'                   : device,
+                    'reads'                    : float(columns[3] ),
+                    'reads_merged'             : float(columns[4] ),
+                    'reads_sectors'            : float(columns[5] ),
+                    'reads_milliseconds'       : float(columns[6] ),
+                    'writes'                   : float(columns[7] ),
+                    'writes_merged'            : float(columns[8] ),
+                    'writes_sectors'           : float(columns[9] ),
+                    'writes_milliseconds'      : float(columns[10]),
+                    'io_in_progress'           : float(columns[11]),
+                    'io_milliseconds'          : float(columns[12]),
+                    'io_milliseconds_weighted' : float(columns[13])
+                }
+            except ValueError:
+                continue
+    
+        file.close()
+        return result
+
     def collect(self):
         
         # Handle collection time intervals correctly
@@ -35,15 +76,15 @@ class DiskUsageCollector(diamond.collector.Collector):
             time_delta = float(self.config['interval'])
         self.LastCollectTime = CollectTime
         
-        for key, info in disk.get_disk_statistics().iteritems():
+        for key, info in self.get_disk_statistics().iteritems():
             metrics = {}
 
-            name = info.device
+            name = info['device']
             # TODO: Make this configurable
             if not re.match(r'md[0-9]$|sd[a-z]+$|xvd[a-z]+$', name):
                 continue
 
-            for key, value in info._asdict().iteritems():
+            for key, value in info.iteritems():
                 if key == 'device':
                     continue
 
@@ -55,7 +96,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                     value = diamond.convertor.binary.convert(value = value, oldUnit = 'kB', newUnit = self.config['byte_unit'])
                     self.MAX_VALUES[key] = diamond.convertor.binary.convert(value = diamond.collector.MAX_COUNTER, oldUnit = 'byte', newUnit = self.config['byte_unit'])
 
-                metric_name = '.'.join([info.device, key])
+                metric_name = '.'.join([info['device'], key])
                 # io_in_progress is a point in time counter, don't derivative
                 if key != 'io_in_progress':
                     metric_value = self.derivative(metric_name, value, self.MAX_VALUES[key])
@@ -102,5 +143,5 @@ class DiskUsageCollector(diamond.collector.Collector):
 
                 # Only publish when we have io figures
                 for key in metrics:
-                    metric_name = '.'.join([info.device, key])
+                    metric_name = '.'.join([info['device'], key])
                     self.publish(metric_name, metrics[key])
