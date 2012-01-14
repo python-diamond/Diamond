@@ -7,7 +7,7 @@
 [server]
 
 # Handlers for published metrics.
-handlers = diamond.handler.NullHandler, diamond.handler.GraphiteHandler, diamond.handler.ArchiveHandler
+handlers = diamond.handler.GraphiteHandler.GraphiteHandler, diamond.handler.ArchiveHandler.ArchiveHandler
 
 # User diamond will run as
 # Leave empty to use the current user
