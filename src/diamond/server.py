@@ -87,6 +87,8 @@ class Server(object):
         """
         Load handlers
         """
+        if type(self.config['server']['handlers']) == str:
+            self.config['server']['handlers'] = [self.config['server']['handlers']]
         for h in self.config['server']['handlers']:
             try:
                 # Load Handler Class
