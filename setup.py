@@ -2,6 +2,7 @@
 
 import os
 from glob import glob
+import platform
 
 if os.environ.get('USE_SETUPTOOLS'):
     from setuptools import setup
@@ -10,20 +11,20 @@ else:
     from distutils.core import setup
     setup_kwargs = dict()
 
+data_files=[
+    ('share/diamond',                      ['LICENSE', 'README.md'] ),
+    ('share/diamond/user_scripts',         [] ),
+]
+
 if os.getenv('VIRTUAL_ENV', False):
-    data_files=[
-        ('etc/diamond',                        glob('conf/*.conf.*') ),
-        ('etc/diamond/collectors',             glob('conf/collectors/*') ),
-        ('share/diamond',                      ['LICENSE', 'README.md'] ),
-        ('share/diamond/user_scripts',         [] ),
-    ]
+    data_files.append(('etc/diamond',                        glob('conf/*.conf.*') ))
+    data_files.append(('etc/diamond/collectors',             glob('conf/collectors/*') ))
 else:
-    data_files=[
-        ('/etc/diamond',                       glob('conf/*.conf.*') ),
-        ('/etc/diamond/collectors',            glob('conf/collectors/*') ),
-        ('share/diamond',                      ['LICENSE', 'README.md'] ),
-        ('share/diamond/user_scripts',         [] ),
-    ]
+    data_files.append(('/etc/diamond',                       glob('conf/*.conf.*') ))
+    data_files.append(('/etc/diamond/collectors',            glob('conf/collectors/*') ))
+
+    if platform.dist()[0] == 'Ubuntu':
+        data_files.append(('/etc/event.d',                   ['debian/upstart/diamond'] ))
 
 def pkgPath(root, path, rpath="/"):
     global data_files
