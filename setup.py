@@ -55,7 +55,7 @@ setup(
     license         = 'MIT License',
     description     = 'Smart data producer for graphite graphing package',
     package_dir     = {'' : 'src'},
-    packages        = ['diamond'],
+    packages        = ['diamond' , 'diamond.handler'],
     scripts         = glob('bin/*'),
     data_files      = data_files,
     #test_suite      = 'test.main',

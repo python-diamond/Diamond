@@ -66,7 +66,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 name = labels[info['device']]
             else:
                 name = info['mount_point'].replace('/', '_')
-                name = 'root' if name == '_' else name
+                if name == '_':
+                    name = 'root'
 
             data = os.statvfs(info['mount_point'])
             block_size = data.f_bsize
