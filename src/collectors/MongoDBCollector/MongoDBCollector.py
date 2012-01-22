@@ -1,7 +1,7 @@
 from numbers import Number
 
-import pymongo
 import diamond
+import pymongo
 
 
 class MongoDBCollector(diamond.collector.Collector):
