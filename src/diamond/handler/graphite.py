@@ -1,4 +1,4 @@
-from Handler import Handler
+from handler import Handler
 import socket
 
 class GraphiteHandler(Handler):
