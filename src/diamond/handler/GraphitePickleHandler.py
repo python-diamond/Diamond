@@ -1,3 +1,5 @@
+import struct
+
 from GraphiteHandler import GraphiteHandler
 
 try:

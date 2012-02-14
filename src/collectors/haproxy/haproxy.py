@@ -22,7 +22,7 @@ class HAProxyCollector(diamond.collector.Collector):
         req  = urllib2.Request(self.config['url'])
         try:
             handle = urllib2.urlopen(req)
-            metrics = handle.readlines()
+            return handle.readlines()
         except Exception, e:
             if not hasattr(e, 'code') or e.code != 401:
                 self.log.error("Error retrieving HAProxy stats. %s", e)

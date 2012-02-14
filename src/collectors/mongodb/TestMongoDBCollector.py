@@ -5,7 +5,6 @@ from test import *
 
 from diamond.collector import Collector
 from mongodb import MongoDBCollector
-import MongoDBCollector as module
 
 ################################################################################
 
