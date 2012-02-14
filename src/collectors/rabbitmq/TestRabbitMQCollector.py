@@ -4,7 +4,7 @@
 from test import *
 
 from diamond.collector import Collector
-from RabbitMQCollector import RabbitMQCollector
+from rabbitmq import RabbitMQCollector
 
 ################################################################################
 
