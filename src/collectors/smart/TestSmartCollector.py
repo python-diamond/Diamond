@@ -4,7 +4,7 @@
 from test import *
 
 from diamond.collector import Collector
-from SmartCollector import SmartCollector
+from smart import SmartCollector
 
 ################################################################################
 

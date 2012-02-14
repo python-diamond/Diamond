@@ -4,7 +4,7 @@
 from test import *
 
 from diamond.collector import Collector
-from HttpdCollector import HttpdCollector
+from httpd import HttpdCollector
 import httplib
 
 ################################################################################

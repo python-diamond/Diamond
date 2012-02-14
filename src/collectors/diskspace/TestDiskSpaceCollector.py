@@ -4,7 +4,7 @@
 from test import *
 
 from diamond.collector import Collector
-from DiskSpaceCollector import DiskSpaceCollector
+from diskspace import DiskSpaceCollector
 
 ################################################################################
 

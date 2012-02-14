@@ -4,7 +4,7 @@
 from test import *
 
 from diamond.collector import Collector
-from NetworkCollector import NetworkCollector
+from network import NetworkCollector
 
 ################################################################################
 

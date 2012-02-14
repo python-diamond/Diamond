@@ -4,7 +4,7 @@
 from test import *
 
 from diamond.collector import Collector
-from TCPCollector import TCPCollector
+from tcp import TCPCollector
 
 ################################################################################
 

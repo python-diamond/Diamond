@@ -4,7 +4,7 @@
 from test import *
 
 from diamond.collector import Collector
-from DiskUsageCollector import DiskUsageCollector
+from diskusage import DiskUsageCollector
 
 ################################################################################
 

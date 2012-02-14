@@ -4,7 +4,7 @@
 from test import *
 
 from diamond.collector import Collector
-from SockstatCollector import SockstatCollector
+from sockstat import SockstatCollector
 
 ################################################################################
 

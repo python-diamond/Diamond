@@ -4,7 +4,7 @@
 from test import *
 
 from diamond.collector import Collector
-from FilestatCollector import FilestatCollector
+from filestat import FilestatCollector
 
 ################################################################################
 

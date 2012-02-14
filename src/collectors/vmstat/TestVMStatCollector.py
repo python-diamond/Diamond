@@ -4,7 +4,7 @@
 from test import *
 
 from diamond.collector import Collector
-from VMStatCollector import VMStatCollector
+from vmstat import VMStatCollector
 
 ################################################################################
 

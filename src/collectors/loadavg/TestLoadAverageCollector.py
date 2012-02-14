@@ -4,7 +4,7 @@
 from test import *
 
 from diamond.collector import Collector
-from LoadAverageCollector import LoadAverageCollector
+from loadavg import LoadAverageCollector
 
 ################################################################################
 
