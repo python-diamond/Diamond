@@ -134,6 +134,9 @@ class Server(object):
         # Get a list of files in the directory, if the directory exists
         if not os.path.exists(path):
             raise OSError, "Directory does not exist: %s" % (path)
+            
+        if path.endswith('tests') or path.endswith('fixtures'):
+            return collectors
 
         # Log
         self.log.debug("Loading Collectors from: %s" % (path))
@@ -151,7 +154,7 @@ class Server(object):
                     collectors[key] = subcollectors[key]
 
             # Ignore anything that isn't a .py file
-            elif os.path.isfile(fpath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'Test':
+            elif os.path.isfile(fpath) and len(f) > 3 and f[-3:] == '.py' and f[0:5] != 'test_':
 
                 # Check filter
                 if filter and os.path.join(path, f) != filter:
