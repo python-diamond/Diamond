@@ -162,11 +162,6 @@ class Server(object):
 
                 modname = f[:-3]
 
-                # Are we disabled?
-                if not self.config['collectors'].has_key(modname) or self.config['collectors'][modname]['enabled'] != "True":
-                    self.log.debug("Skipped loading disabled Collector: %s" % (modname))
-                    continue
-
                 # Stat module file to get mtime
                 st = os.stat(os.path.join(path, f))
                 mtime = st.st_mtime
