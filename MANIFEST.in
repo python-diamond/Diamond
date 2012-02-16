@@ -6,5 +6,4 @@ graft           debian
 graft           conf
 exclude         conf/*.conf
 graft           src/collectors
-global-exclude  */Test*
-global-exclude  */fixtures/*
+global-exclude  */tests/*
