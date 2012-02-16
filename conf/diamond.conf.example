@@ -77,6 +77,23 @@ timeout = 15
 # Batch size for pickled metrics
 batch = 256
 
+[[MySQLHandler]]
+### Options for MySQLHandler
+
+# MySQL Connection Info
+hostname    = 127.0.0.1
+port        = 3306
+username    = root
+password    =
+database    = diamond
+table       = metrics
+# INT UNSIGNED NOT NULL
+col_time    = timestamp
+# VARCHAR(255) NOT NULL
+col_metric  = metric
+# VARCHAR(255) NOT NULL
+col_value   = value
+
 ################################################################################
 ### Options for collectors
 [collectors]
