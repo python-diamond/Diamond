@@ -75,8 +75,9 @@ def getCollectorTests(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
 
-        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] == 'Test':
+        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and 'tests' in cPath:
             sys.path.append(os.path.dirname(cPath))
+            sys.path.append(os.path.join(os.path.dirname(cPath), '..'))
             modname = f[:-3]
             try:
                 # Import the module
