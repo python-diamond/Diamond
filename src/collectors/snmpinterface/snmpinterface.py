@@ -9,7 +9,7 @@ import configobj
 import socket
 import re
 
-from SNMPCollector import SNMPCollector
+from snmp import SNMPCollector
 from diamond.metric import Metric
 
 class SNMPInterfaceCollector(SNMPCollector):
