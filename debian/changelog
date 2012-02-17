@@ -1,1 +1,11 @@
-diamond (2.0.0) unstable; urgency=low
+diamond (0.2.1) unstable; urgency=low
+
+  * Added meta-collector, which can handle non-python metric scripts.
+
+ -- Pavel Potapenkov <oxcd8o@yandex-team.ru>  Wed, 30 Nov 2011 01:55:32 +0400
+
+diamond (0.2.0) unstable; urgency=low
+
+  * Initial release.
+
+ -- Ivan Pouzyrevsky <sandello@yandex-team.ru>  Thu, 10 Nov 2011 01:42:39 +0400

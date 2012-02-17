@@ -18,7 +18,7 @@ from diamond import *
 import diamond
 
 from diamond.collector import Collector
-from diamond.handler.handler import Handler
+from diamond.handler.Handler import Handler
 from diamond.scheduler import *
 from diamond.util import *
 

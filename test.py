@@ -74,10 +74,10 @@ collectorTests = {}
 def getCollectorTests(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
-        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and 'tests' in cPath:
-            sys.path.append(os.path.join(os.path.dirname(cPath), '..'))
+
+        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] == 'Test':
             sys.path.append(os.path.dirname(cPath))
-            modname = inspect.getmodulename(cPath)
+            modname = f[:-3]
             try:
                 # Import the module
                 collectorTests[modname] = __import__(modname, globals(), locals(), ['*'])
@@ -98,19 +98,8 @@ getCollectorTests(cPath)
 
 if __name__ == "__main__":
     tests = []
-    for module in collectorTests:
-        test = None
-        clsmembers = inspect.getmembers(sys.modules[module], inspect.isclass)
-        for cls in clsmembers:
-            for base in cls[1].__bases__:
-                if issubclass(base, unittest.TestCase):
-                    test = cls[0]
-                    break
-                if test:
-                    break
-        if not test:
-            continue
-        c = getattr(collectorTests[module], test)
+    for test in collectorTests:
+        c = getattr(collectorTests[test], test)
         tests.append(unittest.TestLoader().loadTestsFromTestCase(c))
     suite = unittest.TestSuite(tests)
     unittest.TextTestRunner(verbosity=1).run(suite)
