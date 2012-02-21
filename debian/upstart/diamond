@@ -9,7 +9,6 @@ stop on runlevel [!2345]
 respawn
 
 script
-    PYTHONLIB=$(/usr/bin/env python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")
-    exec /usr/bin/python ${PYTHONLIB}/diamond/server.py --foreground
+    /usr/bin/python /usr/bin/diamond --foreground
 end script
 
