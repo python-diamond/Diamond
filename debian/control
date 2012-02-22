@@ -5,7 +5,7 @@ Maintainer: Ivan Pouzyrevsky <sandello@yandex-team.ru>
 Homepage: https://github.com/sandello/Diamond
 Vcs-Git: git://github.com/sandello/Diamond.git
 Vcs-Browser: https://github.com/sandello/Diamond
-Build-Depends: debhelper (>= 7), python (>= 2.4), python-support
+Build-Depends: debhelper (>= 7), python (>= 2.4), python-support, python-mock, python-configobj
 Standards-Version: 3.9.1
 
 Package: diamond

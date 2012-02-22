@@ -1,6 +1,6 @@
 DESTDIR=/
 PROJECT=diamond
-VERSION=2.0.0
+VERSION=0.2.0
 
 all:
 	@echo "make run      - Run Diamond from this directory"
