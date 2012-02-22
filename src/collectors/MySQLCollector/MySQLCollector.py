@@ -58,6 +58,26 @@ class MySQLCollector(diamond.collector.Collector):
         ('max_used_connections',        'Connection.max_used'),
     ]
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'False',
+            'path':     'mysql',
+            # Connection settings
+            'host':     'localhost',
+            'port':     3306,
+            'db':       'yourdatabase',
+            'user':     'yourusername',
+            'passwd':   'yourpassword',
+            
+            # Which rows of 'SHOW GLOBAL STATUS' you would like to publish.
+            # http://dev.mysql.com/doc/refman/5.1/en/show-status.html
+            # Leave unset to publish all
+            #'publish' : '',
+        }
+
     def get_stats(self):
         params = {}
         stats = {}

@@ -28,6 +28,19 @@ class MemoryCollector(diamond.collector.Collector):
 
     PROC = '/proc/meminfo'
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'True',
+            'path':     'memory',
+            'method':   'Threaded',
+            # Collect all the nodes or just a few standard ones?
+            # Uncomment to enable
+            #'detailed' : 'True'
+        }
+
     def collect(self):
         """
         Collect memory stats

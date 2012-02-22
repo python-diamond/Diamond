@@ -15,6 +15,15 @@ class CPUCollector(diamond.collector.Collector):
         'idle': diamond.collector.MAX_COUNTER,
         'iowait': diamond.collector.MAX_COUNTER,
     }
+    
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'True',
+            'path':     'cpu'
+        }
 
     def collect(self):
         """

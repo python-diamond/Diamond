@@ -8,6 +8,36 @@ class DiskSpaceCollector(diamond.collector.Collector):
     """
     Uses /proc/mounts and os.statvfs() to get disk space usage
     """
+    
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            # Enabled by default
+            'enabled' : True,
+            'path' : 'diskspace',
+            # filesystems to examine
+            'filesystems' : 'ext2, ext3, ext4, xfs, glusterfs, nfs',
+
+            # exclude_filters
+            #   A list of regex patterns
+            #   A filesystem matching any of these patterns will be excluded from disk space
+            #   metrics collection.
+            #
+            # Examples:
+            #       exclude_filters = ,                 # no exclude filters at all
+            #       exclude_filters = ^/boot, ^/mnt     # exclude everything that begins /boot or /mnt
+            #       exclude_filters = m,                # exclude everything that includes the letter "m"
+            'exclude_filters' : '^/export/home',
+            
+            # We don't use any derivative data to calculate this value
+            # Thus we can use a threaded model
+            'method' : 'Threaded',
+            
+            # Default numeric output
+            'byte_unit' : 'gigabyte'
+        }
 
     def get_disk_labels(self):
         '''

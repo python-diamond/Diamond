@@ -20,6 +20,15 @@ class InterruptCollector(diamond.collector.Collector):
     """
     PROC='/proc/interrupts'
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'False',
+            'path':     'interrupts'
+        }
+
     def collect(self):
         """
         Collect interrupt data

@@ -10,6 +10,17 @@ class TCPCollector(diamond.collector.Collector):
 
     PROC='/proc/net/netstat'
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':          'False',
+            'path':             'tcp',
+            'allowed_names':    'ListenOverflows, ListenDrops, TCPLoss, TCPTimeouts',
+            'method':           'Threaded'
+        }
+
     def collect(self):
         if not os.access(self.PROC, os.R_OK):
             return None

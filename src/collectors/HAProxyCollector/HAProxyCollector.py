@@ -14,6 +14,18 @@ class HAProxyCollector(diamond.collector.Collector):
     Collect HAProxy Stats
     """
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'False',
+            'path':     'haproxy',
+            'url':      'http://localhost/haproxy?stats;csv',
+            'user':     'admin',
+            'pass':     'password',
+        }
+
     def get_csv_data(self):
         """
         Request stats from HAProxy Server

@@ -15,6 +15,15 @@ class VMStatCollector(diamond.collector.Collector):
         'pswpout': diamond.collector.MAX_COUNTER,
     }
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'True',
+            'path':     'vmstat'
+        }
+
     def collect(self):
         if not os.access(self.PROC, os.R_OK):
             return None

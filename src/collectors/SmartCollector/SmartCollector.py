@@ -9,6 +9,16 @@ class SmartCollector(diamond.collector.Collector):
     Collect smart attributes
     '''
     
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'False',
+            'path':     'smart',
+            'devices':  "^disk[0-9]$|^sd[a-z]$|^hd[a-z]$",
+        }    
+    
     def getDisks(self):
         '''
         Return a list of devices that match the config file regex

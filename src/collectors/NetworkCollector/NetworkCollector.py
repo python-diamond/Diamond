@@ -30,6 +30,17 @@ class NetworkCollector(diamond.collector.Collector):
         'tx_multicast':  diamond.collector.MAX_COUNTER,
         }
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':      'False',
+            'path':         'network',
+            'interfaces':   'eth bond',
+            'byte_unit':    'megabit megabyte',
+        }
+
     def collect(self):
         """
         Collect network interface stats.

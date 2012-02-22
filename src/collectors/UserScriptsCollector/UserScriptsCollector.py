@@ -9,6 +9,18 @@ class UserScriptsCollector(diamond.collector.Collector):
     """
     Runs third party scripts and collects their output
     """
+
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':      'False',
+            'path':         '.',
+            'scripts_path': '/etc/diamond/user_scripts/',
+            'method':       'Threaded',
+        }    
+    
     def collect(self):
         scripts_path = self.config['scripts_path']
         if not os.access(scripts_path, os.R_OK):

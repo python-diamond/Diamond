@@ -23,6 +23,15 @@ class DiskUsageCollector(diamond.collector.Collector):
     
     LastCollectTime = None
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'True',
+            'path':     'iostat'
+        }
+
     def get_disk_statistics(self):
         '''
         Create a map of disks in the machine.

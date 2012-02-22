@@ -9,6 +9,24 @@ class MemcachedCollector(diamond.collector.Collector):
     Collect memcached stats
     """
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'False',
+            'path':     'memcached',
+            # Connection settings
+            'host':     'localhost',
+            'port':     '11211',
+            
+            # Which rows of 'status' you would like to publish.
+            # 'telnet host port' and type stats and hit enter to see the list of
+            # possibilities.
+            # Leave unset to publish all
+            #'publish': ''
+        }
+
     def get_stats(self):
         # stuff that's always ignored, aren't 'stats'
         ignored = ('libevent', 'pid', 'pointer_size', 'time', 'version')

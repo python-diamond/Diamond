@@ -11,6 +11,16 @@ class LoadAverageCollector(diamond.collector.Collector):
 
     PROC = '/proc/loadavg'
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'True',
+            'path':     'loadavg',
+            'method':   'Threaded'
+        }
+
     def collect(self):
         if not os.access(self.PROC, os.R_OK):
             return None

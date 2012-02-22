@@ -15,6 +15,16 @@ class SockstatCollector(diamond.collector.Collector):
 
     PROC = '/proc/net/sockstat'
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'True',
+            'path':     'sockets',
+            'method':   'Threaded',
+        }
+
     def collect(self):
         if not os.access(self.PROC, os.R_OK):
             return None

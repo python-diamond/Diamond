@@ -11,6 +11,15 @@ class FilestatCollector(diamond.collector.Collector):
 
     PROC = '/proc/sys/fs/file-nr'
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'path':     'files',
+            'method':   'Threaded'
+        }
+
     def collect(self):
         if not os.access(self.PROC, os.R_OK):
             return None

@@ -11,6 +11,17 @@ class MongoDBCollector(diamond.collector.Collector):
     values are ignored.
 
     """
+    
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'False',
+            'path':     'mongo',
+            'host':     'localhost'
+        }    
+    
     def collect(self):
         """Collect number values from db.serverStatus()"""
         conn = pymongo.Connection(self.config['host'])

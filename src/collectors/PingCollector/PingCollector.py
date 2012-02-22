@@ -9,6 +9,15 @@ class PingCollector(diamond.collector.Collector):
     Only valid for ipv4 hosts currently
     """
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'False',
+            'path':     'ping',
+        }
+
     def collect(self):
         for key in self.config.keys():
             if key[:7] == "target_":

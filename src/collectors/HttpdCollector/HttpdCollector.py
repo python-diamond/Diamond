@@ -12,6 +12,16 @@ class HttpdCollector(diamond.collector.Collector):
     Collect stats from Apache HTTPD server using mod_status
     """
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'False',
+            'path':     'httpd',
+            'url':      'http://localhost:8080/server-status?auto'
+        }
+
     def collect(self):
         # Parse Url
         parts = urlparse.urlparse(self.config['url'])

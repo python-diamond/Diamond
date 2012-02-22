@@ -10,6 +10,18 @@ class RabbitMQCollector(diamond.collector.Collector):
 
     """
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'enabled':  'False',
+            'path':     'rabbitmq',
+            'host':     'localhost:55672',
+            'user':     'guest',
+            'password': 'guest',
+        }
+
     def collect(self):
         client = pyrabbit.api.Client(self.config['host'],
                                      self.config['user'],
