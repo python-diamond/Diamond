@@ -45,6 +45,13 @@ def main():
 
     # Switch user to specified user/group if required
     try:
+        if len(config['server']['group']) :
+            # Get GID
+            gid = grp.getgrnam(config['server']['group']).gr_gid
+
+            if os.getgid() != gid:
+                # Set GID
+                os.setgid(gid)
 
         if len(config['server']['user']) :
             # Get UID
@@ -53,14 +60,6 @@ def main():
             if os.getuid() != uid:
                 # Set UID
                 os.setuid(uid)
-
-        if len(config['server']['group']) :
-            # Get GID
-            gid = grp.getgrnam(config['server']['group']).gr_gid
-
-            if os.getgid() != gid:
-                # Set GID
-                os.setgid(gid)
 
     except Exception, e:
         print >> sys.stderr, "ERROR: Failed to set UID/GID. %s" % (e)
