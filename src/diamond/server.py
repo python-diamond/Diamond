@@ -41,33 +41,10 @@ class Server(object):
 
     def load_config(self):
         """
-        Load the full config, handling multiple overides
+        Load the full config
         """
         config = configobj.ConfigObj(os.path.abspath(self.config['configfile']))
         config['configfile'] = self.config['configfile']
-
-        collectorConfigs = configobj.ConfigObj()
-        collectorConfigs['default'] = config['collectors']['default']
-
-        # Load the collector default configs
-        for root, dirs, files in os.walk(config['server']['collectors_path']):
-            for file in files:
-                if file[-5:] == ".conf":
-                    path = os.path.abspath(os.path.join(root, file))
-                    section = file[0:-5]
-                    if not collectorConfigs.has_key(section):
-                        collectorConfigs[section] = config['collectors']['default'].copy()
-                    collectorConfigs[section].merge(configobj.ConfigObj(path))
-        # Load the collector overrides
-        for root, dirs, files in os.walk(config['server']['collectors_config_path']):
-            for file in files:
-                if file[-5:] == ".conf":
-                    path = os.path.abspath(os.path.join(root, file))
-                    section = file[0:-5]
-                    if not collectorConfigs.has_key(section):
-                        collectorConfigs[section] = config['collectors']['default'].copy()
-                    collectorConfigs[section].merge(configobj.ConfigObj(path))
-        config['collectors'] = collectorConfigs
         self.config = config
 
     def load_handler(self, fqcn):
@@ -154,7 +131,7 @@ class Server(object):
                     collectors[key] = subcollectors[key]
 
             # Ignore anything that isn't a .py file
-            elif os.path.isfile(fpath) and len(f) > 3 and f[-3:] == '.py' and f[0:5] != 'test_':
+            elif os.path.isfile(fpath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'Test':
 
                 # Check filter
                 if filter and os.path.join(path, f) != filter:
@@ -232,9 +209,8 @@ class Server(object):
         if c is None:
             self.log.warn("Skipped loading invalid Collector: %s" % (c.__class__.__name__))
             return
-
-        # Disabled?
-        if c.config['enabled'] != "True":
+        
+        if c.config['enabled'] != 'True':
             self.log.warn("Skipped loading disabled Collector: %s" % (c.__class__.__name__))
             return
 

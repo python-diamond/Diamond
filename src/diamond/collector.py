@@ -34,35 +34,23 @@ class Collector(object):
         # Get Collector class
         cls = self.__class__
 
-        # Do we have a config pre-generated?
+        # Initialize config
+        self.config = configobj.ConfigObj()
+        # Merge default Collector config
+        self.config.merge(config['collectors']['default'])
+        # Check if default config is defined
+        if self.get_default_config() is not None:
+            # Merge default config
+            self.config.merge(self.get_default_config())
+        # Check if Collector config section exists
         if cls.__name__ in config['collectors']:
-            self.config = config['collectors'][cls.__name__]
-        else:
-            # Initialize config
-            self.config = configobj.ConfigObj()
-            # Merge default Collector config
-            self.config.merge(config['collectors']['default'])
-            # Check if default config is defined
-            if self.get_default_config() is not None:
-                # Merge default config
-                self.config.merge(self.get_default_config())
-            # Check if Collector config section exists
-            if cls.__name__ in config['collectors']:
-                # Merge Collector config section
-                self.config.merge(config['collectors'][cls.__name__])
-            # Check for config file in collector directory
-            configfile = os.path.join(os.path.dirname(inspect.getfile(self.__class__)), cls.__name__) + '.conf'
-            if os.path.exists(configfile):
-                # Merge Collector config file
-                try:
-                    self.config.merge(configobj.ConfigObj(configfile))
-                except TypeError:
-                    pass
-            # Check for config file in config directory
-            configfile = os.path.join(config['server']['collectors_config_path'], cls.__name__) + '.conf'
-            if os.path.exists(configfile):
-                # Merge Collector config file
-                self.config.merge(configobj.ConfigObj(configfile))
+            # Merge Collector config section
+            self.config.merge(config['collectors'][cls.__name__])
+        # Check for config file in config directory
+        configfile = os.path.join(config['server']['collectors_config_path'], cls.__name__) + '.conf'
+        if os.path.exists(configfile):
+            # Merge Collector config file
+            self.config.merge(configobj.ConfigObj(configfile))
 
     def get_default_config(self):
         """
