@@ -1,5 +1,6 @@
 
 import platform
+import os
 
 import diamond.collector
 
@@ -33,6 +34,9 @@ class InterruptCollector(diamond.collector.Collector):
         """
         Collect interrupt data
         """
+        if not os.access(self.PROC, os.R_OK):
+            return False        
+        
         #Open PROC file
         file=open(self.PROC,'r')
         #Get data
