@@ -3,7 +3,7 @@ from diamond import *
 import diamond.collector
 import re
 import subprocess
-
+import os
 
 class VarnishCollector(diamond.collector.Collector):
     """VarnishCollector grabs stats from Varnish and submits them the Graphite
@@ -33,15 +33,25 @@ class VarnishCollector(diamond.collector.Collector):
              'client_drop_late', 'uptime', 'dir_dns_lookups', 'dir_dns_failed',
              'dir_dns_hit', 'dir_dns_cache_full']
 
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        return {
+            'path':     'varnish'
+        }
+
     def collect(self):
         data = self.poll()
         for key in data:
             self.publish(key, int(data[key]))
 
     def poll(self):
+        data = {}
+        if not os.access(self._CMD, os.X_OK):
+            return data
         output = subprocess.check_output([self._CMD, '-1'])
         matches = self._RE.findall(output)
-        data = {}
         for line in matches:
             if line[0] in self._KEYS:
                 data[line[0]] = line[1]
