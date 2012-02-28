@@ -63,7 +63,6 @@ class MySQLCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'enabled':  'False',
             'path':     'mysql',
             # Connection settings
             'host':     'localhost',

@@ -19,7 +19,6 @@ class HAProxyCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'enabled':  'False',
             'path':     'haproxy',
             'url':      'http://localhost/haproxy?stats;csv',
             'user':     'admin',

@@ -14,7 +14,6 @@ class SmartCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'enabled':  'False',
             'path':     'smart',
             'devices':  "^disk[0-9]$|^sd[a-z]$|^hd[a-z]$",
         }    

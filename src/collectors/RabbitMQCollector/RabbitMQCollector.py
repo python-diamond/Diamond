@@ -15,7 +15,6 @@ class RabbitMQCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'enabled':  'False',
             'path':     'rabbitmq',
             'host':     'localhost:55672',
             'user':     'guest',

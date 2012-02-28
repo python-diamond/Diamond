@@ -15,7 +15,6 @@ class TCPCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'enabled':          'False',
             'path':             'tcp',
             'allowed_names':    'ListenOverflows, ListenDrops, TCPLoss, TCPTimeouts',
             'method':           'Threaded'

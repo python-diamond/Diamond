@@ -15,7 +15,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
         """
         return {
             # Enabled by default
-            'enabled' : True,
+            'enabled' : 'True',
             'path' : 'diskspace',
             # filesystems to examine
             'filesystems' : 'ext2, ext3, ext4, xfs, glusterfs, nfs',

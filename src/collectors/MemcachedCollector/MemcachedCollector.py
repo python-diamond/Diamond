@@ -14,7 +14,6 @@ class MemcachedCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'enabled':  'False',
             'path':     'memcached',
             # Connection settings
             'host':     'localhost',

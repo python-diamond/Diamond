@@ -17,7 +17,6 @@ class HttpdCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'enabled':  'False',
             'path':     'httpd',
             'url':      'http://localhost:8080/server-status?auto'
         }

@@ -35,7 +35,6 @@ class NetworkCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'enabled':      'False',
             'path':         'network',
             'interfaces':   'eth bond',
             'byte_unit':    'megabit megabyte',

@@ -17,7 +17,6 @@ class MongoDBCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'enabled':  'False',
             'path':     'mongo',
             'host':     'localhost'
         }    

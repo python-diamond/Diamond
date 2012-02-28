@@ -14,7 +14,6 @@ class PingCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'enabled':  'False',
             'path':     'ping',
         }
 

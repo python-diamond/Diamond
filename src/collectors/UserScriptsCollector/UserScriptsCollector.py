@@ -15,7 +15,6 @@ class UserScriptsCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'enabled':      'False',
             'path':         '.',
             'scripts_path': '/etc/diamond/user_scripts/',
             'method':       'Threaded',
