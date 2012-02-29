@@ -78,13 +78,13 @@ class Collector(object):
             hostname = '.'.join(hostname)
             return hostname
         if self.config['hostname_method'] == 'uname_short':
-            return os.uname().split('.')[0]
+            return os.uname()[1].split('.')[0]
         if self.config['hostname_method'] == 'uname_rev':
-            hostname = os.uname().split('.')
+            hostname = os.uname()[1].split('.')
             hostname.reverse()
             hostname = '.'.join(hostname)
-            return hostname 
-        
+            return hostname
+        raise NotImplementedError()
 
     def get_metric_path(self, name):
         """

@@ -101,6 +101,18 @@ col_value   = value
 [[default]]
 ### Defaults options for all Collectors
 
+# Uncomment and set to hardcode a hostname for the collector path
+# Keep in mind, periods are seperators in graphite
+# hostname = my_custom_hostname
+
+# If you perfer to just use a different way of calculating the hostname
+# Uncomment and set this to one of these values:
+# fqdn_short  = Default. Similar to hostname -s
+# fqdn_rev    = hostname in reverse (com.example.www)
+# uname_short = Similar to uname -n, but only the first part
+# uname_rev   = uname -r in reverse (com.example.www)
+# hostname_method = fqdn_short
+
 # All collectors are disabled by default
 enabled = False
 
