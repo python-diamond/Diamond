@@ -1,5 +1,7 @@
 
 import inspect
+import os
+import socket
 
 from diamond import *
 from diamond.metric import Metric
@@ -65,6 +67,25 @@ class Collector(object):
         # Return a dict of tuples containing (collector function, collector function args, splay, interval)
         return {self.__class__.__name__: (self._run, None, int(self.config['splay']), int(self.config['interval']))}
 
+    def get_hostname(self):
+        if 'hostname' in self.config:
+            hostname = self.config['hostname']
+        if 'hostname_method' not in self.config or self.config['hostname_method'] == 'fqdn_short':
+            return socket.getfqdn().split('.')[0]
+        if self.config['hostname_method'] == 'fqdn_rev':
+            hostname = socket.getfqdn().split('.')
+            hostname.reverse()
+            hostname = '.'.join(hostname)
+            return hostname
+        if self.config['hostname_method'] == 'uname_short':
+            return os.uname().split('.')[0]
+        if self.config['hostname_method'] == 'uname_rev':
+            hostname = os.uname().split('.')
+            hostname.reverse()
+            hostname = '.'.join(hostname)
+            return hostname 
+        
+
     def get_metric_path(self, name):
         """
         Get metric path
@@ -73,11 +94,8 @@ class Collector(object):
             prefix = self.config['path_prefix']
         else:
             prefix = 'systems'
-
-        if 'hostname' in self.config:
-            hostname = self.config['hostname']
-        else:
-            hostname = socket.getfqdn().split('.')[0]
+            
+        hostname = self.get_hostname()
 
         if 'path' in self.config:
             path = self.config['path']
