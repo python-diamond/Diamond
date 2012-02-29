@@ -18,7 +18,7 @@ from diamond import *
 import diamond
 
 from diamond.collector import Collector
-from diamond.handler import Handler
+from diamond.handler.Handler import Handler
 from diamond.scheduler import *
 from diamond.util import *
 
@@ -107,7 +107,7 @@ class Server(object):
         """
         # Initialize return value
         collectors = {}
-
+        
         # Get a list of files in the directory, if the directory exists
         if not os.path.exists(path):
             raise OSError, "Directory does not exist: %s" % (path)
