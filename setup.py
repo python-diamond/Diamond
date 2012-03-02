@@ -24,7 +24,7 @@ else:
     data_files.append(('/etc/diamond/collectors',            glob('conf/collectors/*') ))
 
     if platform.dist()[0] == 'Ubuntu':
-        data_files.append(('/etc/event.d',                   ['debian/upstart/diamond'] ))
+        data_files.append(('/etc/init',                      ['debian/upstart/diamond.conf'] ))
 
 def pkgPath(root, path, rpath="/"):
     global data_files
