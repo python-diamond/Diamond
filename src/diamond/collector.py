@@ -69,7 +69,7 @@ class Collector(object):
 
     def get_hostname(self):
         if 'hostname' in self.config:
-            hostname = self.config['hostname']
+            return self.config['hostname']
         if 'hostname_method' not in self.config or self.config['hostname_method'] == 'fqdn_short':
             return socket.getfqdn().split('.')[0]
         if self.config['hostname_method'] == 'fqdn_rev':

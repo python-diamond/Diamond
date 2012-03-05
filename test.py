@@ -17,6 +17,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'collectors')))
 
 from diamond import *
+from diamond.collector import Collector
 
 def get_collector_config(key, value):
     config = configobj.ConfigObj()
@@ -94,6 +95,22 @@ def getCollectorTests(path):
 cPath = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'collectors'))
 getCollectorTests(cPath)
 
+
+class BaseCollectorTest(unittest.TestCase):
+    
+    def test_SetCustomHostname(self):
+        config = configobj.ConfigObj()
+        config['server'] = {}
+        config['server']['collectors_config_path'] = ''
+        config['collectors'] = {}
+        config['collectors']['default'] = {
+            'hostname' : 'custom.localhost',
+        }
+        c = Collector(config, [])
+        self.assertEquals('custom.localhost', c.get_hostname())
+
+
+
 ################################################################################
 
 if __name__ == "__main__":
@@ -101,5 +118,6 @@ if __name__ == "__main__":
     for test in collectorTests:
         c = getattr(collectorTests[test], test)
         tests.append(unittest.TestLoader().loadTestsFromTestCase(c))
+    tests.append(unittest.TestLoader().loadTestsFromTestCase(BaseCollectorTest))
     suite = unittest.TestSuite(tests)
     unittest.TextTestRunner(verbosity=1).run(suite)
