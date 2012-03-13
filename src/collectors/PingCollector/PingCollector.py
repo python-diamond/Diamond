@@ -21,7 +21,7 @@ class PingCollector(diamond.collector.Collector):
         for key in self.config.keys():
             if key[:7] == "target_":
                 host = self.config[key]
-                metric_name = "ping."+host.replace('.','_');
+                metric_name = host.replace('.','_');
 
                 ping = subprocess.Popen(["ping", '-nq', '-c 1', host], stdout=subprocess.PIPE).communicate()[0].strip().split("\n")[-1]
                 if ping[0:3] != 'rtt':
