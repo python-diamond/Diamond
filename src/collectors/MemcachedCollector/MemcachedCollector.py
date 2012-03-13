@@ -15,22 +15,26 @@ class MemcachedCollector(diamond.collector.Collector):
         """
         return {
             'path':     'memcached',
-            # Connection settings
-            'host':     'localhost',
-            'port':     '11211',
             
             # Which rows of 'status' you would like to publish.
             # 'telnet host port' and type stats and hit enter to see the list of
             # possibilities.
             # Leave unset to publish all
             #'publish': ''
+            
+            # Connection settings
+            'hosts':    {
+                'localhost': {
+                    'host':     'localhost',
+                    'port':     '11211',
+                },
+            },
         }
 
-    def get_stats(self):
+    def get_stats(self, config):
         # stuff that's always ignored, aren't 'stats'
         ignored = ('libevent', 'pid', 'pointer_size', 'time', 'version')
-
-        config = self.config
+        
         stats = {}
         # connect
         try:
@@ -54,17 +58,19 @@ class MemcachedCollector(diamond.collector.Collector):
         return stats
 
     def collect(self):
-        stats = self.get_stats()
-        # figure out what we're configured to get, defaulting to everything
-        desired = self.config.get('publish', stats.keys())
-        # for everything we want
-        for stat in desired:
-            if stat in stats:
-                # we have it
-                self.publish(stat, stats[stat])
-            else:
-                # we don't, must be somehting configured in publish so we
-                # should log an error about it
-                self.log.error("No such key '%s' available, issue 'stats' for "
-                               "a full list", stat)
+        hosts = self.config.get('hosts')
+        for host in hosts:
+            stats = self.get_stats(hosts[host])
+            # figure out what we're configured to get, defaulting to everything
+            desired = self.config.get('publish', stats.keys())
+            # for everything we want
+            for stat in desired:
+                if stat in stats:
+                    # we have it
+                    self.publish(host+"."+stat, stats[stat])
+                else:
+                    # we don't, must be somehting configured in publish so we
+                    # should log an error about it
+                    self.log.error("No such key '%s' available, issue 'stats' for "
+                                   "a full list", stat)
 
