@@ -23,7 +23,7 @@ class MongoDBCollector(diamond.collector.Collector):
     
     def collect(self):
         """Collect number values from db.serverStatus()"""
-        conn = pymongo.Connection(self.config['host'])
+        conn = pymongo.Connection(self.config['host'],slave_okay=True)
         data = conn.db.command('serverStatus')
         for key in data:
             self._publish_metrics([], key, data)
