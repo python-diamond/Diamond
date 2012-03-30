@@ -22,6 +22,9 @@ class MySQLCollector(diamond.collector.Collector):
             # http://dev.mysql.com/doc/refman/5.1/en/show-status.html
             # Leave unset to publish all
             #'publish' : '',
+
+            'slave':    'False',
+            'master':   'False',
         }
 
     def get_stats(self):
@@ -45,11 +48,35 @@ class MySQLCollector(diamond.collector.Collector):
         cursor = db.cursor()
 
         cursor.execute('SHOW GLOBAL STATUS')
-        stats['status'] = dict(cursor.fetchall())
-        for key in stats['status']:
+        metrics['status'] = dict(cursor.fetchall())
+        for key in metrics['status']:
             try:
-                metrics[key] = float(stats['status'][key])
+                metrics[key] = float(metrics['status'][key])
             except:
+                pass
+
+        #if self.config['master'] == 'True':
+        #    cursor = db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
+        #    cursor.execute('SHOW MASTER STATUS')
+        #    try:
+        #        row_master = cursor.fetchone()
+        #        for key, value in row_master.items():
+        #            try:
+        #                metrics[key] = float(value)
+        #            except:
+        #                pass
+        #    except:
+        #        self.log.error('Couldnt get master status')
+        #        pass
+
+        if self.config['slave'] == 'True':
+            cursor = db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
+            cursor.execute('SHOW SLAVE STATUS')
+            try:
+                row_slave = cursor.fetchone()
+                metrics['Seconds_Behind_Master'] = float(row_slave['Seconds_Behind_Master'])
+            except:
+                self.log.error('Couldnt get slave status')
                 pass
 
         db.close()
@@ -68,9 +95,9 @@ class MySQLCollector(diamond.collector.Collector):
             if 'publish' not in self.config or metric_name in self.config['publish']:
                 metric_value = self.derivative(metric_name, metric_value)
                 self.publish(metric_name, metric_value)
-        else:
-            for k in self.config['publish'].split():
-                if not metrics.has_key(k):
-                    self.log.error("No such key '%s' available, issue 'show global status' for a full list", k)
-                else:
-                    self.publish(k, metrics[k])
+            else:
+                for k in self.config['publish'].split():
+                    if not metrics.has_key(k):
+                        self.log.error("No such key '%s' available, issue 'show global status' for a full list", k)
+                    else:
+                        self.publish(k, metrics[k])
