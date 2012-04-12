@@ -8,7 +8,6 @@
 # Short-Description: System statistics collector for Graphite.
 # Description:       Diamond is a daemon and toolset for gathering system statistics
 #                    and publishing them to Graphite.
-
 ### END INIT INFO
 
 # Author: Ivan Pouzyrevsky <sandello@yandex-team.ru>
