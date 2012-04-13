@@ -19,7 +19,6 @@ class SensorsCollector(diamond.collector.Collector):
         Returns default collector settings.
         """
         return {
-            'enabled': 'True',
             'path': 'sensors',
             'fahrenheit': 'True'
         }

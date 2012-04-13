@@ -16,7 +16,6 @@ class UPSCollector(diamond.collector.Collector):
         """
 
         return {
-            'enabled': 'True',
             'path': 'ups',
             'ups_name': 'cyberpower'
         }
