@@ -9,8 +9,11 @@ import configobj
 import socket
 import re
 
-import pysnmp.entity.rfc3413.oneliner.cmdgen
-import pysnmp.debug
+try:
+    import pysnmp.entity.rfc3413.oneliner.cmdgen
+    import pysnmp.debug
+except ImportError:
+    pysnmp = None
 
 import diamond.collector
 from diamond.metric import Metric
@@ -28,7 +31,8 @@ class SNMPCollector(diamond.collector.Collector):
         diamond.collector.Collector.__init__(self, config, handlers)
 
         # Initialize SNMP Command Generator
-        self.snmpCmdGen = pysnmp.entity.rfc3413.oneliner.cmdgen.CommandGenerator()
+        if pysnmp is not None:
+            self.snmpCmdGen = pysnmp.entity.rfc3413.oneliner.cmdgen.CommandGenerator()
 
     def get_default_config(self):
         # Initialize default config

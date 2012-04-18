@@ -1,5 +1,8 @@
-import MySQLdb
-from MySQLdb import MySQLError
+try:
+    import MySQLdb
+    from MySQLdb import MySQLError
+except ImportError:
+    MySQLdb = None
 import diamond
 import re
 
@@ -30,6 +33,9 @@ class MySQLCollector(diamond.collector.Collector):
     def get_stats(self):
         params = {}
         metrics = {}
+
+        if MySQLdb is None:
+            return {}
 
         params['host']   = self.config['host']
         params['port']   = int(self.config['port'])

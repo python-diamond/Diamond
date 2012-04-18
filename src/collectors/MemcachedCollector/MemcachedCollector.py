@@ -44,7 +44,7 @@ class MemcachedCollector(diamond.collector.Collector):
             sock.send('stats\n')
             # something big enough to get whatever is sent back
             data = sock.recv(4096)
-        except socket.error as e:
+        except socket.error, e:
             self.log.exception('Failed to get stats from %s:%s',
                                config['host'], config['port'])
         else:

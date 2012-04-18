@@ -9,6 +9,7 @@ import configobj
 import socket
 import re
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), 'SNMPCollector'))
 from SNMPCollector import SNMPCollector
 from diamond.metric import Metric
 
@@ -45,6 +46,8 @@ class SNMPInterfaceCollector(SNMPCollector):
         """
         Override SNMPCollector.get_default_config method to provide default_config for the SNMPInterfaceCollector
         """
+        if SNMPCollector is None:
+            return {}
         default_config = SNMPCollector.get_default_config(self)
         default_config['path'] = 'interface'
         return default_config
