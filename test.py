@@ -92,9 +92,6 @@ def getCollectorTests(path):
         if os.path.isdir(cPath):
             getCollectorTests(cPath)
 
-cPath = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'collectors'))
-getCollectorTests(cPath)
-
 
 class BaseCollectorTest(unittest.TestCase):
     
@@ -114,6 +111,18 @@ class BaseCollectorTest(unittest.TestCase):
 ################################################################################
 
 if __name__ == "__main__":
+
+    select_collector = ''
+    for arg in sys.argv[1:]:
+        if arg.startswith('--collector='):
+            select_collector = arg[12:]
+        if arg == '--help' or arg == '-h':
+            print "\n%s: [--help] [--collector=<name>]\n" % sys.argv[0]
+            sys.exit(1)
+
+    cPath = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'collectors', select_collector))
+    getCollectorTests(cPath)
+
     tests = []
     for test in collectorTests:
         c = getattr(collectorTests[test], test)
