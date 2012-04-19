@@ -29,4 +29,8 @@ class SmartCollector(diamond.collector.Collector):
                              stdout=subprocess.PIPE).communicate()[0].strip().splitlines()
 
                 for attr in attributes[7:]:
-                    self.publish("%s.%s" % (device, attr.split()[1]), attr.split()[9])
+                    attribute = attr.split()
+                    if attribute[1] != "Unknown_Attribute":
+                        self.publish("%s.%s" % (device, attribute[1]), attribute[9])
+                    else:
+                        self.publish("%s.%s" % (device, attribute[0]), attribute[9])
