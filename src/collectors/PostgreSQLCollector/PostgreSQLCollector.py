@@ -1,9 +1,22 @@
-#!/usr/bin/python
 import psycopg2
 import sys
 import diamond.collector
 
 class PostgresqlCollector(diamond.collector.Collector):
+    """
+    """
+    
+    def get_default_config(self):
+        """
+        Return default config.
+        """
+        return {
+                'path': 'postgres',
+                'host': 'localhost',
+                'user': 'postgres',
+                'password': 'postgres',
+                'port': 5432
+               }
 
     def collect(self):
 
