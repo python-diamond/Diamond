@@ -15,7 +15,8 @@ class PostgresqlCollector(diamond.collector.Collector):
                 'host': 'localhost',
                 'user': 'postgres',
                 'password': 'postgres',
-                'port': 5432
+                'port': 5432,
+                'method': 'Threaded'
                }
 
     def collect(self):

@@ -14,7 +14,8 @@ class SmartCollector(diamond.collector.Collector):
         """
         return {
             'path': 'smart',
-            'devices': '^disk[0-9]$|^sd[a-z]$|^hd[a-z]$'
+            'devices': '^disk[0-9]$|^sd[a-z]$|^hd[a-z]$',
+            'method': 'Threaded'
         }
 
     def collect(self):
