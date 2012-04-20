@@ -22,6 +22,10 @@ class MySQLCollector(diamond.collector.Collector):
         'Qcache_queries_in_cache', 'Qcache_total_blocks',
         'Threads_cached', 'Threads_connected', 'Threads_created', 'Threads_running',
         ]
+    _IGNORE_KEYS = [
+        'Master_Port', 'Master_Server_Id',
+        'Last_Errno', 'Last_IO_Errno', 'Last_SQL_Errno',
+        ]
 
     def get_default_config(self):
         """
@@ -50,6 +54,7 @@ class MySQLCollector(diamond.collector.Collector):
         metrics = {}
 
         if MySQLdb is None:
+            self.log.error('Unable to import MySQLdb')
             return {}
 
         params['host']   = self.config['host']
@@ -76,26 +81,34 @@ class MySQLCollector(diamond.collector.Collector):
             except:
                 pass
 
-        #if self.config['master'] == 'True':
-        #    cursor = db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
-        #    cursor.execute('SHOW MASTER STATUS')
-        #    try:
-        #        row_master = cursor.fetchone()
-        #        for key, value in row_master.items():
-        #            try:
-        #                metrics[key] = float(value)
-        #            except:
-        #                pass
-        #    except:
-        #        self.log.error('Couldnt get master status')
-        #        pass
+        if self.config['master'] == 'True':
+            cursor = db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
+            cursor.execute('SHOW MASTER STATUS')
+            try:
+                row_master = cursor.fetchone()
+                for key, value in row_master.items():
+                    if key in self._IGNORE_KEYS:
+                        continue
+                    try:
+                        metrics[key] = float(row_master[key])
+                    except:
+                        pass
+            except:
+                self.log.error('Couldnt get master status')
+                pass
 
         if self.config['slave'] == 'True':
             cursor = db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
             cursor.execute('SHOW SLAVE STATUS')
             try:
                 row_slave = cursor.fetchone()
-                metrics['Seconds_Behind_Master'] = float(row_slave['Seconds_Behind_Master'])
+                for key, value in row_slave.items():
+                    if key in self._IGNORE_KEYS:
+                        continue
+                    try:
+                        metrics[key] = float(row_slave[key])
+                    except:
+                        pass
             except:
                 self.log.error('Couldnt get slave status')
                 pass
