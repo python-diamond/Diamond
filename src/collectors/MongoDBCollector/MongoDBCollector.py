@@ -28,6 +28,7 @@ class MongoDBCollector(diamond.collector.Collector):
         """Collect number values from db.serverStatus()"""
 
         if Number is None:
+            self.log.error('Unable to import either Number or pymongo')
             return {}
 
         conn = pymongo.Connection(self.config['host'],slave_okay=True)

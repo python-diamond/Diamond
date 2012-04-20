@@ -25,6 +25,7 @@ class RabbitMQCollector(diamond.collector.Collector):
 
     def collect(self):
         if Number is None:
+            self.log.error('Unable to import either Number or pyrabbit.api')
             return {}
 
         client = pyrabbit.api.Client(self.config['host'],

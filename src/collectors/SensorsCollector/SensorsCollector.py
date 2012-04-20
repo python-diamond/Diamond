@@ -1,6 +1,9 @@
 import diamond.collector
 
-import sensors
+try:
+    import sensors
+except ImportError:
+    sensors = None
 
 class SensorsCollector(diamond.collector.Collector):
     """
@@ -24,6 +27,10 @@ class SensorsCollector(diamond.collector.Collector):
         }
 
     def collect(self):
+        if sensors is None:
+            self.log.error('Unable to import module sensors')
+            return {}
+
         sensors.init()
         try:
             for chip in sensors.iter_detected_chips():
