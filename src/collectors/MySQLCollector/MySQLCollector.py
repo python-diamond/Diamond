@@ -8,6 +8,21 @@ import re
 
 class MySQLCollector(diamond.collector.Collector):
 
+    _GAUGE_KEYS = [
+        'Innodb_buffer_pool_pages_data', 'Innodb_buffer_pool_pages_dirty', 'Innodb_buffer_pool_pages_free',
+        'Innodb_buffer_pool_pages_misc', 'Innodb_buffer_pool_pages_total',
+        'Innodb_data_pending_fsyncs', 'Innodb_data_pending_reads', 'Innodb_data_pending_writes',
+        'Innodb_os_log_pending_fsyncs', 'Innodb_os_log_pending_writes',
+        'Innodb_page_size',
+        'Innodb_row_lock_current_waits', 'Innodb_row_lock_time', 'Innodb_row_lock_time_avg',
+        'Innodb_row_lock_time_max', 
+        'Key_blocks_unused', 'Last_query_cost', 'Max_used_connections',
+        'Open_files', 'Open_streams', 'Open_table_definitions', 'Open_tables',
+        'Qcache_free_blocks', 'Qcache_free_memory',
+        'Qcache_queries_in_cache', 'Qcache_total_blocks',
+        'Threads_cached', 'Threads_connected', 'Threads_created', 'Threads_running',
+        ]
+
     def get_default_config(self):
         """
         Returns the default collector settings
@@ -99,7 +114,13 @@ class MySQLCollector(diamond.collector.Collector):
                 continue
             
             if 'publish' not in self.config or metric_name in self.config['publish']:
-                metric_value = self.derivative(metric_name, metric_value)
+                if metric_name not in self._GAUGE_KEYS:
+                    metric_value = self.derivative(metric_name, metric_value)
+                    #All these values are incrementing counters, so if we've gone negative
+                    #then someone's restarted mysqld and reset all the counters. Best not
+                    #record a massive negative number. Skip this value.
+                    if metric_value < 0:
+                        continue
                 self.publish(metric_name, metric_value)
             else:
                 for k in self.config['publish'].split():
