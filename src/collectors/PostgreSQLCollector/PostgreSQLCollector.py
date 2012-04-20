@@ -27,32 +27,20 @@ class PostgresqlCollector(diamond.collector.Collector):
                 self.config['port']
                 )
 
-        try:
-            self.conn = psycopg2.connect(self.conn_string)
-            self.cursor = self.conn.cursor()
-        except:
-            exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
-            sys.exit("Database connection failed!\n ->%s" % (exceptionValue))
+        self.conn = psycopg2.connect(self.conn_string)
+        self.cursor = self.conn.cursor()
 
         # Statistics
-        try:
-            self.cursor.execute("SELECT pg_stat_database.*, pg_database_size(pg_database.datname) AS size \
-                    FROM pg_database JOIN pg_stat_database ON pg_database.datname = pg_stat_database.datname \
-                    WHERE pg_stat_database.datname \
-                    NOT IN ('template0','template1','postgres')")
-            stats = self.cursor.fetchall()
-        except:
-            exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
-            sys.exit("Database connection failed!\n ->%s" % (exceptionValue))
+        self.cursor.execute("SELECT pg_stat_database.*, pg_database_size(pg_database.datname) AS size \
+                FROM pg_database JOIN pg_stat_database ON pg_database.datname = pg_stat_database.datname \
+                WHERE pg_stat_database.datname \
+                NOT IN ('template0','template1','postgres')")
+        stats = self.cursor.fetchall()
 
         # Connections
-        try:
-            self.cursor.execute("SELECT datname, count(datname) \
-                    FROM pg_stat_activity GROUP BY pg_stat_activity.datname;")
-            connections = self.cursor.fetchall()
-        except:
-            exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
-            sys.exit("Database connection failed!\n ->%s" % (exceptionValue))
+        self.cursor.execute("SELECT datname, count(datname) \
+                FROM pg_stat_activity GROUP BY pg_stat_activity.datname;")
+        connections = self.cursor.fetchall()
 
         ret = {}
         for stat in stats:
