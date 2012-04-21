@@ -1,48 +1,37 @@
-
-import subprocess
-import os
-import re
 import diamond.collector
+import subprocess
+import re
+import os
 
 class SmartCollector(diamond.collector.Collector):
-    '''
-    Collect smart attributes
-    '''
-    
+    """
+    Collect data from S.M.A.R.T.'s attribute reporting.
+    """
+
     def get_default_config(self):
         """
-        Returns the default collector settings
+        Returns default configuration options.
         """
         return {
-            'path':     'smart',
-            'devices':  "^disk[0-9]$|^sd[a-z]$|^hd[a-z]$",
-        }    
-    
-    def getDisks(self):
-        '''
-        Return a list of devices that match the config file regex
-        '''
-        disks = []
-        for device in os.listdir('/dev/'):
-            if re.match(self.config['devices'], device):
-                disks.append(device);
-        return disks
-    
-    def getSmartAttributes(self, disk):
-        '''
-        Return a list of smart attributes in truple form
-        '''
-        list = []
-        attributes = subprocess.Popen(["smartctl", "-A", "/dev/"+disk], stdout=subprocess.PIPE).communicate()[0].strip().split("\n")
-        for attribute in attributes[7:]:
-            attribute = attribute.split()
-            list.append((disk+'.'+attribute[0]+'-'+attribute[1], attribute[9]))
-        return list
+            'path': 'smart',
+            'devices': '^disk[0-9]$|^sd[a-z]$|^hd[a-z]$',
+            'method': 'Threaded'
+        }
 
     def collect(self):
-        for device in self.getDisks():
-            attributes = self.getSmartAttributes(device)
-            for attribute in attributes:
-                metric_name = attribute[0]
-                metric_value = round(self.derivative(metric_name, float(attribute[1])), 2)
-                self.publish(metric_name, metric_value)
+        """
+        Collect and publish S.M.A.R.T. attributes
+        """
+        devices = re.compile(self.config['devices'])
+
+        for device in os.listdir('/dev'):
+            if devices.match(device):
+                attributes = subprocess.Popen(["smartctl", "-A", os.path.join('/dev',device)],
+                             stdout=subprocess.PIPE).communicate()[0].strip().splitlines()
+
+                for attr in attributes[7:]:
+                    attribute = attr.split()
+                    if attribute[1] != "Unknown_Attribute":
+                        self.publish("%s.%s" % (device, attribute[1]), attribute[9])
+                    else:
+                        self.publish("%s.%s" % (device, attribute[0]), attribute[9])
