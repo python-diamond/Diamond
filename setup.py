@@ -25,6 +25,8 @@ else:
 
     if platform.dist()[0] == 'Ubuntu':
         data_files.append(('/etc/init',                      ['debian/upstart/diamond.conf'] ))
+    if platform.dist()[0] == 'centos' or 'redhat':
+        data_files.append(('/etc/init.d',		     ['bin/init.d/diamond'] ))
 
 def pkgPath(root, path, rpath="/"):
     global data_files
@@ -56,7 +58,7 @@ setup(
     description     = 'Smart data producer for graphite graphing package',
     package_dir     = {'' : 'src'},
     packages        = ['diamond' , 'diamond.handler'],
-    scripts         = glob('bin/*'),
+    scripts         = ['bin/diamond'],
     data_files      = data_files,
     #test_suite      = 'test.main',
     **setup_kwargs

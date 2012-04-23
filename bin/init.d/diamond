@@ -1,0 +1,77 @@
+#!/bin/sh
+#
+# diamond	Start the diamond statistics collector
+#
+# chkconfig: 2345 99 01
+# description: Diamond is a daemon and toolset for gathering system statistics \
+#              and publishing them to Graphite.
+# processname: python
+# config: /etc/diamond/diamond.conf
+# pidfile: /var/run/diamond.pid
+### BEGIN INIT INFO
+# Provides:          diamond
+# Required-Start:    $network $local_fs $remote_fs
+# Required-Stop:     $network $local_fs $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: System statistics collector for Graphite.
+# Description:       Diamond is a daemon and toolset for gathering system statistics
+#                    and publishing them to Graphite.
+### END INIT INFO
+
+# Author: Sam Bashton <sam@bashton.com>
+NAME=diamond
+DAEMON=/usr/bin/diamond
+DAEMON_ARGS="-p /var/run/diamond.pid"
+PIDFILE=/var/run/diamond.pid
+SCRIPTNAME=/etc/init.d/diamond
+
+. /etc/rc.d/init.d/functions
+
+start() {
+  echo -n $"Starting $NAME: "
+  daemon --pidfile $PIDFILE $DAEMON $DAEMON_ARGS
+  retval=$?
+  if [ $retval -eq 0 ]; then
+    echo_success
+    echo
+  else
+    echo_failure
+    echo
+  fi
+  return $retval
+}
+
+stop() {
+  echo -n $"Stopping $NAME: "
+  killproc -p $PIDFILE $NAME
+  retval=$?
+  echo
+  return $retval
+}
+
+restart() {
+  stop
+  start
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    status -p $PIDFILE $NAME
+    ;;
+  restart)
+    restart
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|status}"
+    exit 2
+    ;;
+esac
+
+exit $?
