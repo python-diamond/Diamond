@@ -1,7 +1,9 @@
-from numbers import Number
-
+try:
+    from numbers import Number
+    import pyrabbit.api
+except ImportError:
+    Number = None
 import diamond
-import pyrabbit.api
 
 from pprint import pprint
 
@@ -22,6 +24,10 @@ class RabbitMQCollector(diamond.collector.Collector):
         }
 
     def collect(self):
+        if Number is None:
+            self.log.error('Unable to import either Number or pyrabbit.api')
+            return {}
+
         client = pyrabbit.api.Client(self.config['host'],
                                      self.config['user'],
                                      self.config['password'])

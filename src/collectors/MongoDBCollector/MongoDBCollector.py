@@ -1,7 +1,10 @@
-from numbers import Number
+try:
+    from numbers import Number
+    import pymongo
+except ImportError:
+    Number = None
 
 import diamond
-import pymongo
 
 
 class MongoDBCollector(diamond.collector.Collector):
@@ -23,6 +26,11 @@ class MongoDBCollector(diamond.collector.Collector):
     
     def collect(self):
         """Collect number values from db.serverStatus()"""
+
+        if Number is None:
+            self.log.error('Unable to import either Number or pymongo')
+            return {}
+
         conn = pymongo.Connection(self.config['host'],slave_okay=True)
         data = conn.db.command('serverStatus')
         for key in data:
