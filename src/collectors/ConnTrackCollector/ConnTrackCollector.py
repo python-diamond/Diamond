@@ -25,7 +25,7 @@ class ConnTrackCollector(diamond.collector.Collector):
     def collect(self):
         if not os.access(COMMAND[0], os.X_OK):
             return
-        line = subprocess.check_output(ConnTrackCollector.COMMAND)
+        line = subprocess.Popen(ConnTrackCollector.COMMAND, stdout=subprocess.PIPE).communicate()[0]
         match = _RE.match(line)
         if match:
             self.publish('nf_conntrack_count', int(match.group(2)))

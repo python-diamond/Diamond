@@ -50,7 +50,7 @@ class VarnishCollector(diamond.collector.Collector):
         data = {}
         if not os.access(self._CMD, os.X_OK):
             return data
-        output = subprocess.check_output([self._CMD, '-1'])
+        output = subprocess.Popen([self._CMD, '-1'], stdout=subprocess.PIPE).communicate()[0]
         matches = self._RE.findall(output)
         for line in matches:
             if line[0] in self._KEYS:
