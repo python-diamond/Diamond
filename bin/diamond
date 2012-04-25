@@ -68,6 +68,7 @@ def main():
 
     # Running in foreground, configure Log Stream Handler with debug severity
     if options.foreground:
+        log.setLevel(logging.DEBUG)
         # Configure Logging Format
         formatter = logging.Formatter('[%(asctime)s] [%(threadName)s] %(message)s')
         # handler
