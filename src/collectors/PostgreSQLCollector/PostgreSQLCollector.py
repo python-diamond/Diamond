@@ -1,6 +1,10 @@
-import psycopg2
 import sys
 import diamond.collector
+
+try:
+    import psycopg2
+except ImportError:
+    psycopg2 = None
 
 class PostgresqlCollector(diamond.collector.Collector):
     """
@@ -20,7 +24,10 @@ class PostgresqlCollector(diamond.collector.Collector):
                }
 
     def collect(self):
-
+        if psycopg2 is None:
+            self.log.error('Unable to import module psycopg2')
+            return {}
+            
         self.conn_string = "host=%s user=%s password=%s port=%s" % (
                 self.config['host'],
                 self.config['user'],
