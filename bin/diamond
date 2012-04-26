@@ -86,16 +86,9 @@ def main():
                 # python <= 2.5 does not have disable_existing_loggers
                 # default was to always disable them, in our case we want to
                 # keep any logger created by handlers
-                disabled = {}
-                for key, value in logging.root.manager.loggerDict.items():
-                    try:
-                        disabled[key] = value.disabled
-                    except AttributeError:
-                        # This is OK, we're just not dealing with a Logger
-                        pass
                 logging.config.fileConfig(options.configfile)
-                for key, disabled in disabled.items():
-                    logging.root.manager.loggerDict[key] = True
+                for logger in logging.root.manager.loggerDict.values():
+                    logger.disabled = 0
         except Exception, e:
             sys.stderr.write("Error occurs when initialize logging: ")
             sys.stderr.write(str(e))
