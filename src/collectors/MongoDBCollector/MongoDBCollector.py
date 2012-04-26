@@ -1,6 +1,7 @@
 try:
     from numbers import Number
     import pymongo
+    from pymongo import ReadPreference
 except ImportError:
     Number = None
 
@@ -31,7 +32,7 @@ class MongoDBCollector(diamond.collector.Collector):
             self.log.error('Unable to import either Number or pymongo')
             return {}
 
-        conn = pymongo.Connection(self.config['host'],slave_okay=True)
+        conn = pymongo.Connection(self.config['host'],read_preference=ReadPreference.SECONDARY)
         data = conn.db.command('serverStatus')
         for key in data:
             self._publish_metrics([], key, data)
