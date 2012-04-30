@@ -20,6 +20,7 @@ class MySQLCollector(diamond.collector.Collector):
         'Open_files', 'Open_streams', 'Open_table_definitions', 'Open_tables',
         'Qcache_free_blocks', 'Qcache_free_memory',
         'Qcache_queries_in_cache', 'Qcache_total_blocks',
+        'Seconds_Behind_Master',
         'Threads_cached', 'Threads_connected', 'Threads_created', 'Threads_running',
         ]
     _IGNORE_KEYS = [
