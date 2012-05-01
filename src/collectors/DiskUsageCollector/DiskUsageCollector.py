@@ -29,7 +29,8 @@ class DiskUsageCollector(diamond.collector.Collector):
         """
         return {
             'enabled':  'True',
-            'path':     'iostat'
+            'path':     'iostat',
+            'devices':  'md[0-9]$|sd[a-z]+$|xvd[a-z]+$'
         }
 
     def get_disk_statistics(self):
@@ -85,12 +86,14 @@ class DiskUsageCollector(diamond.collector.Collector):
             time_delta = float(self.config['interval'])
         self.LastCollectTime = CollectTime
         
+        exp = self.config['devices']
+        reg = re.compile(exp)
+
         for key, info in self.get_disk_statistics().iteritems():
             metrics = {}
 
             name = info['device']
-            # TODO: Make this configurable
-            if not re.match(r'md[0-9]$|sd[a-z]+$|xvd[a-z]+$', name):
+            if not reg.match(name):
                 continue
 
             for key, value in info.iteritems():
