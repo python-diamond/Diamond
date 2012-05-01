@@ -17,12 +17,6 @@ user =
 # Leave empty to use the current group
 group =
 
-# Log file
-log_file = /var/log/diamond/diamond.log
-
-# Number of days to keep log files
-log_file_days = 7
-
 # Pid file
 pid_file = /var/run/diamond.pid
 
@@ -38,6 +32,9 @@ collectors_reload_interval = 3600
 ################################################################################
 ### Options for handlers
 [handlers]
+
+# daemon logging handler(s)
+keys = rotated_file
 
 ### Defaults options for all Handlers
 [[default]]
@@ -130,3 +127,40 @@ method = Sequential
 
 # Default numeric output
 byte_unit = byte
+
+################################################################################
+### Options for logging
+# for more information on file format syntax:
+# http://docs.python.org/library/logging.config.html#configuration-file-format
+
+[loggers]
+
+keys = root
+
+# handlers are higher in this config file, in:
+# [handlers]
+# keys = ...
+
+[formatters]
+
+keys = default
+
+[logger_root]
+
+# to increase verbosity, set DEBUG
+level = INFO
+handlers = rotated_file
+
+[handler_rotated_file]
+
+class = handlers.TimedRotatingFileHandler
+level = DEBUG
+formatter = default
+# rotate at midnight, each day and keep 7 days
+args = ('/var/log/diamond/diamond.log', 'midnight', 1, 7)
+
+[formatter_default]
+
+format = [%(asctime)s] [%(threadName)s] %(message)s
+datefmt =
+

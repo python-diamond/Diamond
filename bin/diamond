@@ -19,16 +19,14 @@ from diamond.server import Server
 
 import optparse
 import signal
-import logging.handlers
+import logging.config
 
 def main():
     # Initialize Options
     parser = optparse.OptionParser()
     parser.add_option("-c", "--configfile", dest="configfile", default="/etc/diamond/diamond.conf", help="config file")
-    parser.add_option("-l", "--logfile", dest="logfile", default=None, help="log file")
     parser.add_option("-f", "--foreground", dest="foreground", default=False, action="store_true", help="run in foreground")
     parser.add_option("-p", "--pidfile", dest="pidfile", default=None, help="pid file")
-    parser.add_option("-v", "--verbose", dest="verbose", default=False, action="store_true", help="verbose")
     parser.add_option("-r", "--run", dest="collector", default=None, help="run a given collector once and exit")
 
     # Parse Command Line Args
@@ -67,40 +65,34 @@ def main():
 
     # Initialize Logging
     log = logging.getLogger('diamond')
-    log.setLevel(logging.INFO)
 
-    # Configure Logging Format
-    formatter = logging.Formatter('[%(asctime)s] [%(threadName)s] %(message)s')
-
-    # Configure Log Stream Handler
+    # Running in foreground, configure Log Stream Handler with debug severity
     if options.foreground:
+        log.setLevel(logging.DEBUG)
+        # Configure Logging Format
+        formatter = logging.Formatter('[%(asctime)s] [%(threadName)s] %(message)s')
+        # handler
         streamHandler = logging.StreamHandler(sys.stdout)
         streamHandler.setFormatter(formatter)
         streamHandler.setLevel(logging.DEBUG)
         log.addHandler(streamHandler)
-
-    # Got Log File Handler log file
-    if not options.logfile:
-        options.logfile = str(config['server']['log_file'])
-
-    # Attempt to Log File Directory
-    logdir = os.path.abspath(os.path.dirname(options.logfile))
-    if not os.path.exists(logdir):
-        os.mkdir(logdir)
-
-    # Configure Log File handler
-    if config['server'].has_key('log_file_days'):
-        fileHandler = logging.handlers.TimedRotatingFileHandler(options.logfile, 'midnight', 1, backupCount=int(config['server']['log_file_days']))
     else:
-        fileHandler = logging.FileHandler(options.logfile, 'w')
-
-    fileHandler.setFormatter(formatter)
-    fileHandler.setLevel(logging.DEBUG)
-    log.addHandler(fileHandler)
-
-    # Configure Logging Verbosity
-    if options.verbose:
-        log.setLevel(logging.DEBUG)
+        # if running in background, configure loggers from config file
+        try:
+            if sys.version_info >= (2,6):
+                logging.config.fileConfig(options.configfile,
+                                          disable_existing_loggers=False)
+            else:
+                # python <= 2.5 does not have disable_existing_loggers
+                # default was to always disable them, in our case we want to
+                # keep any logger created by handlers
+                logging.config.fileConfig(options.configfile)
+                for logger in logging.root.manager.loggerDict.values():
+                    logger.disabled = 0
+        except Exception, e:
+            sys.stderr.write("Error occurs when initialize logging: ")
+            sys.stderr.write(str(e))
+            sys.stderr.write(os.linesep)
 
     # Log
     log.info('Changed UID: %d (%s) GID: %d (%s).' % (os.getuid(), config['server']['user'], os.getgid(), config['server']['group']))
