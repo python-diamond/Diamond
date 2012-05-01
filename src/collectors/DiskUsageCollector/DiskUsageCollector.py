@@ -155,5 +155,5 @@ class DiskUsageCollector(diamond.collector.Collector):
 
                 # Only publish when we have io figures
                 for key in metrics:
-                    metric_name = '.'.join([info['device'], key])
+                    metric_name = '.'.join([info['device'], key]).replace('/','_')
                     self.publish(metric_name, metrics[key])
