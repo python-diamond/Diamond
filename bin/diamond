@@ -125,7 +125,7 @@ def main():
     if not options.foreground and not options.collector:
 
         # Double fork to serverize process
-        log.info('Deatching Process.')
+        log.info('Detaching Process.')
 
         # Fork 1
         try:
