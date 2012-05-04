@@ -72,6 +72,8 @@ class Collector(object):
             return self.config['hostname']
         if 'hostname_method' not in self.config or self.config['hostname_method'] == 'fqdn_short':
             return socket.getfqdn().split('.')[0]
+        if self.config['hostname_method'] == 'fqdn':
+            return socket.getfqdn().replace('.','_')
         if self.config['hostname_method'] == 'fqdn_rev':
             hostname = socket.getfqdn().split('.')
             hostname.reverse()

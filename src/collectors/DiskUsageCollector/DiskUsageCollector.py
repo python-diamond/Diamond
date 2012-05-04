@@ -50,6 +50,10 @@ class DiskUsageCollector(diamond.collector.Collector):
         for line in file:
             try:
                 columns = line.split()
+                #On early linux v2.6 versions, partitions have only 4 output fields
+                #not 11. From linux 2.6.25 partitions have the full stats set.
+                if len(columns) < 14:
+                    continue
                 major, minor, device = int(columns[0]), int(columns[1]), columns[2]
     
                 if device.startswith('ram') or device.startswith('loop'):
