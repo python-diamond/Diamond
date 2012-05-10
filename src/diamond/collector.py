@@ -86,6 +86,8 @@ class Collector(object):
             hostname.reverse()
             hostname = '.'.join(hostname)
             return hostname
+        if self.config['hostname_method'].lower() == 'none':
+            return None
         raise NotImplementedError()
 
     def get_metric_path(self, name):
@@ -96,8 +98,10 @@ class Collector(object):
             prefix = self.config['path_prefix']
         else:
             prefix = 'systems'
-            
+
         hostname = self.get_hostname()
+        if hostname is not None:
+            prefix = prefix + "." + hostname
 
         if 'path' in self.config:
             path = self.config['path']
@@ -105,9 +109,9 @@ class Collector(object):
             path = self.__class__.__name__
 
         if path == '.':
-            return '.'.join([prefix, hostname, name])
+            return '.'.join([prefix, name])
         else:
-            return '.'.join([prefix, hostname, path, name])
+            return '.'.join([prefix, path, name])
 
     def collect(self):
         """
