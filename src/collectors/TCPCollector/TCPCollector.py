@@ -16,7 +16,7 @@ class TCPCollector(diamond.collector.Collector):
         """
         return {
             'path':             'tcp',
-            'allowed_names':    'ListenOverflows, ListenDrops, TCPLoss, TCPTimeouts',
+            'allowed_names':    'ListenOverflows, ListenDrops, TCPLoss, TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, TCPForwardRetrans, TCPSlowStartRetrans',
             'method':           'Threaded'
         }
 
@@ -44,4 +44,7 @@ class TCPCollector(diamond.collector.Collector):
 
         for key, value in zip(names, values):
             if key in allowed_names:
+                value = self.derivative(key, long(value))
+                if value < 0:
+                    continue
                 self.publish(key, value, 0)
