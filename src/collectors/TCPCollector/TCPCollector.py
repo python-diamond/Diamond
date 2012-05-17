@@ -16,8 +16,7 @@ class TCPCollector(diamond.collector.Collector):
         """
         return {
             'path':             'tcp',
-            'allowed_names':    'ListenOverflows, ListenDrops, TCPLoss, TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, TCPForwardRetrans, TCPSlowStartRetrans',
-            'method':           'Threaded'
+            'allowed_names':    'ListenOverflows, ListenDrops, TCPLoss, TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, TCPForwardRetrans, TCPSlowStartRetrans'
         }
 
     def collect(self):
