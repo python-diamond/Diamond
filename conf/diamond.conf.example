@@ -105,6 +105,7 @@ col_value   = value
 # If you perfer to just use a different way of calculating the hostname
 # Uncomment and set this to one of these values:
 # fqdn_short  = Default. Similar to hostname -s
+# fqdn        = hostname output
 # fqdn_rev    = hostname in reverse (com.example.www)
 # uname_short = Similar to uname -n, but only the first part
 # uname_rev   = uname -r in reverse (com.example.www)
