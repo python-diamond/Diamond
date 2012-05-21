@@ -20,6 +20,7 @@ DAEMON=/usr/bin/diamond
 DAEMON_ARGS="-p /var/run/diamond.pid"
 PIDFILE=/var/run/diamond.pid
 SCRIPTNAME=/etc/init.d/diamond
+CONF=/etc/diamond/diamond.conf
 
 # Exit if the package is not installed
 [ -x $DAEMON ] || exit 0
@@ -27,12 +28,19 @@ SCRIPTNAME=/etc/init.d/diamond
 # Read configuration variable file if it is present
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
 
+# Checking for a config file in place
+if [  ! -e $CONF ]; then
+   echo "/etc/diamond/diamond.conf not found. Please see /etc/diamond/diamond.conf.example" 
+   exit 2
+fi
+
 # Load the VERBOSE setting and other rcS variables
 . /lib/init/vars.sh
 
 # Define LSB log_* functions.
 # Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
 . /lib/lsb/init-functions
+
 
 #
 # Function that starts the daemon/service
