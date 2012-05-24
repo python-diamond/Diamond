@@ -6,6 +6,14 @@ class PowerDNSCollector(diamond.collector.Collector):
     Collects all metrics exported by the powerdns nameserver using the
     pdns_control binary.
     """ 
+    _GAUGE_KEYS = [
+        'cache-bytes', 'cache-entries', 'chain-resends',
+        'concurrent-queries', 'dlg-only-drops', 'dont-outqueries',
+        'ipv6-outqueries', 'latency', 'max-mthread-stack', 'negcache-entries',
+        'nsspeeds-entries',
+        'packetcache-bytes', 'packetcache-entries', 'packetcache-size',
+        'qa-latency', 'throttle-entries'
+        ]
     def get_default_config(self): 
         """
         Returns the default collector settings
@@ -22,4 +30,13 @@ class PowerDNSCollector(diamond.collector.Collector):
             if not metric.strip():
                 continue
             metric, value = metric.split('=')
-            self.publish(metric, int(value))
+            try:
+                value = float(value)
+            except:
+                pass
+            if metric not in self._GAUGE_KEYS:
+                value = self.derivative(metric, value)
+                if value < 0:
+                    continue
+            self.log.info("Metric %s has value %d", metric, int(value))
+            self.publish(metric, value)
