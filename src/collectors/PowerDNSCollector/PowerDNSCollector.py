@@ -38,5 +38,4 @@ class PowerDNSCollector(diamond.collector.Collector):
                 value = self.derivative(metric, value)
                 if value < 0:
                     continue
-            self.log.info("Metric %s has value %d", metric, int(value))
             self.publish(metric, value)
