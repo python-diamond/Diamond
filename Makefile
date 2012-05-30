@@ -16,7 +16,7 @@ all:
 	@echo "make cleanws  - Strip trailing whitespaces from files"
 
 run:
-	./bin/diamond --configfile=conf/diamond.conf --foreground --verbose
+	./bin/diamond --configfile=conf/diamond.conf --foreground
 
 watch:
 	watchr test.watchr
