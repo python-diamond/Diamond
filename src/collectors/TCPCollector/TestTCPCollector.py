@@ -11,7 +11,8 @@ from TCPCollector import TCPCollector
 class TestTCPCollector(CollectorTestCase):
     def setUp(self, allowed_names = []):
         config = get_collector_config('TCPCollector', {
-            'allowed_names' : allowed_names
+            'allowed_names' : allowed_names,
+            'interval': 1
         })
         self.collector = TCPCollector(config, None)
 
@@ -29,6 +30,14 @@ class TestTCPCollector(CollectorTestCase):
         self.setUp([ 'A', 'C' ])
         open_mock.return_value = StringIO('''
 TcpExt: A B C
+TcpExt: 0 0 0
+'''.strip())
+
+        self.collector.collect()
+        self.assertPublishedMany(publish_mock, {})
+
+        open_mock.return_value = StringIO('''
+TcpExt: A B C
 TcpExt: 0 1 2
 '''.strip())
 
@@ -36,14 +45,19 @@ TcpExt: 0 1 2
 
         self.assertEqual(len(publish_mock.call_args_list), 2)
         self.assertEqual(publish_mock.call_args_list, [
-            (('A', '0', 0), {}),
-            (('C', '2', 0), {})
+            (('A', 0.0, 0), {}),
+            (('C', 2.0, 0), {})
         ])
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         self.setUp([ 'ListenOverflows', 'ListenDrops', 'TCPLoss', 'TCPTimeouts' ])
+        
         TCPCollector.PROC = self.getFixturePath('proc_net_netstat')
+        self.collector.collect()
+        self.assertPublishedMany(publish_mock, {})
+        
+        TCPCollector.PROC = self.getFixturePath('proc_net_netstat_2')
         self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
