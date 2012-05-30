@@ -4,6 +4,11 @@ import diamond.collector
 import diamond.convertor
 import os
 
+try:
+    import psutil
+except ImportError:
+    psutil = None
+
 class DiskSpaceCollector(diamond.collector.Collector):
     """
     Uses /proc/mounts and os.statvfs() to get disk space usage
@@ -64,29 +69,40 @@ class DiskSpaceCollector(diamond.collector.Collector):
           (major, minor) -> FileSystem(device, mount_point)
         '''
         result = {}
-        if not os.access('/proc/mounts', os.R_OK):
-            return result
-        file = open('/proc/mounts')
-        for line in file:
-            try:
-                device, mount_point, fs_type, fs_options, dummy1, dummy2 = line.split()
-            except ValueError:
-                continue
-    
-            if mount_point.startswith('/dev') or mount_point.startswith('/proc') or mount_point.startswith('/sys'):
-                continue
-    
-            if device.startswith('/') and mount_point.startswith('/'):
-                stat  = os.stat(mount_point)
-                major = os.major(stat.st_dev)
-                minor = os.minor(stat.st_dev)
-    
-                result[(major, minor)] = {
-                    'device'      : device,
-                    'mount_point' : mount_point
+        if os.access('/proc/mounts', os.R_OK):
+            file = open('/proc/mounts')
+            for line in file:
+                try:
+                    device, mount_point, fs_type, fs_options, dummy1, dummy2 = line.split()
+                except ValueError:
+                    continue
+        
+                if mount_point.startswith('/dev') or mount_point.startswith('/proc') or mount_point.startswith('/sys'):
+                    continue
+        
+                if device.startswith('/') and mount_point.startswith('/'):
+                    stat  = os.stat(mount_point)
+                    major = os.major(stat.st_dev)
+                    minor = os.minor(stat.st_dev)
+        
+                    result[(major, minor)] = {
+                        'device'      : device,
+                        'mount_point' : mount_point,
+                        'fs_type'     : fs_type
+                    }
+        
+            file.close()
+            
+        elif psutil:
+            partitions = psutil.disk_partitions(False)
+            for partition in partitions:
+                result[(0, len(result))] = {
+                    'device'      : partition.device,
+                    'mount_point' : partition.mountpoint,
+                    'fs_type'     : partition.fstype
                 }
-    
-        file.close()
+            pass
+        
         return result
     
     def collect(self):
