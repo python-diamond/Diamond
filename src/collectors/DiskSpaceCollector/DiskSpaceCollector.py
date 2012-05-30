@@ -23,7 +23,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             'enabled' : 'True',
             'path' : 'diskspace',
             # filesystems to examine
-            'filesystems' : 'ext2, ext3, ext4, xfs, glusterfs, nfs',
+            'filesystems' : 'ext2, ext3, ext4, xfs, glusterfs, nfs, ntfs, hfs, fat32, fat16',
 
             # exclude_filters
             #   A list of regex patterns
@@ -106,8 +106,22 @@ class DiskSpaceCollector(diamond.collector.Collector):
         return result
     
     def collect(self):
+        exclude_reg = re.compile(self.config['exclude_filters'])
+        
+        filesystems = []
+        for filesystem in self.config['filesystems'].split(','):
+            filesystems.append(filesystem.strip())
+        
         labels = self.get_disk_labels()
         for key, info in self.get_file_systems().iteritems():
+        # Skip the filesystem if it is not in the list of valid filesystems
+            if info['fs_type'] not in filesystems:
+                continue
+            
+        # Process the filters
+            if exclude_reg.match(info['mount_point']):
+                continue
+            
             if labels.has_key(info['device']):
                 name = labels[info['device']]
             else:
