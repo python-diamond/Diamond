@@ -7,6 +7,11 @@ import diamond.convertor
 import time
 import os
 
+try:
+    import psutil
+except ImportError:
+    psutil = None
+
 class DiskUsageCollector(diamond.collector.Collector):
     """
     Collect IO Stats
@@ -31,7 +36,7 @@ class DiskUsageCollector(diamond.collector.Collector):
         return {
             'enabled':  'True',
             'path':     'iostat',
-            'devices':  'md[0-9]$|sd[a-z]+$|xvd[a-z]+$'
+            'devices':  'md[0-9]$|sd[a-z]+$|xvd[a-z]+$|disk[0-9]$'
         }
 
     def get_disk_statistics(self):
@@ -44,40 +49,58 @@ class DiskUsageCollector(diamond.collector.Collector):
           (major, minor) -> DiskStatistics(device, ...)
         '''
         result = {}
-        if not os.access('/proc/diskstats', os.R_OK):
-            return result
-        file = open('/proc/diskstats')
-    
-        for line in file:
-            try:
-                columns = line.split()
-                #On early linux v2.6 versions, partitions have only 4 output fields
-                #not 11. From linux 2.6.25 partitions have the full stats set.
-                if len(columns) < 14:
+        
+        if os.access('/proc/diskstats', os.R_OK):
+            file = open('/proc/diskstats')
+        
+            for line in file:
+                try:
+                    columns = line.split()
+                    #On early linux v2.6 versions, partitions have only 4 output fields
+                    #not 11. From linux 2.6.25 partitions have the full stats set.
+                    if len(columns) < 14:
+                        continue
+                    major, minor, device = int(columns[0]), int(columns[1]), columns[2]
+        
+                    if device.startswith('ram') or device.startswith('loop'):
+                        continue
+        
+                    result[(major, minor)] = {
+                        'device'                   : device,
+                        'reads'                    : float(columns[3] ),
+                        'reads_merged'             : float(columns[4] ),
+                        'reads_sectors'            : float(columns[5] ),
+                        'reads_milliseconds'       : float(columns[6] ),
+                        'writes'                   : float(columns[7] ),
+                        'writes_merged'            : float(columns[8] ),
+                        'writes_sectors'           : float(columns[9] ),
+                        'writes_milliseconds'      : float(columns[10]),
+                        'io_in_progress'           : float(columns[11]),
+                        'io_milliseconds'          : float(columns[12]),
+                        'io_milliseconds_weighted' : float(columns[13])
+                    }
+                except ValueError:
                     continue
-                major, minor, device = int(columns[0]), int(columns[1]), columns[2]
-    
-                if device.startswith('ram') or device.startswith('loop'):
-                    continue
-    
-                result[(major, minor)] = {
-                    'device'                   : device,
-                    'reads'                    : float(columns[3] ),
-                    'reads_merged'             : float(columns[4] ),
-                    'reads_sectors'            : float(columns[5] ),
-                    'reads_milliseconds'       : float(columns[6] ),
-                    'writes'                   : float(columns[7] ),
-                    'writes_merged'            : float(columns[8] ),
-                    'writes_sectors'           : float(columns[9] ),
-                    'writes_milliseconds'      : float(columns[10]),
-                    'io_in_progress'           : float(columns[11]),
-                    'io_milliseconds'          : float(columns[12]),
-                    'io_milliseconds_weighted' : float(columns[13])
-                }
-            except ValueError:
-                continue
-    
-        file.close()
+        
+            file.close()
+        elif psutil:
+            disks = psutil.disk_io_counters(True)
+            for disk in disks:
+                    result[(0, len(result))] = {
+                        'device'                   : disk,
+                        'reads'                    : disks[disk].read_count,
+                        'reads_merged'             : 0,
+                        'reads_sectors'            : disks[disk].read_bytes / 512,
+                        'reads_milliseconds'       : disks[disk].read_time,
+                        'writes'                   : disks[disk].write_count,
+                        'writes_merged'            : 0,
+                        'writes_sectors'           : disks[disk].write_bytes / 512,
+                        'writes_milliseconds'      : disks[disk].write_time,
+                        'io_in_progress'           : 0,
+                        'io_milliseconds'          : disks[disk].read_time + disks[disk].write_time,
+                        'io_milliseconds_weighted' : disks[disk].read_time + disks[disk].write_time
+                    }
+            
         return result
 
     def collect(self):
@@ -144,7 +167,7 @@ class DiskUsageCollector(diamond.collector.Collector):
             metrics['io']                               = metrics['reads'] + metrics['writes']
             metrics['util_percentage']                  = 0
             metrics['concurrent_io']                    = 0
-
+            
             if metrics['io'] > 0:
                 rkey = 'reads_%s' % (self.config['byte_unit'])
                 wkey = 'writes_%s' % (self.config['byte_unit'])
