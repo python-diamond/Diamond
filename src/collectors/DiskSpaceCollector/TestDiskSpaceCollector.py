@@ -51,7 +51,7 @@ none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
             os_minor_mock.assert_called_once_with(42)
 
             self.assertEqual(result, {
-                (9, 0) : {'device' : '/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba', 'mount_point' : '/'}
+                (9, 0) : {'device' : '/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba', 'fs_type': 'ext3', 'mount_point' : '/'}
             })
 
         open_mock.assert_called_once_with('/proc/mounts')
