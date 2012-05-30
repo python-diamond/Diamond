@@ -3,6 +3,11 @@ from diamond import *
 import diamond.collector
 import diamond.convertor
 
+try:
+    import psutil
+except ImportError:
+    psutil = None
+
 _KEY_MAPPING = [
     'MemTotal'     ,
     'MemFree'      ,
@@ -45,24 +50,43 @@ class MemoryCollector(diamond.collector.Collector):
         """
         Collect memory stats
         """
-        if not os.access(self.PROC, os.R_OK):
-            return None
-
-        file = open(self.PROC)
-        data = file.read()
-        file.close()
-
-        for line in data.splitlines():
-            try:
-                name, value, units = line.split()
-                name = name.rstrip(':')
-                value = int(value)
-
-                if name not in _KEY_MAPPING and not self.config.has_key('detailed'):
+        if os.access(self.PROC, os.R_OK):
+            file = open(self.PROC)
+            data = file.read()
+            file.close()
+    
+            for line in data.splitlines():
+                try:
+                    name, value, units = line.split()
+                    name = name.rstrip(':')
+                    value = int(value)
+    
+                    if name not in _KEY_MAPPING and not self.config.has_key('detailed'):
+                        continue
+    
+                    value = diamond.convertor.binary.convert(value = value, oldUnit = units, newUnit = self.config['byte_unit'])
+    
+                    self.publish(name, value)
+                except ValueError:
                     continue
-
-                value = diamond.convertor.binary.convert(value = value, oldUnit = units, newUnit = self.config['byte_unit'])
-
-                self.publish(name, value)
-            except ValueError:
-                continue
+            return True
+        elif psutil:
+            phymem_usage = psutil.phymem_usage()
+            virtmem_usage = psutil.virtmem_usage()
+            units = 'b'
+            
+            value = diamond.convertor.binary.convert(value = phymem_usage.total, oldUnit = units, newUnit = self.config['byte_unit'])
+            self.publish('MemTotal', value)
+            
+            value = diamond.convertor.binary.convert(value = phymem_usage.free, oldUnit = units, newUnit = self.config['byte_unit'])
+            self.publish('MemFree', value)
+            
+            value = diamond.convertor.binary.convert(value = virtmem_usage.total, oldUnit = units, newUnit = self.config['byte_unit'])
+            self.publish('SwapTotal', value)
+            
+            value = diamond.convertor.binary.convert(value = virtmem_usage.free, oldUnit = units, newUnit = self.config['byte_unit'])
+            self.publish('SwapFree', value)
+            
+            return True
+    
+        return None
