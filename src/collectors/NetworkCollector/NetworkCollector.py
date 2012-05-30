@@ -3,6 +3,11 @@ from diamond import *
 import diamond.collector
 import diamond.convertor
 
+try:
+    import psutil
+except ImportError:
+    psutil = None
+
 class NetworkCollector(diamond.collector.Collector):
     """
     The NetworkCollector class collects metrics on network interface usage
@@ -45,25 +50,33 @@ class NetworkCollector(diamond.collector.Collector):
         Collect network interface stats.
         """
 
-        if not os.access(self.PROC, os.R_OK):
-            return None
-
         # Initialize results
         results = {}
-        # Open File
-        file = open(self.PROC)
-        # Build Regular Expression
-        exp = '^(?:\s*)([%s0-9]+):(?:\s*)(?P<rx_bytes>\d+)(?:\s*)(?P<rx_packets>\w+)(?:\s*)(?P<rx_errors>\d+)(?:\s*)(?P<rx_drop>\d+)(?:\s*)(?P<rx_fifo>\d+)(?:\s*)(?P<rx_frame>\d+)(?:\s*)(?P<rx_compressed>\d+)(?:\s*)(?P<rx_multicast>\d+)(?:\s*)(?P<tx_bytes>\d+)(?:\s*)(?P<tx_packets>\w+)(?:\s*)(?P<tx_errors>\d+)(?:\s*)(?P<tx_drop>\d+)(?:\s*)(?P<tx_fifo>\d+)(?:\s*)(?P<tx_frame>\d+)(?:\s*)(?P<tx_compressed>\d+)(?:\s*)(?P<tx_multicast>\d+)(?:.*)$' % ( '|'.join(self.config['interfaces']) )
-        reg = re.compile(exp)
-        # Match Interfaces
-        for line in file:
-            match = reg.match(line)
-            if match:
-                device = match.group(1)
-                results[device] = match.groupdict()
-        # Close File
-        file.close()
-
+        
+        if os.access(self.PROC, os.R_OK):
+            
+            # Open File
+            file = open(self.PROC)
+            # Build Regular Expression
+            exp = '^(?:\s*)([%s0-9]+):(?:\s*)(?P<rx_bytes>\d+)(?:\s*)(?P<rx_packets>\w+)(?:\s*)(?P<rx_errors>\d+)(?:\s*)(?P<rx_drop>\d+)(?:\s*)(?P<rx_fifo>\d+)(?:\s*)(?P<rx_frame>\d+)(?:\s*)(?P<rx_compressed>\d+)(?:\s*)(?P<rx_multicast>\d+)(?:\s*)(?P<tx_bytes>\d+)(?:\s*)(?P<tx_packets>\w+)(?:\s*)(?P<tx_errors>\d+)(?:\s*)(?P<tx_drop>\d+)(?:\s*)(?P<tx_fifo>\d+)(?:\s*)(?P<tx_frame>\d+)(?:\s*)(?P<tx_compressed>\d+)(?:\s*)(?P<tx_multicast>\d+)(?:.*)$' % ( '|'.join(self.config['interfaces']) )
+            reg = re.compile(exp)
+            # Match Interfaces
+            for line in file:
+                match = reg.match(line)
+                if match:
+                    device = match.group(1)
+                    results[device] = match.groupdict()
+            # Close File
+            file.close()
+        elif psutil:
+            network_stats = psutil.network_io_counters(True)
+            for device in network_stats.keys():
+                results[device] = {}
+                results[device]['rx_bytes'] = network_stats[device].bytes_recv
+                results[device]['tx_bytes'] = network_stats[device].bytes_sent
+                results[device]['rx_packets'] = network_stats[device].packets_recv
+                results[device]['tx_packets'] = network_stats[device].packets_sent
+    
         for device in results:
             stats = results[device]
             for s,v in stats.items():
@@ -82,3 +95,6 @@ class NetworkCollector(diamond.collector.Collector):
                 else:
                     # Publish Metric Derivative
                     self.publish(metric_name, metric_value)
+            
+                    
+        return None
