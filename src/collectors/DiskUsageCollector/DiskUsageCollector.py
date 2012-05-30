@@ -3,6 +3,7 @@
 
 from diamond import *
 import diamond.collector
+import diamond.convertor
 import time
 import os
 
