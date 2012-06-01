@@ -111,13 +111,3 @@ class BindCollector(diamond.collector.Collector):
                     'memory.%s' % counter.tag,
                     int(counter.text)
                 )
-
-# For quick tests
-if __name__ == '__main__':
-    import configobj
-    class Handler:
-        def process(self, metric):
-            print str(metric).strip()
-    b = BindCollector(configobj.ConfigObj('/etc/diamond/diamond.conf'), [Handler()])
-    b.config = b.get_default_config()
-    b.collect()
