@@ -4,6 +4,7 @@ VERSION=0.2.0
 
 all:
 	@echo "make run      - Run Diamond from this directory"
+    @echo "make config   - Run a simple configuration CLI program"
 	@echo "make watch    - Watch and continuously run tests"
 	@echo "make test     - Run tests"
 	@echo "make sdist    - Create source package"
@@ -18,6 +19,9 @@ all:
 run:
 	./bin/diamond --configfile=conf/diamond.conf --foreground
 
+config:
+	python config.py
+    
 watch:
 	watchr test.watchr
 
