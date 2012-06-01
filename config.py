@@ -49,6 +49,7 @@ if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("-c", "--configfile", dest="configfile", default="/etc/diamond/diamond.conf", help="Path to the config file")
     parser.add_option("-C", "--collector", dest="collector", default=None, help="Configure a single collector")
+    parser.add_option("-p", "--print", action="store_true", dest="dump", default=False, help="Just print the defaults")
 
     # Parse Command Line Args
     (options, args) = parser.parse_args()
@@ -63,14 +64,15 @@ if __name__ == "__main__":
         parser.print_help(sys.stderr)
         sys.exit(1)
     
-    print    
-    print 'I will be over writing files in'
-    print config['server']['collectors_config_path']
-    print 'Please type yes to continue'
-    
-    val = raw_input('Are you sure? ')
-    if val != 'yes':
-        sys.exit()
+    if not options.dump:
+        print    
+        print 'I will be over writing files in'
+        print config['server']['collectors_config_path']
+        print 'Please type yes to continue'
+        
+        val = raw_input('Are you sure? ')
+        if val != 'yes':
+            sys.exit()
         
     getCollectors(config['server']['collectors_path'])
     
@@ -95,6 +97,11 @@ if __name__ == "__main__":
                 if not issubclass(cls, Collector):
                     continue
             obj = cls(config = config, handlers = {})
+            
+            if options.dump:
+                print collector+" "+str(obj.config)
+                continue
+            
             default_conf = obj.get_default_config()
         
             for key in obj.get_default_config():
@@ -153,5 +160,3 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             print
             sys.exit()
-        except:
-            print "Unexpected error:", sys.exc_info()[0]
