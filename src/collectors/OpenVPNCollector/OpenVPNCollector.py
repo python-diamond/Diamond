@@ -206,6 +206,5 @@ class OpenVPNCollector(diamond.collector.Collector):
             self.log.error('OpenVPN expected a number for "%s", got "%s"' % (key, value))
             return
         else:
-            self.log.debug('OpenVPN publish %s=%r' % (key, value))
             self.publish(key, value)
 
