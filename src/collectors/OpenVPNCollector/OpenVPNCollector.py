@@ -43,7 +43,6 @@ class OpenVPNCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'enabled':   'True',
             'path':      'openvpn',
             'method':    'Threaded',
             'instances': 'file:///var/log/openvpn/status.log',
