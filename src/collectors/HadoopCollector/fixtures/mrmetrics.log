@@ -1,0 +1,15 @@
+mapred.shuffleInput: hostName=doorstop.local, jobId=job_200903091453_0001, jobName=test-mini-mr, sessionId=, taskId=attempt_200903091453_0001_r_000000_0, user=philip, shuffle_failed_fetches=0, shuffle_fetchers_busy_percent=0.0, shuffle_input_bytes=190, shuffle_success_fetches=5
+mapred.job: counter=Launched map tasks, group=Job Counters , hostName=doorstop.local, jobId=job_200903091453_0001, jobName=test-mini-mr, sessionId=, user=philip, value=10.0
+mapred.job: counter=Combine output records, group=Map-Reduce Framework, hostName=doorstop.local, jobId=job_200903091453_0001, jobName=test-mini-mr, sessionId=, user=philip, value=0.0
+mapred.job: counter=Map input records, group=Map-Reduce Framework, hostName=doorstop.local, jobId=job_200903091453_0001, jobName=test-mini-mr, sessionId=, user=philip, value=10.0
+mapred.job: counter=Data-local map tasks, group=Job Counters , hostName=doorstop.local, jobId=job_200903091453_0001, jobName=test-mini-mr, sessionId=, user=philip, value=10.0
+mapred.job: counter=Local bytes written, group=File Systems, hostName=doorstop.local, jobId=job_200903091453_0001, jobName=test-mini-mr, sessionId=, user=philip, value=860.0
+mapred.job: counter=Combine input records, group=Map-Reduce Framework, hostName=doorstop.local, jobId=job_200903091453_0001, jobName=test-mini-mr, sessionId=, user=philip, value=0.0
+mapred.job: counter=Map output records, group=Map-Reduce Framework, hostName=doorstop.local, jobId=job_200903091453_0001, jobName=test-mini-mr, sessionId=, user=philip, value=20.0
+mapred.job: counter=Launched reduce tasks, group=Job Counters , hostName=doorstop.local, jobId=job_200903091453_0001, jobName=test-mini-mr, sessionId=, user=philip, value=1.0
+mapred.job: counter=Map input bytes, group=Map-Reduce Framework, hostName=doorstop.local, jobId=job_200903091453_0001, jobName=test-mini-mr, sessionId=, user=philip, value=240.0
+mapred.job: counter=HDFS bytes read, group=File Systems, hostName=doorstop.local, jobId=job_200903091453_0001, jobName=test-mini-mr, sessionId=, user=philip, value=1180.0
+mapred.job: counter=Map output bytes, group=Map-Reduce Framework, hostName=doorstop.local, jobId=job_200903091453_0001, jobName=test-mini-mr, sessionId=, user=philip, value=320.0
+mapred.jobtracker: hostName=doorstop.local, sessionId=, jobs_completed=0, jobs_submitted=1, maps_completed=10, maps_launched=10, reduces_completed=0, reduces_launched=1
+mapred.shuffleOutput: hostName=doorstop.local, sessionId=, shuffle_failed_outputs=0, shuffle_handler_busy_percent=0.0, shuffle_output_bytes=342, shuffle_success_outputs=9
+mapred.tasktracker: hostName=doorstop.local, sessionId=, mapTaskSlots=2, maps_running=0, reduceTaskSlots=2, reduces_running=1, tasks_completed=10, tasks_failed_ping=0, tasks_failed_timeout=0
