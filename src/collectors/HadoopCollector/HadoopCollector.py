@@ -34,7 +34,7 @@ class HadoopCollector(diamond.collector.Collector):
 
     def collect_from(self, filename):
         if not os.access(filename, os.R_OK):
-            continue
+            return False
 
         with open(filename, 'r') as fd:
             for line in fd:
