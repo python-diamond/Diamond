@@ -21,7 +21,6 @@ class HadoopCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'enabled':  'True',
             'path':     'hadoop',
             'method':   'Threaded',
             'metrics':  ['/var/log/hadoop/*-metrics.out'],
