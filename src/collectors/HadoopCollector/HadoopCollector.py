@@ -33,6 +33,7 @@ class HadoopCollector(diamond.collector.Collector):
 
     def collect_from(self, filename):
         if not os.access(filename, os.R_OK):
+            self.log.error('HadoopCollector unable to read "%s"' % (filename,))
             return False
 
         with open(filename, 'r') as fd:
