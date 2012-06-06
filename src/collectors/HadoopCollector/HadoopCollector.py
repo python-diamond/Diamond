@@ -56,7 +56,6 @@ class HadoopCollector(diamond.collector.Collector):
                             self.publish_metric(Metric(path,
                                 value,
                                 timestamp=int(data['timestamp'])))
-                            self.log.debug('publishing[%s] %s=%s' % (path, key, value))
 
                         except (ValueError):
                             pass
