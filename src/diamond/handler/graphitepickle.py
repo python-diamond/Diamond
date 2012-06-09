@@ -1,6 +1,6 @@
 import struct
 
-from GraphiteHandler import GraphiteHandler
+from graphite import GraphiteHandler
 
 try:
 	import cPickle as pickle
