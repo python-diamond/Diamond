@@ -27,19 +27,23 @@ class RabbitMQCollector(diamond.collector.Collector):
         if Number is None:
             self.log.error('Unable to import either Number or pyrabbit.api')
             return {}
+        
+        try:
+            client = pyrabbit.api.Client(self.config['host'],
+                                         self.config['user'],
+                                         self.config['password'])
 
-        client = pyrabbit.api.Client(self.config['host'],
-                                     self.config['user'],
-                                     self.config['password'])
-
-        for queue in client.get_queues():
-            for key in queue:
-                name = '{0}.{1}'.format('queues', queue['name'])
-                self._publish_metrics(name, [], key, queue)
-
-        overview = client.get_overview()
-        for key in overview:
-            self._publish_metrics('', [], key, overview)
+            for queue in client.get_queues():
+                for key in queue:
+                    name = '{0}.{1}'.format('queues', queue['name'])
+                    self._publish_metrics(name, [], key, queue)
+    
+            overview = client.get_overview()
+            for key in overview:
+                self._publish_metrics('', [], key, overview)
+        except Exception, e:
+            self.log.error('Couldnt connect to rabbitmq %s', e)
+            return {}
 
     def _publish_metrics(self, name, prev_keys, key, data):
         """Recursively publish keys"""
