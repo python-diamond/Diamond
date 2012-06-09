@@ -131,7 +131,7 @@ class Server(object):
                     collectors[key] = subcollectors[key]
 
             # Ignore anything that isn't a .py file
-            elif os.path.isfile(fpath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'Test':
+            elif os.path.isfile(fpath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'test':
 
                 # Check filter
                 if filter and os.path.join(path, f) != filter:
