@@ -1,10 +1,10 @@
 Source: diamond
 Section: misc
 Priority: extra
-Maintainer: Ivan Pouzyrevsky <sandello@yandex-team.ru>
-Homepage: https://github.com/sandello/Diamond
-Vcs-Git: git://github.com/sandello/Diamond.git
-Vcs-Browser: https://github.com/sandello/Diamond
+Maintainer: Rob Smith <kormoc@gmail.com>
+Homepage: https://github.com/BrightcoveOS/Diamond
+Vcs-Git: git://github.com/BrightcoveOS/Diamond.git
+Vcs-Browser: https://github.com/BrightcoveOS/Diamond
 Build-Depends: debhelper (>= 7), python (>= 2.4), python-support, python-mock, python-configobj
 Standards-Version: 3.9.1
 
