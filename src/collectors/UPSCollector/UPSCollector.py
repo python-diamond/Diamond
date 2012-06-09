@@ -17,11 +17,16 @@ class UPSCollector(diamond.collector.Collector):
 
         return {
             'path': 'ups',
-            'ups_name': 'cyberpower'
+            'ups_name': 'cyberpower',
+            'bin': '/bin/upsc'
         }
 
     def collect(self):
-        p = subprocess.Popen(['/bin/upsc', self.config['ups_name']], stdout=subprocess.PIPE)
+        if not os.access(self.config['bin'], os.X_OK):
+            self.log.error(self.config['bin']+" is not executable")
+            return False
+        
+        p = subprocess.Popen([self.config['bin'], self.config['ups_name']], stdout=subprocess.PIPE)
 
         for ln in p.communicate()[0].splitlines():
             datapoint = ln.split(": ")
