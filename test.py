@@ -107,7 +107,7 @@ def getCollectorTests(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
 
-        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] == 'Test':
+        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] == 'test':
             sys.path.append(os.path.dirname(cPath))
             sys.path.append(os.path.dirname(os.path.dirname(cPath)))
             modname = f[:-3]
@@ -157,8 +157,11 @@ if __name__ == "__main__":
     
     tests = []
     for test in collectorTests:
-        c = getattr(collectorTests[test], test)
-        tests.append(unittest.TestLoader().loadTestsFromTestCase(c))
+        for attr in dir(collectorTests[test]):
+            if not attr.startswith('Test') or not attr.endswith('Collector'):
+                continue
+            c = getattr(collectorTests[test], attr)
+            tests.append(unittest.TestLoader().loadTestsFromTestCase(c))
     tests.append(unittest.TestLoader().loadTestsFromTestCase(BaseCollectorTest))
     suite = unittest.TestSuite(tests)
     unittest.TextTestRunner(verbosity=options.verbose).run(suite)
