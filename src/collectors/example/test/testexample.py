@@ -4,7 +4,7 @@
 from test import *
 
 from diamond.collector import Collector
-from ExampleCollector import ExampleCollector
+from example import ExampleCollector
 
 ################################################################################
 
