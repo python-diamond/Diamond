@@ -32,7 +32,11 @@ class MongoDBCollector(diamond.collector.Collector):
             self.log.error('Unable to import either Number or pymongo')
             return {}
 
-        conn = pymongo.Connection(self.config['host'],read_preference=ReadPreference.SECONDARY)
+        try:
+            conn = pymongo.Connection(self.config['host'],read_preference=ReadPreference.SECONDARY)
+        except Exception, e:
+            self.log.error('Couldnt connect to mongodb: %s', e)
+            return {}
         data = conn.db.command('serverStatus')
         for key in data:
             self._publish_metrics([], key, data)

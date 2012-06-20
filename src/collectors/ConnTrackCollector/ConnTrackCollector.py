@@ -23,8 +23,10 @@ class ConnTrackCollector(diamond.collector.Collector):
         }
 
     def collect(self):
-        if not os.access(COMMAND[0], os.X_OK):
-            return
+        if not os.access(ConnTrackCollector.COMMAND[0], os.X_OK):
+            self.log.error(ConnTrackCollector.COMMAND[0]+" is not executable")
+            return False
+        
         line = subprocess.Popen(ConnTrackCollector.COMMAND, stdout=subprocess.PIPE).communicate()[0]
         match = _RE.match(line)
         if match:

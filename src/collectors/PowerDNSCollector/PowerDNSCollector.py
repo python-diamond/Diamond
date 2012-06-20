@@ -1,5 +1,6 @@
 import diamond.collector
 import subprocess
+import os
 
 class PowerDNSCollector(diamond.collector.Collector):
     """
@@ -24,6 +25,10 @@ class PowerDNSCollector(diamond.collector.Collector):
         }
 
     def collect(self):
+        if not os.access(self.config['pdns_control'], os.X_OK):
+            self.log.error(self.config['pdns_control']+" is not executable")
+            return False
+        
         sp = subprocess.Popen([self.config['pdns_control'], "list"], stdout=subprocess.PIPE)
         data = sp.communicate()[0]
         for metric in data.split(','):
