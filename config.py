@@ -24,8 +24,18 @@ def getCollectors(path):
             modname = f[:-3]
             try:
                 # Import the module
-                collectors[modname] = __import__(modname, globals(), locals(), ['*'])
-                #print "Imported module: %s" % (modname)
+                module = __import__(modname, globals(), locals(), ['*'])
+                
+                # Find the name
+                for attr in dir(module):
+                    cls = getattr(module, attr)
+                    try:
+                        if issubclass(cls, Collector):
+                            collectors[cls.__name__] = module
+                            break
+                    except TypeError:
+                        continue
+                # print "Imported module: %s %s" % (modname, cls.__name__)
             except Exception, e:
                 print "Failed to import module: %s. %s" % (modname, traceback.format_exc())
                 collectors[modname] = False
@@ -81,21 +91,22 @@ if __name__ == "__main__":
         if options.collector and collector != options.collector:
             continue
         
+        # Skip configuring the basic collector object
+        if collector == "Collector":
+            continue
+        
         config_keys = { 'enabled': True}
         config_file = ConfigObj()
         config_file.filename = config['server']['collectors_config_path']+"/"+collector+".conf"
         
         # Find the class and load it from the collector module
         try:
-            if hasattr(collectors[collector], collector):
-                cls = getattr(collectors[collector], collector)
-            else:
-                for attr in dir(collectors[collector]):
-                    cls = getattr(collectors[collector], attr)
-                    if issubclass(cls, Collector):
-                        break
-                if not issubclass(cls, Collector):
-                    continue
+            
+            # We can for the name above, so we dont have to scan here anymore
+            if not hasattr(collectors[collector], collector):
+                continue
+            
+            cls = getattr(collectors[collector], collector)
             obj = cls(config = config, handlers = {})
             
             if options.dump:
