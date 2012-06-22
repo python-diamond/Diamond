@@ -19,6 +19,11 @@ class CPUCollector(diamond.collector.Collector):
         'system': diamond.collector.MAX_COUNTER,
         'idle': diamond.collector.MAX_COUNTER,
         'iowait': diamond.collector.MAX_COUNTER,
+        'irq': diamond.collector.MAX_COUNTER,
+        'softirq': diamond.collector.MAX_COUNTER,
+        'steal': diamond.collector.MAX_COUNTER,
+        'guest': diamond.collector.MAX_COUNTER,
+        'guest_nice': diamond.collector.MAX_COUNTER,
     }
     
     def get_default_config(self):
@@ -39,18 +44,31 @@ class CPUCollector(diamond.collector.Collector):
             results = {}
             # Open file
             file = open(self.PROC)
-            # Build Regex
-            exp = '^(cpu[0-9]*)\s+(?P<user>\d+)\s+(?P<nice>\d+)\s+(?P<system>\d+)\s+(?P<idle>\d+)\s+(?P<iowait>\d+).*$'
-            reg = re.compile(exp)
+            
             for line in file:
-                match = reg.match(line)
-    
-                if match:
-                    cpu = match.group(1)
-                    if cpu == 'cpu':
-                        cpu = 'total'
-                    results[cpu] = {}
-                    results[cpu] = match.groupdict()
+                if not line.startswith('cpu'):
+                    continue
+                
+                elements = line.split()
+                
+                cpu = elements[0]
+                
+                if cpu == 'cpu':
+                    cpu = 'total'
+                    
+                results[cpu] = {}
+                
+                if len(elements) >= 2  : results[cpu]['user']       = elements[1] 
+                if len(elements) >= 3  : results[cpu]['nice']       = elements[2]
+                if len(elements) >= 4  : results[cpu]['system']     = elements[3]
+                if len(elements) >= 5  : results[cpu]['idle']       = elements[4]
+                if len(elements) >= 6  : results[cpu]['iowait']     = elements[5]
+                if len(elements) >= 7  : results[cpu]['irq']        = elements[6]
+                if len(elements) >= 8  : results[cpu]['softirq']    = elements[7]
+                if len(elements) >= 9  : results[cpu]['steal']      = elements[8]
+                if len(elements) >= 10 : results[cpu]['guest']      = elements[9]
+                if len(elements) >= 11 : results[cpu]['guest_nice'] = elements[10]
+                
             # Close File
             file.close()
     
