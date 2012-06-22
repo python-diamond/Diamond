@@ -1,4 +1,3 @@
-
 import diamond.collector
 
 class ExampleCollector(diamond.collector.Collector):

@@ -1,6 +1,4 @@
-
 import subprocess
-
 import diamond.collector
 
 class PostqueueCollector(diamond.collector.Collector):

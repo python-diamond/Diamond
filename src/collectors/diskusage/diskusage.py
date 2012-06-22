@@ -1,11 +1,8 @@
-
-# http://www.kernel.org/doc/Documentation/iostats.txt
-
-from diamond import *
 import diamond.collector
 import diamond.convertor
 import time
 import os
+import re
 
 try:
     import psutil
@@ -15,6 +12,9 @@ except ImportError:
 class DiskUsageCollector(diamond.collector.Collector):
     """
     Collect IO Stats
+    
+     * http://www.kernel.org/doc/Documentation/iostats.txt
+     
     """
     MAX_VALUES = {
         'reads':                    4294967295,

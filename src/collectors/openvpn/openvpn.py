@@ -1,7 +1,3 @@
-#
-# Diamond collector for OpenVPN metrics
-
-from diamond import *
 from diamond.metric import Metric
 import diamond.collector
 import os.path

@@ -1,7 +1,6 @@
-
-from diamond import *
 import diamond.collector
 import diamond.convertor
+import os
 
 try:
     import psutil

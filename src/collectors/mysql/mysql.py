@@ -1,11 +1,12 @@
+import diamond.collector
+import re
+import time
+
 try:
     import MySQLdb
     from MySQLdb import MySQLError
 except ImportError:
     MySQLdb = None
-import diamond
-import re
-import time
 
 class MySQLCollector(diamond.collector.Collector):
 

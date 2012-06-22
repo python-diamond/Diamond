@@ -1,10 +1,8 @@
-
 import os
 import sys
 import re
 import httplib
 import urlparse
-
 import diamond.collector
 
 class HttpdCollector(diamond.collector.Collector):

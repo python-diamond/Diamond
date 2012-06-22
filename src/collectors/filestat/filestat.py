@@ -1,6 +1,6 @@
-
-from diamond import *
 import diamond.collector
+import re
+import os
 
 _RE = re.compile(r'(\d+)\s+(\d+)\s+(\d+)')
 

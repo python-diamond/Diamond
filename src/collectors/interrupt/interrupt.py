@@ -1,7 +1,5 @@
-
 import platform
 import os
-
 import diamond.collector
 
 # Detect the architecture of the system

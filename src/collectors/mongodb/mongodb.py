@@ -1,12 +1,11 @@
+import diamond.collector
+
 try:
     from numbers import Number
     import pymongo
     from pymongo import ReadPreference
 except ImportError:
     Number = None
-
-import diamond
-
 
 class MongoDBCollector(diamond.collector.Collector):
     """Collects data from MongoDB's db.serverStatus() command

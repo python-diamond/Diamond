@@ -1,17 +1,15 @@
-#
-# Diamond collector for Hadoop metrics, see:
-#
-#  * http://www.cloudera.com/blog/2009/03/hadoop-metrics/
-
-from diamond import *
 from diamond.metric import Metric
 import diamond.collector
 import glob
 import re
+import os
 
 class HadoopCollector(diamond.collector.Collector):
     """
-    Processes Hadoop metrics.
+    Diamond collector for Hadoop metrics, see:
+    
+    * http://www.cloudera.com/blog/2009/03/hadoop-metrics/
+    
     """
 
     re_log = re.compile(r'^(?P<timestamp>\d+) (?P<name>\S+): (?P<metrics>.*)$')

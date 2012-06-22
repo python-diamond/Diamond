@@ -1,6 +1,4 @@
-
 import subprocess
-
 import diamond.collector
 import socket
 

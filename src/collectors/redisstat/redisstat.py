@@ -1,5 +1,6 @@
 import diamond.collector
 import time
+
 try:
     import redis
 except ImportError:

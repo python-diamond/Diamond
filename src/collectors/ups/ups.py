@@ -1,6 +1,5 @@
-from diamond import *
 import diamond.collector
-
+import os
 import subprocess
 
 class UPSCollector(diamond.collector.Collector):

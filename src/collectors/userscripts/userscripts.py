@@ -1,8 +1,6 @@
-
-from diamond import *
 import diamond.collector
 import diamond.convertor
-
+import os
 import commands
 
 class UserScriptsCollector(diamond.collector.Collector):

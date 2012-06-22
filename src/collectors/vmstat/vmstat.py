@@ -1,6 +1,6 @@
-
-from diamond import *
 import diamond.collector
+import os
+import re
 
 class VMStatCollector(diamond.collector.Collector):
     """

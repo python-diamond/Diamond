@@ -1,4 +1,3 @@
-from diamond import *
 import diamond.collector
 import subprocess
 import os

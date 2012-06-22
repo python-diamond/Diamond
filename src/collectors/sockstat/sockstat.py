@@ -1,6 +1,6 @@
-
-from diamond import *
 import diamond.collector
+import re
+import os
 
 _RE = re.compile('|'.join([
     r'sockets: used (?P<used>\d+)',

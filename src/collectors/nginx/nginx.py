@@ -1,6 +1,5 @@
 import urllib2
 import re
-
 import diamond.collector
 
 class NginxCollector(diamond.collector.Collector):

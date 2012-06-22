@@ -1,4 +1,3 @@
-
 import re
 import sys
 import urllib2
@@ -6,7 +5,6 @@ import base64
 import csv
 import logging
 from urlparse import urlparse
-
 import diamond.collector
 
 class HAProxyCollector(diamond.collector.Collector):

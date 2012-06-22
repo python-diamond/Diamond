@@ -1,7 +1,5 @@
-
 import os
 import diamond.collector
-
 
 class OneWireCollector(diamond.collector.Collector):
     """

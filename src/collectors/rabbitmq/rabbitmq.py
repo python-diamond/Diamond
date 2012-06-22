@@ -1,11 +1,10 @@
+import diamond.collector
+
 try:
     from numbers import Number
     import pyrabbit.api
 except ImportError:
     Number = None
-import diamond
-
-from pprint import pprint
 
 class RabbitMQCollector(diamond.collector.Collector):
     """Collects data from RabbitMQ through the admin interface

@@ -1,11 +1,9 @@
-
-from diamond import *
 import diamond.collector
 import subprocess
 import os
+import re
 
 _RE = re.compile(r'^([a-z\._]*) = ([0-9]*)$')
-
 
 class ConnTrackCollector(diamond.collector.Collector):
     """
