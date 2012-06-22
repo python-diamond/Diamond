@@ -1,0 +1,13 @@
+3BE25217C0    10054 Sun Jun 17 08:57:19  sender@doamin.com
+                   (connect to domain.com[1.2.3.4]:25: Connection refused)
+                                         user@domain.com
+
+3BDE321233    13298 Thu Jun 21 16:22:54  sender2@doamin.com
+(Host or domain name not found. Name service error for name=domain.com type=MX: Host not found, try again)
+                                         user2@domain.com
+
+3F84821379    10042 Wed Jun 20 10:02:44  sender3@doamin.com
+(connect to domain.com[11.22.33.44]:25: Connection timed out)
+                                         user3@domain.com
+
+-- 5073 Kbytes in 3 Requests.
