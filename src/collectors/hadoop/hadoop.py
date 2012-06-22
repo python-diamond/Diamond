@@ -41,21 +41,59 @@ class HadoopCollector(diamond.collector.Collector):
                 match = self.re_log.match(line)
                 if not match:
                     continue
+                
+                metrics={}
 
                 data = match.groupdict()
                 for metric in data['metrics'].split(','):
                     metric = metric.strip()
                     if '=' in metric:
                         key, value = metric.split('=', 1)
-                        try:
-                            value = float(value)
+                        metrics[key]=value
+
+                for metric in metrics.keys():
+                    try:
+                        
+                        if data['name'] == 'jvm.metrics':
                             path = self.get_metric_path('.'.join([
                                 data['name'],
-                                key,
+                                metrics['hostName'].replace('.', '_'),
+                                metrics['processName'].replace(' ', '_'),
+                                metric,
                             ]))
-                            self.publish_metric(Metric(path,
-                                value,
-                                timestamp=int(data['timestamp'])))
+                            
+                        elif data['name'] == 'mapred.job':
+                            path = self.get_metric_path('.'.join([
+                                data['name'],
+                                metrics['hostName'].replace('.', '_'),
+                                metrics['group'].replace(' ', '_'),
+                                metrics['counter'].replace(' ', '_'),
+                                metric,
+                            ]))
+                            
+                        elif data['name'] == 'rpc.metrics':
+                            
+                            if metric == 'port':
+                                continue
+                            
+                            path = self.get_metric_path('.'.join([
+                                data['name'],
+                                metrics['hostName'].replace('.', '_'),
+                                metrics['port'],
+                                metric,
+                            ]))
+                        
+                        else :
+                            path = self.get_metric_path('.'.join([
+                                data['name'],
+                                metric,
+                            ]))
+                        
+                        value = float(metrics[metric])
+                        
+                        self.publish_metric(Metric(path,
+                            value,
+                            timestamp=int(data['timestamp'])))
 
-                        except (ValueError):
-                            pass
+                    except (ValueError):
+                        pass
