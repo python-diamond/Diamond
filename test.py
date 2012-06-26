@@ -7,6 +7,7 @@ import unittest
 import inspect
 import traceback
 import optparse
+import logging
 
 from StringIO import StringIO
 from contextlib import nested
@@ -143,6 +144,10 @@ class BaseCollectorTest(unittest.TestCase):
 ################################################################################
 
 if __name__ == "__main__":
+
+    # Disable log output for the unit tests    
+    log = logging.getLogger("diamond")
+    log.disabled = True
     
     # Initialize Options
     parser = optparse.OptionParser()
