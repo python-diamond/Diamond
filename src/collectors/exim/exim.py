@@ -15,10 +15,14 @@ class EximCollector(diamond.collector.Collector):
         """
         return {
             'path' : 'exim',
+            'method' : 'threaded'
         }
 
     def collect(self):
         if not os.access(EximCollector.COMMAND[0], os.X_OK):
             return
-        queuesize = subprocess.Popen(EximCollector.COMMAND, stdout=subprocess.PIPE).communicate()[0][:-1]
+        queuesize = subprocess.Popen(EximCollector.COMMAND, stdout=subprocess.PIPE).communicate()[0].split()
+        if not len(queuesize):
+            return
+        queuesize = queuesize[-1]
         self.publish('queuesize', queuesize)
