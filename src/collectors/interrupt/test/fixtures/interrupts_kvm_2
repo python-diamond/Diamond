@@ -1,0 +1,13 @@
+           CPU0       CPU1       
+  0: 1157735245          0    IO-APIC-edge  timer
+  1:          9          0    IO-APIC-edge  i8042
+  6:          2          0    IO-APIC-edge  floppy
+  8:          0          0    IO-APIC-edge  rtc
+  9:          0          0   IO-APIC-level  acpi
+ 10:  323299242  152420999   IO-APIC-level  virtio0, virtio1
+ 11:          1          0   IO-APIC-level  uhci_hcd:usb1, virtio2, Intel 82801AA-ICH
+ 12:         63          0    IO-APIC-edge  i8042
+NMI:          0          0 
+LOC: 1157227074 1157300326 
+ERR:          0
+MIS:          0
