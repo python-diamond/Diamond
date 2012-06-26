@@ -29,9 +29,12 @@ class KSMCollector(diamond.collector.Collector):
                }
 
 
-    def collect(self):    
+    def collect(self):
         for item in glob.glob(os.path.join(self.config['ksm_path'], "*")):
             if os.access(item, os.R_OK):
                 filehandle = open(item)
-                self.publish(os.path.basename(item), filehandle.readline().rstrip())
+                try:
+                    self.publish(os.path.basename(item), float(filehandle.readline().rstrip()))
+                except:
+                    pass
                 filehandle.close()
