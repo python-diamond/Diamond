@@ -1,0 +1,30 @@
+smartctl 5.42 2011-10-20 r3458 [x86_64-apple-darwin11.2.0] (local build)
+Copyright (C) 2002-11 by Bruce Allen, http://smartmontools.sourceforge.net
+
+=== START OF READ SMART DATA SECTION ===
+SMART Attributes Data Structure revision number: 10
+Vendor Specific SMART Attributes with Thresholds:
+ID# ATTRIBUTE_NAME          FLAG     VALUE WORST THRESH TYPE      UPDATED  WHEN_FAILED RAW_VALUE
+  1 Raw_Read_Error_Rate     0x000f   092   092   050    Pre-fail  Always       -       5849487
+  5 Reallocated_Sector_Ct   0x0033   100   100   003    Pre-fail  Always       -       0
+  9 Power_On_Hours          0x0032   097   097   000    Old_age   Always       -       199389561752279
+ 12 Power_Cycle_Count       0x0032   100   100   000    Old_age   Always       -       381
+171 Unknown_Attribute       0x0032   000   000   000    Old_age   Always       -       0
+172 Unknown_Attribute       0x0032   000   000   000    Old_age   Always       -       0
+174 Unknown_Attribute       0x0030   000   000   000    Old_age   Offline      -       3
+177 Wear_Leveling_Count     0x0000   000   000   000    Old_age   Offline      -       2
+181 Program_Fail_Cnt_Total  0x0032   000   000   000    Old_age   Always       -       0
+182 Erase_Fail_Count_Total  0x0032   000   000   000    Old_age   Always       -       0
+187 Reported_Uncorrect      0x0032   100   100   000    Old_age   Always       -       0
+194 Temperature_Celsius     0x0022   128   129   000    Old_age   Always       -       128 (0 127 0 129 0)
+195 Hardware_ECC_Recovered  0x001c   120   120   000    Old_age   Offline      -       5849487
+196 Reallocated_Event_Count 0x0033   100   100   003    Pre-fail  Always       -       0
+201 Soft_Read_Error_Rate    0x001c   120   120   000    Old_age   Offline      -       5849487
+204 Soft_ECC_Correction     0x001c   120   120   000    Old_age   Offline      -       5849487
+230 Head_Amplitude          0x0013   100   100   000    Pre-fail  Always       -       100
+231 Temperature_Celsius     0x0013   100   100   010    Pre-fail  Always       -       0
+233 Media_Wearout_Indicator 0x0000   000   000   000    Old_age   Offline      -       4881
+234 Unknown_Attribute       0x0032   000   000   000    Old_age   Always       -       2447
+241 Total_LBAs_Written      0x0032   000   000   000    Old_age   Always       -       2447
+242 Total_LBAs_Read         0x0032   000   000   000    Old_age   Always       -       17985
+

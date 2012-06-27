@@ -1,0 +1,4 @@
+smartctl 5.42 2011-10-20 r3458 [x86_64-apple-darwin11.2.0] (local build)
+Copyright (C) 2002-11 by Bruce Allen, http://smartmontools.sourceforge.net
+
+Smartctl open device: /dev/disk2 failed: Operation not supported by device
