@@ -1,0 +1,5 @@
+PING www.example.com (192.0.43.10) 56(84) bytes of data.
+
+--- www.example.com ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 10.244/10.244/10.244/0.000 ms

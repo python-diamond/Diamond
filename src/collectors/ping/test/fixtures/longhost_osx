@@ -1,0 +1,5 @@
+PING www.example.com (192.0.43.10): 56 data bytes
+
+--- www.example.com ping statistics ---
+1 packets transmitted, 1 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 41.621/41.621/41.621/0.000 ms

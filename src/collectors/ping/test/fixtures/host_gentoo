@@ -1,0 +1,5 @@
+PING example.com (192.0.43.10) 56(84) bytes of data.
+
+--- example.com ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 10.607/10.607/10.607/0.000 ms

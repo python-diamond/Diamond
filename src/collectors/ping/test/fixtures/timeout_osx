@@ -1,0 +1,4 @@
+PING localhost (127.0.0.1): 56 data bytes
+
+--- localhost ping statistics ---
+1 packets transmitted, 0 packets received, 100.0% packet loss
