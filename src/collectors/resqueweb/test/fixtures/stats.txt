@@ -1,0 +1,9 @@
+resque.pending=2
+resque.processed+=11686516
+resque.failed+=38667
+resque.workers=9
+resque.working=2
+queues.low=4
+queues.mail=3
+queues.realtime=9
+queues.normal=1
