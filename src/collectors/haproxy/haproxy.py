@@ -121,7 +121,6 @@ class HAProxyCollector(diamond.collector.Collector):
                     stat_name =  '%s.%s' % (metric_name,metric.lower())
                     if haproxy_stats[metric] == '':
                         haproxy_stats[metric] = 0
-                    self.log.debug('Publishing Metric: %s Value[%s]' % (stat_name,haproxy_stats[metric]))
                     self.publish(stat_name, long(haproxy_stats[metric]))
             #increment the row number and move on to the next set of stats
             rownum += 1
