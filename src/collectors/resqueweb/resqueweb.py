@@ -1,8 +1,5 @@
-
 import urllib2
-
 import diamond.collector
-
 
 class ResqueWebCollector(diamond.collector.Collector):
     def get_default_config(self):
@@ -18,9 +15,10 @@ class ResqueWebCollector(diamond.collector.Collector):
     def get_resque_output(self):
         try:
             response = urllib2.urlopen('http://%s:%d/stats.txt' % (self.config['host'], int(self.config['port'])))
+            return response
         except Exception, e:
             self.log.error('Couldnt connect to resque-web: %s', e)
-            return {}
+            return ""
 
     def collect(self):
         output = self.get_resque_output()
@@ -42,7 +40,6 @@ class ResqueWebCollector(diamond.collector.Collector):
                         self.publish("%s.current" % queue, count)
                 else:
                     self.publish("queue.%s.current" % queue, count)
-
                 
             except Exception, e:
                 self.log.error('Couldnt parse the queue: %s', e)
