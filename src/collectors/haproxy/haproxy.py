@@ -17,10 +17,11 @@ class HAProxyCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         return {
-            'path':     'haproxy',
-            'url':      'http://localhost/haproxy?stats;csv',
-            'user':     'admin',
-            'pass':     'password',
+            'path':             'haproxy',
+            'url':              'http://localhost/haproxy?stats;csv',
+            'user':             'admin',
+            'pass':             'password',
+            'ignore_servers':   False,
         }
 
     def get_csv_data(self):
@@ -83,6 +84,9 @@ class HAProxyCollector(diamond.collector.Collector):
             if rownum == 0:
                 pass
             else:
+                if self.config['ignore_servers'] and row[1].lower() not in ['frontend', 'backend']:
+                    continue
+
                 metric_name =  '%s.%s' % (row[0].lower(), row[1].lower())
                 #create dictionary
                 haproxy_stats = {
@@ -121,7 +125,6 @@ class HAProxyCollector(diamond.collector.Collector):
                     stat_name =  '%s.%s' % (metric_name,metric.lower())
                     if haproxy_stats[metric] == '':
                         haproxy_stats[metric] = 0
-                    self.log.debug('Publishing Metric: %s Value[%s]' % (stat_name,haproxy_stats[metric]))
                     self.publish(stat_name, long(haproxy_stats[metric]))
             #increment the row number and move on to the next set of stats
             rownum += 1
