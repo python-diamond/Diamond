@@ -1,3 +1,4 @@
+
 import urllib2
 import diamond.collector
 
@@ -12,23 +13,19 @@ class ResqueWebCollector(diamond.collector.Collector):
             'path': 'resqueweb', 
         }
 
-    def get_resque_output(self):
-        try:
-            response = urllib2.urlopen('http://%s:%d/stats.txt' % (self.config['host'], int(self.config['port'])))
-            return response
-        except Exception, e:
-            self.log.error('Couldnt connect to resque-web: %s', e)
-            return ""
 
     def collect(self):
-        output = self.get_resque_output()
-        
-        for data in output.split("\n"):
+        try:
+            response = urllib2.urlopen("http://%s:%s/stats.txt" % (self.config['host'], int(self.config['port'])))
+        except Exception, e:
+            self.log.error('Couldnt connect to resque-web: %s', e)
+            return {}
+
+        for data in response.read().split("\n"):
             if data == "":
                 continue
                 
             item,count = data.strip().split("=")
-
             try:
                 count = int(count)
                 (item, queue) = item.split(".")
