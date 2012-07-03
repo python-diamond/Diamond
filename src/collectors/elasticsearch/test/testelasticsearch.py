@@ -5,36 +5,20 @@ from test import *
 
 from diamond.collector import Collector
 
-import elasticsearch
+from elasticsearch import ElasticSearchCollector
 
 ################################################################################
 
-class RequestStub(object):
-    def __init__(self, data):
-        self.data = data
-
-    def read(self):
-        return self.data
-
-    def readlines(self):
-        return self.data.split("\n")
-
 class TestElasticSearchCollector(CollectorTestCase):
     def setUp(self):
-        config = get_collector_config('elasticsearch.ElasticSearchCollector', {})
+        config = get_collector_config('ElasticSearchCollector', {})
 
-        self.collector = elasticsearch.ElasticSearchCollector(config, None)
-
-    def urlopen_stub(self, *args, **kwargs):
-        return RequestStub(self.getFixture('stats').getvalue())
-
-    def urlopen_stub_null(self, *args, **kwargs):
-        return RequestStub('')
+        self.collector = ElasticSearchCollector(config, None)
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        elasticsearch.urllib2.urlopen = self.urlopen_stub
-        self.collector.collect()
+        with patch('urllib2.urlopen', Mock(return_value = self.getFixture('stats'))):
+            self.collector.collect()
             
         self.assertPublishedMany(publish_mock, {
             'http.current' : 1, 
@@ -57,12 +41,12 @@ class TestElasticSearchCollector(CollectorTestCase):
             
         })
 
-    # @patch.object(Collector, 'publish')
-    # def test_should_fail_gracefully(self, publish_mock):
-    #     elasticsearch.urllib2.urlopen = self.urlopen_stub_null
-    #     self.collector.collect()
-            
-    #     self.assertPublishedMany(publish_mock, {})
+    @patch.object(Collector, 'publish')
+    def test_should_fail_gracefully(self, publish_mock):
+        with patch('urllib2.urlopen', Mock(return_value = self.getFixture('stats_blank'))):
+            self.collector.collect()
+          
+        self.assertPublishedMany(publish_mock, {})
 
 ################################################################################
 if __name__ == "__main__":
