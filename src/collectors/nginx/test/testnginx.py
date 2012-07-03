@@ -5,36 +5,20 @@ from test import *
 
 from diamond.collector import Collector
 
-import nginx
+from nginx import NginxCollector
 
 ################################################################################
 
-class RequestStub(object):
-    def __init__(self, data):
-        self.data = data
-
-    def read(self):
-        return self.data
-
-    def readlines(self):
-        return self.data.split("\n")
-
 class TestNginxCollector(CollectorTestCase):
     def setUp(self):
-        config = get_collector_config('nginx.NginxCollector', {})
+        config = get_collector_config('NginxCollector', {})
 
-        self.collector = nginx.NginxCollector(config, None)
-
-    def urlopen_stub(self, *args, **kwargs):
-        return RequestStub(self.getFixture('status').getvalue())
-
-    def urlopen_stub_null(self, *args, **kwargs):
-        return RequestStub('')
+        self.collector = NginxCollector(config, None)
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        nginx.urllib2.urlopen = self.urlopen_stub
-        self.collector.collect()
+        with patch('urllib2.urlopen', Mock(return_value = self.getFixture('status'))):
+            self.collector.collect()
             
         self.assertPublishedMany(publish_mock, {
             'active_connections' : 3, 
@@ -48,8 +32,8 @@ class TestNginxCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        nginx.urllib2.urlopen = self.urlopen_stub_null
-        self.collector.collect()
+        with patch('urllib2.urlopen', Mock(return_value = self.getFixture('status_blank'))):
+            self.collector.collect()
             
         self.assertPublishedMany(publish_mock, {})
 
