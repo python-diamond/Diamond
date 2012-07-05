@@ -53,7 +53,7 @@ class MonitCollector(diamond.collector.Collector):
                 mem = int(service.getElementsByTagName('memory')[0].getElementsByTagName('kilobyte')[0].firstChild.data)
 
                 metrics["%s.cpu.percent" % name] = cpu
-                metrics["%s.memory.%s_usage" % (name, self.config['byte_unit'])] = diamond.convertor.binary.convert(value = mem, oldUnit = 'byte', newUnit = self.config['byte_unit'])
+                metrics["%s.memory.%s_usage" % (name, self.config['byte_unit'])] = diamond.convertor.binary.convert(value = mem, oldUnit = 'kilobyte', newUnit = self.config['byte_unit'])
 
         for key in metrics:
             self.publish(key, metrics[key])
