@@ -11,7 +11,7 @@ from monit import MonitCollector
 
 class TestMonitCollector(CollectorTestCase):
     def setUp(self):
-        config = get_collector_config('MonitCollector', {})
+        config = get_collector_config('MonitCollector', {'byte_unit':    'kilobyte',})
 
         self.collector = MonitCollector(config, None)
 
@@ -22,25 +22,25 @@ class TestMonitCollector(CollectorTestCase):
             
         self.assertPublishedMany(publish_mock, {
             'app_thin_8101.cpu.percent': 0.9,
-            'app_thin_8101.memory.byte_usage': 216104,
+            'app_thin_8101.memory.kilobyte_usage': 216104,
             'app_thin_8102.cpu.percent': 1.1, 
-            'app_thin_8102.memory.byte_usage':212736,
+            'app_thin_8102.memory.kilobyte_usage':212736,
             'app_thin_8103.cpu.percent': 0.9, 
-            'app_thin_8103.memory.byte_usage':204948,
+            'app_thin_8103.memory.kilobyte_usage':204948,
             'app_thin_8104.cpu.percent': 0.9, 
-            'app_thin_8104.memory.byte_usage':212464,
+            'app_thin_8104.memory.kilobyte_usage':212464,
             'sshd.cpu.percent': 0.0, 
-            'sshd.memory.byte_usage':2588,
+            'sshd.memory.kilobyte_usage':2588,
             'rsyslogd.cpu.percent': 0.0, 
-            'rsyslogd.memory.byte_usage':2664,
+            'rsyslogd.memory.kilobyte_usage':2664,
             'postfix.cpu.percent': 0.0, 
-            'postfix.memory.byte_usage':2304,
+            'postfix.memory.kilobyte_usage':2304,
             'nginx.cpu.percent': 0.0, 
-            'nginx.memory.byte_usage':18684,
+            'nginx.memory.kilobyte_usage':18684,
             'haproxy.cpu.percent': 0.0, 
-            'haproxy.memory.byte_usage':4040,
+            'haproxy.memory.kilobyte_usage':4040,
             'cron.cpu.percent': 0.0, 
-            'cron.memory.byte_usage':1036,
+            'cron.memory.kilobyte_usage':1036,
         })
 
     @patch.object(Collector, 'publish')
