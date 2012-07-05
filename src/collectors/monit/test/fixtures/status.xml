@@ -216,7 +216,7 @@
 </cpu>
 </service>
 <service type="5">
-<name>web2.sc.recurly.net</name>
+<name>web2.domain.net</name>
 <collected_sec>1341522571</collected_sec>
 <collected_usec>573538</collected_usec>
 <status>0</status>
