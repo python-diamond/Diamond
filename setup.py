@@ -26,7 +26,8 @@ else:
     if platform.dist()[0] == 'Ubuntu':
         data_files.append(('/etc/init',                      ['debian/upstart/diamond.conf'] ))
     if platform.dist()[0] == 'centos' or 'redhat':
-        data_files.append(('/etc/init.d',		     ['bin/init.d/diamond'] ))
+        data_files.append(('/etc/init.d',		             ['bin/init.d/diamond'] ))
+        data_files.append(('/var/log/diamond',		         ['.keep'] ))
 
 def pkgPath(root, path, rpath="/"):
     global data_files
