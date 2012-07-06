@@ -13,10 +13,12 @@ class EximCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(EximCollector, self).get_default_config()
+        config.update(  {
             'path' : 'exim',
             'method' : 'threaded'
-        }
+        } )
+        return config
 
     def collect(self):
         if not os.access(EximCollector.COMMAND[0], os.X_OK):

@@ -29,10 +29,12 @@ class CPUCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(CPUCollector, self).get_default_config()
+        config.update( {
             'enabled':  'True',
             'path':     'cpu'
-        }
+        } )
+        return config
 
     def collect(self):
         """

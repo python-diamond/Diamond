@@ -13,9 +13,11 @@ class KVMCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(KVMCollector, self).get_default_config()
+        config.update(  {
             'path' : 'kvm',
-        }
+        } )
+        return config
 
     def collect(self):
         if not os.path.isdir(self.PROC):

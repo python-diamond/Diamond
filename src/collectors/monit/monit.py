@@ -15,14 +15,16 @@ class MonitCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(MonitCollector, self).get_default_config()
+        config.update(  {
             'host':         '127.0.0.1',
             'port':         2812,
             'user':         'monit',
             'passwd':       'monit',
             'path':         'monit',
             'byte_unit':    'byte',
-        }
+        } )
+        return config
 
 
     def collect(self):

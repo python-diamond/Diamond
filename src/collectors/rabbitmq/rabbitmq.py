@@ -15,12 +15,14 @@ class RabbitMQCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(RabbitMQCollector, self).get_default_config()
+        config.update(  {
             'path':     'rabbitmq',
             'host':     'localhost:55672',
             'user':     'guest',
             'password': 'guest',
-        }
+        } )
+        return config
 
     def collect(self):
         if Number is None:

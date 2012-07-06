@@ -14,10 +14,12 @@ class HttpdCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(HttpdCollector, self).get_default_config()
+        config.update(  {
             'path':     'httpd',
             'url':      'http://localhost:8080/server-status?auto'
-        }
+        } )
+        return config
 
     def collect(self):
         # Parse Url

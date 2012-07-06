@@ -11,7 +11,8 @@ class NagiosStatsCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(NagiosStatsCollector, self).get_default_config()
+        config.update(  {
             'nagiosstats_cmd': '/usr/sbin/nagios3stats',
             'vars':            ['AVGACTHSTLAT',
                                 'AVGACTSVCLAT',
@@ -43,7 +44,8 @@ class NagiosStatsCollector(diamond.collector.Collector):
             'use_sudo':         True,
             'sudo_cmd':         '/usr/bin/sudo',
             'path':             'nagiosstats'
-        }
+        } )
+        return config
 
     def collect(self):
         if not os.access(self.config['nagiosstats_cmd'], os.X_OK) or (self.config['use_sudo'] and not os.access(self.config['sudo_cmd'], os.X_OK)):

@@ -23,9 +23,11 @@ class InterruptCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(InterruptCollector, self).get_default_config()
+        config.update(  {
             'path':     'interrupts'
-        }
+        } )
+        return config
 
     def collect(self):
         """

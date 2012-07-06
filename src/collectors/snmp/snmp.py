@@ -35,7 +35,7 @@ class SNMPCollector(diamond.collector.Collector):
 
     def get_default_config(self):
         # Initialize default config
-        default_config = {}
+        default_config = super(SNMPCollector, self).get_default_config()
         default_config['path_prefix'] = 'systems'
         default_config['timeout'] = 5
         default_config['retries'] = 3

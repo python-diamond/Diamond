@@ -15,11 +15,13 @@ class LoadAverageCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(LoadAverageCollector, self).get_default_config()
+        config.update(  {
             'enabled':  'True',
             'path':     'loadavg',
             'method':   'Threaded'
-        }
+        } )
+        return config
 
     def collect(self):
         if not os.access(self.PROC, os.R_OK):

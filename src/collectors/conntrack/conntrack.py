@@ -16,9 +16,11 @@ class ConnTrackCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(ConnTrackCollector, self).get_default_config()
+        config.update( {
             'path':     'conntrack'
-        }
+        } )
+        return config
 
     def collect(self):
         if not os.access(ConnTrackCollector.COMMAND[0], os.X_OK):

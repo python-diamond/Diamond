@@ -21,10 +21,12 @@ class LMSensorsCollector(diamond.collector.Collector):
         """
         Returns default collector settings.
         """
-        return {
+        config = super(LMSensorsCollector, self).get_default_config()
+        config.update(  {
             'path': 'sensors',
             'fahrenheit': 'True'
-        }
+        } )
+        return config
 
     def collect(self):
         if sensors is None:

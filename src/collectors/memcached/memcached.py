@@ -11,7 +11,8 @@ class MemcachedCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(MemcachedCollector, self).get_default_config()
+        config.update(  {
             'path':     'memcached',
             
             # Which rows of 'status' you would like to publish.
@@ -27,7 +28,8 @@ class MemcachedCollector(diamond.collector.Collector):
                     'port':     '11211',
                 },
             },
-        }
+        } )
+        return config
 
     def get_stats(self, config):
         # stuff that's always ignored, aren't 'stats'

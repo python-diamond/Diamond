@@ -13,10 +13,12 @@ class TCPCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(TCPCollector, self).get_default_config()
+        config.update(  {
             'path':             'tcp',
             'allowed_names':    'ListenOverflows, ListenDrops, TCPLoss, TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, TCPForwardRetrans, TCPSlowStartRetrans'
-        }
+        } )
+        return config
 
     def collect(self):
         if not os.access(self.PROC, os.R_OK):

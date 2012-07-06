@@ -17,7 +17,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(DiskSpaceCollector, self).get_default_config()
+        config.update( {
             # Enabled by default
             'enabled' : 'True',
             'path' : 'diskspace',
@@ -41,7 +42,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
             
             # Default numeric output
             'byte_unit' : 'gigabyte'
-        }
+        } )
+        return config
 
     def get_disk_labels(self):
         '''

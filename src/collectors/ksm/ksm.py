@@ -23,10 +23,12 @@ class KSMCollector(diamond.collector.Collector):
         path: Graphite path output
         ksm_path: location where KSM kernel data can be found
         """
-        return {
+        config = super(KSMCollector, self).get_default_config()
+        config.update(  {
                 'path': 'ksm',
                 'ksm_path': '/sys/kernel/mm/ksm'
-               }
+               } )
+        return config
 
 
     def collect(self):

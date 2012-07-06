@@ -19,11 +19,13 @@ class SockstatCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(SockstatCollector, self).get_default_config()
+        config.update(  {
             'enabled':  'True',
             'path':     'sockets',
             'method':   'Threaded',
-        }
+        } )
+        return config
 
     def collect(self):
         if not os.access(self.PROC, os.R_OK):

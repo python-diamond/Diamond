@@ -39,12 +39,14 @@ class NetworkCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(NetworkCollector, self).get_default_config()
+        config.update(  {
             'path':         'network',
             'interfaces':   'eth bond',
             'byte_unit':    'megabit megabyte',
             'greedy':       'true',
-        }
+        } )
+        return config
 
     def collect(self):
         """

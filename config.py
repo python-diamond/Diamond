@@ -46,11 +46,6 @@ def getCollectors(path):
         if os.path.isdir(cPath):
             getCollectors(cPath)
 
-def getDefaultHelp():
-    return {
-        'path' : 'The path to publish this metric to'
-    }
-
 ################################################################################
 
 if __name__ == "__main__":

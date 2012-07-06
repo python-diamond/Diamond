@@ -19,10 +19,12 @@ class PowerDNSCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return { 
+        config = super(PowerDNSCollector, self).get_default_config()
+        config.update(  { 
             'pdns_control': '/usr/bin/pdns_control', 
             'path': 'powerdns', 
-        }
+        } )
+        return config
 
     def collect(self):
         if not os.access(self.config['pdns_control'], os.X_OK):

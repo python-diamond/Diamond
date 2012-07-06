@@ -12,11 +12,13 @@ class UserScriptsCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(UserScriptsCollector, self).get_default_config()
+        config.update(  {
             'path':         '.',
             'scripts_path': '/etc/diamond/user_scripts/',
             'method':       'Threaded',
-        }    
+        } )
+        return config
     
     def collect(self):
         scripts_path = self.config['scripts_path']

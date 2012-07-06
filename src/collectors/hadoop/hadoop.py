@@ -18,11 +18,13 @@ class HadoopCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(HadoopCollector, self).get_default_config()
+        config.update(  {
             'path':     'hadoop',
             'method':   'Threaded',
             'metrics':  ['/var/log/hadoop/*-metrics.out'],
-        }
+        } )
+        return config
 
     def collect(self):
         for pattern in self.config['metrics']:

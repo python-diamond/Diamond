@@ -22,12 +22,14 @@ class OneWireCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(OneWireCollector, self).get_default_config()
+        config.update(  {
             'path': 'owfs',
             'owfs': '/mnt/1wire',
 #            'scan': {'temperature': 't'},
 #            'id:24.BB000000': {'file_with_value': 'alias'},
-        }
+        } )
+        return config
 
     def collect(self):
         """

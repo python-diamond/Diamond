@@ -34,9 +34,11 @@ class VarnishCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(VarnishCollector, self).get_default_config()
+        config.update(  {
             'path':     'varnish'
-        }
+        } )
+        return config
 
     def collect(self):
         data = {}

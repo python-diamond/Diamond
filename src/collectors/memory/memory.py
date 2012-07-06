@@ -36,14 +36,16 @@ class MemoryCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(MemoryCollector, self).get_default_config()
+        config.update(  {
             'enabled':  'True',
             'path':     'memory',
             'method':   'Threaded',
             # Collect all the nodes or just a few standard ones?
             # Uncomment to enable
             #'detailed' : 'True'
-        }
+        } )
+        return config
 
     def collect(self):
         """

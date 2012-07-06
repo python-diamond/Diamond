@@ -7,11 +7,13 @@ class ResqueWebCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return { 
+        config = super(ResqueWebCollector, self).get_default_config()
+        config.update(  { 
             'host': 'localhost',
             'port': 5678,
             'path': 'resqueweb', 
-        }
+        } )
+        return config
 
 
     def collect(self):

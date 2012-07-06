@@ -38,27 +38,73 @@ class Collector(object):
 
         # Initialize config
         self.config = configobj.ConfigObj()
-        # Merge default Collector config
-        self.config.merge(config['collectors']['default'])
+        
         # Check if default config is defined
         if self.get_default_config() is not None:
             # Merge default config
             self.config.merge(self.get_default_config())
+            
+        # Merge default Collector config
+        self.config.merge(config['collectors']['default'])
+        
         # Check if Collector config section exists
         if cls.__name__ in config['collectors']:
             # Merge Collector config section
             self.config.merge(config['collectors'][cls.__name__])
+            
         # Check for config file in config directory
         configfile = os.path.join(config['server']['collectors_config_path'], cls.__name__) + '.conf'
         if os.path.exists(configfile):
             # Merge Collector config file
             self.config.merge(configobj.ConfigObj(configfile))
 
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this collector
+        """
+        return {
+            'enabled'   : 'Enable collecting these metrics',
+            'byte_unit' : 'Default numeric output(s)',
+        }
+
     def get_default_config(self):
         """
         Return the default config for the collector
         """
-        return {}
+        return {
+            ### Defaults options for all Collectors
+            
+            # Uncomment and set to hardcode a hostname for the collector path
+            # Keep in mind, periods are seperators in graphite
+            # 'hostname': 'my_custom_hostname',
+            
+            # If you perfer to just use a different way of calculating the hostname
+            # Uncomment and set this to one of these values:
+            # fqdn_short  = Default. Similar to hostname -s
+            # fqdn        = hostname output
+            # fqdn_rev    = hostname in reverse (com.example.www)
+            # uname_short = Similar to uname -n, but only the first part
+            # uname_rev   = uname -r in reverse (com.example.www)
+            # 'hostname_method': 'fqdn_short',
+            
+            # All collectors are disabled by default
+            'enabled': False,
+            
+            # Path Prefix
+            'path_prefix': 'servers',
+            
+            # Default splay time (seconds)
+            'splay': 1,
+            
+            # Default Poll Interval (seconds)
+            'interval': 300,
+            
+            # Default collector threading model
+            'method': 'Sequential',
+            
+            # Default numeric output
+            'byte_unit': 'byte',
+        }
 
     def get_schedule(self):
         """

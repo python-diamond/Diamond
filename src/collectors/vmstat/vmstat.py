@@ -19,10 +19,12 @@ class VMStatCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(VMStatCollector, self).get_default_config()
+        config.update(  {
             'enabled':  'True',
             'path':     'vmstat'
-        }
+        } )
+        return config
 
     def collect(self):
         if not os.access(self.PROC, os.R_OK):

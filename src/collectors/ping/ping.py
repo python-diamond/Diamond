@@ -11,9 +11,11 @@ class PingCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(PingCollector, self).get_default_config()
+        config.update(  {
             'path':     'ping',
-        }
+        } )
+        return config
 
     def collect(self):
         for key in self.config.keys():

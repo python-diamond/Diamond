@@ -16,13 +16,15 @@ class HAProxyCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(HAProxyCollector, self).get_default_config()
+        config.update(  {
             'path':             'haproxy',
             'url':              'http://localhost/haproxy?stats;csv',
             'user':             'admin',
             'pass':             'password',
             'ignore_servers':   False,
-        }
+        } )
+        return config
 
     def get_csv_data(self):
         """

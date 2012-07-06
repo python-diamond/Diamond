@@ -12,12 +12,14 @@ class SmartCollector(diamond.collector.Collector):
         """
         Returns default configuration options.
         """
-        return {
+        config = super(SmartCollector, self).get_default_config()
+        config.update(  {
             'path': 'smart',
             'bin' : 'smartctl',
             'devices': '^disk[0-9]$|^sd[a-z]$|^hd[a-z]$',
             'method': 'Threaded'
-        }
+        } )
+        return config
 
     def collect(self):
         """

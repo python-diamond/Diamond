@@ -14,14 +14,16 @@ class PostgresqlCollector(diamond.collector.Collector):
         """
         Return default config.
         """
-        return {
+        config = super(PostgresqlCollector, self).get_default_config()
+        config.update(  {
                 'path': 'postgres',
                 'host': 'localhost',
                 'user': 'postgres',
                 'password': 'postgres',
                 'port': 5432,
                 'method': 'Threaded'
-               }
+               } )
+        return config
 
     def collect(self):
         if psycopg2 is None:

@@ -38,12 +38,14 @@ class OpenVPNCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(OpenVPNCollector, self).get_default_config()
+        config.update(  {
             'path':      'openvpn',
             'method':    'Threaded',
             'instances': 'file:///var/log/openvpn/status.log',
             'timeout':   '10',
-        }
+        } )
+        return config
 
     def collect(self):
         if isinstance(self.config['instances'], basestring):

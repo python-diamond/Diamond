@@ -12,11 +12,13 @@ class ElasticSearchCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(ElasticSearchCollector, self).get_default_config()
+        config.update( {
             'host':     '127.0.0.1',
             'port':     9200,
             'path':     'elasticsearch',
-        }
+        } )
+        return config
 
 
     def collect(self):

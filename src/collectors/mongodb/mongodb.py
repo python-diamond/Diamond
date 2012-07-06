@@ -19,10 +19,12 @@ class MongoDBCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(MongoDBCollector, self).get_default_config()
+        config.update(  {
             'path':     'mongo',
             'host':     'localhost'
-        }    
+        } )
+        return config
     
     def collect(self):
         """Collect number values from db.serverStatus()"""

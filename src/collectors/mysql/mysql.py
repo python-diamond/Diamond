@@ -103,7 +103,8 @@ class MySQLCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(MySQLCollector, self).get_default_config()
+        config.update(  {
             'path':     'mysql',
             # Connection settings
             'host':     'localhost',
@@ -120,7 +121,8 @@ class MySQLCollector(diamond.collector.Collector):
             'slave':    'False',
             'master':   'False',
             'innodb':    'False',
-        }
+        } )
+        return config
 
     def get_stats(self):
         params = {}

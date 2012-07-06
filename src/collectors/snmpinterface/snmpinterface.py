@@ -45,9 +45,7 @@ class SNMPInterfaceCollector(SNMPCollector):
         """
         Override SNMPCollector.get_default_config method to provide default_config for the SNMPInterfaceCollector
         """
-        if SNMPCollector is None:
-            return {}
-        default_config = SNMPCollector.get_default_config(self)
+        default_config = super(SNMPInterfaceCollector, self).get_default_config()
         default_config['path'] = 'interface'
         return default_config
 

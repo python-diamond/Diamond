@@ -8,7 +8,7 @@ class NginxCollector(diamond.collector.Collector):
     """
 
     def get_default_config(self):
-        default_config = {}
+        default_config = super(NginxCollector, self).get_default_config()
         default_config['req_host'] = 'localhost'
         default_config['req_port'] = 8080
         default_config['req_path'] = '/nginx_status'

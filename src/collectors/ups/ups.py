@@ -14,11 +14,13 @@ class UPSCollector(diamond.collector.Collector):
         Returns default collector settings.
         """
 
-        return {
+        config = super(UPSCollector, self).get_default_config()
+        config.update(  {
             'path': 'ups',
             'ups_name': 'cyberpower',
             'bin': '/bin/upsc'
-        }
+        } )
+        return config
 
     def collect(self):
         if not os.access(self.config['bin'], os.X_OK):

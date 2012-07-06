@@ -10,9 +10,11 @@ class PostqueueCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(PostqueueCollector, self).get_default_config()
+        config.update(  {
             'path':     'postqueue',
-        }
+        } )
+        return config
 
     def get_postqueue_output(self):
         try:

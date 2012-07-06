@@ -12,7 +12,8 @@ class BindCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return { 
+        config = super(BindCollector, self).get_default_config()
+        config.update( { 
             'host': 'localhost',
             'port': 8080,
             'path': 'bind', 
@@ -32,7 +33,8 @@ class BindCollector(diamond.collector.Collector):
             # By default we don't publish these special views
             'publish_view_bind': False,
             'publish_view_meta': False,
-        }
+        })
+        return config
 
     def clean_counter(self, name, value):
         value = self.derivative(name, value)

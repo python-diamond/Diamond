@@ -111,23 +111,11 @@ col_value   = value
 # uname_rev   = uname -r in reverse (com.example.www)
 # hostname_method = fqdn_short
 
-# All collectors are disabled by default
-enabled = False
-
 # Path Prefix
-path_prefix = servers
-
-# Default splay time (seconds)
-splay = 1
+# path_prefix = servers
 
 # Default Poll Interval (seconds)
-interval = 300
-
-# Default collector threading model
-method = Sequential
-
-# Default numeric output
-byte_unit = byte
+# interval = 300
 
 ################################################################################
 ### Options for logging

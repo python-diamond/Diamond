@@ -6,9 +6,11 @@ class ExampleCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(ExampleCollector, self).get_default_config()
+        config.update( {
             'path':     'example'
-        }
+        } )
+        return config
 
     def collect(self):
         """

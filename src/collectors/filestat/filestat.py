@@ -15,10 +15,12 @@ class FilestatCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(FilestatCollector, self).get_default_config()
+        config.update(  {
             'path':     'files',
             'method':   'Threaded'
-        }
+        } )
+        return config
 
     def collect(self):
         if not os.access(self.PROC, os.R_OK):

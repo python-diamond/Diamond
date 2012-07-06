@@ -12,10 +12,12 @@ class NfsdCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        return {
+        config = super(NfsdCollector, self).get_default_config()
+        config.update(  {
             'enabled':  False,
             'path':     'nfsd'
-        }
+        } )
+        return config
 
     def collect(self):
         """

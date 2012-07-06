@@ -46,10 +46,14 @@ class RedisCollector(diamond.collector.Collector):
         :rtype: dict
 
         """
-        return {'host': self._DEFAULT_HOST,
+        config = super(RedisCollector, self).get_default_config()
+        config.update(  {
+                'host': self._DEFAULT_HOST,
                 'port': self._DEFAULT_PORT,
                 'db': self._DEFAULT_DB,
-                'databases': self._DATABASE_COUNT}
+                'databases': self._DATABASE_COUNT
+                } )
+        return config
 
     def _client(self):
         """Return a redis client for the configuration.
