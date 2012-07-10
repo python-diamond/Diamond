@@ -1,0 +1,1381 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Puppet Node Manager</title>
+<link href='/images/favicon.ico?1334781066' rel='shortcut icon' />
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+<script src="/javascripts/jquery.min.js?1334781066" type="text/javascript"></script>
+<script type='text/javascript'>
+  //<![CDATA[
+    var relative_url_root = '';
+    $.noConflict();
+  //]]>
+</script>
+
+<link href="/stylesheets/all.css?1334781066" media="screen" rel="stylesheet" type="text/css" />
+<script src="/javascripts/all.js?1334781066" type="text/javascript"></script>
+</head>
+<body class='with-sidebar pages_controller pages_home_action'>
+<div id='wrap'>
+<div id='skiplinkholder'>
+<a href='#skiptarget' id='skiplink'>
+Skip to main content (Press Enter).
+</a>
+
+</div>
+<div id='header'>
+<div class='topbar'>
+<div class='topbar-inner'>
+<div class='container'>
+<ul class='navigation' id='global-navigation'>
+<li id='logo'>
+<a href='/' style="background-repeat: no-repeat; text-indent: -9000px; background-image: url('/images/dashboard_logo.png'); height: 23px; width: 155px" title='Puppet Dashboard'>Puppet Dashboard</a>
+</li>
+<li class='' id='dashboard-version'>
+<a href="https://github.com/puppetlabs/puppet-dashboard/blob/1.2.7/CHANGELOG">1.2.7</a>
+</li>
+<li class='active' id='navigation-home'>
+<a href="/">Home</a>
+</li>
+<li class='' id='navigation-nodes'>
+<a href="/nodes">Nodes</a>
+</li>
+<li class='' id='navigation-groups'>
+<a href="/node_groups">Groups</a>
+</li>
+<li class='' id='navigation-classes'>
+<a href="/node_classes">Classes</a>
+</li>
+<li class='' id='navigation-reports'>
+<a href="/reports">Reports</a>
+</li>
+<li class='' id='navigation-file-search'>
+<a href="/reports/search">File Search</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+<div id='content'>
+<div id='sidebar'><div class='group delayed-job'>
+<h3><a href="/delayed_job_failures">Background Tasks</a></h3>
+<p class='ok'>
+<em>All systems go</em>
+</p>
+</div>
+<div class='group'>
+<h3 class=''><a href="/nodes">Nodes</a></h3>
+<p class='help'>
+<a href='http://links.puppetlabs.com/dashboard1.2_node_summary_help' target='_blank'>
+Help
+</a>
+</p>
+<div class='node_summary'>
+<table class='primary'>
+<tr class='unresponsive '>
+<td class='count'>
+<a href="/nodes/unresponsive">3</a>
+</td>
+<td class='label'>
+<a href="/nodes/unresponsive">Unresponsive</a>
+</td>
+<td class='percent'>
+<a href="/nodes/unresponsive" style="width: 16%">16<em>%</em></a>
+</td>
+</tr>
+<tr class='failed '>
+<td class='count'>
+<a href="/nodes/failed">1</a>
+</td>
+<td class='label'>
+<a href="/nodes/failed">Failed</a>
+</td>
+<td class='percent'>
+<a href="/nodes/failed" style="width: 5%">5<em>%</em></a>
+</td>
+</tr>
+<tr class='pending '>
+<td class='count'>
+<a href="/nodes/pending">0</a>
+</td>
+<td class='label'>
+<a href="/nodes/pending">Pending</a>
+</td>
+<td class='percent'>
+<a href="/nodes/pending" style="width: 0%">0<em>%</em></a>
+</td>
+</tr>
+<tr class='changed '>
+<td class='count'>
+<a href="/nodes/changed">10</a>
+</td>
+<td class='label'>
+<a href="/nodes/changed">Changed</a>
+</td>
+<td class='percent'>
+<a href="/nodes/changed" style="width: 55%">55<em>%</em></a>
+</td>
+</tr>
+<tr class='unchanged '>
+<td class='count'>
+<a href="/nodes/unchanged">4</a>
+</td>
+<td class='label'>
+<a href="/nodes/unchanged">Unchanged</a>
+</td>
+<td class='percent'>
+<a href="/nodes/unchanged" style="width: 22%">22<em>%</em></a>
+</td>
+</tr>
+<tr class='unreported '>
+<td class='count'>
+<a href="/nodes/unreported">0</a>
+</td>
+<td class='label'>
+<a href="/nodes/unreported">Unreported</a>
+</td>
+<td class='percent'>
+<a href="/nodes/unreported" style="width: 0%">0<em>%</em></a>
+</td>
+</tr>
+<tr class='all '>
+<td class='count'>
+<a href="/nodes">18</a>
+</td>
+<td class='label'>
+<a href="/nodes">All</a>
+</td>
+<td class='percent'>
+<a href="/nodes" style="width: 100%">100<em>%</em></a>
+</td>
+</tr>
+</table>
+</div>
+<div class='footer actionbar'>
+<a href="/nodes/new" class="button">Add node</a>
+</div>
+</div>
+<div class='group'>
+<h3 class=''><a href="/node_groups">Group</a></h3>
+<div class='footer actionbar'>
+<a href="/node_groups/new" class="button">Add group</a>
+</div>
+</div>
+
+<div class='group'>
+<h3 class=''><a href="/node_classes">Class</a></h3>
+<div class='footer actionbar'>
+<a href="/node_classes/new" class="button">Add class</a>
+</div>
+</div>
+
+<div id='skiptargetholder'>
+<a id="skiptarget" name="skiptarget" class="skip" tabindex="-1"></a>
+
+</div>
+</div>
+<div id='main'>
+<div class='item'>
+<div class='section'>
+<h3>Daily run status</h3>
+<p class='legend'>Number and status of runs during the <strong>last 30 days</strong>:</p>
+<table class='inspector data status bar'>
+<thead>
+<tr class='labels'>
+<th scope='col'>2012-07-10</th>
+</tr>
+</thead>
+<tbody>
+<tr class='unchanged'>
+<td>61</td>
+</tr>
+<tr class='changed'>
+<td>243</td>
+</tr>
+<tr class='pending'>
+<td>0</td>
+</tr>
+<tr class='failed'>
+<td>29</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div class='item'>
+<ul class='tabbed' id='home-tabs'>
+<li id='all-tab'>
+<a href='#'>All</a>
+</li>
+<li id='unresponsive-tab'>
+<a href='#'>Unresponsive</a>
+</li>
+<li id='failed-tab'>
+<a href='#'>Failed</a>
+</li>
+<li id='pending-tab'>
+<a href='#'>Pending</a>
+</li>
+<li id='changed-tab'>
+<a href='#'>Changed</a>
+</li>
+<li id='unchanged-tab'>
+<a href='#'>Unchanged</a>
+</li>
+</ul>
+<div class='panel' id='all'>
+<table class='main'>
+<thead>
+<tr>
+<th class='empty' colspan='3'>
+<a href="/nodes.csv">Export nodes as CSV</a>
+</th>
+<th colspan='5'>
+Resources
+</th>
+</tr>
+<tr>
+<th class='status'></th>
+<th class='node'>
+Node
+</th>
+<th class='latest_report desc'>
+&darr; Latest report
+</th>
+<th>
+Total
+</th>
+<th>
+Failed
+</th>
+<th>
+Pending
+</th>
+<th>
+Changed
+</th>
+<th>
+Unchanged
+</th>
+</tr>
+</thead>
+<tfoot>
+<tr>
+<td colspan='8'>
+<div class="actionbar"></div>
+</td>
+</tr>
+</tfoot>
+<tbody>
+<tr>
+<td colspan='3'>Total</td>
+<td>3619</td>
+<td>0</td>
+<td>0</td>
+<td>73</td>
+<td>3546</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 1 minute ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/8">money.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/333">2012-07-10 22:12 UTC</a>
+</td>
+<td>
+143
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+1
+</td>
+<td>
+142
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 2 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/6">service-staging.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/332">2012-07-10 22:10 UTC</a>
+</td>
+<td>
+374
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+13
+</td>
+<td>
+361
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 3 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/2">dns2.sc.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/331">2012-07-10 22:10 UTC</a>
+</td>
+<td>
+146
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+1
+</td>
+<td>
+145
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 4 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/5">web-staging.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/330">2012-07-10 22:09 UTC</a>
+</td>
+<td>
+235
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+6
+</td>
+<td>
+229
+</td>
+</tr>
+<tr class=''>
+<td class='failed status'>
+<img alt="Failed" src="/images/icons/failed.png?1339624512" title="Failed 4 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/14">mongo.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/329">2012-07-10 22:08 UTC</a>
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 6 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/11">web-qa.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/328">2012-07-10 22:06 UTC</a>
+</td>
+<td>
+235
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+2
+</td>
+<td>
+233
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 9 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/10">lb-staging.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/326">2012-07-10 22:03 UTC</a>
+</td>
+<td>
+228
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+3
+</td>
+<td>
+225
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 10 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/4">service-qa.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/325">2012-07-10 22:03 UTC</a>
+</td>
+<td>
+374
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+10
+</td>
+<td>
+364
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 13 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/17">trans.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/322">2012-07-10 22:00 UTC</a>
+</td>
+<td>
+223
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+2
+</td>
+<td>
+221
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 14 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/9">ci.sf.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/320">2012-07-10 21:59 UTC</a>
+</td>
+<td>
+179
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+4
+</td>
+<td>
+175
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 18 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/3">lb-qa.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/319">2012-07-10 21:55 UTC</a>
+</td>
+<td>
+228
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+1
+</td>
+<td>
+227
+</td>
+</tr>
+<tr class=''>
+<td class='status unchanged'>
+<img alt="Unchanged" src="/images/icons/unchanged.png?1334781066" title="Unchanged 20 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/7">redis.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/317">2012-07-10 21:52 UTC</a>
+</td>
+<td>
+149
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+149
+</td>
+</tr>
+<tr class=''>
+<td class='status unchanged'>
+<img alt="Unchanged" src="/images/icons/unchanged.png?1334781066" title="Unchanged 21 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/16">memcache.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/316">2012-07-10 21:52 UTC</a>
+</td>
+<td>
+146
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+146
+</td>
+</tr>
+<tr class=''>
+<td class='status unchanged'>
+<img alt="Unchanged" src="/images/icons/unchanged.png?1334781066" title="Unchanged 21 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/15">db.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/315">2012-07-10 21:51 UTC</a>
+</td>
+<td>
+146
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+146
+</td>
+</tr>
+<tr class=''>
+<td class='status unchanged'>
+<img alt="Unchanged" src="/images/icons/unchanged.png?1334781066" title="Unchanged 24 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/1">ci.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/313">2012-07-10 21:49 UTC</a>
+</td>
+<td>
+157
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+157
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed about 3 hours ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/18">dns1.sc.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/192">2012-07-10 18:54 UTC</a>
+</td>
+<td>
+146
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+9
+</td>
+<td>
+137
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed about 5 hours ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/12">web1.sc.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/129">2012-07-10 17:34 UTC</a>
+</td>
+<td>
+255
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+8
+</td>
+<td>
+247
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed about 5 hours ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/13">web2.sc.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/128">2012-07-10 17:31 UTC</a>
+</td>
+<td>
+255
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+13
+</td>
+<td>
+242
+</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class='panel' id='unresponsive'>
+<table class='main'>
+<thead>
+<tr>
+<th class='empty' colspan='3'>
+<a href="/nodes/unresponsive.csv">Export nodes as CSV</a>
+</th>
+<th colspan='5'>
+Resources
+</th>
+</tr>
+<tr>
+<th class='status'></th>
+<th class='node'>
+Node
+</th>
+<th class='latest_report desc'>
+&darr; Latest report
+</th>
+<th>
+Total
+</th>
+<th>
+Failed
+</th>
+<th>
+Pending
+</th>
+<th>
+Changed
+</th>
+<th>
+Unchanged
+</th>
+</tr>
+</thead>
+<tfoot>
+<tr>
+<td colspan='8'>
+<div class="actionbar"></div>
+</td>
+</tr>
+</tfoot>
+<tbody>
+<tr>
+<td colspan='3'>Total</td>
+<td>656</td>
+<td>0</td>
+<td>0</td>
+<td>30</td>
+<td>626</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed about 3 hours ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/18">dns1.sc.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/192">2012-07-10 18:54 UTC</a>
+</td>
+<td>
+146
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+9
+</td>
+<td>
+137
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed about 5 hours ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/12">web1.sc.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/129">2012-07-10 17:34 UTC</a>
+</td>
+<td>
+255
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+8
+</td>
+<td>
+247
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed about 5 hours ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/13">web2.sc.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/128">2012-07-10 17:31 UTC</a>
+</td>
+<td>
+255
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+13
+</td>
+<td>
+242
+</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class='panel' id='failed'>
+<table class='main'>
+<thead>
+<tr>
+<th class='empty' colspan='3'>
+<a href="/nodes/failed.csv">Export nodes as CSV</a>
+</th>
+<th colspan='5'>
+Resources
+</th>
+</tr>
+<tr>
+<th class='status'></th>
+<th class='node'>
+Node
+</th>
+<th class='latest_report desc'>
+&darr; Latest report
+</th>
+<th>
+Total
+</th>
+<th>
+Failed
+</th>
+<th>
+Pending
+</th>
+<th>
+Changed
+</th>
+<th>
+Unchanged
+</th>
+</tr>
+</thead>
+<tfoot>
+<tr>
+<td colspan='8'>
+<div class="actionbar"></div>
+</td>
+</tr>
+</tfoot>
+<tbody>
+<tr>
+<td colspan='3'>Total</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class=''>
+<td class='failed status'>
+<img alt="Failed" src="/images/icons/failed.png?1339624512" title="Failed 4 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/14">mongo.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/329">2012-07-10 22:08 UTC</a>
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+<td>
+0
+</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class='panel' id='pending'>
+<p>
+<span class='nomatches'>&mdash; No nodes found &mdash;</span>
+</p>
+
+</div>
+<div class='panel' id='changed'>
+<table class='main'>
+<thead>
+<tr>
+<th class='empty' colspan='3'>
+<a href="/nodes/changed.csv">Export nodes as CSV</a>
+</th>
+<th colspan='5'>
+Resources
+</th>
+</tr>
+<tr>
+<th class='status'></th>
+<th class='node'>
+Node
+</th>
+<th class='latest_report desc'>
+&darr; Latest report
+</th>
+<th>
+Total
+</th>
+<th>
+Changed
+</th>
+<th>
+Unchanged
+</th>
+</tr>
+</thead>
+<tfoot>
+<tr>
+<td colspan='8'>
+<div class="actionbar"></div>
+</td>
+</tr>
+</tfoot>
+<tbody>
+<tr>
+<td colspan='3'>Total</td>
+<td>2365</td>
+<td>43</td>
+<td>2322</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 1 minute ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/8">money.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/333">2012-07-10 22:12 UTC</a>
+</td>
+<td>
+143
+</td>
+<td>
+1
+</td>
+<td>
+142
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 2 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/6">service-staging.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/332">2012-07-10 22:10 UTC</a>
+</td>
+<td>
+374
+</td>
+<td>
+13
+</td>
+<td>
+361
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 3 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/2">dns2.sc.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/331">2012-07-10 22:10 UTC</a>
+</td>
+<td>
+146
+</td>
+<td>
+1
+</td>
+<td>
+145
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 4 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/5">web-staging.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/330">2012-07-10 22:09 UTC</a>
+</td>
+<td>
+235
+</td>
+<td>
+6
+</td>
+<td>
+229
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 6 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/11">web-qa.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/328">2012-07-10 22:06 UTC</a>
+</td>
+<td>
+235
+</td>
+<td>
+2
+</td>
+<td>
+233
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 9 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/10">lb-staging.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/326">2012-07-10 22:03 UTC</a>
+</td>
+<td>
+228
+</td>
+<td>
+3
+</td>
+<td>
+225
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 10 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/4">service-qa.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/325">2012-07-10 22:03 UTC</a>
+</td>
+<td>
+374
+</td>
+<td>
+10
+</td>
+<td>
+364
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 13 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/17">trans.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/322">2012-07-10 22:00 UTC</a>
+</td>
+<td>
+223
+</td>
+<td>
+2
+</td>
+<td>
+221
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 14 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/9">ci.sf.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/320">2012-07-10 21:59 UTC</a>
+</td>
+<td>
+179
+</td>
+<td>
+4
+</td>
+<td>
+175
+</td>
+</tr>
+<tr class=''>
+<td class='changed status'>
+<img alt="Changed" src="/images/icons/changed.png?1334781066" title="Changed 18 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/3">lb-qa.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/319">2012-07-10 21:55 UTC</a>
+</td>
+<td>
+228
+</td>
+<td>
+1
+</td>
+<td>
+227
+</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class='panel' id='unchanged'>
+<table class='main'>
+<thead>
+<tr>
+<th class='empty' colspan='3'>
+<a href="/nodes/unchanged.csv">Export nodes as CSV</a>
+</th>
+<th colspan='5'>
+Resources
+</th>
+</tr>
+<tr>
+<th class='status'></th>
+<th class='node'>
+Node
+</th>
+<th class='latest_report desc'>
+&darr; Latest report
+</th>
+<th>
+Total
+</th>
+<th>
+Unchanged
+</th>
+</tr>
+</thead>
+<tfoot>
+<tr>
+<td colspan='8'>
+<div class="actionbar"></div>
+</td>
+</tr>
+</tfoot>
+<tbody>
+<tr>
+<td colspan='3'>Total</td>
+<td>598</td>
+<td>598</td>
+</tr>
+<tr class=''>
+<td class='status unchanged'>
+<img alt="Unchanged" src="/images/icons/unchanged.png?1334781066" title="Unchanged 20 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/7">redis.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/317">2012-07-10 21:52 UTC</a>
+</td>
+<td>
+149
+</td>
+<td>
+149
+</td>
+</tr>
+<tr class=''>
+<td class='status unchanged'>
+<img alt="Unchanged" src="/images/icons/unchanged.png?1334781066" title="Unchanged 21 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/16">memcache.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/316">2012-07-10 21:52 UTC</a>
+</td>
+<td>
+146
+</td>
+<td>
+146
+</td>
+</tr>
+<tr class=''>
+<td class='status unchanged'>
+<img alt="Unchanged" src="/images/icons/unchanged.png?1334781066" title="Unchanged 21 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/15">db.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/315">2012-07-10 21:51 UTC</a>
+</td>
+<td>
+146
+</td>
+<td>
+146
+</td>
+</tr>
+<tr class=''>
+<td class='status unchanged'>
+<img alt="Unchanged" src="/images/icons/unchanged.png?1334781066" title="Unchanged 24 minutes ago" />
+
+</td>
+<td class='node'>
+<a href="/nodes/1">ci.dev.domain.net</a>
+</td>
+<td class='latest_report'>
+<a href="/reports/313">2012-07-10 21:49 UTC</a>
+</td>
+<td>
+157
+</td>
+<td>
+157
+</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+
+</div>
+<div id='footer'>
+<p><a href="http://puppetlabs.com/">&copy; Copyright 2012 Puppet Labs</a></p>
+</div>
+</div>
+</body>
+</html>
