@@ -15,6 +15,10 @@ class DiskUsageCollector(diamond.collector.Collector):
     
      * http://www.kernel.org/doc/Documentation/iostats.txt
      
+    #### Dependencies
+
+    * /proc/diskstats
+     
     """
     MAX_VALUES = {
         'reads':                    4294967295,
@@ -28,6 +32,13 @@ class DiskUsageCollector(diamond.collector.Collector):
     }
     
     LastCollectTime = None
+
+    def get_default_config_help(self):
+        config_help = super(DiskUsageCollector, self).get_default_config_help()
+        config_help.update({
+            'devices' : "devices to examine",
+        })
+        return config_help
 
     def get_default_config(self):
         """

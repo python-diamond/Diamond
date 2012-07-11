@@ -6,7 +6,18 @@ import os
 class SmartCollector(diamond.collector.Collector):
     """
     Collect data from S.M.A.R.T.'s attribute reporting.
+    
+    #### Dependencies
+
+    * [smartmontools](http://sourceforge.net/apps/trac/smartmontools/wiki)
+    
     """
+
+    def get_default_config_help(self):
+        config_help = super(SmartCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

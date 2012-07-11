@@ -7,9 +7,20 @@ _RE = re.compile(r'(\d+)\s+(\d+)\s+(\d+)')
 class FilestatCollector(diamond.collector.Collector):
     """
     Uses /proc/sys/fs/file-nr to collect data on number of open files
+    
+    #### Dependencies
+
+    * /proc/sys/fs/file-nr
+    
     """
 
     PROC = '/proc/sys/fs/file-nr'
+
+    def get_default_config_help(self):
+        config_help = super(FilestatCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

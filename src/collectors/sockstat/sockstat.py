@@ -11,9 +11,20 @@ _RE = re.compile('|'.join([
 class SockstatCollector(diamond.collector.Collector):
     """
     Uses /proc/net/sockstat to collect data on number of open sockets
+    
+    #### Dependencies
+
+    * /proc/net/sockstat
+    
     """
 
     PROC = '/proc/net/sockstat'
+
+    def get_default_config_help(self):
+        config_help = super(SockstatCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

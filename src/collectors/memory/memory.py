@@ -28,9 +28,19 @@ class MemoryCollector(diamond.collector.Collector):
     This class collects data on memory utilization
 
     /proc/meminfo is used to gather the data, which is returned in units of kB
+    
+    #### Dependencies
+
+    * 
     """
 
     PROC = '/proc/meminfo'
+
+    def get_default_config_help(self):
+        config_help = super(MemoryCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

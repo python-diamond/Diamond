@@ -8,7 +8,19 @@ import diamond.collector
 class HttpdCollector(diamond.collector.Collector):
     """
     Collect stats from Apache HTTPD server using mod_status
+    
+    #### Dependencies
+
+    * mod_status
+    
     """
+
+    def get_default_config_help(self):
+        config_help = super(HttpdCollector, self).get_default_config_help()
+        config_help.update({
+            'url' : "Url to server-status in auto format",
+        })
+        return config_help
 
     def get_default_config(self):
         """

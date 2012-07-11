@@ -8,6 +8,31 @@ else:
     import cElementTree as ElementTree
 
 class BindCollector(diamond.collector.Collector):
+    """
+    Collects stats from bind 9.5's statistics server
+    
+    #### Dependencies
+
+    * [bind 9.5](http://www.isc.org/software/bind/new-features/9.5) configured with libxml2 and statistics-channels
+    
+    """
+    
+    def get_default_config_help(self):
+        config_help = super(BindCollector, self).get_default_config_help()
+        config_help.update({
+            'host' : "",
+            'port' : "",
+            'publish' : "Available stats: \n" \
+                        + " - resolver (Per-view resolver and cache statistics) \n" \
+                        + " - server (Incoming requests and their answers) \n" \
+                        + " - zonemgmt (Requests/responses related to zone management) \n" \
+                        + " - sockets (Socket statistics) \n" \
+                        + " - memory (Global memory usage) \n",
+            'publish_view_bind' : "",
+            'publish_view_meta' : "",
+        })
+        return config_help
+    
     def get_default_config(self):
         """
         Returns the default collector settings

@@ -20,6 +20,11 @@ from diamond.metric import Metric
 class SNMPCollector(diamond.collector.Collector):
     """
     SNMPCollector is a special collector for collecting data from using SNMP
+    
+    #### Dependencies
+
+    * pysnmp
+    
     """
 
     def __init__(self, config, handlers):
@@ -32,6 +37,12 @@ class SNMPCollector(diamond.collector.Collector):
         # Initialize SNMP Command Generator
         if pysnmp is not None:
             self.snmpCmdGen = pysnmp.entity.rfc3413.oneliner.cmdgen.CommandGenerator()
+
+    def get_default_config_help(self):
+        config_help = super(SNMPCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         # Initialize default config

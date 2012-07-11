@@ -9,6 +9,11 @@ except ImportError:
 class CPUCollector(diamond.collector.Collector):
     """
     The CPUCollector collects CPU utilization metric using /proc/stat.
+    
+    #### Dependencies
+
+    * /proc/stat
+    
     """
 
     PROC = '/proc/stat'
@@ -24,6 +29,12 @@ class CPUCollector(diamond.collector.Collector):
         'guest': diamond.collector.MAX_COUNTER,
         'guest_nice': diamond.collector.MAX_COUNTER,
     }
+    
+    def get_default_config_help(self):
+        config_help = super(CPUCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
     
     def get_default_config(self):
         """

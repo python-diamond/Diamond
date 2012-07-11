@@ -3,6 +3,21 @@ import urllib2
 import diamond.collector
 
 class ResqueWebCollector(diamond.collector.Collector):
+    """
+    Collects data for Resque Web
+    
+    #### Dependencies
+
+    *
+    
+    """
+    
+    def get_default_config_help(self):
+        config_help = super(ResqueWebCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
+    
     def get_default_config(self):
         """
         Returns the default collector settings

@@ -6,7 +6,13 @@ class PowerDNSCollector(diamond.collector.Collector):
     """
     Collects all metrics exported by the powerdns nameserver using the
     pdns_control binary.
-    """ 
+    
+    #### Dependencies
+
+    * pdns_control
+    
+    """
+    
     _GAUGE_KEYS = [
         'cache-bytes', 'cache-entries', 'chain-resends',
         'concurrent-queries', 'dlg-only-drops', 'dont-outqueries',
@@ -15,6 +21,13 @@ class PowerDNSCollector(diamond.collector.Collector):
         'packetcache-bytes', 'packetcache-entries', 'packetcache-size',
         'qa-latency', 'throttle-entries'
         ]
+    
+    def get_default_config_help(self):
+        config_help = super(PowerDNSCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
+    
     def get_default_config(self): 
         """
         Returns the default collector settings

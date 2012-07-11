@@ -4,10 +4,20 @@ import os
 class KVMCollector(diamond.collector.Collector):
     """
     Collects /sys/kernel/debug/kvm/*
+    
+    #### Dependencies
+
+    * /sys/kernel/debug/kvm
+    
     """
     
     PROC = '/sys/kernel/debug/kvm'
     
+    def get_default_config_help(self):
+        config_help = super(KVMCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
     
     def get_default_config(self):
         """

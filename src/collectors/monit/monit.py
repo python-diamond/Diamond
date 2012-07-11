@@ -9,7 +9,18 @@ import diamond.collector
 class MonitCollector(diamond.collector.Collector):
     """
     Collect the monit stats and report on cpu/memory for monitored processes
+    
+    #### Dependencies
+
+    *
+    
     """
+
+    def get_default_config_help(self):
+        config_help = super(MonitCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

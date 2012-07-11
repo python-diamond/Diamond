@@ -6,7 +6,18 @@ import commands
 class UserScriptsCollector(diamond.collector.Collector):
     """
     Runs third party scripts and collects their output
+    
+    #### Dependencies
+
+    * [commands](http://docs.python.org/library/commands.html)
+    
     """
+
+    def get_default_config_help(self):
+        config_help = super(UserScriptsCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

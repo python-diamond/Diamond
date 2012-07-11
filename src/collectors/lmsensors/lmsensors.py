@@ -15,7 +15,19 @@ class LMSensorsCollector(diamond.collector.Collector):
 
     If you're having issues, check your version of 'sensors'. This collector written against:
     sensors version 3.1.2 with libsensors version 3.1.2
+    
+    #### Dependencies
+
+    * python-sensors
+    
     """
+    
+    def get_default_config_help(self):
+        config_help = super(LMSensorsCollector, self).get_default_config_help()
+        config_help.update({
+            'fahrenheit' : "",
+        })
+        return config_help
 
     def get_default_config(self):
         """

@@ -15,6 +15,11 @@ from diamond.metric import Metric
 class SNMPInterfaceCollector(SNMPCollector):
     """
     SNMPInterfaceCollector is a SNMP collector for collecting data using SNMP IF-MIB
+    
+    #### Dependencies
+
+    * pysmnp
+    
     """
 
     # IF-MIB OID
@@ -40,6 +45,12 @@ class SNMPInterfaceCollector(SNMPCollector):
 
     # A list of interface types we care about
     IF_TYPES = ["6"]
+
+    def get_default_config_help(self):
+        config_help = super(SNMPInterfaceCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

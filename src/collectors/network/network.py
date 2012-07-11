@@ -12,6 +12,10 @@ class NetworkCollector(diamond.collector.Collector):
     """
     The NetworkCollector class collects metrics on network interface usage
     using /proc/net/dev.
+    
+    #### Dependencies
+
+    * 
     """
 
     PROC = '/proc/net/dev'
@@ -34,6 +38,12 @@ class NetworkCollector(diamond.collector.Collector):
         'tx_compressed': diamond.collector.MAX_COUNTER,
         'tx_multicast':  diamond.collector.MAX_COUNTER,
         }
+
+    def get_default_config_help(self):
+        config_help = super(NetworkCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

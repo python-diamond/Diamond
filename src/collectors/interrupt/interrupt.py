@@ -16,8 +16,19 @@ class InterruptCollector(diamond.collector.Collector):
     """
     The InterruptCollector class collects metrics on interrupts from
     /proc/interrupts
+    
+    #### Dependencies
+
+    *
+    
     """
     PROC='/proc/interrupts'
+
+    def get_default_config_help(self):
+        config_help = super(InterruptCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

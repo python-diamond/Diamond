@@ -9,8 +9,13 @@ except ImportError:
 class RedisCollector(diamond.collector.Collector):
     """
     Collects data from a Redis Server
+    
+    #### Dependencies
+
+    * 
 
     """
+    
     _DATABASE_COUNT = 16
     _DEFAULT_DB = 0
     _DEFAULT_HOST = 'localhost'
@@ -40,8 +45,15 @@ class RedisCollector(diamond.collector.Collector):
              'pubsub.patterns': 'pubsub_patterns',
              'slaves.connected': 'connected_slaves'}
 
+    def get_default_config_help(self):
+        config_help = super(RedisCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
+
     def get_default_config(self):
-        """Return default config
+        """
+        Return default config
 
         :rtype: dict
 

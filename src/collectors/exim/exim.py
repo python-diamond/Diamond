@@ -5,9 +5,20 @@ import os
 class EximCollector(diamond.collector.Collector):
     """
     Shells out to get the exim queue length
+    
+    #### Dependencies
+
+    * /usr/sbin/exim
+    
     """
   
     COMMAND = ['/usr/sbin/exim', '-bpc']
+    
+    def get_default_config_help(self):
+        config_help = super(EximCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
     
     def get_default_config(self):
         """

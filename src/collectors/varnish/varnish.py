@@ -3,8 +3,15 @@ import re
 import subprocess
 
 class VarnishCollector(diamond.collector.Collector):
-    """VarnishCollector grabs stats from Varnish and submits them the Graphite
     """
+    VarnishCollector grabs stats from Varnish and submits them the Graphite
+    
+    #### Dependencies
+
+    * /usr/bin/varnishstat
+    
+    """
+    
     _RE = re.compile("^(?P<stat>[\w_\(\)\.,]*)\s+(?P<psa>\d*)\s+"
                    "(?P<psan>[\d.]*)\s(?P<desc>[\w\., /]*)$", re.M)
     _CMD = '/usr/bin/varnishstat'
@@ -29,6 +36,12 @@ class VarnishCollector(diamond.collector.Collector):
              'hcb_nolock', 'hcb_lock', 'hcb_insert', 'accept_fail',
              'client_drop_late', 'uptime', 'dir_dns_lookups', 'dir_dns_failed',
              'dir_dns_hit', 'dir_dns_cache_full']
+
+    def get_default_config_help(self):
+        config_help = super(VarnishCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

@@ -7,9 +7,20 @@ _RE = re.compile(r'([\d.]+) ([\d.]+) ([\d.]+) (\d+)/(\d+)')
 class LoadAverageCollector(diamond.collector.Collector):
     """
     Uses /proc/loadavg to collect data on load average
+    
+    #### Dependencies
+
+    * /proc/loadavg
+    
     """
 
     PROC = '/proc/loadavg'
+
+    def get_default_config_help(self):
+        config_help = super(LoadAverageCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

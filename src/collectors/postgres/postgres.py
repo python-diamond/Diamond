@@ -8,7 +8,18 @@ except ImportError:
 
 class PostgresqlCollector(diamond.collector.Collector):
     """
+    
+    #### Dependencies
+
+    *
+    
     """
+    
+    def get_default_config_help(self):
+        config_help = super(PostgresqlCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
     
     def get_default_config(self):
         """

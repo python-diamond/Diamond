@@ -4,7 +4,18 @@ import diamond.collector
 class PostqueueCollector(diamond.collector.Collector):
     """
     Collect the emails in the postfix queue
+    
+    #### Dependencies
+
+    *
+    
     """
+
+    def get_default_config_help(self):
+        config_help = super(PostqueueCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

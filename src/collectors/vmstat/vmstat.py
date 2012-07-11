@@ -5,6 +5,11 @@ import re
 class VMStatCollector(diamond.collector.Collector):
     """
     Uses /proc/vmstat to collect data on virtual memory manager
+    
+    #### Dependencies
+
+    * /proc/vmstat
+    
     """
 
     PROC = '/proc/vmstat'
@@ -14,6 +19,12 @@ class VMStatCollector(diamond.collector.Collector):
         'pswpin' : diamond.collector.MAX_COUNTER,
         'pswpout': diamond.collector.MAX_COUNTER,
     }
+
+    def get_default_config_help(self):
+        config_help = super(VMStatCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

@@ -10,7 +10,22 @@ import diamond.collector
 class HAProxyCollector(diamond.collector.Collector):
     """
     Collect HAProxy Stats
+    
+    #### Dependencies
+
+    * urlparse
+    
     """
+
+    def get_default_config_help(self):
+        config_help = super(HAProxyCollector, self).get_default_config_help()
+        config_help.update({
+            'url' : "Url to stats in csv format",
+            'user' : "",
+            'pass' : "pass",
+            'ignore_servers' : "Ignore servers, just collect frontend and backend stats",
+        })
+        return config_help
 
     def get_default_config(self):
         """

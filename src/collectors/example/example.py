@@ -1,6 +1,20 @@
 import diamond.collector
 
 class ExampleCollector(diamond.collector.Collector):
+    """
+    An example collector that verifies the answer to life, the universe, and everything does not change.
+    
+    #### Dependencies
+
+    * A sane universe
+    
+    """
+
+    def get_default_config_help(self):
+        config_help = super(ExampleCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

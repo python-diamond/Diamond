@@ -4,9 +4,20 @@ import os
 class NfsdCollector(diamond.collector.Collector):
     """
     The NfsdCollector collects nfsd utilization metrics using /proc/net/rpc/nfsd.
+    
+    #### Dependencies
+
+    *
+    
     """
 
     PROC = '/proc/net/rpc/nfsd'
+    
+    def get_default_config_help(self):
+        config_help = super(NfsdCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
     
     def get_default_config(self):
         """

@@ -5,7 +5,17 @@ class PingCollector(diamond.collector.Collector):
     """
     Collect icmp round trip times
     Only valid for ipv4 hosts currently
+    
+    #### Dependencies
+
+    * 
     """
+
+    def get_default_config_help(self):
+        config_help = super(PingCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

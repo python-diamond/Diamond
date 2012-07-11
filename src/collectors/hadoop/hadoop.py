@@ -10,9 +10,20 @@ class HadoopCollector(diamond.collector.Collector):
     
     * http://www.cloudera.com/blog/2009/03/hadoop-metrics/
     
+    #### Dependencies
+
+    * hadoop
+    
     """
 
     re_log = re.compile(r'^(?P<timestamp>\d+) (?P<name>\S+): (?P<metrics>.*)$')
+
+    def get_default_config_help(self):
+        config_help = super(HadoopCollector, self).get_default_config_help()
+        config_help.update({
+            'metrics' : "List of paths to process metrics from",
+        })
+        return config_help
 
     def get_default_config(self):
         """

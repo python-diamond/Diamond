@@ -11,7 +11,23 @@ except ImportError:
 class DiskSpaceCollector(diamond.collector.Collector):
     """
     Uses /proc/mounts and os.statvfs() to get disk space usage
+    
+    #### Dependencies
+
+    * 
     """
+    
+    def get_default_config_help(self):
+        config_help = super(DiskSpaceCollector, self).get_default_config_help()
+        config_help.update({
+            'filesystems' : "filesystems to examine",
+            'exclude_filters' : "A list of regex patterns. Any filesystem matching any of these patterns will be excluded from disk space metrics collection\n" \
+                              + "Examples:\n" \
+                              + "       exclude_filters = ,                 # no exclude filters at all\n" \
+                              + "       exclude_filters = ^/boot, ^/mnt     # exclude everything that begins /boot or /mnt\n" \
+                              + "       exclude_filters = m,                # exclude everything that includes the letter 'm'\n",
+        })
+        return config_help
     
     def get_default_config(self):
         """

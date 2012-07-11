@@ -3,11 +3,20 @@ import os
 
 class TCPCollector(diamond.collector.Collector):
     """
-    The TCPCollector class collects metrics on TCP stats from
-    /proc/net/netstat
+    The TCPCollector class collects metrics on TCP stats
+    
+    #### Dependencies
+
+    * /proc/net/netstat
     """
 
     PROC='/proc/net/netstat'
+
+    def get_default_config_help(self):
+        config_help = super(TCPCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

@@ -31,8 +31,18 @@ class OpenVPNCollector(diamond.collector.Collector):
     You can also specify multiple and mixed instances::
 
         instances = file:///var/log/openvpn/developers.log, tcp://10.0.0.1:1195?admins
+        
+    #### Dependencies
+
+    * 
 
     """
+
+    def get_default_config_help(self):
+        config_help = super(OpenVPNCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

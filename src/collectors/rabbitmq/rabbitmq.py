@@ -7,9 +7,20 @@ except ImportError:
     Number = None
 
 class RabbitMQCollector(diamond.collector.Collector):
-    """Collects data from RabbitMQ through the admin interface
+    """
+    Collects data from RabbitMQ through the admin interface
+    
+    #### Dependencies
+
+    * 
 
     """
+    
+    def get_default_config_help(self):
+        config_help = super(RabbitMQCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

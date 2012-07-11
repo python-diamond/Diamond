@@ -8,9 +8,20 @@ _RE = re.compile(r'^([a-z\._]*) = ([0-9]*)$')
 class ConnTrackCollector(diamond.collector.Collector):
     """
     Shells out to get the value of sysctl net.netfilter.nf_conntrack_count
+    
+    #### Dependencies
+
+    * /sbin/sysctl
+    
     """
 
     COMMAND = ['/sbin/sysctl', 'net.netfilter.nf_conntrack_count']
+
+    def get_default_config_help(self):
+        config_help = super(ConnTrackCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

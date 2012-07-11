@@ -14,7 +14,19 @@ class KSMCollector(diamond.collector.Collector):
     Requirements: KSM built into your kernel. It does not have to be
                   enabled, but the stats will be less than useful if
                   it isn't :-)
+                  
+    #### Dependencies
+
+    *
+    
     """
+    
+    def get_default_config_help(self):
+        config_help = super(KSMCollector, self).get_default_config_help()
+        config_help.update({
+            'ksm_path' : "location where KSM kernel data can be found",
+        })
+        return config_help
     
     def get_default_config(self):
         """

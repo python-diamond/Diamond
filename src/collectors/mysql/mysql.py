@@ -9,6 +9,13 @@ except ImportError:
     MySQLdb = None
 
 class MySQLCollector(diamond.collector.Collector):
+    """
+    
+    #### Dependencies
+
+    *
+    
+    """
 
     _GAUGE_KEYS = [
         'Innodb_buffer_pool_pages_data', 'Innodb_buffer_pool_pages_dirty', 'Innodb_buffer_pool_pages_free',
@@ -98,6 +105,12 @@ class MySQLCollector(diamond.collector.Collector):
         super(MySQLCollector,self).__init__(*args, **kwargs)
         for key in self.innodb_status_keys:
             self.innodb_status_keys[key] = re.compile(self.innodb_status_keys[key])
+
+    def get_default_config_help(self):
+        config_help = super(MySQLCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         """

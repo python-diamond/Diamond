@@ -5,7 +5,18 @@ import diamond.collector
 class NginxCollector(diamond.collector.Collector):
     """
     Collect statistics from Nginx
+    
+    #### Dependencies
+
+    *
+    
     """
+
+    def get_default_config_help(self):
+        config_help = super(NginxCollector, self).get_default_config_help()
+        config_help.update({
+        })
+        return config_help
 
     def get_default_config(self):
         default_config = super(NginxCollector, self).get_default_config()
