@@ -13,7 +13,7 @@ class MySQLCollector(diamond.collector.Collector):
     
     #### Dependencies
 
-    *
+    * MySQLdb
     
     """
 
@@ -109,6 +109,15 @@ class MySQLCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(MySQLCollector, self).get_default_config_help()
         config_help.update({
+            'host' : 'Hostname',
+            'port' : 'Port',
+            'db' : 'Database',
+            'user' : 'Username',
+            'passwd' : 'Password',
+            'publish' : "Which rows of '[SHOW GLOBAL STATUS](http://dev.mysql.com/doc/refman/5.1/en/show-status.html)' you would like to publish. Leave unset to publish all",
+            'slave' : 'Collect SHOW SLAVE STATUS',
+            'master' : 'Collect SHOW MASTER STATUS',
+            'innodb' : 'Collect SHOW ENGINE INNODB STATUS',
         })
         return config_help
 

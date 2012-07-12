@@ -8,6 +8,7 @@ class TCPCollector(diamond.collector.Collector):
     #### Dependencies
 
     * /proc/net/netstat
+    
     """
 
     PROC='/proc/net/netstat'
@@ -15,6 +16,7 @@ class TCPCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(TCPCollector, self).get_default_config_help()
         config_help.update({
+            'allowed_names' : 'list of entries to collect',
         })
         return config_help
 

@@ -7,7 +7,7 @@ class PostqueueCollector(diamond.collector.Collector):
     
     #### Dependencies
 
-    *
+    * subprocess
     
     """
 

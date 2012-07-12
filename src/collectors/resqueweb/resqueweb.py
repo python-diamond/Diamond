@@ -8,7 +8,7 @@ class ResqueWebCollector(diamond.collector.Collector):
     
     #### Dependencies
 
-    *
+    * urllib2
     
     """
     

@@ -36,7 +36,7 @@ class DiskUsageCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(DiskUsageCollector, self).get_default_config_help()
         config_help.update({
-            'devices' : "devices to examine",
+            'devices' : "A regex of which devices to gather metrics for. Defaults to md, sd, and xvd devices",
         })
         return config_help
 

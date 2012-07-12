@@ -12,6 +12,8 @@ class HttpdCollector(diamond.collector.Collector):
     #### Dependencies
 
     * mod_status
+    * httplib
+    * urlparse
     
     """
 

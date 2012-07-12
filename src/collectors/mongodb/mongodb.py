@@ -15,13 +15,14 @@ class MongoDBCollector(diamond.collector.Collector):
     
     #### Dependencies
 
-    * 
+    * pymongo
 
     """
     
     def get_default_config_help(self):
         config_help = super(MongoDBCollector, self).get_default_config_help()
         config_help.update({
+            'host' : 'Hostname',
         })
         return config_help
     

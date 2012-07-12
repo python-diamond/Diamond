@@ -25,7 +25,7 @@ class LMSensorsCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(LMSensorsCollector, self).get_default_config_help()
         config_help.update({
-            'fahrenheit' : "",
+            'fahrenheit' : "True/False",
         })
         return config_help
 

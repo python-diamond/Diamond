@@ -15,6 +15,8 @@ class UPSCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(UPSCollector, self).get_default_config_help()
         config_help.update({
+            'ups_name' : 'The name of the ups to collect data for',
+            'bin' : 'The path to the upsc binary',
         })
         return config_help
 

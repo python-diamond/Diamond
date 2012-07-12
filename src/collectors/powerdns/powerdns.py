@@ -25,6 +25,7 @@ class PowerDNSCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(PowerDNSCollector, self).get_default_config_help()
         config_help.update({
+            'pdns_control' : 'Path to pdns_control binary',
         })
         return config_help
     

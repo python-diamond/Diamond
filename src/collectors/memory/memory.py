@@ -31,7 +31,8 @@ class MemoryCollector(diamond.collector.Collector):
     
     #### Dependencies
 
-    * 
+    * /proc/meminfo or psutil
+    
     """
 
     PROC = '/proc/meminfo'
@@ -39,6 +40,7 @@ class MemoryCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(MemoryCollector, self).get_default_config_help()
         config_help.update({
+            'detailed' : 'Set to True to Collect all the nodes',
         })
         return config_help
 

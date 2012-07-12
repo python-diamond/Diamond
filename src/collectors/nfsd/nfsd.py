@@ -7,7 +7,7 @@ class NfsdCollector(diamond.collector.Collector):
     
     #### Dependencies
 
-    *
+    * /proc/net/rpc/nfsd
     
     """
 

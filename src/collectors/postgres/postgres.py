@@ -8,16 +8,21 @@ except ImportError:
 
 class PostgresqlCollector(diamond.collector.Collector):
     """
+    Collect metrics from postgresql
     
     #### Dependencies
 
-    *
+    * psycopg2
     
     """
     
     def get_default_config_help(self):
         config_help = super(PostgresqlCollector, self).get_default_config_help()
         config_help.update({
+            'host' : 'Hostname',
+            'user' : 'Username',
+            'password' : 'Password',
+            'port' : 'Port number',
         })
         return config_help
     

@@ -14,6 +14,7 @@ class HAProxyCollector(diamond.collector.Collector):
     #### Dependencies
 
     * urlparse
+    * urllib2
     
     """
 
@@ -21,8 +22,8 @@ class HAProxyCollector(diamond.collector.Collector):
         config_help = super(HAProxyCollector, self).get_default_config_help()
         config_help.update({
             'url' : "Url to stats in csv format",
-            'user' : "",
-            'pass' : "pass",
+            'user' : "Username",
+            'pass' : "Password",
             'ignore_servers' : "Ignore servers, just collect frontend and backend stats",
         })
         return config_help

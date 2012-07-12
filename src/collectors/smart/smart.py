@@ -16,6 +16,7 @@ class SmartCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(SmartCollector, self).get_default_config_help()
         config_help.update({
+            'devices' : "device regex to collect stats on",
         })
         return config_help
 

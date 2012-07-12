@@ -19,7 +19,7 @@ class InterruptCollector(diamond.collector.Collector):
     
     #### Dependencies
 
-    *
+    * /proc/interrupts
     
     """
     PROC='/proc/interrupts'

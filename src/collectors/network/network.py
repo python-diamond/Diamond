@@ -42,6 +42,8 @@ class NetworkCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(NetworkCollector, self).get_default_config_help()
         config_help.update({
+            'interfaces' : 'List of interface types to collect',
+            'greedy' : 'Greedy match interfaces',
         })
         return config_help
 

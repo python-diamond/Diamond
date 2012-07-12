@@ -8,13 +8,17 @@ class NagiosStatsCollector(diamond.collector.Collector):
     
     #### Dependencies
 
-    *
+    * /usr/sbin/nagios3stats
     
     """
 
     def get_default_config_help(self):
         config_help = super(NagiosStatsCollector, self).get_default_config_help()
         config_help.update({
+            'nagiosstats_cmd' : 'Path to nagios3stats binary',
+            'vars' : 'What vars to collect',
+            'use_sudo' : 'Use sudo?',
+            'sudo_cmd' : 'Path to sudo',
         })
         return config_help
 

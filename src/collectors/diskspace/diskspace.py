@@ -14,7 +14,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
     
     #### Dependencies
 
-    * 
+    * /proc/mounts
+    
     """
     
     def get_default_config_help(self):

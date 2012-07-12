@@ -8,13 +8,32 @@ class MemcachedCollector(diamond.collector.Collector):
     
     #### Dependencies
 
-    *
+    * subprocess
+    
+    #### Example Configuration
+    
+    diamond.conf
+    
+    ```
+        [[MemcachedCollector]]
+        enabled = True
+        
+        [[[hosts]]]
+        
+        [[[[app-1]]]
+        host = localhost
+        port = 11211
+    ```
+    
+    Repeat the app-1 block as many times as needed for different host/port combos
     
     """
     
     def get_default_config_help(self):
         config_help = super(MemcachedCollector, self).get_default_config_help()
         config_help.update({
+            'publish' : "Which rows of 'status' you would like to publish. Telnet host port' and type stats and hit enter to see the list of possibilities. Leave unset to publish all.",
+            'hosts' : "Complex set of hosts and ports to collect",
         })
         return config_help
 
