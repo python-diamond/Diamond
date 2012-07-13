@@ -1,14 +1,15 @@
+"""
+Implements the abstract Handler class, sending data to statsd.
+This is a UDP service, sending datagrams.  They may be lost.
+It's OK.
+"""
+
 from Handler import Handler
 import statsd
 import logging
 
-
 class StatsdHandler(Handler):
-    """
-    Implements the abstract Handler class, sending data to statsd.
-    This is a UDP service, sending datagrams.  They may be lost.
-    It's OK.
-    """
+
     def __init__(self, config=None):
         """
         Create a new instance of the StatsdHandler class

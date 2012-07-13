@@ -1,3 +1,7 @@
+"""
+Insert the collected values into a mysql table
+"""
+
 from handler import Handler
 import MySQLdb
 

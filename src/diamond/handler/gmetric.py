@@ -1,3 +1,7 @@
+"""
+Emulate a gmetric client for usage with [Ganglia Monitoring System](http://ganglia.sourceforge.net/)
+"""
+
 from Handler import Handler
 import gmetric
 

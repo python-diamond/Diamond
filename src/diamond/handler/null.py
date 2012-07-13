@@ -1,3 +1,7 @@
+"""
+Output the collected values to the debug log channel.
+"""
+
 from Handler import Handler
 
 class NullHandler(Handler):

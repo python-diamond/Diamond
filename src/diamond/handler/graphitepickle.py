@@ -1,3 +1,12 @@
+"""
+Send metrics to a [graphite](http://graphite.wikidot.com/) using the high performace pickle interface.
+
+- enable it in `diamond.conf` :
+
+`    handlers = diamond.handler.graphitepickle.GraphitePickleHandler
+`
+"""
+
 import struct
 
 from graphite import GraphiteHandler

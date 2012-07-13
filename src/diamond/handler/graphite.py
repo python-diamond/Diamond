@@ -1,3 +1,7 @@
+"""
+Send metrics to a [graphite](http://graphite.wikidot.com/) using the default interface.
+"""
+
 from Handler import Handler
 import socket
 
