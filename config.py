@@ -161,7 +161,7 @@ if __name__ == "__main__":
                 
             config_file.write()
             
-        except IOError as (errno, strerror):
+        except IOError, (errno, strerror):
             print "I/O error({0}): {1}".format(errno, strerror)
         except KeyboardInterrupt:
             print
