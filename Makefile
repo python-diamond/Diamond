@@ -21,7 +21,7 @@ run:
 	./bin/diamond --configfile=conf/diamond.conf --foreground
 
 config:
-	python config.py
+	python config.py --configfile=conf/diamond.conf
 
 watch:
 	watchr test.watchr
@@ -62,4 +62,4 @@ clean:
 cleanws:
 	find . -name '*.py' -exec sed -i'' -e 's/[ \t]*$$//' {} \;
 
-.PHONY: run watch test docs sdist bdist install buildrpm builddeb tar clean cleanws
+.PHONY: run watch config test docs sdist bdist install buildrpm builddeb tar clean cleanws
