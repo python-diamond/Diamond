@@ -86,8 +86,9 @@ class OpenVPNCollector(diamond.collector.Collector):
         else:
             self.log.info('OpenVPN parsing "%s" file: %s' % (name, filename))
 
-        with open(filename, 'r') as fd:
-            lines = fd.readlines()
+        fd = open(filename, 'r')
+        lines = fd.readlines()
+        fd.close()
 
         self.parse(name, lines)
 
