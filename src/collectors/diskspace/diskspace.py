@@ -61,7 +61,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             'method' : 'Threaded',
             
             # Default numeric output
-            'byte_unit' : 'gigabyte'
+            'byte_unit' : ['gigabyte']
         } )
         return config
 
@@ -155,21 +155,23 @@ class DiskSpaceCollector(diamond.collector.Collector):
 
             blocks_total, blocks_free, blocks_avail = data.f_blocks, data.f_bfree, data.f_bavail
             inodes_total, inodes_free, inodes_avail = data.f_files, data.f_ffree, data.f_favail
+            
+            for unit in self.config['byte_unit'] :
 
-            metric_name = '%s.%s_used' % (name, self.config['byte_unit'])
-            metric_value = float(block_size) * float(blocks_total - blocks_free)
-            metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = self.config['byte_unit'])
-            self.publish(metric_name, metric_value, 2)
-
-            metric_name = '%s.%s_free' % (name, self.config['byte_unit'])
-            metric_value = float(block_size) * float(blocks_free)
-            metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = self.config['byte_unit'])
-            self.publish(metric_name, metric_value, 2)
-
-            metric_name = '%s.%s_avail' % (name, self.config['byte_unit'])
-            metric_value = float(block_size) * float(blocks_avail)
-            metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = self.config['byte_unit'])
-            self.publish(metric_name, metric_value, 2)
+                metric_name = '%s.%s_used' % (name, unit)
+                metric_value = float(block_size) * float(blocks_total - blocks_free)
+                metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = unit)
+                self.publish(metric_name, metric_value, 2)
+    
+                metric_name = '%s.%s_free' % (name, unit)
+                metric_value = float(block_size) * float(blocks_free)
+                metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = unit)
+                self.publish(metric_name, metric_value, 2)
+    
+                metric_name = '%s.%s_avail' % (name, unit)
+                metric_value = float(block_size) * float(blocks_avail)
+                metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = unit)
+                self.publish(metric_name, metric_value, 2)
 
             self.publish('%s.inodes_used'  % name, inodes_total - inodes_free)
             self.publish('%s.inodes_free'  % name, inodes_free)
