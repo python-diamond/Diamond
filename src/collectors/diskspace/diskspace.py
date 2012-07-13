@@ -5,6 +5,12 @@ Uses /proc/mounts and os.statvfs() to get disk space usage
 
  * /proc/mounts
 
+#### Examples
+
+    exclude_filters = ,                 # no exclude filters at all
+    exclude_filters = ^/boot, ^/mnt     # exclude everything that begins /boot or /mnt
+    exclude_filters = m,                # exclude everything that includes the letter 'm'
+
 """
 
 import diamond.collector
@@ -23,11 +29,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
         config_help = super(DiskSpaceCollector, self).get_default_config_help()
         config_help.update({
             'filesystems' : "filesystems to examine",
-            'exclude_filters' : "A list of regex patterns. Any filesystem matching any of these patterns will be excluded from disk space metrics collection\n" \
-                              + "Examples:\n" \
-                              + "       exclude_filters = ,                 # no exclude filters at all\n" \
-                              + "       exclude_filters = ^/boot, ^/mnt     # exclude everything that begins /boot or /mnt\n" \
-                              + "       exclude_filters = m,                # exclude everything that includes the letter 'm'\n",
+            'exclude_filters' : "A list of regex patterns. Any filesystem matching any of these patterns will be excluded from disk space metrics collection",
         })
         return config_help
     
