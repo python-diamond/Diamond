@@ -1,15 +1,16 @@
+"""
+The TCPCollector class collects metrics on TCP stats
+
+#### Dependencies
+
+ * /proc/net/netstat
+
+"""
+
 import diamond.collector
 import os
 
 class TCPCollector(diamond.collector.Collector):
-    """
-    The TCPCollector class collects metrics on TCP stats
-    
-    #### Dependencies
-
-    * /proc/net/netstat
-    
-    """
 
     PROC='/proc/net/netstat'
 

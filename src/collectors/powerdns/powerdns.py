@@ -1,17 +1,18 @@
+"""
+Collects all metrics exported by the powerdns nameserver using the
+pdns_control binary.
+
+#### Dependencies
+
+ * pdns_control
+
+"""
+
 import diamond.collector
 import subprocess
 import os
 
 class PowerDNSCollector(diamond.collector.Collector):
-    """
-    Collects all metrics exported by the powerdns nameserver using the
-    pdns_control binary.
-    
-    #### Dependencies
-
-    * pdns_control
-    
-    """
     
     _GAUGE_KEYS = [
         'cache-bytes', 'cache-entries', 'chain-resends',

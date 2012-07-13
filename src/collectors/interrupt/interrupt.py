@@ -1,3 +1,13 @@
+"""
+The InterruptCollector class collects metrics on interrupts from
+/proc/interrupts
+
+#### Dependencies
+
+ * /proc/interrupts
+
+"""
+
 import platform
 import os
 import diamond.collector
@@ -13,15 +23,7 @@ else:
     counter = (2 ** 32) - 1
 
 class InterruptCollector(diamond.collector.Collector):
-    """
-    The InterruptCollector class collects metrics on interrupts from
-    /proc/interrupts
     
-    #### Dependencies
-
-    * /proc/interrupts
-    
-    """
     PROC='/proc/interrupts'
 
     def get_default_config_help(self):

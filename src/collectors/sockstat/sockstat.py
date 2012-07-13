@@ -1,3 +1,12 @@
+"""
+Uses /proc/net/sockstat to collect data on number of open sockets
+
+#### Dependencies
+
+ * /proc/net/sockstat
+
+"""
+
 import diamond.collector
 import re
 import os
@@ -9,14 +18,6 @@ _RE = re.compile('|'.join([
 ]))
 
 class SockstatCollector(diamond.collector.Collector):
-    """
-    Uses /proc/net/sockstat to collect data on number of open sockets
-    
-    #### Dependencies
-
-    * /proc/net/sockstat
-    
-    """
 
     PROC = '/proc/net/sockstat'
 

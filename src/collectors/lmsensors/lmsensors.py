@@ -1,3 +1,19 @@
+"""
+This class collects data from libsensors. It should work against libsensors 2.x and 3.x, pending
+support within the PySensors Ctypes binding: http://pypi.python.org/pypi/PySensors/
+
+Requires: 'sensors' to be installed, configured, and the relevant kernel modules to be loaded.
+Requires: PySensors requires Python 2.6+
+
+If you're having issues, check your version of 'sensors'. This collector written against:
+sensors version 3.1.2 with libsensors version 3.1.2
+
+#### Dependencies
+
+ * python-sensors
+
+"""
+
 import diamond.collector
 
 try:
@@ -6,21 +22,6 @@ except ImportError:
     sensors = None
 
 class LMSensorsCollector(diamond.collector.Collector):
-    """
-    This class collects data from libsensors. It should work against libsensors 2.x and 3.x, pending
-    support within the PySensors Ctypes binding: http://pypi.python.org/pypi/PySensors/
-
-    Requires: 'sensors' to be installed, configured, and the relevant kernel modules to be loaded.
-    Requires: PySensors requires Python 2.6+
-
-    If you're having issues, check your version of 'sensors'. This collector written against:
-    sensors version 3.1.2 with libsensors version 3.1.2
-    
-    #### Dependencies
-
-    * python-sensors
-    
-    """
     
     def get_default_config_help(self):
         config_help = super(LMSensorsCollector, self).get_default_config_help()

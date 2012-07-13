@@ -1,42 +1,43 @@
+"""
+Processes OpenVPN metrics. This collector can process multiple OpenVPN
+instances (even from a server box). In addition to the path, you may
+also specify a name of the instance.
+
+You can use both the status file or the tcp management connection to
+retrieve the metrics.
+
+To parse the status file::
+
+    instances = file:///var/log/openvpn/status.log
+
+Or, to override the name (now "status"):
+
+    instances = file:///var/log/openvpn/status.log?developers
+
+To use the management connection::
+
+    instances = tcp://127.0.0.1:1195
+
+Or, to override the name (now "127_0_0_1"):
+
+    instances = tcp://127.0.0.1:1195?developers
+
+You can also specify multiple and mixed instances::
+
+    instances = file:///var/log/openvpn/developers.log, tcp://10.0.0.1:1195?admins
+    
+#### Dependencies
+
+ * urlparse
+
+"""
+    
 from diamond.metric import Metric
 import diamond.collector
 import os.path
 import urlparse
 
 class OpenVPNCollector(diamond.collector.Collector):
-    """
-    Processes OpenVPN metrics. This collector can process multiple OpenVPN
-    instances (even from a server box). In addition to the path, you may
-    also specify a name of the instance.
-
-    You can use both the status file or the tcp management connection to
-    retrieve the metrics.
-
-    To parse the status file::
-
-        instances = file:///var/log/openvpn/status.log
-
-    Or, to override the name (now "status"):
-
-        instances = file:///var/log/openvpn/status.log?developers
-
-    To use the management connection::
-
-        instances = tcp://127.0.0.1:1195
-
-    Or, to override the name (now "127_0_0_1"):
-
-        instances = tcp://127.0.0.1:1195?developers
-
-    You can also specify multiple and mixed instances::
-
-        instances = file:///var/log/openvpn/developers.log, tcp://10.0.0.1:1195?admins
-        
-    #### Dependencies
-
-    * 
-
-    """
 
     def get_default_config_help(self):
         config_help = super(OpenVPNCollector, self).get_default_config_help()

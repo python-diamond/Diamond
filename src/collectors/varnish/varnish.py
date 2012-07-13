@@ -1,16 +1,17 @@
+"""
+VarnishCollector grabs stats from Varnish and submits them the Graphite
+
+#### Dependencies
+
+ * /usr/bin/varnishstat
+
+"""
+
 import diamond.collector
 import re
 import subprocess
 
 class VarnishCollector(diamond.collector.Collector):
-    """
-    VarnishCollector grabs stats from Varnish and submits them the Graphite
-    
-    #### Dependencies
-
-    * /usr/bin/varnishstat
-    
-    """
     
     _RE = re.compile("^(?P<stat>[\w_\(\)\.,]*)\s+(?P<psa>\d*)\s+"
                    "(?P<psan>[\d.]*)\s(?P<desc>[\w\., /]*)$", re.M)

@@ -1,3 +1,12 @@
+"""
+The CPUCollector collects CPU utilization metric using /proc/stat.
+
+#### Dependencies
+
+ * /proc/stat
+
+"""
+
 import diamond.collector
 import os
 
@@ -7,14 +16,7 @@ except ImportError:
     psutil = None
 
 class CPUCollector(diamond.collector.Collector):
-    """
-    The CPUCollector collects CPU utilization metric using /proc/stat.
-    
-    #### Dependencies
 
-    * /proc/stat
-    
-    """
 
     PROC = '/proc/stat'
     MAX_VALUES = {

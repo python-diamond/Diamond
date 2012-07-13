@@ -1,3 +1,13 @@
+"""
+The NetworkCollector class collects metrics on network interface usage
+using /proc/net/dev.
+
+#### Dependencies
+
+ * /proc/net/dev
+
+"""
+
 import diamond.collector
 import diamond.convertor
 import os
@@ -9,14 +19,6 @@ except ImportError:
     psutil = None
 
 class NetworkCollector(diamond.collector.Collector):
-    """
-    The NetworkCollector class collects metrics on network interface usage
-    using /proc/net/dev.
-    
-    #### Dependencies
-
-    * 
-    """
 
     PROC = '/proc/net/dev'
 

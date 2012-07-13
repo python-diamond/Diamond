@@ -1,3 +1,12 @@
+"""
+Collect metrics from postgresql
+
+#### Dependencies
+
+ * psycopg2
+
+"""
+
 import sys
 import diamond.collector
 
@@ -7,14 +16,6 @@ except ImportError:
     psycopg2 = None
 
 class PostgresqlCollector(diamond.collector.Collector):
-    """
-    Collect metrics from postgresql
-    
-    #### Dependencies
-
-    * psycopg2
-    
-    """
     
     def get_default_config_help(self):
         config_help = super(PostgresqlCollector, self).get_default_config_help()

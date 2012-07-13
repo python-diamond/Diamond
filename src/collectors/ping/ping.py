@@ -1,15 +1,25 @@
+"""
+Collect icmp round trip times
+Only valid for ipv4 hosts currently
+
+#### Dependencies
+
+ * ping
+ 
+#### Options
+
+ * [Generic Options](Configuration)
+ * target_1 - Target to ping
+ * target_2
+ * target_3
+ * target_n
+
+"""
+
 import subprocess
 import diamond.collector
 
 class PingCollector(diamond.collector.Collector):
-    """
-    Collect icmp round trip times
-    Only valid for ipv4 hosts currently
-    
-    #### Dependencies
-
-    * 
-    """
 
     def get_default_config_help(self):
         config_help = super(PingCollector, self).get_default_config_help()

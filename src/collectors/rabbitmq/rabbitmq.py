@@ -1,3 +1,12 @@
+"""
+Collects data from RabbitMQ through the admin interface
+
+#### Dependencies
+
+ * pyrabbit
+
+"""
+
 import diamond.collector
 
 try:
@@ -7,14 +16,6 @@ except ImportError:
     Number = None
 
 class RabbitMQCollector(diamond.collector.Collector):
-    """
-    Collects data from RabbitMQ through the admin interface
-    
-    #### Dependencies
-
-    * pyrabbit
-
-    """
     
     def get_default_config_help(self):
         config_help = super(RabbitMQCollector, self).get_default_config_help()

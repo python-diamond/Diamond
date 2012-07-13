@@ -1,3 +1,14 @@
+"""
+Collect stats from Apache HTTPD server using mod_status
+
+#### Dependencies
+
+ * mod_status
+ * httplib
+ * urlparse
+
+"""
+
 import os
 import sys
 import re
@@ -6,16 +17,6 @@ import urlparse
 import diamond.collector
 
 class HttpdCollector(diamond.collector.Collector):
-    """
-    Collect stats from Apache HTTPD server using mod_status
-    
-    #### Dependencies
-
-    * mod_status
-    * httplib
-    * urlparse
-    
-    """
 
     def get_default_config_help(self):
         config_help = super(HttpdCollector, self).get_default_config_help()

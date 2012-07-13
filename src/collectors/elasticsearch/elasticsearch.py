@@ -1,17 +1,18 @@
+"""
+Collect the elasticsearch stats for the local node
+
+#### Dependencies
+
+ * urlib2
+
+"""
+
 import json
 import urllib2
 
 import diamond.collector
 
 class ElasticSearchCollector(diamond.collector.Collector):
-    """
-    Collect the elasticsearch stats for the local node
-    
-    #### Dependencies
-
-    * urlib2
-    
-    """
 
     def get_default_config_help(self):
         config_help = super(ElasticSearchCollector, self).get_default_config_help()

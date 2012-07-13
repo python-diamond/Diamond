@@ -1,33 +1,34 @@
+"""
+Collect memcached stats
+
+#### Dependencies
+
+ * subprocess
+
+#### Example Configuration
+
+diamond.conf
+
+```
+    [[MemcachedCollector]]
+    enabled = True
+    
+    [[[hosts]]]
+    
+    [[[[app-1]]]
+    host = localhost
+    port = 11211
+```
+
+Repeat the app-1 block as many times as needed for different host/port combos
+
+"""
+
 import subprocess
 import diamond.collector
 import socket
 
 class MemcachedCollector(diamond.collector.Collector):
-    """
-    Collect memcached stats
-    
-    #### Dependencies
-
-    * subprocess
-    
-    #### Example Configuration
-    
-    diamond.conf
-    
-    ```
-        [[MemcachedCollector]]
-        enabled = True
-        
-        [[[hosts]]]
-        
-        [[[[app-1]]]
-        host = localhost
-        port = 11211
-    ```
-    
-    Repeat the app-1 block as many times as needed for different host/port combos
-    
-    """
     
     def get_default_config_help(self):
         config_help = super(MemcachedCollector, self).get_default_config_help()

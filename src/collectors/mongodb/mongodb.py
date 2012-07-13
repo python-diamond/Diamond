@@ -1,3 +1,13 @@
+"""
+Collects all number values from the db.serverStatus() command, other
+values are ignored.
+
+#### Dependencies
+
+ * pymongo
+
+"""
+
 import diamond.collector
 
 try:
@@ -8,16 +18,6 @@ except ImportError:
     Number = None
 
 class MongoDBCollector(diamond.collector.Collector):
-    """Collects data from MongoDB's db.serverStatus() command
-
-    Collects all number values from the db.serverStatus() command, other
-    values are ignored.
-    
-    #### Dependencies
-
-    * pymongo
-
-    """
     
     def get_default_config_help(self):
         config_help = super(MongoDBCollector, self).get_default_config_help()

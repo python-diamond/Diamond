@@ -1,3 +1,12 @@
+"""
+Collects stats from bind 9.5's statistics server
+
+#### Dependencies
+
+ * [bind 9.5](http://www.isc.org/software/bind/new-features/9.5) configured with libxml2 and statistics-channels
+
+"""
+
 import diamond.collector
 import sys
 import urllib2
@@ -8,14 +17,6 @@ else:
     import cElementTree as ElementTree
 
 class BindCollector(diamond.collector.Collector):
-    """
-    Collects stats from bind 9.5's statistics server
-    
-    #### Dependencies
-
-    * [bind 9.5](http://www.isc.org/software/bind/new-features/9.5) configured with libxml2 and statistics-channels
-    
-    """
     
     def get_default_config_help(self):
         config_help = super(BindCollector, self).get_default_config_help()

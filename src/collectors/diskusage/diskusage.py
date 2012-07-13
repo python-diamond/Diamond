@@ -1,3 +1,14 @@
+"""
+Collect IO Stats
+
+ * http://www.kernel.org/doc/Documentation/iostats.txt
+ 
+#### Dependencies
+
+ * /proc/diskstats
+ 
+"""
+
 import diamond.collector
 import diamond.convertor
 import time
@@ -10,16 +21,7 @@ except ImportError:
     psutil = None
 
 class DiskUsageCollector(diamond.collector.Collector):
-    """
-    Collect IO Stats
-    
-     * http://www.kernel.org/doc/Documentation/iostats.txt
-     
-    #### Dependencies
 
-    * /proc/diskstats
-     
-    """
     MAX_VALUES = {
         'reads':                    4294967295,
         'reads_merged':             4294967295,

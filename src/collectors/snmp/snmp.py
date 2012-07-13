@@ -1,3 +1,12 @@
+"""
+SNMPCollector is a special collector for collecting data from using SNMP
+
+#### Dependencies
+
+ * pysnmp
+
+"""
+
 import os
 import sys
 import string
@@ -18,14 +27,6 @@ import diamond.collector
 from diamond.metric import Metric
 
 class SNMPCollector(diamond.collector.Collector):
-    """
-    SNMPCollector is a special collector for collecting data from using SNMP
-    
-    #### Dependencies
-
-    * pysnmp
-    
-    """
 
     def __init__(self, config, handlers):
         """

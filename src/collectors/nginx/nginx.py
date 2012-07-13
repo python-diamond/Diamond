@@ -1,34 +1,35 @@
+"""
+Collect statistics from Nginx
+
+#### Dependencies
+
+ * urllib2
+
+#### Usage
+
+To enable the nginx status page to work with defaults,
+add a file to /etc/nginx/sites-enabled/ (on Ubuntu) with the
+following content:
+<pre>
+  server {
+      listen 127.0.0.1:8080;
+      server_name localhost;
+      location /nginx_status {
+          stub_status on;
+          access_log /data/server/shared/log/access.log;
+          allow 127.0.0.1;
+          deny all;
+      }
+  }
+</pre>
+
+"""
+
 import urllib2
 import re
 import diamond.collector
 
 class NginxCollector(diamond.collector.Collector):
-    """
-    Collect statistics from Nginx
-    
-    #### Dependencies
-
-    * urllib2
-    
-    #### Usage
-    
-    To enable the nginx status page to work with defaults,
-    add a file to /etc/nginx/sites-enabled/ (on Ubuntu) with the
-    following content:
-    <pre>
-      server {
-          listen 127.0.0.1:8080;
-          server_name localhost;
-          location /nginx_status {
-              stub_status on;
-              access_log /data/server/shared/log/access.log;
-              allow 127.0.0.1;
-              deny all;
-          }
-      }
-    </pre>
-    
-    """
 
     def get_default_config_help(self):
         config_help = super(NginxCollector, self).get_default_config_help()

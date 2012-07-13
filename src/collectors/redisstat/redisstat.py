@@ -1,3 +1,12 @@
+"""
+Collects data from a Redis Server
+
+#### Dependencies
+
+ * redis
+
+"""
+
 import diamond.collector
 import time
 
@@ -7,14 +16,6 @@ except ImportError:
     redis = None
 
 class RedisCollector(diamond.collector.Collector):
-    """
-    Collects data from a Redis Server
-    
-    #### Dependencies
-
-    * 
-
-    """
     
     _DATABASE_COUNT = 16
     _DEFAULT_DB = 0

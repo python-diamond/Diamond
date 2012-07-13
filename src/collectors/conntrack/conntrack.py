@@ -1,3 +1,12 @@
+"""
+Shells out to get the value of sysctl net.netfilter.nf_conntrack_count
+
+#### Dependencies
+
+ * /sbin/sysctl
+
+"""
+
 import diamond.collector
 import subprocess
 import os
@@ -6,14 +15,6 @@ import re
 _RE = re.compile(r'^([a-z\._]*) = ([0-9]*)$')
 
 class ConnTrackCollector(diamond.collector.Collector):
-    """
-    Shells out to get the value of sysctl net.netfilter.nf_conntrack_count
-    
-    #### Dependencies
-
-    * /sbin/sysctl
-    
-    """
 
     COMMAND = ['/sbin/sysctl', 'net.netfilter.nf_conntrack_count']
 

@@ -1,25 +1,22 @@
+"""
+This class collects 'Kernel Samepage Merging' statistics.
+KSM is a memory de-duplication feature of the Linux Kernel (2.6.32+).
+
+It can be enabled, if compiled into your kernel, by echoing 1 to
+/sys/kernel/mm/ksm/run. You can find more information about KSM at
+[http://www.linux-kvm.org/page/KSM](http://www.linux-kvm.org/page/KSM).
+
+#### Dependencies
+
+ * KSM built into your kernel. It does not have to be enabled, but the stats will be less than useful if it isn't :-)
+
+"""
+
 import os
 import glob
 import diamond.collector
 
 class KSMCollector(diamond.collector.Collector):
-    """
-    This class collects 'Kernel Samepage Merging' statistics.
-    KSM is a memory de-duplication feature of the Linux Kernel (2.6.32+).
-    
-    It can be enabled, if compiled into your kernel, by echoing 1 to
-    /sys/kernel/mm/ksm/run. You can find more information about KSM at
-    http://www.linux-kvm.org/page/KSM.
-    
-    Requirements: KSM built into your kernel. It does not have to be
-                  enabled, but the stats will be less than useful if
-                  it isn't :-)
-                  
-    #### Dependencies
-
-    *
-    
-    """
     
     def get_default_config_help(self):
         config_help = super(KSMCollector, self).get_default_config_help()

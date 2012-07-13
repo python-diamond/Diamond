@@ -1,15 +1,16 @@
+"""
+The NfsdCollector collects nfsd utilization metrics using /proc/net/rpc/nfsd.
+
+#### Dependencies
+
+ * /proc/net/rpc/nfsd
+
+"""
+
 import diamond.collector
 import os
 
 class NfsdCollector(diamond.collector.Collector):
-    """
-    The NfsdCollector collects nfsd utilization metrics using /proc/net/rpc/nfsd.
-    
-    #### Dependencies
-
-    * /proc/net/rpc/nfsd
-    
-    """
 
     PROC = '/proc/net/rpc/nfsd'
     

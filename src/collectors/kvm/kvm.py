@@ -1,15 +1,16 @@
+"""
+Collects /sys/kernel/debug/kvm/*
+
+#### Dependencies
+
+ * /sys/kernel/debug/kvm
+
+"""
+
 import diamond.collector
 import os
 
 class KVMCollector(diamond.collector.Collector):
-    """
-    Collects /sys/kernel/debug/kvm/*
-    
-    #### Dependencies
-
-    * /sys/kernel/debug/kvm
-    
-    """
     
     PROC = '/sys/kernel/debug/kvm'
     

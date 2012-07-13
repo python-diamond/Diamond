@@ -1,15 +1,16 @@
+"""
+Collect the emails in the postfix queue
+
+#### Dependencies
+
+ * subprocess
+
+"""
+
 import subprocess
 import diamond.collector
 
 class PostqueueCollector(diamond.collector.Collector):
-    """
-    Collect the emails in the postfix queue
-    
-    #### Dependencies
-
-    * subprocess
-    
-    """
 
     def get_default_config_help(self):
         config_help = super(PostqueueCollector, self).get_default_config_help()

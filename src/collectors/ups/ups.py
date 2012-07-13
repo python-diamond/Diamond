@@ -1,16 +1,17 @@
+"""
+This class collects data from NUT, a UPS interface for linux.
+
+#### Dependencies
+
+ * nut/upsc to be installed, configured and running.
+
+"""
+
 import diamond.collector
 import os
 import subprocess
 
 class UPSCollector(diamond.collector.Collector):
-    """
-    This class collects data from NUT, a UPS interface for linux.
-    
-    #### Dependencies
-
-    * nut/upsc to be installed, configured and running.
-    
-    """
 
     def get_default_config_help(self):
         config_help = super(UPSCollector, self).get_default_config_help()

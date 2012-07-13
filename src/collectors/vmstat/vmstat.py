@@ -1,16 +1,17 @@
+"""
+Uses /proc/vmstat to collect data on virtual memory manager
+
+#### Dependencies
+
+ * /proc/vmstat
+
+"""
+
 import diamond.collector
 import os
 import re
 
 class VMStatCollector(diamond.collector.Collector):
-    """
-    Uses /proc/vmstat to collect data on virtual memory manager
-    
-    #### Dependencies
-
-    * /proc/vmstat
-    
-    """
 
     PROC = '/proc/vmstat'
     MAX_VALUES = {

@@ -1,3 +1,12 @@
+"""
+Uses /proc/loadavg to collect data on load average
+
+#### Dependencies
+
+ * /proc/loadavg
+
+"""
+
 import diamond.collector
 import re
 import os
@@ -5,14 +14,6 @@ import os
 _RE = re.compile(r'([\d.]+) ([\d.]+) ([\d.]+) (\d+)/(\d+)')
 
 class LoadAverageCollector(diamond.collector.Collector):
-    """
-    Uses /proc/loadavg to collect data on load average
-    
-    #### Dependencies
-
-    * /proc/loadavg
-    
-    """
 
     PROC = '/proc/loadavg'
 

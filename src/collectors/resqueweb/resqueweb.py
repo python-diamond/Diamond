@@ -1,16 +1,16 @@
+"""
+Collects data for Resque Web
+
+#### Dependencies
+
+ * urllib2
+
+"""
 
 import urllib2
 import diamond.collector
 
 class ResqueWebCollector(diamond.collector.Collector):
-    """
-    Collects data for Resque Web
-    
-    #### Dependencies
-
-    * urllib2
-    
-    """
     
     def get_default_config_help(self):
         config_help = super(ResqueWebCollector, self).get_default_config_help()

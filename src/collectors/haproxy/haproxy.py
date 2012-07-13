@@ -1,3 +1,13 @@
+"""
+Collect HAProxy Stats
+
+#### Dependencies
+
+ * urlparse
+ * urllib2
+
+"""
+
 import re
 import sys
 import urllib2
@@ -8,15 +18,6 @@ from urlparse import urlparse
 import diamond.collector
 
 class HAProxyCollector(diamond.collector.Collector):
-    """
-    Collect HAProxy Stats
-    
-    #### Dependencies
-
-    * urlparse
-    * urllib2
-    
-    """
 
     def get_default_config_help(self):
         config_help = super(HAProxyCollector, self).get_default_config_help()

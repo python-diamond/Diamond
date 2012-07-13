@@ -1,3 +1,11 @@
+"""
+
+#### Dependencies
+
+ * MySQLdb
+
+"""
+
 import diamond.collector
 import re
 import time
@@ -9,13 +17,6 @@ except ImportError:
     MySQLdb = None
 
 class MySQLCollector(diamond.collector.Collector):
-    """
-    
-    #### Dependencies
-
-    * MySQLdb
-    
-    """
 
     _GAUGE_KEYS = [
         'Innodb_buffer_pool_pages_data', 'Innodb_buffer_pool_pages_dirty', 'Innodb_buffer_pool_pages_free',

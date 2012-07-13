@@ -1,3 +1,11 @@
+"""
+Collect the monit stats and report on cpu/memory for monitored processes
+
+#### Dependencies
+
+ * monit serving up /_status
+
+"""
 
 import urllib2
 import base64
@@ -7,14 +15,6 @@ from xml.dom.minidom import parseString
 import diamond.collector
 
 class MonitCollector(diamond.collector.Collector):
-    """
-    Collect the monit stats and report on cpu/memory for monitored processes
-    
-    #### Dependencies
-
-    *
-    
-    """
 
     def get_default_config_help(self):
         config_help = super(MonitCollector, self).get_default_config_help()

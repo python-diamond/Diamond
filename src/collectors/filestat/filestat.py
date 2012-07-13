@@ -1,3 +1,12 @@
+"""
+Uses /proc/sys/fs/file-nr to collect data on number of open files
+
+#### Dependencies
+
+ * /proc/sys/fs/file-nr
+
+"""
+
 import diamond.collector
 import re
 import os
@@ -5,14 +14,6 @@ import os
 _RE = re.compile(r'(\d+)\s+(\d+)\s+(\d+)')
 
 class FilestatCollector(diamond.collector.Collector):
-    """
-    Uses /proc/sys/fs/file-nr to collect data on number of open files
-    
-    #### Dependencies
-
-    * /proc/sys/fs/file-nr
-    
-    """
 
     PROC = '/proc/sys/fs/file-nr'
 

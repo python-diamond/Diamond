@@ -1,3 +1,12 @@
+"""
+Uses /proc/mounts and os.statvfs() to get disk space usage
+
+#### Dependencies
+
+ * /proc/mounts
+
+"""
+
 import diamond.collector
 import diamond.convertor
 import os
@@ -9,14 +18,6 @@ except ImportError:
     psutil = None
 
 class DiskSpaceCollector(diamond.collector.Collector):
-    """
-    Uses /proc/mounts and os.statvfs() to get disk space usage
-    
-    #### Dependencies
-
-    * /proc/mounts
-    
-    """
     
     def get_default_config_help(self):
         config_help = super(DiskSpaceCollector, self).get_default_config_help()

@@ -1,16 +1,17 @@
+"""
+Shells out to get the exim queue length
+
+#### Dependencies
+
+ * /usr/sbin/exim
+
+"""
+
 import diamond.collector
 import subprocess
 import os
 
 class EximCollector(diamond.collector.Collector):
-    """
-    Shells out to get the exim queue length
-    
-    #### Dependencies
-
-    * /usr/sbin/exim
-    
-    """
   
     COMMAND = ['/usr/sbin/exim', '-bpc']
     

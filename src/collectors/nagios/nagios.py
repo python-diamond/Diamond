@@ -1,16 +1,17 @@
+"""
+Shells out to get nagios statistics, which may or may not require sudo access
+
+#### Dependencies
+
+ * /usr/sbin/nagios3stats
+
+"""
+
 import diamond.collector
 import subprocess
 import os
 
 class NagiosStatsCollector(diamond.collector.Collector):
-    """
-    Shells out to get nagios statistics, which may or may not require sudo access
-    
-    #### Dependencies
-
-    * /usr/sbin/nagios3stats
-    
-    """
 
     def get_default_config_help(self):
         config_help = super(NagiosStatsCollector, self).get_default_config_help()
