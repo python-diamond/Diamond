@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
         docFile = open(os.path.join(docs_path, "collectors-"+collector+".md"), 'w')
         
-        collectorIndexFile.write(" - [%s](wiki/collectors-%s)\n" % (collector, collector))
+        collectorIndexFile.write(" - [%s](collectors-%s)\n" % (collector, collector))
         
         docFile.write("%s\n" % (collector))
         docFile.write("=====\n")
@@ -172,7 +172,7 @@ if __name__ == "__main__":
         
         docFile = open(os.path.join(docs_path, "handler-"+handler+".md"), 'w')
         
-        handlerIndexFile.write(" - [%s](wiki/handler-%s)\n" % (handler, handler))
+        handlerIndexFile.write(" - [%s](handler-%s)\n" % (handler, handler))
         
         docFile.write("%s\n" % (handler))
         docFile.write("====\n")
