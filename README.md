@@ -10,3 +10,6 @@ convenience the wiki is setup as a submodule of this checkout. You can get it vi
 
     git submodule init
     git submodule update
+
+
+IRC: [#python-diamond](irc://chat.freenode.net:6667/%23python-diamond) on [freenode](http://www.freenode.net). [Webchat](http://webchat.freenode.net/?channels=python-diamond)
