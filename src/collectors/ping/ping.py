@@ -6,13 +6,15 @@ Only valid for ipv4 hosts currently
 
  * ping
  
-#### Options
+#### Configuration
 
- * [Generic Options](Configuration)
- * target_1 - Target to ping
- * target_2
- * target_3
- * target_n
+Configuration is done by adding in extra keys like this
+
+ * target_1 - example.org
+ * target_fw - 192.168.0.1
+ * target_localhost - localhost
+
+We extract out the key after target_ and use it in the graphite node we push.
 
 """
 
