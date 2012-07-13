@@ -19,23 +19,22 @@ def getCollectors(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
 
-        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'Test':
+        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'test':
             sys.path.append(os.path.dirname(cPath))
             modname = f[:-3]
+            
             try:
                 # Import the module
                 module = __import__(modname, globals(), locals(), ['*'])
                 
                 # Find the name
                 for attr in dir(module):
-                    cls = getattr(module, attr)
-                    try:
-                        if issubclass(cls, Collector):
-                            collectors[cls.__name__] = module
-                            break
-                    except TypeError:
+                    if not attr.endswith('Collector'):
                         continue
-                # print "Imported module: %s %s" % (modname, cls.__name__)
+                    
+                    cls = getattr(module, attr)
+                    
+                    collectors[cls.__name__] = module
             except Exception, e:
                 print "Failed to import module: %s. %s" % (modname, traceback.format_exc())
                 collectors[modname] = False
@@ -74,16 +73,18 @@ if __name__ == "__main__":
     
     getCollectors(collector_path)
     
-    for collector in collectors:
+    collectorIndexFile = open(os.path.join(docs_path, "Collectors.md"), 'w')
+    collectorIndexFile.write("## Collectors\n")
+    collectorIndexFile.write("\n")
+    
+    for collector in sorted(collectors.iterkeys()):
         
         # Skip configuring the basic collector object
         if collector == "Collector":
             continue
         
-        print collector
+        print "Processing %s..." % (collector)
         
-        print collectors[collector].__doc__
-
         if not hasattr(collectors[collector], collector):
             continue
         
@@ -91,4 +92,29 @@ if __name__ == "__main__":
         
         obj = cls(config = config, handlers = {})
         
-        break
+        options = obj.get_default_config_help()
+
+        docFile = open(os.path.join(docs_path, "collectors-"+collector+".md"), 'w')
+        
+        collectorIndexFile.write(" - [%s](wiki/collectors-%s)\n" % (collector, collector))
+        
+        docFile.write("%s\n" % (collector))
+        docFile.write("=====\n")
+        docFile.write("%s" % (collectors[collector].__doc__))
+        docFile.write("#### Options\n")
+        docFile.write("\n")
+        docFile.write(" * [Generic Options](Configuration)\n")
+        for option in options:
+            docFile.write(" * %s: %s\n" %(option, options[option]))
+        docFile.write("\n")
+        docFile.write("#### Example Output\n")
+        docFile.write("\n")
+        docFile.write("All keys are prefixed with nodes.hostname by default\n")
+        docFile.write("\n")
+        docFile.write("```\n")
+        docFile.write("```\n")
+        docFile.write("\n")
+        
+        docFile.close()
+        
+    collectorIndexFile.close()
