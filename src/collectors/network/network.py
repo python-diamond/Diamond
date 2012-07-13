@@ -57,7 +57,7 @@ class NetworkCollector(diamond.collector.Collector):
         config.update(  {
             'path':         'network',
             'interfaces':   'eth bond',
-            'byte_unit':    'megabit megabyte',
+            'byte_unit':    ['megabit', 'megabyte'],
             'greedy':       'true',
         } )
         return config
@@ -107,7 +107,7 @@ class NetworkCollector(diamond.collector.Collector):
                 if s == 'rx_bytes' or s == 'tx_bytes':
                     convertor = diamond.convertor.binary(value = metric_value, unit = 'byte')
 
-                    for u in self.config['byte_unit'].split():
+                    for u in self.config['byte_unit']:
                         # Public Converted Metric
                         self.publish(metric_name.replace('bytes', u), convertor.get(unit = u))
                 else:

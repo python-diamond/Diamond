@@ -76,10 +76,14 @@ class MemoryCollector(diamond.collector.Collector):
     
                     if name not in _KEY_MAPPING and not self.config.has_key('detailed'):
                         continue
-    
-                    value = diamond.convertor.binary.convert(value = value, oldUnit = units, newUnit = self.config['byte_unit'])
-    
-                    self.publish(name, value)
+                    
+                    for unit in self.config['byte_unit']:
+                        value = diamond.convertor.binary.convert(value = value, oldUnit = units, newUnit = unit)
+                        self.publish(name, value)
+                        
+                        # TODO: We only support one unit node here. Fix it!
+                        break;
+                        
                 except ValueError:
                     continue
             return True
@@ -88,17 +92,21 @@ class MemoryCollector(diamond.collector.Collector):
             virtmem_usage = psutil.virtmem_usage()
             units = 'b'
             
-            value = diamond.convertor.binary.convert(value = phymem_usage.total, oldUnit = units, newUnit = self.config['byte_unit'])
-            self.publish('MemTotal', value)
-            
-            value = diamond.convertor.binary.convert(value = phymem_usage.free, oldUnit = units, newUnit = self.config['byte_unit'])
-            self.publish('MemFree', value)
-            
-            value = diamond.convertor.binary.convert(value = virtmem_usage.total, oldUnit = units, newUnit = self.config['byte_unit'])
-            self.publish('SwapTotal', value)
-            
-            value = diamond.convertor.binary.convert(value = virtmem_usage.free, oldUnit = units, newUnit = self.config['byte_unit'])
-            self.publish('SwapFree', value)
+            for unit in self.config['byte_unit']:
+                value = diamond.convertor.binary.convert(value = phymem_usage.total, oldUnit = units, newUnit = unit)
+                self.publish('MemTotal', value)
+                
+                value = diamond.convertor.binary.convert(value = phymem_usage.free, oldUnit = units, newUnit = unit)
+                self.publish('MemFree', value)
+                
+                value = diamond.convertor.binary.convert(value = virtmem_usage.total, oldUnit = units, newUnit = unit)
+                self.publish('SwapTotal', value)
+                
+                value = diamond.convertor.binary.convert(value = virtmem_usage.free, oldUnit = units, newUnit = unit)
+                self.publish('SwapFree', value)
+                
+                # TODO: We only support one unit node here. Fix it!
+                break;
             
             return True
     
