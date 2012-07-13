@@ -45,6 +45,37 @@ def getCollectors(path):
         if os.path.isdir(cPath):
             getCollectors(cPath)
 
+handlers = {}
+def getHandlers(path):
+    for f in os.listdir(path):
+        cPath = os.path.abspath(os.path.join(path, f))
+
+        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'test':
+            sys.path.append(os.path.dirname(cPath))
+            modname = f[:-3]
+            
+            try:
+                # Import the module
+                module = __import__(modname, globals(), locals(), ['*'])
+                
+                # Find the name
+                for attr in dir(module):
+                    if not attr.endswith('Handler') or attr.startswith('Handler'):
+                        continue
+                    
+                    cls = getattr(module, attr)
+                    
+                    handlers[cls.__name__] = module
+            except Exception, e:
+                print "Failed to import module: %s. %s" % (modname, traceback.format_exc())
+                handlers[modname] = False
+                continue
+
+    for f in os.listdir(path):
+        cPath = os.path.abspath(os.path.join(path, f))
+        if os.path.isdir(cPath):
+            getHandlers(cPath)
+
 ################################################################################
 
 if __name__ == "__main__":
@@ -70,6 +101,7 @@ if __name__ == "__main__":
     
     collector_path = config['server']['collectors_path']
     docs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'docs'))
+    handler_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'diamond', 'handler'))
     
     getCollectors(collector_path)
     
@@ -118,3 +150,34 @@ if __name__ == "__main__":
         docFile.close()
         
     collectorIndexFile.close()
+    
+    getHandlers(handler_path)
+    
+    handlerIndexFile = open(os.path.join(docs_path, "Handlers.md"), 'w')
+    handlerIndexFile.write("## Handlers\n")
+    handlerIndexFile.write("\n")
+    
+    for handler in sorted(handlers.iterkeys()):
+        
+        # Skip configuring the basic handler object
+        if handler == "Handler":
+            continue
+        
+        print "Processing %s..." % (handler)
+        
+        if not hasattr(handlers[handler], handler):
+            continue
+        
+        docFile = open(os.path.join(docs_path, "handler-"+handler+".md"), 'w')
+        
+        handlerIndexFile.write(" - [%s](wiki/handler-%s)\n" % (handler, handler))
+        
+        docFile.write("%s\n" % (handler))
+        docFile.write("====\n")
+        docFile.write("%s" % (handlers[handler].__doc__))
+        
+        docFile.close()
+        
+    handlerIndexFile.close()
+    
+
