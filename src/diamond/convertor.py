@@ -37,7 +37,7 @@ class binary:
             return self.bit(value = value)
         if unit in [ 'kilobit', 'kbit', 'Kibit']:
             return self.kilobit(value = value)
-        if unit in [ 'megabit', 'Mbit', 'Mibit']:
+        if unit in [ 'megabit', 'Mbit', 'Mibit', 'Mbit']:
             return self.megabit(value = value)
         if unit in [ 'gigabit', 'Gbit', 'Gibit']:
             return self.gigabit(value = value)
@@ -56,7 +56,7 @@ class binary:
             return self.byte(value = value)
         if unit in [ 'kilobyte', 'kB', 'KiB']:
             return self.kilobyte(value = value)
-        if unit in [ 'megabyte', 'MB', 'MiB']:
+        if unit in [ 'megabyte', 'MB', 'MiB', 'Mbyte']:
             return self.megabyte(value = value)
         if unit in [ 'gigabyte', 'GB', 'GiB']:
             return self.gigabyte(value = value)
