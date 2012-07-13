@@ -7,6 +7,7 @@ all:
 	@echo "make config   - Run a simple configuration CLI program"
 	@echo "make watch    - Watch and continuously run tests"
 	@echo "make test     - Run tests"
+	@echo "make docs     - Build docs"
 	@echo "make sdist    - Create source package"
 	@echo "make bdist    - Create binary package"
 	@echo "make install  - Install on local system"
@@ -27,6 +28,9 @@ watch:
 
 test:
 	python test.py
+
+docs:
+	python build_doc.py --configfile=conf/diamond.conf
 
 sdist:
 	python setup.py sdist --prune
@@ -58,4 +62,4 @@ clean:
 cleanws:
 	find . -name '*.py' -exec sed -i'' -e 's/[ \t]*$$//' {} \;
 
-.PHONY: run watch test sdist bdist install buildrpm builddeb tar clean cleanws
+.PHONY: run watch test docs sdist bdist install buildrpm builddeb tar clean cleanws
