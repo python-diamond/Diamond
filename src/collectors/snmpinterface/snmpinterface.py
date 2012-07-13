@@ -54,6 +54,7 @@ import re
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), 'snmp'))
 from snmp import SNMPCollector
 from diamond.metric import Metric
+import diamond.convertor
 
 class SNMPInterfaceCollector(SNMPCollector):
 
@@ -93,19 +94,8 @@ class SNMPInterfaceCollector(SNMPCollector):
         """
         default_config = super(SNMPInterfaceCollector, self).get_default_config()
         default_config['path'] = 'interface'
+        default_config['byte_unit'] = ['Mbit', 'Mbyte']
         return default_config
-
-    def convert_to_mbit(self, value):
-        """
-        Convert bytes to megabits.
-        """
-        return ((float(value) / 1024.0 / 1024.0) * 8.0 )
-
-    def convert_to_mbyte(self, value):
-        """
-        Convert bytes to megabytes.
-        """
-        return (float(value) / 1024.0 / 1024.0)
 
     def collect_snmp(self, device, host, port, community):
         """
@@ -113,12 +103,6 @@ class SNMPInterfaceCollector(SNMPCollector):
         """
         # Log
         self.log.info("Collecting SNMP interface statistics from: %s" % (device))
-
-        # Initialize Units
-        units = {
-            'Mbit': self.convert_to_mbit,
-            'Mbyte': self.convert_to_mbyte,
-            }
 
         timestamp = time.time()
 
@@ -175,11 +159,11 @@ class SNMPInterfaceCollector(SNMPCollector):
                 metricIfDescr = re.sub(r'\W', '_', ifName)
 
                 if counterName in ['ifInOctets', 'ifOutOctets']:
-                    for u in units:
+                    for unit in self.config['byte_unit'] :
                         # Convert Metric
-                        metricName = '.'.join([metricIfDescr, counterName.replace('Octets', u)])
-                        metricValue = units[u](int(ifCounterValue))
-
+                        metricName = '.'.join([metricIfDescr, counterName.replace('Octets', unit)])
+                        metricValue = diamond.convertor.binary.convert(value = ifCounterValue, oldUnit = 'byte', newUnit = unit)
+                        
                         # Get Metric Path
                         metricPath = '.'.join(['devices', device, self.config['path'], metricName])
                         # Create Metric
