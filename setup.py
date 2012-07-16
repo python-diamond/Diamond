@@ -59,7 +59,7 @@ setup(
     description     = 'Smart data producer for graphite graphing package',
     package_dir     = {'' : 'src'},
     packages        = ['diamond' , 'diamond.handler'],
-    scripts         = ['bin/diamond'],
+    scripts         = ['bin/diamond', 'bin/diamond-setup'],
     data_files      = data_files,
     #test_suite      = 'test.main',
     **setup_kwargs
