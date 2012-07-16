@@ -34,7 +34,7 @@ def getCollectors(path):
                 for attr in dir(module):
                     cls = getattr(module, attr)
                     try:
-                        if issubclass(cls, Collector):
+                        if issubclass(cls, Collector) and not collectors.has_key(cls.__name__):
                             collectors[cls.__name__] = module
                             break
                     except TypeError:
@@ -204,6 +204,7 @@ if __name__ == "__main__":
             config_keys['method'] = False
                 
             print "\n\t\tNow configuring "+collector
+            print collectors[collector].__doc__
             
             configureKey('enabled')
             
