@@ -7,9 +7,13 @@ import optparse
 
 from configobj import ConfigObj
 
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'collectors')))
+for path in [
+    os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')),
+    os.path.join('opt', 'diamond', 'lib'),
+]:
+    if os.path.exists(os.path.join(path, 'diamond', '__init__.py')):
+        sys.path.append(path)
+        break
 
 from diamond import *
 from diamond.collector import Collector

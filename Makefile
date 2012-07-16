@@ -21,28 +21,28 @@ run:
 	./bin/diamond --configfile=conf/diamond.conf --foreground
 
 config:
-	python config.py --configfile=conf/diamond.conf
+	./bin/diamond-setup --configfile=conf/diamond.conf
 
 watch:
 	watchr test.watchr
 
 test:
-	python test.py
+	./test.py
 
 docs:
-	python build_doc.py --configfile=conf/diamond.conf
+	./build_doc.py --configfile=conf/diamond.conf
 
 sdist:
-	python setup.py sdist --prune
+	./setup.py sdist --prune
 
 bdist:
-	python setup.py bdist --prune
+	./setup.py bdist --prune
 
 install:
-	python setup.py install --root $(DESTDIR)
+	./setup.py install --root $(DESTDIR)
 
 buildrpm: sdist
-	python setup.py bdist_rpm \
+	./setup.py bdist_rpm \
 		--post-install=rpm/postinstall \
 		--pre-uninstall=rpm/preuninstall \
 		--install-script=rpm/install
@@ -55,7 +55,7 @@ builddeb: sdist
 tar: sdist
 
 clean:
-	python setup.py clean
+	./setup.py clean
 	rm -rf dist build MANIFEST
 	find . -name '*.pyc' -delete
 
