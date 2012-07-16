@@ -68,14 +68,22 @@ def stringToType(key, val):
     if type(obj.config[key]) is type(val):
         config_file[key] = val
     elif isinstance(obj.config[key], basestring):
-        if obj.config[key].lower() == 'false':
+        if val.lower() == 'false':
             config_file[key] = False
-        elif obj.config[key].lower() == 'true':
+        elif val.lower() == 'true':
             config_file[key] = True
         else:
             config_file[key] = val
     elif isinstance(obj.config[key], bool):
-        config_file[key] = bool(val)
+        if isinstance(val, basestring):
+            if val.lower() == 'false':
+                config_file[key] = False
+            elif val.lower() == 'true':
+                config_file[key] = True
+            else:
+                raise NotImplementedError("Unknown type!")
+        else:
+            config_file[key] = bool(val)
     elif isinstance(obj.config[key], int):
         config_file[key] = int(val)
     elif isinstance(obj.config[key], list):
@@ -84,16 +92,16 @@ def stringToType(key, val):
     else:
         raise NotImplementedError("Unknown type!")
     
-def boolCheck(key):
-    if isinstance(obj.config[key], basestring):
-        if obj.config[key].lower() == 'false':
+def boolCheck(val):
+    if isinstance(val, basestring):
+        if val.lower() == 'false':
             return False
-        elif obj.config[key].lower() == 'true':
+        elif val.lower() == 'true':
             return True
         else:
             raise NotImplementedError("Unknown type!")
-    elif isinstance(obj.config[key], bool):
-        return obj.config[key]
+    elif isinstance(val, bool):
+        return val
     else:
         raise NotImplementedError("Unknown type!")
     
@@ -110,7 +118,7 @@ def configureKey(key):
     val = raw_input(key+' ['+user_val+']: ')
     
     # Empty user input? Default to current value
-    if not val:
+    if len(val) == 0:
         val = obj.config[key]
         
     try:
@@ -142,7 +150,7 @@ if __name__ == "__main__":
         sys.exit(1)
     
     if not options.dump:
-        print    
+        print ''   
         print 'I will be over writing files in'
         print config['server']['collectors_config_path']
         print 'Please type yes to continue'
@@ -162,7 +170,7 @@ if __name__ == "__main__":
         if collector == "Collector":
             continue
         
-        config_keys = { 'enabled': True}
+        config_keys = {}
         config_file = ConfigObj()
         config_file.filename = config['server']['collectors_config_path']+"/"+collector+".conf"
         
@@ -186,7 +194,8 @@ if __name__ == "__main__":
             for key in obj.get_default_config():
                 config_keys[key] = True
                 
-            # Disable some keys
+            # Manage Keys
+            config_keys['enabled'] = True
             config_keys['path'] = False
             config_keys['method'] = False
             config_keys['path_prefix'] = False
@@ -198,7 +207,7 @@ if __name__ == "__main__":
             
             configureKey('enabled')
             
-            if boolCheck('enabled'):
+            if boolCheck(config_file['enabled']):
                 for key in config_keys:
                     if key == 'enabled':
                         continue
@@ -211,3 +220,5 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             print
             sys.exit()
+        except:
+            continue
