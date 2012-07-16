@@ -141,7 +141,7 @@ class Collector(object):
             return hostname
         if self.config['hostname_method'].lower() == 'none':
             return None
-        raise NotImplementedError()
+        raise NotImplementedError(self.config['hostname_method'])
 
     def get_metric_path(self, name):
         """
