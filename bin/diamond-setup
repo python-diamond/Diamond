@@ -114,7 +114,9 @@ def configureKey(key):
     except NotImplementedError:
         return
     
-    print "\n"+default_conf_help[key]
+    print "\n"
+    if key in default_conf_help:
+        print default_conf_help[key]
     val = raw_input(key+' ['+user_val+']: ')
     
     # Empty user input? Default to current value
