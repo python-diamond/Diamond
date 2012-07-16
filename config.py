@@ -45,6 +45,74 @@ def getCollectors(path):
         cPath = os.path.abspath(os.path.join(path, f))
         if os.path.isdir(cPath):
             getCollectors(cPath)
+            
+def typeToString(key):
+    if isinstance(obj.config[key], basestring):
+        user_val = obj.config[key]
+    elif isinstance(obj.config[key], bool):
+        user_val = str(obj.config[key])
+    elif isinstance(obj.config[key], int):
+        user_val = str(obj.config[key])
+    elif isinstance(obj.config[key], list):
+        user_val = str(obj.config[key])[1:-1]
+    else:
+        raise NotImplementedError("Unknown type!")
+        
+    return user_val
+
+def stringToType(key, val):
+    if type(obj.config[key]) is type(val):
+        config_file[key] = val
+    elif isinstance(obj.config[key], basestring):
+        if obj.config[key].lower() == 'false':
+            config_file[key] = False
+        elif obj.config[key].lower() == 'true':
+            config_file[key] = True
+        else:
+            config_file[key] = val
+    elif isinstance(obj.config[key], bool):
+        config_file[key] = bool(val)
+    elif isinstance(obj.config[key], int):
+        config_file[key] = int(val)
+    elif isinstance(obj.config[key], list):
+        entry = ConfigObj([key + ' = ' + val])
+        config_file[key] = entry[key]
+    else:
+        raise NotImplementedError("Unknown type!")
+    
+def boolCheck(key):
+    if isinstance(obj.config[key], basestring):
+        if obj.config[key].lower() == 'false':
+            return False
+        elif obj.config[key].lower() == 'true':
+            return True
+        else:
+            raise NotImplementedError("Unknown type!")
+    elif isinstance(obj.config[key], bool):
+        return obj.config[key]
+    else:
+        raise NotImplementedError("Unknown type!")
+    
+def configureKey(key):
+    if not config_keys[key]:
+        return
+    
+    try:
+        user_val = typeToString(key)
+    except NotImplementedError:
+        return
+    
+    print "\n"+default_conf_help[key]
+    val = raw_input(key+' ['+user_val+']: ')
+    
+    # Empty user input? Default to current value
+    if not val:
+        val = obj.config[key]
+        
+    try:
+        stringToType(key, val)
+    except NotImplementedError:
+        return
 
 ################################################################################
 
@@ -109,6 +177,7 @@ if __name__ == "__main__":
                 continue
             
             default_conf = obj.get_default_config()
+            default_conf_help = obj.get_default_config_help()
         
             for key in obj.get_default_config():
                 config_keys[key] = True
@@ -116,49 +185,21 @@ if __name__ == "__main__":
             # Disable some keys
             config_keys['path'] = False
             config_keys['method'] = False
+            config_keys['path_prefix'] = False
+            config_keys['splay'] = False
+            config_keys['interval'] = False
+            config_keys['method'] = False
                 
-            print
-            print "\t\tNow configuring "+collector
+            print "\n\t\tNow configuring "+collector
             
-            for key in config_keys:
-                if not config_keys[key]:
-                    continue
-                
-                if isinstance(obj.config[key], basestring):
-                    user_val = obj.config[key]
-                elif isinstance(obj.config[key], bool):
-                    user_val = str(obj.config[key])
-                elif isinstance(obj.config[key], int):
-                    user_val = str(obj.config[key])
-                
-                elif isinstance(obj.config[key], list):
-                    user_val = str(obj.config[key])[1:-1]
-                else:
-                    continue
-                
-                val = raw_input(key+' ['+user_val+']: ')
-                
-                # Empty user input? Default to current value
-                if not val:
-                    val = obj.config[key]
-                
-                if type(obj.config[key]) is type(val):
-                    config_file[key] = val
-                elif isinstance(obj.config[key], basestring):
-                    config_file[key] = val
-                elif isinstance(obj.config[key], bool):
-                    config_file[key] = bool(val)
-                elif isinstance(obj.config[key], int):
-                    config_file[key] = int(val)
-                
-                elif isinstance(obj.config[key], list):
-                    print key + ' = ' + val
-                    entry = ConfigObj([key + ' = ' + val])
-                    print entry
-                    config_file[key] = entry[key]
-                else:
-                    continue
-                
+            configureKey('enabled')
+            
+            if boolCheck('enabled'):
+                for key in config_keys:
+                    if key == 'enabled':
+                        continue
+                    configureKey(key)
+                    
             config_file.write()
             
         except IOError, (errno, strerror):
