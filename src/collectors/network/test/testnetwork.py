@@ -12,8 +12,6 @@ class TestNetworkCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('NetworkCollector', {
             'interval'   : 10,
-            'interfaces' : [ 'eth0', 'eth1' ],
-            'byte_unit'  : 'megabyte megabit'
         })
 
         self.collector = NetworkCollector(config, None)
