@@ -11,5 +11,12 @@ convenience the wiki is setup as a submodule of this checkout. You can get it vi
     git submodule init
     git submodule update
 
+Success Stories
+=====
 
-IRC: [#python-diamond](irc://chat.freenode.net:6667/%23python-diamond) on [freenode](http://www.freenode.net). [Webchat](http://webchat.freenode.net/?channels=python-diamond)
+ * Diamond has successfully been deployed to a cluster of 1000 machines pushing [3 million points per minute](https://answers.launchpad.net/graphite/+question/178969).
+ * Have a story? Please share!
+ 
+Contact
+=====
+ * IRC [#python-diamond](irc://chat.freenode.net:6667/%23python-diamond) on [freenode](http://www.freenode.net). [Webchat](http://webchat.freenode.net/?channels=python-diamond)
