@@ -1,3 +1,14 @@
+"""
+This class collects data on memory utilization
+
+/proc/meminfo is used to gather the data, which is returned in units of kB
+
+#### Dependencies
+
+* /proc/meminfo or psutil
+
+"""
+
 import diamond.collector
 import diamond.convertor
 import os
@@ -24,16 +35,6 @@ _KEY_MAPPING = [
 ]
 
 class MemoryCollector(diamond.collector.Collector):
-    """
-    This class collects data on memory utilization
-
-    /proc/meminfo is used to gather the data, which is returned in units of kB
-    
-    #### Dependencies
-
-    * /proc/meminfo or psutil
-    
-    """
 
     PROC = '/proc/meminfo'
 
