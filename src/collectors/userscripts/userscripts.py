@@ -1,5 +1,15 @@
 """
-Runs third party scripts and collects their output
+Runs third party scripts and collects their output.
+
+Scripts need to be +x and should output metrics in the form of
+
+```
+metric.path.a 1
+metric.path.b 2
+metric.path.c 3
+```
+
+They are not passed any arguments and if they return an error code, no metrics are collected.
 
 #### Dependencies
 
