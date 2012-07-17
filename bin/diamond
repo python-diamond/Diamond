@@ -160,7 +160,11 @@ def main():
     if not options.foreground and not options.collector:
         # Write pid file
         pid = str(os.getpid())
-        pf = file(options.pidfile,'w+')
+        try:
+            pf = file(options.pidfile,'w+')
+        except IOError, e:
+            print >> sys.stderr, "Failed to write pid." % (e)
+            sys.exit(1)
         pf.write("%s\n" % pid)
         pf.close()
         # Log
