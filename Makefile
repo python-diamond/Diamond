@@ -1,6 +1,7 @@
 DESTDIR=/
 PROJECT=diamond
 VERSION=0.2.0
+RELEASE := $(shell ls -1 dist/*.noarch.rpm 2>/dev/null | wc -l )
 
 all:
 	@echo "make run      - Run Diamond from this directory"
@@ -11,8 +12,8 @@ all:
 	@echo "make sdist    - Create source package"
 	@echo "make bdist    - Create binary package"
 	@echo "make install  - Install on local system"
-	@echo "make buildrpm - Generate a rpm package"
-	@echo "make builddeb - Generate a deb package"
+	@echo "make rpm      - Generate a rpm package"
+	@echo "make deb      - Generate a deb package"
 	@echo "make tar      - Generate a tar ball"
 	@echo "make clean    - Get rid of scratch and byte files"
 	@echo "make cleanws  - Strip trailing whitespaces from files"
@@ -41,12 +42,16 @@ bdist:
 install:
 	./setup.py install --root $(DESTDIR)
 
+rpm: buildrpm
+
 buildrpm: sdist
 	./setup.py bdist_rpm \
 		--post-install=rpm/postinstall \
 		--pre-uninstall=rpm/preuninstall \
 		--install-script=rpm/install \
 		--release=`ls dist/*.noarch.rpm | wc -l`
+
+deb: builddeb
 
 builddeb: sdist
 	mkdir -p build
@@ -63,4 +68,7 @@ clean:
 cleanws:
 	find . -name '*.py' -exec sed -i'' -e 's/[ \t]*$$//' {} \;
 
-.PHONY: run watch config test docs sdist bdist install buildrpm builddeb tar clean cleanws
+reltest:
+	echo "${RELEASE}"
+
+.PHONY: run watch config test docs sdist bdist install rpm buildrpm deb builddeb tar clean cleanws reltest
