@@ -105,7 +105,10 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     stat  = os.stat(mount_point)
                     major = os.major(stat.st_dev)
                     minor = os.minor(stat.st_dev)
-        
+
+                    if [(major, minor)] in result:
+                        continue
+
                     result[(major, minor)] = {
                         'device'      : device,
                         'mount_point' : mount_point,
@@ -147,6 +150,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 name = labels[info['device']]
             else:
                 name = info['mount_point'].replace('/', '_')
+                name = name.replace('.', '_')
                 if name == '_':
                     name = 'root'
 
