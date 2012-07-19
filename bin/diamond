@@ -40,29 +40,7 @@ def main():
         print >> sys.stderr, "ERROR: Config file: %s does not exist." % (options.configfile)
         parser.print_help(sys.stderr)
         sys.exit(1)
-
-    # Switch user to specified user/group if required
-    try:
-        if len(config['server']['group']) :
-            # Get GID
-            gid = grp.getgrnam(config['server']['group']).gr_gid
-
-            if os.getgid() != gid:
-                # Set GID
-                os.setgid(gid)
-
-        if len(config['server']['user']) :
-            # Get UID
-            uid = pwd.getpwnam(config['server']['user']).pw_uid
-
-            if os.getuid() != uid:
-                # Set UID
-                os.setuid(uid)
-
-    except Exception, e:
-        print >> sys.stderr, "ERROR: Failed to set UID/GID. %s" % (e)
-        sys.exit(1)
-
+        
     # Initialize Logging
     log = logging.getLogger('diamond')
 
@@ -93,10 +71,7 @@ def main():
             sys.stderr.write("Error occurs when initialize logging: ")
             sys.stderr.write(str(e))
             sys.stderr.write(os.linesep)
-
-    # Log
-    log.info('Changed UID: %d (%s) GID: %d (%s).' % (os.getuid(), config['server']['user'], os.getgid(), config['server']['group']))
-
+        
     # Initialize Pid file
     if not options.pidfile:
         options.pidfile = str(config['server']['pid_file'])
@@ -120,6 +95,48 @@ def main():
         else:
             print >> sys.stderr, "ERROR: Pidfile already exists. Server already running?"
             sys.exit(1)
+        
+    # Get final GIDs
+    gid = -1
+    if len(config['server']['group']) :
+        gid = grp.getgrnam(config['server']['group']).gr_gid
+    
+    # Get final UID
+    uid = -1
+    if len(config['server']['user']) :
+        uid = pwd.getpwnam(config['server']['user']).pw_uid
+    
+    # Fix up pid permissions
+    if not options.foreground and not options.collector:
+        # Write pid file
+        pid = str(os.getpid())
+        try:
+            pf = file(options.pidfile,'w+')
+        except IOError, e:
+            print >> sys.stderr, "Failed to write PID file: %s" % (e)
+            sys.exit(1)
+        pf.write("%s\n" % pid)
+        pf.close()
+        os.chown(options.pidfile, uid, gid) 
+        # Log
+        log.debug("Wrote First PID file: %s" % (options.pidfile))
+
+    # Switch user to specified user/group if required
+    try:
+        if gid != -1 and os.getgid() != gid:
+            # Set GID
+            os.setgid(gid)
+
+        if uid != -1 and os.getuid() != uid:
+            # Set UID
+            os.setuid(uid)
+
+    except Exception, e:
+        print >> sys.stderr, "ERROR: Failed to set UID/GID. %s" % (e)
+        sys.exit(1)
+
+    # Log
+    log.info('Changed UID: %d (%s) GID: %d (%s).' % (os.getuid(), config['server']['user'], os.getgid(), config['server']['group']))
 
     # Detatch Process
     if not options.foreground and not options.collector:
@@ -163,12 +180,12 @@ def main():
         try:
             pf = file(options.pidfile,'w+')
         except IOError, e:
-            log.error("Failed to write PID file: %s" % (e))
+            log.error("Failed to write child PID file: %s" % (e))
             sys.exit(1)
         pf.write("%s\n" % pid)
         pf.close()
         # Log
-        log.debug("Wrote PID file: %s" % (options.pidfile))
+        log.debug("Wrote child PID file: %s" % (options.pidfile))
 
     # Initialize Server
     server = Server(config)
