@@ -22,195 +22,210 @@ import signal
 import logging.config
 
 def main():
-    # Initialize Options
-    parser = optparse.OptionParser()
-    parser.add_option("-c", "--configfile", dest="configfile", default="/etc/diamond/diamond.conf", help="config file")
-    parser.add_option("-f", "--foreground", dest="foreground", default=False, action="store_true", help="run in foreground")
-    parser.add_option("-p", "--pidfile", dest="pidfile", default=None, help="pid file")
-    parser.add_option("-r", "--run", dest="collector", default=None, help="run a given collector once and exit")
-
-    # Parse Command Line Args
-    (options, args) = parser.parse_args()
-
-    # Initialize Config
-    if os.path.exists(options.configfile):
-        config = configobj.ConfigObj(os.path.abspath(options.configfile))
-        config['configfile'] = options.configfile
-    else:
-        print >> sys.stderr, "ERROR: Config file: %s does not exist." % (options.configfile)
-        parser.print_help(sys.stderr)
-        sys.exit(1)
-        
-    # Initialize Logging
-    log = logging.getLogger('diamond')
-
-    # Running in foreground, configure Log Stream Handler with debug severity
-    if options.foreground:
-        log.setLevel(logging.DEBUG)
-        # Configure Logging Format
-        formatter = logging.Formatter('[%(asctime)s] [%(threadName)s] %(message)s')
-        # handler
-        streamHandler = logging.StreamHandler(sys.stdout)
-        streamHandler.setFormatter(formatter)
-        streamHandler.setLevel(logging.DEBUG)
-        log.addHandler(streamHandler)
-    else:
-        # if running in background, configure loggers from config file
-        try:
-            if sys.version_info >= (2,6):
-                logging.config.fileConfig(options.configfile,
-                                          disable_existing_loggers=False)
-            else:
-                # python <= 2.5 does not have disable_existing_loggers
-                # default was to always disable them, in our case we want to
-                # keep any logger created by handlers
-                logging.config.fileConfig(options.configfile)
-                for logger in logging.root.manager.loggerDict.values():
-                    logger.disabled = 0
-        except Exception, e:
-            sys.stderr.write("Error occurs when initialize logging: ")
-            sys.stderr.write(str(e))
-            sys.stderr.write(os.linesep)
-        
-    # Initialize Pid file
-    if not options.pidfile:
-        options.pidfile = str(config['server']['pid_file'])
-
-    # Read existing pid file
     try:
-        pf = file(options.pidfile,'r')
-        pid = int(pf.read().strip())
-        pf.close()
-    except IOError:
-        pid = None
-
-    # Check existing pid file
-    if pid:
-        # Check if pid is real
-        if not os.path.exists("/".join(["/proc", str(pid), "cmdline"])):
-            # Pid is not real
-            os.unlink(options.pidfile)
-            pid = None
-            print >> sys.stderr, "WARN: Bogus pid file was found. I deleted it."
+        # Initialize Options
+        parser = optparse.OptionParser()
+        parser.add_option("-c", "--configfile", dest="configfile", default="/etc/diamond/diamond.conf", help="config file")
+        parser.add_option("-f", "--foreground", dest="foreground", default=False, action="store_true", help="run in foreground")
+        parser.add_option("-p", "--pidfile", dest="pidfile", default=None, help="pid file")
+        parser.add_option("-r", "--run", dest="collector", default=None, help="run a given collector once and exit")
+    
+        # Parse Command Line Args
+        (options, args) = parser.parse_args()
+    
+        # Initialize Config
+        if os.path.exists(options.configfile):
+            config = configobj.ConfigObj(os.path.abspath(options.configfile))
+            config['configfile'] = options.configfile
         else:
-            print >> sys.stderr, "ERROR: Pidfile already exists. Server already running?"
+            print >> sys.stderr, "ERROR: Config file: %s does not exist." % (options.configfile)
+            parser.print_help(sys.stderr)
             sys.exit(1)
-        
-    # Get final GIDs
-    gid = -1
-    if len(config['server']['group']) :
-        gid = grp.getgrnam(config['server']['group']).gr_gid
+            
+        # Initialize Logging
+        log = logging.getLogger('diamond')
     
-    # Get final UID
-    uid = -1
-    if len(config['server']['user']) :
-        uid = pwd.getpwnam(config['server']['user']).pw_uid
-    
-    # Fix up pid permissions
-    if not options.foreground and not options.collector:
-        # Write pid file
-        pid = str(os.getpid())
-        try:
-            pf = file(options.pidfile,'w+')
-        except IOError, e:
-            print >> sys.stderr, "Failed to write PID file: %s" % (e)
-            sys.exit(1)
-        pf.write("%s\n" % pid)
-        pf.close()
-        os.chown(options.pidfile, uid, gid) 
-        # Log
-        log.debug("Wrote First PID file: %s" % (options.pidfile))
-
-    # Switch user to specified user/group if required
-    try:
-        if gid != -1 and os.getgid() != gid:
-            # Set GID
-            os.setgid(gid)
-
-        if uid != -1 and os.getuid() != uid:
-            # Set UID
-            os.setuid(uid)
-
+        # Running in foreground, configure Log Stream Handler with debug severity
+        if options.foreground:
+            log.setLevel(logging.DEBUG)
+            # Configure Logging Format
+            formatter = logging.Formatter('[%(asctime)s] [%(threadName)s] %(message)s')
+            # handler
+            streamHandler = logging.StreamHandler(sys.stdout)
+            streamHandler.setFormatter(formatter)
+            streamHandler.setLevel(logging.DEBUG)
+            log.addHandler(streamHandler)
+        else:
+            # if running in background, configure loggers from config file
+            try:
+                if sys.version_info >= (2,6):
+                    logging.config.fileConfig(options.configfile,
+                                              disable_existing_loggers=False)
+                else:
+                    # python <= 2.5 does not have disable_existing_loggers
+                    # default was to always disable them, in our case we want to
+                    # keep any logger created by handlers
+                    logging.config.fileConfig(options.configfile)
+                    for logger in logging.root.manager.loggerDict.values():
+                        logger.disabled = 0
+            except Exception, e:
+                sys.stderr.write("Error occurs when initialize logging: ")
+                sys.stderr.write(str(e))
+                sys.stderr.write(os.linesep)
+                
     except Exception, e:
-        print >> sys.stderr, "ERROR: Failed to set UID/GID. %s" % (e)
+        import traceback
+        sys.stderr.write("Unhandled exception: %s" % str(e))
+        sys.stderr.write("traceback: %s" % traceback.format_exc())
         sys.exit(1)
-
-    # Log
-    log.info('Changed UID: %d (%s) GID: %d (%s).' % (os.getuid(), config['server']['user'], os.getgid(), config['server']['group']))
-
-    # Detatch Process
-    if not options.foreground and not options.collector:
-
-        # Double fork to serverize process
-        log.info('Detaching Process.')
-
-        # Fork 1
+        
+    # Switch to using the logging system
+    try:
+            
+        # Initialize Pid file
+        if not options.pidfile:
+            options.pidfile = str(config['server']['pid_file'])
+    
+        # Read existing pid file
         try:
-            pid = os.fork()
-            if pid > 0:
-                # Exit first paren
-                sys.exit(0)
-        except OSError, e:
-            print >> sys.stderr, "Failed to fork process." % (e)
-            sys.exit(1)
-        # Decouple from parent environmen
-        os.setsid()
-        os.umask(0)
-        # Fork 2
-        try:
-            pid = os.fork()
-            if pid > 0:
-                # Exit econd paren
-                sys.exit(0)
-        except OSError, e:
-            print >> sys.stderr, "Failed to fork process." % (e)
-            sys.exit(1)
-        # Close file descriptors so that we can detach
-        sys.stdout.close()
-        sys.stderr.close()
-        sys.stdin.close()
-        os.close(0)
-        os.close(1)
-        os.close(2)
-
-    # Finish Initialize PID file
-    if not options.foreground and not options.collector:
-        # Write pid file
-        pid = str(os.getpid())
-        try:
-            pf = file(options.pidfile,'w+')
-        except IOError, e:
-            log.error("Failed to write child PID file: %s" % (e))
-            sys.exit(1)
-        pf.write("%s\n" % pid)
-        pf.close()
-        # Log
-        log.debug("Wrote child PID file: %s" % (options.pidfile))
-
-    # Initialize Server
-    server = Server(config)
-
-    def sigint_handler(signum, frame):
+            pf = file(options.pidfile,'r')
+            pid = int(pf.read().strip())
+            pf.close()
+        except IOError:
+            pid = None
+    
+        # Check existing pid file
+        if pid:
+            # Check if pid is real
+            if not os.path.exists("/".join(["/proc", str(pid), "cmdline"])):
+                # Pid is not real
+                os.unlink(options.pidfile)
+                pid = None
+                print >> sys.stderr, "WARN: Bogus pid file was found. I deleted it."
+            else:
+                print >> sys.stderr, "ERROR: Pidfile already exists. Server already running?"
+                sys.exit(1)
+            
+        # Get final GIDs
+        gid = -1
+        if len(config['server']['group']) :
+            gid = grp.getgrnam(config['server']['group']).gr_gid
+        
+        # Get final UID
+        uid = -1
+        if len(config['server']['user']) :
+            uid = pwd.getpwnam(config['server']['user']).pw_uid
+        
+        # Fix up pid permissions
+        if not options.foreground and not options.collector:
+            # Write pid file
+            pid = str(os.getpid())
+            try:
+                pf = file(options.pidfile,'w+')
+            except IOError, e:
+                print >> sys.stderr, "Failed to write PID file: %s" % (e)
+                sys.exit(1)
+            pf.write("%s\n" % pid)
+            pf.close()
+            os.chown(options.pidfile, uid, gid) 
             # Log
-            log.debug("Signal Received: %d" % (signum))
-            # Stop Server
-            server.stop()
-            # Delete Pidfile
-            if os.path.exists(options.pidfile):
-                os.remove(options.pidfile)
+            log.debug("Wrote First PID file: %s" % (options.pidfile))
+    
+        # Switch user to specified user/group if required
+        try:
+            if gid != -1 and os.getgid() != gid:
+                # Set GID
+                os.setgid(gid)
+    
+            if uid != -1 and os.getuid() != uid:
+                # Set UID
+                os.setuid(uid)
+    
+        except Exception, e:
+            print >> sys.stderr, "ERROR: Failed to set UID/GID. %s" % (e)
+            sys.exit(1)
+    
+        # Log
+        log.info('Changed UID: %d (%s) GID: %d (%s).' % (os.getuid(), config['server']['user'], os.getgid(), config['server']['group']))
+    
+        # Detatch Process
+        if not options.foreground and not options.collector:
+    
+            # Double fork to serverize process
+            log.info('Detaching Process.')
+    
+            # Fork 1
+            try:
+                pid = os.fork()
+                if pid > 0:
+                    # Exit first paren
+                    sys.exit(0)
+            except OSError, e:
+                print >> sys.stderr, "Failed to fork process." % (e)
+                sys.exit(1)
+            # Decouple from parent environmen
+            os.setsid()
+            os.umask(0)
+            # Fork 2
+            try:
+                pid = os.fork()
+                if pid > 0:
+                    # Exit econd paren
+                    sys.exit(0)
+            except OSError, e:
+                print >> sys.stderr, "Failed to fork process." % (e)
+                sys.exit(1)
+            # Close file descriptors so that we can detach
+            sys.stdout.close()
+            sys.stderr.close()
+            sys.stdin.close()
+            os.close(0)
+            os.close(1)
+            os.close(2)
+    
+        # Finish Initialize PID file
+        if not options.foreground and not options.collector:
+            # Write pid file
+            pid = str(os.getpid())
+            try:
+                pf = file(options.pidfile,'w+')
+            except IOError, e:
+                log.error("Failed to write child PID file: %s" % (e))
+                sys.exit(1)
+            pf.write("%s\n" % pid)
+            pf.close()
+            # Log
+            log.debug("Wrote child PID file: %s" % (options.pidfile))
+    
+        # Initialize Server
+        server = Server(config)
+    
+        def sigint_handler(signum, frame):
                 # Log
-                log.debug("Removed PID file: %s" % (options.pidfile))
-
-    # Set the signal handlers
-    signal.signal(signal.SIGINT, sigint_handler)
-    signal.signal(signal.SIGTERM, sigint_handler)
-
-    if options.collector:
-        # Run Server with one collector
-        server.run_one(options.collector)
-    else:
-        # Run Server
-        server.run()
+                log.debug("Signal Received: %d" % (signum))
+                # Stop Server
+                server.stop()
+                # Delete Pidfile
+                if os.path.exists(options.pidfile):
+                    os.remove(options.pidfile)
+                    # Log
+                    log.debug("Removed PID file: %s" % (options.pidfile))
+    
+        # Set the signal handlers
+        signal.signal(signal.SIGINT, sigint_handler)
+        signal.signal(signal.SIGTERM, sigint_handler)
+    
+        if options.collector:
+            # Run Server with one collector
+            server.run_one(options.collector)
+        else:
+            # Run Server
+            server.run()
+    except Exception, e:
+        import traceback
+        log.error("Unhandled exception: %s" % str(e))
+        log.error("traceback: %s" % traceback.format_exc())
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
