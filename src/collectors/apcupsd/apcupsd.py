@@ -33,7 +33,6 @@ class ApcupsdCollector(diamond.collector.Collector):
         """
         config = super(ApcupsdCollector, self).get_default_config()
         config.update( {
-            'enabled':  'True',
             'path':     'apcupsd',
             'hostname': 'localhost',
             'port': 3551,
