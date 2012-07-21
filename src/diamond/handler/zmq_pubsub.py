@@ -35,7 +35,7 @@ class zmqHandler ( Handler ):
        Create PUB socket and bind
     """
     self.context = zmq.Context()
-    self.socket = self.contact.socket(zmq.PUB)
+    self.socket = self.context.socket(zmq.PUB)
     self.socket.bind("tcp://*:%i" % self.port )
 
 
