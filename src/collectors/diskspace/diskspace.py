@@ -106,7 +106,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     major = os.major(stat.st_dev)
                     minor = os.minor(stat.st_dev)
 
-                    if [(major, minor)] in result:
+                    if result.has_key((major, minor)):
                         continue
 
                     result[(major, minor)] = {
