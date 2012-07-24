@@ -2,6 +2,19 @@
 Implements the abstract Handler class, sending data to statsd.
 This is a UDP service, sending datagrams.  They may be lost.
 It's OK.
+
+#### Dependencies
+
+ * [python-statsd](http://pypi.python.org/pypi/python-statsd/)
+ 
+#### Notes
+
+If your system has both [python-statsd](http://pypi.python.org/pypi/python-statsd/)
+and [statsd](http://pypi.python.org/pypi/statsd/) installed, you might experience
+failues after python updates or pip updates that change the order of importing. We
+recommend that you only have [python-statsd](http://pypi.python.org/pypi/python-statsd/)
+installed on your system if you are using this handler.
+
 """
 
 from Handler import Handler
