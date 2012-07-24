@@ -91,6 +91,10 @@ col_metric  = metric
 # VARCHAR(255) NOT NULL
 col_value   = value
 
+[[StatsdHandler]]
+host = 127.0.0.1
+port = 8125
+
 ################################################################################
 ### Options for collectors
 [collectors]
