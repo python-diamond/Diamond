@@ -16,6 +16,10 @@ Success Stories
 
  * Diamond has successfully been deployed to a cluster of 1000 machines pushing [3 million points per minute](https://answers.launchpad.net/graphite/+question/178969).
  * Have a story? Please share!
+
+Diamond Related Projects
+=====
+ * [puppet-diamond](https://github.com/vimeo/puppet-diamond) - diamond module for puppet
  
 Contact
 =====
