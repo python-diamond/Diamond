@@ -18,6 +18,9 @@ class SmartCollector(diamond.collector.Collector):
         config_help = super(SmartCollector, self).get_default_config_help()
         config_help.update({
             'devices' : "device regex to collect stats on",
+            'bin' :         'The path to the smartctl binary',
+            'use_sudo' :    'Use sudo?',
+            'sudo_cmd' :    'Path to sudo',
         })
         return config_help
 
@@ -29,6 +32,8 @@ class SmartCollector(diamond.collector.Collector):
         config.update(  {
             'path': 'smart',
             'bin' : 'smartctl',
+            'use_sudo':         False,
+            'sudo_cmd':         '/usr/bin/sudo',
             'devices': '^disk[0-9]$|^sd[a-z]$|^hd[a-z]$',
             'method': 'Threaded'
         } )
@@ -42,8 +47,13 @@ class SmartCollector(diamond.collector.Collector):
 
         for device in os.listdir('/dev'):
             if devices.match(device):
-                attributes = subprocess.Popen([self.config['bin'], "-A", os.path.join('/dev',device)],
-                             stdout=subprocess.PIPE).communicate()[0].strip().splitlines()
+                
+                command = [self.config['bin'], "-A", os.path.join('/dev',device)]
+
+                if self.config['use_sudo']:
+                    command.insert(0, self.config['sudo_cmd'])
+        
+                attributes = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip().splitlines()
                 
                 metrics = {}
 
