@@ -16,11 +16,12 @@ _RE = re.compile(r'^([a-z\._]*) = ([0-9]*)$')
 
 class ConnTrackCollector(diamond.collector.Collector):
 
-    COMMAND = ['/sbin/sysctl', 'net.netfilter.nf_conntrack_count']
-
     def get_default_config_help(self):
         config_help = super(ConnTrackCollector, self).get_default_config_help()
         config_help.update({
+            'use_sudo' :    'Use sudo?',
+            'sudo_cmd' :    'Path to sudo',
+            'bin' :         'The path to the sysctl binary',
         })
         return config_help
 
@@ -30,16 +31,25 @@ class ConnTrackCollector(diamond.collector.Collector):
         """
         config = super(ConnTrackCollector, self).get_default_config()
         config.update( {
-            'path':     'conntrack'
+            'path':             'conntrack',
+            'use_sudo':         False,
+            'sudo_cmd':         '/usr/bin/sudo',
+            'bin':              '/sbin/sysctl',
         } )
         return config
 
     def collect(self):
-        if not os.access(ConnTrackCollector.COMMAND[0], os.X_OK):
-            self.log.error(ConnTrackCollector.COMMAND[0]+" is not executable")
+        if not os.access(self.config['bin'], os.X_OK):
+            self.log.error(self.config['bin']+" is not executable")
             return False
         
-        line = subprocess.Popen(ConnTrackCollector.COMMAND, stdout=subprocess.PIPE).communicate()[0]
+        command = [self.config['bin'], 'net.netfilter.nf_conntrack_count' ]
+
+        if self.config['use_sudo']:
+            command.insert(0, self.config['sudo_cmd'])
+
+        line = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
+        
         match = _RE.match(line)
         if match:
             self.publish('nf_conntrack_count', int(match.group(2)))
