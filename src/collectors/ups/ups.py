@@ -16,8 +16,10 @@ class UPSCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(UPSCollector, self).get_default_config_help()
         config_help.update({
-            'ups_name' : 'The name of the ups to collect data for',
-            'bin' : 'The path to the upsc binary',
+            'ups_name' :    'The name of the ups to collect data for',
+            'bin' :         'The path to the upsc binary',
+            'use_sudo' :    'Use sudo?',
+            'sudo_cmd' :    'Path to sudo',
         })
         return config_help
 
@@ -28,9 +30,11 @@ class UPSCollector(diamond.collector.Collector):
 
         config = super(UPSCollector, self).get_default_config()
         config.update(  {
-            'path': 'ups',
-            'ups_name': 'cyberpower',
-            'bin': '/bin/upsc'
+            'path':             'ups',
+            'ups_name':         'cyberpower',
+            'bin':              '/bin/upsc',
+            'use_sudo':         False,
+            'sudo_cmd':         '/usr/bin/sudo',
         } )
         return config
 
@@ -39,7 +43,12 @@ class UPSCollector(diamond.collector.Collector):
             self.log.error(self.config['bin']+" is not executable")
             return False
         
-        p = subprocess.Popen([self.config['bin'], self.config['ups_name']], stdout=subprocess.PIPE)
+        command = [self.config['bin'], self.config['ups_name']]
+
+        if self.config['use_sudo']:
+            command.insert(0, self.config['sudo_cmd'])
+
+        p = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0][:-1]
 
         for ln in p.communicate()[0].splitlines():
             datapoint = ln.split(": ")
