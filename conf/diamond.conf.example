@@ -95,6 +95,11 @@ col_value   = value
 host = 127.0.0.1
 port = 8125
 
+[[TSDBHandler]]
+host = 127.0.0.1
+port = 4242
+timeout = 15
+
 ################################################################################
 ### Options for collectors
 [collectors]
