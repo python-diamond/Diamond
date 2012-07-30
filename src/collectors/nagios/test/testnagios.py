@@ -12,7 +12,7 @@ class TestNagiosStatsCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('NagiosStatsCollector', {
             'interval': 10,
-            'nagiosstats_cmd' : 'true',
+            'bin' : 'true',
             'use_sudo' : False
         })
 
