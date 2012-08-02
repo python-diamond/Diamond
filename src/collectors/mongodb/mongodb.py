@@ -11,7 +11,6 @@ values are ignored.
 import diamond.collector
 
 try:
-    from numbers import Number
     import pymongo
     from pymongo import ReadPreference
 except ImportError:
@@ -60,5 +59,5 @@ class MongoDBCollector(diamond.collector.Collector):
         if isinstance(value, dict):
             for new_key in value:
                 self._publish_metrics(keys, new_key, value)
-        elif isinstance(value, Number):
+        elif isinstance(value, int) or isinstance(value, float):
             self.publish('.'.join(keys), value)
