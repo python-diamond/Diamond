@@ -1,3 +1,7 @@
+diamond (3.0.2) unstable; urgency=low
+  * new upstream
+ -- Rob Smith <kormoc@gmail.com>  Tue, 01 Aug 2012 21:06:00 -0800
+
 diamond (3.0.0) unstable; urgency=low
   * new upstream
  -- Rob Smith <kormoc@gmail.com>  Tue, 24 Jul 2012 23:56:00 -0800
