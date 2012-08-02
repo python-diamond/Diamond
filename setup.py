@@ -62,6 +62,9 @@ setup(
     packages        = ['diamond' , 'diamond.handler'],
     scripts         = ['bin/diamond', 'bin/diamond-setup'],
     data_files      = data_files,
+    install_requires=[
+        'python-configobj',
+    ],
     #test_suite      = 'test.main',
     **setup_kwargs
 )
