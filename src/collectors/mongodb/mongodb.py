@@ -14,7 +14,7 @@ try:
     import pymongo
     from pymongo import ReadPreference
 except ImportError:
-    Number = None
+    pymongo = None
 
 class MongoDBCollector(diamond.collector.Collector):
     
@@ -39,8 +39,8 @@ class MongoDBCollector(diamond.collector.Collector):
     def collect(self):
         """Collect number values from db.serverStatus()"""
 
-        if Number is None:
-            self.log.error('Unable to import either Number or pymongo')
+        if pymongo is None:
+            self.log.error('Unable to import pymongo')
             return {}
 
         try:
