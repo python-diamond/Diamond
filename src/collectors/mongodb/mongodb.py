@@ -17,14 +17,14 @@ except ImportError:
     pymongo = None
 
 class MongoDBCollector(diamond.collector.Collector):
-    
+
     def get_default_config_help(self):
         config_help = super(MongoDBCollector, self).get_default_config_help()
         config_help.update({
             'host' : 'Hostname',
         })
         return config_help
-    
+
     def get_default_config(self):
         """
         Returns the default collector settings
@@ -35,7 +35,7 @@ class MongoDBCollector(diamond.collector.Collector):
             'host':     'localhost'
         } )
         return config
-    
+
     def collect(self):
         """Collect number values from db.serverStatus()"""
 
