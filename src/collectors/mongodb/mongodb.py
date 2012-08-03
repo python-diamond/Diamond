@@ -49,8 +49,15 @@ class MongoDBCollector(diamond.collector.Collector):
             self.log.error('Couldnt connect to mongodb: %s', e)
             return {}
         data = conn.db.command('serverStatus')
-        for key in data:
-            self._publish_metrics([], key, data)
+        self._publish_dict_with_prefix(data, [])
+
+        for db_name in conn.database_names():
+            db_stats = conn[db_name].command('dbStats')
+            self._publish_dict_with_prefix(db_stats, ['databases', db_name])
+
+    def _publish_dict_with_prefix(self, dict, prefix):
+        for key in dict:
+            self._publish_metrics(prefix, key, dict)
 
     def _publish_metrics(self, prev_keys, key, data):
         """Recursively publish keys"""
