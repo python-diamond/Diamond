@@ -28,6 +28,7 @@ else:
     if platform.dist()[0] == 'centos' or 'redhat':
         data_files.append(('/etc/init.d',		             ['bin/init.d/diamond'] ))
         data_files.append(('/var/log/diamond',		         ['.keep'] ))
+        data_files.append(('/etc/init',                      ['rpm/upstart/diamond.conf'] ))
 
 def pkgPath(root, path, rpath="/"):
     global data_files
@@ -51,7 +52,7 @@ pkgPath('share/diamond/collectors', 'src/collectors')
 
 setup(
     name            = 'diamond',
-    version         = '3.0.0',
+    version         = '3.0.2',
     url             = 'https://github.com/BrightcoveOS/Diamond',
     author          = 'The Diamond Team',
     author_email    = 'https://github.com/BrightcoveOS/Diamond',
@@ -61,6 +62,9 @@ setup(
     packages        = ['diamond' , 'diamond.handler'],
     scripts         = ['bin/diamond', 'bin/diamond-setup'],
     data_files      = data_files,
+    install_requires=[
+        'python-configobj',
+    ],
     #test_suite      = 'test.main',
     **setup_kwargs
 )

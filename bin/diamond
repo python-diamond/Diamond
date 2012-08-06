@@ -73,6 +73,10 @@ def main():
                 sys.stderr.write(str(e))
                 sys.stderr.write(os.linesep)
                 
+    # Pass the exit up stream rather then handle it as an general exception
+    except SystemExit, e:
+       raise SystemExit
+            
     except Exception, e:
         import traceback
         sys.stderr.write("Unhandled exception: %s" % str(e))
@@ -170,7 +174,7 @@ def main():
             try:
                 pid = os.fork()
                 if pid > 0:
-                    # Exit econd paren
+                    # Exit second paren
                     sys.exit(0)
             except OSError, e:
                 print >> sys.stderr, "Failed to fork process." % (e)
@@ -221,6 +225,11 @@ def main():
         else:
             # Run Server
             server.run()
+    
+    # Pass the exit up stream rather then handle it as an general exception
+    except SystemExit, e:
+       raise SystemExit
+    
     except Exception, e:
         import traceback
         log.error("Unhandled exception: %s" % str(e))

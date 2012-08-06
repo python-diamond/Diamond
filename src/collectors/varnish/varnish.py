@@ -15,7 +15,6 @@ class VarnishCollector(diamond.collector.Collector):
     
     _RE = re.compile("^(?P<stat>[\w_\(\)\.,]*)\s+(?P<psa>\d*)\s+"
                    "(?P<psan>[\d.]*)\s(?P<desc>[\w\., /]*)$", re.M)
-    _CMD = '/usr/bin/varnishstat'
     _KEYS = ['client_conn', 'client_drop', 'client_req', 'cache_hit',
              'cache_hitpass', 'cache_miss', 'backend_conn', 'backend_unhealthy',
              'backend_busy', 'backend_fail', 'backend_reuse', 'backend_toolate',
@@ -41,6 +40,9 @@ class VarnishCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(VarnishCollector, self).get_default_config_help()
         config_help.update({
+            'bin' :         'The path to the smartctl binary',
+            'use_sudo' :    'Use sudo?',
+            'sudo_cmd' :    'Path to sudo',
         })
         return config_help
 
@@ -50,7 +52,10 @@ class VarnishCollector(diamond.collector.Collector):
         """
         config = super(VarnishCollector, self).get_default_config()
         config.update(  {
-            'path':     'varnish'
+            'path':             'varnish',
+            'bin' :             '/usr/bin/varnishstat',
+            'use_sudo':         False,
+            'sudo_cmd':         '/usr/bin/sudo',
         } )
         return config
 
@@ -68,7 +73,12 @@ class VarnishCollector(diamond.collector.Collector):
 
     def poll(self):
         try:
-            output = subprocess.Popen([self._CMD, '-1'], stdout=subprocess.PIPE).communicate()[0]
+            command = [self.config['bin'], '-1']
+
+            if self.config['use_sudo']:
+                command.insert(0, self.config['sudo_cmd'])
+
+            output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
         except:
             output = ""
 

@@ -13,11 +13,12 @@ import os
 
 class EximCollector(diamond.collector.Collector):
   
-    COMMAND = ['/usr/sbin/exim', '-bpc']
-    
     def get_default_config_help(self):
         config_help = super(EximCollector, self).get_default_config_help()
         config_help.update({
+            'bin' :         'The path to the exim binary',
+            'use_sudo' :    'Use sudo?',
+            'sudo_cmd' :    'Path to sudo',
         })
         return config_help
     
@@ -27,15 +28,25 @@ class EximCollector(diamond.collector.Collector):
         """
         config = super(EximCollector, self).get_default_config()
         config.update(  {
-            'path' : 'exim',
-            'method' : 'threaded'
+            'path' :            'exim',
+            'method' :          'threaded',
+            'bin':              '/usr/sbin/exim',
+            'use_sudo':         False,
+            'sudo_cmd':         '/usr/bin/sudo',
         } )
         return config
 
     def collect(self):
-        if not os.access(EximCollector.COMMAND[0], os.X_OK):
+        if not os.access(self.config['bin'], os.X_OK):
             return
-        queuesize = subprocess.Popen(EximCollector.COMMAND, stdout=subprocess.PIPE).communicate()[0].split()
+        
+        command = [self.config['bin'], '-bpc']
+
+        if self.config['use_sudo']:
+            command.insert(0, self.config['sudo_cmd'])
+
+        queuesize = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].split()
+        
         if not len(queuesize):
             return
         queuesize = queuesize[-1]

@@ -26,7 +26,9 @@ class PowerDNSCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(PowerDNSCollector, self).get_default_config_help()
         config_help.update({
-            'pdns_control' : 'Path to pdns_control binary',
+            'bin' :         'The path to the pdns_control binary',
+            'use_sudo' :    'Use sudo?',
+            'sudo_cmd' :    'Path to sudo',
         })
         return config_help
     
@@ -36,18 +38,25 @@ class PowerDNSCollector(diamond.collector.Collector):
         """
         config = super(PowerDNSCollector, self).get_default_config()
         config.update(  { 
-            'pdns_control': '/usr/bin/pdns_control', 
-            'path': 'powerdns', 
+            'bin': '/usr/bin/pdns_control', 
+            'path': 'powerdns',
+            'use_sudo':         False,
+            'sudo_cmd':         '/usr/bin/sudo',
         } )
         return config
 
     def collect(self):
-        if not os.access(self.config['pdns_control'], os.X_OK):
-            self.log.error(self.config['pdns_control']+" is not executable")
+        if not os.access(self.config['bin'], os.X_OK):
+            self.log.error(self.config['bin']+" is not executable")
             return False
         
-        sp = subprocess.Popen([self.config['pdns_control'], "list"], stdout=subprocess.PIPE)
-        data = sp.communicate()[0]
+        command = [self.config['bin'], 'list']
+
+        if self.config['use_sudo']:
+            command.insert(0, self.config['sudo_cmd'])
+
+        data = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
+        
         for metric in data.split(','):
             if not metric.strip():
                 continue

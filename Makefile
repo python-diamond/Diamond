@@ -1,6 +1,6 @@
 DESTDIR=/
 PROJECT=diamond
-VERSION=3.0.0
+VERSION=3.0.2
 RELEASE := $(shell ls -1 dist/*.noarch.rpm 2>/dev/null | wc -l )
 
 all:

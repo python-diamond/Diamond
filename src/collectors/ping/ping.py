@@ -20,12 +20,16 @@ We extract out the key after target_ and use it in the graphite node we push.
 
 import subprocess
 import diamond.collector
+import os
 
 class PingCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
         config_help = super(PingCollector, self).get_default_config_help()
         config_help.update({
+            'bin' :         'The path to the ping binary',
+            'use_sudo' :    'Use sudo?',
+            'sudo_cmd' :    'Path to sudo',
         })
         return config_help
 
@@ -35,7 +39,10 @@ class PingCollector(diamond.collector.Collector):
         """
         config = super(PingCollector, self).get_default_config()
         config.update(  {
-            'path':     'ping',
+            'path':             'ping',
+            'bin':              '/bin/ping',
+            'use_sudo':         False,
+            'sudo_cmd':         '/usr/bin/sudo',
         } )
         return config
 
@@ -44,9 +51,17 @@ class PingCollector(diamond.collector.Collector):
             if key[:7] == "target_":
                 host = self.config[key]
                 metric_name = host.replace('.','_');
-
-                ping = subprocess.Popen(["ping", '-nq', '-c 1', host], stdout=subprocess.PIPE).communicate()[0].strip().split("\n")[-1]
                 
+                if not os.access(self.config['bin'], os.X_OK):
+                    return
+                
+                command = [self.config['bin'], '-nq', '-c 1', host]
+        
+                if self.config['use_sudo']:
+                    command.insert(0, self.config['sudo_cmd'])
+        
+                ping = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip().split("\n")[-1]
+
                 # Linux
                 if ping.startswith('rtt'):
                     ping = ping.split()[3].split('/')[0]

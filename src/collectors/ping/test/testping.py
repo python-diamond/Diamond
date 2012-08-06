@@ -12,7 +12,8 @@ class TestPingCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('PingCollector', {
             'interval': 10,
-            'target_a': 'localhost'
+            'target_a': 'localhost',
+            'bin' : 'true'
         })
 
         self.collector = PingCollector(config, None)

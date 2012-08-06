@@ -24,7 +24,6 @@ Repeat the app-1 block as many times as needed for different host/port combos
 
 """
 
-import subprocess
 import diamond.collector
 import socket
 

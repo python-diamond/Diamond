@@ -16,7 +16,7 @@ class NagiosStatsCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(NagiosStatsCollector, self).get_default_config_help()
         config_help.update({
-            'nagiosstats_cmd' : 'Path to nagios3stats binary',
+            'bin' : 'Path to nagios3stats binary',
             'vars' : 'What vars to collect',
             'use_sudo' : 'Use sudo?',
             'sudo_cmd' : 'Path to sudo',
@@ -29,7 +29,7 @@ class NagiosStatsCollector(diamond.collector.Collector):
         """
         config = super(NagiosStatsCollector, self).get_default_config()
         config.update(  {
-            'nagiosstats_cmd': '/usr/sbin/nagios3stats',
+            'bin':              '/usr/sbin/nagios3stats',
             'vars':            ['AVGACTHSTLAT',
                                 'AVGACTSVCLAT',
                                 'AVGACTHSTEXT',
@@ -64,10 +64,10 @@ class NagiosStatsCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        if not os.access(self.config['nagiosstats_cmd'], os.X_OK) or (self.config['use_sudo'] and not os.access(self.config['sudo_cmd'], os.X_OK)):
+        if not os.access(self.config['bin'], os.X_OK) or (self.config['use_sudo'] and not os.access(self.config['sudo_cmd'], os.X_OK)):
             return
  
-        command = [self.config['nagiosstats_cmd'], '--data', ",".join(self.config['vars']), '--mrtg']
+        command = [self.config['bin'], '--data', ",".join(self.config['vars']), '--mrtg']
 
         if self.config['use_sudo']:
             command.insert(0, self.config['sudo_cmd'])

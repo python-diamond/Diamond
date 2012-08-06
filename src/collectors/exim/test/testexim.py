@@ -11,11 +11,11 @@ from exim import EximCollector
 class TestEximCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('EximCollector', {
-            'interval': 10
+            'interval': 10,
+            'bin': 'true'
         })
 
         self.collector = EximCollector(config, None)
-        self.collector.COMMAND[0] = 'true'
 
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
