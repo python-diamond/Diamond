@@ -84,67 +84,34 @@ class HAProxyCollector(diamond.collector.Collector):
         try:
             handle    = urllib2.urlopen(req)
             metrics   = handle.readlines()
-            print metrics
             return metrics
         except IOError, e:
             # here we shouldn't fail if the USER/PASS is right
             self.log.error("Error retrieving HAProxy stats. (Invalid username or password?) %s", e)
             return metrics
 
+    def _generate_headings(self, row):
+        headings = {}
+        for index, heading in enumerate(row):
+            headings[index] = heading
+        return headings
+
     def collect(self):
         """
         Collect HAProxy Stats
         """
         csv_data = self.get_csv_data()
-        data = csv.reader(csv_data)
-        rownum = 0
+        data = list(csv.reader(csv_data))
+        headings = self._generate_headings(data[0])
 
         for row in data:
-            if rownum == 0:
-                pass
-            else:
-                if self.config['ignore_servers'] and row[1].lower() not in ['frontend', 'backend']:
+            if self.config['ignore_servers'] and row[1].lower() not in ['frontend', 'backend']:
+                continue
+            metric_name =  '%s.%s' % (row[0].lower(), row[1].lower())
+            for index, metric_string in enumerate(row):
+                try:
+                    metric_value = float(metric_string)
+                except ValueError:
                     continue
-
-                metric_name =  '%s.%s' % (row[0].lower(), row[1].lower())
-                #create dictionary
-                haproxy_stats = {
-                    'qcur': row[2],
-                    'qmax': row[3],
-                    'scur': row[4],
-                    'smax': row[5],
-                    'slim': row[6],
-                    'stot': row[7],
-                    'bin':  row[8],
-                    'bout': row[9],
-                    'dreq': row[10],
-                    'dresp': row[11],
-                    'ereq': row[12],
-                    'econ': row[13],
-                    'eresp': row[14],
-                    'wretr': row[15],
-                    'wredis': row[16],
-                    'weight': row[18],
-                    'act': row[19],
-                    'bck': row[20],
-                    'lastchg': row[21],
-                    'downtime': row[22],
-                    'qlimit': row[23],
-                    'iid': row[25],
-                    'sid': row[26],
-                    'throttle': row[27],
-                    'lbtot': row[28],
-                    'tracked': row[29],
-                    'type': row[30],
-                    'rate': row[31],
-                    'rate_lim': row[32],
-                    'rate_max': row[33]
-                }
-                for metric in haproxy_stats.keys():
-                    stat_name =  '%s.%s' % (metric_name,metric.lower())
-                    if haproxy_stats[metric] == '':
-                        haproxy_stats[metric] = 0
-                    self.publish(stat_name, long(haproxy_stats[metric]))
-            #increment the row number and move on to the next set of stats
-            rownum += 1
-
+                stat_name =  '%s.%s' % (metric_name,headings[index])
+                self.publish(stat_name, metric_value)
