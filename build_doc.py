@@ -14,13 +14,24 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 from diamond import *
 from diamond.collector import Collector
 
+def getIncludePaths(path):
+    for f in os.listdir(path):
+        cPath = os.path.abspath(os.path.join(path, f))
+
+        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'test':
+            sys.path.append(os.path.dirname(cPath))
+
+    for f in os.listdir(path):
+        cPath = os.path.abspath(os.path.join(path, f))
+        if os.path.isdir(cPath):
+            getIncludePaths(cPath)
+
 collectors = {}
 def getCollectors(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
 
         if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'test':
-            sys.path.append(os.path.dirname(cPath))
             modname = f[:-3]
             
             try:
@@ -52,7 +63,6 @@ def getHandlers(path):
         cPath = os.path.abspath(os.path.join(path, f))
 
         if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py':
-            sys.path.append(os.path.dirname(cPath))
             modname = f[:-3]
             
             try:
@@ -105,6 +115,7 @@ if __name__ == "__main__":
     docs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'docs'))
     handler_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'diamond', 'handler'))
     
+    getIncludePaths(collector_path)
     getCollectors(collector_path)
     
     collectorIndexFile = open(os.path.join(docs_path, "Collectors.md"), 'w')
@@ -153,6 +164,7 @@ if __name__ == "__main__":
         
     collectorIndexFile.close()
     
+    getIncludePaths(handler_path)
     getHandlers(handler_path)
     
     handlerIndexFile = open(os.path.join(docs_path, "Handlers.md"), 'w')
