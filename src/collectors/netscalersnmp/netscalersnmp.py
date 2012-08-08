@@ -1,5 +1,9 @@
 """
 SNMPCollector for Netscaler Metrics
+
+NetScaler is a network appliance manufactured by Citrix providing level 4 load
+balancing, firewall, proxy and VPN functions.
+
 """
 
 import sys
@@ -65,8 +69,6 @@ class NetscalerSNMPCollector(SNMPCollector):
         config.update( {
             'path':     'netscaler',
             'timeout' : 15,
-            'retries' : 3,
-            'interval': 300
         } ) 
         return config
 
