@@ -116,6 +116,9 @@ if __name__ == "__main__":
     handler_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'diamond', 'handler'))
     
     getIncludePaths(collector_path)
+    
+    # Ugly hack for snmp collector overrides
+    getCollectors(os.path.join(collector_path, 'snmp'))
     getCollectors(collector_path)
     
     collectorIndexFile = open(os.path.join(docs_path, "Collectors.md"), 'w')
