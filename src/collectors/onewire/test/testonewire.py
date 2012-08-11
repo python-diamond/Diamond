@@ -23,31 +23,33 @@ class TestOneWireCollector(CollectorTestCase):
 
     @patch('os.path.isfile')
     @patch('os.listdir')
-    @patch('__builtin__.open')
     @patch.object(Collector, 'publish')
-    def test(self, publish_mock, open_mock, listdir_mock, isfile_mock):
-
-        self.mock_data = {
-                    "28.A76569020000": None,
-                    "28.A76569020000/temperature": StringIO("22.4375"),
-                    "28.A76569020000/presure": StringIO("error"),
-                    "28.2F702A010000": None,
-                    "28.2F702A010000/presure": StringIO("999"),
-                    "01.AE5426040000": None,
-                    "alarm": None,
-                    "bus.0": None,
-                    "settings": None,
-                    }
-
-        self.mock_root = "/mnt/1wire"
-
-        open_mock.side_effect = self._ret_open_mock
-        listdir_mock.side_effect = self._ret_listdir_mock
-        isfile_mock.side_effect = self._ret_isfile_mock
-
-        self.collector.collect()
-
-        listdir_mock.assert_called_once_with(self.mock_root)
+    def test(self, publish_mock, listdir_mock, isfile_mock):
+        
+        open_name = 'onewire.open'
+        with patch(open_name, create=True) as open_mock:
+    
+            self.mock_data = {
+                        "28.A76569020000": None,
+                        "28.A76569020000/temperature": StringIO("22.4375"),
+                        "28.A76569020000/presure": StringIO("error"),
+                        "28.2F702A010000": None,
+                        "28.2F702A010000/presure": StringIO("999"),
+                        "01.AE5426040000": None,
+                        "alarm": None,
+                        "bus.0": None,
+                        "settings": None,
+                        }
+    
+            self.mock_root = "/mnt/1wire"
+    
+            open_mock.side_effect = self._ret_open_mock
+            listdir_mock.side_effect = self._ret_listdir_mock
+            isfile_mock.side_effect = self._ret_isfile_mock
+    
+            self.collector.collect()
+    
+            listdir_mock.assert_called_once_with(self.mock_root)
 
         metrics = {
             '28_A76569020000.t': 22.4375,
