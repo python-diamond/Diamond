@@ -39,10 +39,13 @@ class TestMongoDBCollector(CollectorTestCase):
         self.collector.collect()
 
         self.connection['db1'].command.assert_called_once_with('dbStats')
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'db_keys.db_nested_key': 1,
             'dbkey' : 2
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
     def _annotate_connection(self, connector_mock, data):
         connector_mock.return_value = self.connection

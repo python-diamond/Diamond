@@ -26,7 +26,7 @@ class TestNagiosStatsCollector(CollectorTestCase):
         )):
             self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'AVGACTHSTLAT' : 196, 
             'AVGACTSVCLAT' : 242, 
             'AVGACTHSTEXT' : 4037, 
@@ -54,7 +54,10 @@ class TestNagiosStatsCollector(CollectorTestCase):
             'NUMCACHEDSVCCHECKS5M' : 0, 
             'NUMSACTSVCCHECKS5M' : 1101, 
             'NUMPSVSVCCHECKS5M' : 0, 
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

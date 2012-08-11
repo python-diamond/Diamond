@@ -22,7 +22,7 @@ class TestHadoopCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
         self.collector.collect()
 
-        self.assertPublishedMetricMany(publish_mock, {
+        metrics = {
             'dfs.datanode.replaceBlockOp_num_ops' : 0.000000, 
             'dfs.datanode.replaceBlockOp_avg_time' : 0.000000, 
             'dfs.datanode.blocks_read' : 0.000000, 
@@ -222,7 +222,10 @@ class TestHadoopCollector(CollectorTestCase):
             'rpc.metrics.doorstop_local.50030.RpcQueueTime_num_ops' : 21.000000, 
             'rpc.metrics.doorstop_local.50030.getProtocolVersion_num_ops' : 1.000000, 
             'rpc.metrics.doorstop_local.50030.getBuildVersion_avg_time' : 0.000000, 
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMetricMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

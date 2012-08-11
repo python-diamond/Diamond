@@ -20,9 +20,12 @@ class TestExampleCollector(CollectorTestCase):
     def test(self, publish_mock):
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'my.example.metric' :  42
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

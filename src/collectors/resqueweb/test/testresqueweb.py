@@ -21,7 +21,7 @@ class TestResqueWebCollector(CollectorTestCase):
         with patch('urllib2.urlopen', Mock(return_value = self.getFixture('stats.txt'))):
             self.collector.collect()
             
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'pending.current' : 2, 
             'processed.total' : 11686516, 
             'failed.total' : 38667, 
@@ -31,7 +31,10 @@ class TestResqueWebCollector(CollectorTestCase):
             'queue.mail.current' : 3, 
             'queue.realtime.current' : 9, 
             'queue.normal.current' : 1,
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):

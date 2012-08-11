@@ -87,7 +87,7 @@ class TestDiskUsageCollector(CollectorTestCase):
         ):
             self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'sda.average_queue_length':             0.0,
             'sda.average_request_size_kilobyte':    10.7,
             'sda.await':                            0.0,
@@ -139,7 +139,10 @@ class TestDiskUsageCollector(CollectorTestCase):
             'sdb.writes_merged':                    201.7,
             'sdb.writes_milliseconds':              33.7,
             'sdb.writes_per_second':                80.5,
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

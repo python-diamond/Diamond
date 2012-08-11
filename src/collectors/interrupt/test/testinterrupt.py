@@ -35,7 +35,7 @@ class TestInterruptCollector(CollectorTestCase):
         InterruptCollector.PROC = self.getFixturePath('interrupts_24_core_2')
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'IO-APIC-edge.timer.0.CPU0' : 318660.000000, 
             'IO-APIC-edge.timer.0.total' : 318660.000000, 
             'PCI-MSI-X.eth3-rx-1.51.CPU6' : 293.000000, 
@@ -69,7 +69,10 @@ class TestInterruptCollector(CollectorTestCase):
             'PCI-MSI-X_eth3-rx-0.total' : 224074.000000, 
             'PCI-MSI_eth1.CPU19' : 10386.000000, 
             'PCI-MSI_eth1.total' : 10386.000000, 
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_kvm(self, publish_mock):

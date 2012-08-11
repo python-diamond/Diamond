@@ -57,13 +57,16 @@ class TestCPUCollector(CollectorTestCase):
         CPUCollector.PROC = self.getFixturePath('proc_stat_2')
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'total.idle'   : 2440.8,
             'total.iowait' : 0.2,
             'total.nice'   : 0.0,
             'total.system' : 0.2,
             'total.user'   : 0.4
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

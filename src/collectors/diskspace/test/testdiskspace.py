@@ -81,14 +81,17 @@ none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
         ):
             self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'root.gigabyte_used'  : ( 284.525, 2),
             'root.gigabyte_free'  : (1090.826, 2),
             'root.gigabyte_avail' : (1020.962, 2),
             'root.inodes_used'    : 348873,
             'root.inodes_free'    : 91229495,
             'root.inodes_avail'   : 91229495
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

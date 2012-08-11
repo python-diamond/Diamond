@@ -40,12 +40,15 @@ class TestRabbitMQCollector(CollectorTestCase):
 
         client.get_queues.assert_called_once_with()
         client.get_overview.assert_called_once_with()
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'queues.test_queue.more_keys.nested_key': 1,
             'queues.test_queue.key' : 2,
             'more_keys.nested_key': 3,
             'key' : 4
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

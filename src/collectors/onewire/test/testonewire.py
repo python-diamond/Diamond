@@ -49,9 +49,13 @@ class TestOneWireCollector(CollectorTestCase):
 
         listdir_mock.assert_called_once_with(self.mock_root)
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             '28_A76569020000.t': 22.4375,
-            '28_2F702A010000.p11': 999})
+            '28_2F702A010000.p11': 999
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
     def _ret_isfile_mock(self, *args, **kwargs):
         fname = args[0][len(self.mock_root) + 1:]

@@ -35,12 +35,15 @@ class TestVMStatCollector(CollectorTestCase):
         VMStatCollector.PROC = self.getFixturePath('proc_vmstat_2')
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'pgpgin'  : 0.0,
             'pgpgout' : 9.2,
             'pswpin'  : 0.0,
             'pswpout' : 0.0,
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 
 ################################################################################

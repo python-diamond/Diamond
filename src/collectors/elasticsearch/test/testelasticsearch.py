@@ -20,7 +20,7 @@ class TestElasticSearchCollector(CollectorTestCase):
         with patch('urllib2.urlopen', Mock(return_value = self.getFixture('stats'))):
             self.collector.collect()
             
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'http.current' : 1, 
             
             'indices.docs.count' : 11968062, 
@@ -37,9 +37,10 @@ class TestElasticSearchCollector(CollectorTestCase):
             'disk.reads.size': 1235387392,
             'disk.writes.count': 5808198,
             'disk.writes.size': 23287275520,
-
-            
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):

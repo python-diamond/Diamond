@@ -26,7 +26,7 @@ class TestIPMISensorCollector(CollectorTestCase):
         )):
             self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'System.Temp' : 32.000000, 
             'CPU1.Vcore' : 1.080000, 
             'CPU2.Vcore' : 1.000000, 
@@ -61,7 +61,10 @@ class TestIPMISensorCollector(CollectorTestCase):
             'P2-DIMM2B.Temp' : 39.000000, 
             'P2-DIMM3A.Temp' : 39.000000, 
             'P2-DIMM3B.Temp' : 40.000000, 
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ class TestNginxCollector(CollectorTestCase):
         with patch('urllib2.urlopen', Mock(return_value = self.getFixture('status'))):
             self.collector.collect()
             
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'active_connections' : 3, 
             'conn_accepted' : 396396, 
             'conn_handled' : 396396, 
@@ -28,7 +28,10 @@ class TestNginxCollector(CollectorTestCase):
             'act_reads' : 2, 
             'act_writes' : 1, 
             'act_waits' : 0, 
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):

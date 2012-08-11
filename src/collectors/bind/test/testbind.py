@@ -21,7 +21,7 @@ class TestBindCollector(CollectorTestCase):
         with patch('urllib2.urlopen', Mock(return_value = self.getFixture('bind.xml'))):
             self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'view._default.resstat.Queryv4' : 0.000000, 
             'view._default.resstat.Queryv6' : 0.000000, 
             'view._default.resstat.Responsev4' : 0.000000, 
@@ -155,7 +155,11 @@ class TestBindCollector(CollectorTestCase):
             'sockstat.TCP6RecvErr' : 0.000000, 
             'sockstat.UnixRecvErr' : 0.000000, 
             'sockstat.FDwatchRecvErr' : 0.000000, 
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
+        
 
 ################################################################################
 if __name__ == "__main__":

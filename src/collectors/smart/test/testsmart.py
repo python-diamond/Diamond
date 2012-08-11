@@ -71,7 +71,7 @@ class TestSmartCollector(CollectorTestCase):
             )):
                 self.collector.collect()
     
-            self.assertPublishedMany(publish_mock, {
+            metrics = {
                 'sda.Temperature_Celsius' : 28,
                 'sda.Power_On_Hours' : 6827,
                 'sda.Power_Cycle_Count' : 7,
@@ -89,7 +89,10 @@ class TestSmartCollector(CollectorTestCase):
                 'sda.Current_Pending_Sector' : 0,
                 'sda.Reallocated_Sector_Ct' : 0,
                 'sda.Seek_Error_Rate' : 0,
-            })
+            }
+            
+            self.setDocExample(self.collector.__class__.__name__, metrics)
+            self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

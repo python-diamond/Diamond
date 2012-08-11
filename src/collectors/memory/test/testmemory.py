@@ -31,7 +31,7 @@ class TestMemoryCollector(CollectorTestCase):
         MemoryCollector.PROC = self.getFixturePath('proc_meminfo')
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'MemTotal'      : 49554212,
             'MemFree'       : 35194496,
             'Buffers'       : 1526304,
@@ -45,7 +45,10 @@ class TestMemoryCollector(CollectorTestCase):
             'VmallocTotal'  : 34359738367,
             'VmallocUsed'   : 445452,
             'VmallocChunk'  : 34311049240
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

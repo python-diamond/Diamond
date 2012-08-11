@@ -60,12 +60,15 @@ TcpExt: 0 1 2
         TCPCollector.PROC = self.getFixturePath('proc_net_netstat_2')
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'ListenOverflows'  : 0,
             'ListenDrops'      : 0,
             'TCPLoss'          : 188,
             'TCPTimeouts'      : 15265
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

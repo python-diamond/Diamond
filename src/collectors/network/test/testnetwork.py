@@ -35,12 +35,15 @@ class TestNetworkCollector(CollectorTestCase):
         NetworkCollector.PROC = self.getFixturePath('proc_net_dev_2')
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'eth0.rx_megabyte' : (2.504, 2),
             'eth0.tx_megabyte' : (4.707, 2),
             'eth1.rx_megabyte' : (0.0, 2),
             'eth1.tx_megabyte' : (0.0, 2)
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 
 ################################################################################

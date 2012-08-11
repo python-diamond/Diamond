@@ -30,11 +30,14 @@ class TestFilestatCollector(CollectorTestCase):
         FilestatCollector.PROC = self.getFixturePath('proc_sys_fs_file-nr')
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'assigned' : 576,
             'unused'   : 0,
             'max'      : 4835852
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

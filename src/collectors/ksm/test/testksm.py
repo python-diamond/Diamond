@@ -22,7 +22,7 @@ class TestKSMCollector(CollectorTestCase):
     def test_should_work_with_synthetic_data(self, publish_mock):
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'full_scans' : 123.0, 
             'pages_shared' : 124.0, 
             'pages_sharing' : 125.0, 
@@ -31,7 +31,10 @@ class TestKSMCollector(CollectorTestCase):
             'pages_volatile' : 127.0, 
             'run' : 1.0, 
             'sleep_millisecs' : 20.0, 
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

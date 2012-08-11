@@ -58,13 +58,16 @@ class TestHttpdCollector(CollectorTestCase):
         with patch.object(TestHTTPResponse, 'read', Mock(return_value = self.getFixture('server-status-live-2').getvalue())):
             self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'ReqPerSec'   : 0,
             'BytesPerSec' : 165,
             'BytesPerReq' : 5418,
             'BusyWorkers' : 9,
             'IdleWorkers' : 0,
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

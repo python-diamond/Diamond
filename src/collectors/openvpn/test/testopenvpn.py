@@ -22,7 +22,7 @@ class TestOpenVPNCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'status.clients.a_example_org.bytes_rx' : 109619579.000000,
             'status.clients.a_example_org.bytes_tx' : 935436488.000000,
             'status.clients.b_example_org.bytes_rx' : 25067295.000000,
@@ -34,7 +34,10 @@ class TestOpenVPNCollector(CollectorTestCase):
             'status.clients.e_example_org.bytes_rx' : 13090090.000000,
             'status.clients.e_example_org.bytes_tx' : 13401853.000000,
             'status.global.max_bcast-mcast_queue_length' : 14.000000,
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

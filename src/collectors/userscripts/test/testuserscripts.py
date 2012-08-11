@@ -21,10 +21,13 @@ class TestUserScriptsCollector(CollectorTestCase):
     def test_should_work_with_example(self, publish_mock):
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'example.1': 42, 
             'example.2': 24,
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

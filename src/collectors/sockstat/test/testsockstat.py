@@ -30,7 +30,7 @@ class TestSockstatCollector(CollectorTestCase):
         SockstatCollector.PROC = self.getFixturePath('proc_net_sockstat')
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'used'       : 118,
             'tcp_inuse'  : 10,
             'tcp_orphan' : 0,
@@ -39,7 +39,10 @@ class TestSockstatCollector(CollectorTestCase):
             'tcp_mem'    : 1,
             'udp_inuse'  : 0,
             'udp_mem'    : 0
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

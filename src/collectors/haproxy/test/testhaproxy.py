@@ -23,7 +23,7 @@ class TestHAProxyCollector(CollectorTestCase):
         with patch('urllib2.urlopen', Mock(return_value = self.getFixture('stats.csv'))):
             self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'admin.frontend.smax' : 2.000000,
             'admin.frontend.slim' : 10000.000000,
             'admin.frontend.stot' : 5302.000000,
@@ -581,7 +581,10 @@ class TestHAProxyCollector(CollectorTestCase):
             'trans-service.backend.hrsp_other' : 0.000000,
             'trans-service.backend.cli_abrt' : 0.000000,
             'trans-service.backend.srv_abrt' : 0.000000,
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_and_ignore_servers(self, publish_mock):

@@ -25,9 +25,12 @@ class TestConnTrackCollector(CollectorTestCase):
         )):
             self.collector.collect()
             
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'nf_conntrack_count' : 33.0
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')

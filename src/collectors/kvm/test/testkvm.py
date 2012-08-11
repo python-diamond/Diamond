@@ -29,7 +29,7 @@ class TestKVMCollector(CollectorTestCase):
             
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'efer_reload' : 0.000000, 
             'exits' : 1436135848.000000, 
             'fpu_reload' : 121764903.500000, 
@@ -62,7 +62,10 @@ class TestKVMCollector(CollectorTestCase):
             'request_irq' : 0.000000, 
             'signal_exits' : 0.000000, 
             'tlb_flush' : 0.000000, 
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":

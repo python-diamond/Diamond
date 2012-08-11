@@ -30,13 +30,16 @@ class TestLoadAverageCollector(CollectorTestCase):
         LoadAverageCollector.PROC = self.getFixturePath('proc_loadavg')
         self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             '01' : (0.00, 2),
             '05' : (0.32, 2),
             '15' : (0.56, 2),
             'processes_running' : 1,
             'processes_total'   : 235
-        })
+        }
+        
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
 if __name__ == "__main__":
