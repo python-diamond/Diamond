@@ -36,26 +36,36 @@ class CollectorTestCase(unittest.TestCase):
         if not len(metrics):
             return False
         
-        file = os.path.join('docs', 'collectors-'+collector+'.md')
-        if not os.path.exists(file) or not os.access(file, os.W_OK) or not os.access(file, os.R_OK):
+        filePath = os.path.join('docs', 'collectors-'+collector+'.md')
+        
+        if not os.path.exists(filePath):
             return False
         
-        fp = open(file, 'r')
-        if not fp:
+        if not os.access(filePath, os.W_OK):
             return False
-        content = fp.readlines()
-        fp.close()
+            
+        if not os.access(filePath, os.R_OK):
+            return False
         
-        fp = open(file, 'w')
-        for line in content:
-            if line.strip() == '__EXAMPLESHERE__':
-                for metric in sorted(metrics.iterkeys()):
-                    metricPath = 'servers.hostname.'+metric
-                    metricPath = metricPath.replace('..', '.')
-                    fp.write(metricPath+' '+str(metrics[metric])+'\n')
-            else:
-                fp.write(line)
-        fp.close()
+        try:
+            fp = open(filePath, 'Ur')
+            content = fp.readlines()
+            fp.close()
+            
+            fp = open(filePath, 'w')
+            for line in content:
+                if line.strip() == '__EXAMPLESHERE__':
+                    for metric in sorted(metrics.iterkeys()):
+                        metricPath = 'servers.hostname.'+metric
+                        metricPath = metricPath.replace('..', '.')
+                        fp.write(metricPath+' '+str(metrics[metric])+'\n')
+                else:
+                    fp.write(line)
+            fp.close()
+            
+        except IOError, e:
+            return False
+        return True
 
     def getFixturePath(self, fixture_name):
         file = os.path.join(os.path.dirname(inspect.getfile(self.__class__)), 'fixtures', fixture_name)
