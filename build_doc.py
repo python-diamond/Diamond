@@ -18,7 +18,7 @@ def getIncludePaths(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
 
-        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'test':
+        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py':
             sys.path.append(os.path.dirname(cPath))
 
     for f in os.listdir(path):
@@ -31,7 +31,7 @@ def getCollectors(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
 
-        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'test':
+        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py':
             modname = f[:-3]
             
             try:
@@ -130,6 +130,8 @@ if __name__ == "__main__":
         # Skip configuring the basic collector object
         if collector == "Collector":
             continue
+        if collector.startswith('Test'):
+            continue
         
         print "Processing %s..." % (collector)
         
@@ -157,9 +159,8 @@ if __name__ == "__main__":
         docFile.write("\n")
         docFile.write("#### Example Output\n")
         docFile.write("\n")
-        docFile.write("All keys are prefixed with nodes.hostname by default\n")
-        docFile.write("\n")
         docFile.write("```\n")
+        docFile.write("__EXAMPLESHERE__\n")
         docFile.write("```\n")
         docFile.write("\n")
         
