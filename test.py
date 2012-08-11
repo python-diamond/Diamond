@@ -37,18 +37,22 @@ class CollectorTestCase(unittest.TestCase):
             return False
         
         file = os.path.join('docs', 'collectors-'+collector+'.md')
-        if not os.access(file, os.W_OK):
+        if not os.path.exists(file) or not os.access(file, os.W_OK) or not os.access(file, os.R_OK):
             return False
         
         fp = open(file, 'r')
+        if not fp:
+            return False
         content = fp.readlines()
         fp.close()
         
         fp = open(file, 'w')
         for line in content:
             if line.strip() == '__EXAMPLESHERE__':
-                for metric in metrics:
-                    fp.write('servers.hostname.'+metric+' '+str(metrics[metric])+'\n')
+                for metric in sorted(metrics.iterkeys()):
+                    metricPath = 'servers.hostname.'+metric
+                    metricPath = metricPath.replace('..', '.')
+                    fp.write(metricPath+' '+str(metrics[metric])+'\n')
             else:
                 fp.write(line)
         fp.close()
