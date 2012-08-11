@@ -31,6 +31,28 @@ def get_collector_config(key, value):
     return config
 
 class CollectorTestCase(unittest.TestCase):
+    
+    def setDocExample(self, collector, metrics):
+        if not len(metrics):
+            return False
+        
+        file = os.path.join('docs', 'collectors-'+collector+'.md')
+        if not os.access(file, os.W_OK):
+            return False
+        
+        fp = open(file, 'r')
+        content = fp.readlines()
+        fp.close()
+        
+        fp = open(file, 'w')
+        for line in content:
+            if line.strip() == '__EXAMPLESHERE__':
+                for metric in metrics:
+                    fp.write('servers.hostname.'+metric+' '+str(metrics[metric])+'\n')
+            else:
+                fp.write(line)
+        fp.close()
+
     def getFixturePath(self, fixture_name):
         file = os.path.join(os.path.dirname(inspect.getfile(self.__class__)), 'fixtures', fixture_name)
         if not os.access(file, os.R_OK):
