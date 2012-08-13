@@ -60,6 +60,14 @@ class XENCollector(Collector):
             memallocated += dominfo[2]
             if i > 0:
                 coresallocated += dominfo[3]
-        results = { 'InstalledMem': conninfo[1], 'MemAllocated': memallocated / 1024, 'MemFree': conninfo[1] - (memallocated / 1024), 'AllocatedCores': coresallocated, 'DiskFree': freeSpace, 'TotalCores': totalcores, 'FreeCores': (totalcores - coresallocated) }
+        results = {
+            'InstalledMem': conninfo[1],
+            'MemAllocated': memallocated / 1024,
+            'MemFree': conninfo[1] - (memallocated / 1024),
+            'AllocatedCores': coresallocated,
+            'DiskFree': freeSpace,
+            'TotalCores': totalcores,
+            'FreeCores': (totalcores - coresallocated)
+        }
         for k in results.keys():
             self.publish(k, results[k], 0)
