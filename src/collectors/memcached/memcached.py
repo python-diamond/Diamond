@@ -60,16 +60,13 @@ class MemcachedCollector(diamond.collector.Collector):
             },
         } )
         return config
-
-    def get_stats(self, config):
-        # stuff that's always ignored, aren't 'stats'
-        ignored = ('libevent', 'pid', 'pointer_size', 'time', 'version')
-        
-        stats = {}
+    
+    def get_raw_stats(self, host, port):
+        data = ''
         # connect
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((config['host'], int(config['port'])))
+            sock.connect((host, int(port)))
             # request stats
             sock.send('stats\n')
             # something big enough to get whatever is sent back
@@ -77,14 +74,22 @@ class MemcachedCollector(diamond.collector.Collector):
         except socket.error, e:
             self.log.exception('Failed to get stats from %s:%s',
                                config['host'], config['port'])
-        else:
-            # parse stats
-            for line in data.split('\r\n'):
-                pieces = line.split(' ')
-                if pieces[0] != 'STAT' or pieces[1] in ignored:
-                    continue
-                stats[pieces[1]] = pieces[2]
+        return data
 
+    def get_stats(self, config):
+        # stuff that's always ignored, aren't 'stats'
+        ignored = ('libevent', 'pid', 'pointer_size', 'time', 'version')
+        
+        stats = {}
+        data = self.get_raw_stats(config['host'], int(config['port']))
+                             
+        # parse stats
+        for line in data.splitlines():
+            pieces = line.split(' ')
+            if pieces[0] != 'STAT' or pieces[1] in ignored:
+                continue
+            stats[pieces[1]] = pieces[2]
+        
         return stats
 
     def collect(self):
