@@ -10,7 +10,7 @@ sensors version 3.1.2 with libsensors version 3.1.2
 
 #### Dependencies
 
- * python-sensors
+ * [PySensors](http://pypi.python.org/pypi/PySensors/)
 
 """
 
