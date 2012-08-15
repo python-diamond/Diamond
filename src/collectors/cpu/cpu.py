@@ -74,16 +74,26 @@ class CPUCollector(diamond.collector.Collector):
 
                 results[cpu] = {}
 
-                if len(elements) >= 2  : results[cpu]['user']       = elements[1]
-                if len(elements) >= 3  : results[cpu]['nice']       = elements[2]
-                if len(elements) >= 4  : results[cpu]['system']     = elements[3]
-                if len(elements) >= 5  : results[cpu]['idle']       = elements[4]
-                if len(elements) >= 6  : results[cpu]['iowait']     = elements[5]
-                if len(elements) >= 7  : results[cpu]['irq']        = elements[6]
-                if len(elements) >= 8  : results[cpu]['softirq']    = elements[7]
-                if len(elements) >= 9  : results[cpu]['steal']      = elements[8]
-                if len(elements) >= 10 : results[cpu]['guest']      = elements[9]
-                if len(elements) >= 11 : results[cpu]['guest_nice'] = elements[10]
+                if len(elements) >= 2  :
+                    results[cpu]['user'] = elements[1]
+                if len(elements) >= 3  :
+                    results[cpu]['nice'] = elements[2]
+                if len(elements) >= 4  :
+                    results[cpu]['system'] = elements[3]
+                if len(elements) >= 5  :
+                    results[cpu]['idle'] = elements[4]
+                if len(elements) >= 6  :
+                    results[cpu]['iowait'] = elements[5]
+                if len(elements) >= 7  :
+                    results[cpu]['irq'] = elements[6]
+                if len(elements) >= 8  :
+                    results[cpu]['softirq'] = elements[7]
+                if len(elements) >= 9  :
+                    results[cpu]['steal'] = elements[8]
+                if len(elements) >= 10 :
+                    results[cpu]['guest'] = elements[9]
+                if len(elements) >= 11 :
+                    results[cpu]['guest_nice'] = elements[10]
 
             # Close File
             file.close()
