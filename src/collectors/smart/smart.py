@@ -67,7 +67,7 @@ class SmartCollector(diamond.collector.Collector):
                         metric = "%s.%s" % (device, attribute[0])
                         
                     # New metric? Store it
-                    if not metrics.has_key(metric):
+                    if metric not in metrics:
                         metrics[metric] = attribute[9]
                     # Duplicate metric? Only store if it has a larger value
                     # This happens semi-often with the Temperature_Celsius attribute

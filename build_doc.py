@@ -45,7 +45,7 @@ def getCollectors(path):
                     
                     cls = getattr(module, attr)
 
-                    if not collectors.has_key(cls.__name__):
+                    if cls.__name__ not in collectors:
                         collectors[cls.__name__] = module
             except Exception, e:
                 print "Failed to import module: %s. %s" % (modname, traceback.format_exc())
@@ -76,7 +76,7 @@ def getHandlers(path):
                     
                     cls = getattr(module, attr)
                     
-                    if not handlers.has_key(cls.__name__):
+                    if cls.__name__ not in handlers:
                         handlers[cls.__name__] = module
             except Exception, e:
                 print "Failed to import module: %s. %s" % (modname, traceback.format_exc())

@@ -242,7 +242,7 @@ class Server(object):
 
             method = diamond.scheduler.method.sequential
 
-            if c.config.has_key('method'):
+            if 'method' in c.config:
                 if c.config['method'] == 'Threaded':
                     method = diamond.scheduler.method.threaded
                 elif c.config['method'] == 'Forked':

@@ -272,7 +272,7 @@ class MySQLCollector(diamond.collector.Collector):
                 self.publish(metric_name, metric_value)
             else:
                 for k in self.config['publish'].split():
-                    if not metrics.has_key(k):
+                    if k not in metrics:
                         self.log.error("No such key '%s' available, issue 'show global status' for a full list", k)
                     else:
                         self.publish(k, metrics[k])

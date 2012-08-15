@@ -108,7 +108,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     major = os.major(stat.st_dev)
                     minor = os.minor(stat.st_dev)
 
-                    if result.has_key((major, minor)):
+                    if (major, minor) in result:
                         continue
 
                     result[(major, minor)] = {
@@ -148,7 +148,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             if exclude_reg.match(info['mount_point']):
                 continue
             
-            if labels.has_key(info['device']):
+            if info['device'] in labels:
                 name = labels[info['device']]
             else:
                 name = info['mount_point'].replace('/', '_')

@@ -83,7 +83,7 @@ class ApcupsdCollector(diamond.collector.Collector):
                 metrics[matches.group(1)] = value
                 
         for metric in self.config['metrics']:
-            if not metrics.has_key(metric):
+            if metric not in metrics:
                 continue
             
             metric_name = "%s.%s" % (raw['UPSNAME'], metric)
