@@ -31,7 +31,8 @@ You can also specify multiple and mixed instances::
  * urlparse
 
 """
-    
+
+import socket
 import diamond.collector
 import os.path
 import urlparse
