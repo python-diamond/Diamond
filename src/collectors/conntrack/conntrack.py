@@ -42,7 +42,7 @@ class ConnTrackCollector(diamond.collector.Collector):
 
     def collect(self):
         if not os.access(self.config['bin'], os.X_OK):
-            self.log.error(self.config['bin']+" is not executable")
+            self.log.error("%s is not executable", self.config['bin'])
             return False
         
         command = [self.config['bin'], 'net.netfilter.nf_conntrack_count' ]

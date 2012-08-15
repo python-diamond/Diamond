@@ -60,7 +60,7 @@ class HttpdCollector(diamond.collector.Collector):
         try:
             connection.request("GET", "%s?%s" % (parts[2], parts[4]))
         except Exception, e:
-            self.log.error("Error retrieving HTTPD stats. %s" % e)
+            self.log.error("Error retrieving HTTPD stats. %s", e)
             return
 
         response = connection.getresponse()

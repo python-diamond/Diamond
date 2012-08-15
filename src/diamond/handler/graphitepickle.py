@@ -53,7 +53,8 @@ class GraphitePickleHandler(GraphiteHandler):
         # If there are sufficient metrics, then pickle and send
         if len(self.batch) >= self.batch_size:
             # Log
-            self.log.debug("GraphitePickleHandler: Sending batch data. batch size: %d" % self.batch_size)
+            self.log.debug("GraphitePickleHandler: Sending batch data. batch size: %d",
+                           self.batch_size)
             # Pickle the batch of metrics
             data = self._pickle_batch()
             # Send pickled batch

@@ -53,7 +53,7 @@ class Server(object):
         if cls == Handler or not issubclass(cls, Handler):
             raise TypeError, "%s is not a vaild Handler" % fqcn
         # Log
-        self.log.debug("Loaded Handler: %s" % fqcn)
+        self.log.debug("Loaded Handler: %s", fqcn)
         return cls
 
     def load_handlers(self):
@@ -81,7 +81,8 @@ class Server(object):
 
             except Exception, e:
                 # Log Error
-                self.log.debug("Failed to load handler %s. %s" % (h, traceback.format_exc()))
+                self.log.debug("Failed to load handler %s. %s", h,
+                               traceback.format_exc())
                 continue
 
     def load_collector(self, fqcn):
@@ -94,7 +95,7 @@ class Server(object):
         if cls == Collector or not issubclass(cls, Collector):
             raise TypeError, "%s is not a valid Collector" % fqcn
         # Log
-        self.log.debug("Loaded Collector: %s" % fqcn)
+        self.log.debug("Loaded Collector: %s", fqcn)
         return cls
 
     def load_collectors(self, path, filter=None):
@@ -112,7 +113,7 @@ class Server(object):
             return collectors
 
         # Log
-        self.log.debug("Loading Collectors from: %s" % path)
+        self.log.debug("Loading Collectors from: %s", path)
 
         # Add path to the system path
         sys.path.append(path)
@@ -144,7 +145,7 @@ class Server(object):
                     if mtime <= self.modules[modname]:
                         # Module hasn't changed
                         # Log
-                        self.log.debug("Found Module %s, but it hasn't changed." % modname)
+                        self.log.debug("Found Module %s, but it hasn't changed.", modname)
                         continue
 
                 try:
@@ -152,13 +153,14 @@ class Server(object):
                     mod = __import__(modname, globals(), locals(), ['*'])
                 except Exception, e:
                     # Log error
-                    self.log.error("Failed to import module: %s. %s" % (modname, traceback.format_exc()))
+                    self.log.error("Failed to import module: %s. %s", modname,
+                                   traceback.format_exc())
                     continue
 
                 # Update module mtime
                 self.modules[modname] = mtime
                 # Log
-                self.log.debug("Loaded Module: %s" % modname)
+                self.log.debug("Loaded Module: %s", modname)
 
                 # Find all classes defined in the module
                 for attrname in dir(mod):
@@ -174,7 +176,8 @@ class Server(object):
                             collectors[cls.__name__] = cls
                         except Exception, e:
                             # Log error
-                            self.log.error("Failed to load Collector: %s. %s" % (fqcn, traceback.format_exc()))
+                            self.log.error("Failed to load Collector: %s. %s",
+                                           fqcn, traceback.format_exc())
                             continue
 
         # Return Collector classes
@@ -189,10 +192,11 @@ class Server(object):
             # Initialize Collector
             collector = cls(self.config, self.handlers)
             # Log
-            self.log.debug("Initialized Collector: %s" % cls.__name__)
+            self.log.debug("Initialized Collector: %s", cls.__name__)
         except Exception, e:
             # Log error
-            self.log.error("Failed to initialize Collector: %s. %s" % (cls.__name__, traceback.format_exc()))
+            self.log.error("Failed to initialize Collector: %s. %s",
+                           cls.__name__, traceback.format_exc())
 
         # Return collector
         return collector
@@ -203,11 +207,13 @@ class Server(object):
         """
         # Check collector is for realz
         if c is None:
-            self.log.warn("Skipped loading invalid Collector: %s" % c.__class__.__name__)
+            self.log.warn("Skipped loading invalid Collector: %s",
+                          c.__class__.__name__)
             return
         
         if c.config['enabled'] != 'True':
-            self.log.warn("Skipped loading disabled Collector: %s" % c.__class__.__name__)
+            self.log.warn("Skipped loading disabled Collector: %s",
+                          c.__class__.__name__)
             return
 
         # Get collector schedule
@@ -219,7 +225,7 @@ class Server(object):
             if name in self.tasks:
                 self.scheduler.cancel(self.tasks[name])
                 # Log
-                self.log.debug("Canceled task: %s" % name)
+                self.log.debug("Canceled task: %s", name)
 
             method = diamond.scheduler.method.sequential
 
@@ -236,7 +242,7 @@ class Server(object):
                 task = self.scheduler.add_single_task(func, name, splay, method, args, None)
 
             # Log
-            self.log.debug("Scheduled task: %s" % name)
+            self.log.debug("Scheduled task: %s", name)
             # Add task to list
             self.tasks[name] = task
 

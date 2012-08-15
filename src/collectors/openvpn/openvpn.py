@@ -74,7 +74,7 @@ class OpenVPNCollector(diamond.collector.Collector):
             if collect:
                 collect(uri)
             else:
-                self.log.error('OpenVPN no handler for %s' % (uri,))
+                self.log.error('OpenVPN no handler for %s', uri)
 
     def collect_file(self, uri):
         parsed = urlparse.urlparse(uri)
@@ -85,10 +85,11 @@ class OpenVPNCollector(diamond.collector.Collector):
             name = os.path.splitext(os.path.basename(filename))[0]
 
         if not os.access(filename, os.R_OK):
-            self.log.error('OpenVPN collect failed: unable to read "%s"' % (filename,))
+            self.log.error('OpenVPN collect failed: unable to read "%s"',
+                           filename)
             return
         else:
-            self.log.info('OpenVPN parsing "%s" file: %s' % (name, filename))
+            self.log.info('OpenVPN parsing "%s" file: %s', name, filename)
 
         fd = open(filename, 'r')
         lines = fd.readlines()
@@ -102,7 +103,8 @@ class OpenVPNCollector(diamond.collector.Collector):
             host, port = parsed.netloc.split(':')
             port = int(port)
         except ValueError:
-            self.log.error('OpenVPN expected host:port in URI, got "%s"' % (parsed.netloc,))
+            self.log.error('OpenVPN expected host:port in URI, got "%s"',
+                           parsed.netloc)
             return
 
         if '?' in parsed.path:
@@ -110,7 +112,7 @@ class OpenVPNCollector(diamond.collector.Collector):
         else:
             name = host.replace('.', '_')
         
-        self.log.info('OpenVPN parsing "%s" tcp: %s:%d' % (name, host, port))
+        self.log.info('OpenVPN parsing "%s" tcp: %s:%d', name, host, port)
 
         try:
             server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -120,7 +122,7 @@ class OpenVPNCollector(diamond.collector.Collector):
             fd = server.makefile('rb')
             line = fd.readline()
             if not line.startswith('>INFO:OpenVPN'):
-                self.log.debug('OpenVPN received: %s' % (line.rstrip(),))
+                self.log.debug('OpenVPN received: %s', line.rstrip())
                 self.log.error('OpenVPN protocol error')
                 server.close()
                 return
@@ -141,12 +143,12 @@ class OpenVPNCollector(diamond.collector.Collector):
             server.close()
 
         except socket.error, e:
-            self.log.error('OpenVPN management connection error: %s' % (str(e),))
+            self.log.error('OpenVPN management connection error: %s', e)
             return
 
     def parse(self, name, lines):
         for line in lines:
-            self.log.debug('OpenVPN: %s' % (line.rstrip(),))
+            self.log.debug('OpenVPN: %s', line.rstrip())
 
         import time
         time.sleep(0.5)
@@ -217,7 +219,8 @@ class OpenVPNCollector(diamond.collector.Collector):
         try:
             value = long(value)
         except ValueError:
-            self.log.error('OpenVPN expected a number for "%s", got "%s"' % (key, value))
+            self.log.error('OpenVPN expected a number for "%s", got "%s"',
+                           key, value)
             return
         else:
             self.publish(key, value)

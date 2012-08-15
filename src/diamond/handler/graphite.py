@@ -82,7 +82,7 @@ class GraphiteHandler(Handler):
                 break
             except socket.error, e:
                 # Log Error
-                self.log.error("GraphiteHandler: Failed sending data. %s." % e)
+                self.log.error("GraphiteHandler: Failed sending data. %s.", e)
                 # Attempt to restablish connection
                 self._close()
                 # Decrement retry
@@ -108,10 +108,12 @@ class GraphiteHandler(Handler):
         try:
             self.socket.connect((self.host, self.port))
             # Log
-            self.log.debug("Established connection to graphite server %s:%d" % (self.host, self.port))
+            self.log.debug("Established connection to graphite server %s:%d",
+                           self.host, self.port)
         except Exception, ex:
             # Log Error
-            self.log.error("GraphiteHandler: Failed to connect to %s:%i. %s" % (self.host, self.port, ex))
+            self.log.error("GraphiteHandler: Failed to connect to %s:%i. %s",
+                           self.host, self.port, ex)
             # Close Socket
             self._close()
             return
