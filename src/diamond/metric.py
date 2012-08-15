@@ -20,7 +20,7 @@ class Metric(object):
 
         # Validate the path and value submitted
         if path is None or value is None:
-            raise DiamondException, "Invalid parameter."
+            raise DiamondException("Invalid parameter.")
 
         # If no timestamp was passed in, set it to the current time
         if timestamp is None:
@@ -31,7 +31,7 @@ class Metric(object):
                 try:
                     timestamp = int(timestamp)
                 except ValueError, e:
-                    raise DiamondException, "Invalid parameter: %s" % e
+                    raise DiamondException("Invalid parameter: %s" % e)
 
         # The value needs to be a float or an int.  If it is, great.  If not, try to cast it to one of those.
         if not isinstance(value, int) and not isinstance(value, float):
@@ -41,7 +41,7 @@ class Metric(object):
                 else:
                     value = float(value)
             except ValueError, e:
-                    raise DiamondException, "Invalid parameter: %s" % e
+                    raise DiamondException("Invalid parameter: %s" % e)
 
         self.path = path
         self.value = value
@@ -69,4 +69,4 @@ class Metric(object):
             # TODO: get precision from value string
             return Metric(groups['name'], groups['value'], float(groups['timestamp']))
         except:
-            raise DiamondException, "Metric could not be parsed from string: %s." % string
+            raise DiamondException("Metric could not be parsed from string: %s." % string)

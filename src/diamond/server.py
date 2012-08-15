@@ -51,7 +51,7 @@ class Server(object):
         cls = load_class_from_name(fqcn)
         # Check if cls is subclass of Handler
         if cls == Handler or not issubclass(cls, Handler):
-            raise TypeError, "%s is not a valid Handler" % fqcn
+            raise TypeError("%s is not a valid Handler" % fqcn)
         # Log
         self.log.debug("Loaded Handler: %s", fqcn)
         return cls
@@ -93,7 +93,7 @@ class Server(object):
         cls = load_class_from_name(fqcn)
         # Check if cls is subclass of Collector
         if cls == Collector or not issubclass(cls, Collector):
-            raise TypeError, "%s is not a valid Collector" % fqcn
+            raise TypeError("%s is not a valid Collector" % fqcn)
         # Log
         self.log.debug("Loaded Collector: %s", fqcn)
         return cls
@@ -120,7 +120,7 @@ class Server(object):
         
         # Get a list of files in the directory, if the directory exists
         if not os.path.exists(path):
-            raise OSError, "Directory does not exist: %s" % path
+            raise OSError("Directory does not exist: %s" % path)
             
         if path.endswith('tests') or path.endswith('fixtures'):
             return collectors

@@ -14,7 +14,7 @@ def load_modules_from_path(path):
 
     # Get a list of files in the directory, if the directory exists
     if not os.path.exists(path):
-        raise OSError, "Directory does not exist: %s" % path
+        raise OSError("Directory does not exist: %s" % path)
 
     # Add path to the system path
     sys.path.append(path)
@@ -37,6 +37,6 @@ def load_class_from_name(fqcn):
     cls = getattr(sys.modules[modulename], classname)
     # Check cls
     if not inspect.isclass(cls):
-        raise TypeError, "%s is not a class" % fqcn
+        raise TypeError("%s is not a class" % fqcn)
     # Return class
     return cls

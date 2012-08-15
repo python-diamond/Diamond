@@ -62,7 +62,7 @@ class SNMPCollector(diamond.collector.Collector):
                 task = "_".join([self.__class__.__name__, device])
                 # Check if task is already in schedule
                 if task in schedule:
-                    raise KeyError, "Duplicate device scheduled"
+                    raise KeyError("Duplicate device scheduled")
                 schedule[task] = (self.collect_snmp, (device, c['host'], int(c['port']), c['community']), int(self.config['splay']), int(self.config['interval']))
         return schedule
 
