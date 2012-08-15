@@ -224,4 +224,3 @@ class OpenVPNCollector(diamond.collector.Collector):
             return
         else:
             self.publish(key, value)
-

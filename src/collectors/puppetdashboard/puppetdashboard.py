@@ -58,4 +58,3 @@ class PuppetDashboardCollector(diamond.collector.Collector):
                 self.publish(results['key'], results['count'])
             except Exception, e:
                 self.log.error('Couldnt parse the output: %s', e)
-

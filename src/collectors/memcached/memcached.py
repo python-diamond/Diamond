@@ -110,4 +110,3 @@ class MemcachedCollector(diamond.collector.Collector):
                     # should log an error about it
                     self.log.error("No such key '%s' available, issue 'stats' for "
                                    "a full list", stat)
-

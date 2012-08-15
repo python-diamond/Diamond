@@ -197,5 +197,3 @@ if __name__ == "__main__":
         docFile.close()
         
     handlerIndexFile.close()
-    
-

@@ -59,4 +59,3 @@ class ResqueWebCollector(diamond.collector.Collector):
                 
             except Exception, e:
                 self.log.error('Couldnt parse the queue: %s', e)
-

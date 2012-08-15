@@ -152,4 +152,3 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
                 metric = Metric(metricPath, metricValue, timestamp, 0)
                 # Publish Metric
                 self.publish_metric(metric)
-

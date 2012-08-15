@@ -69,4 +69,3 @@ class GmetricHandler(Handler):
         Close the connection
         """
         self.gmetric = None
-

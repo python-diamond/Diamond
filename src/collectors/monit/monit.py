@@ -75,4 +75,3 @@ class MonitCollector(diamond.collector.Collector):
 
         for key in metrics:
             self.publish(key, metrics[key])
-

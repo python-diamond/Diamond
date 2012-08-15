@@ -56,4 +56,3 @@ class PostqueueCollector(diamond.collector.Collector):
             postqueue_count = 0
 
         self.publish('count', postqueue_count)
-

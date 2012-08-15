@@ -77,4 +77,3 @@ class RabbitMQCollector(diamond.collector.Collector):
             else:
                 publish_key = joined_keys
             self.publish(publish_key, value)
-

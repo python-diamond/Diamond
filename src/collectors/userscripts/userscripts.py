@@ -58,4 +58,3 @@ class UserScriptsCollector(diamond.collector.Collector):
             for line in out.split('\n'):
                 name, value = line.split()
                 self.publish(name, value)
-

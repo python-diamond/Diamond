@@ -59,4 +59,3 @@ class zmqHandler ( Handler ):
     self.socket.send("%s" % str(metric) )
     # Release lock
     self.lock.release()
-
