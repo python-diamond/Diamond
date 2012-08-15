@@ -36,10 +36,12 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
 
     def collect(self):
+        url = 'http://%s:%i/_cluster/nodes/_local/stats?all=true' % (
+            self.config['host'], int(self.config['port']))
         try:
-            response = urllib2.urlopen('http://%s:%i/_cluster/nodes/_local/stats?all=true' % (self.config['host'], int(self.config['port'])))
+            response = urllib2.urlopen(url)
         except Exception, e:
-            self.log.error("Unable to open http://%s:%i/_cluster/nodes/_local/stats?all=true" % (self.config['host'], int(self.config['port'])))
+            self.log.error("Unable to open %s" % url)
             return
 
         try:
