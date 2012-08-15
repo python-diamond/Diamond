@@ -256,12 +256,14 @@ class Scheduler:
         # code for sched module of python 2.6+
         def _getqueuetoptime(self):
             return self.sched._queue[0].time
+
         def _clearschedqueue(self):
             self.sched._queue[:] = []
     else:
         # code for sched module of python 2.5 and older
         def _getqueuetoptime(self):
             return self.sched.queue[0][0]
+
         def _clearschedqueue(self):
             self.sched.queue[:] = []
 
