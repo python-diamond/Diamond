@@ -49,9 +49,6 @@ class HttpdCollector(diamond.collector.Collector):
             service_host = endpoint[0]
             service_port = 80
 
-        # Parse path
-        service_path = parts[2]
-
         metrics = ['ReqPerSec', 'BytesPerSec', 'BytesPerReq', 'BusyWorkers', 'IdleWorkers']
 
         # Setup Connection

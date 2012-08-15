@@ -78,7 +78,7 @@ class ApcupsdCollector(diamond.collector.Collector):
                     continue
                 try:
                     value = float(vmatch.group(1))
-                except:
+                except ValueError:
                     continue
                 metrics[matches.group(1)] = value
                 

@@ -48,6 +48,6 @@ class KSMCollector(diamond.collector.Collector):
                 filehandle = open(item)
                 try:
                     self.publish(os.path.basename(item), float(filehandle.readline().rstrip()))
-                except:
+                except ValueError:
                     pass
                 filehandle.close()

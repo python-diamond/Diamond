@@ -12,7 +12,6 @@ Shells out to get ipvs statistics, which may or may not require sudo access
 import diamond.collector
 import subprocess
 import os
-import re
 import string
 
 class IPVSCollector(diamond.collector.Collector):

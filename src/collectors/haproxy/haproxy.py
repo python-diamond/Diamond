@@ -70,7 +70,6 @@ class HAProxyCollector(diamond.collector.Collector):
             return metrics
 
         scheme = matchobj.group(1)
-        realm  = matchobj.group(2)
         # here we've extracted the scheme
         # and the realm from the header
         if scheme.lower() != 'basic':
