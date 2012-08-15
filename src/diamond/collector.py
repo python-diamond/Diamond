@@ -15,8 +15,6 @@ if platform.architecture()[0] == '64bit':
 else:
     MAX_COUNTER = (2 ** 32) - 1
 
-from diamond.metric import Metric
-
 class Collector(object):
     """
     The Collector class is a base class for all metric collectors.
