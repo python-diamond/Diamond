@@ -65,7 +65,7 @@ class HttpdCollector(diamond.collector.Collector):
 
         response = connection.getresponse()
         data = response.read()
-        exp = re.compile('^([A-Za-z]+):\s+(.+)$');
+        exp = re.compile('^([A-Za-z]+):\s+(.+)$')
         for line in data.split('\n'):
             if line:
                 m = exp.match(line)

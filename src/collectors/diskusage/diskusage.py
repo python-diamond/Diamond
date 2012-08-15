@@ -160,8 +160,8 @@ class DiskUsageCollector(diamond.collector.Collector):
                     if key != 'io_in_progress':
                         metric_value = self.derivative(metric_name, value, self.MAX_VALUES[key])
                     else:
-                        metric_value = value;
-    
+                        metric_value = value
+
                     metrics[key] = metric_value
 
             metrics['read_requests_merged_per_second']  = metrics['reads_merged'] / time_delta

@@ -50,8 +50,8 @@ class PingCollector(diamond.collector.Collector):
         for key in self.config.keys():
             if key[:7] == "target_":
                 host = self.config[key]
-                metric_name = host.replace('.','_');
-                
+                metric_name = host.replace('.','_')
+
                 if not os.access(self.config['bin'], os.X_OK):
                     return
                 
