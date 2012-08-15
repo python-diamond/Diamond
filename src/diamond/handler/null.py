@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Output the collected values to the debug log channel.
 """

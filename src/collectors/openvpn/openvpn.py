@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Processes OpenVPN metrics. This collector can process multiple OpenVPN
 instances (even from a server box). In addition to the path, you may

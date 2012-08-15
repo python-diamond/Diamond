@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 The NfsdCollector collects nfsd utilization metrics using /proc/net/rpc/nfsd.
 

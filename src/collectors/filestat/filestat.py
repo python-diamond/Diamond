@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Uses /proc/sys/fs/file-nr to collect data on number of open files
 

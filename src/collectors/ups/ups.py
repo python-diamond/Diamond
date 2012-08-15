@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 This class collects data from NUT, a UPS interface for linux.
 

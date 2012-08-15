@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 The CPUCollector collects CPU utilization metric using /proc/stat.
 

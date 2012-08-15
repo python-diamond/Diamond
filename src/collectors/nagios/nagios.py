@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Shells out to get nagios statistics, which may or may not require sudo access
 

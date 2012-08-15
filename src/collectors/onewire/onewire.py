@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 The OneWireCollector collects data from 1-Wire Filesystem
 

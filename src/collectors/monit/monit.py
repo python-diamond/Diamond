@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collect the monit stats and report on cpu/memory for monitored processes
 

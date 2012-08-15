@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Send metrics to a [OpenTSDB](http://opentsdb.net/) server.
 

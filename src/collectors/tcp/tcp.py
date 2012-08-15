@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 The TCPCollector class collects metrics on TCP stats
 

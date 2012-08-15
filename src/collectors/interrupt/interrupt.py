@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 The InterruptCollector class collects metrics on interrupts from
 /proc/interrupts

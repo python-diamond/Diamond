@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Emulate a gmetric client for usage with [Ganglia Monitoring System](http://ganglia.sourceforge.net/)
 """

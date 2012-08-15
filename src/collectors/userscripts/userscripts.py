@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Runs third party scripts and collects their output.
 

@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Uses /proc/loadavg to collect data on load average
 

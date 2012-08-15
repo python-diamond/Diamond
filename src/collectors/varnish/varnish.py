@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 VarnishCollector grabs stats from Varnish and submits them the Graphite
 

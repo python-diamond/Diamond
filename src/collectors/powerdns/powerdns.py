@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collects all metrics exported by the powerdns nameserver using the
 pdns_control binary.

@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collect stats from Apache HTTPD server using mod_status
 

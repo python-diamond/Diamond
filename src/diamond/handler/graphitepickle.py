@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Send metrics to a [graphite](http://graphite.wikidot.com/) using the high performace pickle interface.
 

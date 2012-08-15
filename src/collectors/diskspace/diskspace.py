@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Uses /proc/mounts and os.statvfs() to get disk space usage
 

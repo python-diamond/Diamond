@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 SNMPCollector is a special collector for collecting data from using SNMP
 

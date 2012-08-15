@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Uses /proc/vmstat to collect data on virtual memory manager
 

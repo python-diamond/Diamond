@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 The XENCollector grabs usage/allocation metrics using libvirt
 

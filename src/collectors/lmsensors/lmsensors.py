@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 This class collects data from libsensors. It should work against libsensors 2.x and 3.x, pending
 support within the PySensors Ctypes binding: http://pypi.python.org/pypi/PySensors/

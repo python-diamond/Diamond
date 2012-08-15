@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 The SNMPInterfaceCollector is designed for collecting interface data from remote SNMP-enabled devices such as routers and switches using SNMP IF_MIB
 

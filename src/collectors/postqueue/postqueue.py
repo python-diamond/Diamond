@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collect the emails in the postfix queue
 

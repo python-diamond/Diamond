@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collects stats from bind 9.5's statistics server
 

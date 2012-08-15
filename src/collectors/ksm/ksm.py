@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 This class collects 'Kernel Samepage Merging' statistics.
 KSM is a memory de-duplication feature of the Linux Kernel (2.6.32+).

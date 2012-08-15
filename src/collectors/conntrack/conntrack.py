@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Shells out to get the value of sysctl net.netfilter.nf_conntrack_count
 

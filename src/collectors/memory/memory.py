@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 This class collects data on memory utilization
 

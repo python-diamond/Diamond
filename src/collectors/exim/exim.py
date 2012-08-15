@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Shells out to get the exim queue length
 

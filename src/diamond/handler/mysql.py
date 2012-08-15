@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Insert the collected values into a mysql table
 """

@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Diamond collector for Hadoop metrics, see:
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding=utf-8
 
 # This is the MIT License
 # http://www.opensource.org/licenses/mit-license.php
