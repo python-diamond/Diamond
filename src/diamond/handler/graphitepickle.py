@@ -23,7 +23,7 @@ from graphite import GraphiteHandler
 
 try:
     import cPickle as pickle
-except:
+except ImportError:
     import pickle as pickle
 
 class GraphitePickleHandler(GraphiteHandler):
