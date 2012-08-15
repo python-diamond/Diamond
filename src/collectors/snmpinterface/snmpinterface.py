@@ -49,11 +49,11 @@ import time
 import re
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), 'snmp'))
-from snmp import SNMPCollector
+from snmp import SNMPCollector as parent_SNMPCollector
 from diamond.metric import Metric
 import diamond.convertor
 
-class SNMPInterfaceCollector(SNMPCollector):
+class SNMPInterfaceCollector(parent_SNMPCollector):
 
     # IF-MIB OID
     IF_MIB_INDEX_OID = "1.3.6.1.2.1.2.2.1.1"

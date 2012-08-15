@@ -79,7 +79,7 @@ class Server(object):
                 # Initialize Handler class
                 self.handlers.append(cls(handler_config))
 
-            except Exception, e:
+            except ImportError:
                 # Log Error
                 self.log.debug("Failed to load handler %s. %s", h,
                                traceback.format_exc())
@@ -97,6 +97,19 @@ class Server(object):
         # Log
         self.log.debug("Loaded Collector: %s", fqcn)
         return cls
+    
+    def load_include_path(self, path):
+        """
+        Scan for and add paths to the include path
+        """
+        # Add path to the system path
+        sys.path.append(path)
+        # Load all the files in path
+        for f in os.listdir(path):
+            # Are we a directory? If so process down the tree
+            fpath = os.path.join(path, f)
+            if os.path.isdir(fpath):
+                self.load_include_path(fpath)
 
     def load_collectors(self, path, filter=None):
         """
@@ -115,12 +128,10 @@ class Server(object):
         # Log
         self.log.debug("Loading Collectors from: %s", path)
 
-        # Add path to the system path
-        sys.path.append(path)
         # Load all the files in path
         for f in os.listdir(path):
 
-            # Are we a directory? If so process down the stack
+            # Are we a directory? If so process down the tree
             fpath = os.path.join(path, f)
             if os.path.isdir(fpath):
                 subcollectors = self.load_collectors(fpath)
@@ -151,7 +162,7 @@ class Server(object):
                 try:
                     # Import the module
                     mod = __import__(modname, globals(), locals(), ['*'])
-                except Exception, e:
+                except ImportError:
                     # Log error
                     self.log.error("Failed to import module: %s. %s", modname,
                                    traceback.format_exc())
@@ -167,6 +178,8 @@ class Server(object):
                     attr = getattr(mod, attrname)
                     # Only attempt to load classes that are infact classes, are Collectors but are not the base Collector class
                     if inspect.isclass(attr) and issubclass(attr, Collector) and attr != Collector:
+                        if attrname.startswith('parent_'):
+                            continue
                         # Get class name
                         fqcn = '.'.join([modname, attrname])
                         try:
@@ -261,6 +274,7 @@ class Server(object):
         self.load_config()
 
         # Load collectors
+        self.load_include_path(self.config['server']['collectors_path'])
         collectors = self.load_collectors(self.config['server']['collectors_path'])
 
         # Setup Collectors

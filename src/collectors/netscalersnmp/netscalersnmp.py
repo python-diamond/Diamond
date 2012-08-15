@@ -18,9 +18,9 @@ import re
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"../")))
 
 from diamond.metric import Metric
-from snmp import SNMPCollector
+from snmp import SNMPCollector as parent_SNMPCollector
 
-class NetscalerSNMPCollector(SNMPCollector):
+class NetscalerSNMPCollector(parent_SNMPCollector):
     """
     SNMPCollector for Netscaler Metrics
     """
