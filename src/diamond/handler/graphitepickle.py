@@ -22,9 +22,9 @@ import struct
 from graphite import GraphiteHandler
 
 try:
-	import cPickle as pickle
+    import cPickle as pickle
 except:
-	import pickle as pickle
+    import pickle as pickle
 
 class GraphitePickleHandler(GraphiteHandler):
     """
