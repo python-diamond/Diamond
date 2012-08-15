@@ -22,19 +22,19 @@ class TestElasticSearchCollector(CollectorTestCase):
             self.collector.collect()
 
         metrics = {
-            'http.current' : 1, 
+            'http.current' : 1,
 
-            'indices.docs.count' : 11968062, 
-            'indices.docs.deleted' : 2692068, 
+            'indices.docs.count' : 11968062,
+            'indices.docs.deleted' : 2692068,
             'indices.datastore.size': 22724243633,
 
-            'process.cpu.percent' : 58, 
+            'process.cpu.percent' : 58,
 
-            'process.mem.resident' : 5192126464, 
-            'process.mem.share' : 11075584, 
-            'process.mem.virtual' : 7109668864, 
+            'process.mem.resident' : 5192126464,
+            'process.mem.share' : 11075584,
+            'process.mem.virtual' : 7109668864,
 
-            'disk.reads.count': 55996, 
+            'disk.reads.count': 55996,
             'disk.reads.size': 1235387392,
             'disk.writes.count': 5808198,
             'disk.writes.size': 23287275520,

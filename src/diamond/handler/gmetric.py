@@ -15,7 +15,7 @@ class GmetricHandler(Handler):
 
     def __init__(self, config=None):
         """
-        Create a new instance of the GmetricHandler class 
+        Create a new instance of the GmetricHandler class
         """
         # Initialize Handler
         Handler.__init__(self, config)
@@ -23,9 +23,9 @@ class GmetricHandler(Handler):
         # Initialize Data
         self.socket = None
 
-        # Initialize Options 
-        self.host = self.config['host'] 
-        self.port = int(self.config['port']) 
+        # Initialize Options
+        self.host = self.config['host']
+        self.port = int(self.config['port'])
         self.protocol = self.config['protocol']
         if not self.protocol:
           self.protocol = 'udp'
@@ -37,17 +37,17 @@ class GmetricHandler(Handler):
         """
         Destroy instance of the GmetricHandler class
         """
-        self._close() 
+        self._close()
 
     def process(self, metric):
         """
         Process a metric by sending it to a gmond instance
         """
-        # Acquire lock    
+        # Acquire lock
         self.lock.acquire()
         # Just send the data as a string
         self._send(metric)
-        # Release lock 
+        # Release lock
         self.lock.release()
 
     def _send(self, metric):

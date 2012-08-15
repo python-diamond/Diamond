@@ -14,7 +14,7 @@ import time
 import struct
 import re
 
-# Fix Path    
+# Fix Path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"../")))
 
 from diamond.metric import Metric
@@ -37,9 +37,9 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
         "httpTotRequests" : "1.3.6.1.4.1.5951.4.1.1.48.67.0"
     }
 
-    NETSCALER_SERVICE_NAMES = "1.3.6.1.4.1.5951.4.1.2.1.1.1" 
+    NETSCALER_SERVICE_NAMES = "1.3.6.1.4.1.5951.4.1.2.1.1.1"
 
-    NETSCALER_SERVICE_TYPE = "1.3.6.1.4.1.5951.4.1.2.1.1.4"   
+    NETSCALER_SERVICE_TYPE = "1.3.6.1.4.1.5951.4.1.2.1.1.4"
 
     NETSCALER_SERVICE_STATE = "1.3.6.1.4.1.5951.4.1.2.1.1.5"
 
@@ -59,7 +59,7 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
             'host' : 'netscaler dns address',
             'port' : 'Netscaler port to collect snmp data',
             'community' : 'SNMP community'
-        })  
+        })
         return config_help
 
     def get_default_config(self):
@@ -70,7 +70,7 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
         config.update( {
             'path':     'netscaler',
             'timeout' : 15,
-        } ) 
+        } )
         return config
 
     def get_string_index_oid(self, s):
@@ -85,7 +85,7 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
     def collect_snmp(self, device, host, port, community):
         """
         Collect Netscaler SNMP stats from device
-        """ 
+        """
         # Log
         self.log.info("Collecting Netscaler statistics from: %s", device)
 
@@ -122,9 +122,9 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
 
         for serviceName in serviceNames:
             # Get Service Name in OID form
-            serviceNameOid = self.get_string_index_oid(serviceName) 
+            serviceNameOid = self.get_string_index_oid(serviceName)
 
-            # Get Service Type 
+            # Get Service Type
             serviceTypeOid = ".".join([self.NETSCALER_SERVICE_TYPE, self._convert_from_oid(serviceNameOid)])
             serviceType = int(self.get(serviceTypeOid, host, port, community)[serviceTypeOid].strip("\'"))
 
@@ -141,7 +141,7 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
                 continue
 
             for k,v in self.NETSCALER_SERVICE_GUAGES.items():
-                serviceGuageOid = ".".join([v, self._convert_from_oid(serviceNameOid)]) 
+                serviceGuageOid = ".".join([v, self._convert_from_oid(serviceNameOid)])
                 # Get Metric Name
                 metricName = '.'.join([re.sub(r'\.|\\', '_', serviceName), k])
                 # Get Metric Value

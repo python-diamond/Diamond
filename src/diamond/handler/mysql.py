@@ -28,7 +28,7 @@ class MySQLHandler(Handler):
         self.database   = self.config['database']
         self.table      = self.config['table']
         self.col_time   = self.config['col_time']
-        self.col_metric = self.config['col_metric']        
+        self.col_metric = self.config['col_metric']
         self.col_value  = self.config['col_value']
 
         # Connect
@@ -76,7 +76,7 @@ class MySQLHandler(Handler):
                                     port = self.port,
                                     user = self.username,
                                     passwd = self.password,
-                                    db = self.database)        
+                                    db = self.database)
 
 
     def _close(self):

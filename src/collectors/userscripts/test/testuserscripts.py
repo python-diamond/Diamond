@@ -23,7 +23,7 @@ class TestUserScriptsCollector(CollectorTestCase):
         self.collector.collect()
 
         metrics = {
-            'example.1': 42, 
+            'example.1': 42,
             'example.2': 24,
         }
 

@@ -181,7 +181,7 @@ class BaseCollectorTest(unittest.TestCase):
 
 if __name__ == "__main__":
 
-    # Disable log output for the unit tests    
+    # Disable log output for the unit tests
     log = logging.getLogger("diamond")
     log.disabled = True
 

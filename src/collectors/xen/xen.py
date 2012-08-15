@@ -21,17 +21,17 @@ class XENCollector(Collector):
     def get_default_config_help(self):
         config_help = super(XENCollector, self).get_default_config_help()
         config_help.update({
-        })  
+        })
         return config_help
 
     def get_default_config(self):
-        """ 
+        """
         Returns the default collector settings
         """
         config = super(XENCollector, self).get_default_config()
         config.update( {
             'path':     'xen'
-        } ) 
+        } )
         return config
 
     def collect(self):

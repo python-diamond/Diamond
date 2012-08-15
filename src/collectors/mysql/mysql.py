@@ -28,7 +28,7 @@ class MySQLCollector(diamond.collector.Collector):
         'Innodb_os_log_pending_fsyncs', 'Innodb_os_log_pending_writes',
         'Innodb_page_size',
         'Innodb_row_lock_current_waits', 'Innodb_row_lock_time', 'Innodb_row_lock_time_avg',
-        'Innodb_row_lock_time_max', 
+        'Innodb_row_lock_time_max',
         'Key_blocks_unused', 'Last_query_cost', 'Max_used_connections',
         'Open_files', 'Open_streams', 'Open_table_definitions', 'Open_tables',
         'Qcache_free_blocks', 'Qcache_free_memory',

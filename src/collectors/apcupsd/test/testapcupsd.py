@@ -23,13 +23,13 @@ class TestApcupsdCollector(CollectorTestCase):
             self.collector.collect()
 
         metrics = {
-            'localhost.LINEV': 124.000000, 
-            'localhost.LOADPCT': 5.000000, 
-            'localhost.BCHARGE': 100.000000, 
-            'localhost.TIMELEFT': 73.900000, 
-            'localhost.BATTV': 27.300000, 
-            'localhost.NUMXFERS': 0.000000, 
-            'localhost.TONBATT': 0.000000, 
+            'localhost.LINEV': 124.000000,
+            'localhost.LOADPCT': 5.000000,
+            'localhost.BCHARGE': 100.000000,
+            'localhost.TIMELEFT': 73.900000,
+            'localhost.BATTV': 27.300000,
+            'localhost.NUMXFERS': 0.000000,
+            'localhost.TONBATT': 0.000000,
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

@@ -74,7 +74,7 @@ class CPUCollector(diamond.collector.Collector):
 
                 results[cpu] = {}
 
-                if len(elements) >= 2  : results[cpu]['user']       = elements[1] 
+                if len(elements) >= 2  : results[cpu]['user']       = elements[1]
                 if len(elements) >= 3  : results[cpu]['nice']       = elements[2]
                 if len(elements) >= 4  : results[cpu]['system']     = elements[3]
                 if len(elements) >= 5  : results[cpu]['idle']       = elements[4]

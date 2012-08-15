@@ -49,7 +49,7 @@ class InterruptCollector(diamond.collector.Collector):
         Collect interrupt data
         """
         if not os.access(self.PROC, os.R_OK):
-            return False        
+            return False
 
         #Open PROC file
         file=open(self.PROC,'r')
