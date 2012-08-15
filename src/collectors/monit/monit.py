@@ -39,7 +39,6 @@ class MonitCollector(diamond.collector.Collector):
         } )
         return config
 
-
     def collect(self):
         url = 'http://%s:%i/_status?format=xml' % (self.config['host'],
                                                    int(self.config['port']))

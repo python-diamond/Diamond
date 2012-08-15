@@ -36,7 +36,6 @@ class PuppetDashboardCollector(diamond.collector.Collector):
         } )
         return config
 
-
     def collect(self):
         try:
             response = urllib2.urlopen("http://%s:%s/" % (self.config['host'], int(self.config['port'])))

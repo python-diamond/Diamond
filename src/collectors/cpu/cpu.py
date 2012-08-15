@@ -19,7 +19,6 @@ except ImportError:
 
 class CPUCollector(diamond.collector.Collector):
 
-
     PROC = '/proc/stat'
     MAX_VALUES = {
         'user': diamond.collector.MAX_COUNTER,

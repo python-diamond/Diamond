@@ -36,7 +36,6 @@ class ElasticSearchCollector(diamond.collector.Collector):
         } )
         return config
 
-
     def collect(self):
         url = 'http://%s:%i/_cluster/nodes/_local/stats?all=true' % (
             self.config['host'], int(self.config['port']))

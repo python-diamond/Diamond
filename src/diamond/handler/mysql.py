@@ -78,7 +78,6 @@ class MySQLHandler(Handler):
                                     passwd = self.password,
                                     db = self.database)
 
-
     def _close(self):
         """
         Close the connection

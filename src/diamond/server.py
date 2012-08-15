@@ -364,7 +364,6 @@ class Server(object):
         # Log
         self.log.debug("Exiting.")
 
-
     def stop(self):
         """
         Close all connections and terminate threads.

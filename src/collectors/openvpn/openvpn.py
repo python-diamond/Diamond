@@ -213,7 +213,6 @@ class OpenVPNCollector(diamond.collector.Collector):
             elif line.startswith('END'):
                 break
 
-
     def publish_number(self, key, value):
         key = key.replace('/', '-').replace(' ', '_').lower()
         try:

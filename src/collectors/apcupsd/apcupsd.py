@@ -60,7 +60,6 @@ class ApcupsdCollector(diamond.collector.Collector):
         s.close()
         return data
 
-
     def collect(self):
         metrics = {}
         raw = {}

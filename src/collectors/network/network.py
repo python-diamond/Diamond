@@ -119,5 +119,4 @@ class NetworkCollector(diamond.collector.Collector):
                     # Publish Metric Derivative
                     self.publish(metric_name, metric_value)
 
-
         return None

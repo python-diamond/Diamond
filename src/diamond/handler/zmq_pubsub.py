@@ -40,13 +40,11 @@ class zmqHandler ( Handler ):
     self.socket = self.context.socket(zmq.PUB)
     self.socket.bind("tcp://*:%i" % self.port )
 
-
   def __del__(self):
     """
       Destroy instance of the zmqHandler class
     """
     pass
-
 
   def process(self,metric):
     """

@@ -461,7 +461,6 @@ try:
             """Release the lock on th ethread's task queue."""
             self._lock.release()
 
-
     class ThreadedTaskMixin:
         """A mixin class to make a Task execute in a separate thread."""
 
@@ -531,7 +530,6 @@ if hasattr(os, "fork"):
         def signalhandler(self, sig, stack):
             Scheduler.stop(self)
 
-
     class ForkedTaskMixin:
         """A mixin class to make a Task execute in a separate process."""
 
@@ -549,7 +547,6 @@ if hasattr(os, "fork"):
                 # we are the parent
                 self.reschedule(schedulerref())
 
-
     class ForkedIntervalTask(ForkedTaskMixin, IntervalTask):
         """Interval Task that executes in its own process."""
         pass
@@ -565,8 +562,6 @@ if hasattr(os, "fork"):
     class ForkedMonthdayTask(ForkedTaskMixin, MonthdayTask):
         """Monthday Task that executes in its own process."""
         pass
-
-
 
 if __name__=="__main__":
     def testaction(arg):

@@ -41,7 +41,6 @@ class KSMCollector(diamond.collector.Collector):
                } )
         return config
 
-
     def collect(self):
         for item in glob.glob(os.path.join(self.config['ksm_path'], "*")):
             if os.access(item, os.R_OK):
