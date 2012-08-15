@@ -174,7 +174,7 @@ class Server(object):
                             collectors[cls.__name__] = cls
                         except Exception, e:
                             # Log error
-                            self.log.error("Failed to load Collector: %s. %s" % (c, traceback.format_exc()))
+                            self.log.error("Failed to load Collector: %s. %s" % (fqcn, traceback.format_exc()))
                             continue
 
         # Return Collector classes
