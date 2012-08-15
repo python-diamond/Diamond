@@ -73,11 +73,12 @@ class NetscalerSNMPCollector(SNMPCollector):
         return config
 
     def get_string_index_oid(self, s):
-        "Turns a string into an oid format is length of name followed by name chars in ascii"
+        """Turns a string into an oid format is length of name followed by
+        name chars in ascii"""
         return ( len(self.get_bytes(s)) , ) + self.get_bytes(s)
 
     def get_bytes(self, s):
-        "Turns a string into a list of byte values"
+        """Turns a string into a list of byte values"""
         return struct.unpack('%sB' % len(s), s)
 
     def collect_snmp(self, device, host, port, community):

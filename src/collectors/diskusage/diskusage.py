@@ -55,14 +55,14 @@ class DiskUsageCollector(diamond.collector.Collector):
         return config
 
     def get_disk_statistics(self):
-        '''
+        """
         Create a map of disks in the machine.
-        
+
         http://www.kernel.org/doc/Documentation/iostats.txt
-    
+
         Returns:
           (major, minor) -> DiskStatistics(device, ...)
-        '''
+        """
         result = {}
         
         if os.access('/proc/diskstats', os.R_OK):

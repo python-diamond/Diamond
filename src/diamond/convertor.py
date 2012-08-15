@@ -10,9 +10,9 @@ def camelcase_to_underscore(name):
     ).lower()
 
 class binary:
-    '''
+    """
     Store the value in bits so we can convert between things easily
-    '''
+    """
     value = None
 
     def __init__(self, value = None, unit = None):
