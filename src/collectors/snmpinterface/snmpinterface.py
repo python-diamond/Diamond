@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 The SNMPInterfaceCollector is designed for collecting interface data from remote SNMP-enabled devices such as routers and switches using SNMP IF_MIB
 
@@ -43,12 +45,7 @@ Note: If you modify the SNMPInterfaceCollector configuration, you will need to r
 
 import os
 import sys
-import string
-import logging
 import time
-import traceback
-import configobj
-import socket
 import re
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), 'snmp'))
@@ -102,7 +99,7 @@ class SNMPInterfaceCollector(SNMPCollector):
         Collect SNMP interface data from device
         """
         # Log
-        self.log.info("Collecting SNMP interface statistics from: %s" % (device))
+        self.log.info("Collecting SNMP interface statistics from: %s", device)
 
         timestamp = time.time()
 

@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Output the collected values to . Zer0MQ pub/sub channel
 """

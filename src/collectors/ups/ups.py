@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 This class collects data from NUT, a UPS interface for linux.
 
@@ -40,7 +42,7 @@ class UPSCollector(diamond.collector.Collector):
 
     def collect(self):
         if not os.access(self.config['bin'], os.X_OK):
-            self.log.error(self.config['bin']+" is not executable")
+            self.log.error("%s is not executable", self.config['bin'])
             return False
         
         command = [self.config['bin'], self.config['ups_name']]

@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 This collector uses the [ipmitool](http://openipmi.sourceforge.net/) to read hardware sensors from servers
 using the Intelligent Platform Management Interface (IPMI). IPMI is very common

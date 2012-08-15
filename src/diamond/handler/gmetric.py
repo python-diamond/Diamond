@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Emulate a gmetric client for usage with [Ganglia Monitoring System](http://ganglia.sourceforge.net/)
 """
@@ -29,7 +31,7 @@ class GmetricHandler(Handler):
           self.protocol = 'udp'
 
         # Initialize
-        self.gmetric = Gmetric(self.host, self.port, self.protocol)
+        self.gmetric = gmetric.Gmetric(self.host, self.port, self.protocol)
 
     def __del__(self):
         """

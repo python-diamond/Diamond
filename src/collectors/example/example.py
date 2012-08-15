@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 An example collector that verifies the answer to life, the universe, and everything does not change.
 

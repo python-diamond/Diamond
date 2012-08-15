@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 This class collects data on memory utilization
 
@@ -83,8 +85,8 @@ class MemoryCollector(diamond.collector.Collector):
                         self.publish(name, value)
                         
                         # TODO: We only support one unit node here. Fix it!
-                        break;
-                        
+                        break
+
                 except ValueError:
                     continue
             return True
@@ -107,8 +109,8 @@ class MemoryCollector(diamond.collector.Collector):
                 self.publish('SwapFree', value)
                 
                 # TODO: We only support one unit node here. Fix it!
-                break;
-            
+                break
+
             return True
     
         return None

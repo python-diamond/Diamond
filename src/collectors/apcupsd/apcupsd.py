@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collects the complete status of most American Power Conversion Corp. (APC) UPSes
 provided you have the apcupsd daemon installed, properly configured and

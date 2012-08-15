@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collect HAProxy Stats
 
@@ -9,12 +11,9 @@ Collect HAProxy Stats
 """
 
 import re
-import sys
 import urllib2
 import base64
 import csv
-import logging
-from urlparse import urlparse
 import diamond.collector
 
 class HAProxyCollector(diamond.collector.Collector):

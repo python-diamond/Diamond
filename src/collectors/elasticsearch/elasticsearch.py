@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collect the elasticsearch stats for the local node
 
@@ -36,15 +38,17 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
 
     def collect(self):
+        url = 'http://%s:%i/_cluster/nodes/_local/stats?all=true' % (
+            self.config['host'], int(self.config['port']))
         try:
-            response = urllib2.urlopen('http://%s:%i/_cluster/nodes/_local/stats?all=true' % (self.config['host'], int(self.config['port'])))
-        except Exception, e:
-            self.log.error("Unable to open http://%s:%i/_cluster/nodes/_local/stats?all=true" % (self.config['host'], int(self.config['port'])))
+            response = urllib2.urlopen(url)
+        except urllib2.HTTPError, err:
+            self.log.error("%s: %s", url, err)
             return
 
         try:
             result = json.load(response)
-        except Exception, e:
+        except TypeError:
             self.log.error("Unable to parse response from elasticsearch as a json object")
             return
 

@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collect stats from Apache HTTPD server using mod_status
 
@@ -9,8 +11,6 @@ Collect stats from Apache HTTPD server using mod_status
 
 """
 
-import os
-import sys
 import re
 import httplib
 import urlparse
@@ -60,12 +60,12 @@ class HttpdCollector(diamond.collector.Collector):
         try:
             connection.request("GET", "%s?%s" % (parts[2], parts[4]))
         except Exception, e:
-            self.log.error("Error retrieving HTTPD stats. %s" % e)
+            self.log.error("Error retrieving HTTPD stats. %s", e)
             return
 
         response = connection.getresponse()
         data = response.read()
-        exp = re.compile('^([A-Za-z]+):\s+(.+)$');
+        exp = re.compile('^([A-Za-z]+):\s+(.+)$')
         for line in data.split('\n'):
             if line:
                 m = exp.match(line)
@@ -74,7 +74,7 @@ class HttpdCollector(diamond.collector.Collector):
                     v = m.group(2)
                     if k in metrics:
                         # Get Metric Name
-                        metric_name = "%s" % (k)
+                        metric_name = "%s" % k
                         # Get Metric Value
                         metric_value = "%d" % float(v)
                         # Publish Metric

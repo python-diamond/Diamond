@@ -1,3 +1,4 @@
+# coding=utf-8
 
 import time
 import re
@@ -52,7 +53,7 @@ class Metric(object):
         Return the Metric as a string
         """
         # Set the format string
-        fstring = "%%s %%0.%if %%i\n" % (self.precision)
+        fstring = "%%s %%0.%if %%i\n" % self.precision
 
         # Return formated string
         return fstring % (self.path, self.value, self.timestamp)
@@ -68,4 +69,4 @@ class Metric(object):
             # TODO: get precision from value string
             return Metric(groups['name'], groups['value'], float(groups['timestamp']))
         except:
-            raise DiamondException, "Metric could not be parsed from string: %s." % (string)
+            raise DiamondException, "Metric could not be parsed from string: %s." % string

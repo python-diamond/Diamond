@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collect metrics from postgresql
 
@@ -7,7 +9,6 @@ Collect metrics from postgresql
 
 """
 
-import sys
 import diamond.collector
 
 try:
@@ -71,23 +72,21 @@ class PostgresqlCollector(diamond.collector.Collector):
 
         ret = {}
         for stat in stats:
-            info                    = {}
-            info['numbackends']     = stat[2]
-            info['xact_commit']     = stat[3]
-            info['xact_rollback']   = stat[4]
-            info['blks_read']       = stat[5]
-            info['blks_hit']        = stat[6]
-            info['tup_returned']    = stat[7]
-            info['tup_fetched']     = stat[8]
-            info['tup_inserted']    = stat[9]
-            info['tup_updated']     = stat[10]
-            info['tup_deleted']     = stat[11]
-            info['conflicts']       = stat[12]
-            info['size']            = stat[14]
+            info = {'numbackends': stat[2],
+                    'xact_commit': stat[3],
+                    'xact_rollback': stat[4],
+                    'blks_read': stat[5],
+                    'blks_hit': stat[6],
+                    'tup_returned': stat[7],
+                    'tup_fetched': stat[8],
+                    'tup_inserted': stat[9],
+                    'tup_updated': stat[10],
+                    'tup_deleted': stat[11],
+                    'conflicts': stat[12],
+                    'size': stat[14]}
 
-            database                = stat[1]
-            ret[database]           = info
-
+            database  = stat[1]
+            ret[database] = info
 
         for database in ret:
             for (metric, value) in info.items():

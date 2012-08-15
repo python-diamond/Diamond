@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 
 #### Dependencies
@@ -15,6 +17,7 @@ try:
     from MySQLdb import MySQLError
 except ImportError:
     MySQLdb = None
+    MySQLError = ValueError
 
 class MySQLCollector(diamond.collector.Collector):
 
@@ -231,18 +234,18 @@ class MySQLCollector(diamond.collector.Collector):
                                     value = float(match.group(match_index))
                                     # store value
                                     if key_index in metrics:
-                                        self.log.debug("MySQLCollector: %s already defined, ignoring new value" % (key_index,))
+                                        self.log.debug("MySQLCollector: %s already defined, ignoring new value", key_index)
                                     else:
                                         metrics[key_index] = value
                                     match_index += 1
                                 except IndexError:
-                                    self.log.debug("MySQLCollector: Cannot find value in innodb status for %s" % (key_index,))
+                                    self.log.debug("MySQLCollector: Cannot find value in innodb status for %s", key_index)
                 for key in todo:
-                    self.log.error("MySQLCollector: %s regexp not matched in innodb status" % (key,))
+                    self.log.error("MySQLCollector: %s regexp not matched in innodb status", key)
             except Exception, innodb_status_error:
-                self.log.error('MySQLCollector: Couldnt get engine innodb status, check user permissions: %s' % (innodb_status_error, ))
+                self.log.error('MySQLCollector: Couldnt get engine innodb status, check user permissions: %s', innodb_status_error)
             Innodb_status_process_time  = time.time() - innodb_status_timer
-            self.log.debug("MySQLCollector: innodb status process time: %f" % (Innodb_status_process_time, ))
+            self.log.debug("MySQLCollector: innodb status process time: %f", Innodb_status_process_time)
             metrics["Innodb_status_process_time"] =  Innodb_status_process_time
 
         db.close()

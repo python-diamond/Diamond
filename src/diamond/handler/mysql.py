@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Insert the collected values into a mysql table
 """
@@ -61,7 +63,7 @@ class MySQLHandler(Handler):
             # Done
         except BaseException, e:
             # Log Error
-            self.log.error("MySQLHandler: Failed sending data. %s." % (e))
+            self.log.error("MySQLHandler: Failed sending data. %s.", e)
             # Attempt to restablish connection
             self._connect()
 

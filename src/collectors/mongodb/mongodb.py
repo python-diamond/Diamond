@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collects all number values from the db.serverStatus() command, other
 values are ignored.

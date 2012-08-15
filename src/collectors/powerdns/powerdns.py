@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collects all metrics exported by the powerdns nameserver using the
 pdns_control binary.
@@ -47,7 +49,7 @@ class PowerDNSCollector(diamond.collector.Collector):
 
     def collect(self):
         if not os.access(self.config['bin'], os.X_OK):
-            self.log.error(self.config['bin']+" is not executable")
+            self.log.error("%s is not executable", self.config['bin'])
             return False
         
         command = [self.config['bin'], 'list']

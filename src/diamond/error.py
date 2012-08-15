@@ -1,3 +1,4 @@
+# coding=utf-8
 
 class DiamondException(Exception):
     def __init__(self, message):

@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collect the emails in the postfix queue
 
@@ -42,7 +44,7 @@ class PostqueueCollector(diamond.collector.Collector):
                 command.insert(0, self.config['sudo_cmd'])
     
             return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
-        except:
+        except OSError:
             return ""
 
     def collect(self):

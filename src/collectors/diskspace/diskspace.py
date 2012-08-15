@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Uses /proc/mounts and os.statvfs() to get disk space usage
 
@@ -66,9 +68,9 @@ class DiskSpaceCollector(diamond.collector.Collector):
         return config
 
     def get_disk_labels(self):
-        '''
+        """
         Creates a mapping of device nodes to filesystem labels
-        '''
+        """
         path = '/dev/disk/by-label/'
         labels = {}
         if not os.path.isdir(path):
@@ -81,14 +83,14 @@ class DiskSpaceCollector(diamond.collector.Collector):
         return labels
     
     def get_file_systems(self):
-        '''
+        """
         Creates a map of mounted filesystems on the machine.
-        
+
         iostat(1): Each sector has size of 512 bytes.
-    
+
         Returns:
           (major, minor) -> FileSystem(device, mount_point)
-        '''
+        """
         result = {}
         if os.access('/proc/mounts', os.R_OK):
             file = open('/proc/mounts')

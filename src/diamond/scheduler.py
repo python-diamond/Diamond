@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """Module that provides a cron-like task scheduler.
 
 This task scheduler is designed to be used from inside your own program.
@@ -73,7 +75,6 @@ import sched
 import time
 import traceback
 import weakref
-import time
 
 class method:
     sequential="sequential"

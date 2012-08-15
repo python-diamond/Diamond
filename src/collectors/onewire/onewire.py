@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 The OneWireCollector collects data from 1-Wire Filesystem
 
@@ -79,15 +81,13 @@ class OneWireCollector(diamond.collector.Collector):
                     v = f.read()
                     f.close()
                 except:
-                    self.log.error("Unable to read %s" % fv)
+                    self.log.error("Unable to read %s", fv)
                     raise
-                    continue
 
                 try:
                     v = float(v)
                 except:
-                    self.log.error("Unexpected value %s in %s" % (v, fv))
+                    self.log.error("Unexpected value %s in %s", v, fv)
                     raise
-                    continue
 
                 metrics["%s.%s" % (oid, alias)] = v

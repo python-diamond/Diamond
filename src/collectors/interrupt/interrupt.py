@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 The InterruptCollector class collects metrics on interrupts from
 /proc/interrupts
@@ -58,7 +60,7 @@ class InterruptCollector(diamond.collector.Collector):
                 cpuCount = len(line.split())
             else:
                 data = line.strip().split(None, cpuCount+2)
-                data[0] = data[0].replace(':', '');
+                data[0] = data[0].replace(':', '')
 
                 if len(data) == 2:
                     metric_name = data[0]

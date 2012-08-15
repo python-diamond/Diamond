@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 The NetworkCollector class collects metrics on network interface usage
 using /proc/net/dev.

@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Uses /proc/net/sockstat to collect data on number of open sockets
 

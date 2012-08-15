@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collects data from RabbitMQ through the admin interface
 

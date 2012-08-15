@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Send metrics to a [Statsite](https://github.com/armon/statsite/) using the default interface.
 
@@ -120,7 +122,7 @@ class StatsiteHandler(Handler):
                 break
             except socket.error, e:
                 # Log Error
-                self.log.error("StatsiteHandler: Failed sending data. %s." % (e))
+                self.log.error("StatsiteHandler: Failed sending data. %s.", e)
                 # Attempt to restablish connection
                 self._close()
                 # Decrement retry
@@ -133,10 +135,10 @@ class StatsiteHandler(Handler):
         Connect to the statsite server
         """
         # Create socket
-        if (self.udbport > 0):
+        if self.udbport > 0:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.port = self.udbport
-        elif (self.tcpport > 0):
+        elif self.tcpport > 0:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.port = self.tcpport
         if socket is None:
@@ -151,10 +153,12 @@ class StatsiteHandler(Handler):
         try:
             self.socket.connect((self.host, self.port))
             # Log
-            self.log.debug("Established connection to statsite server %s:%d" % (self.host, self.port))
+            self.log.debug("Established connection to statsite server %s:%d",
+                           self.host, self.port)
         except Exception, ex:
             # Log Error
-            self.log.error("StatsiteHandler: Failed to connect to %s:%i. %s" % (self.host, self.port, ex))
+            self.log.error("StatsiteHandler: Failed to connect to %s:%i. %s",
+                           self.host, self.port, ex)
             # Close Socket
             self._close()
             return

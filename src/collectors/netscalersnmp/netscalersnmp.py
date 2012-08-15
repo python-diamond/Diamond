@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 SNMPCollector for Netscaler Metrics
 
@@ -9,7 +11,6 @@ balancing, firewall, proxy and VPN functions.
 import sys
 import os
 import time
-import logging
 import struct
 import re
 
@@ -73,11 +74,12 @@ class NetscalerSNMPCollector(SNMPCollector):
         return config
 
     def get_string_index_oid(self, s):
-        "Turns a string into an oid format is length of name followed by name chars in ascii"
+        """Turns a string into an oid format is length of name followed by
+        name chars in ascii"""
         return ( len(self.get_bytes(s)) , ) + self.get_bytes(s)
 
     def get_bytes(self, s):
-        "Turns a string into a list of byte values"
+        """Turns a string into a list of byte values"""
         return struct.unpack('%sB' % len(s), s)
 
     def collect_snmp(self, device, host, port, community):
@@ -85,7 +87,7 @@ class NetscalerSNMPCollector(SNMPCollector):
         Collect Netscaler SNMP stats from device
         """ 
         # Log
-        self.log.info("Collecting Netscaler statistics from: %s" % (device))
+        self.log.info("Collecting Netscaler statistics from: %s", device)
 
         # Set timestamp
         timestamp = time.time()

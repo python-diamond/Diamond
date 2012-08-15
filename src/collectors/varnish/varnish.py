@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 VarnishCollector grabs stats from Varnish and submits them the Graphite
 
@@ -79,7 +81,7 @@ class VarnishCollector(diamond.collector.Collector):
                 command.insert(0, self.config['sudo_cmd'])
 
             output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
-        except:
+        except OSError:
             output = ""
 
         return output

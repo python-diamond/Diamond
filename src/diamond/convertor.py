@@ -1,3 +1,4 @@
+# coding=utf-8
 
 from diamond import *
 
@@ -10,9 +11,9 @@ def camelcase_to_underscore(name):
     ).lower()
 
 class binary:
-    '''
+    """
     Store the value in bits so we can convert between things easily
-    '''
+    """
     value = None
 
     def __init__(self, value = None, unit = None):
@@ -71,7 +72,7 @@ class binary:
         if unit in [ 'yottabyte', 'YB', 'YiB']:
             return self.yottabyte(value = value)
 
-        raise NotImplementedError("unit %s" % (unit))
+        raise NotImplementedError("unit %s" % unit)
 
     def bit(self, value = None):
         if value is None:

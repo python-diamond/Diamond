@@ -50,7 +50,7 @@ days = 7
 [[GraphiteHandler]]
 ### Options for GraphiteHandler
 
-# Graphtie server host
+# Graphite server host
 host = graphite
 
 # Port to send metrics to
@@ -62,7 +62,7 @@ timeout = 15
 [[GraphitePickleHandler]]
 ### Options for GraphitePickleHandler
 
-# Graphtie server host
+# Graphite server host
 host = graphite
 
 # Port to send metrics to

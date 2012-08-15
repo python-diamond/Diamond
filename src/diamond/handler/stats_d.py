@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Implements the abstract Handler class, sending data to statsd.
 This is a UDP service, sending datagrams.  They may be lost.

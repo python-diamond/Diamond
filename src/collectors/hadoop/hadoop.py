@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Diamond collector for Hadoop metrics, see:
 
@@ -45,7 +47,7 @@ class HadoopCollector(diamond.collector.Collector):
 
     def collect_from(self, filename):
         if not os.access(filename, os.R_OK):
-            self.log.error('HadoopCollector unable to read "%s"' % (filename,))
+            self.log.error('HadoopCollector unable to read "%s"', filename)
             return False
 
         fd = open(filename, 'r')
@@ -107,6 +109,6 @@ class HadoopCollector(diamond.collector.Collector):
                         value,
                         timestamp=int(data['timestamp'])))
 
-                except (ValueError):
+                except ValueError:
                     pass
         fd.close()

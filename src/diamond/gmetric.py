@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding=utf-8
 
 # This is the MIT License
 # http://www.opensource.org/licenses/mit-license.php
@@ -125,7 +126,7 @@ def gmetric_write(NAME, VAL, TYPE, UNITS, SLOPE, TMAX, DMAX, GROUP):
     data.pack_string("%s")
     data.pack_string(str(VAL))
 
-    return ( packer.get_buffer() ,  data.get_buffer() )
+    return packer.get_buffer() ,  data.get_buffer()
 
 def gmetric_read(msg):
     unpacker = Unpacker(msg)

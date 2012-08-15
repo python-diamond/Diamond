@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collects data from a Redis Server
 

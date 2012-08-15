@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collect memcached stats
 
@@ -73,7 +75,7 @@ class MemcachedCollector(diamond.collector.Collector):
             data = sock.recv(4096)
         except socket.error, e:
             self.log.exception('Failed to get stats from %s:%s',
-                               config['host'], config['port'])
+                               self.config['host'], self.config['port'])
         return data
 
     def get_stats(self, config):

@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collect data from S.M.A.R.T.'s attribute reporting.
 

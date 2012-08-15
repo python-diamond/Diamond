@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Collect IO Stats
 
@@ -55,14 +57,14 @@ class DiskUsageCollector(diamond.collector.Collector):
         return config
 
     def get_disk_statistics(self):
-        '''
+        """
         Create a map of disks in the machine.
-        
+
         http://www.kernel.org/doc/Documentation/iostats.txt
-    
+
         Returns:
           (major, minor) -> DiskStatistics(device, ...)
-        '''
+        """
         result = {}
         
         if os.access('/proc/diskstats', os.R_OK):
@@ -151,7 +153,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                         key = key.replace('sectors', unit)
                         # Assume 512 byte sectors
                         # TODO: Fix me to be detectable
-                        value = value / 2
+                        value /= 2
                         value = diamond.convertor.binary.convert(value = value, oldUnit = 'kB', newUnit = unit)
                         self.MAX_VALUES[key] = diamond.convertor.binary.convert(value = diamond.collector.MAX_COUNTER, oldUnit = 'byte', newUnit = unit)
     
@@ -160,8 +162,8 @@ class DiskUsageCollector(diamond.collector.Collector):
                     if key != 'io_in_progress':
                         metric_value = self.derivative(metric_name, value, self.MAX_VALUES[key])
                     else:
-                        metric_value = value;
-    
+                        metric_value = value
+
                     metrics[key] = metric_value
 
             metrics['read_requests_merged_per_second']  = metrics['reads_merged'] / time_delta
@@ -170,15 +172,15 @@ class DiskUsageCollector(diamond.collector.Collector):
             metrics['writes_per_second']                = metrics['writes'] / time_delta
 
             for unit in self.config['byte_unit']:
-                metric_name = 'read_%s_per_second' % (unit)
-                key = 'reads_%s' % (unit)
+                metric_name = 'read_%s_per_second' % unit
+                key = 'reads_%s' % unit
                 metrics[metric_name]                        = metrics[key] / time_delta
 
-                metric_name = 'write_%s_per_second' % (unit)
-                key = 'writes_%s' % (unit)
+                metric_name = 'write_%s_per_second' % unit
+                key = 'writes_%s' % unit
                 metrics[metric_name]                        = metrics[key] / time_delta
     
-                metric_name = 'average_request_size_%s' % (unit)
+                metric_name = 'average_request_size_%s' % unit
             
             metrics[metric_name]                        = 0
             metrics['average_queue_length']             = metrics['io_milliseconds'] / time_delta * 1000.0
@@ -192,9 +194,9 @@ class DiskUsageCollector(diamond.collector.Collector):
             if metrics['io'] > 0:
                 
                 for unit in self.config['byte_unit']:
-                    rkey = 'reads_%s' % (unit)
-                    wkey = 'writes_%s' % (unit)
-                    metric_name = 'average_request_size_%s' % (unit)
+                    rkey = 'reads_%s' % unit
+                    wkey = 'writes_%s' % unit
+                    metric_name = 'average_request_size_%s' % unit
                     metrics[metric_name]                    = (metrics[rkey] + metrics[wkey] ) / metrics['io']
                     
                 metrics['service_time']                 = metrics['io_milliseconds'] / metrics['io']

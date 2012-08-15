@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Output the collected values to the debug log channel.
 """
@@ -12,4 +14,4 @@ class NullHandler(Handler):
         """
         Process a metric by doing nothing
         """
-        self.log.debug("Process: %s" % (str(metric).rstrip()))
+        self.log.debug("Process: %s", str(metric).rstrip())

@@ -1,5 +1,5 @@
+# coding=utf-8
 
-import inspect
 import os
 import socket
 
@@ -14,8 +14,6 @@ if platform.architecture()[0] == '64bit':
     MAX_COUNTER = (2 ** 64) - 1
 else:
     MAX_COUNTER = (2 ** 32) - 1
-
-from diamond.metric import Metric
 
 class Collector(object):
     """
@@ -224,7 +222,7 @@ class Collector(object):
         Run the collector
         """
         # Log
-        self.log.debug("Collecting data from: %s" % (self.__class__.__name__))
+        self.log.debug("Collecting data from: %s" % self.__class__.__name__)
         try:
             # Collect Data
             self.collect()
