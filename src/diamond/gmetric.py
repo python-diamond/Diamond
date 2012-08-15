@@ -87,7 +87,7 @@ class Gmetric:
 
         ( meta_msg, data_msg )  = gmetric_write(NAME, VAL, TYPE, UNITS, SLOPE, TMAX, DMAX, GROUP)
         # print msg
-        
+
         self.socket.sendto(meta_msg, self.hostport)
         self.socket.sendto(data_msg, self.hostport)
 
@@ -116,7 +116,7 @@ def gmetric_write(NAME, VAL, TYPE, UNITS, SLOPE, TMAX, DMAX, GROUP):
         packer.pack_int(1)
         packer.pack_string("GROUP")
         packer.pack_string(GROUP)
-        
+
     # Actual data sent in a separate packet
     data = Packer()
     data.pack_int(128+5)

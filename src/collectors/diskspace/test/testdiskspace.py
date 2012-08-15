@@ -16,7 +16,7 @@ class TestDiskSpaceCollector(CollectorTestCase):
         })
 
         self.collector = DiskSpaceCollector(config, None)
-        
+
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
 
@@ -90,7 +90,7 @@ none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
             'root.inodes_free'    : 91229495,
             'root.inodes_avail'   : 91229495
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

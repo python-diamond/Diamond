@@ -70,20 +70,20 @@ class MemoryCollector(diamond.collector.Collector):
             file = open(self.PROC)
             data = file.read()
             file.close()
-    
+
             for line in data.splitlines():
                 try:
                     name, value, units = line.split()
                     name = name.rstrip(':')
                     value = int(value)
-    
+
                     if name not in _KEY_MAPPING and 'detailed' not in self.config:
                         continue
-                    
+
                     for unit in self.config['byte_unit']:
                         value = diamond.convertor.binary.convert(value = value, oldUnit = units, newUnit = unit)
                         self.publish(name, value)
-                        
+
                         # TODO: We only support one unit node here. Fix it!
                         break
 
@@ -94,23 +94,23 @@ class MemoryCollector(diamond.collector.Collector):
             phymem_usage = psutil.phymem_usage()
             virtmem_usage = psutil.virtmem_usage()
             units = 'b'
-            
+
             for unit in self.config['byte_unit']:
                 value = diamond.convertor.binary.convert(value = phymem_usage.total, oldUnit = units, newUnit = unit)
                 self.publish('MemTotal', value)
-                
+
                 value = diamond.convertor.binary.convert(value = phymem_usage.free, oldUnit = units, newUnit = unit)
                 self.publish('MemFree', value)
-                
+
                 value = diamond.convertor.binary.convert(value = virtmem_usage.total, oldUnit = units, newUnit = unit)
                 self.publish('SwapTotal', value)
-                
+
                 value = diamond.convertor.binary.convert(value = virtmem_usage.free, oldUnit = units, newUnit = unit)
                 self.publish('SwapFree', value)
-                
+
                 # TODO: We only support one unit node here. Fix it!
                 break
 
             return True
-    
+
         return None

@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 # coding=utf-8
 
@@ -24,10 +25,10 @@ class TestOneWireCollector(CollectorTestCase):
     @patch('os.listdir')
     @patch.object(Collector, 'publish')
     def test(self, publish_mock, listdir_mock, isfile_mock):
-        
+
         open_name = 'onewire.open'
         with patch(open_name, create=True) as open_mock:
-    
+
             self.mock_data = {
                         "28.A76569020000": None,
                         "28.A76569020000/temperature": StringIO("22.4375"),
@@ -39,22 +40,22 @@ class TestOneWireCollector(CollectorTestCase):
                         "bus.0": None,
                         "settings": None,
                         }
-    
+
             self.mock_root = "/mnt/1wire"
-    
+
             open_mock.side_effect = self._ret_open_mock
             listdir_mock.side_effect = self._ret_listdir_mock
             isfile_mock.side_effect = self._ret_isfile_mock
-    
+
             self.collector.collect()
-    
+
             listdir_mock.assert_called_once_with(self.mock_root)
 
         metrics = {
             '28_A76569020000.t': 22.4375,
             '28_2F702A010000.p11': 999
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

@@ -138,7 +138,7 @@ class MySQLCollector(diamond.collector.Collector):
             'db':       'yourdatabase',
             'user':     'yourusername',
             'passwd':   'yourpassword',
-            
+
             # Which rows of 'SHOW GLOBAL STATUS' you would like to publish.
             # http://dev.mysql.com/doc/refman/5.1/en/show-status.html
             # Leave unset to publish all
@@ -221,7 +221,7 @@ class MySQLCollector(diamond.collector.Collector):
                 cursor.execute('SHOW ENGINE INNODB STATUS')
 
                 innodb_status_output = cursor.fetchone()
- 
+
                 todo = self.innodb_status_keys.keys()
                 for line in innodb_status_output[2].split('\n'):
                     for key in todo:
@@ -257,10 +257,10 @@ class MySQLCollector(diamond.collector.Collector):
 
         for metric_name in metrics:
             metric_value = metrics[metric_name]
-            
+
             if type(metric_value) is not float:
                 continue
-            
+
             if 'publish' not in self.config or metric_name in self.config['publish']:
                 if metric_name not in self._GAUGE_KEYS:
                     metric_value = self.derivative(metric_name, metric_value)

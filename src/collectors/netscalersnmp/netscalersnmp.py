@@ -42,7 +42,7 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
     NETSCALER_SERVICE_TYPE = "1.3.6.1.4.1.5951.4.1.2.1.1.4"   
 
     NETSCALER_SERVICE_STATE = "1.3.6.1.4.1.5951.4.1.2.1.1.5"
- 
+
     NETSCALER_SERVICE_GUAGES = {
         "svcRequestRate" : "1.3.6.1.4.1.5951.4.1.2.1.1.42",
         "svcSurgeCount" : "1.3.6.1.4.1.5951.4.1.2.1.1.10",
@@ -103,7 +103,7 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
             metric = Metric(metricPath, metricValue, timestamp, 0)
             # Publish Metric
             self.publish_metric(metric)
-        
+
         # Collect Netscaler System Counter OIDs
         for k, v in self.NETSCALER_SYSTEM_COUNTERS.items():
             # Get Metric Name and Value

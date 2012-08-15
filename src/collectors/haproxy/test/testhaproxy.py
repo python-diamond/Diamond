@@ -583,7 +583,7 @@ class TestHAProxyCollector(CollectorTestCase):
             'trans-service.backend.cli_abrt' : 0.000000,
             'trans-service.backend.srv_abrt' : 0.000000,
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

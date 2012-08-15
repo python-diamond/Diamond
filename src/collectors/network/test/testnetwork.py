@@ -42,7 +42,7 @@ class TestNetworkCollector(CollectorTestCase):
             'eth1.rx_megabyte' : (0.0, 2),
             'eth1.tx_megabyte' : (0.0, 2)
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

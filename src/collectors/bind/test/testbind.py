@@ -157,10 +157,10 @@ class TestBindCollector(CollectorTestCase):
             'sockstat.UnixRecvErr' : 0.000000, 
             'sockstat.FDwatchRecvErr' : 0.000000, 
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
-        
+
 
 ################################################################################
 if __name__ == "__main__":

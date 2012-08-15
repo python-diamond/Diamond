@@ -66,7 +66,7 @@ class ExampleCollector(diamond.collector.Collector):
         """
         Overrides the Collector.collect method
         """
-        
+
         # Set Metric Name
         metric_name = "my.example.metric"
         # Set Metric Value

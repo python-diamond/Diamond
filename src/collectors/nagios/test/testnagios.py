@@ -56,7 +56,7 @@ class TestNagiosStatsCollector(CollectorTestCase):
             'NUMSACTSVCCHECKS5M' : 1101, 
             'NUMPSVSVCCHECKS5M' : 0, 
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

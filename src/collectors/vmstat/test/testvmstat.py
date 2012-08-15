@@ -42,7 +42,7 @@ class TestVMStatCollector(CollectorTestCase):
             'pswpin'  : 0.0,
             'pswpout' : 0.0,
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

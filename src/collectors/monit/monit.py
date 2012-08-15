@@ -56,7 +56,7 @@ class MonitCollector(diamond.collector.Collector):
             return
 
         metrics = {}
-        
+
         try:
             dom = parseString("".join(response.readlines()))
         except:

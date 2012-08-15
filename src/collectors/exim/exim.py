@@ -14,7 +14,7 @@ import subprocess
 import os
 
 class EximCollector(diamond.collector.Collector):
-  
+
     def get_default_config_help(self):
         config_help = super(EximCollector, self).get_default_config_help()
         config_help.update({
@@ -23,7 +23,7 @@ class EximCollector(diamond.collector.Collector):
             'sudo_cmd' :    'Path to sudo',
         })
         return config_help
-    
+
     def get_default_config(self):
         """
         Returns the default collector settings
@@ -41,14 +41,14 @@ class EximCollector(diamond.collector.Collector):
     def collect(self):
         if not os.access(self.config['bin'], os.X_OK):
             return
-        
+
         command = [self.config['bin'], '-bpc']
 
         if self.config['use_sudo']:
             command.insert(0, self.config['sudo_cmd'])
 
         queuesize = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].split()
-        
+
         if not len(queuesize):
             return
         queuesize = queuesize[-1]

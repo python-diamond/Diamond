@@ -20,7 +20,7 @@ class TestVarnishCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
         with patch.object(VarnishCollector, 'poll', Mock(return_value = self.getFixture('varnish_stats').getvalue())):
             self.collector.collect()
-            
+
         metrics = {
             'client_conn': 10799,
             'client_drop': 0,
@@ -111,7 +111,7 @@ class TestVarnishCollector(CollectorTestCase):
             'dir_dns_hit': 0,
             'dir_dns_cache_full': 0,
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 
@@ -119,7 +119,7 @@ class TestVarnishCollector(CollectorTestCase):
     def test_should_fail_gracefully(self, publish_mock):
         with patch.object(VarnishCollector, 'poll', Mock(return_value = self.getFixture('varnish_stats_blank').getvalue())):
             self.collector.collect()
-            
+
         self.assertPublishedMany(publish_mock, {})
 
 ################################################################################

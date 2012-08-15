@@ -44,7 +44,7 @@ class UPSCollector(diamond.collector.Collector):
         if not os.access(self.config['bin'], os.X_OK):
             self.log.error("%s is not executable", self.config['bin'])
             return False
-        
+
         command = [self.config['bin'], self.config['ups_name']]
 
         if self.config['use_sudo']:

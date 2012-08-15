@@ -41,7 +41,7 @@ class TestSockstatCollector(CollectorTestCase):
             'udp_inuse'  : 0,
             'udp_mem'    : 0
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

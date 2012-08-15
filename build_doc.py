@@ -33,16 +33,16 @@ def getCollectors(path):
 
         if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py':
             modname = f[:-3]
-            
+
             try:
                 # Import the module
                 module = __import__(modname, globals(), locals(), ['*'])
-                
+
                 # Find the name
                 for attr in dir(module):
                     if not attr.endswith('Collector'):
                         continue
-                    
+
                     cls = getattr(module, attr)
 
                     if cls.__name__ not in collectors:
@@ -64,18 +64,18 @@ def getHandlers(path):
 
         if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py':
             modname = f[:-3]
-            
+
             try:
                 # Import the module
                 module = __import__(modname, globals(), locals(), ['*'])
-                
+
                 # Find the name
                 for attr in dir(module):
                     if not attr.endswith('Handler') or attr.startswith('Handler'):
                         continue
-                    
+
                     cls = getattr(module, attr)
-                    
+
                     if cls.__name__ not in handlers:
                         handlers[cls.__name__] = module
             except Exception, e:
@@ -91,7 +91,7 @@ def getHandlers(path):
 ################################################################################
 
 if __name__ == "__main__":
-    
+
     # Initialize Options
     parser = optparse.OptionParser()
     parser.add_option("-c", "--configfile", dest="configfile", default="/etc/diamond/diamond.conf", help="Path to the config file")
@@ -100,7 +100,7 @@ if __name__ == "__main__":
 
     # Parse Command Line Args
     (options, args) = parser.parse_args()
-    
+
     # Initialize Config
     if os.path.exists(options.configfile):
         config = configobj.ConfigObj(os.path.abspath(options.configfile))
@@ -110,44 +110,44 @@ if __name__ == "__main__":
         print >> sys.stderr, "Please run python config.py -c /path/to/diamond.conf"
         parser.print_help(sys.stderr)
         sys.exit(1)
-    
+
     collector_path = config['server']['collectors_path']
     docs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'docs'))
     handler_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'diamond', 'handler'))
-    
+
     getIncludePaths(collector_path)
-    
+
     # Ugly hack for snmp collector overrides
     getCollectors(os.path.join(collector_path, 'snmp'))
     getCollectors(collector_path)
-    
+
     collectorIndexFile = open(os.path.join(docs_path, "Collectors.md"), 'w')
     collectorIndexFile.write("## Collectors\n")
     collectorIndexFile.write("\n")
-    
+
     for collector in sorted(collectors.iterkeys()):
-        
+
         # Skip configuring the basic collector object
         if collector == "Collector":
             continue
         if collector.startswith('Test'):
             continue
-        
+
         print "Processing %s..." % (collector)
-        
+
         if not hasattr(collectors[collector], collector):
             continue
-        
+
         cls = getattr(collectors[collector], collector)
-        
+
         obj = cls(config = config, handlers = {})
-        
+
         options = obj.get_default_config_help()
 
         docFile = open(os.path.join(docs_path, "collectors-"+collector+".md"), 'w')
-        
+
         collectorIndexFile.write(" - [%s](collectors-%s)\n" % (collector, collector))
-        
+
         docFile.write("%s\n" % (collector))
         docFile.write("=====\n")
         docFile.write("%s" % (collectors[collector].__doc__))
@@ -163,37 +163,37 @@ if __name__ == "__main__":
         docFile.write("__EXAMPLESHERE__\n")
         docFile.write("```\n")
         docFile.write("\n")
-        
+
         docFile.close()
-        
+
     collectorIndexFile.close()
-    
+
     getIncludePaths(handler_path)
     getHandlers(handler_path)
-    
+
     handlerIndexFile = open(os.path.join(docs_path, "Handlers.md"), 'w')
     handlerIndexFile.write("## Handlers\n")
     handlerIndexFile.write("\n")
-    
+
     for handler in sorted(handlers.iterkeys()):
-        
+
         # Skip configuring the basic handler object
         if handler == "Handler":
             continue
-        
+
         print "Processing %s..." % (handler)
-        
+
         if not hasattr(handlers[handler], handler):
             continue
-        
+
         docFile = open(os.path.join(docs_path, "handler-"+handler+".md"), 'w')
-        
+
         handlerIndexFile.write(" - [%s](handler-%s)\n" % (handler, handler))
-        
+
         docFile.write("%s\n" % (handler))
         docFile.write("====\n")
         docFile.write("%s" % (handlers[handler].__doc__))
-        
+
         docFile.close()
-        
+
     handlerIndexFile.close()

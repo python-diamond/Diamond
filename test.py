@@ -31,27 +31,27 @@ def get_collector_config(key, value):
     return config
 
 class CollectorTestCase(unittest.TestCase):
-    
+
     def setDocExample(self, collector, metrics):
         if not len(metrics):
             return False
-        
+
         filePath = os.path.join('docs', 'collectors-'+collector+'.md')
-        
+
         if not os.path.exists(filePath):
             return False
-        
+
         if not os.access(filePath, os.W_OK):
             return False
-            
+
         if not os.access(filePath, os.R_OK):
             return False
-        
+
         try:
             fp = open(filePath, 'Ur')
             content = fp.readlines()
             fp.close()
-            
+
             fp = open(filePath, 'w')
             for line in content:
                 if line.strip() == '__EXAMPLESHERE__':
@@ -62,7 +62,7 @@ class CollectorTestCase(unittest.TestCase):
                 else:
                     fp.write(line)
             fp.close()
-            
+
         except IOError, e:
             return False
         return True
@@ -81,7 +81,7 @@ class CollectorTestCase(unittest.TestCase):
 
     def assertPublished(self, mock, key, value):
         calls = filter(lambda x: x[0][0] == key, mock.call_args_list)
-        
+
         actual_value = len(calls)
         expected_value = 1
         message = '%s: actual number of calls %d, expected %d' % (key, actual_value, expected_value)
@@ -111,7 +111,7 @@ class CollectorTestCase(unittest.TestCase):
 
     def assertPublishedMetric(self, mock, key, value):
         calls = filter(lambda x: x[0][0].path.find(key) != -1, mock.call_args_list)
-        
+
         actual_value = len(calls)
         expected_value = 1
         message = '%s: actual number of calls %d, expected %d' % (key, actual_value, expected_value)
@@ -163,7 +163,7 @@ def getCollectorTests(path):
 
 
 class BaseCollectorTest(unittest.TestCase):
-    
+
     def test_SetCustomHostname(self):
         config = configobj.ConfigObj()
         config['server'] = {}
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     # Disable log output for the unit tests    
     log = logging.getLogger("diamond")
     log.disabled = True
-    
+
     # Initialize Options
     parser = optparse.OptionParser()
     parser.add_option("-c", "--collector", dest="collector", default="", help="Run a single collector's unit tests")
@@ -192,10 +192,10 @@ if __name__ == "__main__":
 
     # Parse Command Line Args
     (options, args) = parser.parse_args()
-    
+
     cPath = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'collectors', options.collector))
     getCollectorTests(cPath)
-    
+
     tests = []
     for test in collectorTests:
         for attr in dir(collectorTests[test]):

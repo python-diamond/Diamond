@@ -26,7 +26,7 @@ except ImportError:
     psutil = None
 
 class DiskSpaceCollector(diamond.collector.Collector):
-    
+
     def get_default_config_help(self):
         config_help = super(DiskSpaceCollector, self).get_default_config_help()
         config_help.update({
@@ -34,7 +34,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             'exclude_filters' : "A list of regex patterns. Any filesystem matching any of these patterns will be excluded from disk space metrics collection",
         })
         return config_help
-    
+
     def get_default_config(self):
         """
         Returns the default collector settings
@@ -57,11 +57,11 @@ class DiskSpaceCollector(diamond.collector.Collector):
             #       exclude_filters = ^/boot, ^/mnt     # exclude everything that begins /boot or /mnt
             #       exclude_filters = m,                # exclude everything that includes the letter "m"
             'exclude_filters' : '^/export/home',
-            
+
             # We don't use any derivative data to calculate this value
             # Thus we can use a threaded model
             'method' : 'Threaded',
-            
+
             # Default numeric output
             'byte_unit' : ['gigabyte']
         } )
@@ -75,13 +75,13 @@ class DiskSpaceCollector(diamond.collector.Collector):
         labels = {}
         if not os.path.isdir(path):
             return labels
-    
+
         for label in os.listdir(path):
             device = os.path.realpath(path+'/'+label)
             labels[device] = label
-    
+
         return labels
-    
+
     def get_file_systems(self):
         """
         Creates a map of mounted filesystems on the machine.
@@ -99,10 +99,10 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     device, mount_point, fs_type, fs_options, dummy1, dummy2 = line.split()
                 except ValueError:
                     continue
-        
+
                 if mount_point.startswith('/dev') or mount_point.startswith('/proc') or mount_point.startswith('/sys'):
                     continue
-        
+
                 if device.startswith('/') and mount_point.startswith('/'):
                     stat  = os.stat(mount_point)
                     major = os.major(stat.st_dev)
@@ -116,9 +116,9 @@ class DiskSpaceCollector(diamond.collector.Collector):
                         'mount_point' : mount_point,
                         'fs_type'     : fs_type
                     }
-        
+
             file.close()
-            
+
         elif psutil:
             partitions = psutil.disk_partitions(False)
             for partition in partitions:
@@ -128,26 +128,26 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     'fs_type'     : partition.fstype
                 }
             pass
-        
+
         return result
-    
+
     def collect(self):
         exclude_reg = re.compile(self.config['exclude_filters'])
-        
+
         filesystems = []
         for filesystem in self.config['filesystems'].split(','):
             filesystems.append(filesystem.strip())
-        
+
         labels = self.get_disk_labels()
         for key, info in self.get_file_systems().iteritems():
         # Skip the filesystem if it is not in the list of valid filesystems
             if info['fs_type'] not in filesystems:
                 continue
-            
+
         # Process the filters
             if exclude_reg.match(info['mount_point']):
                 continue
-            
+
             if info['device'] in labels:
                 name = labels[info['device']]
             else:
@@ -161,19 +161,19 @@ class DiskSpaceCollector(diamond.collector.Collector):
 
             blocks_total, blocks_free, blocks_avail = data.f_blocks, data.f_bfree, data.f_bavail
             inodes_total, inodes_free, inodes_avail = data.f_files, data.f_ffree, data.f_favail
-            
+
             for unit in self.config['byte_unit'] :
 
                 metric_name = '%s.%s_used' % (name, unit)
                 metric_value = float(block_size) * float(blocks_total - blocks_free)
                 metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = unit)
                 self.publish(metric_name, metric_value, 2)
-    
+
                 metric_name = '%s.%s_free' % (name, unit)
                 metric_value = float(block_size) * float(blocks_free)
                 metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = unit)
                 self.publish(metric_name, metric_value, 2)
-    
+
                 metric_name = '%s.%s_avail' % (name, unit)
                 metric_value = float(block_size) * float(blocks_avail)
                 metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = unit)

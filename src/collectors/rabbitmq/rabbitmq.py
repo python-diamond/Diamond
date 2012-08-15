@@ -18,7 +18,7 @@ except ImportError:
     Number = None
 
 class RabbitMQCollector(diamond.collector.Collector):
-    
+
     def get_default_config_help(self):
         config_help = super(RabbitMQCollector, self).get_default_config_help()
         config_help.update({
@@ -45,7 +45,7 @@ class RabbitMQCollector(diamond.collector.Collector):
         if Number is None:
             self.log.error('Unable to import either Number or pyrabbit.api')
             return {}
-        
+
         try:
             client = pyrabbit.api.Client(self.config['host'],
                                          self.config['user'],
@@ -55,7 +55,7 @@ class RabbitMQCollector(diamond.collector.Collector):
                 for key in queue:
                     name = '{0}.{1}'.format('queues', queue['name'])
                     self._publish_metrics(name, [], key, queue)
-    
+
             overview = client.get_overview()
             for key in overview:
                 self._publish_metrics('', [], key, overview)

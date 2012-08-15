@@ -36,7 +36,7 @@ class TestOpenVPNCollector(CollectorTestCase):
             'status.clients.e_example_org.bytes_tx' : 13401853.000000,
             'status.global.max_bcast-mcast_queue_length' : 14.000000,
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

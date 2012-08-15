@@ -21,7 +21,7 @@ class TestPuppetDashboardCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
         with patch('urllib2.urlopen', Mock(return_value = self.getFixture('index.html'))):
             self.collector.collect()
-            
+
         metrics = {
             'unresponsive': 3,
             'pending': 0,
@@ -29,7 +29,7 @@ class TestPuppetDashboardCollector(CollectorTestCase):
             'unchanged': 4,
             'unreported': 0,
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 
@@ -37,7 +37,7 @@ class TestPuppetDashboardCollector(CollectorTestCase):
     def test_should_fail_gracefully(self, publish_mock):
         with patch('urllib2.urlopen', Mock(return_value = self.getFixture('index.blank'))):
             self.collector.collect()
-            
+
         self.assertPublishedMany(publish_mock, {})
 
 ################################################################################

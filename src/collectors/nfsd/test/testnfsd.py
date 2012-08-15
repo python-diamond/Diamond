@@ -35,7 +35,7 @@ class TestNfsdCollector(CollectorTestCase):
 
         NfsdCollector.PROC = self.getFixturePath('proc_nfsd_2')
         self.collector.collect()
-        
+
         metrics = {
             '.input_output.bytes-read' : 3139369493.0,
             '.input_output.bytes-written' : 15691669.0,
@@ -98,7 +98,7 @@ class TestNfsdCollector(CollectorTestCase):
             '.v4.ops.write' : 76562.0,
             '.v4.unknown' : 2.0
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

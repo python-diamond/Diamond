@@ -19,11 +19,11 @@ class TestXENCollector(CollectorTestCase):
     @patch('libvirt.openReadOnly')
     @patch.object(Collector, 'publish')
     def test_centos6(self, publish_mock, libvirt_mock, os_mock):
-        
+
         class info:
             def __init__(self, id):
                 self.id = id
-            
+
             def info(self):
                 if self.id == 0:
                    return [1, 49420888L, 49420888L, 8, 911232000000000L]
@@ -35,25 +35,25 @@ class TestXENCollector(CollectorTestCase):
                    return [1, 10485760L, 10485760L, 2, 335312040000000L]
                 if self.id == 4:
                    return [1, 10485760L, 10485760L, 2, 351313480000000L]
-        
+
         libvirt_m = Mock()
         libvirt_m.getInfo.return_value = ['x86_64', 48262, 8, 1200, 2, 1, 4, 1]
         libvirt_m.listDomainsID.return_value = [2, 1, 4, 3]
-        
+
         def lookupByIdMock(id):
             lookup = info(id)
             return lookup
-        
+
         libvirt_m.lookupByID = lookupByIdMock
-        
+
         libvirt_mock.return_value = libvirt_m
-        
+
         statsvfs_mock = Mock()
         statsvfs_mock.f_bavail = 74492145
         statsvfs_mock.f_frsize = 4096
-        
+
         os_mock.return_value = statsvfs_mock
-        
+
         self.collector.collect()
 
         metrics = {
@@ -65,7 +65,7 @@ class TestXENCollector(CollectorTestCase):
             'FreeCores': 0.000000,
             'AllocatedCores': 8.000000,
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

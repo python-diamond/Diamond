@@ -33,7 +33,7 @@ class TestKSMCollector(CollectorTestCase):
             'run' : 1.0, 
             'sleep_millisecs' : 20.0, 
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

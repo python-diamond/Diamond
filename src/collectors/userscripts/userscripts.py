@@ -44,7 +44,7 @@ class UserScriptsCollector(diamond.collector.Collector):
             'method':       'Threaded',
         } )
         return config
-    
+
     def collect(self):
         scripts_path = self.config['scripts_path']
         if not os.access(scripts_path, os.R_OK):

@@ -4,11 +4,11 @@
 Collect IO Stats
 
  * http://www.kernel.org/doc/Documentation/iostats.txt
- 
+
 #### Dependencies
 
  * /proc/diskstats
- 
+
 """
 
 import diamond.collector
@@ -34,7 +34,7 @@ class DiskUsageCollector(diamond.collector.Collector):
         'io_milliseconds':          4294967295,
         'io_milliseconds_weighted': 4294967295
     }
-    
+
     LastCollectTime = None
 
     def get_default_config_help(self):
@@ -66,10 +66,10 @@ class DiskUsageCollector(diamond.collector.Collector):
           (major, minor) -> DiskStatistics(device, ...)
         """
         result = {}
-        
+
         if os.access('/proc/diskstats', os.R_OK):
             file = open('/proc/diskstats')
-        
+
             for line in file:
                 try:
                     columns = line.split()
@@ -78,10 +78,10 @@ class DiskUsageCollector(diamond.collector.Collector):
                     if len(columns) < 14:
                         continue
                     major, minor, device = int(columns[0]), int(columns[1]), columns[2]
-        
+
                     if device.startswith('ram') or device.startswith('loop'):
                         continue
-        
+
                     result[(major, minor)] = {
                         'device'                   : device,
                         'reads'                    : float(columns[3] ),
@@ -98,7 +98,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                     }
                 except ValueError:
                     continue
-        
+
             file.close()
         elif psutil:
             disks = psutil.disk_io_counters(True)
@@ -117,11 +117,11 @@ class DiskUsageCollector(diamond.collector.Collector):
                         'io_milliseconds'          : disks[disk].read_time + disks[disk].write_time,
                         'io_milliseconds_weighted' : disks[disk].read_time + disks[disk].write_time
                     }
-            
+
         return result
 
     def collect(self):
-        
+
         # Handle collection time intervals correctly
         CollectTime = time.time()
         time_delta = float(self.config['interval'])
@@ -130,7 +130,7 @@ class DiskUsageCollector(diamond.collector.Collector):
         if not time_delta:
             time_delta = float(self.config['interval'])
         self.LastCollectTime = CollectTime
-        
+
         exp = self.config['devices']
         reg = re.compile(exp)
 
@@ -145,7 +145,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                 if key == 'device':
                     continue
                 oldkey = key
-                
+
                 for unit in self.config['byte_unit']:
                     key = oldkey
 
@@ -156,7 +156,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                         value /= 2
                         value = diamond.convertor.binary.convert(value = value, oldUnit = 'kB', newUnit = unit)
                         self.MAX_VALUES[key] = diamond.convertor.binary.convert(value = diamond.collector.MAX_COUNTER, oldUnit = 'byte', newUnit = unit)
-    
+
                     metric_name = '.'.join([info['device'], key])
                     # io_in_progress is a point in time counter, don't derivative
                     if key != 'io_in_progress':
@@ -179,12 +179,12 @@ class DiskUsageCollector(diamond.collector.Collector):
                 metric_name = 'write_%s_per_second' % unit
                 key = 'writes_%s' % unit
                 metrics[metric_name]                        = metrics[key] / time_delta
-    
+
                 # Set to zero so the nodes are valid even if we have 0 io for the
                 # Metric duration
                 metric_name = 'average_request_size_%s' % unit
                 metrics[metric_name]                        = 0
-            
+
             metrics['average_queue_length']             = metrics['io_milliseconds'] / time_delta * 1000.0
             metrics['await']                            = 0
             metrics['service_time']                     = 0
@@ -192,15 +192,15 @@ class DiskUsageCollector(diamond.collector.Collector):
             metrics['io']                               = metrics['reads'] + metrics['writes']
             metrics['util_percentage']                  = 0
             metrics['concurrent_io']                    = 0
-            
+
             if metrics['io'] > 0:
-                
+
                 for unit in self.config['byte_unit']:
                     rkey = 'reads_%s' % unit
                     wkey = 'writes_%s' % unit
                     metric_name = 'average_request_size_%s' % unit
                     metrics[metric_name]                    = (metrics[rkey] + metrics[wkey] ) / metrics['io']
-                    
+
                 metrics['service_time']                 = metrics['io_milliseconds'] / metrics['io']
                 metrics['await']                        = metrics['io_milliseconds_weighted'] / metrics['io']
                 metrics['util_percentage']              = (metrics['io'] * metrics['service_time'] / 1000.0) * 100.0

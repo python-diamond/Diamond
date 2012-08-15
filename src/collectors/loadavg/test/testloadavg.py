@@ -38,7 +38,7 @@ class TestLoadAverageCollector(CollectorTestCase):
             'processes_running' : 1,
             'processes_total'   : 235
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

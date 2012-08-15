@@ -65,7 +65,7 @@ class TestCPUCollector(CollectorTestCase):
             'total.system' : 0.2,
             'total.user'   : 0.4
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

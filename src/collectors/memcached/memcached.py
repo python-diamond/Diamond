@@ -14,9 +14,9 @@ diamond.conf
 ```
     [[MemcachedCollector]]
     enabled = True
-    
+
     [[[hosts]]]
-    
+
     [[[[app-1]]]
     host = localhost
     port = 11211
@@ -30,7 +30,7 @@ import diamond.collector
 import socket
 
 class MemcachedCollector(diamond.collector.Collector):
-    
+
     def get_default_config_help(self):
         config_help = super(MemcachedCollector, self).get_default_config_help()
         config_help.update({
@@ -46,13 +46,13 @@ class MemcachedCollector(diamond.collector.Collector):
         config = super(MemcachedCollector, self).get_default_config()
         config.update(  {
             'path':     'memcached',
-            
+
             # Which rows of 'status' you would like to publish.
             # 'telnet host port' and type stats and hit enter to see the list of
             # possibilities.
             # Leave unset to publish all
             #'publish': ''
-            
+
             # Connection settings
             'hosts':    {
                 'localhost': {
@@ -62,7 +62,7 @@ class MemcachedCollector(diamond.collector.Collector):
             },
         } )
         return config
-    
+
     def get_raw_stats(self, host, port):
         data = ''
         # connect
@@ -81,17 +81,17 @@ class MemcachedCollector(diamond.collector.Collector):
     def get_stats(self, config):
         # stuff that's always ignored, aren't 'stats'
         ignored = ('libevent', 'pid', 'pointer_size', 'time', 'version')
-        
+
         stats = {}
         data = self.get_raw_stats(config['host'], int(config['port']))
-                             
+
         # parse stats
         for line in data.splitlines():
             pieces = line.split(' ')
             if pieces[0] != 'STAT' or pieces[1] in ignored:
                 continue
             stats[pieces[1]] = pieces[2]
-        
+
         return stats
 
     def collect(self):

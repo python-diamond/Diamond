@@ -15,13 +15,13 @@ import os
 class NfsdCollector(diamond.collector.Collector):
 
     PROC = '/proc/net/rpc/nfsd'
-    
+
     def get_default_config_help(self):
         config_help = super(NfsdCollector, self).get_default_config_help()
         config_help.update({
         })
         return config_help
-    
+
     def get_default_config(self):
         """
         Returns the default collector settings
@@ -38,14 +38,14 @@ class NfsdCollector(diamond.collector.Collector):
         Collect stats
         """
         if os.access(self.PROC, os.R_OK):
-    
+
             results = {}
             # Open file
             file = open(self.PROC)
-            
+
             for line in file:
                 line = line.split()
-                
+
                 if line[0] == 'rc':
                     results['reply_cache.hits'] = line[1]
                     results['reply_cache.misses'] = line[2]
@@ -185,15 +185,15 @@ class NfsdCollector(diamond.collector.Collector):
                     results['v4.ops.verify'] = line[39]
                     results['v4.ops.write'] = line[40]
                     results['v4.ops.rellockowner'] = line[41]
-                
+
             # Close File
             file.close()
-    
+
             for stat in results.keys():
                 metric_name = '.'+stat
                 metric_value = long(float(results[stat]))
                 metric_value = self.derivative(metric_name, metric_value)
                 self.publish(metric_name, metric_value)
             return True
-        
+
         return False

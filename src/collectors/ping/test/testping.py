@@ -42,10 +42,10 @@ class TestPingCollector(CollectorTestCase):
         metrics = {
             'localhost': 11
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
-        
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_ip_gentoo(self, publish_mock):
@@ -93,7 +93,7 @@ class TestPingCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, {
             'localhost': 38
         })
-        
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_ip_osx(self, publish_mock):

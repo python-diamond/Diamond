@@ -97,7 +97,7 @@ class Server(object):
         # Log
         self.log.debug("Loaded Collector: %s", fqcn)
         return cls
-    
+
     def load_include_path(self, path):
         """
         Scan for and add paths to the include path
@@ -117,11 +117,11 @@ class Server(object):
         """
         # Initialize return value
         collectors = {}
-        
+
         # Get a list of files in the directory, if the directory exists
         if not os.path.exists(path):
             raise OSError("Directory does not exist: %s" % path)
-            
+
         if path.endswith('tests') or path.endswith('fixtures'):
             return collectors
 
@@ -223,7 +223,7 @@ class Server(object):
             self.log.warn("Skipped loading invalid Collector: %s",
                           c.__class__.__name__)
             return
-        
+
         if c.config['enabled'] != 'True':
             self.log.warn("Skipped loading disabled Collector: %s",
                           c.__class__.__name__)

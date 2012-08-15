@@ -18,7 +18,7 @@ class zmqHandler ( Handler ):
     """
       Create a new instance of zmqHandler class
     """   
- 
+
     # Initialize Handler
     Handler.__init__(self,config)
 

@@ -25,7 +25,7 @@ else:
     counter = (2 ** 32) - 1
 
 class InterruptCollector(diamond.collector.Collector):
-    
+
     PROC='/proc/interrupts'
 
     def get_default_config_help(self):
@@ -50,7 +50,7 @@ class InterruptCollector(diamond.collector.Collector):
         """
         if not os.access(self.PROC, os.R_OK):
             return False        
-        
+
         #Open PROC file
         file=open(self.PROC,'r')
         #Get data

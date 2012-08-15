@@ -47,7 +47,7 @@ class TestRabbitMQCollector(CollectorTestCase):
             'more_keys.nested_key': 3,
             'key' : 4
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

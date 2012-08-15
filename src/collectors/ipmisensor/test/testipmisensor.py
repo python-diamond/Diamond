@@ -63,7 +63,7 @@ class TestIPMISensorCollector(CollectorTestCase):
             'P2-DIMM3A.Temp' : 39.000000, 
             'P2-DIMM3B.Temp' : 40.000000, 
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

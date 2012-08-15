@@ -44,14 +44,14 @@ class ConnTrackCollector(diamond.collector.Collector):
         if not os.access(self.config['bin'], os.X_OK):
             self.log.error("%s is not executable", self.config['bin'])
             return False
-        
+
         command = [self.config['bin'], 'net.netfilter.nf_conntrack_count' ]
 
         if self.config['use_sudo']:
             command.insert(0, self.config['sudo_cmd'])
 
         line = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
-        
+
         match = _RE.match(line)
         if match:
             self.publish('nf_conntrack_count', int(match.group(2)))

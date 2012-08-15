@@ -22,14 +22,14 @@ devices being polled. You may wish to change this to every 300 seconds. However 
     # Options for SNMPInterfaceCollector
     path = interface
     interval = 60
-   
+
     [devices]
-   
+
     [[router1]]
     host = router1.example.com
     port = 161
     community = public
-   
+
     [[router2]]
     host = router1.example.com
     port = 161
@@ -160,7 +160,7 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
                         # Convert Metric
                         metricName = '.'.join([metricIfDescr, counterName.replace('Octets', unit)])
                         metricValue = diamond.convertor.binary.convert(value = ifCounterValue, oldUnit = 'byte', newUnit = unit)
-                        
+
                         # Get Metric Path
                         metricPath = '.'.join(['devices', device, self.config['path'], metricName])
                         # Create Metric

@@ -20,7 +20,7 @@ class TestMonitCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
         with patch('urllib2.urlopen', Mock(return_value = self.getFixture('status.xml'))):
             self.collector.collect()
-            
+
         metrics = {
             'app_thin_8101.cpu.percent': 0.9,
             'app_thin_8101.memory.kilobyte_usage': 216104,
@@ -43,7 +43,7 @@ class TestMonitCollector(CollectorTestCase):
             'cron.cpu.percent': 0.0, 
             'cron.memory.kilobyte_usage':1036,
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 
@@ -51,7 +51,7 @@ class TestMonitCollector(CollectorTestCase):
     def test_should_fail_gracefully(self, publish_mock):
         with patch('urllib2.urlopen', Mock(return_value = self.getFixture('status_blank.xml'))):
             self.collector.collect()
-          
+
         self.assertPublishedMany(publish_mock, {})
 
 ################################################################################

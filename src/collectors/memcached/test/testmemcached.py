@@ -27,7 +27,7 @@ class TestMemcachedCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
         with patch.object(MemcachedCollector, 'get_raw_stats', Mock(return_value = self.getFixture('stats').getvalue())):
             self.collector.collect()
-        
+
         metrics = {
             'localhost.reclaimed': 0.000000,
             'localhost.expired_unfetched': 0.000000,
@@ -73,7 +73,7 @@ class TestMemcachedCollector(CollectorTestCase):
             'localhost.decr_misses': 0.000000,
             'localhost.get_hits': 0.000000,
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

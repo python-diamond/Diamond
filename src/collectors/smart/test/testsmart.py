@@ -26,10 +26,10 @@ class TestSmartCollector(CollectorTestCase):
                 ( self.getFixture('osx_missing').getvalue() , '')
             )):
                 self.collector.collect()
-    
+
             self.assertPublishedMany(publish_mock, {
             })
-            
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_osx_ssd(self, publish_mock):
@@ -38,7 +38,7 @@ class TestSmartCollector(CollectorTestCase):
                 ( self.getFixture('osx_ssd').getvalue() , '')
             )):
                 self.collector.collect()
-    
+
             self.assertPublishedMany(publish_mock, {
                 'disk0.172' : 0,
                 'disk0.Head_Amplitude' : 100,
@@ -71,7 +71,7 @@ class TestSmartCollector(CollectorTestCase):
                 ( self.getFixture('centos5.5_hdd').getvalue() , '')
             )):
                 self.collector.collect()
-    
+
             metrics = {
                 'sda.Temperature_Celsius' : 28,
                 'sda.Power_On_Hours' : 6827,
@@ -91,7 +91,7 @@ class TestSmartCollector(CollectorTestCase):
                 'sda.Reallocated_Sector_Ct' : 0,
                 'sda.Seek_Error_Rate' : 0,
             }
-            
+
             self.setDocExample(self.collector.__class__.__name__, metrics)
             self.assertPublishedMany(publish_mock, metrics)
 

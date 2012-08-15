@@ -7,7 +7,7 @@ Only valid for ipv4 hosts currently
 #### Dependencies
 
  * ping
- 
+
 #### Configuration
 
 Configuration is done by adding in extra keys like this
@@ -56,12 +56,12 @@ class PingCollector(diamond.collector.Collector):
 
                 if not os.access(self.config['bin'], os.X_OK):
                     return
-                
+
                 command = [self.config['bin'], '-nq', '-c 1', host]
-        
+
                 if self.config['use_sudo']:
                     command.insert(0, self.config['sudo_cmd'])
-        
+
                 ping = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip().split("\n")[-1]
 
                 # Linux
@@ -75,5 +75,5 @@ class PingCollector(diamond.collector.Collector):
                 # Unknown
                 else :
                     metric_value = 10000
-                    
+
                 self.publish(metric_name, metric_value)

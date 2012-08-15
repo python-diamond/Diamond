@@ -27,7 +27,7 @@ Or, to override the name (now "127_0_0_1"):
 You can also specify multiple and mixed instances::
 
     instances = file:///var/log/openvpn/developers.log, tcp://10.0.0.1:1195?admins
-    
+
 #### Dependencies
 
  * urlparse
@@ -112,7 +112,7 @@ class OpenVPNCollector(diamond.collector.Collector):
             name = parsed.path[1:]
         else:
             name = host.replace('.', '_')
-        
+
         self.log.info('OpenVPN parsing "%s" tcp: %s:%d', name, host, port)
 
         try:
@@ -209,7 +209,7 @@ class OpenVPNCollector(diamond.collector.Collector):
                             section,
                             key,
                         ]), value)
-                    
+
             elif line.startswith('END'):
                 break
 

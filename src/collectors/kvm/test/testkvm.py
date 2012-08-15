@@ -25,9 +25,9 @@ class TestKVMCollector(CollectorTestCase):
             '0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n'
         ))):
             self.collector.collect()
-            
+
         self.assertPublishedMany(publish_mock, {})
-            
+
         self.collector.collect()
 
         metrics = {
@@ -64,7 +64,7 @@ class TestKVMCollector(CollectorTestCase):
             'signal_exits' : 0.000000, 
             'tlb_flush' : 0.000000, 
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

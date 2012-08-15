@@ -13,13 +13,13 @@ import urllib2
 import diamond.collector
 
 class ResqueWebCollector(diamond.collector.Collector):
-    
+
     def get_default_config_help(self):
         config_help = super(ResqueWebCollector, self).get_default_config_help()
         config_help.update({
         })
         return config_help
-    
+
     def get_default_config(self):
         """
         Returns the default collector settings
@@ -43,7 +43,7 @@ class ResqueWebCollector(diamond.collector.Collector):
         for data in response.read().split("\n"):
             if data == "":
                 continue
-                
+
             item,count = data.strip().split("=")
             try:
                 count = int(count)
@@ -56,6 +56,6 @@ class ResqueWebCollector(diamond.collector.Collector):
                         self.publish("%s.current" % queue, count)
                 else:
                     self.publish("queue.%s.current" % queue, count)
-                
+
             except Exception, e:
                 self.log.error('Couldnt parse the queue: %s', e)

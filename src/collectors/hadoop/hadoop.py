@@ -55,7 +55,7 @@ class HadoopCollector(diamond.collector.Collector):
             match = self.re_log.match(line)
             if not match:
                 continue
-            
+
             metrics={}
 
             data = match.groupdict()
@@ -67,7 +67,7 @@ class HadoopCollector(diamond.collector.Collector):
 
             for metric in metrics.keys():
                 try:
-                    
+
                     if data['name'] == 'jvm.metrics':
                         path = self.get_metric_path('.'.join([
                             data['name'],
@@ -75,7 +75,7 @@ class HadoopCollector(diamond.collector.Collector):
                             metrics['processName'].replace(' ', '_'),
                             metric,
                         ]))
-                        
+
                     elif data['name'] == 'mapred.job':
                         path = self.get_metric_path('.'.join([
                             data['name'],
@@ -84,27 +84,27 @@ class HadoopCollector(diamond.collector.Collector):
                             metrics['counter'].replace(' ', '_'),
                             metric,
                         ]))
-                        
+
                     elif data['name'] == 'rpc.metrics':
-                        
+
                         if metric == 'port':
                             continue
-                        
+
                         path = self.get_metric_path('.'.join([
                             data['name'],
                             metrics['hostName'].replace('.', '_'),
                             metrics['port'],
                             metric,
                         ]))
-                    
+
                     else :
                         path = self.get_metric_path('.'.join([
                             data['name'],
                             metric,
                         ]))
-                    
+
                     value = float(metrics[metric])
-                    
+
                     self.publish_metric(Metric(path,
                         value,
                         timestamp=int(data['timestamp'])))

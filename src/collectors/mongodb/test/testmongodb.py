@@ -44,7 +44,7 @@ class TestMongoDBCollector(CollectorTestCase):
             'db_keys.db_nested_key': 1,
             'dbkey' : 2
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

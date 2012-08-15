@@ -23,7 +23,7 @@ class XENCollector(Collector):
         config_help.update({
         })  
         return config_help
-    
+
     def get_default_config(self):
         """ 
         Returns the default collector settings

@@ -42,14 +42,14 @@ class PostqueueCollector(diamond.collector.Collector):
 
             if self.config['use_sudo']:
                 command.insert(0, self.config['sudo_cmd'])
-    
+
             return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
         except OSError:
             return ""
 
     def collect(self):
         output = self.get_postqueue_output()
-        
+
         try:
             postqueue_count = int(output.strip().split("\n")[-1].split()[-2])
         except:

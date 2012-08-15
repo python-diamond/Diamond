@@ -8,14 +8,14 @@ It's OK.
 #### Dependencies
 
  * [python-statsd](http://pypi.python.org/pypi/python-statsd/)
- 
+
 #### Configuration
- 
+
 Enable this handler
 
  * handers = diamond.handler.stats_d.StatsdHandler
- 
- 
+
+
 #### Notes
 
 If your system has both [python-statsd](http://pypi.python.org/pypi/python-statsd/)

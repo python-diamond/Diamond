@@ -14,7 +14,7 @@ import re
 import diamond.collector
 
 class PuppetDashboardCollector(diamond.collector.Collector):
-    
+
     def get_default_config_help(self):
         config_help = super(PuppetDashboardCollector, self).get_default_config_help()
         config_help.update({
@@ -23,7 +23,7 @@ class PuppetDashboardCollector(diamond.collector.Collector):
             'path' : 'Path to the dashboard',
         })
         return config_help
-    
+
     def get_default_config(self):
         """
         Returns the default collector settings

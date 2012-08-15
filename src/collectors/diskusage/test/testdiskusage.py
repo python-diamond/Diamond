@@ -141,7 +141,7 @@ class TestDiskUsageCollector(CollectorTestCase):
             'sdb.writes_milliseconds':              33.7,
             'sdb.writes_per_second':                80.5,
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

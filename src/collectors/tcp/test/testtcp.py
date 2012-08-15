@@ -55,11 +55,11 @@ TcpExt: 0 1 2
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         self.setUp([ 'ListenOverflows', 'ListenDrops', 'TCPLoss', 'TCPTimeouts' ])
-        
+
         TCPCollector.PROC = self.getFixturePath('proc_net_netstat')
         self.collector.collect()
         self.assertPublishedMany(publish_mock, {})
-        
+
         TCPCollector.PROC = self.getFixturePath('proc_net_netstat_2')
         self.collector.collect()
 
@@ -69,7 +69,7 @@ TcpExt: 0 1 2
             'TCPLoss'          : 188,
             'TCPTimeouts'      : 15265
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

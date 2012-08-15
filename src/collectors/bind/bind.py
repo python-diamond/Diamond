@@ -19,7 +19,7 @@ else:
     import cElementTree as ElementTree
 
 class BindCollector(diamond.collector.Collector):
-    
+
     def get_default_config_help(self):
         config_help = super(BindCollector, self).get_default_config_help()
         config_help.update({
@@ -35,7 +35,7 @@ class BindCollector(diamond.collector.Collector):
             'publish_view_meta' : "",
         })
         return config_help
-    
+
     def get_default_config(self):
         """
         Returns the default collector settings
@@ -76,7 +76,7 @@ class BindCollector(diamond.collector.Collector):
         except Exception, e:
             self.log.error('Couldnt connect to bind: %s', e)
             return {}
-        
+
         tree = ElementTree.parse(req)
 
         if not tree:

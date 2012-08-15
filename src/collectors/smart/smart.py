@@ -49,14 +49,14 @@ class SmartCollector(diamond.collector.Collector):
 
         for device in os.listdir('/dev'):
             if devices.match(device):
-                
+
                 command = [self.config['bin'], "-A", os.path.join('/dev',device)]
 
                 if self.config['use_sudo']:
                     command.insert(0, self.config['sudo_cmd'])
-        
+
                 attributes = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip().splitlines()
-                
+
                 metrics = {}
 
                 for attr in attributes[7:]:
@@ -65,7 +65,7 @@ class SmartCollector(diamond.collector.Collector):
                         metric = "%s.%s" % (device, attribute[1])
                     else:
                         metric = "%s.%s" % (device, attribute[0])
-                        
+
                     # New metric? Store it
                     if metric not in metrics:
                         metrics[metric] = attribute[9]
@@ -77,6 +77,6 @@ class SmartCollector(diamond.collector.Collector):
                         metrics[metric] = attribute[9]
                     else:
                         continue
-                        
+
                 for metric in metrics.keys():
                     self.publish(metric, metrics[metric])

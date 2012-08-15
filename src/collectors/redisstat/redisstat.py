@@ -18,7 +18,7 @@ except ImportError:
     redis = None
 
 class RedisCollector(diamond.collector.Collector):
-    
+
     _DATABASE_COUNT = 16
     _DEFAULT_DB = 0
     _DEFAULT_HOST = 'localhost'

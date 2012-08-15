@@ -36,7 +36,7 @@ class TestFilestatCollector(CollectorTestCase):
             'unused'   : 0,
             'max'      : 4835852
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

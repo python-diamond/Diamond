@@ -33,7 +33,7 @@ class TestIPVSCollector(CollectorTestCase):
             "172_16_1_56:443.10_68_15_66:443.conns" : 59,
             "172_16_1_56:443.10_68_15_66:443.outbytes" : 216873,
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 

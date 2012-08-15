@@ -19,14 +19,14 @@ import glob
 import diamond.collector
 
 class KSMCollector(diamond.collector.Collector):
-    
+
     def get_default_config_help(self):
         config_help = super(KSMCollector, self).get_default_config_help()
         config_help.update({
             'ksm_path' : "location where KSM kernel data can be found",
         })
         return config_help
-    
+
     def get_default_config(self):
         """
         Return default config.

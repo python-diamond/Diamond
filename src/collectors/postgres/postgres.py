@@ -17,7 +17,7 @@ except ImportError:
     psycopg2 = None
 
 class PostgresqlCollector(diamond.collector.Collector):
-    
+
     def get_default_config_help(self):
         config_help = super(PostgresqlCollector, self).get_default_config_help()
         config_help.update({
@@ -27,7 +27,7 @@ class PostgresqlCollector(diamond.collector.Collector):
             'port' : 'Port number',
         })
         return config_help
-    
+
     def get_default_config(self):
         """
         Return default config.
@@ -47,7 +47,7 @@ class PostgresqlCollector(diamond.collector.Collector):
         if psycopg2 is None:
             self.log.error('Unable to import module psycopg2')
             return {}
-            
+
         self.conn_string = "host=%s user=%s password=%s port=%s" % (
                 self.config['host'],
                 self.config['user'],

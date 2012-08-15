@@ -71,7 +71,7 @@ class TestInterruptCollector(CollectorTestCase):
             'PCI-MSI_eth1.CPU19' : 10386.000000, 
             'PCI-MSI_eth1.total' : 10386.000000, 
         }
-        
+
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 
