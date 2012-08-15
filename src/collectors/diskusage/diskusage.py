@@ -180,9 +180,11 @@ class DiskUsageCollector(diamond.collector.Collector):
                 key = 'writes_%s' % unit
                 metrics[metric_name]                        = metrics[key] / time_delta
     
+                # Set to zero so the nodes are valid even if we have 0 io for the
+                # Metric duration
                 metric_name = 'average_request_size_%s' % unit
+                metrics[metric_name]                        = 0
             
-            metrics[metric_name]                        = 0
             metrics['average_queue_length']             = metrics['io_milliseconds'] / time_delta * 1000.0
             metrics['await']                            = 0
             metrics['service_time']                     = 0
