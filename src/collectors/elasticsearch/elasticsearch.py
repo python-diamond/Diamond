@@ -40,13 +40,13 @@ class ElasticSearchCollector(diamond.collector.Collector):
             self.config['host'], int(self.config['port']))
         try:
             response = urllib2.urlopen(url)
-        except Exception, e:
-            self.log.error("Unable to open %s" % url)
+        except urllib2.HTTPError, err:
+            self.log.error("%s: %s", url, err)
             return
 
         try:
             result = json.load(response)
-        except Exception, e:
+        except TypeError:
             self.log.error("Unable to parse response from elasticsearch as a json object")
             return
 
