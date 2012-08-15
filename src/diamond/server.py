@@ -51,7 +51,7 @@ class Server(object):
         cls = load_class_from_name(fqcn)
         # Check if cls is subclass of Handler
         if cls == Handler or not issubclass(cls, Handler):
-            raise TypeError, "%s is not a vaild Handler" % fqcn
+            raise TypeError, "%s is not a valid Handler" % fqcn
         # Log
         self.log.debug("Loaded Handler: %s", fqcn)
         return cls
