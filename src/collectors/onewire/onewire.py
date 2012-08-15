@@ -81,13 +81,11 @@ class OneWireCollector(diamond.collector.Collector):
                 except:
                     self.log.error("Unable to read %s" % fv)
                     raise
-                    continue
 
                 try:
                     v = float(v)
                 except:
                     self.log.error("Unexpected value %s in %s" % (v, fv))
                     raise
-                    continue
 
                 metrics["%s.%s" % (oid, alias)] = v
