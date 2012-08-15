@@ -43,12 +43,7 @@ Note: If you modify the SNMPInterfaceCollector configuration, you will need to r
 
 import os
 import sys
-import string
-import logging
 import time
-import traceback
-import configobj
-import socket
 import re
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), 'snmp'))

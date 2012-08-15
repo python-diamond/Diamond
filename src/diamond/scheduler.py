@@ -73,7 +73,6 @@ import sched
 import time
 import traceback
 import weakref
-import time
 
 class method:
     sequential="sequential"

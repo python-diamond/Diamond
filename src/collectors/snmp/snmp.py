@@ -7,15 +7,7 @@ SNMPCollector is a special collector for collecting data from using SNMP
 
 """
 
-import os
-import sys
-import string
-import logging
-import time
-import traceback
-import configobj
 import socket
-import re
 
 try:
     import pysnmp.entity.rfc3413.oneliner.cmdgen
@@ -24,7 +16,6 @@ except ImportError:
     pysnmp = None
 
 import diamond.collector
-from diamond.metric import Metric
 
 class SNMPCollector(diamond.collector.Collector):
 

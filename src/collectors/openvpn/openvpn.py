@@ -32,7 +32,6 @@ You can also specify multiple and mixed instances::
 
 """
     
-from diamond.metric import Metric
 import diamond.collector
 import os.path
 import urlparse

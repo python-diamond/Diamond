@@ -7,7 +7,6 @@ Collect metrics from postgresql
 
 """
 
-import sys
 import diamond.collector
 
 try:

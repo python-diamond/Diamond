@@ -7,8 +7,6 @@ from test import *
 from diamond.collector import Collector
 from onewire import OneWireCollector
 
-import __builtin__
-
 ###############################################################################
 
 

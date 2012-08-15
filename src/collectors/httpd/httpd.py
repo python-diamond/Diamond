@@ -9,8 +9,6 @@ Collect stats from Apache HTTPD server using mod_status
 
 """
 
-import os
-import sys
 import re
 import httplib
 import urlparse

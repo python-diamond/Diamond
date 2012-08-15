@@ -9,7 +9,6 @@ balancing, firewall, proxy and VPN functions.
 import sys
 import os
 import time
-import logging
 import struct
 import re
 

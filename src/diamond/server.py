@@ -5,16 +5,11 @@ import time
 import logging
 import traceback
 import configobj
-import optparse
-import signal
 import inspect
-import pwd
-import grp
 
 # Path Fix
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"../")))
 
-from diamond import *
 import diamond
 
 from diamond.collector import Collector
