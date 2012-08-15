@@ -151,7 +151,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                         key = key.replace('sectors', unit)
                         # Assume 512 byte sectors
                         # TODO: Fix me to be detectable
-                        value = value / 2
+                        value /= 2
                         value = diamond.convertor.binary.convert(value = value, oldUnit = 'kB', newUnit = unit)
                         self.MAX_VALUES[key] = diamond.convertor.binary.convert(value = diamond.collector.MAX_COUNTER, oldUnit = 'byte', newUnit = unit)
     
