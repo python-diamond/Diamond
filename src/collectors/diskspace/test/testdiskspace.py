@@ -19,7 +19,6 @@ class TestDiskSpaceCollector(CollectorTestCase):
 
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
-
     def test_get_file_systems(self, open_mock):
         result = None
         open_mock.return_value = StringIO("""

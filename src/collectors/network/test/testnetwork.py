@@ -19,7 +19,6 @@ class TestNetworkCollector(CollectorTestCase):
 
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
-
     @patch.object(Collector, 'publish')
     def test_should_open_proc_net_dev(self, publish_mock, open_mock):
         open_mock.return_value = StringIO('')
