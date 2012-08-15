@@ -107,6 +107,6 @@ class HadoopCollector(diamond.collector.Collector):
                         value,
                         timestamp=int(data['timestamp'])))
 
-                except (ValueError):
+                except ValueError:
                     pass
         fd.close()

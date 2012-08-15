@@ -80,7 +80,7 @@ class GraphiteHandler(Handler):
                 break
             except socket.error, e:
                 # Log Error
-                self.log.error("GraphiteHandler: Failed sending data. %s." % (e))
+                self.log.error("GraphiteHandler: Failed sending data. %s." % e)
                 # Attempt to restablish connection
                 self._close()
                 # Decrement retry

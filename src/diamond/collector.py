@@ -224,7 +224,7 @@ class Collector(object):
         Run the collector
         """
         # Log
-        self.log.debug("Collecting data from: %s" % (self.__class__.__name__))
+        self.log.debug("Collecting data from: %s" % self.__class__.__name__)
         try:
             # Collect Data
             self.collect()

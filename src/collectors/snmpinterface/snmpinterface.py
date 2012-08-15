@@ -102,7 +102,7 @@ class SNMPInterfaceCollector(SNMPCollector):
         Collect SNMP interface data from device
         """
         # Log
-        self.log.info("Collecting SNMP interface statistics from: %s" % (device))
+        self.log.info("Collecting SNMP interface statistics from: %s" % device)
 
         timestamp = time.time()
 

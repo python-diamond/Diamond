@@ -102,7 +102,7 @@ class TSDBHandler(Handler):
                 break
             except socket.error, e:
                 # Log Error
-                self.log.error("TSDBHandler: Failed sending data. %s." % (e))
+                self.log.error("TSDBHandler: Failed sending data. %s." % e)
                 # Attempt to restablish connection
                 self._close()
                 # Decrement retry

@@ -85,7 +85,7 @@ class NetscalerSNMPCollector(SNMPCollector):
         Collect Netscaler SNMP stats from device
         """ 
         # Log
-        self.log.info("Collecting Netscaler statistics from: %s" % (device))
+        self.log.info("Collecting Netscaler statistics from: %s" % device)
 
         # Set timestamp
         timestamp = time.time()

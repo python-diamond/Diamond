@@ -75,4 +75,4 @@ class NginxCollector(diamond.collector.Collector):
         except IOError, e:
             self.log.error("Unable to open http://%s:%i:%s" % (self.config['req_host'], int(self.config['req_port']), self.config['req_path']))
         except Exception, e:
-            self.log.error("Unknown error opening url: %s" % (e))
+            self.log.error("Unknown error opening url: %s" % e)

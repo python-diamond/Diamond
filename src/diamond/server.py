@@ -55,9 +55,9 @@ class Server(object):
         cls = load_class_from_name(fqcn)
         # Check if cls is subclass of Handler
         if cls == Handler or not issubclass(cls, Handler):
-            raise TypeError, "%s is not a vaild Handler" % (fqcn)
+            raise TypeError, "%s is not a vaild Handler" % fqcn
         # Log
-        self.log.debug("Loaded Handler: %s" % (fqcn))
+        self.log.debug("Loaded Handler: %s" % fqcn)
         return cls
 
     def load_handlers(self):
@@ -96,9 +96,9 @@ class Server(object):
         cls = load_class_from_name(fqcn)
         # Check if cls is subclass of Collector
         if cls == Collector or not issubclass(cls, Collector):
-            raise TypeError, "%s is not a valid Collector" % (fqcn)
+            raise TypeError, "%s is not a valid Collector" % fqcn
         # Log
-        self.log.debug("Loaded Collector: %s" % (fqcn))
+        self.log.debug("Loaded Collector: %s" % fqcn)
         return cls
 
     def load_collectors(self, path, filter=None):
@@ -110,13 +110,13 @@ class Server(object):
         
         # Get a list of files in the directory, if the directory exists
         if not os.path.exists(path):
-            raise OSError, "Directory does not exist: %s" % (path)
+            raise OSError, "Directory does not exist: %s" % path
             
         if path.endswith('tests') or path.endswith('fixtures'):
             return collectors
 
         # Log
-        self.log.debug("Loading Collectors from: %s" % (path))
+        self.log.debug("Loading Collectors from: %s" % path)
 
         # Add path to the system path
         sys.path.append(path)
@@ -148,7 +148,7 @@ class Server(object):
                     if mtime <= self.modules[modname]:
                         # Module hasn't changed
                         # Log
-                        self.log.debug("Found Module %s, but it hasn't changed." % (modname))
+                        self.log.debug("Found Module %s, but it hasn't changed." % modname)
                         continue
 
                 try:
@@ -162,7 +162,7 @@ class Server(object):
                 # Update module mtime
                 self.modules[modname] = mtime
                 # Log
-                self.log.debug("Loaded Module: %s" % (modname))
+                self.log.debug("Loaded Module: %s" % modname)
 
                 # Find all classes defined in the module
                 for attrname in dir(mod):
@@ -193,7 +193,7 @@ class Server(object):
             # Initialize Collector
             collector = cls(self.config, self.handlers)
             # Log
-            self.log.debug("Initialized Collector: %s" % (cls.__name__))
+            self.log.debug("Initialized Collector: %s" % cls.__name__)
         except Exception, e:
             # Log error
             self.log.error("Failed to initialize Collector: %s. %s" % (cls.__name__, traceback.format_exc()))
@@ -207,11 +207,11 @@ class Server(object):
         """
         # Check collector is for realz
         if c is None:
-            self.log.warn("Skipped loading invalid Collector: %s" % (c.__class__.__name__))
+            self.log.warn("Skipped loading invalid Collector: %s" % c.__class__.__name__)
             return
         
         if c.config['enabled'] != 'True':
-            self.log.warn("Skipped loading disabled Collector: %s" % (c.__class__.__name__))
+            self.log.warn("Skipped loading disabled Collector: %s" % c.__class__.__name__)
             return
 
         # Get collector schedule
@@ -223,7 +223,7 @@ class Server(object):
             if name in self.tasks:
                 self.scheduler.cancel(self.tasks[name])
                 # Log
-                self.log.debug("Canceled task: %s" % (name))
+                self.log.debug("Canceled task: %s" % name)
 
             method = diamond.scheduler.method.sequential
 
@@ -240,7 +240,7 @@ class Server(object):
                 task = self.scheduler.add_single_task(func, name, splay, method, args, None)
 
             # Log
-            self.log.debug("Scheduled task: %s" % (name))
+            self.log.debug("Scheduled task: %s" % name)
             # Add task to list
             self.tasks[name] = task
 

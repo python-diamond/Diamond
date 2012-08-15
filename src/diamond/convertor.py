@@ -71,7 +71,7 @@ class binary:
         if unit in [ 'yottabyte', 'YB', 'YiB']:
             return self.yottabyte(value = value)
 
-        raise NotImplementedError("unit %s" % (unit))
+        raise NotImplementedError("unit %s" % unit)
 
     def bit(self, value = None):
         if value is None:

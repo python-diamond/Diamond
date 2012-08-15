@@ -170,15 +170,15 @@ class DiskUsageCollector(diamond.collector.Collector):
             metrics['writes_per_second']                = metrics['writes'] / time_delta
 
             for unit in self.config['byte_unit']:
-                metric_name = 'read_%s_per_second' % (unit)
-                key = 'reads_%s' % (unit)
+                metric_name = 'read_%s_per_second' % unit
+                key = 'reads_%s' % unit
                 metrics[metric_name]                        = metrics[key] / time_delta
 
-                metric_name = 'write_%s_per_second' % (unit)
-                key = 'writes_%s' % (unit)
+                metric_name = 'write_%s_per_second' % unit
+                key = 'writes_%s' % unit
                 metrics[metric_name]                        = metrics[key] / time_delta
     
-                metric_name = 'average_request_size_%s' % (unit)
+                metric_name = 'average_request_size_%s' % unit
             
             metrics[metric_name]                        = 0
             metrics['average_queue_length']             = metrics['io_milliseconds'] / time_delta * 1000.0
@@ -192,9 +192,9 @@ class DiskUsageCollector(diamond.collector.Collector):
             if metrics['io'] > 0:
                 
                 for unit in self.config['byte_unit']:
-                    rkey = 'reads_%s' % (unit)
-                    wkey = 'writes_%s' % (unit)
-                    metric_name = 'average_request_size_%s' % (unit)
+                    rkey = 'reads_%s' % unit
+                    wkey = 'writes_%s' % unit
+                    metric_name = 'average_request_size_%s' % unit
                     metrics[metric_name]                    = (metrics[rkey] + metrics[wkey] ) / metrics['io']
                     
                 metrics['service_time']                 = metrics['io_milliseconds'] / metrics['io']

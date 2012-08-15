@@ -74,7 +74,7 @@ class HttpdCollector(diamond.collector.Collector):
                     v = m.group(2)
                     if k in metrics:
                         # Get Metric Name
-                        metric_name = "%s" % (k)
+                        metric_name = "%s" % k
                         # Get Metric Value
                         metric_value = "%d" % float(v)
                         # Publish Metric
