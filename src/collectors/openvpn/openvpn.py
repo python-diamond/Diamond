@@ -38,6 +38,7 @@ import socket
 import diamond.collector
 import os.path
 import urlparse
+import time
 
 class OpenVPNCollector(diamond.collector.Collector):
 
@@ -150,7 +151,6 @@ class OpenVPNCollector(diamond.collector.Collector):
         for line in lines:
             self.log.debug('OpenVPN: %s', line.rstrip())
 
-        import time
         time.sleep(0.5)
 
         section = ''
