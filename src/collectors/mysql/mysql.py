@@ -15,6 +15,7 @@ try:
     from MySQLdb import MySQLError
 except ImportError:
     MySQLdb = None
+    MySQLError = ValueError
 
 class MySQLCollector(diamond.collector.Collector):
 
