@@ -48,7 +48,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
         try:
             result = json.load(response)
-        except TypeError:
+        except (TypeError, ValueError):
             self.log.error("Unable to parse response from elasticsearch as a json object")
             return
 
