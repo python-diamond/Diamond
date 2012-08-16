@@ -34,7 +34,7 @@ class RabbitMQCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(RabbitMQCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path':     'rabbitmq',
             'host':     'localhost:55672',
             'user':     'guest',

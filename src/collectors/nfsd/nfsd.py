@@ -28,7 +28,7 @@ class NfsdCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(NfsdCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'enabled':  False,
             'path':     'nfsd'
         } )

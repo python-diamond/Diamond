@@ -39,7 +39,7 @@ class UserScriptsCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(UserScriptsCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path':         '.',
             'scripts_path': '/etc/diamond/user_scripts/',
             'method':       'Threaded',

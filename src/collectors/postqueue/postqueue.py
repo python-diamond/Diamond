@@ -29,7 +29,7 @@ class PostqueueCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(PostqueueCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path':             'postqueue',
             'bin':              '/usr/bin/postqueue',
             'use_sudo':         False,

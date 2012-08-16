@@ -54,7 +54,7 @@ class VarnishCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(VarnishCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path':             'varnish',
             'bin' :             '/usr/bin/varnishstat',
             'use_sudo':         False,

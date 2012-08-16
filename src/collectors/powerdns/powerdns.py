@@ -40,7 +40,7 @@ class PowerDNSCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(PowerDNSCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'bin': '/usr/bin/pdns_control',
             'path': 'powerdns',
             'use_sudo':         False,

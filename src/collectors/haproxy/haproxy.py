@@ -34,7 +34,7 @@ class HAProxyCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(HAProxyCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path':             'haproxy',
             'url':              'http://localhost/haproxy?stats;csv',
             'user':             'admin',

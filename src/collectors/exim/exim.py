@@ -30,7 +30,7 @@ class EximCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(EximCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path' :            'exim',
             'method' :          'threaded',
             'bin':              '/usr/sbin/exim',

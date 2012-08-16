@@ -31,7 +31,7 @@ class NagiosStatsCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(NagiosStatsCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'bin':              '/usr/sbin/nagios3stats',
             'vars':            ['AVGACTHSTLAT',
                                 'AVGACTSVCLAT',

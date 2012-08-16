@@ -31,7 +31,7 @@ class HttpdCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(HttpdCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path':     'httpd',
             'url':      'http://localhost:8080/server-status?auto'
         } )

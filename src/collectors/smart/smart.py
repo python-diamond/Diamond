@@ -32,7 +32,7 @@ class SmartCollector(diamond.collector.Collector):
         Returns default configuration options.
         """
         config = super(SmartCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path': 'smart',
             'bin' : 'smartctl',
             'use_sudo':         False,

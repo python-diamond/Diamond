@@ -56,7 +56,7 @@ class OpenVPNCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(OpenVPNCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path':      'openvpn',
             'method':    'Threaded',
             'instances': 'file:///var/log/openvpn/status.log',

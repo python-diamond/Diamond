@@ -68,7 +68,7 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
         Returns the default collector settings
         """
         config = super(NetscalerSNMPCollector, self).get_default_config()
-        config.update( {
+        config.update({
             'path':     'netscaler',
             'timeout' : 15,
         } )
@@ -77,7 +77,7 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
     def get_string_index_oid(self, s):
         """Turns a string into an oid format is length of name followed by
         name chars in ascii"""
-        return ( len(self.get_bytes(s)) , ) + self.get_bytes(s)
+        return (len(self.get_bytes(s)) , ) + self.get_bytes(s)
 
     def get_bytes(self, s):
         """Turns a string into a list of byte values"""

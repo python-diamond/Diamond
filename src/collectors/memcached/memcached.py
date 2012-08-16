@@ -45,7 +45,7 @@ class MemcachedCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(MemcachedCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path':     'memcached',
 
             # Which rows of 'status' you would like to publish.

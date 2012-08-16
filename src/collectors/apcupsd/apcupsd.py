@@ -35,7 +35,7 @@ class ApcupsdCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(ApcupsdCollector, self).get_default_config()
-        config.update( {
+        config.update({
             'path':     'apcupsd',
             'hostname': 'localhost',
             'port': 3551,

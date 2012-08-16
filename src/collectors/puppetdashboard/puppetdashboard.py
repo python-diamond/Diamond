@@ -30,7 +30,7 @@ class PuppetDashboardCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(PuppetDashboardCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'host': 'localhost',
             'port': 5678,
             'path': 'puppetdashboard',

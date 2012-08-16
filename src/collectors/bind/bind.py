@@ -42,7 +42,7 @@ class BindCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(BindCollector, self).get_default_config()
-        config.update( {
+        config.update({
             'host': 'localhost',
             'port': 8080,
             'path': 'bind',

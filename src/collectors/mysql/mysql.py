@@ -131,7 +131,7 @@ class MySQLCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(MySQLCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path':     'mysql',
             # Connection settings
             'host':     'localhost',

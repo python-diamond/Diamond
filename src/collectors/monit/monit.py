@@ -30,7 +30,7 @@ class MonitCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(MonitCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'host':         '127.0.0.1',
             'port':         2812,
             'user':         'monit',

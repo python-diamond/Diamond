@@ -575,7 +575,7 @@ if __name__ == "__main__":
         print "<<<END_TASK", arg
 
     s = ThreadedScheduler()
-    s.add_interval_task( testaction, "test action 1", 0, 4, method.threaded, ["task 1"], None )
+    s.add_interval_task(testaction, "test action 1", 0, 4, method.threaded, ["task 1"], None )
     s.start()
 
     print "Scheduler started, waiting 15 sec...."

@@ -27,7 +27,7 @@ class binary:
         return convertor.get(unit=newUnit)
 
     def set(self, value, unit=None):
-        return self.do( value=value, unit=unit )
+        return self.do(value=value, unit=unit )
 
     def get(self, unit=None):
         return self.do(unit=unit)
@@ -36,42 +36,42 @@ class binary:
         if not unit:
             return self.bit(value=value)
 
-        if unit in [ 'bit', 'b']:
+        if unit in ['bit', 'b']:
             return self.bit(value=value)
-        if unit in [ 'kilobit', 'kbit', 'Kibit']:
+        if unit in ['kilobit', 'kbit', 'Kibit']:
             return self.kilobit(value=value)
-        if unit in [ 'megabit', 'Mbit', 'Mibit', 'Mbit']:
+        if unit in ['megabit', 'Mbit', 'Mibit', 'Mbit']:
             return self.megabit(value=value)
-        if unit in [ 'gigabit', 'Gbit', 'Gibit']:
+        if unit in ['gigabit', 'Gbit', 'Gibit']:
             return self.gigabit(value=value)
-        if unit in [ 'terabit', 'Tbit', 'Tibit']:
+        if unit in ['terabit', 'Tbit', 'Tibit']:
             return self.terabit(value=value)
-        if unit in [ 'petabit', 'Pbit', 'Pibit']:
+        if unit in ['petabit', 'Pbit', 'Pibit']:
             return self.petabit(value=value)
-        if unit in [ 'exabit', 'Ebit', 'Eibit']:
+        if unit in ['exabit', 'Ebit', 'Eibit']:
             return self.exabit(value=value)
-        if unit in [ 'zettabit', 'Zbit', 'Zibit']:
+        if unit in ['zettabit', 'Zbit', 'Zibit']:
             return self.zettabit(value=value)
-        if unit in [ 'yottabit', 'Ybit', 'Yibit']:
+        if unit in ['yottabit', 'Ybit', 'Yibit']:
             return self.yottabit(value=value)
 
-        if unit in [ 'byte', 'B']:
+        if unit in ['byte', 'B']:
             return self.byte(value=value)
-        if unit in [ 'kilobyte', 'kB', 'KiB']:
+        if unit in ['kilobyte', 'kB', 'KiB']:
             return self.kilobyte(value=value)
-        if unit in [ 'megabyte', 'MB', 'MiB', 'Mbyte']:
+        if unit in ['megabyte', 'MB', 'MiB', 'Mbyte']:
             return self.megabyte(value=value)
-        if unit in [ 'gigabyte', 'GB', 'GiB']:
+        if unit in ['gigabyte', 'GB', 'GiB']:
             return self.gigabyte(value=value)
-        if unit in [ 'terabyte', 'TB', 'TiB']:
+        if unit in ['terabyte', 'TB', 'TiB']:
             return self.terabyte(value=value)
-        if unit in [ 'petabyte', 'PB', 'PiB']:
+        if unit in ['petabyte', 'PB', 'PiB']:
             return self.petabyte(value=value)
-        if unit in [ 'exabyte', 'EB', 'EiB']:
+        if unit in ['exabyte', 'EB', 'EiB']:
             return self.exabyte(value=value)
-        if unit in [ 'zettabyte', 'ZB', 'ZiB']:
+        if unit in ['zettabyte', 'ZB', 'ZiB']:
             return self.zettabyte(value=value)
-        if unit in [ 'yottabyte', 'YB', 'YiB']:
+        if unit in ['yottabyte', 'YB', 'YiB']:
             return self.yottabyte(value=value)
 
         raise NotImplementedError("unit %s" % unit)

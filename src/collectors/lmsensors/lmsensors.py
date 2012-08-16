@@ -38,7 +38,7 @@ class LMSensorsCollector(diamond.collector.Collector):
         Returns default collector settings.
         """
         config = super(LMSensorsCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path': 'sensors',
             'fahrenheit': 'True'
         } )

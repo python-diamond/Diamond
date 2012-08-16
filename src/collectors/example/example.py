@@ -58,7 +58,7 @@ class ExampleCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(ExampleCollector, self).get_default_config()
-        config.update( {
+        config.update({
             'path':     'example'
         } )
         return config

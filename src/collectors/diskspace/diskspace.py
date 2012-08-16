@@ -41,7 +41,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(DiskSpaceCollector, self).get_default_config()
-        config.update( {
+        config.update({
             # Enabled by default
             'enabled' : 'True',
             'path' : 'diskspace',

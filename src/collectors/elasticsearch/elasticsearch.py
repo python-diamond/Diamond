@@ -30,7 +30,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(ElasticSearchCollector, self).get_default_config()
-        config.update( {
+        config.update({
             'host':     '127.0.0.1',
             'port':     9200,
             'path':     'elasticsearch',

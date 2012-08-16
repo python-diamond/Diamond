@@ -28,7 +28,7 @@ class KVMCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(KVMCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path' : 'kvm',
         } )
         return config

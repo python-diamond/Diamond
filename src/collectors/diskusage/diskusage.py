@@ -50,7 +50,7 @@ class DiskUsageCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(DiskUsageCollector, self).get_default_config()
-        config.update( {
+        config.update({
             'enabled':  'True',
             'path':     'iostat',
             'devices':  'md[0-9]$|sd[a-z]+$|xvd[a-z]+$|disk[0-9]$'

@@ -45,7 +45,7 @@ class CPUCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(CPUCollector, self).get_default_config()
-        config.update( {
+        config.update({
             'enabled':  'True',
             'path':     'cpu'
         } )

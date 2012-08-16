@@ -41,7 +41,7 @@ class PingCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(PingCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path':             'ping',
             'bin':              '/bin/ping',
             'use_sudo':         False,

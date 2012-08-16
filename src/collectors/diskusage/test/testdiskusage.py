@@ -65,7 +65,7 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         self.assertEqual(
             sorted(result.keys()),
-            [ (8,  0), (8,  1), (8, 16), (8, 17), (8, 32), (8, 33), (8, 48), (8, 49), (9,  0) ]
+            [(8,  0), (8,  1), (8, 16), (8, 17), (8, 32), (8, 33), (8, 48), (8, 49), (9,  0) ]
         )
 
         return result

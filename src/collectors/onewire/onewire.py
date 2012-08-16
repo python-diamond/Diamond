@@ -38,7 +38,7 @@ class OneWireCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(OneWireCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path': 'owfs',
             'owfs': '/mnt/1wire',
 #            'scan': {'temperature': 't'},

@@ -36,7 +36,7 @@ class KSMCollector(diamond.collector.Collector):
         ksm_path: location where KSM kernel data can be found
         """
         config = super(KSMCollector, self).get_default_config()
-        config.update(  {
+        config.update({
                 'path': 'ksm',
                 'ksm_path': '/sys/kernel/mm/ksm'
                } )

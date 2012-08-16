@@ -31,7 +31,7 @@ class IPVSCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(IPVSCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'bin':              '/usr/sbin/ipvsadm',
             'use_sudo':         True,
             'sudo_cmd':         '/usr/bin/sudo',

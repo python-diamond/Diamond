@@ -31,7 +31,7 @@ class LoadAverageCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(LoadAverageCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'enabled':  'True',
             'path':     'loadavg',
             'method':   'Threaded'

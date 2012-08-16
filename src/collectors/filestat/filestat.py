@@ -31,7 +31,7 @@ class FilestatCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(FilestatCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path':     'files',
             'method':   'Threaded'
         } )

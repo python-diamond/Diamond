@@ -32,7 +32,7 @@ class UPSCollector(diamond.collector.Collector):
         """
 
         config = super(UPSCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'path':             'ups',
             'ups_name':         'cyberpower',
             'bin':              '/bin/upsc',

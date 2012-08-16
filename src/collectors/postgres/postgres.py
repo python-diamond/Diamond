@@ -34,7 +34,7 @@ class PostgresqlCollector(diamond.collector.Collector):
         Return default config.
         """
         config = super(PostgresqlCollector, self).get_default_config()
-        config.update(  {
+        config.update({
                 'path': 'postgres',
                 'host': 'localhost',
                 'user': 'postgres',

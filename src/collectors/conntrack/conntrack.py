@@ -33,7 +33,7 @@ class ConnTrackCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(ConnTrackCollector, self).get_default_config()
-        config.update( {
+        config.update({
             'path':             'conntrack',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',

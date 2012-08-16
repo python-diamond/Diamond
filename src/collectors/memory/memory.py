@@ -53,7 +53,7 @@ class MemoryCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(MemoryCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'enabled':  'True',
             'path':     'memory',
             'method':   'Threaded',

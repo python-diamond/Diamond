@@ -30,7 +30,7 @@ class XENCollector(Collector):
         Returns the default collector settings
         """
         config = super(XENCollector, self).get_default_config()
-        config.update( {
+        config.update({
             'path':     'xen'
         } )
         return config

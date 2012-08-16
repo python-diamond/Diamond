@@ -34,7 +34,7 @@ class IPMISensorCollector(diamond.collector.Collector):
         Returns the default collector settings
         """
         config = super(IPMISensorCollector, self).get_default_config()
-        config.update(  {
+        config.update({
             'bin':              '/usr/bin/ipmitool',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
