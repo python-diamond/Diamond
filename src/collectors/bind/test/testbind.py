@@ -9,6 +9,7 @@ from bind import BindCollector
 
 ################################################################################
 
+
 class TestBindCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('BindCollector', {

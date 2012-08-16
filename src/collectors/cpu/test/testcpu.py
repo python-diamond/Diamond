@@ -9,6 +9,7 @@ from cpu import CPUCollector
 
 ################################################################################
 
+
 class TestCPUCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('CPUCollector', {

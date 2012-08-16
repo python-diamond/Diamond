@@ -9,6 +9,7 @@ from network import NetworkCollector
 
 ################################################################################
 
+
 class TestNetworkCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('NetworkCollector', {

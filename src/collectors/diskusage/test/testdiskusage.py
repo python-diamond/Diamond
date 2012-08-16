@@ -9,6 +9,7 @@ from diskusage import DiskUsageCollector
 
 ################################################################################
 
+
 class TestDiskUsageCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('DiskUsageCollector', {

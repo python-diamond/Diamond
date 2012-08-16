@@ -5,10 +5,12 @@ from diamond import *
 _RE_FIND_FIRST_CAP = re.compile('(.)([A-Z][a-z]+)')
 _RE_SPAN_OF_CAPS = re.compile('([a-z0-9])([A-Z])')
 
+
 def camelcase_to_underscore(name):
     return _RE_SPAN_OF_CAPS.sub(r'\1_\2',
         _RE_FIND_FIRST_CAP.sub(r'\1_\2', name)
     ).lower()
+
 
 class binary:
     """

@@ -9,6 +9,7 @@ from diskspace import DiskSpaceCollector
 
 ################################################################################
 
+
 class TestDiskSpaceCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('DiskSpaceCollector', {

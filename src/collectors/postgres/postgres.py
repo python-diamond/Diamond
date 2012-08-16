@@ -16,6 +16,7 @@ try:
 except ImportError:
     psycopg2 = None
 
+
 class PostgresqlCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

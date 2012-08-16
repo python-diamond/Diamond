@@ -15,6 +15,7 @@ import os
 
 _RE = re.compile(r'([\d.]+) ([\d.]+) ([\d.]+) (\d+)/(\d+)')
 
+
 class LoadAverageCollector(diamond.collector.Collector):
 
     PROC = '/proc/loadavg'

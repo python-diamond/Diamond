@@ -3,6 +3,7 @@
 import logging
 import threading
 
+
 class Handler(object):
     """
     Handlers process metrics that are collected by Collectors.

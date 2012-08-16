@@ -9,6 +9,7 @@ from rabbitmq import RabbitMQCollector
 
 ################################################################################
 
+
 class TestRabbitMQCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('RabbitMQCollector', {

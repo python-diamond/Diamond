@@ -9,6 +9,7 @@ from ipvs import IPVSCollector
 
 ################################################################################
 
+
 class TestIPVSCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('IPVSCollector', {

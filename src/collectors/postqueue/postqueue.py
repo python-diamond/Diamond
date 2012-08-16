@@ -12,6 +12,7 @@ Collect the emails in the postfix queue
 import subprocess
 import diamond.collector
 
+
 class PostqueueCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

@@ -24,6 +24,7 @@ Author: Tomasz Prus
 import os
 import diamond.collector
 
+
 class OneWireCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

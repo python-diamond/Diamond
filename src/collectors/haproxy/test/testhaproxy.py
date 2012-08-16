@@ -9,6 +9,7 @@ from haproxy import HAProxyCollector
 
 ################################################################################
 
+
 class TestHAProxyCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('HAProxyCollector', {

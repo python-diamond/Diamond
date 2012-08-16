@@ -17,6 +17,7 @@ try:
 except ImportError:
     redis = None
 
+
 class RedisCollector(diamond.collector.Collector):
 
     _DATABASE_COUNT = 16

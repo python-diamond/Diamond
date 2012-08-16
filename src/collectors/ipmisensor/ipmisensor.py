@@ -17,6 +17,7 @@ import os
 import re
 import getpass
 
+
 class IPMISensorCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

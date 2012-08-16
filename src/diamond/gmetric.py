@@ -91,6 +91,7 @@ class Gmetric:
         self.socket.sendto(meta_msg, self.hostport)
         self.socket.sendto(data_msg, self.hostport)
 
+
 def gmetric_write(NAME, VAL, TYPE, UNITS, SLOPE, TMAX, DMAX, GROUP):
     """
     Arguments are in all upper-case to match XML
@@ -127,6 +128,7 @@ def gmetric_write(NAME, VAL, TYPE, UNITS, SLOPE, TMAX, DMAX, GROUP):
     data.pack_string(str(VAL))
 
     return packer.get_buffer() ,  data.get_buffer()
+
 
 def gmetric_read(msg):
     unpacker = Unpacker(msg)

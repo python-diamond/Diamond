@@ -9,6 +9,7 @@ from openvpn import OpenVPNCollector
 
 ################################################################################
 
+
 class TestOpenVPNCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('OpenVPNCollector', {

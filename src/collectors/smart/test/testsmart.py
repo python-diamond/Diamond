@@ -9,6 +9,7 @@ from smart import SmartCollector
 
 ################################################################################
 
+
 class TestSmartCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('SmartCollector', {

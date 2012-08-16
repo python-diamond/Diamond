@@ -9,6 +9,7 @@ from conntrack import ConnTrackCollector
 
 ################################################################################
 
+
 class TestConnTrackCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('ConnTrackCollector', {

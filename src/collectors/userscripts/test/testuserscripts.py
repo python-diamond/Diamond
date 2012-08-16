@@ -9,6 +9,7 @@ from userscripts import UserScriptsCollector
 
 ################################################################################
 
+
 class TestUserScriptsCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('UserScriptsCollector', {

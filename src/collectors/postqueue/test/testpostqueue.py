@@ -9,6 +9,7 @@ from postqueue import PostqueueCollector
 
 ################################################################################
 
+
 class TestPostqueueCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('PostqueueCollector', {})

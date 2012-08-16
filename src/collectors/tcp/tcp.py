@@ -12,6 +12,7 @@ The TCPCollector class collects metrics on TCP stats
 import diamond.collector
 import os
 
+
 class TCPCollector(diamond.collector.Collector):
 
     PROC='/proc/net/netstat'

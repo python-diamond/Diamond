@@ -9,6 +9,7 @@ from loadavg import LoadAverageCollector
 
 ################################################################################
 
+
 class TestLoadAverageCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('LoadAverageCollector', {

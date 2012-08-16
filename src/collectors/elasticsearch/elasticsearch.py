@@ -14,6 +14,7 @@ import urllib2
 
 import diamond.collector
 
+
 class ElasticSearchCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

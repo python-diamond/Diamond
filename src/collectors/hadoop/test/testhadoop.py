@@ -11,6 +11,7 @@ import os
 
 ################################################################################
 
+
 class TestHadoopCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('HadoopCollector', {

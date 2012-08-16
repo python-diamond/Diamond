@@ -16,6 +16,7 @@ import re
 
 _RE = re.compile(r'^([a-z\._]*) = ([0-9]*)$')
 
+
 class ConnTrackCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

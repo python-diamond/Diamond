@@ -22,6 +22,7 @@ try:
 except ImportError:
     psutil = None
 
+
 class DiskUsageCollector(diamond.collector.Collector):
 
     MAX_VALUES = {

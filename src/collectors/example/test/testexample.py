@@ -9,6 +9,7 @@ from example import ExampleCollector
 
 ################################################################################
 
+
 class TestExampleCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('ExampleCollector', {

@@ -7,6 +7,7 @@ Insert the collected values into a mysql table
 from handler import Handler
 import MySQLdb
 
+
 class MySQLHandler(Handler):
     """
     Implements the abstract Handler class, sending data to a mysql table

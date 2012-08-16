@@ -10,6 +10,7 @@ from elasticsearch import ElasticSearchCollector
 
 ################################################################################
 
+
 class TestElasticSearchCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('ElasticSearchCollector', {})

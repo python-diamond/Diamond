@@ -9,6 +9,7 @@ from tcp import TCPCollector
 
 ################################################################################
 
+
 class TestTCPCollector(CollectorTestCase):
     def setUp(self, allowed_names=None):
         if not allowed_names:

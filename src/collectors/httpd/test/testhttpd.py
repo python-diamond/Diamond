@@ -10,12 +10,14 @@ import httplib
 
 ################################################################################
 
+
 class TestHTTPResponse(httplib.HTTPResponse):
     def __init__(self):
         pass
 
     def read(self):
         pass
+
 
 class TestHttpdCollector(CollectorTestCase):
     def setUp(self):

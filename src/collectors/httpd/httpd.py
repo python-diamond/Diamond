@@ -16,6 +16,7 @@ import httplib
 import urlparse
 import diamond.collector
 
+
 class HttpdCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

@@ -23,6 +23,7 @@ try:
 except ImportError:
     sensors = None
 
+
 class LMSensorsCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

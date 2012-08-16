@@ -9,6 +9,7 @@ from sockstat import SockstatCollector
 
 ################################################################################
 
+
 class TestSockstatCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('SockstatCollector', {

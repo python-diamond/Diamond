@@ -4,6 +4,7 @@ import os
 import sys
 import inspect
 
+
 def load_modules_from_path(path):
     """
     Import all modules from the given directory
@@ -25,6 +26,7 @@ def load_modules_from_path(path):
             modname = f[:-3]
             # Import the module
             __import__(modname, globals(), locals(), ['*'])
+
 
 def load_class_from_name(fqcn):
     # Break apart fqcn to get module and classname

@@ -14,6 +14,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 from diamond import *
 from diamond.collector import Collector
 
+
 def getIncludePaths(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
@@ -27,6 +28,8 @@ def getIncludePaths(path):
             getIncludePaths(cPath)
 
 collectors = {}
+
+
 def getCollectors(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
@@ -58,6 +61,8 @@ def getCollectors(path):
             getCollectors(cPath)
 
 handlers = {}
+
+
 def getHandlers(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))

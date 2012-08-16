@@ -14,6 +14,7 @@ import diamond.collector
 import subprocess
 import os
 
+
 class PowerDNSCollector(diamond.collector.Collector):
 
     _GAUGE_KEYS = [

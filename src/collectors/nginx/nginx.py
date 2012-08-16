@@ -31,6 +31,7 @@ import urllib2
 import re
 import diamond.collector
 
+
 class NginxCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

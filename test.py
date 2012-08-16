@@ -21,6 +21,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', '
 from diamond import *
 from diamond.collector import Collector
 
+
 def get_collector_config(key, value):
     config = configobj.ConfigObj()
     config['server'] = {}
@@ -29,6 +30,7 @@ def get_collector_config(key, value):
     config['collectors']['default'] = {}
     config['collectors'][key] = value
     return config
+
 
 class CollectorTestCase(unittest.TestCase):
 
@@ -140,6 +142,8 @@ class CollectorTestCase(unittest.TestCase):
         mock.reset_mock()
 
 collectorTests = {}
+
+
 def getCollectorTests(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))

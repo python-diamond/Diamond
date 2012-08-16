@@ -9,6 +9,7 @@ from ipmisensor import IPMISensorCollector
 
 ################################################################################
 
+
 class TestIPMISensorCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('IPMISensorCollector', {

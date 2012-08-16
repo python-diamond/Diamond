@@ -9,6 +9,7 @@ from memcached import MemcachedCollector
 
 ################################################################################
 
+
 class TestMemcachedCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MemcachedCollector', {

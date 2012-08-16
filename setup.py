@@ -31,6 +31,7 @@ else:
         if platform.dist()[1].split('.')[0] >= '6':
           data_files.append(('/etc/init',                      ['rpm/upstart/diamond.conf'] ))
 
+
 def pkgPath(root, path, rpath="/"):
     global data_files
     if not os.path.exists(path):

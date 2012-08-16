@@ -13,6 +13,7 @@ import diamond.collector
 import subprocess
 import os
 
+
 class EximCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

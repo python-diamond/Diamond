@@ -53,6 +53,7 @@ from snmp import SNMPCollector as parent_SNMPCollector
 from diamond.metric import Metric
 import diamond.convertor
 
+
 class SNMPInterfaceCollector(parent_SNMPCollector):
 
     # IF-MIB OID

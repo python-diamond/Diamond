@@ -16,6 +16,7 @@ import base64
 import csv
 import diamond.collector
 
+
 class HAProxyCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

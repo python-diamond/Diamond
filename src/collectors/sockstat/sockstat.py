@@ -19,6 +19,7 @@ _RE = re.compile('|'.join([
     r'UDP: inuse (?P<udp_inuse>\d+) mem (?P<udp_mem>\d+)'
 ]))
 
+
 class SockstatCollector(diamond.collector.Collector):
 
     PROC = '/proc/net/sockstat'

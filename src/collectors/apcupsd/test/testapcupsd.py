@@ -9,6 +9,7 @@ from apcupsd import ApcupsdCollector
 
 ################################################################################
 
+
 class TestApcupsdCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('ApcupsdCollector', {

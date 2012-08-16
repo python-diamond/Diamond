@@ -54,6 +54,7 @@ store only a fraction of the samples.
 from Handler import Handler
 import socket
 
+
 class StatsiteHandler(Handler):
     """
     Implements the abstract Handler class, sending data to statsite

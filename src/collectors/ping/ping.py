@@ -24,6 +24,7 @@ import subprocess
 import diamond.collector
 import os
 
+
 class PingCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

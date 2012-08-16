@@ -14,6 +14,7 @@ import subprocess
 import re
 import os
 
+
 class SmartCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

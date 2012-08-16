@@ -9,6 +9,7 @@ from puppetdashboard import PuppetDashboardCollector
 
 ################################################################################
 
+
 class TestPuppetDashboardCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('PuppetDashboardCollector', {

@@ -7,6 +7,7 @@ Emulate a gmetric client for usage with [Ganglia Monitoring System](http://gangl
 from Handler import Handler
 import gmetric
 
+
 class GmetricHandler(Handler):
     """
     Implements the abstract Handler class, sending data the same way that

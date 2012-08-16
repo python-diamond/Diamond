@@ -5,6 +5,7 @@ import re
 
 from error import *
 
+
 class Metric(object):
 
     def __init__(self, path, value, timestamp = None, precision = 0):

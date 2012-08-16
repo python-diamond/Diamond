@@ -19,6 +19,7 @@ except ImportError:
 
 import diamond.collector
 
+
 class SNMPCollector(diamond.collector.Collector):
 
     def __init__(self, config, handlers):

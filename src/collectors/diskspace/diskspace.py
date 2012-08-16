@@ -25,6 +25,7 @@ try:
 except ImportError:
     psutil = None
 
+
 class DiskSpaceCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

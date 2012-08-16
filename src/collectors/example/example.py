@@ -44,6 +44,7 @@ The configuration file name should match the name of the diamond collector class
 
 import diamond.collector
 
+
 class ExampleCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

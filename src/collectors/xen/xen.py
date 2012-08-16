@@ -16,6 +16,7 @@ try:
 except ImportError:
     libvirt = None
 
+
 class XENCollector(Collector):
 
     def get_default_config_help(self):

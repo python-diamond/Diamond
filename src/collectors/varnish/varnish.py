@@ -13,6 +13,7 @@ import diamond.collector
 import re
 import subprocess
 
+
 class VarnishCollector(diamond.collector.Collector):
 
     _RE = re.compile("^(?P<stat>[\w_\(\)\.,]*)\s+(?P<psa>\d*)\s+"

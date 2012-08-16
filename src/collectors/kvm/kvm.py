@@ -12,6 +12,7 @@ Collects /sys/kernel/debug/kvm/*
 import diamond.collector
 import os
 
+
 class KVMCollector(diamond.collector.Collector):
 
     PROC = '/sys/kernel/debug/kvm'

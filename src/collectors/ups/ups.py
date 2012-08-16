@@ -13,6 +13,7 @@ import diamond.collector
 import os
 import subprocess
 
+
 class UPSCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

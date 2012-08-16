@@ -6,6 +6,7 @@ Output the collected values to the debug log channel.
 
 from Handler import Handler
 
+
 class NullHandler(Handler):
     """
     Implements the abstract Handler class, doing nothing except log

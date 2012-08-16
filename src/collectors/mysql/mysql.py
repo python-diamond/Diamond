@@ -19,6 +19,7 @@ except ImportError:
     MySQLdb = None
     MySQLError = ValueError
 
+
 class MySQLCollector(diamond.collector.Collector):
 
     _GAUGE_KEYS = [

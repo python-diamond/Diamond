@@ -18,6 +18,7 @@ from diamond.handler.Handler import Handler
 from diamond.scheduler import *
 from diamond.util import *
 
+
 class Server(object):
     """
     Server class loads and starts Handlers and Collectors

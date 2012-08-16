@@ -18,6 +18,7 @@ import socket
 from struct import *
 import re
 
+
 class ApcupsdCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

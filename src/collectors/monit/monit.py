@@ -16,6 +16,7 @@ from xml.dom.minidom import parseString
 
 import diamond.collector
 
+
 class MonitCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

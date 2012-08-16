@@ -15,6 +15,7 @@ import os
 
 _RE = re.compile(r'(\d+)\s+(\d+)\s+(\d+)')
 
+
 class FilestatCollector(diamond.collector.Collector):
 
     PROC = '/proc/sys/fs/file-nr'

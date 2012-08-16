@@ -20,6 +20,7 @@ try:
 except ImportError:
     psutil = None
 
+
 class NetworkCollector(diamond.collector.Collector):
 
     PROC = '/proc/net/dev'

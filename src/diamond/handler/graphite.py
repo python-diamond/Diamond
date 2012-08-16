@@ -17,6 +17,7 @@ use it.
 from Handler import Handler
 import socket
 
+
 class GraphiteHandler(Handler):
     """
     Implements the abstract Handler class, sending data to graphite

@@ -24,6 +24,7 @@ import diamond.convertor
 import os
 import commands
 
+
 class UserScriptsCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

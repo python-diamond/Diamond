@@ -9,6 +9,7 @@ from exim import EximCollector
 
 ################################################################################
 
+
 class TestEximCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('EximCollector', {

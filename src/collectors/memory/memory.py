@@ -36,6 +36,7 @@ _KEY_MAPPING = [
     'VmallocChunk'
 ]
 
+
 class MemoryCollector(diamond.collector.Collector):
 
     PROC = '/proc/meminfo'

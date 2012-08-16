@@ -8,6 +8,7 @@ from Handler import Handler
 
 import zmq
 
+
 class zmqHandler ( Handler ):
   """
     Implements the abstract Handler class, sending data to a Zer0MQ pub channel

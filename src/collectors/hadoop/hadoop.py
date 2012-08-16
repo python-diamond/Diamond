@@ -17,6 +17,7 @@ import glob
 import re
 import os
 
+
 class HadoopCollector(diamond.collector.Collector):
 
     re_log = re.compile(r'^(?P<timestamp>\d+) (?P<name>\S+): (?P<metrics>.*)$')

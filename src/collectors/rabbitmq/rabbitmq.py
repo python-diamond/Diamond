@@ -17,6 +17,7 @@ try:
 except ImportError:
     Number = None
 
+
 class RabbitMQCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

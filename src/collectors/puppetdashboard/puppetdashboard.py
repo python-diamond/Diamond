@@ -13,6 +13,7 @@ import urllib2
 import re
 import diamond.collector
 
+
 class PuppetDashboardCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

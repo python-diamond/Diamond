@@ -9,6 +9,7 @@ from ksm import KSMCollector
 
 ################################################################################
 
+
 class TestKSMCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('KSMCollector', {

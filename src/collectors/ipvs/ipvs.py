@@ -14,6 +14,7 @@ import subprocess
 import os
 import string
 
+
 class IPVSCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

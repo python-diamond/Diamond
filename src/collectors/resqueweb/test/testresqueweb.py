@@ -9,6 +9,7 @@ from resqueweb import ResqueWebCollector
 
 ################################################################################
 
+
 class TestResqueWebCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('ResqueWebCollector', {

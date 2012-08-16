@@ -9,6 +9,7 @@ from ping import PingCollector
 
 ################################################################################
 
+
 class TestPingCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('PingCollector', {

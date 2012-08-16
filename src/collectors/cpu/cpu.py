@@ -17,6 +17,7 @@ try:
 except ImportError:
     psutil = None
 
+
 class CPUCollector(diamond.collector.Collector):
 
     PROC = '/proc/stat'

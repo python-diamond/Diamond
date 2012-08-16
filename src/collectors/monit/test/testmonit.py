@@ -10,6 +10,7 @@ from monit import MonitCollector
 
 ################################################################################
 
+
 class TestMonitCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MonitCollector', {'byte_unit':    'kilobyte',})

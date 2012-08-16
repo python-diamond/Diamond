@@ -28,6 +28,7 @@ try:
 except ImportError:
     import pickle as pickle
 
+
 class GraphitePickleHandler(GraphiteHandler):
     """
     Overrides the GraphiteHandler class, sending data to graphite using batched pickle format

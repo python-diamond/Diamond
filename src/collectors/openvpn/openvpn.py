@@ -40,6 +40,7 @@ import os.path
 import urlparse
 import time
 
+
 class OpenVPNCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

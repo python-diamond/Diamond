@@ -9,6 +9,7 @@ from filestat import FilestatCollector
 
 ################################################################################
 
+
 class TestFilestatCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('FilestatCollector', {

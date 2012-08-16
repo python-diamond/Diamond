@@ -18,6 +18,7 @@ try:
 except ImportError:
     pymongo = None
 
+
 class MongoDBCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

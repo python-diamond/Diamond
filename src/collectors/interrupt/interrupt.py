@@ -24,6 +24,7 @@ if platform.architecture()[0] == '64bit':
 else:
     counter = (2 ** 32) - 1
 
+
 class InterruptCollector(diamond.collector.Collector):
 
     PROC='/proc/interrupts'

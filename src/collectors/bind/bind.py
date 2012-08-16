@@ -18,6 +18,7 @@ if sys.version_info >= (2,5):
 else:
     import cElementTree as ElementTree
 
+
 class BindCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
