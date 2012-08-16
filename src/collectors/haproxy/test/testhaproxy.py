@@ -22,7 +22,7 @@ class TestHAProxyCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
         self.collector.config['ignore_servers'] = False
 
-        with patch('urllib2.urlopen', Mock(return_value = self.getFixture('stats.csv'))):
+        with patch('urllib2.urlopen', Mock(return_value=self.getFixture('stats.csv'))):
             self.collector.collect()
 
         metrics = {
@@ -592,7 +592,7 @@ class TestHAProxyCollector(CollectorTestCase):
     def test_should_work_with_real_data_and_ignore_servers(self, publish_mock):
         self.collector.config['ignore_servers'] = True
 
-        with patch('urllib2.urlopen', Mock(return_value = self.getFixture('stats.csv'))):
+        with patch('urllib2.urlopen', Mock(return_value=self.getFixture('stats.csv'))):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {

@@ -23,8 +23,8 @@ class TestNagiosStatsCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value =
-            ( self.getFixture('nagiostat').getvalue() , '')
+        with patch('subprocess.Popen.communicate', Mock(return_value=(
+            self.getFixture('nagiostat').getvalue() , '')
         )):
             self.collector.collect()
 

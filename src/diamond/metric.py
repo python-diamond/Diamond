@@ -8,7 +8,7 @@ from error import *
 
 class Metric(object):
 
-    def __init__(self, path, value, timestamp = None, precision = 0):
+    def __init__(self, path, value, timestamp=None, precision=0):
         """
         Create new instance of the Metric class
 

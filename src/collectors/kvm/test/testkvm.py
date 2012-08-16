@@ -22,7 +22,7 @@ class TestKVMCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        with patch('__builtin__.open', Mock(return_value = StringIO(
+        with patch('__builtin__.open', Mock(return_value=StringIO(
             '0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n'
         ))):
             self.collector.collect()

@@ -145,7 +145,7 @@ if __name__ == "__main__":
 
         cls = getattr(collectors[collector], collector)
 
-        obj = cls(config = config, handlers = {})
+        obj = cls(config=config, handlers={})
 
         options = obj.get_default_config_help()
 

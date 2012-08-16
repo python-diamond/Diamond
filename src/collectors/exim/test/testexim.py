@@ -22,8 +22,8 @@ class TestEximCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value =
-            ( '33' , '')
+        with patch('subprocess.Popen.communicate', Mock(return_value=(
+            '33' , '')
         )):
             self.collector.collect()
 
@@ -37,8 +37,8 @@ class TestEximCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value =
-            ( '' , '')
+        with patch('subprocess.Popen.communicate', Mock(return_value=(
+            '' , '')
         )):
             self.collector.collect()
 

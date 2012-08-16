@@ -20,7 +20,7 @@ class TestBindCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch('urllib2.urlopen', Mock(return_value = self.getFixture('bind.xml'))):
+        with patch('urllib2.urlopen', Mock(return_value=self.getFixture('bind.xml'))):
             self.collector.collect()
 
         metrics = {

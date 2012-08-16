@@ -23,8 +23,8 @@ class TestPingCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_bad_gentoo(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value =
-            ( self.getFixture('bad_gentoo').getvalue() , '')
+        with patch('subprocess.Popen.communicate', Mock(return_value=(
+            self.getFixture('bad_gentoo').getvalue() , '')
         )):
             self.collector.collect()
 
@@ -35,8 +35,8 @@ class TestPingCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_host_gentoo(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value =
-            ( self.getFixture('host_gentoo').getvalue() , '')
+        with patch('subprocess.Popen.communicate', Mock(return_value=(
+            self.getFixture('host_gentoo').getvalue() , '')
         )):
             self.collector.collect()
 
@@ -50,8 +50,8 @@ class TestPingCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_ip_gentoo(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value =
-            ( self.getFixture('ip_gentoo').getvalue() , '')
+        with patch('subprocess.Popen.communicate', Mock(return_value=(
+            self.getFixture('ip_gentoo').getvalue() , '')
         )):
             self.collector.collect()
 
@@ -62,8 +62,8 @@ class TestPingCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_longhost_gentoo(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value =
-            ( self.getFixture('longhost_gentoo').getvalue() , '')
+        with patch('subprocess.Popen.communicate', Mock(return_value=(
+            self.getFixture('longhost_gentoo').getvalue() , '')
         )):
             self.collector.collect()
 
@@ -74,8 +74,8 @@ class TestPingCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_timeout_gentoo(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value =
-            ( self.getFixture('timeout_gentoo').getvalue() , '')
+        with patch('subprocess.Popen.communicate', Mock(return_value=(
+            self.getFixture('timeout_gentoo').getvalue() , '')
         )):
             self.collector.collect()
 
@@ -86,8 +86,8 @@ class TestPingCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_host_osx(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value =
-            ( self.getFixture('host_osx').getvalue() , '')
+        with patch('subprocess.Popen.communicate', Mock(return_value=(
+            self.getFixture('host_osx').getvalue() , '')
         )):
             self.collector.collect()
 
@@ -98,8 +98,8 @@ class TestPingCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_ip_osx(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value =
-            ( self.getFixture('ip_osx').getvalue() , '')
+        with patch('subprocess.Popen.communicate', Mock(return_value=(
+            self.getFixture('ip_osx').getvalue() , '')
         )):
             self.collector.collect()
 
@@ -110,8 +110,8 @@ class TestPingCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_longhost_osx(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value =
-            ( self.getFixture('longhost_osx').getvalue() , '')
+        with patch('subprocess.Popen.communicate', Mock(return_value=(
+            self.getFixture('longhost_osx').getvalue() , '')
         )):
             self.collector.collect()
 
@@ -122,8 +122,8 @@ class TestPingCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_timeout_osx(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value =
-            ( self.getFixture('timeout_osx').getvalue() , '')
+        with patch('subprocess.Popen.communicate', Mock(return_value=(
+            self.getFixture('timeout_osx').getvalue() , '')
         )):
             self.collector.collect()
 

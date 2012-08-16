@@ -167,17 +167,17 @@ class DiskSpaceCollector(diamond.collector.Collector):
 
                 metric_name = '%s.%s_used' % (name, unit)
                 metric_value = float(block_size) * float(blocks_total - blocks_free)
-                metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = unit)
+                metric_value = diamond.convertor.binary.convert(value=metric_value, oldUnit='byte', newUnit=unit)
                 self.publish(metric_name, metric_value, 2)
 
                 metric_name = '%s.%s_free' % (name, unit)
                 metric_value = float(block_size) * float(blocks_free)
-                metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = unit)
+                metric_value = diamond.convertor.binary.convert(value=metric_value, oldUnit='byte', newUnit=unit)
                 self.publish(metric_name, metric_value, 2)
 
                 metric_name = '%s.%s_avail' % (name, unit)
                 metric_value = float(block_size) * float(blocks_avail)
-                metric_value = diamond.convertor.binary.convert(value = metric_value, oldUnit = 'byte', newUnit = unit)
+                metric_value = diamond.convertor.binary.convert(value=metric_value, oldUnit='byte', newUnit=unit)
                 self.publish(metric_name, metric_value, 2)
 
             self.publish('%s.inodes_used'  % name, inodes_total - inodes_free)

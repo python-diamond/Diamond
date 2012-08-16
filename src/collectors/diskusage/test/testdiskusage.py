@@ -75,16 +75,16 @@ class TestDiskUsageCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
 
         with nested(
-            patch('__builtin__.open', Mock(return_value = self.getFixture('proc_diskstats_1'))),
-            patch('time.time', Mock(return_value = 10))
+            patch('__builtin__.open', Mock(return_value=self.getFixture('proc_diskstats_1'))),
+            patch('time.time', Mock(return_value=10))
         ):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {})
 
         with nested(
-            patch('__builtin__.open', Mock(return_value = self.getFixture('proc_diskstats_2'))),
-            patch('time.time', Mock(return_value = 20))
+            patch('__builtin__.open', Mock(return_value=self.getFixture('proc_diskstats_2'))),
+            patch('time.time', Mock(return_value=20))
         ):
             self.collector.collect()
 

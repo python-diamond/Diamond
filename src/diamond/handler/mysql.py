@@ -73,11 +73,11 @@ class MySQLHandler(Handler):
         Connect to the MySQL server
         """
         self._close()
-        self.conn = MySQLdb.Connect(host = self.hostname,
-                                    port = self.port,
-                                    user = self.username,
-                                    passwd = self.password,
-                                    db = self.database)
+        self.conn = MySQLdb.Connect(host=self.hostname,
+                                    port=self.port,
+                                    user=self.username,
+                                    passwd=self.password,
+                                    db=self.database)
 
     def _close(self):
         """

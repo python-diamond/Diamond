@@ -28,14 +28,14 @@ class TestCPUCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        with patch('__builtin__.open', Mock(return_value = StringIO(
+        with patch('__builtin__.open', Mock(return_value=StringIO(
             'cpu 100 200 300 400 500 0 0 0 0 0'
         ))):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {})
 
-        with patch('__builtin__.open', Mock(return_value = StringIO(
+        with patch('__builtin__.open', Mock(return_value=StringIO(
             'cpu 110 220 330 440 550 0 0 0 0 0'
         ))):
             self.collector.collect()

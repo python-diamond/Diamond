@@ -74,11 +74,11 @@ none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
 
         with nested(
             patch('os.stat'),
-            patch('os.major', Mock(return_value = 9)),
-            patch('os.minor', Mock(return_value = 0)),
-            patch('os.path.isdir', Mock(return_value = False)),
-            patch('__builtin__.open', Mock(return_value = self.getFixture('proc_mounts'))),
-            patch('os.statvfs', Mock(return_value = statvfs_mock))
+            patch('os.major', Mock(return_value=9)),
+            patch('os.minor', Mock(return_value=0)),
+            patch('os.path.isdir', Mock(return_value=False)),
+            patch('__builtin__.open', Mock(return_value=self.getFixture('proc_mounts'))),
+            patch('os.statvfs', Mock(return_value=statvfs_mock))
         ):
             self.collector.collect()
 

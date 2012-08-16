@@ -155,8 +155,8 @@ class DiskUsageCollector(diamond.collector.Collector):
                         # Assume 512 byte sectors
                         # TODO: Fix me to be detectable
                         value /= 2
-                        value = diamond.convertor.binary.convert(value = value, oldUnit = 'kB', newUnit = unit)
-                        self.MAX_VALUES[key] = diamond.convertor.binary.convert(value = diamond.collector.MAX_COUNTER, oldUnit = 'byte', newUnit = unit)
+                        value = diamond.convertor.binary.convert(value=value, oldUnit='kB', newUnit=unit)
+                        self.MAX_VALUES[key] = diamond.convertor.binary.convert(value=diamond.collector.MAX_COUNTER, oldUnit='byte', newUnit=unit)
 
                     metric_name = '.'.join([info['device'], key])
                     # io_in_progress is a point in time counter, don't derivative

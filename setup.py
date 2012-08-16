@@ -53,20 +53,20 @@ def pkgPath(root, path, rpath="/"):
 pkgPath('share/diamond/collectors', 'src/collectors')
 
 setup(
-    name            = 'diamond',
-    version         = '3.0.2',
-    url             = 'https://github.com/BrightcoveOS/Diamond',
-    author          = 'The Diamond Team',
-    author_email    = 'https://github.com/BrightcoveOS/Diamond',
-    license         = 'MIT License',
-    description     = 'Smart data producer for graphite graphing package',
-    package_dir     = {'' : 'src'},
-    packages        = ['diamond' , 'diamond.handler'],
-    scripts         = ['bin/diamond', 'bin/diamond-setup'],
-    data_files      = data_files,
+    name='diamond',
+    version='3.0.2',
+    url='https://github.com/BrightcoveOS/Diamond',
+    author='The Diamond Team',
+    author_email='https://github.com/BrightcoveOS/Diamond',
+    license='MIT License',
+    description='Smart data producer for graphite graphing package',
+    package_dir={'' : 'src'},
+    packages=['diamond' , 'diamond.handler'],
+    scripts=['bin/diamond', 'bin/diamond-setup'],
+    data_files=data_files,
     install_requires=[
         'python-configobj', 'psutil',
     ],
-    #test_suite      = 'test.main',
+    #test_suite='test.main',
     **setup_kwargs
 )

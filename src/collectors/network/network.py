@@ -111,11 +111,11 @@ class NetworkCollector(diamond.collector.Collector):
 
                 # Convert rx_bytes and tx_bytes
                 if s == 'rx_bytes' or s == 'tx_bytes':
-                    convertor = diamond.convertor.binary(value = metric_value, unit = 'byte')
+                    convertor = diamond.convertor.binary(value=metric_value, unit='byte')
 
                     for u in self.config['byte_unit']:
                         # Public Converted Metric
-                        self.publish(metric_name.replace('bytes', u), convertor.get(unit = u))
+                        self.publish(metric_name.replace('bytes', u), convertor.get(unit=u))
                 else:
                     # Publish Metric Derivative
                     self.publish(metric_name, metric_value)
