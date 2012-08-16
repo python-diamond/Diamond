@@ -34,7 +34,7 @@ def load_class_from_name(fqcn):
     modulename = '.'.join(paths[:-1])
     classname = paths[-1]
     # Import the module
-    mod = __import__(modulename, globals(), locals(), ['*'])
+    __import__(modulename, globals(), locals(), ['*'])
     # Get the class
     cls = getattr(sys.modules[modulename], classname)
     # Check cls

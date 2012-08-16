@@ -1,5 +1,7 @@
 # coding=utf-8
 
+import re
+
 from diamond import *
 
 _RE_FIND_FIRST_CAP = re.compile('(.)([A-Z][a-z]+)')

@@ -188,7 +188,7 @@ class Server(object):
                             cls = self.load_collector(fqcn)
                             # Add Collector class
                             collectors[cls.__name__] = cls
-                        except Exception, e:
+                        except Exception:
                             # Log error
                             self.log.error("Failed to load Collector: %s. %s",
                                            fqcn, traceback.format_exc())
@@ -207,7 +207,7 @@ class Server(object):
             collector = cls(self.config, self.handlers)
             # Log
             self.log.debug("Initialized Collector: %s", cls.__name__)
-        except Exception, e:
+        except Exception:
             # Log error
             self.log.error("Failed to initialize Collector: %s. %s",
                            cls.__name__, traceback.format_exc())

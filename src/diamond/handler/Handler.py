@@ -25,4 +25,4 @@ class Handler(object):
 
         Should be overridden in subclasses
         """
-        raise NotImplementedException
+        raise NotImplementedError

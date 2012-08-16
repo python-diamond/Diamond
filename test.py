@@ -8,6 +8,7 @@ import inspect
 import traceback
 import optparse
 import logging
+import configobj
 
 from StringIO import StringIO
 from contextlib import nested
