@@ -65,7 +65,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
 
             # Default numeric output
             'byte_unit': ['gigabyte']
-        } )
+        })
         return config
 
     def get_disk_labels(self):

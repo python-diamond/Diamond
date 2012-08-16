@@ -71,7 +71,7 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
         config.update({
             'path':     'netscaler',
             'timeout': 15,
-        } )
+        })
         return config
 
     def get_string_index_oid(self, s):

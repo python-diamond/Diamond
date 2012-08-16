@@ -59,7 +59,7 @@ class VarnishCollector(diamond.collector.Collector):
             'bin':             '/usr/bin/varnishstat',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
-        } )
+        })
         return config
 
     def collect(self):

@@ -42,7 +42,7 @@ class ApcupsdCollector(diamond.collector.Collector):
             'metrics': ['LINEV', 'LOADPCT', 'BCHARGE', 'TIMELEFT', 'BATTV',
                          'NUMXFERS', 'TONBATT', 'MAXLINEV', 'MINLINEV',
                          'OUTPUTV', 'ITEMP', 'LINEFREQ', 'CUMONBATT', ],
-        } )
+        })
         return config
 
     def getData(self):

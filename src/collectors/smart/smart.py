@@ -39,7 +39,7 @@ class SmartCollector(diamond.collector.Collector):
             'sudo_cmd':         '/usr/bin/sudo',
             'devices': '^disk[0-9]$|^sd[a-z]$|^hd[a-z]$',
             'method': 'Threaded'
-        } )
+        })
         return config
 
     def collect(self):

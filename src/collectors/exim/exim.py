@@ -36,7 +36,7 @@ class EximCollector(diamond.collector.Collector):
             'bin':              '/usr/sbin/exim',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
-        } )
+        })
         return config
 
     def collect(self):
