@@ -42,7 +42,7 @@ class Metric(object):
                 else:
                     value = float(value)
             except ValueError, e:
-                    raise DiamondException("Invalid parameter: %s" % e)
+                raise DiamondException("Invalid parameter: %s" % e)
 
         self.path = path
         self.value = value

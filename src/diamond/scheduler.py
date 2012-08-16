@@ -275,10 +275,10 @@ class Scheduler:
             try:
                 self.sched.run()
             except Exception, x:
-                print >>sys.stderr, "ERROR DURING SCHEDULER EXECUTION", x
-                print >>sys.stderr, "".join(
+                print >> sys.stderr, "ERROR DURING SCHEDULER EXECUTION", x
+                print >> sys.stderr, "".join(
                     traceback.format_exception(*sys.exc_info()))
-                print >>sys.stderr, "-" * 20
+                print >> sys.stderr, "-" * 20
             # queue is empty; sleep a short while before checking again
             if self.running:
                 time.sleep(5)
@@ -313,9 +313,9 @@ class Task:
 
     def handle_exception(self, exc):
         """Handle any exception that occured during task execution."""
-        print >>sys.stderr, "ERROR DURING TASK EXECUTION", exc
-        print >>sys.stderr, "".join(traceback.format_exception(*sys.exc_info()))
-        print >>sys.stderr, "-" * 20
+        print >> sys.stderr, "ERROR DURING TASK EXECUTION", exc
+        print >> sys.stderr, "".join(traceback.format_exception(*sys.exc_info()))
+        print >> sys.stderr, "-" * 20
 
 
 class SingleTask(Task):

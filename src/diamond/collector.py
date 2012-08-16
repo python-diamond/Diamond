@@ -1,8 +1,15 @@
 # coding=utf-8
 
+"""
+The Collector class is a base class for all metric collectors.
+"""
+
 import os
 import socket
 import platform
+import logging
+import configobj
+import traceback
 
 from diamond import *
 from diamond.metric import Metric
@@ -121,6 +128,9 @@ class Collector(object):
         return {self.__class__.__name__: (self._run, None, int(self.config['splay']), int(self.config['interval']))}
 
     def get_hostname(self):
+        """
+        Returns a hostname as configured by the user
+        """
         if 'hostname' in self.config:
             return self.config['hostname']
         if 'hostname_method' not in self.config or self.config['hostname_method'] == 'fqdn_short':
@@ -190,8 +200,8 @@ class Collector(object):
         Publish a Metric object
         """
         # Process Metric
-        for h in self.handlers:
-            h.process(metric)
+        for handler in self.handlers:
+            handler.process(metric)
 
     def derivative(self, name, new, max_value=0):
         """
@@ -206,10 +216,10 @@ class Collector(object):
             if new < old:
                 old = old - max_value
             # Get Change in X (value)
-            dx = new - old
+            derivative_x = new - old
             # Get Change in Y (time)
-            dy = int(self.config['interval'])
-            result = float(dx) / float(dy)
+            derivative_y = int(self.config['interval'])
+            result = float(derivative_x) / float(derivative_y)
         else:
             result = 0
 
@@ -228,6 +238,6 @@ class Collector(object):
         try:
             # Collect Data
             self.collect()
-        except Exception, e:
+        except Exception:
             # Log Error
             self.log.error(traceback.format_exc())
