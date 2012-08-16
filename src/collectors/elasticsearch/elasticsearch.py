@@ -82,4 +82,4 @@ class ElasticSearchCollector(diamond.collector.Collector):
         metrics['disk.writes.size'] = data['fs']['data'][0]['disk_write_size_in_bytes']
 
         for key in metrics:
-           self.publish(key, metrics[key])
+            self.publish(key, metrics[key])

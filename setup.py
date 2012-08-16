@@ -29,7 +29,7 @@ else:
         data_files.append(('/etc/init.d',		             ['bin/init.d/diamond'] ))
         data_files.append(('/var/log/diamond',		         ['.keep'] ))
         if platform.dist()[1].split('.')[0] >= '6':
-          data_files.append(('/etc/init',                      ['rpm/upstart/diamond.conf'] ))
+            data_files.append(('/etc/init',                  ['rpm/upstart/diamond.conf'] ))
 
 
 def pkgPath(root, path, rpath="/"):

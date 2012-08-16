@@ -29,7 +29,7 @@ class GmetricHandler(Handler):
         self.port = int(self.config['port'])
         self.protocol = self.config['protocol']
         if not self.protocol:
-          self.protocol = 'udp'
+            self.protocol = 'udp'
 
         # Initialize
         self.gmetric = gmetric.Gmetric(self.host, self.port, self.protocol)
