@@ -247,7 +247,7 @@ class MySQLCollector(diamond.collector.Collector):
                 self.log.error('MySQLCollector: Couldnt get engine innodb status, check user permissions: %s', innodb_status_error)
             Innodb_status_process_time  = time.time() - innodb_status_timer
             self.log.debug("MySQLCollector: innodb status process time: %f", Innodb_status_process_time)
-            metrics["Innodb_status_process_time"] =  Innodb_status_process_time
+            metrics["Innodb_status_process_time"] = Innodb_status_process_time
 
         db.close()
 

@@ -106,11 +106,11 @@ class HAProxyCollector(diamond.collector.Collector):
         for row in data:
             if self.config['ignore_servers'] and row[1].lower() not in ['frontend', 'backend']:
                 continue
-            metric_name =  '%s.%s' % (row[0].lower(), row[1].lower())
+            metric_name = '%s.%s' % (row[0].lower(), row[1].lower())
             for index, metric_string in enumerate(row):
                 try:
                     metric_value = float(metric_string)
                 except ValueError:
                     continue
-                stat_name =  '%s.%s' % (metric_name, headings[index])
+                stat_name = '%s.%s' % (metric_name, headings[index])
                 self.publish(stat_name, metric_value)

@@ -208,7 +208,7 @@ class Collector(object):
             dx = new - old
             # Get Change in Y (time)
             dy = int(self.config['interval'])
-            result =  float(dx) / float(dy)
+            result = float(dx) / float(dy)
         else:
             result = 0
 
