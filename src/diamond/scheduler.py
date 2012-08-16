@@ -437,7 +437,6 @@ class MonthdayTask(DayTaskRescheduler, Task):
 try:
     import threading
 
-
     class ThreadedScheduler(Scheduler):
         """A Scheduler that runs in its own thread."""
 
@@ -468,7 +467,6 @@ try:
             """Release the lock on th ethread's task queue."""
             self._lock.release()
 
-
     class ThreadedTaskMixin:
         """A mixin class to make a Task execute in a separate thread."""
 
@@ -485,21 +483,17 @@ try:
             except Exception,x:
                 self.handle_exception(x)
 
-
     class ThreadedIntervalTask(ThreadedTaskMixin, IntervalTask):
         """Interval Task that executes in its own thread."""
         pass
-
 
     class ThreadedSingleTask(ThreadedTaskMixin, SingleTask):
         """Single Task that executes in its own thread."""
         pass
 
-
     class ThreadedWeekdayTask(ThreadedTaskMixin, WeekdayTask):
         """Weekday Task that executes in its own thread."""
         pass
-
 
     class ThreadedMonthdayTask(ThreadedTaskMixin, MonthdayTask):
         """Monthday Task that executes in its own thread."""
@@ -509,10 +503,8 @@ except ImportError:
     # threading is not available
     pass
 
-
 if hasattr(os, "fork"):
     import signal
-
 
     class ForkedScheduler(Scheduler):
         """A Scheduler that runs in its own forked process."""
@@ -543,7 +535,6 @@ if hasattr(os, "fork"):
         def signalhandler(self, sig, stack):
             Scheduler.stop(self)
 
-
     class ForkedTaskMixin:
         """A mixin class to make a Task execute in a separate process."""
 
@@ -561,21 +552,17 @@ if hasattr(os, "fork"):
                 # we are the parent
                 self.reschedule(schedulerref())
 
-
     class ForkedIntervalTask(ForkedTaskMixin, IntervalTask):
         """Interval Task that executes in its own process."""
         pass
-
 
     class ForkedSingleTask(ForkedTaskMixin, SingleTask):
         """Single Task that executes in its own process."""
         pass
 
-
     class ForkedWeekdayTask(ForkedTaskMixin, WeekdayTask):
         """Weekday Task that executes in its own process."""
         pass
-
 
     class ForkedMonthdayTask(ForkedTaskMixin, MonthdayTask):
         """Monthday Task that executes in its own process."""
