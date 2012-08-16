@@ -62,7 +62,7 @@ class HAProxyCollector(diamond.collector.Collector):
         authline = e.headers['www-authenticate']
 
         # this regular expression is used to extract scheme and realm
-        authobj = re.compile(r'''(?:\s*www-authenticate\s*:)?\s*(\w*)\s+realm=['"]([^'"]+)['"]''',re.IGNORECASE)
+        authobj = re.compile(r'''(?:\s*www-authenticate\s*:)?\s*(\w*)\s+realm=['"]([^'"]+)['"]''', re.IGNORECASE)
         matchobj = authobj.match(authline)
         if not matchobj:
             # if the authline isn't matched by the regular expression
@@ -112,5 +112,5 @@ class HAProxyCollector(diamond.collector.Collector):
                     metric_value = float(metric_string)
                 except ValueError:
                     continue
-                stat_name =  '%s.%s' % (metric_name,headings[index])
+                stat_name =  '%s.%s' % (metric_name, headings[index])
                 self.publish(stat_name, metric_value)

@@ -15,7 +15,7 @@ import struct
 import re
 
 # Fix Path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"../")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
 from diamond.metric import Metric
 from snmp import SNMPCollector as parent_SNMPCollector
@@ -141,7 +141,7 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
             if serviceState not in [7]:
                 continue
 
-            for k,v in self.NETSCALER_SERVICE_GUAGES.items():
+            for k, v in self.NETSCALER_SERVICE_GUAGES.items():
                 serviceGuageOid = ".".join([v, self._convert_from_oid(serviceNameOid)])
                 # Get Metric Name
                 metricName = '.'.join([re.sub(r'\.|\\', '_', serviceName), k])

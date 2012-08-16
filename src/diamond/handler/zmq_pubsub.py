@@ -1,7 +1,7 @@
 # coding=utf-8
 
 """
-Output the collected values to . Zer0MQ pub/sub channel
+Output the collected values to a Zer0MQ pub/sub channel
 """
 
 from Handler import Handler
@@ -21,7 +21,7 @@ class zmqHandler ( Handler ):
     """
 
     # Initialize Handler
-    Handler.__init__(self,config)
+    Handler.__init__(self, config)
 
     # Initialize Data
     self.context = None
@@ -47,7 +47,7 @@ class zmqHandler ( Handler ):
     """
     pass
 
-  def process(self,metric):
+  def process(self, metric):
     """
       Process a metric and send it to zmq pub socket
     """

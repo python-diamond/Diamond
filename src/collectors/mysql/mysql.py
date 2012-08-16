@@ -107,7 +107,7 @@ class MySQLCollector(diamond.collector.Collector):
     innodb_status_match = {}
 
     def __init__(self, *args, **kwargs):
-        super(MySQLCollector,self).__init__(*args, **kwargs)
+        super(MySQLCollector, self).__init__(*args, **kwargs)
         for key in self.innodb_status_keys:
             self.innodb_status_keys[key] = re.compile(self.innodb_status_keys[key])
 

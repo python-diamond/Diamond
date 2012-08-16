@@ -44,7 +44,7 @@ class ResqueWebCollector(diamond.collector.Collector):
             if data == "":
                 continue
 
-            item,count = data.strip().split("=")
+            item, count = data.strip().split("=")
             try:
                 count = int(count)
                 (item, queue) = item.split(".")

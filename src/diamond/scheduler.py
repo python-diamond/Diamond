@@ -254,7 +254,7 @@ class Scheduler:
         """Cancel given scheduled task."""
         self.sched.cancel(task.event)
 
-    if sys.version_info>=(2,6):
+    if sys.version_info>=(2, 6):
         # code for sched module of python 2.6+
         def _getqueuetoptime(self):
             return self.sched._queue[0].time
@@ -274,8 +274,8 @@ class Scheduler:
         while self.running:
             try:
                 self.sched.run()
-            except Exception,x:
-                print >>sys.stderr, "ERROR DURING SCHEDULER EXECUTION",x
+            except Exception, x:
+                print >>sys.stderr, "ERROR DURING SCHEDULER EXECUTION", x
                 print >>sys.stderr, "".join(
                     traceback.format_exception(*sys.exc_info()))
                 print >>sys.stderr, "-" * 20
@@ -298,7 +298,7 @@ class Task:
         """Execute the task action in the scheduler's thread."""
         try:
             self.execute()
-        except Exception,x:
+        except Exception, x:
             self.handle_exception(x)
         self.reschedule(schedulerref())
 
@@ -480,7 +480,7 @@ try:
             # do the execute() call and exception handling here.
             try:
                 self.execute()
-            except Exception,x:
+            except Exception, x:
                 self.handle_exception(x)
 
     class ThreadedIntervalTask(ThreadedTaskMixin, IntervalTask):
@@ -545,7 +545,7 @@ if hasattr(os, "fork"):
                 # we are the child
                 try:
                     self.execute()
-                except Exception,x:
+                except Exception, x:
                     self.handle_exception(x)
                 os._exit(0)
             else:
@@ -570,9 +570,9 @@ if hasattr(os, "fork"):
 
 if __name__=="__main__":
     def testaction(arg):
-        print ">>>TASK",arg,"sleeping 3 seconds"
+        print ">>>TASK", arg, "sleeping 3 seconds"
         time.sleep(3)
-        print "<<<END_TASK",arg
+        print "<<<END_TASK", arg
 
     s=ThreadedScheduler()
     s.add_interval_task( testaction, "test action 1", 0, 4, method.threaded, ["task 1"], None )

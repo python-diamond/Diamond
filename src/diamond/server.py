@@ -9,7 +9,7 @@ import configobj
 import inspect
 
 # Path Fix
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"../")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
 import diamond
 
@@ -231,7 +231,7 @@ class Server(object):
             return
 
         # Get collector schedule
-        for name,schedule in c.get_schedule().items():
+        for name, schedule in c.get_schedule().items():
             # Get scheduler args
             func, args, splay, interval = schedule
 

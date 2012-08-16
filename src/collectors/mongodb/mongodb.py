@@ -47,7 +47,7 @@ class MongoDBCollector(diamond.collector.Collector):
             return {}
 
         try:
-            conn = pymongo.Connection(self.config['host'],read_preference=ReadPreference.SECONDARY)
+            conn = pymongo.Connection(self.config['host'], read_preference=ReadPreference.SECONDARY)
         except Exception, e:
             self.log.error('Couldnt connect to mongodb: %s', e)
             return {}

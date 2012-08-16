@@ -51,7 +51,7 @@ class SmartCollector(diamond.collector.Collector):
         for device in os.listdir('/dev'):
             if devices.match(device):
 
-                command = [self.config['bin'], "-A", os.path.join('/dev',device)]
+                command = [self.config['bin'], "-A", os.path.join('/dev', device)]
 
                 if self.config['use_sudo']:
                     command.insert(0, self.config['sudo_cmd'])
