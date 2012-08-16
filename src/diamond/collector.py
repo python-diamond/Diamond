@@ -2,6 +2,7 @@
 
 import os
 import socket
+import platform
 
 from diamond import *
 from diamond.metric import Metric
