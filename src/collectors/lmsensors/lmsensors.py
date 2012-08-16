@@ -41,7 +41,7 @@ class LMSensorsCollector(diamond.collector.Collector):
         config.update({
             'path': 'sensors',
             'fahrenheit': 'True'
-        } )
+        })
         return config
 
     def collect(self):

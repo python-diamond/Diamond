@@ -34,7 +34,7 @@ class PostqueueCollector(diamond.collector.Collector):
             'bin':              '/usr/bin/postqueue',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
-        } )
+        })
         return config
 
     def get_postqueue_output(self):

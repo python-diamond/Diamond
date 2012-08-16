@@ -36,7 +36,7 @@ class IPVSCollector(diamond.collector.Collector):
             'use_sudo':         True,
             'sudo_cmd':         '/usr/bin/sudo',
             'path':             'ipvs'
-        } )
+        })
         return config
 
     def collect(self):

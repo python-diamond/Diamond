@@ -54,7 +54,7 @@ class DiskUsageCollector(diamond.collector.Collector):
             'enabled':  'True',
             'path':     'iostat',
             'devices':  'md[0-9]$|sd[a-z]+$|xvd[a-z]+$|disk[0-9]$'
-        } )
+        })
         return config
 
     def get_disk_statistics(self):
@@ -85,13 +85,13 @@ class DiskUsageCollector(diamond.collector.Collector):
 
                     result[(major, minor)] = {
                         'device'                   : device,
-                        'reads'                    : float(columns[3] ),
-                        'reads_merged'             : float(columns[4] ),
-                        'reads_sectors'            : float(columns[5] ),
-                        'reads_milliseconds'       : float(columns[6] ),
-                        'writes'                   : float(columns[7] ),
-                        'writes_merged'            : float(columns[8] ),
-                        'writes_sectors'           : float(columns[9] ),
+                        'reads'                    : float(columns[3]),
+                        'reads_merged'             : float(columns[4]),
+                        'reads_sectors'            : float(columns[5]),
+                        'reads_milliseconds'       : float(columns[6]),
+                        'writes'                   : float(columns[7]),
+                        'writes_merged'            : float(columns[8]),
+                        'writes_sectors'           : float(columns[9]),
                         'writes_milliseconds'      : float(columns[10]),
                         'io_in_progress'           : float(columns[11]),
                         'io_milliseconds'          : float(columns[12]),
@@ -200,7 +200,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                     rkey = 'reads_%s' % unit
                     wkey = 'writes_%s' % unit
                     metric_name = 'average_request_size_%s' % unit
-                    metrics[metric_name] = (metrics[rkey] + metrics[wkey] ) / metrics['io']
+                    metrics[metric_name] = (metrics[rkey] + metrics[wkey]) / metrics['io']
 
                 metrics['service_time'] = metrics['io_milliseconds'] / metrics['io']
                 metrics['await'] = metrics['io_milliseconds_weighted'] / metrics['io']

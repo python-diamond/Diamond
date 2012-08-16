@@ -22,10 +22,10 @@ class TestSmartCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_osx_missing(self, publish_mock):
-        with patch('os.listdir', Mock(return_value=['disk0'] )):
+        with patch('os.listdir', Mock(return_value=['disk0'])):
             with patch('subprocess.Popen.communicate', Mock(return_value=(
                 self.getFixture('osx_missing').getvalue() , '')
-            )):
+)):
                 self.collector.collect()
 
             self.assertPublishedMany(publish_mock, {
@@ -34,10 +34,10 @@ class TestSmartCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_osx_ssd(self, publish_mock):
-        with patch('os.listdir', Mock(return_value=['disk0'] )):
+        with patch('os.listdir', Mock(return_value=['disk0'])):
             with patch('subprocess.Popen.communicate', Mock(return_value=(
                 self.getFixture('osx_ssd').getvalue() , '')
-            )):
+)):
                 self.collector.collect()
 
             self.assertPublishedMany(publish_mock, {
@@ -67,10 +67,10 @@ class TestSmartCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_centos55_hdd(self, publish_mock):
-        with patch('os.listdir', Mock(return_value=['sda'] )):
+        with patch('os.listdir', Mock(return_value=['sda'])):
             with patch('subprocess.Popen.communicate', Mock(return_value=(
                 self.getFixture('centos5.5_hdd').getvalue() , '')
-            )):
+)):
                 self.collector.collect()
 
             metrics = {

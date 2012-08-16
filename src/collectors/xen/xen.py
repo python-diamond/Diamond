@@ -32,7 +32,7 @@ class XENCollector(Collector):
         config = super(XENCollector, self).get_default_config()
         config.update({
             'path':     'xen'
-        } )
+        })
         return config
 
     def collect(self):

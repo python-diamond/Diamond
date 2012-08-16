@@ -9,7 +9,7 @@ _RE_SPAN_OF_CAPS = re.compile('([a-z0-9])([A-Z])')
 def camelcase_to_underscore(name):
     return _RE_SPAN_OF_CAPS.sub(r'\1_\2',
         _RE_FIND_FIRST_CAP.sub(r'\1_\2', name)
-    ).lower()
+).lower()
 
 
 class binary:
@@ -27,7 +27,7 @@ class binary:
         return convertor.get(unit=newUnit)
 
     def set(self, value, unit=None):
-        return self.do(value=value, unit=unit )
+        return self.do(value=value, unit=unit)
 
     def get(self, unit=None):
         return self.do(unit=unit)

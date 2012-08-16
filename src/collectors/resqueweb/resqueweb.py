@@ -30,7 +30,7 @@ class ResqueWebCollector(diamond.collector.Collector):
             'host': 'localhost',
             'port': 5678,
             'path': 'resqueweb',
-        } )
+        })
         return config
 
     def collect(self):

@@ -60,7 +60,7 @@ class MemoryCollector(diamond.collector.Collector):
             # Collect all the nodes or just a few standard ones?
             # Uncomment to enable
             #'detailed' : 'True'
-        } )
+        })
         return config
 
     def collect(self):

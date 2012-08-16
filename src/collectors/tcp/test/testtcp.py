@@ -31,7 +31,7 @@ class TestTCPCollector(CollectorTestCase):
     @patch('__builtin__.open')
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock, open_mock):
-        self.setUp(['A', 'C' ])
+        self.setUp(['A', 'C'])
         open_mock.return_value = StringIO('''
 TcpExt: A B C
 TcpExt: 0 0 0
@@ -51,11 +51,11 @@ TcpExt: 0 1 2
         self.assertEqual(publish_mock.call_args_list, [
             (('A', 0.0, 0), {}),
             (('C', 2.0, 0), {})
-        ])
+])
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        self.setUp(['ListenOverflows', 'ListenDrops', 'TCPLoss', 'TCPTimeouts' ])
+        self.setUp(['ListenOverflows', 'ListenDrops', 'TCPLoss', 'TCPTimeouts'])
 
         TCPCollector.PROC = self.getFixturePath('proc_net_netstat')
         self.collector.collect()

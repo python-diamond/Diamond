@@ -37,7 +37,7 @@ class MonitCollector(diamond.collector.Collector):
             'passwd':       'monit',
             'path':         'monit',
             'byte_unit':    ['byte'],
-        } )
+        })
         return config
 
     def collect(self):

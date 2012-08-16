@@ -9,12 +9,12 @@ from Handler import Handler
 import zmq
 
 
-class zmqHandler (Handler ):
+class zmqHandler (Handler):
     """
       Implements the abstract Handler class, sending data to a Zer0MQ pub channel
     """
 
-    def __init__(self, config=None ):
+    def __init__(self, config=None):
 
         """
           Create a new instance of zmqHandler class
@@ -25,10 +25,11 @@ class zmqHandler (Handler ):
     
         # Initialize Data
         self.context = None
+
         self.socket = None
     
         # Initialize Options
-        self.port = int(self.config['port'] )
+        self.port = int(self.config['port'])
     
         # Create ZMQ pub socket and bind
         self._bind()
@@ -39,7 +40,7 @@ class zmqHandler (Handler ):
         """
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PUB)
-        self.socket.bind("tcp://*:%i" % self.port )
+        self.socket.bind("tcp://*:%i" % self.port)
 
     def __del__(self):
         """
@@ -55,6 +56,6 @@ class zmqHandler (Handler ):
         self.lock.acquire()
     
         # Send the data as ......
-        self.socket.send("%s" % str(metric) )
+        self.socket.send("%s" % str(metric))
         # Release lock
         self.lock.release()

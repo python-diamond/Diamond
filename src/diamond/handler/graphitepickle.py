@@ -48,7 +48,7 @@ class GraphitePickleHandler(GraphiteHandler):
         # Acquire lock
         self.lock.acquire()
         # Convert metric to pickle format
-        m = (metric.path, (metric.timestamp, metric.value) )
+        m = (metric.path, (metric.timestamp, metric.value))
         # Add the metric to the match
         self.batch.append(m)
         # If there are sufficient metrics, then pickle and send

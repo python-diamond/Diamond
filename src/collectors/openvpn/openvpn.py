@@ -61,7 +61,7 @@ class OpenVPNCollector(diamond.collector.Collector):
             'method':    'Threaded',
             'instances': 'file:///var/log/openvpn/status.log',
             'timeout':   '10',
-        } )
+        })
         return config
 
     def collect(self):
@@ -179,7 +179,7 @@ class OpenVPNCollector(diamond.collector.Collector):
                             name,
                             'global',
                             key,
-                        ]), value)
+]), value)
 
                 elif section == 'clients':
                     # Clients come with a heading
@@ -195,13 +195,13 @@ class OpenVPNCollector(diamond.collector.Collector):
                                 section,
                                 info['common name'].replace('.', '_'),
                                 'bytes_rx'
-                            ]), info['bytes received'])
+]), info['bytes received'])
                         self.publish_number('.'.join([
                                 name,
                                 section,
                                 info['common name'].replace('.', '_'),
                                 'bytes_tx'
-                            ]), info['bytes sent'])
+]), info['bytes sent'])
 
                 elif section == 'global':
                     # All values here are numeric
@@ -209,7 +209,7 @@ class OpenVPNCollector(diamond.collector.Collector):
                             name,
                             section,
                             key,
-                        ]), value)
+]), value)
 
             elif line.startswith('END'):
                 break

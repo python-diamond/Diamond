@@ -34,7 +34,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             'host':     '127.0.0.1',
             'port':     9200,
             'path':     'elasticsearch',
-        } )
+        })
         return config
 
     def collect(self):

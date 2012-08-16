@@ -42,7 +42,7 @@ class InterruptCollector(diamond.collector.Collector):
         config = super(InterruptCollector, self).get_default_config()
         config.update({
             'path':     'interrupts'
-        } )
+        })
         return config
 
     def collect(self):

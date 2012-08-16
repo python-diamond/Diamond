@@ -34,7 +34,7 @@ class FilestatCollector(diamond.collector.Collector):
         config.update({
             'path':     'files',
             'method':   'Threaded'
-        } )
+        })
         return config
 
     def collect(self):

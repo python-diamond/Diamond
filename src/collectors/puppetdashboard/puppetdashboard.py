@@ -34,7 +34,7 @@ class PuppetDashboardCollector(diamond.collector.Collector):
             'host': 'localhost',
             'port': 5678,
             'path': 'puppetdashboard',
-        } )
+        })
         return config
 
     def collect(self):

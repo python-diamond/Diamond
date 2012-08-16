@@ -31,7 +31,7 @@ class NfsdCollector(diamond.collector.Collector):
         config.update({
             'enabled':  False,
             'path':     'nfsd'
-        } )
+        })
         return config
 
     def collect(self):

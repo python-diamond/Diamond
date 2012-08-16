@@ -39,7 +39,7 @@ class SockstatCollector(diamond.collector.Collector):
             'enabled':  'True',
             'path':     'sockets',
             'method':   'Threaded',
-        } )
+        })
         return config
 
     def collect(self):

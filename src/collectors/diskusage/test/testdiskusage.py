@@ -65,8 +65,8 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         self.assertEqual(
             sorted(result.keys()),
-            [(8,  0), (8,  1), (8, 16), (8, 17), (8, 32), (8, 33), (8, 48), (8, 49), (9,  0) ]
-        )
+            [(8,  0), (8,  1), (8, 16), (8, 17), (8, 32), (8, 33), (8, 48), (8, 49), (9,  0)]
+)
 
         return result
 
@@ -77,7 +77,7 @@ class TestDiskUsageCollector(CollectorTestCase):
         with nested(
             patch('__builtin__.open', Mock(return_value=self.getFixture('proc_diskstats_1'))),
             patch('time.time', Mock(return_value=10))
-        ):
+):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {})
@@ -85,7 +85,7 @@ class TestDiskUsageCollector(CollectorTestCase):
         with nested(
             patch('__builtin__.open', Mock(return_value=self.getFixture('proc_diskstats_2'))),
             patch('time.time', Mock(return_value=20))
-        ):
+):
             self.collector.collect()
 
         metrics = {

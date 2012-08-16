@@ -41,7 +41,7 @@ class PostgresqlCollector(diamond.collector.Collector):
                 'password': 'postgres',
                 'port': 5432,
                 'method': 'Threaded'
-               } )
+               })
         return config
 
     def collect(self):
@@ -54,7 +54,7 @@ class PostgresqlCollector(diamond.collector.Collector):
                 self.config['user'],
                 self.config['password'],
                 self.config['port']
-                )
+)
 
         self.conn = psycopg2.connect(self.conn_string)
         self.cursor = self.conn.cursor()

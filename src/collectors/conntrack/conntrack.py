@@ -38,7 +38,7 @@ class ConnTrackCollector(diamond.collector.Collector):
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
             'bin':              '/sbin/sysctl',
-        } )
+        })
         return config
 
     def collect(self):
@@ -46,7 +46,7 @@ class ConnTrackCollector(diamond.collector.Collector):
             self.log.error("%s is not executable", self.config['bin'])
             return False
 
-        command = [self.config['bin'], 'net.netfilter.nf_conntrack_count' ]
+        command = [self.config['bin'], 'net.netfilter.nf_conntrack_count']
 
         if self.config['use_sudo']:
             command.insert(0, self.config['sudo_cmd'])

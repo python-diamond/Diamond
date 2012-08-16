@@ -34,7 +34,7 @@ class HttpdCollector(diamond.collector.Collector):
         config.update({
             'path':     'httpd',
             'url':      'http://localhost:8080/server-status?auto'
-        } )
+        })
         return config
 
     def collect(self):

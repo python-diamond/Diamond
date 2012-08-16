@@ -40,7 +40,7 @@ class HAProxyCollector(diamond.collector.Collector):
             'user':             'admin',
             'pass':             'password',
             'ignore_servers':   False,
-        } )
+        })
         return config
 
     def get_csv_data(self):

@@ -216,12 +216,12 @@ class Scheduler:
             self._acquire_lock()
             try:
                 task.event = self.sched.enter(delay, 0, task,
-                            (weakref.ref(self),) )
+                            (weakref.ref(self),))
             finally:
                 self._release_lock()
         else:
             task.event = self.sched.enter(delay, 0, task,
-                        (weakref.ref(self),) )
+                        (weakref.ref(self),))
 
     def schedule_task_abs(self, task, abstime):
         """Add a new task to the scheduler for the given absolute time value.
@@ -234,12 +234,12 @@ class Scheduler:
             self._acquire_lock()
             try:
                 task.event = self.sched.enterabs(abstime, 0, task,
-                                    (weakref.ref(self),) )
+                                    (weakref.ref(self),))
             finally:
                 self._release_lock()
         else:
             task.event = self.sched.enterabs(abstime, 0, task,
-                                (weakref.ref(self),) )
+                                (weakref.ref(self),))
 
     def start(self):
         """Start the scheduler."""
@@ -575,7 +575,7 @@ if __name__ == "__main__":
         print "<<<END_TASK", arg
 
     s = ThreadedScheduler()
-    s.add_interval_task(testaction, "test action 1", 0, 4, method.threaded, ["task 1"], None )
+    s.add_interval_task(testaction, "test action 1", 0, 4, method.threaded, ["task 1"], None)
     s.start()
 
     print "Scheduler started, waiting 15 sec...."

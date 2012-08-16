@@ -24,7 +24,7 @@ class PowerDNSCollector(diamond.collector.Collector):
         'nsspeeds-entries',
         'packetcache-bytes', 'packetcache-entries', 'packetcache-size',
         'qa-latency', 'throttle-entries'
-        ]
+]
 
     def get_default_config_help(self):
         config_help = super(PowerDNSCollector, self).get_default_config_help()
@@ -45,7 +45,7 @@ class PowerDNSCollector(diamond.collector.Collector):
             'path': 'powerdns',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
-        } )
+        })
         return config
 
     def collect(self):

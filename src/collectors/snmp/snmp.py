@@ -95,7 +95,7 @@ class SNMPCollector(diamond.collector.Collector):
         snmpTransportData = pysnmp.entity.rfc3413.oneliner.cmdgen.UdpTransportTarget((host, port), int(self.config['timeout']), int(self.config['retries']))
 
         # Assemble SNMP Next Command
-        errorIndication, errorStatus, errorIndex, varBind = self.snmpCmdGen.getCmd(snmpAuthData, snmpTransportData, oid )
+        errorIndication, errorStatus, errorIndex, varBind = self.snmpCmdGen.getCmd(snmpAuthData, snmpTransportData, oid)
 
         # TODO: Error check
 
@@ -125,7 +125,7 @@ class SNMPCollector(diamond.collector.Collector):
         snmpTransportData = pysnmp.entity.rfc3413.oneliner.cmdgen.UdpTransportTarget((host, port), int(self.config['timeout']), int(self.config['retries']))
 
         # Assemble SNMP Next Command
-        errorIndication, errorStatus, errorIndex, varBindTable = self.snmpCmdGen.nextCmd(snmpAuthData, snmpTransportData, oid )
+        errorIndication, errorStatus, errorIndex, varBindTable = self.snmpCmdGen.nextCmd(snmpAuthData, snmpTransportData, oid)
 
         # TODO: Error Check
 

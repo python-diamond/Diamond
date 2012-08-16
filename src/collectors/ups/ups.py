@@ -38,7 +38,7 @@ class UPSCollector(diamond.collector.Collector):
             'bin':              '/bin/upsc',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
-        } )
+        })
         return config
 
     def collect(self):

@@ -12,24 +12,24 @@ else:
     setup_kwargs = dict()
 
 data_files = [
-    ('share/diamond',                      ['LICENSE', 'README.md'] ),
-    ('share/diamond/user_scripts',         [] ),
+    ('share/diamond',                      ['LICENSE', 'README.md']),
+    ('share/diamond/user_scripts',         []),
 ]
 
 if os.getenv('VIRTUAL_ENV', False):
-    data_files.append(('etc/diamond',                        glob('conf/*.conf.*') ))
-    data_files.append(('etc/diamond/collectors',             glob('conf/collectors/*') ))
+    data_files.append(('etc/diamond',                        glob('conf/*.conf.*')))
+    data_files.append(('etc/diamond/collectors',             glob('conf/collectors/*')))
 else:
-    data_files.append(('/etc/diamond',                       glob('conf/*.conf.*') ))
-    data_files.append(('/etc/diamond/collectors',            glob('conf/collectors/*') ))
+    data_files.append(('/etc/diamond',                       glob('conf/*.conf.*')))
+    data_files.append(('/etc/diamond/collectors',            glob('conf/collectors/*')))
 
     if platform.dist()[0] == 'Ubuntu':
-        data_files.append(('/etc/init',                      ['debian/upstart/diamond.conf'] ))
+        data_files.append(('/etc/init',                      ['debian/upstart/diamond.conf']))
     if platform.dist()[0] == 'centos' or 'redhat':
-        data_files.append(('/etc/init.d',		             ['bin/init.d/diamond'] ))
-        data_files.append(('/var/log/diamond',		         ['.keep'] ))
+        data_files.append(('/etc/init.d',		             ['bin/init.d/diamond']))
+        data_files.append(('/var/log/diamond',		         ['.keep']))
         if platform.dist()[1].split('.')[0] >= '6':
-            data_files.append(('/etc/init',                  ['rpm/upstart/diamond.conf'] ))
+            data_files.append(('/etc/init',                  ['rpm/upstart/diamond.conf']))
 
 
 def pkgPath(root, path, rpath="/"):
@@ -66,7 +66,7 @@ setup(
     data_files=data_files,
     install_requires=[
         'python-configobj', 'psutil',
-    ],
+],
     #test_suite='test.main',
     ** setup_kwargs
 )

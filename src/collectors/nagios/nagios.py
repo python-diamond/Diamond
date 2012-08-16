@@ -63,7 +63,7 @@ class NagiosStatsCollector(diamond.collector.Collector):
             'use_sudo':         True,
             'sudo_cmd':         '/usr/bin/sudo',
             'path':             'nagiosstats'
-        } )
+        })
         return config
 
     def collect(self):

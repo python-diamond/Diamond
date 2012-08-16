@@ -72,7 +72,7 @@ class RedisCollector(diamond.collector.Collector):
                 'port': self._DEFAULT_PORT,
                 'db': self._DEFAULT_DB,
                 'databases': self._DATABASE_COUNT
-                } )
+                })
         return config
 
     def _client(self):

@@ -35,7 +35,7 @@ class LoadAverageCollector(diamond.collector.Collector):
             'enabled':  'True',
             'path':     'loadavg',
             'method':   'Threaded'
-        } )
+        })
         return config
 
     def collect(self):

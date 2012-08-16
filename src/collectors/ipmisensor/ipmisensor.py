@@ -39,7 +39,7 @@ class IPMISensorCollector(diamond.collector.Collector):
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
             'path':             'ipmi.sensors'
-        } )
+        })
         return config
 
     def collect(self):

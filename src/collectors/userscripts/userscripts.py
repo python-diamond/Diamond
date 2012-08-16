@@ -43,7 +43,7 @@ class UserScriptsCollector(diamond.collector.Collector):
             'path':         '.',
             'scripts_path': '/etc/diamond/user_scripts/',
             'method':       'Threaded',
-        } )
+        })
         return config
 
     def collect(self):

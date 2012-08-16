@@ -46,7 +46,7 @@ class PingCollector(diamond.collector.Collector):
             'bin':              '/bin/ping',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
-        } )
+        })
         return config
 
     def collect(self):

@@ -38,7 +38,7 @@ class HadoopCollector(diamond.collector.Collector):
             'path':     'hadoop',
             'method':   'Threaded',
             'metrics':  ['/var/log/hadoop/*-metrics.out'],
-        } )
+        })
         return config
 
     def collect(self):
@@ -75,7 +75,7 @@ class HadoopCollector(diamond.collector.Collector):
                             metrics['hostName'].replace('.', '_'),
                             metrics['processName'].replace(' ', '_'),
                             metric,
-                        ]))
+]))
 
                     elif data['name'] == 'mapred.job':
                         path = self.get_metric_path('.'.join([
@@ -84,7 +84,7 @@ class HadoopCollector(diamond.collector.Collector):
                             metrics['group'].replace(' ', '_'),
                             metrics['counter'].replace(' ', '_'),
                             metric,
-                        ]))
+]))
 
                     elif data['name'] == 'rpc.metrics':
 
@@ -96,13 +96,13 @@ class HadoopCollector(diamond.collector.Collector):
                             metrics['hostName'].replace('.', '_'),
                             metrics['port'],
                             metric,
-                        ]))
+]))
 
                     else :
                         path = self.get_metric_path('.'.join([
                             data['name'],
                             metric,
-                        ]))
+]))
 
                     value = float(metrics[metric])
 

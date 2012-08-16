@@ -43,7 +43,7 @@ class OneWireCollector(diamond.collector.Collector):
             'owfs': '/mnt/1wire',
 #            'scan': {'temperature': 't'},
 #            'id:24.BB000000': {'file_with_value': 'alias'},
-        } )
+        })
         return config
 
     def collect(self):

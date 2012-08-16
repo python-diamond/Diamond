@@ -48,7 +48,7 @@ class CPUCollector(diamond.collector.Collector):
         config.update({
             'enabled':  'True',
             'path':     'cpu'
-        } )
+        })
         return config
 
     def collect(self):

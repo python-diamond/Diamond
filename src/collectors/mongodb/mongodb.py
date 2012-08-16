@@ -36,7 +36,7 @@ class MongoDBCollector(diamond.collector.Collector):
         config.update({
             'path':     'mongo',
             'host':     'localhost'
-        } )
+        })
         return config
 
     def collect(self):

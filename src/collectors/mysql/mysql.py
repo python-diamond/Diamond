@@ -56,11 +56,11 @@ class MySQLCollector(diamond.collector.Collector):
         'Innodb_row_queries_inside', 'Innodb_row_queries_queue',
         'Innodb_trx_history_list_length', 'Innodb_trx_total_lock_structs',
         'Innodb_status_process_time',
-        ]
+]
     _IGNORE_KEYS = [
         'Master_Port', 'Master_Server_Id',
         'Last_Errno', 'Last_IO_Errno', 'Last_SQL_Errno',
-        ]
+]
 
     innodb_status_keys = {
         'Innodb_bp_total_alloc,Innodb_bp_add_alloc':									'Total memory allocated (\d+)\; in additional pool allocated (\d+)',
@@ -148,7 +148,7 @@ class MySQLCollector(diamond.collector.Collector):
             'slave':    'False',
             'master':   'False',
             'innodb':    'False',
-        } )
+        })
         return config
 
     def get_stats(self):

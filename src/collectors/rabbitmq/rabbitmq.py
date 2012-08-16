@@ -39,7 +39,7 @@ class RabbitMQCollector(diamond.collector.Collector):
             'host':     'localhost:55672',
             'user':     'guest',
             'password': 'guest',
-        } )
+        })
         return config
 
     def collect(self):

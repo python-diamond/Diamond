@@ -53,7 +53,7 @@ class TestHttpdCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch.object(TestHTTPResponse, 'read', Mock(return_value=self.getFixture('server-status-live-1').getvalue() )):
+        with patch.object(TestHTTPResponse, 'read', Mock(return_value=self.getFixture('server-status-live-1').getvalue())):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {})

@@ -61,7 +61,7 @@ class MemcachedCollector(diamond.collector.Collector):
                     'port':     '11211',
                 },
             },
-        } )
+        })
         return config
 
     def get_raw_stats(self, host, port):
