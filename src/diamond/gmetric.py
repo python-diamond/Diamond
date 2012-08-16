@@ -107,7 +107,7 @@ def gmetric_write(NAME, VAL, TYPE, UNITS, SLOPE, TMAX, DMAX, GROUP):
     packer.pack_string(TYPE)
     packer.pack_string(NAME)
     packer.pack_string(UNITS)
-    packer.pack_int(slope_str2int[SLOPE]) # map slope string to int
+    packer.pack_int(slope_str2int[SLOPE])  # map slope string to int
     packer.pack_uint(int(TMAX))
     packer.pack_uint(int(DMAX))
     # Magic number. Indicates number of entries to follow. Put in 1 for GROUP
