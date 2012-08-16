@@ -52,10 +52,10 @@ class XENCollector(Collector):
         results = {}
         #Total cores
         domU = conn.lookupByID(0)
-        totalcores=domU.info()[3]
+        totalcores = domU.info()[3]
         #Free Space
         s = os.statvfs('/')
-        freeSpace=(s.f_bavail * s.f_frsize) / 1024
+        freeSpace = (s.f_bavail * s.f_frsize) / 1024
         #Calculate allocated memory and cores
         for i in conn.listDomainsID():
             domU = conn.lookupByID(i)

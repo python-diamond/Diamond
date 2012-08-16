@@ -11,7 +11,7 @@ else:
     from distutils.core import setup
     setup_kwargs = dict()
 
-data_files=[
+data_files = [
     ('share/diamond',                      ['LICENSE', 'README.md'] ),
     ('share/diamond/user_scripts',         [] ),
 ]
@@ -43,7 +43,7 @@ def pkgPath(root, path, rpath="/"):
         if os.path.isfile(subpath):
             files.append(subpath)
 
-    data_files.append((root+rpath, files))
+    data_files.append((root + rpath, files))
     for spath in os.listdir(path):
         subpath = os.path.join(path, spath)
         spath = os.path.join(rpath, spath)
@@ -68,5 +68,5 @@ setup(
         'python-configobj', 'psutil',
     ],
     #test_suite='test.main',
-    **setup_kwargs
+    ** setup_kwargs
 )

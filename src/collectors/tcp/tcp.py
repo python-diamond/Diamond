@@ -15,7 +15,7 @@ import os
 
 class TCPCollector(diamond.collector.Collector):
 
-    PROC='/proc/net/netstat'
+    PROC = '/proc/net/netstat'
 
     def get_default_config_help(self):
         config_help = super(TCPCollector, self).get_default_config_help()

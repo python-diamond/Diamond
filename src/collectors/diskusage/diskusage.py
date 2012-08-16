@@ -127,7 +127,7 @@ class DiskUsageCollector(diamond.collector.Collector):
         CollectTime = time.time()
         time_delta = float(self.config['interval'])
         if self.LastCollectTime:
-            time_delta = CollectTime-self.LastCollectTime
+            time_delta = CollectTime - self.LastCollectTime
         if not time_delta:
             time_delta = float(self.config['interval'])
         self.LastCollectTime = CollectTime

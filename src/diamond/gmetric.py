@@ -97,8 +97,8 @@ def gmetric_write(NAME, VAL, TYPE, UNITS, SLOPE, TMAX, DMAX, GROUP):
     Arguments are in all upper-case to match XML
     """
     packer = Packer()
-    HOSTNAME="test"
-    SPOOF=0
+    HOSTNAME = "test"
+    SPOOF = 0
     # Meta data about a metric
     packer.pack_int(128)
     packer.pack_string(HOSTNAME)
@@ -120,7 +120,7 @@ def gmetric_write(NAME, VAL, TYPE, UNITS, SLOPE, TMAX, DMAX, GROUP):
 
     # Actual data sent in a separate packet
     data = Packer()
-    data.pack_int(128+5)
+    data.pack_int(128 + 5)
     data.pack_string(HOSTNAME)
     data.pack_string(NAME)
     data.pack_int(SPOOF)

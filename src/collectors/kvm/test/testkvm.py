@@ -17,7 +17,7 @@ class TestKVMCollector(CollectorTestCase):
         })
 
         self.collector = KVMCollector(config, None)
-        self.collector.PROC = os.path.dirname(__file__)+'/fixtures/'
+        self.collector.PROC = os.path.dirname(__file__) + '/fixtures/'
 
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')

@@ -45,7 +45,7 @@ http://www.opensource.org/licenses/mit-license.php
 
 """
 
-__version__="2.0"
+__version__ = "2.0"
 
 __all__ = [
     "DayTaskRescheduler",
@@ -78,16 +78,16 @@ import weakref
 
 
 class method:
-    sequential="sequential"
-    forked="forked"
-    threaded="threaded"
+    sequential = "sequential"
+    forked = "forked"
+    threaded = "threaded"
 
 
 class Scheduler:
     """The Scheduler itself."""
 
     def __init__(self):
-        self.running=True
+        self.running = True
         self.sched = sched.scheduler(time.time, self.__delayfunc)
 
     def __delayfunc(self, delay):
@@ -95,7 +95,7 @@ class Scheduler:
         # divided up, so that we can check the self.running flag while delaying.
         # there is an additional check in here to ensure that the top item of
         # the queue hasn't changed
-        if delay<10:
+        if delay < 10:
             time.sleep(delay)
         else:
             toptime = self._getqueuetoptime()
@@ -188,7 +188,7 @@ class Scheduler:
                 TaskClass = ForkedWeekdayTask
             else:
                 raise ValueError("Invalid processmethod")
-            task=TaskClass(taskname, weekdays, timeonday, action, args, kw)
+            task = TaskClass(taskname, weekdays, timeonday, action, args, kw)
         if monthdays:
             # Select the correct MonthdayTask class.
             # Not all types may be available!
@@ -200,8 +200,8 @@ class Scheduler:
                 TaskClass = ForkedMonthdayTask
             else:
                 raise ValueError("Invalid processmethod")
-            task=TaskClass(taskname, monthdays, timeonday, action, args, kw)
-        firsttime=task.get_schedule_time(True)
+            task = TaskClass(taskname, monthdays, timeonday, action, args, kw)
+        firsttime = task.get_schedule_time(True)
         self.schedule_task_abs(task, firsttime)
         return task
 
@@ -254,7 +254,7 @@ class Scheduler:
         """Cancel given scheduled task."""
         self.sched.cancel(task.event)
 
-    if sys.version_info>=(2, 6):
+    if sys.version_info >= (2, 6):
         # code for sched module of python 2.6+
         def _getqueuetoptime(self):
             return self.sched._queue[0].time
@@ -289,10 +289,10 @@ class Task:
 
     def __init__(self, name, action, args, kw):
         """This is an abstract class!"""
-        self.name=name
-        self.action=action
-        self.args=args
-        self.kw=kw
+        self.name = name
+        self.action = action
+        self.args = args
+        self.kw = kw
 
     def __call__(self, schedulerref):
         """Execute the task action in the scheduler's thread."""
@@ -568,13 +568,13 @@ if hasattr(os, "fork"):
         """Monthday Task that executes in its own process."""
         pass
 
-if __name__=="__main__":
+if __name__ == "__main__":
     def testaction(arg):
         print ">>>TASK", arg, "sleeping 3 seconds"
         time.sleep(3)
         print "<<<END_TASK", arg
 
-    s=ThreadedScheduler()
+    s = ThreadedScheduler()
     s.add_interval_task( testaction, "test action 1", 0, 4, method.threaded, ["task 1"], None )
     s.start()
 

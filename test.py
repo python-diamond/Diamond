@@ -38,7 +38,7 @@ class CollectorTestCase(unittest.TestCase):
         if not len(metrics):
             return False
 
-        filePath = os.path.join('docs', 'collectors-'+collector+'.md')
+        filePath = os.path.join('docs', 'collectors-' + collector + '.md')
 
         if not os.path.exists(filePath):
             return False
@@ -58,9 +58,9 @@ class CollectorTestCase(unittest.TestCase):
             for line in content:
                 if line.strip() == '__EXAMPLESHERE__':
                     for metric in sorted(metrics.iterkeys()):
-                        metricPath = 'servers.hostname.'+metric
+                        metricPath = 'servers.hostname.' + metric
                         metricPath = metricPath.replace('..', '.')
-                        fp.write(metricPath+' '+str(metrics[metric])+'\n')
+                        fp.write(metricPath + ' ' + str(metrics[metric]) + '\n')
                 else:
                     fp.write(line)
             fp.close()
@@ -72,7 +72,7 @@ class CollectorTestCase(unittest.TestCase):
     def getFixturePath(self, fixture_name):
         file = os.path.join(os.path.dirname(inspect.getfile(self.__class__)), 'fixtures', fixture_name)
         if not os.access(file, os.R_OK):
-            print "Missing Fixture "+file
+            print "Missing Fixture " + file
         return file
 
     def getFixture(self, fixture_name):

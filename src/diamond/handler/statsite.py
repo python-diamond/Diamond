@@ -117,7 +117,7 @@ class StatsiteHandler(Handler):
             try:
                 # Send data to socket
                 data = data.split()
-                data = data[0]+":"+data[1]+"|kv\n"
+                data = data[0] + ":" + data[1] + "|kv\n"
                 self.socket.sendall(data)
                 # Done
                 break

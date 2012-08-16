@@ -149,7 +149,7 @@ if __name__ == "__main__":
 
         options = obj.get_default_config_help()
 
-        docFile = open(os.path.join(docs_path, "collectors-"+collector+".md"), 'w')
+        docFile = open(os.path.join(docs_path, "collectors-" + collector + ".md"), 'w')
 
         collectorIndexFile.write(" - [%s](collectors-%s)\n" % (collector, collector))
 
@@ -160,7 +160,7 @@ if __name__ == "__main__":
         docFile.write("\n")
         docFile.write(" * [Generic Options](Configuration)\n")
         for option in options:
-            docFile.write(" * %s: %s\n" %(option, options[option]))
+            docFile.write(" * %s: %s\n" % (option, options[option]))
         docFile.write("\n")
         docFile.write("#### Example Output\n")
         docFile.write("\n")
@@ -191,7 +191,7 @@ if __name__ == "__main__":
         if not hasattr(handlers[handler], handler):
             continue
 
-        docFile = open(os.path.join(docs_path, "handler-"+handler+".md"), 'w')
+        docFile = open(os.path.join(docs_path, "handler-" + handler + ".md"), 'w')
 
         handlerIndexFile.write(" - [%s](handler-%s)\n" % (handler, handler))
 

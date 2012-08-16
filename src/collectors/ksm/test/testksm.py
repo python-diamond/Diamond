@@ -14,7 +14,7 @@ class TestKSMCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('KSMCollector', {
             'interval': 10,
-            'ksm_path': os.path.dirname(__file__)+'/fixtures/'
+            'ksm_path': os.path.dirname(__file__) + '/fixtures/'
         })
 
         self.collector = KSMCollector(config, None)

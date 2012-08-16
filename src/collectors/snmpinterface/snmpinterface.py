@@ -122,7 +122,7 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
             # Get Interface Name
             ifNameOid = '.'.join([self.IF_MIB_NAME_OID, ifIndex])
             ifNameData = self.get(ifNameOid, host, port, community)
-            ifName=ifNameData[ifNameOid]
+            ifName = ifNameData[ifNameOid]
             # Remove quotes from string
             ifName = re.sub(r'(\"|\')', '', ifName)
 

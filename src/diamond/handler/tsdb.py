@@ -77,7 +77,7 @@ class TSDBHandler(Handler):
         # Acquire lock
         self.lock.acquire()
         # Just send the data as a string
-        self._send("put "+str(metric))
+        self._send("put " + str(metric))
         # Release lock
         self.lock.release()
 

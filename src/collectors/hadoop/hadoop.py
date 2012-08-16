@@ -57,14 +57,14 @@ class HadoopCollector(diamond.collector.Collector):
             if not match:
                 continue
 
-            metrics={}
+            metrics = {}
 
             data = match.groupdict()
             for metric in data['metrics'].split(','):
                 metric = metric.strip()
                 if '=' in metric:
                     key, value = metric.split('=', 1)
-                    metrics[key]=value
+                    metrics[key] = value
 
             for metric in metrics.keys():
                 try:

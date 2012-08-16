@@ -134,7 +134,7 @@ class RedisCollector(diamond.collector.Collector):
             db = 'db%i' % dbnum
             if db in info:
                 for key in info[db]:
-                    data['%s.%s'% (db, key)] = info[db][key]
+                    data['%s.%s' % (db, key)] = info[db][key]
 
         # Time since last save
         data['last_save.time_since'] = int(time.time()) - info['last_save_time']

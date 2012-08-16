@@ -14,7 +14,7 @@ class TestUserScriptsCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('UserScriptsCollector', {
             'interval': 10,
-            'scripts_path': os.path.dirname(__file__)+'/fixtures/',
+            'scripts_path': os.path.dirname(__file__) + '/fixtures/',
         })
 
         self.collector = UserScriptsCollector(config, None)

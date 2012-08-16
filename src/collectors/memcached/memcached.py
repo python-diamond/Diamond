@@ -105,7 +105,7 @@ class MemcachedCollector(diamond.collector.Collector):
             for stat in desired:
                 if stat in stats:
                     # we have it
-                    self.publish(host+"."+stat, stats[stat])
+                    self.publish(host + "." + stat, stats[stat])
                 else:
                     # we don't, must be somehting configured in publish so we
                     # should log an error about it

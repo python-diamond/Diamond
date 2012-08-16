@@ -27,7 +27,7 @@ else:
 
 class InterruptCollector(diamond.collector.Collector):
 
-    PROC='/proc/interrupts'
+    PROC = '/proc/interrupts'
 
     def get_default_config_help(self):
         config_help = super(InterruptCollector, self).get_default_config_help()
@@ -53,14 +53,14 @@ class InterruptCollector(diamond.collector.Collector):
             return False
 
         #Open PROC file
-        file=open(self.PROC, 'r')
+        file = open(self.PROC, 'r')
         #Get data
         cpuCount = None
         for line in file:
             if not cpuCount:
                 cpuCount = len(line.split())
             else:
-                data = line.strip().split(None, cpuCount+2)
+                data = line.strip().split(None, cpuCount + 2)
                 data[0] = data[0].replace(':', '')
 
                 if len(data) == 2:
@@ -68,24 +68,24 @@ class InterruptCollector(diamond.collector.Collector):
                     metric_value = data[1]
                     self.publish(metric_name, self.derivative(metric_name, long(metric_value), counter))
                 else:
-                    if len(data[0]) == cpuCount+1:
-                        metric_name = data[0]+'.'
+                    if len(data[0]) == cpuCount + 1:
+                        metric_name = data[0] + '.'
                     elif len(data[0]) == 3:
-                        metric_name = ((data[-2]+' '+data[-1]).replace(' ', '_'))+'.'
+                        metric_name = ((data[ -2] + ' ' + data[ -1]).replace(' ', '_')) + '.'
                     else:
-                        metric_name = ((data[-2]).replace(' ', '_'))+'.'+((data[-1]).replace(', ', '-').replace(' ', '_'))+'.'+data[0]+'.'
+                        metric_name = ((data[ -2]).replace(' ', '_')) + '.' + ((data[ -1]).replace(', ', '-').replace(' ', '_')) + '.' + data[0] + '.'
                     total = 0
                     for index, value in enumerate(data):
-                        if index == 0 or index >= cpuCount+1:
+                        if index == 0 or index >= cpuCount + 1:
                             continue
 
-                        metric_name_node = metric_name+'CPU'+str(index-1)
+                        metric_name_node = metric_name + 'CPU' + str(index - 1)
                         value = int(self.derivative(metric_name_node, long(value), counter))
                         total += value
                         self.publish(metric_name_node, value)
 
                     # Roll up value
-                    metric_name_node = metric_name+'total'
+                    metric_name_node = metric_name + 'total'
                     self.publish(metric_name_node, total)
 
         #Close file

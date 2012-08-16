@@ -78,7 +78,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             return labels
 
         for label in os.listdir(path):
-            device = os.path.realpath(path+'/'+label)
+            device = os.path.realpath(path + '/' + label)
             labels[device] = label
 
         return labels
