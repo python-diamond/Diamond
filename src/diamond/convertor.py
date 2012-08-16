@@ -2,8 +2,6 @@
 
 import re
 
-from diamond import *
-
 _RE_FIND_FIRST_CAP = re.compile('(.)([A-Z][a-z]+)')
 _RE_SPAN_OF_CAPS = re.compile('([a-z0-9])([A-Z])')
 

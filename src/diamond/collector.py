@@ -11,7 +11,6 @@ import logging
 import configobj
 import traceback
 
-from diamond import *
 from diamond.metric import Metric
 
 # Detect the architecture of the system and set the counters for MAX_VALUES

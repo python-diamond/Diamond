@@ -15,8 +15,8 @@ import diamond
 
 from diamond.collector import Collector
 from diamond.handler.Handler import Handler
-from diamond.scheduler import *
-from diamond.util import *
+from diamond.scheduler import ThreadedScheduler
+from diamond.util import load_class_from_name
 
 
 class Server(object):

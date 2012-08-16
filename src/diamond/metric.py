@@ -2,8 +2,7 @@
 
 import time
 import re
-
-from error import *
+from error import DiamondException
 
 
 class Metric(object):
