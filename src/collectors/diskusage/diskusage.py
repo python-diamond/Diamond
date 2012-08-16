@@ -167,32 +167,32 @@ class DiskUsageCollector(diamond.collector.Collector):
 
                     metrics[key] = metric_value
 
-            metrics['read_requests_merged_per_second']  = metrics['reads_merged'] / time_delta
+            metrics['read_requests_merged_per_second'] = metrics['reads_merged'] / time_delta
             metrics['write_requests_merged_per_second'] = metrics['writes_merged'] / time_delta
-            metrics['reads_per_second']                 = metrics['reads'] / time_delta
-            metrics['writes_per_second']                = metrics['writes'] / time_delta
+            metrics['reads_per_second'] = metrics['reads'] / time_delta
+            metrics['writes_per_second'] = metrics['writes'] / time_delta
 
             for unit in self.config['byte_unit']:
                 metric_name = 'read_%s_per_second' % unit
                 key = 'reads_%s' % unit
-                metrics[metric_name]                        = metrics[key] / time_delta
+                metrics[metric_name] = metrics[key] / time_delta
 
                 metric_name = 'write_%s_per_second' % unit
                 key = 'writes_%s' % unit
-                metrics[metric_name]                        = metrics[key] / time_delta
+                metrics[metric_name] = metrics[key] / time_delta
 
                 # Set to zero so the nodes are valid even if we have 0 io for the
                 # Metric duration
                 metric_name = 'average_request_size_%s' % unit
-                metrics[metric_name]                        = 0
+                metrics[metric_name] = 0
 
-            metrics['average_queue_length']             = metrics['io_milliseconds'] / time_delta * 1000.0
-            metrics['await']                            = 0
-            metrics['service_time']                     = 0
-            metrics['iops']                             = (metrics['reads'] + metrics['writes']) / time_delta
-            metrics['io']                               = metrics['reads'] + metrics['writes']
-            metrics['util_percentage']                  = 0
-            metrics['concurrent_io']                    = 0
+            metrics['average_queue_length'] = metrics['io_milliseconds'] / time_delta * 1000.0
+            metrics['await'] = 0
+            metrics['service_time'] = 0
+            metrics['iops'] = (metrics['reads'] + metrics['writes']) / time_delta
+            metrics['io'] = metrics['reads'] + metrics['writes']
+            metrics['util_percentage'] = 0
+            metrics['concurrent_io'] = 0
 
             if metrics['io'] > 0:
 
@@ -200,14 +200,14 @@ class DiskUsageCollector(diamond.collector.Collector):
                     rkey = 'reads_%s' % unit
                     wkey = 'writes_%s' % unit
                     metric_name = 'average_request_size_%s' % unit
-                    metrics[metric_name]                    = (metrics[rkey] + metrics[wkey] ) / metrics['io']
+                    metrics[metric_name] = (metrics[rkey] + metrics[wkey] ) / metrics['io']
 
-                metrics['service_time']                 = metrics['io_milliseconds'] / metrics['io']
-                metrics['await']                        = metrics['io_milliseconds_weighted'] / metrics['io']
-                metrics['util_percentage']              = (metrics['io'] * metrics['service_time'] / 1000.0) * 100.0
+                metrics['service_time'] = metrics['io_milliseconds'] / metrics['io']
+                metrics['await'] = metrics['io_milliseconds_weighted'] / metrics['io']
+                metrics['util_percentage'] = (metrics['io'] * metrics['service_time'] / 1000.0) * 100.0
 
                 # http://www.scribd.com/doc/15013525/Your-Disk-Array-is-Slower-Than-it-Should-Be Page 28
-                metrics['concurrent_io']                = (metrics['reads_per_second'] + metrics['writes_per_second']) * (metrics['service_time'] / 1000.0)
+                metrics['concurrent_io'] = (metrics['reads_per_second'] + metrics['writes_per_second']) * (metrics['service_time'] / 1000.0)
 
                 # Only publish when we have io figures
                 for key in metrics:

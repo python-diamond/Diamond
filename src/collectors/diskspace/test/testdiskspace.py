@@ -61,15 +61,15 @@ none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         statvfs_mock = Mock()
-        statvfs_mock.f_bsize   = 4096
-        statvfs_mock.f_frsize  = 4096
-        statvfs_mock.f_blocks  = 360540255
-        statvfs_mock.f_bfree   = 285953527
-        statvfs_mock.f_bavail  = 267639130
-        statvfs_mock.f_files   = 91578368
-        statvfs_mock.f_ffree   = 91229495
-        statvfs_mock.f_favail  = 91229495
-        statvfs_mock.f_flag    = 4096
+        statvfs_mock.f_bsize = 4096
+        statvfs_mock.f_frsize = 4096
+        statvfs_mock.f_blocks = 360540255
+        statvfs_mock.f_bfree = 285953527
+        statvfs_mock.f_bavail = 267639130
+        statvfs_mock.f_files = 91578368
+        statvfs_mock.f_ffree = 91229495
+        statvfs_mock.f_favail = 91229495
+        statvfs_mock.f_flag = 4096
         statvfs_mock.f_namemax = 255
 
         with nested(

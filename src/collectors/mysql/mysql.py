@@ -159,10 +159,10 @@ class MySQLCollector(diamond.collector.Collector):
             self.log.error('Unable to import MySQLdb')
             return {}
 
-        params['host']   = self.config['host']
-        params['port']   = int(self.config['port'])
-        params['db']     = self.config['db']
-        params['user']   = self.config['user']
+        params['host'] = self.config['host']
+        params['port'] = int(self.config['port'])
+        params['db'] = self.config['db']
+        params['user'] = self.config['user']
         params['passwd'] = self.config['passwd']
 
         try:
@@ -245,7 +245,7 @@ class MySQLCollector(diamond.collector.Collector):
                     self.log.error("MySQLCollector: %s regexp not matched in innodb status", key)
             except Exception, innodb_status_error:
                 self.log.error('MySQLCollector: Couldnt get engine innodb status, check user permissions: %s', innodb_status_error)
-            Innodb_status_process_time  = time.time() - innodb_status_timer
+            Innodb_status_process_time = time.time() - innodb_status_timer
             self.log.debug("MySQLCollector: innodb status process time: %f", Innodb_status_process_time)
             metrics["Innodb_status_process_time"] = Innodb_status_process_time
 

@@ -105,7 +105,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     continue
 
                 if device.startswith('/') and mount_point.startswith('/'):
-                    stat  = os.stat(mount_point)
+                    stat = os.stat(mount_point)
                     major = os.major(stat.st_dev)
                     minor = os.minor(stat.st_dev)
 
@@ -180,6 +180,6 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 metric_value = diamond.convertor.binary.convert(value=metric_value, oldUnit='byte', newUnit=unit)
                 self.publish(metric_name, metric_value, 2)
 
-            self.publish('%s.inodes_used'  % name, inodes_total - inodes_free)
-            self.publish('%s.inodes_free'  % name, inodes_free)
+            self.publish('%s.inodes_used' % name, inodes_total - inodes_free)
+            self.publish('%s.inodes_free' % name, inodes_free)
             self.publish('%s.inodes_avail' % name, inodes_avail)

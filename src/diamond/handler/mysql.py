@@ -22,15 +22,15 @@ class MySQLHandler(Handler):
         Handler.__init__(self, config)
 
         # Initialize Options
-        self.hostname   = self.config['hostname']
-        self.port       = int(self.config['port'])
-        self.username   = self.config['username']
-        self.password   = self.config['password']
-        self.database   = self.config['database']
-        self.table      = self.config['table']
-        self.col_time   = self.config['col_time']
+        self.hostname = self.config['hostname']
+        self.port = int(self.config['port'])
+        self.username = self.config['username']
+        self.password = self.config['password']
+        self.database = self.config['database']
+        self.table = self.config['table']
+        self.col_time = self.config['col_time']
         self.col_metric = self.config['col_metric']
-        self.col_value  = self.config['col_value']
+        self.col_value = self.config['col_value']
 
         # Connect
         self._connect()

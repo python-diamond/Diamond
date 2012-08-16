@@ -48,7 +48,7 @@ class HAProxyCollector(diamond.collector.Collector):
         Request stats from HAProxy Server
         """
         metrics = []
-        req  = urllib2.Request(self.config['url'])
+        req = urllib2.Request(self.config['url'])
         try:
             handle = urllib2.urlopen(req)
             return handle.readlines()
@@ -81,8 +81,8 @@ class HAProxyCollector(diamond.collector.Collector):
         authheader = 'Basic %s' % base64string
         req.add_header("Authorization", authheader)
         try:
-            handle    = urllib2.urlopen(req)
-            metrics   = handle.readlines()
+            handle = urllib2.urlopen(req)
+            metrics = handle.readlines()
             return metrics
         except IOError, e:
             # here we shouldn't fail if the USER/PASS is right

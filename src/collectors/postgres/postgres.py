@@ -86,7 +86,7 @@ class PostgresqlCollector(diamond.collector.Collector):
                     'conflicts': stat[12],
                     'size': stat[14]}
 
-            database  = stat[1]
+            database = stat[1]
             ret[database] = info
 
         for database in ret:

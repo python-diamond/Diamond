@@ -25,7 +25,7 @@ class zmqHandler ( Handler ):
     
         # Initialize Data
         self.context = None
-        self.socket  = None
+        self.socket = None
     
         # Initialize Options
         self.port = int( self.config['port'] )
