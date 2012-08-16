@@ -120,8 +120,11 @@ timeout = 15
 # uname_rev   = uname -r in reverse (com.example.www)
 # hostname_method = fqdn_short
 
-# Path Prefix
+# Path Prefix and Suffix
+# you can use one or both to craft the path where you want to put metrics
+# such as: %(path_prefix)s.$(hostname)s.$(path_suffix)s.$(metric)s
 # path_prefix = servers
+# path_suffix =
 
 # Default Poll Interval (seconds)
 # interval = 300
