@@ -19,18 +19,18 @@ class zmqHandler (Handler):
         """
           Create a new instance of zmqHandler class
         """
-    
+
         # Initialize Handler
         Handler.__init__(self, config)
-    
+
         # Initialize Data
         self.context = None
 
         self.socket = None
-    
+
         # Initialize Options
         self.port = int(self.config['port'])
-    
+
         # Create ZMQ pub socket and bind
         self._bind()
 
@@ -54,7 +54,7 @@ class zmqHandler (Handler):
         """
         # Acquire a lock
         self.lock.acquire()
-    
+
         # Send the data as ......
         self.socket.send("%s" % str(metric))
         # Release lock
