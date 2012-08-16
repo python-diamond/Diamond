@@ -99,7 +99,7 @@ class Collector(object):
             'path_prefix': 'servers',
 
             # Path Suffix
-            'path_suffix': None,
+            'path_suffix': '',
             
             # Default splay time (seconds)
             'splay': 1,
@@ -163,7 +163,7 @@ class Collector(object):
             prefix = prefix + "." + hostname
 
         # if there is a suffix, add after the hostname
-        if suffix is not None:
+        if suffix:
             prefix = '.'.join((prefix, suffix))
 
         if 'path' in self.config:
