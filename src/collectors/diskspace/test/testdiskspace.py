@@ -83,7 +83,7 @@ none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
             self.collector.collect()
 
         metrics = {
-            'root.gigabyte_used': ( 284.525, 2),
+            'root.gigabyte_used': (284.525, 2),
             'root.gigabyte_free': (1090.826, 2),
             'root.gigabyte_avail': (1020.962, 2),
             'root.inodes_used': 348873,
