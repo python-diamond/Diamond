@@ -22,9 +22,9 @@ class ConnTrackCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(ConnTrackCollector, self).get_default_config_help()
         config_help.update({
-            'use_sudo' :    'Use sudo?',
-            'sudo_cmd' :    'Path to sudo',
-            'bin' :         'The path to the sysctl binary',
+            'use_sudo':    'Use sudo?',
+            'sudo_cmd':    'Path to sudo',
+            'bin':         'The path to the sysctl binary',
         })
         return config_help
 

@@ -32,9 +32,9 @@ class TestFilestatCollector(CollectorTestCase):
         self.collector.collect()
 
         metrics = {
-            'assigned' : 576,
-            'unused'   : 0,
-            'max'      : 4835852
+            'assigned': 576,
+            'unused': 0,
+            'max': 4835852
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

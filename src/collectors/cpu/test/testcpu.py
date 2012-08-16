@@ -41,11 +41,11 @@ class TestCPUCollector(CollectorTestCase):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
-            'total.idle'   : 4.0,
-            'total.iowait' : 5.0,
-            'total.nice'   : 2.0,
-            'total.system' : 3.0,
-            'total.user'   : 1.0
+            'total.idle': 4.0,
+            'total.iowait': 5.0,
+            'total.nice': 2.0,
+            'total.system': 3.0,
+            'total.user': 1.0
         })
 
     @patch.object(Collector, 'publish')
@@ -59,11 +59,11 @@ class TestCPUCollector(CollectorTestCase):
         self.collector.collect()
 
         metrics = {
-            'total.idle'   : 2440.8,
-            'total.iowait' : 0.2,
-            'total.nice'   : 0.0,
-            'total.system' : 0.2,
-            'total.user'   : 0.4
+            'total.idle': 2440.8,
+            'total.iowait': 0.2,
+            'total.nice': 0.0,
+            'total.system': 0.2,
+            'total.user': 0.4
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

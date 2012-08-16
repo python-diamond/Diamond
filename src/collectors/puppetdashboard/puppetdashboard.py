@@ -19,9 +19,9 @@ class PuppetDashboardCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(PuppetDashboardCollector, self).get_default_config_help()
         config_help.update({
-            'host' : 'Hostname to collect from',
-            'port' : 'Port number to collect from',
-            'path' : 'Path to the dashboard',
+            'host': 'Hostname to collect from',
+            'port': 'Port number to collect from',
+            'path': 'Path to the dashboard',
         })
         return config_help
 

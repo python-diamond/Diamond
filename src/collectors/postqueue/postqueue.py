@@ -18,9 +18,9 @@ class PostqueueCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(PostqueueCollector, self).get_default_config_help()
         config_help.update({
-            'bin' :         'The path to the postqueue binary',
-            'use_sudo' :    'Use sudo?',
-            'sudo_cmd' :    'Path to sudo',
+            'bin':         'The path to the postqueue binary',
+            'use_sudo':    'Use sudo?',
+            'sudo_cmd':    'Path to sudo',
         })
         return config_help
 

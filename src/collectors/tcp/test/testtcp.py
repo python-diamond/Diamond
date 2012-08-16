@@ -15,7 +15,7 @@ class TestTCPCollector(CollectorTestCase):
         if not allowed_names:
             allowed_names = []
         config = get_collector_config('TCPCollector', {
-            'allowed_names' : allowed_names,
+            'allowed_names': allowed_names,
             'interval': 1
         })
         self.collector = TCPCollector(config, None)
@@ -65,10 +65,10 @@ TcpExt: 0 1 2
         self.collector.collect()
 
         metrics = {
-            'ListenOverflows'  : 0,
-            'ListenDrops'      : 0,
-            'TCPLoss'          : 188,
-            'TCPTimeouts'      : 15265
+            'ListenOverflows': 0,
+            'ListenDrops': 0,
+            'TCPLoss': 188,
+            'TCPTimeouts': 15265
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

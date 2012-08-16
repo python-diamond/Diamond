@@ -29,7 +29,7 @@ class KVMCollector(diamond.collector.Collector):
         """
         config = super(KVMCollector, self).get_default_config()
         config.update({
-            'path' : 'kvm',
+            'path': 'kvm',
         } )
         return config
 

@@ -41,7 +41,7 @@ class DiskUsageCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(DiskUsageCollector, self).get_default_config_help()
         config_help.update({
-            'devices' : "A regex of which devices to gather metrics for. Defaults to md, sd, and xvd devices",
+            'devices': "A regex of which devices to gather metrics for. Defaults to md, sd, and xvd devices",
         })
         return config_help
 
@@ -84,18 +84,18 @@ class DiskUsageCollector(diamond.collector.Collector):
                         continue
 
                     result[(major, minor)] = {
-                        'device'                   : device,
-                        'reads'                    : float(columns[3]),
-                        'reads_merged'             : float(columns[4]),
-                        'reads_sectors'            : float(columns[5]),
-                        'reads_milliseconds'       : float(columns[6]),
-                        'writes'                   : float(columns[7]),
-                        'writes_merged'            : float(columns[8]),
-                        'writes_sectors'           : float(columns[9]),
-                        'writes_milliseconds'      : float(columns[10]),
-                        'io_in_progress'           : float(columns[11]),
-                        'io_milliseconds'          : float(columns[12]),
-                        'io_milliseconds_weighted' : float(columns[13])
+                        'device': device,
+                        'reads': float(columns[3]),
+                        'reads_merged': float(columns[4]),
+                        'reads_sectors': float(columns[5]),
+                        'reads_milliseconds': float(columns[6]),
+                        'writes': float(columns[7]),
+                        'writes_merged': float(columns[8]),
+                        'writes_sectors': float(columns[9]),
+                        'writes_milliseconds': float(columns[10]),
+                        'io_in_progress': float(columns[11]),
+                        'io_milliseconds': float(columns[12]),
+                        'io_milliseconds_weighted': float(columns[13])
                     }
                 except ValueError:
                     continue
@@ -105,18 +105,18 @@ class DiskUsageCollector(diamond.collector.Collector):
             disks = psutil.disk_io_counters(True)
             for disk in disks:
                     result[(0, len(result))] = {
-                        'device'                   : disk,
-                        'reads'                    : disks[disk].read_count,
-                        'reads_merged'             : 0,
-                        'reads_sectors'            : disks[disk].read_bytes / 512,
-                        'reads_milliseconds'       : disks[disk].read_time,
-                        'writes'                   : disks[disk].write_count,
-                        'writes_merged'            : 0,
-                        'writes_sectors'           : disks[disk].write_bytes / 512,
-                        'writes_milliseconds'      : disks[disk].write_time,
-                        'io_in_progress'           : 0,
-                        'io_milliseconds'          : disks[disk].read_time + disks[disk].write_time,
-                        'io_milliseconds_weighted' : disks[disk].read_time + disks[disk].write_time
+                        'device': disk,
+                        'reads': disks[disk].read_count,
+                        'reads_merged': 0,
+                        'reads_sectors': disks[disk].read_bytes / 512,
+                        'reads_milliseconds': disks[disk].read_time,
+                        'writes': disks[disk].write_count,
+                        'writes_merged': 0,
+                        'writes_sectors': disks[disk].write_bytes / 512,
+                        'writes_milliseconds': disks[disk].write_time,
+                        'io_in_progress': 0,
+                        'io_milliseconds': disks[disk].read_time + disks[disk].write_time,
+                        'io_milliseconds_weighted': disks[disk].read_time + disks[disk].write_time
                     }
 
         return result

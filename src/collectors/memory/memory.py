@@ -21,18 +21,18 @@ except ImportError:
     psutil = None
 
 _KEY_MAPPING = [
-    'MemTotal'     ,
-    'MemFree'      ,
-    'Buffers'      ,
-    'Cached'       ,
-    'Active'       ,
-    'Dirty'        ,
-    'Inactive'     ,
-    'SwapTotal'    ,
-    'SwapFree'     ,
-    'SwapCached'   ,
-    'VmallocTotal' ,
-    'VmallocUsed'  ,
+    'MemTotal',
+    'MemFree',
+    'Buffers',
+    'Cached',
+    'Active',
+    'Dirty',
+    'Inactive',
+    'SwapTotal',
+    'SwapFree',
+    'SwapCached',
+    'VmallocTotal',
+    'VmallocUsed',
     'VmallocChunk'
 ]
 
@@ -44,7 +44,7 @@ class MemoryCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(MemoryCollector, self).get_default_config_help()
         config_help.update({
-            'detailed' : 'Set to True to Collect all the nodes',
+            'detailed': 'Set to True to Collect all the nodes',
         })
         return config_help
 
@@ -59,7 +59,7 @@ class MemoryCollector(diamond.collector.Collector):
             'method':   'Threaded',
             # Collect all the nodes or just a few standard ones?
             # Uncomment to enable
-            #'detailed' : 'True'
+            #'detailed': 'True'
         })
         return config
 

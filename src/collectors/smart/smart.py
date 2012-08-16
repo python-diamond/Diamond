@@ -20,10 +20,10 @@ class SmartCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(SmartCollector, self).get_default_config_help()
         config_help.update({
-            'devices' : "device regex to collect stats on",
-            'bin' :         'The path to the smartctl binary',
-            'use_sudo' :    'Use sudo?',
-            'sudo_cmd' :    'Path to sudo',
+            'devices': "device regex to collect stats on",
+            'bin':         'The path to the smartctl binary',
+            'use_sudo':    'Use sudo?',
+            'sudo_cmd':    'Path to sudo',
         })
         return config_help
 
@@ -34,7 +34,7 @@ class SmartCollector(diamond.collector.Collector):
         config = super(SmartCollector, self).get_default_config()
         config.update({
             'path': 'smart',
-            'bin' : 'smartctl',
+            'bin': 'smartctl',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
             'devices': '^disk[0-9]$|^sd[a-z]$|^hd[a-z]$',

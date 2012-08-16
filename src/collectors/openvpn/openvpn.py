@@ -47,7 +47,7 @@ class OpenVPNCollector(diamond.collector.Collector):
         config_help = super(OpenVPNCollector, self).get_default_config_help()
         config_help.update({
             'instances': 'List of instances to collect stats from',
-            'timeout' : 'network timeout'
+            'timeout': 'network timeout'
         })
         return config_help
 

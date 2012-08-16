@@ -9,7 +9,7 @@ Uses /proc/mounts and os.statvfs() to get disk space usage
 
 #### Examples
 
-    exclude_filters = ,                 # no exclude filters at all
+    exclude_filters =,                 # no exclude filters at all
     exclude_filters = ^/boot, ^/mnt     # exclude everything that begins /boot or /mnt
     exclude_filters = m,                # exclude everything that includes the letter 'm'
 
@@ -31,8 +31,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(DiskSpaceCollector, self).get_default_config_help()
         config_help.update({
-            'filesystems' : "filesystems to examine",
-            'exclude_filters' : "A list of regex patterns. Any filesystem matching any of these patterns will be excluded from disk space metrics collection",
+            'filesystems': "filesystems to examine",
+            'exclude_filters': "A list of regex patterns. Any filesystem matching any of these patterns will be excluded from disk space metrics collection",
         })
         return config_help
 
@@ -43,10 +43,10 @@ class DiskSpaceCollector(diamond.collector.Collector):
         config = super(DiskSpaceCollector, self).get_default_config()
         config.update({
             # Enabled by default
-            'enabled' : 'True',
-            'path' : 'diskspace',
+            'enabled': 'True',
+            'path': 'diskspace',
             # filesystems to examine
-            'filesystems' : 'ext2, ext3, ext4, xfs, glusterfs, nfs, ntfs, hfs, fat32, fat16',
+            'filesystems': 'ext2, ext3, ext4, xfs, glusterfs, nfs, ntfs, hfs, fat32, fat16',
 
             # exclude_filters
             #   A list of regex patterns
@@ -54,17 +54,17 @@ class DiskSpaceCollector(diamond.collector.Collector):
             #   metrics collection.
             #
             # Examples:
-            #       exclude_filters = ,                 # no exclude filters at all
+            #       exclude_filters =,                 # no exclude filters at all
             #       exclude_filters = ^/boot, ^/mnt     # exclude everything that begins /boot or /mnt
             #       exclude_filters = m,                # exclude everything that includes the letter "m"
-            'exclude_filters' : '^/export/home',
+            'exclude_filters': '^/export/home',
 
             # We don't use any derivative data to calculate this value
             # Thus we can use a threaded model
-            'method' : 'Threaded',
+            'method': 'Threaded',
 
             # Default numeric output
-            'byte_unit' : ['gigabyte']
+            'byte_unit': ['gigabyte']
         } )
         return config
 
@@ -113,9 +113,9 @@ class DiskSpaceCollector(diamond.collector.Collector):
                         continue
 
                     result[(major, minor)] = {
-                        'device'      : device,
-                        'mount_point' : mount_point,
-                        'fs_type'     : fs_type
+                        'device': device,
+                        'mount_point': mount_point,
+                        'fs_type': fs_type
                     }
 
             file.close()
@@ -124,9 +124,9 @@ class DiskSpaceCollector(diamond.collector.Collector):
             partitions = psutil.disk_partitions(False)
             for partition in partitions:
                 result[(0, len(result))] = {
-                    'device'      : partition.device,
-                    'mount_point' : partition.mountpoint,
-                    'fs_type'     : partition.fstype
+                    'device': partition.device,
+                    'mount_point': partition.mountpoint,
+                    'fs_type': partition.fstype
                 }
             pass
 
@@ -163,7 +163,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             blocks_total, blocks_free, blocks_avail = data.f_blocks, data.f_bfree, data.f_bavail
             inodes_total, inodes_free, inodes_avail = data.f_files, data.f_ffree, data.f_favail
 
-            for unit in self.config['byte_unit'] :
+            for unit in self.config['byte_unit']:
 
                 metric_name = '%s.%s_used' % (name, unit)
                 metric_value = float(block_size) * float(blocks_total - blocks_free)

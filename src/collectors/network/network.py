@@ -47,8 +47,8 @@ class NetworkCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(NetworkCollector, self).get_default_config_help()
         config_help.update({
-            'interfaces' : 'List of interface types to collect',
-            'greedy' : 'Greedy match interfaces',
+            'interfaces': 'List of interface types to collect',
+            'greedy': 'Greedy match interfaces',
         })
         return config_help
 
@@ -79,7 +79,7 @@ class NetworkCollector(diamond.collector.Collector):
             file = open(self.PROC)
             # Build Regular Expression
             greed = ''
-            if self.config['greedy'].lower() == 'true' :
+            if self.config['greedy'].lower() == 'true':
                 greed = '[0-9]+'
 
             exp = '^(?:\s*)((?:%s)%s):(?:\s*)(?P<rx_bytes>\d+)(?:\s*)(?P<rx_packets>\w+)(?:\s*)(?P<rx_errors>\d+)(?:\s*)(?P<rx_drop>\d+)(?:\s*)(?P<rx_fifo>\d+)(?:\s*)(?P<rx_frame>\d+)(?:\s*)(?P<rx_compressed>\d+)(?:\s*)(?P<rx_multicast>\d+)(?:\s*)(?P<tx_bytes>\d+)(?:\s*)(?P<tx_packets>\w+)(?:\s*)(?P<tx_errors>\d+)(?:\s*)(?P<tx_drop>\d+)(?:\s*)(?P<tx_fifo>\d+)(?:\s*)(?P<tx_frame>\d+)(?:\s*)(?P<tx_compressed>\d+)(?:\s*)(?P<tx_multicast>\d+)(?:.*)$' % (('|'.join(self.config['interfaces'])), greed)

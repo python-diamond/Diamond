@@ -13,7 +13,7 @@ from network import NetworkCollector
 class TestNetworkCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('NetworkCollector', {
-            'interval'   : 10,
+            'interval': 10,
         })
 
         self.collector = NetworkCollector(config, None)
@@ -37,10 +37,10 @@ class TestNetworkCollector(CollectorTestCase):
         self.collector.collect()
 
         metrics = {
-            'eth0.rx_megabyte' : (2.504, 2),
-            'eth0.tx_megabyte' : (4.707, 2),
-            'eth1.rx_megabyte' : (0.0, 2),
-            'eth1.tx_megabyte' : (0.0, 2)
+            'eth0.rx_megabyte': (2.504, 2),
+            'eth0.tx_megabyte': (4.707, 2),
+            'eth1.rx_megabyte': (0.0, 2),
+            'eth1.tx_megabyte': (0.0, 2)
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

@@ -44,11 +44,11 @@ class TestHttpdCollector(CollectorTestCase):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
-            'ReqPerSec'   : 10,
-            'BytesPerSec' : 20480,
-            'BytesPerReq' : 204,
-            'BusyWorkers' : 6,
-            'IdleWorkers' : 4,
+            'ReqPerSec': 10,
+            'BytesPerSec': 20480,
+            'BytesPerReq': 204,
+            'BusyWorkers': 6,
+            'IdleWorkers': 4,
         })
 
     @patch.object(Collector, 'publish')
@@ -62,11 +62,11 @@ class TestHttpdCollector(CollectorTestCase):
             self.collector.collect()
 
         metrics = {
-            'ReqPerSec'   : 0,
-            'BytesPerSec' : 165,
-            'BytesPerReq' : 5418,
-            'BusyWorkers' : 9,
-            'IdleWorkers' : 0,
+            'ReqPerSec': 0,
+            'BytesPerSec': 165,
+            'BytesPerReq': 5418,
+            'BusyWorkers': 9,
+            'IdleWorkers': 0,
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

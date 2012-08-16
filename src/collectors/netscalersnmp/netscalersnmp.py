@@ -27,15 +27,15 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
     """
 
     NETSCALER_SYSTEM_GUAGES = {
-        "cpuUsage" : "1.3.6.1.4.1.5951.4.1.1.41.1.0",
-        "memUsage" : "1.3.6.1.4.1.5951.4.1.1.41.2.0",
-        "surgeQueue" : "1.3.6.1.4.1.5951.4.1.1.46.15.0",
-        "establishedServerConnections" : "1.3.6.1.4.1.5951.4.1.1.46.10.0",
-        "establishedClientConnections" : "1.3.6.1.4.1.5951.4.1.1.46.12.0"
+        "cpuUsage": "1.3.6.1.4.1.5951.4.1.1.41.1.0",
+        "memUsage": "1.3.6.1.4.1.5951.4.1.1.41.2.0",
+        "surgeQueue": "1.3.6.1.4.1.5951.4.1.1.46.15.0",
+        "establishedServerConnections": "1.3.6.1.4.1.5951.4.1.1.46.10.0",
+        "establishedClientConnections": "1.3.6.1.4.1.5951.4.1.1.46.12.0"
     }
 
     NETSCALER_SYSTEM_COUNTERS = {
-        "httpTotRequests" : "1.3.6.1.4.1.5951.4.1.1.48.67.0"
+        "httpTotRequests": "1.3.6.1.4.1.5951.4.1.1.48.67.0"
     }
 
     NETSCALER_SERVICE_NAMES = "1.3.6.1.4.1.5951.4.1.2.1.1.1"
@@ -45,11 +45,11 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
     NETSCALER_SERVICE_STATE = "1.3.6.1.4.1.5951.4.1.2.1.1.5"
 
     NETSCALER_SERVICE_GUAGES = {
-        "svcRequestRate" : "1.3.6.1.4.1.5951.4.1.2.1.1.42",
-        "svcSurgeCount" : "1.3.6.1.4.1.5951.4.1.2.1.1.10",
-        "svcEstablishedConn" : "1.3.6.1.4.1.5951.4.1.2.1.1.8",
-        "svcActiveConn" : "1.3.6.1.4.1.5951.4.1.2.1.1.9",
-        "svcCurClntConnections" : "1.3.6.1.4.1.5951.4.1.2.1.1.41"
+        "svcRequestRate": "1.3.6.1.4.1.5951.4.1.2.1.1.42",
+        "svcSurgeCount": "1.3.6.1.4.1.5951.4.1.2.1.1.10",
+        "svcEstablishedConn": "1.3.6.1.4.1.5951.4.1.2.1.1.8",
+        "svcActiveConn": "1.3.6.1.4.1.5951.4.1.2.1.1.9",
+        "svcCurClntConnections": "1.3.6.1.4.1.5951.4.1.2.1.1.41"
     }
 
     MAX_VALUE = 18446744073709551615
@@ -57,9 +57,9 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
     def get_default_config_help(self):
         config_help = super(NetscalerSNMPCollector, self).get_default_config_help()
         config_help.update({
-            'host' : 'netscaler dns address',
-            'port' : 'Netscaler port to collect snmp data',
-            'community' : 'SNMP community'
+            'host': 'netscaler dns address',
+            'port': 'Netscaler port to collect snmp data',
+            'community': 'SNMP community'
         })
         return config_help
 
@@ -70,14 +70,14 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
         config = super(NetscalerSNMPCollector, self).get_default_config()
         config.update({
             'path':     'netscaler',
-            'timeout' : 15,
+            'timeout': 15,
         } )
         return config
 
     def get_string_index_oid(self, s):
         """Turns a string into an oid format is length of name followed by
         name chars in ascii"""
-        return (len(self.get_bytes(s)) , ) + self.get_bytes(s)
+        return (len(self.get_bytes(s)), ) + self.get_bytes(s)
 
     def get_bytes(self, s):
         """Turns a string into a list of byte values"""

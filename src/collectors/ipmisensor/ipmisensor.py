@@ -23,9 +23,9 @@ class IPMISensorCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(IPMISensorCollector, self).get_default_config_help()
         config_help.update({
-            'bin' : 'Path to the ipmitool binary',
-            'use_sudo' : 'Use sudo?',
-            'sudo_cmd' : 'Path to sudo',
+            'bin': 'Path to the ipmitool binary',
+            'use_sudo': 'Use sudo?',
+            'sudo_cmd': 'Path to sudo',
         })
         return config_help
 

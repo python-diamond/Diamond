@@ -25,7 +25,7 @@ class HadoopCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(HadoopCollector, self).get_default_config_help()
         config_help.update({
-            'metrics' : "List of paths to process metrics from",
+            'metrics': "List of paths to process metrics from",
         })
         return config_help
 
@@ -98,7 +98,7 @@ class HadoopCollector(diamond.collector.Collector):
                             metric,
 ]))
 
-                    else :
+                    else:
                         path = self.get_metric_path('.'.join([
                             data['name'],
                             metric,

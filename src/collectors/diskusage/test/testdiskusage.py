@@ -13,8 +13,8 @@ from diskusage import DiskUsageCollector
 class TestDiskUsageCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('DiskUsageCollector', {
-            'interval'  : 10,
-            'byte_unit' : 'kilobyte'
+            'interval': 10,
+            'byte_unit': 'kilobyte'
         })
 
         self.collector = DiskUsageCollector(config, None)

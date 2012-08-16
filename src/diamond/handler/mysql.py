@@ -55,7 +55,7 @@ class MySQLHandler(Handler):
         data = data.strip().split(' ')
         try:
             cursor = self.conn.cursor()
-            cursor.execute("INSERT INTO " + self.table + "(" + self.col_metric + ", " + self.col_time + ", " + self.col_value + ") VALUES(%s, %s, %s)" , (data[0], data[2], data[1]) )
+            cursor.execute("INSERT INTO " + self.table + "(" + self.col_metric + ", " + self.col_time + ", " + self.col_value + ") VALUES(%s, %s, %s)", (data[0], data[2], data[1]) )
             cursor.close()
             self.conn.commit()
             # Insert data

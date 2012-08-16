@@ -24,15 +24,15 @@ class TestResqueWebCollector(CollectorTestCase):
             self.collector.collect()
 
         metrics = {
-            'pending.current' : 2,
-            'processed.total' : 11686516,
-            'failed.total' : 38667,
-            'workers.current' : 9,
-            'working.current' : 2,
-            'queue.low.current' : 4,
-            'queue.mail.current' : 3,
-            'queue.realtime.current' : 9,
-            'queue.normal.current' : 1,
+            'pending.current': 2,
+            'processed.total': 11686516,
+            'failed.total': 38667,
+            'workers.current': 9,
+            'working.current': 2,
+            'queue.low.current': 4,
+            'queue.mail.current': 3,
+            'queue.realtime.current': 9,
+            'queue.normal.current': 1,
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

@@ -19,9 +19,9 @@ class EximCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(EximCollector, self).get_default_config_help()
         config_help.update({
-            'bin' :         'The path to the exim binary',
-            'use_sudo' :    'Use sudo?',
-            'sudo_cmd' :    'Path to sudo',
+            'bin':         'The path to the exim binary',
+            'use_sudo':    'Use sudo?',
+            'sudo_cmd':    'Path to sudo',
         })
         return config_help
 
@@ -31,8 +31,8 @@ class EximCollector(diamond.collector.Collector):
         """
         config = super(EximCollector, self).get_default_config()
         config.update({
-            'path' :            'exim',
-            'method' :          'threaded',
+            'path':            'exim',
+            'method':          'threaded',
             'bin':              '/usr/sbin/exim',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',

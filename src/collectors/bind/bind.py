@@ -24,16 +24,16 @@ class BindCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(BindCollector, self).get_default_config_help()
         config_help.update({
-            'host' : "",
-            'port' : "",
-            'publish' : "Available stats: \n" \
+            'host': "",
+            'port': "",
+            'publish': "Available stats: \n" \
                         + " - resolver (Per-view resolver and cache statistics) \n" \
                         + " - server (Incoming requests and their answers) \n" \
                         + " - zonemgmt (Requests/responses related to zone management) \n" \
                         + " - sockets (Socket statistics) \n" \
                         + " - memory (Global memory usage) \n",
-            'publish_view_bind' : "",
-            'publish_view_meta' : "",
+            'publish_view_bind': "",
+            'publish_view_meta': "",
         })
         return config_help
 

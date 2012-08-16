@@ -29,9 +29,9 @@ class PowerDNSCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(PowerDNSCollector, self).get_default_config_help()
         config_help.update({
-            'bin' :         'The path to the pdns_control binary',
-            'use_sudo' :    'Use sudo?',
-            'sudo_cmd' :    'Path to sudo',
+            'bin':         'The path to the pdns_control binary',
+            'use_sudo':    'Use sudo?',
+            'sudo_cmd':    'Path to sudo',
         })
         return config_help
 

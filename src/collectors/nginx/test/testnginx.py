@@ -23,13 +23,13 @@ class TestNginxCollector(CollectorTestCase):
             self.collector.collect()
 
         metrics = {
-            'active_connections' : 3,
-            'conn_accepted' : 396396,
-            'conn_handled' : 396396,
-            'req_handled' : 396396,
-            'act_reads' : 2,
-            'act_writes' : 1,
-            'act_waits' : 0,
+            'active_connections': 3,
+            'conn_accepted': 396396,
+            'conn_handled': 396396,
+            'req_handled': 396396,
+            'act_reads': 2,
+            'act_writes': 1,
+            'act_waits': 0,
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

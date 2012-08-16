@@ -13,7 +13,7 @@ from diskspace import DiskSpaceCollector
 class TestDiskSpaceCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('DiskSpaceCollector', {
-            'interval'  : 10,
+            'interval': 10,
         })
 
         self.collector = DiskSpaceCollector(config, None)
@@ -51,7 +51,7 @@ none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
             os_minor_mock.assert_called_once_with(42)
 
             self.assertEqual(result, {
-                (9, 0) : {'device' : '/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba', 'fs_type': 'ext3', 'mount_point' : '/'}
+                (9, 0): {'device': '/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba', 'fs_type': 'ext3', 'mount_point': '/'}
             })
 
         open_mock.assert_called_once_with('/proc/mounts')
@@ -83,12 +83,12 @@ none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
             self.collector.collect()
 
         metrics = {
-            'root.gigabyte_used'  : ( 284.525, 2),
-            'root.gigabyte_free'  : (1090.826, 2),
-            'root.gigabyte_avail' : (1020.962, 2),
-            'root.inodes_used'    : 348873,
-            'root.inodes_free'    : 91229495,
-            'root.inodes_avail'   : 91229495
+            'root.gigabyte_used': ( 284.525, 2),
+            'root.gigabyte_free': (1090.826, 2),
+            'root.gigabyte_avail': (1020.962, 2),
+            'root.inodes_used': 348873,
+            'root.inodes_free': 91229495,
+            'root.inodes_avail': 91229495
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

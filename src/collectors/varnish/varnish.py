@@ -43,9 +43,9 @@ class VarnishCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(VarnishCollector, self).get_default_config_help()
         config_help.update({
-            'bin' :         'The path to the smartctl binary',
-            'use_sudo' :    'Use sudo?',
-            'sudo_cmd' :    'Path to sudo',
+            'bin':         'The path to the smartctl binary',
+            'use_sudo':    'Use sudo?',
+            'sudo_cmd':    'Path to sudo',
         })
         return config_help
 
@@ -56,7 +56,7 @@ class VarnishCollector(diamond.collector.Collector):
         config = super(VarnishCollector, self).get_default_config()
         config.update({
             'path':             'varnish',
-            'bin' :             '/usr/bin/varnishstat',
+            'bin':             '/usr/bin/varnishstat',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
         } )

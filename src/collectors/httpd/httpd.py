@@ -22,7 +22,7 @@ class HttpdCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(HttpdCollector, self).get_default_config_help()
         config_help.update({
-            'url' : "Url to server-status in auto format",
+            'url': "Url to server-status in auto format",
         })
         return config_help
 

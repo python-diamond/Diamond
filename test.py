@@ -174,7 +174,7 @@ class BaseCollectorTest(unittest.TestCase):
         config['server']['collectors_config_path'] = ''
         config['collectors'] = {}
         config['collectors']['default'] = {
-            'hostname' : 'custom.localhost',
+            'hostname': 'custom.localhost',
         }
         c = Collector(config, [])
         self.assertEquals('custom.localhost', c.get_hostname())

@@ -157,7 +157,7 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
                 metricIfDescr = re.sub(r'\W', '_', ifName)
 
                 if counterName in ['ifInOctets', 'ifOutOctets']:
-                    for unit in self.config['byte_unit'] :
+                    for unit in self.config['byte_unit']:
                         # Convert Metric
                         metricName = '.'.join([metricIfDescr, counterName.replace('Octets', unit)])
                         metricValue = diamond.convertor.binary.convert(value=ifCounterValue, oldUnit='byte', newUnit=unit)

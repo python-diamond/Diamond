@@ -36,8 +36,8 @@ class SNMPCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(SNMPCollector, self).get_default_config_help()
         config_help.update({
-            'timeout' : 'Number of seconds before timing out the snmp connection',
-            'retries' : 'Number of times to retry before bailing',
+            'timeout': 'Number of seconds before timing out the snmp connection',
+            'retries': 'Number of times to retry before bailing',
         })
         return config_help
 

@@ -37,10 +37,10 @@ class TestVMStatCollector(CollectorTestCase):
         self.collector.collect()
 
         metrics = {
-            'pgpgin'  : 0.0,
-            'pgpgout' : 9.2,
-            'pswpin'  : 0.0,
-            'pswpout' : 0.0,
+            'pgpgin': 0.0,
+            'pgpgout': 9.2,
+            'pswpin': 0.0,
+            'pswpout': 0.0,
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

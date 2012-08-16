@@ -52,10 +52,10 @@ class RedisCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(RedisCollector, self).get_default_config_help()
         config_help.update({
-            'host' : 'Hostname to collect from',
-            'port' : 'Port number to collect from',
-            'db'   : '',
-            'databases' : '',
+            'host': 'Hostname to collect from',
+            'port': 'Port number to collect from',
+            'db': '',
+            'databases': '',
         })
         return config_help
 
@@ -63,7 +63,7 @@ class RedisCollector(diamond.collector.Collector):
         """
         Return default config
 
-        :rtype: dict
+:rtype: dict
 
         """
         config = super(RedisCollector, self).get_default_config()
@@ -78,7 +78,7 @@ class RedisCollector(diamond.collector.Collector):
     def _client(self):
         """Return a redis client for the configuration.
 
-        :rtype: redis.Redis
+:rtype: redis.Redis
 
         """
         return redis.Redis(host=self.config.get('host', self._DEFAULT_HOST),
@@ -88,8 +88,8 @@ class RedisCollector(diamond.collector.Collector):
     def _precision(self, value):
         """Return the precision of the number
 
-        :param str value: The value to find the precision of
-        :rtype: int
+:param str value: The value to find the precision of
+:rtype: int
 
         """
         value = str(value)
@@ -102,8 +102,8 @@ class RedisCollector(diamond.collector.Collector):
         """Return the full key for the partial key. Prefix the redis port
         in case there are multiple running on one machine.
 
-        :param str key: The key name
-        :rtype: str
+:param str key: The key name
+:rtype: str
 
         """
         return '%s.%s' % (self.config.get('port', self._DEFAULT_PORT), key)

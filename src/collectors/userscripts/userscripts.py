@@ -30,7 +30,7 @@ class UserScriptsCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(UserScriptsCollector, self).get_default_config_help()
         config_help.update({
-            'scripts_path' : "Path to find the scripts to run",
+            'scripts_path': "Path to find the scripts to run",
         })
         return config_help
 

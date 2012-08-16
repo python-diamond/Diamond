@@ -94,7 +94,7 @@ class MySQLCollector(diamond.collector.Collector):
         'Innodb_bp_pages_read,Innodb_bp_pages_created,Innodb_bp_pages_written':			'Pages read (\d+), created (\d+), written (\d+)',
         'Innodb_bp_pages_read_ahead_per_sec,Innodb_bp_pages_evicted_no_access_per_sec,Innodb_status_bp_pages_random_read_ahead':	'Pages read ahead (\d+.\d+)/s, evicted without access (\d+.\d+)\/s, Random read ahead (\d+.\d+)/s',
         'Innodb_io_pending_flush_log,Innodb_io_pending_flush_bp':						'Pending flushes \(fsync\) log: (\d+); buffer pool: (\d+)',
-        'Innodb_io_pending_reads,Innodb_io_pending_writes':								'Pending normal aio reads: (\d+) \[\d+, \d+, \d+, \d+\] , aio writes: (\d+) \[\d+, \d+, \d+, \d+\]',
+        'Innodb_io_pending_reads,Innodb_io_pending_writes':								'Pending normal aio reads: (\d+) \[\d+, \d+, \d+, \d+\], aio writes: (\d+) \[\d+, \d+, \d+, \d+\]',
         'Innodb_bp_pending_writes_lru,Innodb_bp_pending_writes_flush_list,Innodb_bp_pending_writes_single_page':	'Pending writes: LRU (\d+), flush list (\d+), single page (\d+)',
         'Innodb_per_sec_avg':															'Per second averages calculated from the last (\d+) seconds',
         'Innodb_sem_rw_excl_spins,Innodb_sem_rw_excl_rounds,Innodb_sem_rw_excl_os_waits':	'RW-excl spins (\d+), rounds (\d+), OS waits (\d+)',
@@ -114,15 +114,15 @@ class MySQLCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(MySQLCollector, self).get_default_config_help()
         config_help.update({
-            'host' : 'Hostname',
-            'port' : 'Port',
-            'db' : 'Database',
-            'user' : 'Username',
-            'passwd' : 'Password',
-            'publish' : "Which rows of '[SHOW GLOBAL STATUS](http://dev.mysql.com/doc/refman/5.1/en/show-status.html)' you would like to publish. Leave unset to publish all",
-            'slave' : 'Collect SHOW SLAVE STATUS',
-            'master' : 'Collect SHOW MASTER STATUS',
-            'innodb' : 'Collect SHOW ENGINE INNODB STATUS',
+            'host': 'Hostname',
+            'port': 'Port',
+            'db': 'Database',
+            'user': 'Username',
+            'passwd': 'Password',
+            'publish': "Which rows of '[SHOW GLOBAL STATUS](http://dev.mysql.com/doc/refman/5.1/en/show-status.html)' you would like to publish. Leave unset to publish all",
+            'slave': 'Collect SHOW SLAVE STATUS',
+            'master': 'Collect SHOW MASTER STATUS',
+            'innodb': 'Collect SHOW ENGINE INNODB STATUS',
         })
         return config_help
 
@@ -143,7 +143,7 @@ class MySQLCollector(diamond.collector.Collector):
             # Which rows of 'SHOW GLOBAL STATUS' you would like to publish.
             # http://dev.mysql.com/doc/refman/5.1/en/show-status.html
             # Leave unset to publish all
-            #'publish' : '',
+            #'publish': '',
 
             'slave':    'False',
             'master':   'False',

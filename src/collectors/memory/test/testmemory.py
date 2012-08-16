@@ -13,8 +13,8 @@ from memory import MemoryCollector
 class TestMemoryCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MemoryCollector', {
-            'interval'  : 10,
-            'byte_unit' : 'kilobyte'
+            'interval': 10,
+            'byte_unit': 'kilobyte'
         })
 
         self.collector = MemoryCollector(config, None)
@@ -33,19 +33,19 @@ class TestMemoryCollector(CollectorTestCase):
         self.collector.collect()
 
         metrics = {
-            'MemTotal'      : 49554212,
-            'MemFree'       : 35194496,
-            'Buffers'       : 1526304,
-            'Cached'        : 10726736,
-            'Active'        : 10022168,
-            'Dirty'         : 24748,
-            'Inactive'      : 2524928,
-            'SwapTotal'     : 262143996,
-            'SwapFree'      : 262143996,
-            'SwapCached'    : 0,
-            'VmallocTotal'  : 34359738367,
-            'VmallocUsed'   : 445452,
-            'VmallocChunk'  : 34311049240
+            'MemTotal': 49554212,
+            'MemFree': 35194496,
+            'Buffers': 1526304,
+            'Cached': 10726736,
+            'Active': 10022168,
+            'Dirty': 24748,
+            'Inactive': 2524928,
+            'SwapTotal': 262143996,
+            'SwapFree': 262143996,
+            'SwapCached': 0,
+            'VmallocTotal': 34359738367,
+            'VmallocUsed': 445452,
+            'VmallocChunk': 34311049240
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

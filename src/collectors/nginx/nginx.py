@@ -37,9 +37,9 @@ class NginxCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(NginxCollector, self).get_default_config_help()
         config_help.update({
-            'req_host' : 'Hostname',
-            'req_port' : 'Port',
-            'req_path' : 'Path',
+            'req_host': 'Hostname',
+            'req_port': 'Port',
+            'req_path': 'Path',
         })
         return config_help
 

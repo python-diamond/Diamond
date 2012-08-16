@@ -44,9 +44,9 @@ class TestRabbitMQCollector(CollectorTestCase):
         client.get_overview.assert_called_once_with()
         metrics = {
             'queues.test_queue.more_keys.nested_key': 1,
-            'queues.test_queue.key' : 2,
+            'queues.test_queue.key': 2,
             'more_keys.nested_key': 3,
-            'key' : 4
+            'key': 4
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

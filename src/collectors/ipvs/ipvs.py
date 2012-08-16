@@ -20,9 +20,9 @@ class IPVSCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(IPVSCollector, self).get_default_config_help()
         config_help.update({
-            'bin' : 'Path to ipvsadm binary',
-            'use_sudo' : 'Use sudo?',
-            'sudo_cmd' : 'Path to sudo',
+            'bin': 'Path to ipvsadm binary',
+            'use_sudo': 'Use sudo?',
+            'sudo_cmd': 'Path to sudo',
         })
         return config_help
 

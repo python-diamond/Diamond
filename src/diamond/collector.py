@@ -69,8 +69,8 @@ class Collector(object):
         Returns the help text for the configuration options for this collector
         """
         return {
-            'enabled'   : 'Enable collecting these metrics',
-            'byte_unit' : 'Default numeric output(s)',
+            'enabled': 'Enable collecting these metrics',
+            'byte_unit': 'Default numeric output(s)',
         }
 
     def get_default_config(self):

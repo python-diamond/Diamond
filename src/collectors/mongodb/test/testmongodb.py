@@ -13,7 +13,7 @@ from mongodb import MongoDBCollector
 class TestMongoDBCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MongoDBCollector', {
-            'host'  : 'localhost:27017',
+            'host': 'localhost:27017',
         })
         self.collector = MongoDBCollector(config, None)
         self.connection = MagicMock()
@@ -29,7 +29,7 @@ class TestMongoDBCollector(CollectorTestCase):
         self.connection.db.command.assert_called_once_with('serverStatus')
         self.assertPublishedMany(publish_mock, {
             'more_keys.nested_key': 1,
-            'key' : 2
+            'key': 2
         })
 
     @patch('pymongo.Connection')
@@ -43,7 +43,7 @@ class TestMongoDBCollector(CollectorTestCase):
         self.connection['db1'].command.assert_called_once_with('dbStats')
         metrics = {
             'db_keys.db_nested_key': 1,
-            'dbkey' : 2
+            'dbkey': 2
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

@@ -32,14 +32,14 @@ class TestSockstatCollector(CollectorTestCase):
         self.collector.collect()
 
         metrics = {
-            'used'       : 118,
-            'tcp_inuse'  : 10,
-            'tcp_orphan' : 0,
-            'tcp_tw'     : 1,
-            'tcp_alloc'  : 13,
-            'tcp_mem'    : 1,
-            'udp_inuse'  : 0,
-            'udp_mem'    : 0
+            'used': 118,
+            'tcp_inuse': 10,
+            'tcp_orphan': 0,
+            'tcp_tw': 1,
+            'tcp_alloc': 13,
+            'tcp_mem': 1,
+            'udp_inuse': 0,
+            'udp_mem': 0
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

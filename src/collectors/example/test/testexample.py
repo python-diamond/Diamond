@@ -13,7 +13,7 @@ from example import ExampleCollector
 class TestExampleCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('ExampleCollector', {
-            'interval'  : 10
+            'interval': 10
         })
 
         self.collector = ExampleCollector(config, None)
@@ -23,7 +23,7 @@ class TestExampleCollector(CollectorTestCase):
         self.collector.collect()
 
         metrics = {
-            'my.example.metric' :  42
+            'my.example.metric':  42
         }
 
         self.setDocExample(self.collector.__class__.__name__, metrics)

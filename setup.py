@@ -60,8 +60,8 @@ setup(
     author_email='https://github.com/BrightcoveOS/Diamond',
     license='MIT License',
     description='Smart data producer for graphite graphing package',
-    package_dir={'' : 'src'},
-    packages=['diamond' , 'diamond.handler'],
+    package_dir={'': 'src'},
+    packages=['diamond', 'diamond.handler'],
     scripts=['bin/diamond', 'bin/diamond-setup'],
     data_files=data_files,
     install_requires=[

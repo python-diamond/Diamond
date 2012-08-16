@@ -23,9 +23,9 @@ class RabbitMQCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(RabbitMQCollector, self).get_default_config_help()
         config_help.update({
-            'host' : 'Hostname and port to collect from',
-            'user' : 'Username',
-            'password' : 'Password',
+            'host': 'Hostname and port to collect from',
+            'user': 'Username',
+            'password': 'Password',
         })
         return config_help
 

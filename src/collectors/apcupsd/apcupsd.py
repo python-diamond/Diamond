@@ -24,9 +24,9 @@ class ApcupsdCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(ApcupsdCollector, self).get_default_config_help()
         config_help.update({
-            'hostname' : 'Hostname to collect from',
-            'port' : 'port to collect from. defaults to 3551',
-            'metrics' : 'List of metrics. Valid metric keys can be found at (http://www.apcupsd.com/manual/manual.html#status-report-fields)'
+            'hostname': 'Hostname to collect from',
+            'port': 'port to collect from. defaults to 3551',
+            'metrics': 'List of metrics. Valid metric keys can be found at (http://www.apcupsd.com/manual/manual.html#status-report-fields)'
         })
         return config_help
 
@@ -39,7 +39,7 @@ class ApcupsdCollector(diamond.collector.Collector):
             'path':     'apcupsd',
             'hostname': 'localhost',
             'port': 3551,
-            'metrics' : ['LINEV', 'LOADPCT', 'BCHARGE', 'TIMELEFT', 'BATTV',
+            'metrics': ['LINEV', 'LOADPCT', 'BCHARGE', 'TIMELEFT', 'BATTV',
                          'NUMXFERS', 'TONBATT', 'MAXLINEV', 'MINLINEV',
                          'OUTPUTV', 'ITEMP', 'LINEFREQ', 'CUMONBATT', ],
         } )

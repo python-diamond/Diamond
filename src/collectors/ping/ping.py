@@ -30,9 +30,9 @@ class PingCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(PingCollector, self).get_default_config_help()
         config_help.update({
-            'bin' :         'The path to the ping binary',
-            'use_sudo' :    'Use sudo?',
-            'sudo_cmd' :    'Path to sudo',
+            'bin':         'The path to the ping binary',
+            'use_sudo':    'Use sudo?',
+            'sudo_cmd':    'Path to sudo',
         })
         return config_help
 
@@ -74,7 +74,7 @@ class PingCollector(diamond.collector.Collector):
                     ping = ping.split()[3].split('/')[0]
                     metric_value = int(round(float(ping)))
                 # Unknown
-                else :
+                else:
                     metric_value = 10000
 
                 self.publish(metric_name, metric_value)

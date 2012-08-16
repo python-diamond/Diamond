@@ -18,9 +18,9 @@ class VMStatCollector(diamond.collector.Collector):
 
     PROC = '/proc/vmstat'
     MAX_VALUES = {
-        'pgpgin' : diamond.collector.MAX_COUNTER,
+        'pgpgin': diamond.collector.MAX_COUNTER,
         'pgpgout': diamond.collector.MAX_COUNTER,
-        'pswpin' : diamond.collector.MAX_COUNTER,
+        'pswpin': diamond.collector.MAX_COUNTER,
         'pswpout': diamond.collector.MAX_COUNTER,
     }
 
