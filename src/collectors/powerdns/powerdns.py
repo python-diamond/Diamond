@@ -58,7 +58,8 @@ class PowerDNSCollector(diamond.collector.Collector):
         if self.config['use_sudo']:
             command.insert(0, self.config['sudo_cmd'])
 
-        data = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
+        data = subprocess.Popen(command,
+                                stdout=subprocess.PIPE).communicate()[0]
 
         for metric in data.split(','):
             if not metric.strip():

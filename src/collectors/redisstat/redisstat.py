@@ -81,9 +81,12 @@ class RedisCollector(diamond.collector.Collector):
 :rtype: redis.Redis
 
         """
-        return redis.Redis(host=self.config.get('host', self._DEFAULT_HOST),
-                           port=int(self.config.get('port', self._DEFAULT_PORT)),
-                           db=int(self.config.get('db', self._DEFAULT_DB)))
+        return redis.Redis(host=self.config.get('host',
+                                                self._DEFAULT_HOST),
+                           port=int(self.config.get('port',
+                                                    self._DEFAULT_PORT)),
+                           db=int(self.config.get('db',
+                                                  self._DEFAULT_DB)))
 
     def _precision(self, value):
         """Return the precision of the number
@@ -121,7 +124,8 @@ class RedisCollector(diamond.collector.Collector):
         info = client.info()
         del client
 
-        # The structure should include the port for multiple instances per server
+        # The structure should include the port for multiple instances per
+        # server
         data = dict()
 
         # Iterate over the top level keys
@@ -130,7 +134,8 @@ class RedisCollector(diamond.collector.Collector):
                 data[key] = info[self._KEYS[key]]
 
         # Look for databaase speific stats
-        for dbnum in range(0, self.config.get('databases', self._DATABASE_COUNT)):
+        for dbnum in range(0, self.config.get('databases',
+                                              self._DATABASE_COUNT)):
             db = 'db%i' % dbnum
             if db in info:
                 for key in info[db]:
@@ -141,4 +146,6 @@ class RedisCollector(diamond.collector.Collector):
 
         # Publish the data to graphite
         for key in data:
-            self.publish(self._publish_key(key), data[key], self._precision(data[key]))
+            self.publish(self._publish_key(key),
+                         data[key],
+                         self._precision(data[key]))

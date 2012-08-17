@@ -36,7 +36,7 @@ class SNMPCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(SNMPCollector, self).get_default_config_help()
         config_help.update({
-            'timeout': 'Number of seconds before timing out the snmp connection',
+            'timeout': 'Seconds before timing out the snmp connection',
             'retries': 'Number of times to retry before bailing',
         })
         return config_help
@@ -65,7 +65,12 @@ class SNMPCollector(diamond.collector.Collector):
                 # Check if task is already in schedule
                 if task in schedule:
                     raise KeyError("Duplicate device scheduled")
-                schedule[task] = (self.collect_snmp, (device, c['host'], int(c['port']), c['community']), int(self.config['splay']), int(self.config['interval']))
+                schedule[task] = (self.collect_snmp, (device,
+                                                      c['host'],
+                                                      int(c['port']),
+                                                      c['community']),
+                                  int(self.config['splay']),
+                                  int(self.config['interval']))
         return schedule
 
     def _convert_to_oid(self, s):

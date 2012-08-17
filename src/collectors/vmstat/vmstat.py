@@ -56,7 +56,9 @@ class VMStatCollector(diamond.collector.Collector):
             if match:
                 name = match.group(1)
                 value = match.group(2)
-                results[name] = self.derivative(name, int(value), self.MAX_VALUES[name])
+                results[name] = self.derivative(name,
+                                                int(value),
+                                                self.MAX_VALUES[name])
 
         # Close file
         file.close()

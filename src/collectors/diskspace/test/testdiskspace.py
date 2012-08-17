@@ -29,7 +29,8 @@ none /proc proc rw,nosuid,nodev,noexec,relatime 0 0
 none /dev devtmpfs rw,relatime,size=24769364k,nr_inodes=6192341,mode=755 0 0
 none /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000 0 0
 fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0
-/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba / ext3 rw,relatime,errors=continue,barrier=0,data=ordered 0 0
+/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba / ext3 """
++ """rw,relatime,errors=continue,barrier=0,data=ordered 0 0
 none /sys/kernel/debug debugfs rw,relatime 0 0
 none /sys/kernel/security securityfs rw,relatime 0 0
 none /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0
@@ -51,7 +52,11 @@ none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
             os_minor_mock.assert_called_once_with(42)
 
             self.assertEqual(result, {
-                (9, 0): {'device': '/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba', 'fs_type': 'ext3', 'mount_point': '/'}
+                (9, 0): {
+                'device':
+                    '/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba',
+                'fs_type': 'ext3',
+                'mount_point': '/'}
             })
 
         open_mock.assert_called_once_with('/proc/mounts')
@@ -77,7 +82,8 @@ none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
             patch('os.major', Mock(return_value=9)),
             patch('os.minor', Mock(return_value=0)),
             patch('os.path.isdir', Mock(return_value=False)),
-            patch('__builtin__.open', Mock(return_value=self.getFixture('proc_mounts'))),
+            patch('__builtin__.open', Mock(
+                return_value=self.getFixture('proc_mounts'))),
             patch('os.statvfs', Mock(return_value=statvfs_mock))
         ):
             self.collector.collect()

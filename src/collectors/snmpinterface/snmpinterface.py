@@ -1,23 +1,32 @@
 # coding=utf-8
 
 """
-The SNMPInterfaceCollector is designed for collecting interface data from remote SNMP-enabled devices such as routers and switches using SNMP IF_MIB
+The SNMPInterfaceCollector is designed for collecting interface data from
+remote SNMP-enabled devices such as routers and switches using SNMP IF_MIB
 
 #### Installation
 
-The snmpinterfacecollector.py module should be installed into your Diamond installation collectors directory. This directory is defined
-in diamond.cfg under the *collectors_path* directive. This defaults to */usr/lib/diamond/collectors/* on Ubuntu.
+The snmpinterfacecollector.py module should be installed into your Diamond
+installation collectors directory. This directory is defined
+in diamond.cfg under the *collectors_path* directive. This defaults to
+*/usr/lib/diamond/collectors/* on Ubuntu.
 
-The SNMPInterfaceCollector.cfg file should be installed into your diamond installation config directory. This directory is defined
-in diamond.cfg under the *collectors_config_path* directive. This defaults to */etc/diamond/* on Ubuntu.
+The SNMPInterfaceCollector.cfg file should be installed into your diamond
+installation config directory. This directory is defined
+in diamond.cfg under the *collectors_config_path* directive. This defaults to
+*/etc/diamond/* on Ubuntu.
 
-Once the collector is installed and configured, you can wait for diamond to pick up the new collector automatically, or simply restart diamond.
+Once the collector is installed and configured, you can wait for diamond to
+pick up the new collector automatically, or simply restart diamond.
 
 #### Configuration
 
-Below is an example configuration for the SNMPInterfaceCollector. The collector can collect data any number of devices by adding configuration sections
-under the *devices* header. By default the collector will collect every 60 seconds. This might be a bit excessive and put unnecessary load on the
-devices being polled. You may wish to change this to every 300 seconds. However you need modify your graphite data retentions to handle this properly.
+Below is an example configuration for the SNMPInterfaceCollector. The collector
+can collect data any number of devices by adding configuration sections
+under the *devices* header. By default the collector will collect every 60
+seconds. This might be a bit excessive and put unnecessary load on the
+devices being polled. You may wish to change this to every 300 seconds. However
+you need modify your graphite data retentions to handle this properly.
 
     # Options for SNMPInterfaceCollector
     path = interface
@@ -35,7 +44,8 @@ devices being polled. You may wish to change this to every 300 seconds. However 
     port = 161
     community = public
 
-Note: If you modify the SNMPInterfaceCollector configuration, you will need to restart diamond.
+Note: If you modify the SNMPInterfaceCollector configuration, you will need to
+restart diamond.
 
 #### Dependencies
 
@@ -48,7 +58,8 @@ import sys
 import time
 import re
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), 'snmp'))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                                'snmp'))
 from snmp import SNMPCollector as parent_SNMPCollector
 from diamond.metric import Metric
 import diamond.convertor
@@ -81,16 +92,19 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
     IF_TYPES = ["6"]
 
     def get_default_config_help(self):
-        config_help = super(SNMPInterfaceCollector, self).get_default_config_help()
+        config_help = super(SNMPInterfaceCollector,
+                            self).get_default_config_help()
         config_help.update({
         })
         return config_help
 
     def get_default_config(self):
         """
-        Override SNMPCollector.get_default_config method to provide default_config for the SNMPInterfaceCollector
+        Override SNMPCollector.get_default_config method to provide
+        default_config for the SNMPInterfaceCollector
         """
-        default_config = super(SNMPInterfaceCollector, self).get_default_config()
+        default_config = super(SNMPInterfaceCollector,
+                               self).get_default_config()
         default_config['path'] = 'interface'
         default_config['byte_unit'] = ['Mbit', 'Mbyte']
         return default_config
@@ -128,7 +142,8 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
 
             # Get Gauges
             for gaugeName, gaugeOid in self.IF_MIB_GAUGE_OID_TABLE.items():
-                ifGaugeOid = '.'.join([self.IF_MIB_GAUGE_OID_TABLE[gaugeName], ifIndex])
+                ifGaugeOid = '.'.join([self.IF_MIB_GAUGE_OID_TABLE[gaugeName],
+                                       ifIndex])
                 ifGaugeData = self.get(ifGaugeOid, host, port, community)
                 ifGaugeValue = ifGaugeData[ifGaugeOid]
                 if not ifGaugeValue:
@@ -139,15 +154,20 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
                 metricName = '.'.join([metricIfDescr, gaugeName])
                 metricValue = int(ifGaugeValue)
                 # Get Metric Path
-                metricPath = '.'.join(['devices', device, self.config['path'], metricName])
+                metricPath = '.'.join(['devices',
+                                       device,
+                                       self.config['path'],
+                                       metricName])
                 # Create Metric
                 metric = Metric(metricPath, metricValue, None, 0)
                 # Publish Metric
                 self.publish_metric(metric)
 
             # Get counters (64bit)
-            for counterName, counterOid in self.IF_MIB_COUNTER_OID_TABLE.items():
-                ifCounterOid = '.'.join([self.IF_MIB_COUNTER_OID_TABLE[counterName], ifIndex])
+            counterItems = self.IF_MIB_COUNTER_OID_TABLE.items()
+            for counterName, counterOid in counterItems:
+                ifCounterOid = '.'.join(
+                    [self.IF_MIB_COUNTER_OID_TABLE[counterName], ifIndex])
                 ifCounterData = self.get(ifCounterOid, host, port, community)
                 ifCounterValue = ifCounterData[ifCounterOid]
                 if not ifCounterValue:
@@ -159,13 +179,25 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
                 if counterName in ['ifInOctets', 'ifOutOctets']:
                     for unit in self.config['byte_unit']:
                         # Convert Metric
-                        metricName = '.'.join([metricIfDescr, counterName.replace('Octets', unit)])
-                        metricValue = diamond.convertor.binary.convert(value=ifCounterValue, oldUnit='byte', newUnit=unit)
+                        metricName = '.'.join([metricIfDescr,
+                                               counterName.replace('Octets',
+                                                                   unit)])
+                        metricValue = diamond.convertor.binary.convert(
+                            value=ifCounterValue,
+                            oldUnit='byte',
+                            newUnit=unit)
 
                         # Get Metric Path
-                        metricPath = '.'.join(['devices', device, self.config['path'], metricName])
+                        metricPath = '.'.join(['devices',
+                                               device,
+                                               self.config['path'],
+                                               metricName])
                         # Create Metric
-                        metric = Metric(metricPath, self.derivative(metricPath, metricValue, 18446744073709600000), timestamp, 0)
+                        metric = Metric(metricPath,
+                                        self.derivative(metricPath,
+                                                        metricValue,
+                                                        18446744073709600000),
+                                        timestamp, 0)
                         # Publish Metric
                         self.publish_metric(metric)
                 else:
@@ -173,8 +205,15 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
                     metricValue = int(ifCounterValue)
 
                     # Get Metric Path
-                    metricPath = '.'.join(['devices', device, self.config['path'], metricName])
+                    metricPath = '.'.join(['devices',
+                                           device,
+                                           self.config['path'],
+                                           metricName])
                     # Create Metric
-                    metric = Metric(metricPath, self.derivative(metricPath, metricValue, 18446744073709600000), timestamp, 0)
+                    metric = Metric(metricPath,
+                                    self.derivative(metricPath,
+                                                    metricValue,
+                                                    18446744073709600000),
+                                    timestamp, 0)
                     # Publish Metric
                     self.publish_metric(metric)

@@ -20,7 +20,8 @@ class TestPuppetDashboardCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch('urllib2.urlopen', Mock(return_value=self.getFixture('index.html'))):
+        with patch('urllib2.urlopen', Mock(
+            return_value=self.getFixture('index.html'))):
             self.collector.collect()
 
         metrics = {
@@ -36,7 +37,8 @@ class TestPuppetDashboardCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        with patch('urllib2.urlopen', Mock(return_value=self.getFixture('index.blank'))):
+        with patch('urllib2.urlopen', Mock(
+            return_value=self.getFixture('index.blank'))):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {})

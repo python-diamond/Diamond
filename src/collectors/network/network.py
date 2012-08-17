@@ -82,7 +82,24 @@ class NetworkCollector(diamond.collector.Collector):
             if self.config['greedy'].lower() == 'true':
                 greed = '[0-9]+'
 
-            exp = '^(?:\s*)((?:%s)%s):(?:\s*)(?P<rx_bytes>\d+)(?:\s*)(?P<rx_packets>\w+)(?:\s*)(?P<rx_errors>\d+)(?:\s*)(?P<rx_drop>\d+)(?:\s*)(?P<rx_fifo>\d+)(?:\s*)(?P<rx_frame>\d+)(?:\s*)(?P<rx_compressed>\d+)(?:\s*)(?P<rx_multicast>\d+)(?:\s*)(?P<tx_bytes>\d+)(?:\s*)(?P<tx_packets>\w+)(?:\s*)(?P<tx_errors>\d+)(?:\s*)(?P<tx_drop>\d+)(?:\s*)(?P<tx_fifo>\d+)(?:\s*)(?P<tx_frame>\d+)(?:\s*)(?P<tx_compressed>\d+)(?:\s*)(?P<tx_multicast>\d+)(?:.*)$' % (('|'.join(self.config['interfaces'])), greed)
+            exp = ('^(?:\s*)((?:%s)%s):(?:\s*)'
+                + '(?P<rx_bytes>\d+)(?:\s*)'
+                + '(?P<rx_packets>\w+)(?:\s*)'
+                + '(?P<rx_errors>\d+)(?:\s*)'
+                + '(?P<rx_drop>\d+)(?:\s*)'
+                + '(?P<rx_fifo>\d+)(?:\s*)'
+                + '(?P<rx_frame>\d+)(?:\s*)'
+                + '(?P<rx_compressed>\d+)(?:\s*)'
+                + '(?P<rx_multicast>\d+)(?:\s*)'
+                + '(?P<tx_bytes>\d+)(?:\s*)'
+                + '(?P<tx_packets>\w+)(?:\s*)'
+                + '(?P<tx_errors>\d+)(?:\s*)'
+                + '(?P<tx_drop>\d+)(?:\s*)'
+                + '(?P<tx_fifo>\d+)(?:\s*)'
+                + '(?P<tx_frame>\d+)(?:\s*)'
+                + '(?P<tx_compressed>\d+)(?:\s*)'
+                + '(?P<tx_multicast>\d+)(?:.*)$' ) % (
+                ('|'.join(self.config['interfaces'])), greed)
             reg = re.compile(exp)
             # Match Interfaces
             for line in file:
@@ -95,11 +112,12 @@ class NetworkCollector(diamond.collector.Collector):
         elif psutil:
             network_stats = psutil.network_io_counters(True)
             for device in network_stats.keys():
+                network_stat = network_stats[device]
                 results[device] = {}
-                results[device]['rx_bytes'] = network_stats[device].bytes_recv
-                results[device]['tx_bytes'] = network_stats[device].bytes_sent
-                results[device]['rx_packets'] = network_stats[device].packets_recv
-                results[device]['tx_packets'] = network_stats[device].packets_sent
+                results[device]['rx_bytes'] = network_stat.bytes_recv
+                results[device]['tx_bytes'] = network_stat.bytes_sent
+                results[device]['rx_packets'] = network_stat.packets_recv
+                results[device]['tx_packets'] = network_stat.packets_sent
 
         for device in results:
             stats = results[device]
@@ -107,15 +125,19 @@ class NetworkCollector(diamond.collector.Collector):
                 # Get Metric Name
                 metric_name = '.'.join([device, s])
                 # Get Metric Value
-                metric_value = self.derivative(metric_name, long(v), self.MAX_VALUES[s])
+                metric_value = self.derivative(metric_name,
+                                               long(v),
+                                               self.MAX_VALUES[s])
 
                 # Convert rx_bytes and tx_bytes
                 if s == 'rx_bytes' or s == 'tx_bytes':
-                    convertor = diamond.convertor.binary(value=metric_value, unit='byte')
+                    convertor = diamond.convertor.binary(value=metric_value,
+                                                         unit='byte')
 
                     for u in self.config['byte_unit']:
                         # Public Converted Metric
-                        self.publish(metric_name.replace('bytes', u), convertor.get(unit=u))
+                        self.publish(metric_name.replace('bytes', u),
+                                     convertor.get(unit=u))
                 else:
                     # Publish Metric Derivative
                     self.publish(metric_name, metric_value)

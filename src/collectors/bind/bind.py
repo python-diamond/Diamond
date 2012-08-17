@@ -5,7 +5,8 @@ Collects stats from bind 9.5's statistics server
 
 #### Dependencies
 
- * [bind 9.5](http://www.isc.org/software/bind/new-features/9.5) configured with libxml2 and statistics-channels
+ * [bind 9.5](http://www.isc.org/software/bind/new-features/9.5)
+    configured with libxml2 and statistics-channels
 
 """
 
@@ -26,12 +27,12 @@ class BindCollector(diamond.collector.Collector):
         config_help.update({
             'host': "",
             'port': "",
-            'publish': "Available stats: \n" \
-                        + " - resolver (Per-view resolver and cache statistics) \n" \
-                        + " - server (Incoming requests and their answers) \n" \
-                        + " - zonemgmt (Requests/responses related to zone management) \n" \
-                        + " - sockets (Socket statistics) \n" \
-                        + " - memory (Global memory usage) \n",
+            'publish': "Available stats: \n"
+                + " - resolver (Per-view resolver and cache statistics) \n"
+                + " - server (Incoming requests and their answers) \n"
+                + " - zonemgmt (Zone management requests/responses)\n"
+                + " - sockets (Socket statistics) \n"
+                + " - memory (Global memory usage) \n",
             'publish_view_bind': "",
             'publish_view_meta': "",
         })
@@ -73,7 +74,8 @@ class BindCollector(diamond.collector.Collector):
 
     def collect(self):
         try:
-            req = urllib2.urlopen('http://%s:%d/' % (self.config['host'], int(self.config['port'])))
+            req = urllib2.urlopen('http://%s:%d/' % (
+                self.config['host'], int(self.config['port'])))
         except Exception, e:
             self.log.error('Couldnt connect to bind: %s', e)
             return {}
@@ -96,17 +98,21 @@ class BindCollector(diamond.collector.Collector):
                 self.publish('view.%s.zones' % name, nzones)
                 for counter in view.findall('rdtype'):
                     self.clean_counter(
-                        'view.%s.query.%s' % (name, counter.find('name').text),
+                        'view.%s.query.%s' % (name,
+                                              counter.find('name').text),
                         int(counter.find('counter').text)
                     )
                 for counter in view.findall('resstat'):
                     self.clean_counter(
-                        'view.%s.resstat.%s' % (name, counter.find('name').text),
+                        'view.%s.resstat.%s' % (name,
+                                                counter.find('name').text),
                         int(counter.find('counter').text)
                     )
                 for counter in view.findall('cache/rrset'):
                     self.clean_counter(
-                        'view.%s.cache.%s' % (name, counter.find('name').text.replace('!', 'NOT_')),
+                        'view.%s.cache.%s' % (
+                            name, counter.find('name').text.replace('!',
+                                                                    'NOT_')),
                         int(counter.find('counter').text)
                     )
 

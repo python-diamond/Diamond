@@ -51,12 +51,16 @@ class SmartCollector(diamond.collector.Collector):
         for device in os.listdir('/dev'):
             if devices.match(device):
 
-                command = [self.config['bin'], "-A", os.path.join('/dev', device)]
+                command = [self.config['bin'], "-A", os.path.join('/dev',
+                                                                  device)]
 
                 if self.config['use_sudo']:
                     command.insert(0, self.config['sudo_cmd'])
 
-                attributes = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip().splitlines()
+                attributes = subprocess.Popen(
+                    command,
+                    stdout=subprocess.PIPE
+                    ).communicate()[0].strip().splitlines()
 
                 metrics = {}
 
@@ -71,9 +75,10 @@ class SmartCollector(diamond.collector.Collector):
                     if metric not in metrics:
                         metrics[metric] = attribute[9]
                     # Duplicate metric? Only store if it has a larger value
-                    # This happens semi-often with the Temperature_Celsius attribute
-                    # You will have a PASS/FAIL after the real temp, so only overwrite if
-                    # The earlier one was a PASS/FAIL (0/1)
+                    # This happens semi-often with the Temperature_Celsius
+                    # attribute You will have a PASS/FAIL after the real temp,
+                    # so only overwrite if The earlier one was a
+                    # PASS/FAIL (0/1)
                     elif metrics[metric] == 0 and attribute[9] > 0:
                         metrics[metric] = attribute[9]
                     else:

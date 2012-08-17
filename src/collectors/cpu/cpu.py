@@ -104,7 +104,9 @@ class CPUCollector(diamond.collector.Collector):
                     # Get Metric Name
                     metric_name = '.'.join([cpu, s])
                     # Publish Metric Derivative
-                    self.publish(metric_name, self.derivative(metric_name, long(stats[s]), self.MAX_VALUES[s]))
+                    self.publish(metric_name,
+                                 self.derivative(metric_name, long(stats[s]),
+                                                 self.MAX_VALUES[s]))
             return True
 
         elif psutil:
@@ -112,16 +114,40 @@ class CPUCollector(diamond.collector.Collector):
             total_time = psutil.cpu_times()
             for i in range(0, len(cpu_time)):
                 metric_name = 'cpu' + str(i)
-                self.publish(metric_name + '.user',   self.derivative(metric_name + '.user',   cpu_time[i].user,   self.MAX_VALUES['user']))
-                self.publish(metric_name + '.nice',   self.derivative(metric_name + '.nice',   cpu_time[i].nice,   self.MAX_VALUES['nice']))
-                self.publish(metric_name + '.system', self.derivative(metric_name + '.system', cpu_time[i].system, self.MAX_VALUES['system']))
-                self.publish(metric_name + '.idle',   self.derivative(metric_name + '.idle',   cpu_time[i].idle,   self.MAX_VALUES['idle']))
+                self.publish(metric_name + '.user',
+                             self.derivative(metric_name + '.user',
+                                             cpu_time[i].user,
+                                             self.MAX_VALUES['user']))
+                self.publish(metric_name + '.nice',
+                             self.derivative(metric_name + '.nice',
+                                             cpu_time[i].nice,
+                                             self.MAX_VALUES['nice']))
+                self.publish(metric_name + '.system',
+                             self.derivative(metric_name + '.system',
+                                             cpu_time[i].system,
+                                             self.MAX_VALUES['system']))
+                self.publish(metric_name + '.idle',
+                             self.derivative(metric_name + '.idle',
+                                             cpu_time[i].idle,
+                                             self.MAX_VALUES['idle']))
 
             metric_name = 'total'
-            self.publish(metric_name + '.user',   self.derivative(metric_name + '.user',   total_time.user,   self.MAX_VALUES['user']))
-            self.publish(metric_name + '.nice',   self.derivative(metric_name + '.nice',   total_time.nice,   self.MAX_VALUES['nice']))
-            self.publish(metric_name + '.system', self.derivative(metric_name + '.system', total_time.system, self.MAX_VALUES['system']))
-            self.publish(metric_name + '.idle',   self.derivative(metric_name + '.idle',   total_time.idle,   self.MAX_VALUES['idle']))
+            self.publish(metric_name + '.user',
+                         self.derivative(metric_name + '.user',
+                                         total_time.user,
+                                         self.MAX_VALUES['user']))
+            self.publish(metric_name + '.nice',
+                         self.derivative(metric_name + '.nice',
+                                         total_time.nice,
+                                         self.MAX_VALUES['nice']))
+            self.publish(metric_name + '.system',
+                         self.derivative(metric_name + '.system',
+                                         total_time.system,
+                                         self.MAX_VALUES['system']))
+            self.publish(metric_name + '.idle',
+                         self.derivative(metric_name + '.idle',
+                                         total_time.idle,
+                                         self.MAX_VALUES['idle']))
 
             return True
 

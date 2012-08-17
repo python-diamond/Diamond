@@ -60,8 +60,10 @@ class PostgresqlCollector(diamond.collector.Collector):
         self.cursor = self.conn.cursor()
 
         # Statistics
-        self.cursor.execute("SELECT pg_stat_database.*, pg_database_size(pg_database.datname) AS size \
-                FROM pg_database JOIN pg_stat_database ON pg_database.datname = pg_stat_database.datname \
+        self.cursor.execute("SELECT pg_stat_database.*, \
+                pg_database_size(pg_database.datname) AS size \
+                FROM pg_database JOIN pg_stat_database \
+                ON pg_database.datname = pg_stat_database.datname \
                 WHERE pg_stat_database.datname \
                 NOT IN ('template0','template1','postgres')")
         stats = self.cursor.fetchall()
@@ -91,10 +93,12 @@ class PostgresqlCollector(diamond.collector.Collector):
 
         for database in ret:
             for (metric, value) in ret[database].items():
-                self.publish("%s.database.%s" % (database.replace("_", "."), metric), value)
+                self.publish("%s.database.%s" % (
+                    database.replace("_", "."), metric), value)
 
         for (database, connection) in connections:
-            self.publish("%s.database.connections" % (database.replace("_", ".")), connection)
+            self.publish("%s.database.connections" % (
+                database.replace("_", ".")), connection)
 
         self.cursor.close()
         self.conn.close()

@@ -7,9 +7,7 @@ import optparse
 
 from configobj import ConfigObj
 
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'collectors')))
 
 from diamond import *
 from diamond.collector import Collector
@@ -51,7 +49,8 @@ def getCollectors(path):
                     if cls.__name__ not in collectors:
                         collectors[cls.__name__] = module
             except Exception, e:
-                print "Failed to import module: %s. %s" % (modname, traceback.format_exc())
+                print "Failed to import module: %s. %s" % (
+                    modname, traceback.format_exc())
                 collectors[modname] = False
                 continue
 
@@ -76,7 +75,8 @@ def getHandlers(path):
 
                 # Find the name
                 for attr in dir(module):
-                    if not attr.endswith('Handler') or attr.startswith('Handler'):
+                    if (not attr.endswith('Handler')
+                        or attr.startswith('Handler')):
                         continue
 
                     cls = getattr(module, attr)
@@ -84,7 +84,8 @@ def getHandlers(path):
                     if cls.__name__ not in handlers:
                         handlers[cls.__name__] = module
             except Exception, e:
-                print "Failed to import module: %s. %s" % (modname, traceback.format_exc())
+                print "Failed to import module: %s. %s" % (
+                    modname, traceback.format_exc())
                 handlers[modname] = False
                 continue
 
@@ -99,9 +100,19 @@ if __name__ == "__main__":
 
     # Initialize Options
     parser = optparse.OptionParser()
-    parser.add_option("-c", "--configfile", dest="configfile", default="/etc/diamond/diamond.conf", help="Path to the config file")
-    parser.add_option("-C", "--collector", dest="collector", default=None, help="Configure a single collector")
-    parser.add_option("-p", "--print", action="store_true", dest="dump", default=False, help="Just print the defaults")
+    parser.add_option("-c", "--configfile",
+                      dest="configfile",
+                      default="/etc/diamond/diamond.conf",
+                      help="Path to the config file")
+    parser.add_option("-C", "--collector",
+                      dest="collector",
+                      default=None,
+                      help="Configure a single collector")
+    parser.add_option("-p", "--print",
+                      action="store_true",
+                      dest="dump",
+                      default=False,
+                      help="Just print the defaults")
 
     # Parse Command Line Args
     (options, args) = parser.parse_args()
@@ -111,14 +122,17 @@ if __name__ == "__main__":
         config = configobj.ConfigObj(os.path.abspath(options.configfile))
         config['configfile'] = options.configfile
     else:
-        print >> sys.stderr, "ERROR: Config file: %s does not exist." % (options.configfile)
-        print >> sys.stderr, "Please run python config.py -c /path/to/diamond.conf"
+        print >> sys.stderr, "ERROR: Config file: %s does not exist." % (
+            options.configfile)
+        print >> sys.stderr, ("Please run python config.py -c "
+                              + "/path/to/diamond.conf")
         parser.print_help(sys.stderr)
         sys.exit(1)
 
     collector_path = config['server']['collectors_path']
     docs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'docs'))
-    handler_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'diamond', 'handler'))
+    handler_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                'src', 'diamond', 'handler'))
 
     getIncludePaths(collector_path)
 
@@ -149,9 +163,11 @@ if __name__ == "__main__":
 
         options = obj.get_default_config_help()
 
-        docFile = open(os.path.join(docs_path, "collectors-" + collector + ".md"), 'w')
+        docFile = open(os.path.join(docs_path,
+                                    "collectors-" + collector + ".md"), 'w')
 
-        collectorIndexFile.write(" - [%s](collectors-%s)\n" % (collector, collector))
+        collectorIndexFile.write(" - [%s](collectors-%s)\n" % (collector,
+                                                               collector))
 
         docFile.write("%s\n" % (collector))
         docFile.write("=====\n")
@@ -191,7 +207,8 @@ if __name__ == "__main__":
         if not hasattr(handlers[handler], handler):
             continue
 
-        docFile = open(os.path.join(docs_path, "handler-" + handler + ".md"), 'w')
+        docFile = open(os.path.join(docs_path,
+                                    "handler-" + handler + ".md"), 'w')
 
         handlerIndexFile.write(" - [%s](handler-%s)\n" % (handler, handler))
 

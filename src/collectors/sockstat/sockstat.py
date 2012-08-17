@@ -15,7 +15,11 @@ import os
 
 _RE = re.compile('|'.join([
     r'sockets: used (?P<used>\d+)',
-    r'TCP: inuse (?P<tcp_inuse>\d+) orphan (?P<tcp_orphan>\d+) tw (?P<tcp_tw>\d+) alloc (?P<tcp_alloc>\d+) mem (?P<tcp_mem>\d+)',
+    r'TCP: inuse (?P<tcp_inuse>\d+) '
+    + 'orphan (?P<tcp_orphan>\d+) '
+    + 'tw (?P<tcp_tw>\d+) '
+    + 'alloc (?P<tcp_alloc>\d+) '
+    + 'mem (?P<tcp_mem>\d+)',
     r'UDP: inuse (?P<udp_inuse>\d+) mem (?P<udp_mem>\d+)'
 ]))
 

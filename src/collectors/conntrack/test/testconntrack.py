@@ -38,7 +38,8 @@ class TestConnTrackCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
         with patch('subprocess.Popen.communicate', Mock(return_value=(
-            'sysctl: cannot stat /proc/sys/net/netfilter/nf_conntrack_count: No such file or directory', '')
+            'sysctl: cannot stat /proc/sys/net/netfilter/nf_conntrack_count: '
+            + 'No such file or directory', '')
         )):
             self.collector.collect()
 

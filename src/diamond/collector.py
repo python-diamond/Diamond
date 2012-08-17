@@ -59,7 +59,8 @@ class Collector(object):
             self.config.merge(config['collectors'][cls.__name__])
 
         # Check for config file in config directory
-        configfile = os.path.join(config['server']['collectors_config_path'], cls.__name__) + '.conf'
+        configfile = os.path.join(config['server']['collectors_config_path'],
+                                  cls.__name__) + '.conf'
         if os.path.exists(configfile):
             # Merge Collector config file
             self.config.merge(configobj.ConfigObj(configfile))
@@ -91,7 +92,8 @@ class Collector(object):
             # Keep in mind, periods are seperators in graphite
             # 'hostname': 'my_custom_hostname',
 
-            # If you perfer to just use a different way of calculating the hostname
+            # If you perfer to just use a different way of calculating the
+            # hostname
             # Uncomment and set this to one of these values:
             # fqdn_short  = Default. Similar to hostname -s
             # fqdn        = hostname output
@@ -126,8 +128,12 @@ class Collector(object):
         """
         Return schedule for the collector
         """
-        # Return a dict of tuples containing (collector function, collector function args, splay, interval)
-        return {self.__class__.__name__: (self._run, None, int(self.config['splay']), int(self.config['interval']))}
+        # Return a dict of tuples containing (collector function,
+        # collector function args, splay, interval)
+        return {self.__class__.__name__: (self._run,
+                                          None,
+                                          int(self.config['splay']),
+                                          int(self.config['interval']))}
 
     def get_hostname(self):
         """
@@ -135,7 +141,8 @@ class Collector(object):
         """
         if 'hostname' in self.config:
             return self.config['hostname']
-        if 'hostname_method' not in self.config or self.config['hostname_method'] == 'fqdn_short':
+        if ('hostname_method' not in self.config
+            or self.config['hostname_method'] == 'fqdn_short'):
             return socket.getfqdn().split('.')[0]
         if self.config['hostname_method'] == 'fqdn':
             return socket.getfqdn().replace('.', '_')

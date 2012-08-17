@@ -17,7 +17,8 @@ from mock import *
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'collectors')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                             'src', 'collectors')))
 
 from diamond import *
 from diamond.collector import Collector
@@ -71,7 +72,9 @@ class CollectorTestCase(unittest.TestCase):
         return True
 
     def getFixturePath(self, fixture_name):
-        file = os.path.join(os.path.dirname(inspect.getfile(self.__class__)), 'fixtures', fixture_name)
+        file = os.path.join(os.path.dirname(inspect.getfile(self.__class__)),
+                            'fixtures',
+                            fixture_name)
         if not os.access(file, os.R_OK):
             print "Missing Fixture " + file
         return file
@@ -87,7 +90,8 @@ class CollectorTestCase(unittest.TestCase):
 
         actual_value = len(calls)
         expected_value = 1
-        message = '%s: actual number of calls %d, expected %d' % (key, actual_value, expected_value)
+        message = '%s: actual number of calls %d, expected %d' % (
+            key, actual_value, expected_value)
 
         self.assertEqual(actual_value, expected_value, message)
 
@@ -98,11 +102,16 @@ class CollectorTestCase(unittest.TestCase):
         if isinstance(value, tuple):
             expected_value, precision = expected_value
 
-        message = '%s: actual %r, expected %r' % (key, actual_value, expected_value)
+        message = '%s: actual %r, expected %r' % (key,
+                                                  actual_value,
+                                                  expected_value)
         #print message
 
         if precision is not None:
-            self.assertAlmostEqual(float(actual_value), float(expected_value), places=precision, msg=message)
+            self.assertAlmostEqual(float(actual_value),
+                                   float(expected_value),
+                                   places=precision,
+                                   msg=message)
         else:
             self.assertEqual(actual_value, expected_value, message)
 
@@ -113,11 +122,13 @@ class CollectorTestCase(unittest.TestCase):
         mock.reset_mock()
 
     def assertPublishedMetric(self, mock, key, value):
-        calls = filter(lambda x: x[0][0].path.find(key) != -1, mock.call_args_list)
+        calls = filter(lambda x: x[0][0].path.find(key) != -1,
+                       mock.call_args_list)
 
         actual_value = len(calls)
         expected_value = 1
-        message = '%s: actual number of calls %d, expected %d' % (key, actual_value, expected_value)
+        message = '%s: actual number of calls %d, expected %d' % (
+            key, actual_value, expected_value)
 
         self.assertEqual(actual_value, expected_value, message)
 
@@ -128,11 +139,16 @@ class CollectorTestCase(unittest.TestCase):
         if isinstance(value, tuple):
             expected_value, precision = expected_value
 
-        message = '%s: actual %r, expected %r' % (key, actual_value, expected_value)
+        message = '%s: actual %r, expected %r' % (key,
+                                                  actual_value,
+                                                  expected_value)
         #print message
 
         if precision is not None:
-            self.assertAlmostEqual(float(actual_value), float(expected_value), places=precision, msg=message)
+            self.assertAlmostEqual(float(actual_value),
+                                   float(expected_value),
+                                   places=precision,
+                                   msg=message)
         else:
             self.assertEqual(actual_value, expected_value, message)
 
@@ -149,16 +165,23 @@ def getCollectorTests(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
 
-        if os.path.isfile(cPath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] == 'test':
+        if (os.path.isfile(cPath)
+            and len(f) > 3
+            and f[-3:] == '.py'
+            and f[0:4] == 'test'):
             sys.path.append(os.path.dirname(cPath))
             sys.path.append(os.path.dirname(os.path.dirname(cPath)))
             modname = f[:-3]
             try:
                 # Import the module
-                collectorTests[modname] = __import__(modname, globals(), locals(), ['*'])
+                collectorTests[modname] = __import__(modname,
+                                                     globals(),
+                                                     locals(),
+                                                     ['*'])
                 #print "Imported module: %s" % (modname)
             except Exception, e:
-                print "Failed to import module: %s. %s" % (modname, traceback.format_exc())
+                print "Failed to import module: %s. %s" % (
+                    modname, traceback.format_exc())
                 continue
 
     for f in os.listdir(path):
@@ -190,13 +213,25 @@ if __name__ == "__main__":
 
     # Initialize Options
     parser = optparse.OptionParser()
-    parser.add_option("-c", "--collector", dest="collector", default="", help="Run a single collector's unit tests")
-    parser.add_option("-v", "--verbose", dest="verbose", default=1, action="count", help="verbose")
+    parser.add_option("-c",
+                      "--collector",
+                      dest="collector",
+                      default="",
+                      help="Run a single collector's unit tests")
+    parser.add_option("-v",
+                      "--verbose",
+                      dest="verbose",
+                      default=1,
+                      action="count",
+                      help="verbose")
 
     # Parse Command Line Args
     (options, args) = parser.parse_args()
 
-    cPath = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src', 'collectors', options.collector))
+    cPath = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                         'src',
+                                         'collectors',
+                                         options.collector))
     getCollectorTests(cPath)
 
     tests = []

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+###############################################################################
 
 from test import *
 
@@ -8,7 +8,7 @@ from diamond.collector import Collector
 
 from varnish import VarnishCollector
 
-################################################################################
+###############################################################################
 
 
 class TestVarnishCollector(CollectorTestCase):
@@ -19,7 +19,8 @@ class TestVarnishCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch.object(VarnishCollector, 'poll', Mock(return_value=self.getFixture('varnish_stats').getvalue())):
+        with patch.object(VarnishCollector, 'poll', Mock(
+            return_value=self.getFixture('varnish_stats').getvalue())):
             self.collector.collect()
 
         metrics = {
@@ -118,11 +119,12 @@ class TestVarnishCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        with patch.object(VarnishCollector, 'poll', Mock(return_value=self.getFixture('varnish_stats_blank').getvalue())):
+        with patch.object(VarnishCollector, 'poll', Mock(
+            return_value=self.getFixture('varnish_stats_blank').getvalue())):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {})
 
-################################################################################
+###############################################################################
 if __name__ == "__main__":
     unittest.main()

@@ -1,13 +1,13 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+###############################################################################
 
 from test import *
 
 from diamond.collector import Collector
 from xen import XENCollector
 
-################################################################################
+###############################################################################
 
 
 class TestXENCollector(CollectorTestCase):
@@ -70,6 +70,6 @@ class TestXENCollector(CollectorTestCase):
         self.setDocExample(self.collector.__class__.__name__, metrics)
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+###############################################################################
 if __name__ == "__main__":
     unittest.main()

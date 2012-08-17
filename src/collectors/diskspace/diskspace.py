@@ -9,9 +9,14 @@ Uses /proc/mounts and os.statvfs() to get disk space usage
 
 #### Examples
 
-    exclude_filters =,                 # no exclude filters at all
-    exclude_filters = ^/boot, ^/mnt     # exclude everything that begins /boot or /mnt
-    exclude_filters = m,                # exclude everything that includes the letter 'm'
+    # no exclude filters at all
+    exclude_filters =,
+
+    # exclude everything that begins /boot or /mnt
+    exclude_filters = ^/boot, ^/mnt
+
+    # exclude everything that includes the letter 'm'
+    exclude_filters = m,
 
 """
 
@@ -32,7 +37,9 @@ class DiskSpaceCollector(diamond.collector.Collector):
         config_help = super(DiskSpaceCollector, self).get_default_config_help()
         config_help.update({
             'filesystems': "filesystems to examine",
-            'exclude_filters': "A list of regex patterns. Any filesystem matching any of these patterns will be excluded from disk space metrics collection",
+            'exclude_filters': "A list of regex patterns. Any filesystem"
+                + " matching any of these patterns will be excluded from disk"
+                + " space metrics collection",
         })
         return config_help
 
@@ -46,17 +53,21 @@ class DiskSpaceCollector(diamond.collector.Collector):
             'enabled': 'True',
             'path': 'diskspace',
             # filesystems to examine
-            'filesystems': 'ext2, ext3, ext4, xfs, glusterfs, nfs, ntfs, hfs, fat32, fat16',
+            'filesystems': 'ext2, ext3, ext4, xfs, glusterfs, nfs, ntfs, hfs,'
+                + ' fat32, fat16',
 
             # exclude_filters
             #   A list of regex patterns
-            #   A filesystem matching any of these patterns will be excluded from disk space
-            #   metrics collection.
+            #   A filesystem matching any of these patterns will be excluded
+            #   from disk space metrics collection.
             #
             # Examples:
-            #       exclude_filters =,                 # no exclude filters at all
-            #       exclude_filters = ^/boot, ^/mnt     # exclude everything that begins /boot or /mnt
-            #       exclude_filters = m,                # exclude everything that includes the letter "m"
+            #       exclude_filters =,
+            # no exclude filters at all
+            #       exclude_filters = ^/boot, ^/mnt
+            # exclude everything that begins /boot or /mnt
+            #       exclude_filters = m,
+            # exclude everything that includes the letter "m"
             'exclude_filters': '^/export/home',
 
             # We don't use any derivative data to calculate this value
@@ -97,11 +108,17 @@ class DiskSpaceCollector(diamond.collector.Collector):
             file = open('/proc/mounts')
             for line in file:
                 try:
-                    device, mount_point, fs_type, fs_options, dummy1, dummy2 = line.split()
-                except ValueError:
+                    mount = line.split()
+                    device = mount[0]
+                    mount_point = mount[1]
+                    fs_type = mount[2]
+                    fs_options = mount[3]
+                except (IndexError, ValueError):
                     continue
 
-                if mount_point.startswith('/dev') or mount_point.startswith('/proc') or mount_point.startswith('/sys'):
+                if (mount_point.startswith('/dev')
+                    or mount_point.startswith('/proc')
+                    or mount_point.startswith('/sys')):
                     continue
 
                 if device.startswith('/') and mount_point.startswith('/'):
@@ -160,24 +177,32 @@ class DiskSpaceCollector(diamond.collector.Collector):
             data = os.statvfs(info['mount_point'])
             block_size = data.f_bsize
 
-            blocks_total, blocks_free, blocks_avail = data.f_blocks, data.f_bfree, data.f_bavail
-            inodes_total, inodes_free, inodes_avail = data.f_files, data.f_ffree, data.f_favail
+            blocks_total = data.f_blocks
+            blocks_free = data.f_bfree
+            blocks_avail = data.f_bavail
+            inodes_total = data.f_files
+            inodes_free = data.f_ffree
+            inodes_avail = data.f_favail
 
             for unit in self.config['byte_unit']:
 
                 metric_name = '%s.%s_used' % (name, unit)
-                metric_value = float(block_size) * float(blocks_total - blocks_free)
-                metric_value = diamond.convertor.binary.convert(value=metric_value, oldUnit='byte', newUnit=unit)
+                metric_value = float(block_size) * float(
+                    blocks_total - blocks_free)
+                metric_value = diamond.convertor.binary.convert(
+                    value=metric_value, oldUnit='byte', newUnit=unit)
                 self.publish(metric_name, metric_value, 2)
 
                 metric_name = '%s.%s_free' % (name, unit)
                 metric_value = float(block_size) * float(blocks_free)
-                metric_value = diamond.convertor.binary.convert(value=metric_value, oldUnit='byte', newUnit=unit)
+                metric_value = diamond.convertor.binary.convert(
+                    value=metric_value, oldUnit='byte', newUnit=unit)
                 self.publish(metric_name, metric_value, 2)
 
                 metric_name = '%s.%s_avail' % (name, unit)
                 metric_value = float(block_size) * float(blocks_avail)
-                metric_value = diamond.convertor.binary.convert(value=metric_value, oldUnit='byte', newUnit=unit)
+                metric_value = diamond.convertor.binary.convert(
+                    value=metric_value, oldUnit='byte', newUnit=unit)
                 self.publish(metric_name, metric_value, 2)
 
             self.publish('%s.inodes_used' % name, inodes_total - inodes_free)

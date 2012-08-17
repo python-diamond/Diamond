@@ -53,16 +53,23 @@ class NginxCollector(diamond.collector.Collector):
 
     def collect(self):
         activeConnectionsRE = re.compile(r'Active connections: (?P<conn>\d+)')
-        totalConnectionsRE = re.compile('^\s+(?P<conn>\d+)\s+(?P<acc>\d+)\s+(?P<req>\d+)')
-        connectionStatusRE = re.compile('Reading: (?P<reading>\d+) Writing: (?P<writing>\d+) Waiting: (?P<waiting>\d+)')
+        totalConnectionsRE = re.compile('^\s+(?P<conn>\d+)\s+'
+                                        + '(?P<acc>\d+)\s+(?P<req>\d+)')
+        connectionStatusRE = re.compile('Reading: (?P<reading>\d+) '
+                                        + 'Writing: (?P<writing>\d+) '
+                                        + 'Waiting: (?P<waiting>\d+)')
         metrics = []
-        req = urllib2.Request('http://%s:%i%s' % (self.config['req_host'], int(self.config['req_port']), self.config['req_path']))
+        req = urllib2.Request('http://%s:%i%s' % (self.config['req_host'],
+                                                  int(self.config['req_port']),
+                                                  self.config['req_path']))
         try:
             handle = urllib2.urlopen(req)
             for l in handle.readlines():
                 l = l.rstrip('\r\n')
                 if activeConnectionsRE.match(l):
-                    self.publish('active_connections', int(activeConnectionsRE.match(l).group('conn')))
+                    self.publish(
+                        'active_connections',
+                        int(activeConnectionsRE.match(l).group('conn')))
                 elif totalConnectionsRE.match(l):
                     m = totalConnectionsRE.match(l)
                     req_per_conn = float(m.group('req')) / float(m.group('acc'))

@@ -35,7 +35,8 @@ class ResqueWebCollector(diamond.collector.Collector):
 
     def collect(self):
         try:
-            response = urllib2.urlopen("http://%s:%s/stats.txt" % (self.config['host'], int(self.config['port'])))
+            response = urllib2.urlopen("http://%s:%s/stats.txt" % (
+                self.config['host'], int(self.config['port'])))
         except Exception, e:
             self.log.error('Couldnt connect to resque-web: %s', e)
             return {}

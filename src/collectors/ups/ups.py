@@ -51,7 +51,8 @@ class UPSCollector(diamond.collector.Collector):
         if self.config['use_sudo']:
             command.insert(0, self.config['sudo_cmd'])
 
-        p = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0][:-1]
+        p = subprocess.Popen(command,
+                             stdout=subprocess.PIPE).communicate()[0][:-1]
 
         for ln in p.communicate()[0].splitlines():
             datapoint = ln.split(": ")

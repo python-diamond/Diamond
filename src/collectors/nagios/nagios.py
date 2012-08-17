@@ -17,7 +17,8 @@ import os
 class NagiosStatsCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
-        config_help = super(NagiosStatsCollector, self).get_default_config_help()
+        config_help = super(NagiosStatsCollector,
+                            self).get_default_config_help()
         config_help.update({
             'bin': 'Path to nagios3stats binary',
             'vars': 'What vars to collect',
@@ -67,15 +68,20 @@ class NagiosStatsCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        if not os.access(self.config['bin'], os.X_OK) or (self.config['use_sudo'] and not os.access(self.config['sudo_cmd'], os.X_OK)):
+        if (not os.access(self.config['bin'], os.X_OK)
+            or (self.config['use_sudo']
+                and not os.access(self.config['sudo_cmd'], os.X_OK))):
             return
 
-        command = [self.config['bin'], '--data', ",".join(self.config['vars']), '--mrtg']
+        command = [self.config['bin'],
+                   '--data', ",".join(self.config['vars']),
+                   '--mrtg']
 
         if self.config['use_sudo']:
             command.insert(0, self.config['sudo_cmd'])
 
-        p = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0][:-1]
+        p = subprocess.Popen(command,
+                             stdout=subprocess.PIPE).communicate()[0][:-1]
 
         for i, v in enumerate(p.split("\n")):
             metric_name = self.config['vars'][i]

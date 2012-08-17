@@ -81,7 +81,8 @@ class VarnishCollector(diamond.collector.Collector):
             if self.config['use_sudo']:
                 command.insert(0, self.config['sudo_cmd'])
 
-            output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
+            output = subprocess.Popen(command,
+                                      stdout=subprocess.PIPE).communicate()[0]
         except OSError:
             output = ""
 

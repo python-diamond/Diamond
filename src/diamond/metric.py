@@ -14,8 +14,9 @@ class Metric(object):
         Takes:
             path=string: string the specifies the path of the metric
             value=[float|int]: the value to be submitted
-            timestamp=[float|int]: the timestamp, in seconds since the epoch (as from time.time())
-            precision=int: the precision to apply.  Generally the default (2) should work fine.
+            timestamp=[float|int]: the timestamp, in seconds since the epoch
+            (as from time.time()) precision=int: the precision to apply.
+            Generally the default (2) should work fine.
         """
 
         # Validate the path and value submitted
@@ -64,11 +65,16 @@ class Metric(object):
         """
         Parse a string and create a metric
         """
-        match = re.match(r'^(?P<name>[A-Za-z0-9\.\-_]+)\s+(?P<value>[0-9\.]+)\s+(?P<timestamp>[0-9\.]+)(\n?)$', string)
+        match = re.match(r'^(?P<name>[A-Za-z0-9\.\-_]+)\s+'
+                         + '\(?P<value>[0-9\.]+)\s+'
+                         + '(?P<timestamp>[0-9\.]+)(\n?)$',
+                        string)
         try:
             groups = match.groupdict()
             # TODO: get precision from value string
-            return Metric(groups['name'], groups['value'], float(groups['timestamp']))
+            return Metric(groups['name'],
+                          groups['value'],
+                          float(groups['timestamp']))
         except:
             raise DiamondException(
                 "Metric could not be parsed from string: %s." % string)

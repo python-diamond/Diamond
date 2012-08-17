@@ -1,13 +1,13 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+###############################################################################
 
 from test import *
 
 from diamond.collector import Collector
 from vmstat import VMStatCollector
 
-################################################################################
+###############################################################################
 
 
 class TestVMStatCollector(CollectorTestCase):
@@ -47,6 +47,6 @@ class TestVMStatCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, metrics)
 
 
-################################################################################
+###############################################################################
 if __name__ == "__main__":
     unittest.main()

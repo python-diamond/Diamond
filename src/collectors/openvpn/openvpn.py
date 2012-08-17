@@ -26,7 +26,7 @@ Or, to override the name (now "127_0_0_1"):
 
 You can also specify multiple and mixed instances::
 
-    instances = file:///var/log/openvpn/developers.log, tcp://10.0.0.1:1195?admins
+    instances = file:///var/log/openvpn/openvpn.log, tcp://10.0.0.1:1195?admins
 
 #### Dependencies
 

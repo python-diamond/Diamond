@@ -11,7 +11,8 @@ metric.path.b 2
 metric.path.c 3
 ```
 
-They are not passed any arguments and if they return an error code, no metrics are collected.
+They are not passed any arguments and if they return an error code,
+no metrics are collected.
 
 #### Dependencies
 
@@ -28,7 +29,8 @@ import commands
 class UserScriptsCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
-        config_help = super(UserScriptsCollector, self).get_default_config_help()
+        config_help = super(UserScriptsCollector,
+                            self).get_default_config_help()
         config_help.update({
             'scripts_path': "Path to find the scripts to run",
         })
@@ -53,7 +55,8 @@ class UserScriptsCollector(diamond.collector.Collector):
         for script in os.listdir(scripts_path):
             if not os.access(os.path.join(scripts_path, script), os.X_OK):
                 continue
-            stat, out = commands.getstatusoutput(os.path.join(scripts_path, script))
+            stat, out = commands.getstatusoutput(os.path.join(scripts_path,
+                                                              script))
             if stat != 0:
                 continue
             for line in out.split('\n'):

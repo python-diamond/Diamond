@@ -31,7 +31,9 @@ class TCPCollector(diamond.collector.Collector):
         config = super(TCPCollector, self).get_default_config()
         config.update({
             'path':             'tcp',
-            'allowed_names':    'ListenOverflows, ListenDrops, TCPLoss, TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, TCPForwardRetrans, TCPSlowStartRetrans'
+            'allowed_names':    'ListenOverflows, ListenDrops, TCPLoss, '
+                            + 'TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, '
+                            + 'TCPForwardRetrans, TCPSlowStartRetrans'
         })
         return config
 

@@ -51,7 +51,8 @@ class ConnTrackCollector(diamond.collector.Collector):
         if self.config['use_sudo']:
             command.insert(0, self.config['sudo_cmd'])
 
-        line = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0]
+        line = subprocess.Popen(command,
+                                stdout=subprocess.PIPE).communicate()[0]
 
         match = _RE.match(line)
         if match:

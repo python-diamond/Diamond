@@ -63,7 +63,9 @@ class PingCollector(diamond.collector.Collector):
                 if self.config['use_sudo']:
                     command.insert(0, self.config['sudo_cmd'])
 
-                ping = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip().split("\n")[-1]
+                ping = subprocess.Popen(
+                    command, stdout=subprocess.PIPE).communicate()[0].strip(
+                    ).split("\n")[-1]
 
                 # Linux
                 if ping.startswith('rtt'):
