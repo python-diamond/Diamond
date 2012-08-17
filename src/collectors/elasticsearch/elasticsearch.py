@@ -18,7 +18,8 @@ import diamond.collector
 class ElasticSearchCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
-        config_help = super(ElasticSearchCollector, self).get_default_config_help()
+        config_help = super(ElasticSearchCollector,
+                            self).get_default_config_help()
         config_help.update({
             'host': "",
             'port': "",
@@ -49,7 +50,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
         try:
             result = json.load(response)
         except (TypeError, ValueError):
-            self.log.error("Unable to parse response from elasticsearch as a json object")
+            self.log.error("Unable to parse response from elasticsearch as a"
+                           + " json object")
             return
 
         metrics = {}
@@ -62,24 +64,28 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
         #
         # indices
-        metrics['indices.docs.count'] = data['indices']['docs']['count']
-        metrics['indices.docs.deleted'] = data['indices']['docs']['deleted']
+        indices = data['indices']
+        metrics['indices.docs.count'] = indices['docs']['count']
+        metrics['indices.docs.deleted'] = indices['docs']['deleted']
 
-        metrics['indices.datastore.size'] = data['indices']['store']['size_in_bytes']
+        metrics['indices.datastore.size'] = indices['store']['size_in_bytes']
 
         #
         # process mem/cpu
-        metrics['process.cpu.percent'] = data['process']['cpu']['percent']
-        metrics['process.mem.resident'] = data['process']['mem']['resident_in_bytes']
-        metrics['process.mem.share'] = data['process']['mem']['share_in_bytes']
-        metrics['process.mem.virtual'] = data['process']['mem']['total_virtual_in_bytes']
+        process = data['process']
+        mem = process['mem']
+        metrics['process.cpu.percent'] = process['cpu']['percent']
+        metrics['process.mem.resident'] = mem['resident_in_bytes']
+        metrics['process.mem.share'] = mem['share_in_bytes']
+        metrics['process.mem.virtual'] = mem['total_virtual_in_bytes']
 
         #
         # filesystem
-        metrics['disk.reads.count'] = data['fs']['data'][0]['disk_reads']
-        metrics['disk.reads.size'] = data['fs']['data'][0]['disk_read_size_in_bytes']
-        metrics['disk.writes.count'] = data['fs']['data'][0]['disk_writes']
-        metrics['disk.writes.size'] = data['fs']['data'][0]['disk_write_size_in_bytes']
+        fs_data = data['fs']['data'][0]
+        metrics['disk.reads.count'] = fs_data['disk_reads']
+        metrics['disk.reads.size'] = fs_data['disk_read_size_in_bytes']
+        metrics['disk.writes.count'] = fs_data['disk_writes']
+        metrics['disk.writes.size'] = fs_data['disk_write_size_in_bytes']
 
         for key in metrics:
             self.publish(key, metrics[key])

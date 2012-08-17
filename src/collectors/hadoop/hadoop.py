@@ -3,7 +3,7 @@
 """
 Diamond collector for Hadoop metrics, see:
 
- * [http://www.cloudera.com/blog/2009/03/hadoop-metrics/](http://www.cloudera.com/blog/2009/03/hadoop-metrics/)
+ * [http://www.cloudera.com/blog/2009/03/hadoop-metrics/](http://bit.ly/NKBcFm)
 
 #### Dependencies
 

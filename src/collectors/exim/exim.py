@@ -48,7 +48,8 @@ class EximCollector(diamond.collector.Collector):
         if self.config['use_sudo']:
             command.insert(0, self.config['sudo_cmd'])
 
-        queuesize = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].split()
+        queuesize = subprocess.Popen(
+            command, stdout=subprocess.PIPE).communicate()[0].split()
 
         if not len(queuesize):
             return
