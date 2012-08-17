@@ -22,7 +22,6 @@ class TestDiskUsageCollector(CollectorTestCase):
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
     def test_get_disk_statistics(self, open_mock):
-        result = None
         open_mock.return_value = StringIO("""
    1       0 ram0 0 0 0 0 0 0 0 0 0 0 0
    1       1 ram1 0 0 0 0 0 0 0 0 0 0 0
@@ -65,7 +64,8 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         self.assertEqual(
             sorted(result.keys()),
-            [(8,  0), (8,  1), (8, 16), (8, 17), (8, 32), (8, 33), (8, 48), (8, 49), (9,  0)]
+            [(8,  0), (8,  1), (8, 16), (8, 17), (8, 32),
+                (8, 33), (8, 48), (8, 49), (9,  0)]
 )
 
         return result
@@ -75,7 +75,8 @@ class TestDiskUsageCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
 
         with nested(
-            patch('__builtin__.open', Mock(return_value=self.getFixture('proc_diskstats_1'))),
+            patch('__builtin__.open', Mock(
+                return_value=self.getFixture('proc_diskstats_1'))),
             patch('time.time', Mock(return_value=10))
 ):
             self.collector.collect()
@@ -83,7 +84,8 @@ class TestDiskUsageCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, {})
 
         with nested(
-            patch('__builtin__.open', Mock(return_value=self.getFixture('proc_diskstats_2'))),
+            patch('__builtin__.open', Mock(
+                return_value=self.getFixture('proc_diskstats_2'))),
             patch('time.time', Mock(return_value=20))
 ):
             self.collector.collect()
