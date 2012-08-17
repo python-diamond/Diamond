@@ -10,6 +10,11 @@ import optparse
 import logging
 import configobj
 
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle as pickle
+
 from StringIO import StringIO
 from contextlib import nested
 
@@ -84,6 +89,15 @@ class CollectorTestCase(unittest.TestCase):
         data = StringIO(file.read())
         file.close()
         return data
+
+    def getPickledResults(self, results_name):
+        file = open(self.getFixturePath(results_name), 'r')
+        data = pickle.load(file)
+        file.close()
+        return data
+
+    def setPickledResults(self, results_name, data):
+        pickle.dump(data, open(self.getFixturePath(results_name), "wb"))
 
     def assertPublished(self, mock, key, value):
         calls = filter(lambda x: x[0][0] == key, mock.call_args_list)
