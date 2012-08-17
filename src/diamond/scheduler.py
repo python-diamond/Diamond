@@ -92,9 +92,9 @@ class Scheduler:
 
     def __delayfunc(self, delay):
         # This delay function is basically a time.sleep() that is
-        # divided up, so that we can check the self.running flag while delaying.
-        # there is an additional check in here to ensure that the top item of
-        # the queue hasn't changed
+        # divided up, so that we can check the self.running flag while
+        # delaying. There is an additional check in here to ensure that the
+        # top item of the queue hasn't changed
         if delay < 10:
             time.sleep(delay)
         else:
@@ -128,7 +128,8 @@ class Scheduler:
         """
         if initialdelay < 0 or interval < 1:
             raise ValueError("Delay or interval must be >0")
-        # Select the correct IntervalTask class. Not all types may be available!
+        # Select the correct IntervalTask class.
+        # Not all types may be available!
         if processmethod == method.sequential:
             TaskClass = IntervalTask
         elif processmethod == method.threaded:
@@ -167,8 +168,8 @@ class Scheduler:
         self.schedule_task(task, initialdelay)
         return task
 
-    def add_daytime_task(self, action, taskname, weekdays, monthdays, timeonday,
-            processmethod, args, kw):
+    def add_daytime_task(self, action, taskname, weekdays, monthdays,
+                         timeonday, processmethod, args, kw):
         """Add a new Day Task (Weekday or Monthday) to the schedule."""
         if weekdays and monthdays:
             raise ValueError("You can only specify weekdays or monthdays, "
@@ -304,7 +305,7 @@ class Task:
 
     def reschedule(self, scheduler):
         """This method should be defined in one of the sub classes!"""
-        raise NotImplementedError("You're using the abstract base class 'Task',"
+        raise NotImplementedError("You're using the abstract class 'Task',"
             " use a concrete class instead")
 
     def execute(self):
@@ -314,7 +315,8 @@ class Task:
     def handle_exception(self, exc):
         """Handle any exception that occured during task execution."""
         print >> sys.stderr, "ERROR DURING TASK EXECUTION", exc
-        print >> sys.stderr, "".join(traceback.format_exception(*sys.exc_info()))
+        print >> sys.stderr, "".join(traceback.format_exception(
+                                                    *sys.exc_info()))
         print >> sys.stderr, "-" * 20
 
 
@@ -421,7 +423,7 @@ class MonthdayTask(DayTaskRescheduler, Task):
         if type(timeonday) not in (list, tuple) or len(timeonday) != 2:
             raise TypeError("timeonday must be a 2-tuple (hour,minute)")
         if type(monthdays) not in (list, tuple):
-            raise TypeError("monthdays must be a sequence of monthdays numbers "
+            raise TypeError("monthdays must be a sequence of numbers "
                 "1-31")
         DayTaskRescheduler.__init__(self, timeonday)
         Task.__init__(self, name, action, args, kw)
@@ -575,7 +577,13 @@ if __name__ == "__main__":
         print "<<<END_TASK", arg
 
     s = ThreadedScheduler()
-    s.add_interval_task(testaction, "test action 1", 0, 4, method.threaded, ["task 1"], None)
+    s.add_interval_task(testaction,
+                        "test action 1",
+                        0,
+                        4,
+                        method.threaded,
+                        ["task 1"],
+                        None)
     s.start()
 
     print "Scheduler started, waiting 15 sec...."

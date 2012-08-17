@@ -1,7 +1,8 @@
 # coding=utf-8
 
 """
-Write the collected stats to a locally stored log file. Rotate the log file every night and remove after 7 days.
+Write the collected stats to a locally stored log file. Rotate the log file
+every night and remove after 7 days.
 """
 
 from Handler import Handler
@@ -26,7 +27,12 @@ class ArchiveHandler(Handler):
         # Create Archive Log Formatter
         formatter = logging.Formatter('%(message)s')
         # Create Archive Log Handler
-        handler = logging.handlers.TimedRotatingFileHandler(self.config['log_file'], 'midnight', 1, backupCount=int(self.config['days']))
+        handler = logging.handlers.TimedRotatingFileHandler(
+            self.config['log_file'],
+            'midnight',
+            1,
+            backupCount=int(self.config['days'])
+            )
         handler.setFormatter(formatter)
         handler.setLevel(logging.DEBUG)
         self.archive.addHandler(handler)

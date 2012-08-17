@@ -18,16 +18,18 @@ Enable this handler
 
 #### Notes
 
-If your system has both [python-statsd](http://pypi.python.org/pypi/python-statsd/)
-and [statsd](http://pypi.python.org/pypi/statsd/) installed, you might experience
-failues after python updates or pip updates that change the order of importing. We
-recommend that you only have [python-statsd](http://pypi.python.org/pypi/python-statsd/)
+If your system has both
+[python-statsd](http://pypi.python.org/pypi/python-statsd/)
+and [statsd](http://pypi.python.org/pypi/statsd/) installed, you might
+experience failues after python updates or pip updates that change the order of
+importing. We recommend that you only have
+[python-statsd](http://pypi.python.org/pypi/python-statsd/)
 installed on your system if you are using this handler.
 
-The handler file is named an odd stats_d.py because of an import issue with having
-the python library called statsd and this handler's module being called statsd,
-so we use an odd name for this handler. This doesn't affect the usage of this
-handler.
+The handler file is named an odd stats_d.py because of an import issue with
+having the python library called statsd and this handler's module being called
+statsd, so we use an odd name for this handler. This doesn't affect the usage
+of this handler.
 
 """
 
@@ -71,8 +73,12 @@ class StatsdHandler(Handler):
         # to work with the statsd module's view of the world.
         # It will get re-joined by the python-statsd module.
         (prefix, name) = metric.path.rsplit(".", 1)
-        logging.debug("Sending {0} {1} {2}|r".format(name, metric.value, metric.timestamp))
-        statsd.Raw(prefix, self.connection).send(name, metric.value, metric.timestamp)
+        logging.debug("Sending {0} {1} {2}|r".format(name,
+                                                     metric.value,
+                                                     metric.timestamp))
+        statsd.Raw(prefix, self.connection).send(name,
+                                                 metric.value,
+                                                 metric.timestamp)
 
     def _connect(self):
         """

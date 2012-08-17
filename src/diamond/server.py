@@ -9,7 +9,10 @@ import configobj
 import inspect
 
 # Path Fix
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
+sys.path.append(
+    os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__), "../")))
 
 import diamond
 
@@ -40,7 +43,8 @@ class Server(object):
         """
         Load the full config
         """
-        config = configobj.ConfigObj(os.path.abspath(self.config['configfile']))
+        configfile = os.path.abspath(self.config['configfile'])
+        config = configobj.ConfigObj(configfile)
         config['configfile'] = self.config['configfile']
         self.config = config
 
@@ -62,7 +66,9 @@ class Server(object):
         Load handlers
         """
         if type(self.config['server']['handlers']) == str:
-            self.config['server']['handlers'] = [self.config['server']['handlers']]
+            handlers = [self.config['server']['handlers']]
+            self.config['server']['handlers'] = handlers
+
         for h in self.config['server']['handlers']:
             try:
                 # Load Handler Class
@@ -140,7 +146,10 @@ class Server(object):
                     collectors[key] = subcollectors[key]
 
             # Ignore anything that isn't a .py file
-            elif os.path.isfile(fpath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'test':
+            elif (os.path.isfile(fpath)
+                  and len(f) > 3
+                  and f[-3:] == '.py'
+                  and f[0:4] != 'test'):
 
                 # Check filter
                 if filter and os.path.join(path, f) != filter:
@@ -153,11 +162,12 @@ class Server(object):
                 mtime = st.st_mtime
                 # Check if module has been loaded before
                 if modname in self.modules:
-                    # Check if file mtime is newer then the last verison we loaded
+                    # Check if file mtime is newer then the last loaded verison
                     if mtime <= self.modules[modname]:
                         # Module hasn't changed
                         # Log
-                        self.log.debug("Found Module %s, but it hasn't changed.", modname)
+                        self.log.debug("Found %s, but it hasn't changed.",
+                                       modname)
                         continue
 
                 try:
@@ -177,8 +187,11 @@ class Server(object):
                 # Find all classes defined in the module
                 for attrname in dir(mod):
                     attr = getattr(mod, attrname)
-                    # Only attempt to load classes that are infact classes, are Collectors but are not the base Collector class
-                    if inspect.isclass(attr) and issubclass(attr, Collector) and attr != Collector:
+                    # Only attempt to load classes that are infact classes
+                    # are Collectors but are not the base Collector class
+                    if (inspect.isclass(attr)
+                        and issubclass(attr, Collector)
+                        and attr != Collector):
                         if attrname.startswith('parent_'):
                             continue
                         # Get class name
@@ -251,9 +264,21 @@ class Server(object):
 
             # Schedule Collector
             if interval_task:
-                task = self.scheduler.add_interval_task(func, name, splay, interval, method, args, None, True)
+                task = self.scheduler.add_interval_task(func,
+                                                        name,
+                                                        splay,
+                                                        interval,
+                                                        method,
+                                                        args,
+                                                        None,
+                                                        True)
             else:
-                task = self.scheduler.add_single_task(func, name, splay, method, args, None)
+                task = self.scheduler.add_single_task(func,
+                                                      name,
+                                                      splay,
+                                                      method,
+                                                      args,
+                                                      None)
 
             # Log
             self.log.debug("Scheduled task: %s", name)
@@ -275,8 +300,9 @@ class Server(object):
         self.load_config()
 
         # Load collectors
-        self.load_include_path(self.config['server']['collectors_path'])
-        collectors = self.load_collectors(self.config['server']['collectors_path'])
+        collectors_path = self.config['server']['collectors_path']
+        self.load_include_path(collectors_path)
+        collectors = self.load_collectors(collectors_path)
 
         # Setup Collectors
         for cls in collectors.values():
@@ -299,7 +325,8 @@ class Server(object):
         self.load_handlers()
 
         # Overrides collector config dir
-        self.config['server']['collectors_config_path'] = os.path.abspath(os.path.dirname(file))
+        collector_config_path = os.path.abspath(os.path.dirname(file))
+        self.config['server']['collectors_config_path'] = collector_config_path
 
         # Load config
         self.load_config()
@@ -335,13 +362,15 @@ class Server(object):
             time_since_reload += 1
 
             # Check if its time to reload collectors
-            if reload and time_since_reload > int(self.config['server']['collectors_reload_interval']):
+            if (reload and time_since_reload
+                > int(self.config['server']['collectors_reload_interval'])):
                 self.log.debug("Reloading config.")
                 self.load_config()
                 # Log
                 self.log.debug("Reloading collectors.")
                 # Load collectors
-                collectors = self.load_collectors(self.config['server']['collectors_path'])
+                collectors_path = self.config['server']['collectors_path']
+                collectors = self.load_collectors(collectors_path)
                 # Setup any Collectors that were loaded
                 for cls in collectors.values():
                     # Initialize Collector

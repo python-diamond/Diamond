@@ -11,7 +11,8 @@ import zmq
 
 class zmqHandler (Handler):
     """
-      Implements the abstract Handler class, sending data to a Zer0MQ pub channel
+      Implements the abstract Handler class
+      Sending data to a Zer0MQ pub channel
     """
 
     def __init__(self, config=None):

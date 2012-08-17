@@ -33,7 +33,8 @@ class Metric(object):
                 except ValueError, e:
                     raise DiamondException("Invalid parameter: %s" % e)
 
-        # The value needs to be a float or an int.  If it is, great.  If not, try to cast it to one of those.
+        # The value needs to be a float or an int.  If it is, great.  If not,
+        # try to cast it to one of those.
         if not isinstance(value, int) and not isinstance(value, float):
             try:
                 if precision == 0:
@@ -69,4 +70,5 @@ class Metric(object):
             # TODO: get precision from value string
             return Metric(groups['name'], groups['value'], float(groups['timestamp']))
         except:
-            raise DiamondException("Metric could not be parsed from string: %s." % string)
+            raise DiamondException(
+                "Metric could not be parsed from string: %s." % string)

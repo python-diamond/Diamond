@@ -1,7 +1,8 @@
 # coding=utf-8
 
 """
-Emulate a gmetric client for usage with [Ganglia Monitoring System](http://ganglia.sourceforge.net/)
+Emulate a gmetric client for usage with
+[Ganglia Monitoring System](http://ganglia.sourceforge.net/)
 """
 
 from Handler import Handler
@@ -63,7 +64,14 @@ class GmetricHandler(Handler):
         metric_type = "double"
         units = ""
         group = ""
-        self.gmetric.send(metric_name, metric.value, metric_type, units, slope, tmax, dmax, group)
+        self.gmetric.send(metric_name,
+                          metric.value,
+                          metric_type,
+                          units,
+                          slope,
+                          tmax,
+                          dmax,
+                          group)
 
     def _close(self):
         """

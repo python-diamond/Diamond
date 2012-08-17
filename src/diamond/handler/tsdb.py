@@ -3,11 +3,11 @@
 """
 Send metrics to a [OpenTSDB](http://opentsdb.net/) server.
 
-[OpenTSDB](http://opentsdb.net/) is a distributed, scalable Time Series Database
-(TSDB) written on top of [HBase](http://hbase.org/). OpenTSDB was written to
-address a common need: store, index and serve metrics collected from computer
-systems (network gear, operating systems, applications) at a large scale, and
-make this data easily accessible and graphable.
+[OpenTSDB](http://opentsdb.net/) is a distributed, scalable Time Series
+Database (TSDB) written on top of [HBase](http://hbase.org/). OpenTSDB was
+written to address a common need: store, index and serve metrics collected from
+computer systems (network gear, operating systems, applications) at a large
+scale, and make this data easily accessible and graphable.
 
 Thanks to HBase's scalability, OpenTSDB allows you to collect many thousands of
 metrics from thousands of hosts and applications, at a high rate (every few
@@ -18,10 +18,10 @@ per day in their main production datacenter.
 
 Imagine having the ability to quickly plot a graph showing the number of DELETE
 statements going to your MySQL database along with the number of slow queries
-and temporary files created, and correlate this with the 99th percentile of your
-service's latency. OpenTSDB makes generating such graphs on the fly a trivial
-operation, while manipulating millions of data point for very fine grained,
-real-time monitoring.
+and temporary files created, and correlate this with the 99th percentile of
+your service's latency. OpenTSDB makes generating such graphs on the fly a
+trivial operation, while manipulating millions of data point for very fine
+grained, real-time monitoring.
 
 ==== Notes
 

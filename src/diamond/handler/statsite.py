@@ -1,7 +1,8 @@
 # coding=utf-8
 
 """
-Send metrics to a [Statsite](https://github.com/armon/statsite/) using the default interface.
+Send metrics to a [Statsite](https://github.com/armon/statsite/)
+using the default interface.
 
 Statsite
 ========
