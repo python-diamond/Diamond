@@ -12,7 +12,7 @@ SNMPCollector is a special collector for collecting data from using SNMP
 import socket
 
 try:
-    import pysnmp.entity.rfc3413.oneliner.cmdgen
+    import pysnmp.entity.rfc3413.oneliner.cmdgen as cmdgen
     import pysnmp.debug
 except ImportError:
     pysnmp = None
@@ -31,7 +31,7 @@ class SNMPCollector(diamond.collector.Collector):
 
         # Initialize SNMP Command Generator
         if pysnmp is not None:
-            self.snmpCmdGen = pysnmp.entity.rfc3413.oneliner.cmdgen.CommandGenerator()
+            self.snmpCmdGen = cmdgen.CommandGenerator()
 
     def get_default_config_help(self):
         config_help = super(SNMPCollector, self).get_default_config_help()
@@ -95,13 +95,17 @@ class SNMPCollector(diamond.collector.Collector):
         host = socket.gethostbyname(host)
 
         # Assemble SNMP Auth Data
-        snmpAuthData = pysnmp.entity.rfc3413.oneliner.cmdgen.CommunityData('agent', community)
+        snmpAuthData = cmdgen.CommunityData('agent', community)
 
         # Assemble SNMP Transport Data
-        snmpTransportData = pysnmp.entity.rfc3413.oneliner.cmdgen.UdpTransportTarget((host, port), int(self.config['timeout']), int(self.config['retries']))
+        snmpTransportData = cmdgen.UdpTransportTarget((host, port),
+            int(self.config['timeout']), int(self.config['retries']))
 
         # Assemble SNMP Next Command
-        errorIndication, errorStatus, errorIndex, varBind = self.snmpCmdGen.getCmd(snmpAuthData, snmpTransportData, oid)
+        errorIndication,
+        errorStatus,
+        errorIndex,
+        varBind = self.snmpCmdGen.getCmd(snmpAuthData, snmpTransportData, oid)
 
         # TODO: Error check
 
@@ -125,13 +129,19 @@ class SNMPCollector(diamond.collector.Collector):
         host = socket.gethostbyname(host)
 
         # Assemble SNMP Auth Data
-        snmpAuthData = pysnmp.entity.rfc3413.oneliner.cmdgen.CommunityData('agent', community)
+        snmpAuthData = cmdgen.CommunityData('agent', community)
 
         # Assemble SNMP Transport Data
-        snmpTransportData = pysnmp.entity.rfc3413.oneliner.cmdgen.UdpTransportTarget((host, port), int(self.config['timeout']), int(self.config['retries']))
+        snmpTransportData = cmdgen.UdpTransportTarget((host, port),
+            int(self.config['timeout']), int(self.config['retries']))
 
         # Assemble SNMP Next Command
-        errorIndication, errorStatus, errorIndex, varBindTable = self.snmpCmdGen.nextCmd(snmpAuthData, snmpTransportData, oid)
+        errorIndication,
+        errorStatus,
+        errorIndex,
+        varBindTable = self.snmpCmdGen.nextCmd(snmpAuthData,
+                                               snmpTransportData,
+                                               oid)
 
         # TODO: Error Check
 
