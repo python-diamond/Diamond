@@ -15,7 +15,11 @@ try:
 except ImportError:
     import pickle as pickle
 
-from StringIO import StringIO
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+    
 from contextlib import nested
 
 from mock import *
