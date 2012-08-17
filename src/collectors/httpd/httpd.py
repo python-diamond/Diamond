@@ -50,7 +50,8 @@ class HttpdCollector(diamond.collector.Collector):
             service_host = endpoint[0]
             service_port = 80
 
-        metrics = ['ReqPerSec', 'BytesPerSec', 'BytesPerReq', 'BusyWorkers', 'IdleWorkers']
+        metrics = ['ReqPerSec', 'BytesPerSec', 'BytesPerReq',
+                   'BusyWorkers', 'IdleWorkers']
 
         # Setup Connection
         connection = httplib.HTTPConnection(service_host, service_port)

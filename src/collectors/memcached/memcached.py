@@ -35,7 +35,9 @@ class MemcachedCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(MemcachedCollector, self).get_default_config_help()
         config_help.update({
-            'publish': "Which rows of 'status' you would like to publish. Telnet host port' and type stats and hit enter to see the list of possibilities. Leave unset to publish all.",
+            'publish': "Which rows of 'status' you would like to publish."
+            + " Telnet host port' and type stats and hit enter to see the list"
+            + " of possibilities. Leave unset to publish all.",
             'hosts': "Complex set of hosts and ports to collect",
         })
         return config_help
@@ -109,5 +111,5 @@ class MemcachedCollector(diamond.collector.Collector):
                 else:
                     # we don't, must be somehting configured in publish so we
                     # should log an error about it
-                    self.log.error("No such key '%s' available, issue 'stats' for "
-                                   "a full list", stat)
+                    self.log.error("No such key '%s' available, issue 'stats' "
+                                   "for a full list", stat)

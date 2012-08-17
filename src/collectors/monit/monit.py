@@ -48,7 +48,8 @@ class MonitCollector(diamond.collector.Collector):
 
             #
             # shouldn't need to check this
-            base64string = base64.encodestring('%s:%s' % (self.config['user'], self.config['passwd'])).replace('\n', '')
+            base64string = base64.encodestring('%s:%s' % (
+                self.config['user'], self.config['passwd'])).replace('\n', '')
             request.add_header("Authorization", "Basic %s" % base64string)
             response = urllib2.urlopen(request)
         except urllib2.HTTPError, err:
@@ -66,12 +67,18 @@ class MonitCollector(diamond.collector.Collector):
         for service in dom.getElementsByTagName('service'):
             if int(service.getAttribute('type')) == 3:
                 name = service.getElementsByTagName('name')[0].firstChild.data
-                cpu = service.getElementsByTagName('cpu')[0].getElementsByTagName('percent')[0].firstChild.data
-                mem = int(service.getElementsByTagName('memory')[0].getElementsByTagName('kilobyte')[0].firstChild.data)
+                cpu = service.getElementsByTagName(
+                    'cpu')[0].getElementsByTagName('percent')[0].firstChild.data
+                mem = int(service.getElementsByTagName(
+                    'memory')[0].getElementsByTagName(
+                    'kilobyte')[0].firstChild.data)
 
                 metrics["%s.cpu.percent" % name] = cpu
                 for unit in self.config['byte_unit']:
-                    metrics["%s.memory.%s_usage" % (name, unit)] = diamond.convertor.binary.convert(value=mem, oldUnit='kilobyte', newUnit=unit)
+                    metrics["%s.memory.%s_usage" % (name, unit)] = (
+                        diamond.convertor.binary.convert(value=mem,
+                                                         oldUnit='kilobyte',
+                                                         newUnit=unit))
 
         for key in metrics:
             self.publish(key, metrics[key])

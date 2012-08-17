@@ -10,7 +10,8 @@ It can be enabled, if compiled into your kernel, by echoing 1 to
 
 #### Dependencies
 
- * KSM built into your kernel. It does not have to be enabled, but the stats will be less than useful if it isn't:-)
+ * KSM built into your kernel. It does not have to be enabled, but the stats
+ will be less than useful if it isn't:-)
 
 """
 
@@ -47,7 +48,8 @@ class KSMCollector(diamond.collector.Collector):
             if os.access(item, os.R_OK):
                 filehandle = open(item)
                 try:
-                    self.publish(os.path.basename(item), float(filehandle.readline().rstrip()))
+                    self.publish(os.path.basename(item),
+                                 float(filehandle.readline().rstrip()))
                 except ValueError:
                     pass
                 filehandle.close()

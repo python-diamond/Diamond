@@ -21,7 +21,8 @@ class LoadAverageCollector(diamond.collector.Collector):
     PROC = '/proc/loadavg'
 
     def get_default_config_help(self):
-        config_help = super(LoadAverageCollector, self).get_default_config_help()
+        config_help = super(LoadAverageCollector,
+                            self).get_default_config_help()
         config_help.update({
         })
         return config_help

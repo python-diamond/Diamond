@@ -26,7 +26,8 @@ class TestMemcachedCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch.object(MemcachedCollector, 'get_raw_stats', Mock(return_value=self.getFixture('stats').getvalue())):
+        with patch.object(MemcachedCollector, 'get_raw_stats',
+            Mock(return_value=self.getFixture('stats').getvalue())):
             self.collector.collect()
 
         metrics = {

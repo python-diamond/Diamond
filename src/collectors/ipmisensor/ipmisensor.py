@@ -1,7 +1,8 @@
 # coding=utf-8
 
 """
-This collector uses the [ipmitool](http://openipmi.sourceforge.net/) to read hardware sensors from servers
+This collector uses the [ipmitool](http://openipmi.sourceforge.net/) to read
+hardware sensors from servers
 using the Intelligent Platform Management Interface (IPMI). IPMI is very common
 with server hardware but usually not available in consumer hardware.
 
@@ -43,7 +44,9 @@ class IPMISensorCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        if not os.access(self.config['bin'], os.X_OK) or (self.config['use_sudo'] and not os.access(self.config['sudo_cmd'], os.X_OK)):
+        if (not os.access(self.config['bin'], os.X_OK)
+            or (self.config['use_sudo']
+                and not os.access(self.config['sudo_cmd'], os.X_OK))):
             return False
 
         command = [self.config['bin'], 'sensor']
@@ -51,13 +54,15 @@ class IPMISensorCollector(diamond.collector.Collector):
         if self.config['use_sudo'] and getpass.getuser() != 'root':
             command.insert(0, self.config['sudo_cmd'])
 
-        p = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0][:-1]
+        p = subprocess.Popen(command,
+                             stdout=subprocess.PIPE).communicate()[0][:-1]
 
         for i, v in enumerate(p.split("\n")):
             data = v.split("|")
             try:
                 # Complex keys are fun!
-                metric_name = data[0].strip().replace(".", "_").replace(" ", ".")
+                metric_name = data[0].strip().replace(".",
+                                                      "_").replace(" ", ".")
                 value = data[1].strip()
 
                 # Skip missing sensors

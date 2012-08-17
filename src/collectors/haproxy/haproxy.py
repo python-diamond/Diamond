@@ -25,7 +25,8 @@ class HAProxyCollector(diamond.collector.Collector):
             'url': "Url to stats in csv format",
             'user': "Username",
             'pass': "Password",
-            'ignore_servers': "Ignore servers, just collect frontend and backend stats",
+            'ignore_servers': "Ignore servers, just collect frontend and "
+                                + "backend stats",
         })
         return config_help
 
@@ -77,7 +78,8 @@ class HAProxyCollector(diamond.collector.Collector):
             self.log.error('Invalid authentication scheme.')
             return metrics
 
-        base64string = base64.encodestring('%s:%s' % (self.config['user'], self.config['pass']))[:-1]
+        base64string = base64.encodestring(
+            '%s:%s' % (self.config['user'], self.config['pass']))[:-1]
         authheader = 'Basic %s' % base64string
         req.add_header("Authorization", authheader)
         try:
@@ -86,7 +88,8 @@ class HAProxyCollector(diamond.collector.Collector):
             return metrics
         except IOError, e:
             # here we shouldn't fail if the USER/PASS is right
-            self.log.error("Error retrieving HAProxy stats. (Invalid username or password?) %s", e)
+            self.log.error("Error retrieving HAProxy stats. (Invalid username "
+                           + "or password?) %s", e)
             return metrics
 
     def _generate_headings(self, row):
@@ -104,7 +107,8 @@ class HAProxyCollector(diamond.collector.Collector):
         headings = self._generate_headings(data[0])
 
         for row in data:
-            if self.config['ignore_servers'] and row[1].lower() not in ['frontend', 'backend']:
+            if (self.config['ignore_servers']
+                and row[1].lower() not in ['frontend', 'backend']):
                 continue
             metric_name = '%s.%s' % (row[0].lower(), row[1].lower())
             for index, metric_string in enumerate(row):

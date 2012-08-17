@@ -31,16 +31,21 @@ class TestHttpdCollector(CollectorTestCase):
         self.HTTPResponse = TestHTTPResponse()
 
         httplib.HTTPConnection.request = Mock(return_value=True)
-        httplib.HTTPConnection.getresponse = Mock(return_value=self.HTTPResponse)
+        httplib.HTTPConnection.getresponse = Mock(
+            return_value=self.HTTPResponse)
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        with patch.object(TestHTTPResponse, 'read', Mock(return_value=self.getFixture('server-status-fake-1').getvalue())):
+        with patch.object(TestHTTPResponse, 'read',
+            Mock(return_value=self.getFixture(
+                'server-status-fake-1').getvalue())):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {})
 
-        with patch.object(TestHTTPResponse, 'read', Mock(return_value=self.getFixture('server-status-fake-2').getvalue())):
+        with patch.object(TestHTTPResponse, 'read',
+            Mock(return_value=self.getFixture(
+                'server-status-fake-2').getvalue())):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
@@ -53,12 +58,16 @@ class TestHttpdCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch.object(TestHTTPResponse, 'read', Mock(return_value=self.getFixture('server-status-live-1').getvalue())):
+        with patch.object(TestHTTPResponse, 'read',
+            Mock(return_value=self.getFixture(
+                'server-status-live-1').getvalue())):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {})
 
-        with patch.object(TestHTTPResponse, 'read', Mock(return_value=self.getFixture('server-status-live-2').getvalue())):
+        with patch.object(TestHTTPResponse, 'read',
+            Mock(return_value=self.getFixture(
+                'server-status-live-2').getvalue())):
             self.collector.collect()
 
         metrics = {
