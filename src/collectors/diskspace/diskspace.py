@@ -112,7 +112,6 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     device = mount[0]
                     mount_point = mount[1]
                     fs_type = mount[2]
-                    fs_options = mount[3]
                 except (IndexError, ValueError):
                     continue
 

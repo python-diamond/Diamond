@@ -9,11 +9,6 @@ from mock import Mock
 from mock import patch
 from contextlib import nested
 
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
-
 from diamond.collector import Collector
 from diskspace import DiskSpaceCollector
 

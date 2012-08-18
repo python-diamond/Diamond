@@ -58,7 +58,6 @@ class NginxCollector(diamond.collector.Collector):
         connectionStatusRE = re.compile('Reading: (?P<reading>\d+) '
                                         + 'Writing: (?P<writing>\d+) '
                                         + 'Waiting: (?P<waiting>\d+)')
-        metrics = []
         req = urllib2.Request('http://%s:%i%s' % (self.config['req_host'],
                                                   int(self.config['req_port']),
                                                   self.config['req_path']))

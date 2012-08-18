@@ -104,10 +104,8 @@ class SNMPCollector(diamond.collector.Collector):
             int(self.config['retries']))
 
         # Assemble SNMP Next Command
-        errorIndication,
-        errorStatus,
-        errorIndex,
-        varBind = self.snmpCmdGen.getCmd(snmpAuthData, snmpTransportData, oid)
+        result = self.snmpCmdGen.getCmd(snmpAuthData, snmpTransportData, oid)
+        varBind = result[3]
 
         # TODO: Error check
 
@@ -140,12 +138,10 @@ class SNMPCollector(diamond.collector.Collector):
             int(self.config['retries']))
 
         # Assemble SNMP Next Command
-        errorIndication,
-        errorStatus,
-        errorIndex,
-        varBindTable = self.snmpCmdGen.nextCmd(snmpAuthData,
-                                               snmpTransportData,
-                                               oid)
+        resultTable = self.snmpCmdGen.nextCmd(snmpAuthData,
+                                              snmpTransportData,
+                                              oid)
+        varBindTable = resultTable[3]
 
         # TODO: Error Check
 
