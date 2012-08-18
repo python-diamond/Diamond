@@ -42,7 +42,7 @@ class DiskUsageCollector(diamond.collector.Collector):
         config_help = super(DiskUsageCollector, self).get_default_config_help()
         config_help.update({
             'devices': "A regex of which devices to gather metrics for."
-                        + " Defaults to md, sd, and xvd devices",
+                       + " Defaults to md, sd, and xvd devices",
         })
         return config_help
 
@@ -120,9 +120,9 @@ class DiskUsageCollector(diamond.collector.Collector):
                         'writes_milliseconds': disks[disk].write_time,
                         'io_in_progress': 0,
                         'io_milliseconds':
-                            disks[disk].read_time + disks[disk].write_time,
+                        disks[disk].read_time + disks[disk].write_time,
                         'io_milliseconds_weighted':
-                            disks[disk].read_time + disks[disk].write_time
+                        disks[disk].read_time + disks[disk].write_time
                     }
 
         return result
@@ -231,7 +231,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                 metrics['concurrent_io'] = (metrics['reads_per_second']
                                             + metrics['writes_per_second']
                                             ) * (metrics['service_time']
-                                                / 1000.0)
+                                                 / 1000.0)
 
                 # Only publish when we have io figures
                 for key in metrics:

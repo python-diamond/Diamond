@@ -60,7 +60,7 @@ TcpExt: 0 1 2
         self.assertEqual(publish_mock.call_args_list, [
             (('A', 0.0, 0), {}),
             (('C', 2.0, 0), {})
-])
+        ])
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):

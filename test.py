@@ -19,13 +19,14 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
-    
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                              'src', 'collectors')))
 
 from diamond.collector import Collector
+
 
 def get_collector_config(key, value):
     config = configobj.ConfigObj()
@@ -178,9 +179,9 @@ def getCollectorTests(path):
         cPath = os.path.abspath(os.path.join(path, f))
 
         if (os.path.isfile(cPath)
-            and len(f) > 3
-            and f[-3:] == '.py'
-            and f[0:4] == 'test'):
+                and len(f) > 3
+                and f[-3:] == '.py'
+                and f[0:4] == 'test'):
             sys.path.append(os.path.dirname(cPath))
             sys.path.append(os.path.dirname(os.path.dirname(cPath)))
             modname = f[:-3]

@@ -12,7 +12,7 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
-    
+
 from diamond.collector import Collector
 from vmstat import VMStatCollector
 

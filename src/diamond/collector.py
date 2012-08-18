@@ -142,7 +142,7 @@ class Collector(object):
         if 'hostname' in self.config:
             return self.config['hostname']
         if ('hostname_method' not in self.config
-            or self.config['hostname_method'] == 'fqdn_short'):
+                or self.config['hostname_method'] == 'fqdn_short'):
             return socket.getfqdn().split('.')[0]
         if self.config['hostname_method'] == 'fqdn':
             return socket.getfqdn().replace('.', '_')

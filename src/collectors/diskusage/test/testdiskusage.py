@@ -47,7 +47,7 @@ class TestDiskUsageCollector(CollectorTestCase):
         with nested(
             patch('__builtin__.open', Mock(
                 return_value=self.getFixture('proc_diskstats_1'))),
-            patch('time.time', Mock(return_value=10))):
+                patch('time.time', Mock(return_value=10))):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {})
@@ -55,7 +55,7 @@ class TestDiskUsageCollector(CollectorTestCase):
         with nested(
             patch('__builtin__.open', Mock(
                 return_value=self.getFixture('proc_diskstats_2'))),
-            patch('time.time', Mock(return_value=20))):
+                patch('time.time', Mock(return_value=20))):
             self.collector.collect()
 
         metrics = {

@@ -41,8 +41,8 @@ class ApcupsdCollector(diamond.collector.Collector):
             'hostname': 'localhost',
             'port': 3551,
             'metrics': ['LINEV', 'LOADPCT', 'BCHARGE', 'TIMELEFT', 'BATTV',
-                         'NUMXFERS', 'TONBATT', 'MAXLINEV', 'MINLINEV',
-                         'OUTPUTV', 'ITEMP', 'LINEFREQ', 'CUMONBATT', ],
+                        'NUMXFERS', 'TONBATT', 'MAXLINEV', 'MINLINEV',
+                        'OUTPUTV', 'ITEMP', 'LINEFREQ', 'CUMONBATT', ],
         })
         return config
 

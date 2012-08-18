@@ -24,7 +24,7 @@ class TestMonitCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         with patch('urllib2.urlopen', Mock(
-            return_value=self.getFixture('status.xml'))):
+                return_value=self.getFixture('status.xml'))):
             self.collector.collect()
 
         metrics = {
@@ -56,7 +56,7 @@ class TestMonitCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
         with patch('urllib2.urlopen', Mock(
-            return_value=self.getFixture('status_blank.xml'))):
+                return_value=self.getFixture('status_blank.xml'))):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {})

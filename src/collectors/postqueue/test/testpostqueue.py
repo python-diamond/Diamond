@@ -25,7 +25,7 @@ class TestPostqueueCollector(CollectorTestCase):
         with patch.object(PostqueueCollector,
                           'get_postqueue_output',
                           Mock(return_value=self.getFixture(
-                            'postqueue_emails').getvalue())):
+                              'postqueue_emails').getvalue())):
             self.collector.collect()
 
         self.assertPublishedMetric(publish_mock, 'count', 3)
@@ -35,7 +35,7 @@ class TestPostqueueCollector(CollectorTestCase):
         with patch.object(PostqueueCollector,
                           'get_postqueue_output',
                           Mock(return_value=self.getFixture(
-                            'postqueue_empty').getvalue())):
+                              'postqueue_empty').getvalue())):
             self.collector.collect()
 
         self.assertPublishedMetric(publish_mock, 'count', 0)

@@ -24,7 +24,7 @@ class TestNginxCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         with patch('urllib2.urlopen', Mock(
-            return_value=self.getFixture('status'))):
+                return_value=self.getFixture('status'))):
             self.collector.collect()
 
         metrics = {
@@ -43,7 +43,7 @@ class TestNginxCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
         with patch('urllib2.urlopen', Mock(
-            return_value=self.getFixture('status_blank'))):
+                return_value=self.getFixture('status_blank'))):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {})

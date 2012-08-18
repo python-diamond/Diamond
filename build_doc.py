@@ -9,6 +9,7 @@ import traceback
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 
+
 def getIncludePaths(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
@@ -72,7 +73,7 @@ def getHandlers(path):
                 # Find the name
                 for attr in dir(module):
                     if (not attr.endswith('Handler')
-                        or attr.startswith('Handler')):
+                            or attr.startswith('Handler')):
                         continue
 
                     cls = getattr(module, attr)

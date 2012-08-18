@@ -102,8 +102,9 @@ class Scheduler:
             endtime = time.time() + delay
             period = 5
             stoptime = endtime - period
-            while self.running and stoptime > time.time() and \
-                self._getqueuetoptime() == toptime:
+            while (self.running
+                    and stoptime > time.time()
+                    and self._getqueuetoptime() == toptime):
                 time.sleep(period)
             if not self.running or self._getqueuetoptime() != toptime:
                 return
@@ -118,7 +119,7 @@ class Scheduler:
         pass
 
     def add_interval_task(self, action, taskname, initialdelay, interval,
-            processmethod, args, kw, abs=False):
+                          processmethod, args, kw, abs=False):
         """Add a new Interval Task to the schedule.
 
         A very short initialdelay or one of zero cannot be honored, you will
@@ -147,7 +148,7 @@ class Scheduler:
         return task
 
     def add_single_task(self, action, taskname, initialdelay, processmethod,
-            args, kw):
+                        args, kw):
         """Add a new task to the scheduler that will only be executed once."""
         if initialdelay < 0:
             raise ValueError("Delay must be >0")
@@ -173,7 +174,7 @@ class Scheduler:
         """Add a new Day Task (Weekday or Monthday) to the schedule."""
         if weekdays and monthdays:
             raise ValueError("You can only specify weekdays or monthdays, "
-                "not both")
+                             "not both")
         if not args:
             args = []
         if not kw:
@@ -217,12 +218,12 @@ class Scheduler:
             self._acquire_lock()
             try:
                 task.event = self.sched.enter(delay, 0, task,
-                            (weakref.ref(self),))
+                                             (weakref.ref(self),))
             finally:
                 self._release_lock()
         else:
             task.event = self.sched.enter(delay, 0, task,
-                        (weakref.ref(self),))
+                                         (weakref.ref(self),))
 
     def schedule_task_abs(self, task, abstime):
         """Add a new task to the scheduler for the given absolute time value.
@@ -235,12 +236,12 @@ class Scheduler:
             self._acquire_lock()
             try:
                 task.event = self.sched.enterabs(abstime, 0, task,
-                                    (weakref.ref(self),))
+                                                (weakref.ref(self),))
             finally:
                 self._release_lock()
         else:
             task.event = self.sched.enterabs(abstime, 0, task,
-                                (weakref.ref(self),))
+                                            (weakref.ref(self),))
 
     def start(self):
         """Start the scheduler."""
@@ -306,7 +307,7 @@ class Task:
     def reschedule(self, scheduler):
         """This method should be defined in one of the sub classes!"""
         raise NotImplementedError("You're using the abstract class 'Task',"
-            " use a concrete class instead")
+                                  " use a concrete class instead")
 
     def execute(self):
         """Execute the actual task."""
@@ -316,7 +317,7 @@ class Task:
         """Handle any exception that occured during task execution."""
         print >> sys.stderr, "ERROR DURING TASK EXECUTION", exc
         print >> sys.stderr, "".join(traceback.format_exception(
-                                                    *sys.exc_info()))
+            *sys.exc_info()))
         print >> sys.stderr, "-" * 20
 
 
@@ -400,7 +401,7 @@ class WeekdayTask(DayTaskRescheduler, Task):
             raise TypeError("timeonday must be a 2-tuple (hour,minute)")
         if type(weekdays) not in (list, tuple):
             raise TypeError("weekdays must be a sequence of weekday numbers "
-                "1-7 (1 is Monday)")
+                            "1-7 (1 is Monday)")
         DayTaskRescheduler.__init__(self, timeonday)
         Task.__init__(self, name, action, args, kw)
         self.days = weekdays
@@ -423,8 +424,7 @@ class MonthdayTask(DayTaskRescheduler, Task):
         if type(timeonday) not in (list, tuple) or len(timeonday) != 2:
             raise TypeError("timeonday must be a 2-tuple (hour,minute)")
         if type(monthdays) not in (list, tuple):
-            raise TypeError("monthdays must be a sequence of numbers "
-                "1-31")
+            raise TypeError("monthdays must be a sequence of numbers 1-31")
         DayTaskRescheduler.__init__(self, timeonday)
         Task.__init__(self, name, action, args, kw)
         self.days = monthdays

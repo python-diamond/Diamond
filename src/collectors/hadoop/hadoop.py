@@ -74,8 +74,7 @@ class HadoopCollector(diamond.collector.Collector):
                             data['name'],
                             metrics['hostName'].replace('.', '_'),
                             metrics['processName'].replace(' ', '_'),
-                            metric,
-]))
+                            metric, ]))
 
                     elif data['name'] == 'mapred.job':
                         path = self.get_metric_path('.'.join([
@@ -83,8 +82,7 @@ class HadoopCollector(diamond.collector.Collector):
                             metrics['hostName'].replace('.', '_'),
                             metrics['group'].replace(' ', '_'),
                             metrics['counter'].replace(' ', '_'),
-                            metric,
-]))
+                            metric, ]))
 
                     elif data['name'] == 'rpc.metrics':
 
@@ -95,20 +93,18 @@ class HadoopCollector(diamond.collector.Collector):
                             data['name'],
                             metrics['hostName'].replace('.', '_'),
                             metrics['port'],
-                            metric,
-]))
+                            metric, ]))
 
                     else:
                         path = self.get_metric_path('.'.join([
                             data['name'],
-                            metric,
-]))
+                            metric, ]))
 
                     value = float(metrics[metric])
 
                     self.publish_metric(Metric(path,
-                        value,
-                        timestamp=int(data['timestamp'])))
+                                        value,
+                                        timestamp=int(data['timestamp'])))
 
                 except ValueError:
                     pass

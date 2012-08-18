@@ -79,7 +79,7 @@ class MemoryCollector(diamond.collector.Collector):
                     value = int(value)
 
                     if (name not in _KEY_MAPPING
-                        and 'detailed' not in self.config):
+                            and 'detailed' not in self.config):
                         continue
 
                     for unit in self.config['byte_unit']:

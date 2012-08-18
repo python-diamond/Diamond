@@ -17,7 +17,7 @@ import subprocess
 class VarnishCollector(diamond.collector.Collector):
 
     _RE = re.compile("^(?P<stat>[\w_\(\)\.,]*)\s+(?P<psa>\d*)\s+"
-                   "(?P<psan>[\d.]*)\s(?P<desc>[\w\., /]*)$", re.M)
+                     "(?P<psan>[\d.]*)\s(?P<desc>[\w\., /]*)$", re.M)
     _KEYS = ['client_conn', 'client_drop', 'client_req', 'cache_hit',
              'cache_hitpass', 'cache_miss', 'backend_conn', 'backend_unhealthy',
              'backend_busy', 'backend_fail', 'backend_reuse', 'backend_toolate',

@@ -35,13 +35,12 @@ class PostgresqlCollector(diamond.collector.Collector):
         """
         config = super(PostgresqlCollector, self).get_default_config()
         config.update({
-                'path': 'postgres',
-                'host': 'localhost',
-                'user': 'postgres',
-                'password': 'postgres',
-                'port': 5432,
-                'method': 'Threaded'
-               })
+            'path': 'postgres',
+            'host': 'localhost',
+            'user': 'postgres',
+            'password': 'postgres',
+            'port': 5432,
+            'method': 'Threaded'})
         return config
 
     def collect(self):
@@ -50,11 +49,10 @@ class PostgresqlCollector(diamond.collector.Collector):
             return {}
 
         self.conn_string = "host=%s user=%s password=%s port=%s" % (
-                self.config['host'],
-                self.config['user'],
-                self.config['password'],
-                self.config['port']
-)
+            self.config['host'],
+            self.config['user'],
+            self.config['password'],
+            self.config['port'])
 
         self.conn = psycopg2.connect(self.conn_string)
         self.cursor = self.conn.cursor()

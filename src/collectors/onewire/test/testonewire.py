@@ -37,16 +37,15 @@ class TestOneWireCollector(CollectorTestCase):
         with patch(open_name, create=True) as open_mock:
 
             self.mock_data = {
-                        "28.A76569020000": None,
-                        "28.A76569020000/temperature": StringIO("22.4375"),
-                        "28.A76569020000/presure": StringIO("error"),
-                        "28.2F702A010000": None,
-                        "28.2F702A010000/presure": StringIO("999"),
-                        "01.AE5426040000": None,
-                        "alarm": None,
-                        "bus.0": None,
-                        "settings": None,
-                        }
+                "28.A76569020000": None,
+                "28.A76569020000/temperature": StringIO("22.4375"),
+                "28.A76569020000/presure": StringIO("error"),
+                "28.2F702A010000": None,
+                "28.2F702A010000/presure": StringIO("999"),
+                "01.AE5426040000": None,
+                "alarm": None,
+                "bus.0": None,
+                "settings": None, }
 
             self.mock_root = "/mnt/1wire"
 

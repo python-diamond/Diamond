@@ -26,7 +26,7 @@ class HAProxyCollector(diamond.collector.Collector):
             'user': "Username",
             'pass': "Password",
             'ignore_servers': "Ignore servers, just collect frontend and "
-                                + "backend stats",
+                              + "backend stats",
         })
         return config_help
 
@@ -110,7 +110,7 @@ class HAProxyCollector(diamond.collector.Collector):
 
         for row in data:
             if (self.config['ignore_servers']
-                and row[1].lower() not in ['frontend', 'backend']):
+                    and row[1].lower() not in ['frontend', 'backend']):
                 continue
             metric_name = '%s.%s' % (row[0].lower(), row[1].lower())
             for index, metric_string in enumerate(row):

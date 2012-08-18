@@ -78,9 +78,12 @@ class InterruptCollector(diamond.collector.Collector):
                                          + data[-1]).replace(' ', '_')) + '.')
                     else:
                         metric_name = (((data[-2]).replace(' ', '_'))
-                            + '.'
-                            + ((data[-1]).replace(', ', '-').replace(' ', '_'))
-                            + '.' + data[0] + '.')
+                                       + '.'
+                                       + ((data[-1]).replace(', ',
+                                                             '-'
+                                                             ).replace(' ',
+                                                                       '_'))
+                                       + '.' + data[0] + '.')
                     total = 0
                     for index, value in enumerate(data):
                         if index == 0 or index >= cpuCount + 1:

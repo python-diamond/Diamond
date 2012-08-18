@@ -23,8 +23,7 @@ class PowerDNSCollector(diamond.collector.Collector):
         'ipv6-outqueries', 'latency', 'max-mthread-stack', 'negcache-entries',
         'nsspeeds-entries',
         'packetcache-bytes', 'packetcache-entries', 'packetcache-size',
-        'qa-latency', 'throttle-entries'
-]
+        'qa-latency', 'throttle-entries']
 
     def get_default_config_help(self):
         config_help = super(PowerDNSCollector, self).get_default_config_help()

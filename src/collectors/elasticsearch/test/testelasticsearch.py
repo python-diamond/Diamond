@@ -23,7 +23,7 @@ class TestElasticSearchCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         with patch('urllib2.urlopen', Mock(
-            return_value=self.getFixture('stats'))):
+                return_value=self.getFixture('stats'))):
             self.collector.collect()
 
         metrics = {
@@ -51,7 +51,7 @@ class TestElasticSearchCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
         with patch('urllib2.urlopen', Mock(
-            return_value=self.getFixture('stats_blank'))):
+                return_value=self.getFixture('stats_blank'))):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {})

@@ -176,10 +176,9 @@ class OpenVPNCollector(diamond.collector.Collector):
                 if section == 'statistics':
                     # All values here are numeric
                     self.publish_number('.'.join([
-                            name,
-                            'global',
-                            key,
-]), value)
+                        name,
+                        'global',
+                        key, ]), value)
 
                 elif section == 'clients':
                     # Clients come with a heading
@@ -191,25 +190,22 @@ class OpenVPNCollector(diamond.collector.Collector):
                             info[k.lower()] = v
 
                         self.publish_number('.'.join([
-                                name,
-                                section,
-                                info['common name'].replace('.', '_'),
-                                'bytes_rx'
-]), info['bytes received'])
+                            name,
+                            section,
+                            info['common name'].replace('.', '_'),
+                            'bytes_rx']), info['bytes received'])
                         self.publish_number('.'.join([
-                                name,
-                                section,
-                                info['common name'].replace('.', '_'),
-                                'bytes_tx'
-]), info['bytes sent'])
+                            name,
+                            section,
+                            info['common name'].replace('.', '_'),
+                            'bytes_tx']), info['bytes sent'])
 
                 elif section == 'global':
                     # All values here are numeric
                     self.publish_number('.'.join([
-                            name,
-                            section,
-                            key,
-]), value)
+                        name,
+                        section,
+                        key, ]), value)
 
             elif line.startswith('END'):
                 break

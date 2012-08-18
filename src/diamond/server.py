@@ -190,8 +190,8 @@ class Server(object):
                     # Only attempt to load classes that are infact classes
                     # are Collectors but are not the base Collector class
                     if (inspect.isclass(attr)
-                        and issubclass(attr, Collector)
-                        and attr != Collector):
+                            and issubclass(attr, Collector)
+                            and attr != Collector):
                         if attrname.startswith('parent_'):
                             continue
                         # Get class name
@@ -362,8 +362,9 @@ class Server(object):
             time_since_reload += 1
 
             # Check if its time to reload collectors
-            if (reload and time_since_reload
-                > int(self.config['server']['collectors_reload_interval'])):
+            if (reload
+                    and time_since_reload
+                    > int(self.config['server']['collectors_reload_interval'])):
                 self.log.debug("Reloading config.")
                 self.load_config()
                 # Log

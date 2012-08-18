@@ -38,9 +38,8 @@ class KSMCollector(diamond.collector.Collector):
         """
         config = super(KSMCollector, self).get_default_config()
         config.update({
-                'path': 'ksm',
-                'ksm_path': '/sys/kernel/mm/ksm'
-               })
+            'path': 'ksm',
+            'ksm_path': '/sys/kernel/mm/ksm'})
         return config
 
     def collect(self):

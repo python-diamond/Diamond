@@ -31,8 +31,7 @@ class ArchiveHandler(Handler):
             self.config['log_file'],
             'midnight',
             1,
-            backupCount=int(self.config['days'])
-            )
+            backupCount=int(self.config['days']))
         handler.setFormatter(formatter)
         handler.setLevel(logging.DEBUG)
         self.archive.addHandler(handler)

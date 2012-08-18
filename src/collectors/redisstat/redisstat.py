@@ -68,11 +68,10 @@ class RedisCollector(diamond.collector.Collector):
         """
         config = super(RedisCollector, self).get_default_config()
         config.update({
-                'host': self._DEFAULT_HOST,
-                'port': self._DEFAULT_PORT,
-                'db': self._DEFAULT_DB,
-                'databases': self._DATABASE_COUNT
-                })
+            'host': self._DEFAULT_HOST,
+            'port': self._DEFAULT_PORT,
+            'db': self._DEFAULT_DB,
+            'databases': self._DATABASE_COUNT})
         return config
 
     def _client(self):

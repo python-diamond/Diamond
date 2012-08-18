@@ -26,7 +26,7 @@ class TestHAProxyCollector(CollectorTestCase):
         self.collector.config['ignore_servers'] = False
 
         with patch('urllib2.urlopen', Mock(
-            return_value=self.getFixture('stats.csv'))):
+                return_value=self.getFixture('stats.csv'))):
             self.collector.collect()
 
         metrics = {
@@ -597,7 +597,7 @@ class TestHAProxyCollector(CollectorTestCase):
         self.collector.config['ignore_servers'] = True
 
         with patch('urllib2.urlopen', Mock(
-            return_value=self.getFixture('stats.csv'))):
+                return_value=self.getFixture('stats.csv'))):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {

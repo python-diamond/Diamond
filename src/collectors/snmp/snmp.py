@@ -98,8 +98,10 @@ class SNMPCollector(diamond.collector.Collector):
         snmpAuthData = cmdgen.CommunityData('agent', community)
 
         # Assemble SNMP Transport Data
-        snmpTransportData = cmdgen.UdpTransportTarget((host, port),
-            int(self.config['timeout']), int(self.config['retries']))
+        snmpTransportData = cmdgen.UdpTransportTarget(
+            (host, port),
+            int(self.config['timeout']),
+            int(self.config['retries']))
 
         # Assemble SNMP Next Command
         errorIndication,
@@ -132,8 +134,10 @@ class SNMPCollector(diamond.collector.Collector):
         snmpAuthData = cmdgen.CommunityData('agent', community)
 
         # Assemble SNMP Transport Data
-        snmpTransportData = cmdgen.UdpTransportTarget((host, port),
-            int(self.config['timeout']), int(self.config['retries']))
+        snmpTransportData = cmdgen.UdpTransportTarget(
+            (host, port),
+            int(self.config['timeout']),
+            int(self.config['retries']))
 
         # Assemble SNMP Next Command
         errorIndication,

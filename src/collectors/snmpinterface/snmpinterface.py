@@ -74,9 +74,9 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
 
     # A list of IF-MIB the 32bit counters to walk
     IF_MIB_GAUGE_OID_TABLE = {'ifInDiscards': "1.3.6.1.2.1.2.2.1.13",
-                                'ifInErrors': "1.3.6.1.2.1.2.2.1.14",
-                                'ifOutDiscards': "1.3.6.1.2.1.2.2.1.19",
-                                'ifOutErrors': "1.3.6.1.2.1.2.2.1.20"}
+                              'ifInErrors': "1.3.6.1.2.1.2.2.1.14",
+                              'ifOutDiscards': "1.3.6.1.2.1.2.2.1.19",
+                              'ifOutErrors': "1.3.6.1.2.1.2.2.1.20"}
 
     # A list of IF-MIB 64bit counters to talk
     IF_MIB_COUNTER_OID_TABLE = {'ifInOctets': "1.3.6.1.2.1.31.1.1.1.6",
