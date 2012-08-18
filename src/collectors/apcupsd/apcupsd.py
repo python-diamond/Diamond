@@ -15,7 +15,7 @@ apcuspd in NIS mode.
 
 import diamond.collector
 import socket
-from struct import *
+from struct import pack
 import re
 
 
