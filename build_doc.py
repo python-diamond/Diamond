@@ -4,14 +4,10 @@
 import os
 import sys
 import optparse
-
-from configobj import ConfigObj
+import configobj
+import traceback
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
-
-from diamond import *
-from diamond.collector import Collector
-
 
 def getIncludePaths(path):
     for f in os.listdir(path):
@@ -48,7 +44,7 @@ def getCollectors(path):
 
                     if cls.__name__ not in collectors:
                         collectors[cls.__name__] = module
-            except Exception, e:
+            except Exception:
                 print "Failed to import module: %s. %s" % (
                     modname, traceback.format_exc())
                 collectors[modname] = False
@@ -83,7 +79,7 @@ def getHandlers(path):
 
                     if cls.__name__ not in handlers:
                         handlers[cls.__name__] = module
-            except Exception, e:
+            except Exception:
                 print "Failed to import module: %s. %s" % (
                     modname, traceback.format_exc())
                 handlers[modname] = False

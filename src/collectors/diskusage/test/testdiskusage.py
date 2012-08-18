@@ -2,7 +2,11 @@
 # coding=utf-8
 ################################################################################
 
-from test import *
+from test import CollectorTestCase
+from test import get_collector_config
+from mock import Mock
+from mock import patch
+from contextlib import nested
 
 from diamond.collector import Collector
 from diskusage import DiskUsageCollector

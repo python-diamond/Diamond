@@ -2,7 +2,12 @@
 # coding=utf-8
 ################################################################################
 
-from test import *
+import os
+
+from test import CollectorTestCase
+from test import get_collector_config
+from mock import Mock
+from mock import patch
 
 from diamond.collector import Collector
 from userscripts import UserScriptsCollector

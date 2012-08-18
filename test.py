@@ -20,18 +20,12 @@ try:
 except ImportError:
     from StringIO import StringIO
     
-from contextlib import nested
-
-from mock import *
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                              'src', 'collectors')))
 
-from diamond import *
 from diamond.collector import Collector
-
 
 def get_collector_config(key, value):
     config = configobj.ConfigObj()
@@ -76,7 +70,7 @@ class CollectorTestCase(unittest.TestCase):
                     fp.write(line)
             fp.close()
 
-        except IOError, e:
+        except IOError:
             return False
         return True
 
@@ -197,7 +191,7 @@ def getCollectorTests(path):
                                                      locals(),
                                                      ['*'])
                 #print "Imported module: %s" % (modname)
-            except Exception, e:
+            except Exception:
                 print "Failed to import module: %s. %s" % (
                     modname, traceback.format_exc())
                 continue
