@@ -38,8 +38,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
         config_help.update({
             'filesystems': "filesystems to examine",
             'exclude_filters': "A list of regex patterns. Any filesystem"
-                + " matching any of these patterns will be excluded from disk"
-                + " space metrics collection",
+            + " matching any of these patterns will be excluded from disk"
+            + " space metrics collection",
         })
         return config_help
 
@@ -54,7 +54,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             'path': 'diskspace',
             # filesystems to examine
             'filesystems': 'ext2, ext3, ext4, xfs, glusterfs, nfs, ntfs, hfs,'
-                + ' fat32, fat16',
+            + ' fat32, fat16',
 
             # exclude_filters
             #   A list of regex patterns
@@ -118,7 +118,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
 
                 if (mount_point.startswith('/dev')
                     or mount_point.startswith('/proc')
-                    or mount_point.startswith('/sys')):
+                        or mount_point.startswith('/sys')):
                     continue
 
                 if device.startswith('/') and mount_point.startswith('/'):

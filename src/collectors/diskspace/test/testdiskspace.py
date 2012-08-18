@@ -27,29 +27,17 @@ class TestDiskSpaceCollector(CollectorTestCase):
 
         self.collector = DiskSpaceCollector(config, None)
 
-    @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
-    def test_get_file_systems(self, open_mock):
+    def test_get_file_systems(self):
         result = None
-        open_mock.return_value = StringIO("""
-rootfs / rootfs rw 0 0
-none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
-none /proc proc rw,nosuid,nodev,noexec,relatime 0 0
-none /dev devtmpfs rw,relatime,size=24769364k,nr_inodes=6192341,mode=755 0 0
-none /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000 0 0
-fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0
-/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba / ext3 """
-+ """rw,relatime,errors=continue,barrier=0,data=ordered 0 0
-none /sys/kernel/debug debugfs rw,relatime 0 0
-none /sys/kernel/security securityfs rw,relatime 0 0
-none /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0
-none /var/run tmpfs rw,nosuid,relatime,mode=755 0 0
-none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
-        """.strip())
 
         with nested(
-            patch('os.stat'), patch('os.major'), patch('os.minor')
-        ) as (os_stat_mock, os_major_mock, os_minor_mock):
+            patch('os.stat'),
+            patch('os.major'),
+            patch('os.minor'),
+            patch('__builtin__.open', Mock(
+                return_value=self.getFixture('proc_mounts')))
+        ) as (os_stat_mock, os_major_mock, os_minor_mock, open_mock):
             os_stat_mock.return_value.st_dev = 42
             os_major_mock.return_value = 9
             os_minor_mock.return_value = 0
@@ -68,7 +56,7 @@ none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
                     'mount_point': '/'}
             })
 
-        open_mock.assert_called_once_with('/proc/mounts')
+            open_mock.assert_called_once_with('/proc/mounts')
         return result
 
     @patch('os.access', Mock(return_value=True))
