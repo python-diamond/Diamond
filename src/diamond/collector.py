@@ -178,7 +178,10 @@ class Collector(object):
 
         hostname = self.get_hostname()
         if hostname is not None:
-            prefix = prefix + "." + hostname
+            if prefix:
+                prefix = ".".join((prefix, hostname))
+            else:
+                prefix = hostname
 
         # if there is a suffix, add after the hostname
         if suffix:
