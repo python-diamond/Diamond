@@ -4,6 +4,8 @@ import os
 import sys
 import inspect
 
+def get_diamond_version():
+    return "3.0.2"
 
 def load_modules_from_path(path):
     """

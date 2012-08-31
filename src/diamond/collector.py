@@ -124,6 +124,22 @@ class Collector(object):
             'byte_unit': 'byte',
         }
 
+    def get_stats_for_upload(self, config=None):
+        if config is None:
+            config = self.config
+
+        stats = {}
+
+        if 'enabled' in config:
+            stats['enabled'] = config['enabled']
+        else:
+            stats['enabled'] = False
+
+        if 'interval' in config:
+            stats['interval'] = config['interval']
+
+        return stats
+
     def get_schedule(self):
         """
         Return schedule for the collector
