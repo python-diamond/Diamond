@@ -163,7 +163,10 @@ class StatsCollector(diamond.collector.Collector):
 
         stats['server'] = {}
 
-        handlers = self.full_config['server']['handlers'].split(',')
+        if type(self.full_config['server']['handlers']) is list:
+            handlers = self.full_config['server']['handlers']
+        else:
+            handlers = self.full_config['server']['handlers'].split(',')
         stats['server']['handlers'] = handlers
 
         reload_i = self.full_config['server']['collectors_reload_interval']
