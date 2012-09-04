@@ -67,10 +67,7 @@ class Collector(object):
 
         # Handle some config file changes transparently
         if isinstance(self.config['byte_unit'], basestring):
-            units = self.config['byte_unit'].split()
-            self.config['byte_unit'] = []
-            for unit in units:
-                self.config['byte_unit'].append(unit)
+            self.config['byte_unit'] = self.config['byte_unit'].split()
 
     def get_default_config_help(self):
         """
