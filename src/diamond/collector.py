@@ -275,3 +275,8 @@ class Collector(object):
         except Exception:
             # Log Error
             self.log.error(traceback.format_exc())
+        finally:
+            # After collector run, invoke a flush
+            # method on each handler. 
+            for handler in self.handlers:
+                handler.flush()

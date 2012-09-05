@@ -26,3 +26,11 @@ class Handler(object):
         Should be overridden in subclasses
         """
         raise NotImplementedError
+
+    def flush(self):
+        """
+        Flush metrics
+
+        Optional: Should be overridden in subclasses
+        """
+        pass
