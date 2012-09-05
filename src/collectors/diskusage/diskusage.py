@@ -42,7 +42,7 @@ class DiskUsageCollector(diamond.collector.Collector):
         config_help = super(DiskUsageCollector, self).get_default_config_help()
         config_help.update({
             'devices': "A regex of which devices to gather metrics for."
-                       + " Defaults to md, sd, and xvd devices",
+                       + " Defaults to md, sd, xvd, disk, and dm devices",
             'sector_size': 'The size to use to calculate sector usage'
         })
         return config_help
@@ -55,7 +55,11 @@ class DiskUsageCollector(diamond.collector.Collector):
         config.update({
             'enabled':  'True',
             'path':     'iostat',
-            'devices':  'md[0-9]$|sd[a-z]+$|xvd[a-z]+$|disk[0-9]$',
+            'devices':  ('md[0-9]+$'
+                         + '|sd[a-z]+[0-9]*$'
+                         + '|xvd[a-z]+[0-9]*$'
+                         + '|disk[0-9]+$'
+                         + '|dm\-[0-9]+$'),
             'sector_size': 512
         })
         return config
