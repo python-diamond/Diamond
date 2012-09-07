@@ -212,6 +212,8 @@ class DiskUsageCollector(diamond.collector.Collector):
             metrics['average_queue_length'] = (metrics['io_milliseconds']
                                                / time_delta * 1000.0)
             metrics['await'] = 0
+            metrics['read_await'] = 0
+            metrics['write_await'] = 0
             metrics['service_time'] = 0
             metrics['iops'] = (metrics['reads']
                                + metrics['writes']) / time_delta
@@ -232,6 +234,10 @@ class DiskUsageCollector(diamond.collector.Collector):
                                            / metrics['io'])
                 metrics['await'] = (metrics['io_milliseconds_weighted']
                                     / metrics['io'])
+                metrics['read_await'] = (metrics['reads_milliseconds']
+                                         / metrics['reads'])
+                metrics['write_await'] = (metrics['writes_milliseconds']
+                                          / metrics['writes'])
                 metrics['util_percentage'] = (metrics['io']
                                               * metrics['service_time']
                                               / 1000.0) * 100.0
