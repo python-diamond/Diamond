@@ -9,8 +9,12 @@ Collect the elasticsearch stats for the local node
 
 """
 
-import json
 import urllib2
+
+try:
+    import json
+except ImportError:
+    json = None
 
 import diamond.collector
 
@@ -39,6 +43,9 @@ class ElasticSearchCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
+        if json == None:
+            self.log.error('Unable to import json')
+            return {}
         url = 'http://%s:%i/_cluster/nodes/_local/stats?all=true' % (
             self.config['host'], int(self.config['port']))
         try:
