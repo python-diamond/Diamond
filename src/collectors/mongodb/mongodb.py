@@ -19,7 +19,7 @@ except ImportError:
 try:
     from pymongo import ReadPreference
 except ImportError:
-    readpreference = False
+    ReadPreference = None
 
 
 class MongoDBCollector(diamond.collector.Collector):
@@ -50,7 +50,7 @@ class MongoDBCollector(diamond.collector.Collector):
             return {}
 
         try:
-            if readpreference == False:
+            if ReadPreference is None:
                 conn = pymongo.Connection(self.config['host'])
             else:
                 conn = pymongo.Connection(self.config['host'],
