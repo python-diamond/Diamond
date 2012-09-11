@@ -14,7 +14,6 @@ import diamond.collector
 
 try:
     import pymongo
-    from pymongo import ReadPreference
 except ImportError:
     pymongo = None
 try:
