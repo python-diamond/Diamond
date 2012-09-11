@@ -43,7 +43,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        if json == None:
+        if json is None:
             self.log.error('Unable to import json')
             return {}
         url = 'http://%s:%i/_cluster/nodes/_local/stats?all=true' % (
