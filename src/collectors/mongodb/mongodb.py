@@ -17,6 +17,10 @@ try:
     from pymongo import ReadPreference
 except ImportError:
     pymongo = None
+try:
+    from pymongo import ReadPreference
+except ImportError:
+    readpreference = False
 
 
 class MongoDBCollector(diamond.collector.Collector):
@@ -47,7 +51,10 @@ class MongoDBCollector(diamond.collector.Collector):
             return {}
 
         try:
-            conn = pymongo.Connection(self.config['host'],
+            if readpreference == False:
+                conn = pymongo.Connection(self.config['host'])
+            else:
+                conn = pymongo.Connection(self.config['host'],
                                       read_preference=ReadPreference.SECONDARY)
         except Exception, e:
             self.log.error('Couldnt connect to mongodb: %s', e)
