@@ -280,11 +280,12 @@ class Collector(object):
         # Log
         self.log.debug("Collecting data from: %s" % self.__class__.__name__)
         try:
-            # Collect Data
-            self.collect()
-        except Exception:
-            # Log Error
-            self.log.error(traceback.format_exc())
+            try:
+                # Collect Data
+                self.collect()
+            except Exception:
+                # Log Error
+                self.log.error(traceback.format_exc())
         finally:
             # After collector run, invoke a flush
             # method on each handler. 
