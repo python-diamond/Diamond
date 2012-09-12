@@ -77,7 +77,7 @@ class NagiosStatsCollector(diamond.collector.Collector):
                    '--data', ",".join(self.config['vars']),
                    '--mrtg']
 
-        if self.config['use_sudo']:
+        if self.config['use_sudo'] == 'True':
             command.insert(0, self.config['sudo_cmd'])
 
         p = subprocess.Popen(command,
