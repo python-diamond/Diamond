@@ -4,6 +4,9 @@
 Diamond handler that check if values are too high or too low, if so send an
 alert to a Sentry server
 
+This handler requires the Python module Raven:
+http://raven.readthedocs.org/en/latest/index.html
+
 To work this handler need a similar configuration:
 
 [[SentryHandler]]
