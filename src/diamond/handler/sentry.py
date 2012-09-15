@@ -22,7 +22,7 @@ max = 8.5
 
 name = Free Memory
 path = memory.MemFree
-max = 66020000
+min = 66020000
 """
 
 __author__ = 'Bruno Clermont'
