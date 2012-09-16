@@ -174,19 +174,9 @@ class Rule(object):
 
             if minimum.is_error or maximum.is_error:
                 self.counter_errors += 1
-                if minimum.is_error and maximum.is_error:
-                    # if both, mean it must be a specific value
-                    culprit = "%s Warning on %s: not %.1f" % (
-                        self.name, match.group('prefix'), minimum.threshold)
-                else:
-                    if minimum.is_error:
-                        result = minimum
-                    else:
-                        result = maximum
-                    culprit = "%s: %.1f" % (self.name, metric.value)
-                message = "%s Warning on %s" % (self.name,
-                                                handler.hostname)
-
+                message = "%s Warning on %s: %.1f" % (self.name,
+                                                     handler.hostname, metric.value)
+                culprit = "%s %s" % (handler.hostname, match.group('path'))
                 handler.raven_logger.error(message, extra={
                         'culprit': culprit,
                         'data':{
