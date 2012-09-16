@@ -202,7 +202,8 @@ class Rule(object):
                             'maximum threshold': self.max,
                             'path regular expression': self.regexp.pattern,
                             'total errors': self.counter_errors,
-                            'total pass': self.counter_pass
+                            'total pass': self.counter_pass,
+                            'hostname': handler.hostname
                         }
                     }
                 )
