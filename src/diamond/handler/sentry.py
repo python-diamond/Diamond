@@ -65,7 +65,7 @@ class BaseResult(object):
         """return more complete message"""
         if self.threshold is None:
             return 'No threshold'
-        return '%.2f is %s than %.2f' % (self.value,
+        return '%.1f is %s than %.1f' % (self.value,
                                          self.adjective,
                                          self.threshold)
 
@@ -90,8 +90,8 @@ class BaseResult(object):
     def __str__(self):
         name = self.__class__.__name__.lower()
         if self.threshold is None:
-            return '%s: %.2f no threshold' % (name, self.value)
-        return '%.2f (%s: %.2f)' % (self.value, name, self.threshold)
+            return '%s: %.1f no threshold' % (name, self.value)
+        return '%.1f (%s: %.1f)' % (self.value, name, self.threshold)
 
 class Minimum(BaseResult):
     """
@@ -152,7 +152,7 @@ class Rule(object):
 
         if self.min is not None and self.max is not None:
             if self.min > self.max:
-                raise InvalidRule("min %.2f is larger than max %.2f" % (
+                raise InvalidRule("min %.1f is larger than max %.1f" % (
                     self.min, self.max))
 
         # compile path regular expression
@@ -176,14 +176,14 @@ class Rule(object):
                 self.counter_errors += 1
                 if minimum.is_error and maximum.is_error:
                     # if both, mean it must be a specific value
-                    culprit = "%s Warning on %s: not %.2f" % (
+                    culprit = "%s Warning on %s: not %.1f" % (
                         self.name, match.group('prefix'), minimum.threshold)
                 else:
                     if minimum.is_error:
                         result = minimum
                     else:
                         result = maximum
-                    culprit = "%s: %s" % (match.group('path'), metric.value)
+                    culprit = "%s: %.1f" % (self.name, metric.value)
                 message = "%s Warning on %s" % (self.name,
                                                 handler.hostname)
 
