@@ -34,9 +34,10 @@ __email__ = 'bruno.clermont@gmail.com'
 import logging
 import re
 
+import raven.handlers.logging
 from Handler import Handler
+from diamond.collector import get_hostname
 from configobj import Section
-from raven.handlers.logging import SentryHandler as SentryLogHandler
 
 class InvalidRule(ValueError):
     """
@@ -62,13 +63,35 @@ class BaseResult(object):
     @property
     def verbose_message(self):
         """return more complete message"""
-        return '%.2f is %s than %.2f' % (self.value,
+        if self.threshold is None:
+            return 'No threshold'
+        return '%.1f is %s than %.1f' % (self.value,
                                          self.adjective,
                                          self.threshold)
 
+    @property
+    def _is_error(self):
+        raise NotImplementedError('_is_error')
+
+    @property
+    def is_error(self):
+        """
+        for some reason python do this:
+        >>> 1.0 > None
+        True
+        >>> 1.0 < None
+        False
+        so we just check if min/max is not None before return _is_error
+        """
+        if self.threshold is None:
+            return False
+        return self._is_error
+
     def __str__(self):
-        return '%.2f (%s: %.2f)' % (self.value, self.__class__.__name__.lower(),
-                                    self.threshold)
+        name = self.__class__.__name__.lower()
+        if self.threshold is None:
+            return '%s: %.1f no threshold' % (name, self.value)
+        return '%.1f (%s: %.1f)' % (self.value, name, self.threshold)
 
 class Minimum(BaseResult):
     """
@@ -76,7 +99,7 @@ class Minimum(BaseResult):
     """
     adjective = 'lower'
     @property
-    def is_error(self):
+    def _is_error(self):
         """if it's too low"""
         return self.value < self.threshold
 
@@ -86,7 +109,7 @@ class Maximum(BaseResult):
     """
     adjective = 'higher'
     @property
-    def is_error(self):
+    def _is_error(self):
         """if it's too high"""
         return self.value > self.threshold
 
@@ -104,7 +127,7 @@ class Rule(object):
         @type min: string of float/int, int or float. will be convert to float
         @param min: optional minimal value that if value goes below it send
             an alert to Sentry
-        @type max: tring of float/int, int or float. will be convert to float
+        @type max: string of float/int, int or float. will be convert to float
         @param max: optional maximal value that if value goes over it send
             an alert to Sentry
         """
@@ -129,50 +152,32 @@ class Rule(object):
 
         if self.min is not None and self.max is not None:
             if self.min > self.max:
-                raise InvalidRule("min %.2f is larger than max %.2f" % (
+                raise InvalidRule("min %.1f is larger than max %.1f" % (
                     self.min, self.max))
 
         # compile path regular expression
         self.regexp = re.compile(r'(?P<prefix>.*)\.(?P<path>%s)$' % path)
 
-    def process(self, metric, log_handler):
+    def process(self, metric, handler):
         """
         process a single diamond metric
         @type metric: diamond.metric.Metric
         @param metric: metric to process
-        @type log_handler: logging.Logger
-        @param log_handler: configured Sentry log handler that will be use to
-            send alert
+        @type handler: diamond.handler.sentry.SentryHandler
+        @param handler: configured Sentry graphite handler
         @rtype None
         """
         match = self.regexp.match(metric.path)
         if match:
-            # for some reason python do this:
-            # >>> 1.0 > None
-            # True
-            # >>> 1.0 < None
-            # False
-            # so we just check if min/max is not None
-
             minimum = Minimum(metric.value, self.min)
             maximum = Maximum(metric.value, self.max)
 
             if minimum.is_error or maximum.is_error:
                 self.counter_errors += 1
-                if minimum.is_error and maximum.is_error:
-                    # if both, mean it must be a specific value
-                    culprit = "%s Warning on %s: not %.2f" % (
-                        self.name, match.group('prefix'), minimum.threshold)
-                else:
-                    if minimum.is_error:
-                        result = minimum
-                    else:
-                        result = maximum
-                    culprit = "%s Warning on %s: %s" % (
-                        self.name, match.group('prefix'), str(result))
-                message = "%s: %.2f" % (metric.path, metric.value)
-
-                log_handler.error(message, extra={
+                message = "%s Warning on %s: %.1f" % (self.name,
+                                                     handler.hostname, metric.value)
+                culprit = "%s %s" % (handler.hostname, match.group('path'))
+                handler.raven_logger.error(message, extra={
                         'culprit': culprit,
                         'data':{
                             'metric prefix': match.group('prefix'),
@@ -187,7 +192,8 @@ class Rule(object):
                             'maximum threshold': self.max,
                             'path regular expression': self.regexp.pattern,
                             'total errors': self.counter_errors,
-                            'total pass': self.counter_pass
+                            'total pass': self.counter_pass,
+                            'hostname': handler.hostname
                         }
                     }
                 )
@@ -212,11 +218,13 @@ class SentryHandler(Handler):
         """
         Handler.__init__(self, config)
         # init sentry/raven
-        self.sentry_log_handler = SentryLogHandler(self.config['dsn'])
+        self.sentry_log_handler = raven.handlers.logging.SentryHandler(
+            self.config['dsn'])
         self.raven_logger = logging.getLogger(self.__class__.__name__)
         self.raven_logger.addHandler(self.sentry_log_handler)
         self.configure_sentry_errors()
         self.rules = self.compile_rules()
+        self.hostname = get_hostname(self.config)
         if not len(self.rules):
             self.log.warning("No rules, this graphite handler is unused")
 
@@ -300,7 +308,7 @@ class SentryHandler(Handler):
         @rtype None
         """
         for rule in self.rules:
-            rule.process(metric, self.raven_logger)
+            rule.process(metric, self)
 
     def __repr__(self):
         return "SentryHandler '%s' %d rules" % (
