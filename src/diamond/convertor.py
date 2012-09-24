@@ -134,7 +134,7 @@ class binary:
         if value is None:
             return self.value / 8
         else:
-            self.value = value * 8
+            self.value = float(value) * 8
 
     def kilobyte(self, value=None):
         if value is None:
