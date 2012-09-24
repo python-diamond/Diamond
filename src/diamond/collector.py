@@ -209,6 +209,9 @@ class Collector(object):
             return '.'.join([prefix, name])
         else:
             return '.'.join([prefix, path, name])
+        
+    def get_hostname(self):
+        return get_hostname(self.config)
 
     def collect(self):
         """
