@@ -17,7 +17,7 @@ diamond.conf
 
     [[[hosts]]]
 
-    [[[[app-1]]]
+    [[[[app-1]]]]
     host = localhost
     port = 11211
 ```
