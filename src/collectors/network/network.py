@@ -136,7 +136,7 @@ class NetworkCollector(diamond.collector.Collector):
                     for u in self.config['byte_unit']:
                         # Public Converted Metric
                         self.publish(metric_name.replace('bytes', u),
-                                     convertor.get(unit=u))
+                                     convertor.get(unit=u), 2)
                 else:
                     # Publish Metric Derivative
                     self.publish(metric_name, metric_value)
