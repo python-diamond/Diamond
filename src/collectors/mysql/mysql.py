@@ -238,7 +238,7 @@ class MySQLCollector(diamond.collector.Collector):
 
             'slave':    'False',
             'master':   'False',
-            'innodb':    'False',
+            'innodb':   'False',
         })
         return config
 
