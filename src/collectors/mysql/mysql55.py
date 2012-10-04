@@ -5,9 +5,9 @@
 Diamond collector that monitors relevant MySQL performance_schema values
 For now only monitors replication load
 
-(Blog)[http://bit.ly/VjdxC3] announcement.
+[Blog](http://bit.ly/PbSkbN) announcement.
 
-(Sniplet)[http://bit.ly/SHwYhT] to build example graph.
+[Sniplet](http://bit.ly/SHwYhT) to build example graph.
 
 #### Dependencies
 
