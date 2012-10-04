@@ -9,25 +9,18 @@ Collect memcached stats
 
 #### Example Configuration
 
-diamond.conf
+MemcachedCollector.conf
 
 ```
-    [[MemcachedCollector]]
     enabled = True
-
-    [[[hosts]]]
-
-    [[[[app-1]]]]
-    host = localhost
-    port = 11211
+    hosts = localhost:11211, app-1@localhost:11212, app-2@localhost:11213, etc
 ```
-
-Repeat the app-1 block as many times as needed for different host/port combos
 
 """
 
 import diamond.collector
 import socket
+import re
 
 
 class MemcachedCollector(diamond.collector.Collector):
@@ -38,7 +31,8 @@ class MemcachedCollector(diamond.collector.Collector):
             'publish': "Which rows of 'status' you would like to publish."
             + " Telnet host port' and type stats and hit enter to see the list"
             + " of possibilities. Leave unset to publish all.",
-            'hosts': "Complex set of hosts and ports to collect",
+            'hosts': "List of hosts, and ports to collect. Set an alias by "
+            + " prefixing the host:port with alias@",
         })
         return config_help
 
@@ -57,12 +51,7 @@ class MemcachedCollector(diamond.collector.Collector):
             #'publish': ''
 
             # Connection settings
-            'hosts':    {
-                'localhost': {
-                    'host':     'localhost',
-                    'port':     '11211',
-                },
-            },
+            'hosts': [ 'localhost:11211' ]
         })
         return config
 
@@ -78,15 +67,15 @@ class MemcachedCollector(diamond.collector.Collector):
             data = sock.recv(4096)
         except socket.error:
             self.log.exception('Failed to get stats from %s:%s',
-                               self.config['host'], self.config['port'])
+                               host, port)
         return data
 
-    def get_stats(self, config):
+    def get_stats(self, host, port):
         # stuff that's always ignored, aren't 'stats'
         ignored = ('libevent', 'pid', 'pointer_size', 'time', 'version')
 
         stats = {}
-        data = self.get_raw_stats(config['host'], int(config['port']))
+        data = self.get_raw_stats(host, int(port))
 
         # parse stats
         for line in data.splitlines():
@@ -99,16 +88,33 @@ class MemcachedCollector(diamond.collector.Collector):
 
     def collect(self):
         hosts = self.config.get('hosts')
+        
+        # Convert a string config value to be an array
+        if isinstance(hosts, basestring):
+            hosts = [hosts]
+            
         for host in hosts:
-            stats = self.get_stats(hosts[host])
+            matches = re.search('((.+)\@)?([^:]+):(\d+)', host)
+            alias = matches.group(2)
+            hostname = matches.group(3)
+            port = matches.group(4)
+            
+            if alias is None:
+                alias = hostname
+            
+            stats = self.get_stats(hostname, port)
+            
             # figure out what we're configured to get, defaulting to everything
             desired = self.config.get('publish', stats.keys())
+            
             # for everything we want
             for stat in desired:
                 if stat in stats:
+                    
                     # we have it
-                    self.publish(host + "." + stat, stats[stat])
+                    self.publish(alias + "." + stat, stats[stat])
                 else:
+                    
                     # we don't, must be somehting configured in publish so we
                     # should log an error about it
                     self.log.error("No such key '%s' available, issue 'stats' "

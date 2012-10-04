@@ -18,12 +18,7 @@ class TestMemcachedCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MemcachedCollector', {
             'interval': 10,
-            'hosts':    {
-                'localhost': {
-                    'host':     'localhost',
-                    'port':     '11211',
-                },
-            },
+            'hosts': [ 'localhost:11211' ],
         })
 
         self.collector = MemcachedCollector(config, None)
