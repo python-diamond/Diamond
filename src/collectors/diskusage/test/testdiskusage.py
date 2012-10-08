@@ -19,6 +19,7 @@ class TestDiskUsageCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('DiskUsageCollector', {
             'interval': 10,
+            'sector_size': '512',
             'byte_unit': 'kilobyte'
         })
 

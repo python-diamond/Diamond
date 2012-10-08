@@ -119,12 +119,12 @@ class DiskUsageCollector(diamond.collector.Collector):
                         'reads': disks[disk].read_count,
                         'reads_merged': 0,
                         'reads_sectors': (disks[disk].read_bytes
-                                          / self.config['sector_size']),
+                                          / int(self.config['sector_size'])),
                         'reads_milliseconds': disks[disk].read_time,
                         'writes': disks[disk].write_count,
                         'writes_merged': 0,
                         'writes_sectors': (disks[disk].write_bytes
-                                           / self.config['sector_size']),
+                                           / int(self.config['sector_size'])),
                         'writes_milliseconds': disks[disk].write_time,
                         'io_in_progress': 0,
                         'io_milliseconds':
@@ -166,7 +166,7 @@ class DiskUsageCollector(diamond.collector.Collector):
 
                     if key.endswith('sectors'):
                         key = key.replace('sectors', unit)
-                        value /= (1024 / self.config['sector_size'])
+                        value /= (1024 / int(self.config['sector_size']))
                         value = diamond.convertor.binary.convert(value=value,
                                                                  oldUnit='kB',
                                                                  newUnit=unit)
