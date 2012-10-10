@@ -20,6 +20,7 @@ Success Stories
 Diamond Related Projects
 =====
  * [puppet-diamond](https://github.com/vimeo/puppet-diamond) - diamond module for puppet
+ * [chef-diamond](https://github.com/CBarraford/diamond_cookbook) - diamond cookbook for chef
  
 Contact
 =====
