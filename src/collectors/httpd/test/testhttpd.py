@@ -55,6 +55,7 @@ class TestHttpdCollector(CollectorTestCase):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
+            'TotalAccesses': 100,
             'ReqPerSec': 10,
             'BytesPerSec': 20480,
             'BytesPerReq': 204,
@@ -79,6 +80,7 @@ class TestHttpdCollector(CollectorTestCase):
             self.collector.collect()
 
         metrics = {
+            'TotalAccesses': 8314,
             'ReqPerSec': 0,
             'BytesPerSec': 165,
             'BytesPerReq': 5418,
