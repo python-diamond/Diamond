@@ -51,7 +51,7 @@ class HttpdCollector(diamond.collector.Collector):
             service_port = 80
 
         metrics = ['ReqPerSec', 'BytesPerSec', 'BytesPerReq',
-                   'BusyWorkers', 'IdleWorkers']
+                   'BusyWorkers', 'IdleWorkers', 'Total Accesses']
 
         # Setup Connection
         connection = httplib.HTTPConnection(service_host, service_port)
@@ -64,7 +64,7 @@ class HttpdCollector(diamond.collector.Collector):
 
         response = connection.getresponse()
         data = response.read()
-        exp = re.compile('^([A-Za-z]+):\s+(.+)$')
+        exp = re.compile('^([A-Za-z ]+):\s+(.+)$')
         for line in data.split('\n'):
             if line:
                 m = exp.match(line)
@@ -73,7 +73,7 @@ class HttpdCollector(diamond.collector.Collector):
                     v = m.group(2)
                     if k in metrics:
                         # Get Metric Name
-                        metric_name = "%s" % k
+                        metric_name = "%s" % re.sub('\s+', '', k)
                         # Get Metric Value
                         metric_value = "%d" % float(v)
                         # Publish Metric
