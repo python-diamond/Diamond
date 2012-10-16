@@ -2,6 +2,7 @@ include         LICENSE
 include         README.md
 include         MANIFEST.in
 include         .keep
+include         rpm/upstart/diamond.conf
 graft           bin
 graft           debian
 graft           conf
