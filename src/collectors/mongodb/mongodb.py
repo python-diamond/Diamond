@@ -64,6 +64,9 @@ class MongoDBCollector(diamond.collector.Collector):
         for db_name in conn.database_names():
             db_stats = conn[db_name].command('dbStats')
             self._publish_dict_with_prefix(db_stats, ['databases', db_name])
+            for collection_name in conn[db_name].collection_names():
+                collection_stats = conn[db_name].command('collstats', collection_name)
+                self._publish_dict_with_prefix(collection_stats, ['databases', db_name, collection_name])
 
     def _publish_dict_with_prefix(self, dict, prefix):
         for key in dict:
