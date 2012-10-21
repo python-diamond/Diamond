@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding=utf-8
 ################################################################################
 
 import os
@@ -140,6 +141,8 @@ if __name__ == "__main__":
     collectorIndexFile = open(os.path.join(docs_path, "Collectors.md"), 'w')
     collectorIndexFile.write("## Collectors\n")
     collectorIndexFile.write("\n")
+    collectorIndexFile.write("Note that the default collectors are noted via the super-script symbol <sup>♦</sup>.\n")
+    collectorIndexFile.write("\n")
 
     for collector in sorted(collectors.iterkeys()):
 
@@ -159,12 +162,19 @@ if __name__ == "__main__":
         obj = cls(config=config, handlers={})
 
         options = obj.get_default_config_help()
+        
+        defaultOptions = obj.get_default_config()
 
         docFile = open(os.path.join(docs_path,
                                     "collectors-" + collector + ".md"), 'w')
 
-        collectorIndexFile.write(" - [%s](collectors-%s)\n" % (collector,
-                                                               collector))
+        enabled = ''
+        if defaultOptions['enabled']:
+            enabled = ' <sup>♦</sup>'
+            
+        collectorIndexFile.write(" - [%s](collectors-%s)%s\n" % (collector,
+                                                                 collector,
+                                                                 enabled))
 
         docFile.write("%s\n" % (collector))
         docFile.write("=====\n")
