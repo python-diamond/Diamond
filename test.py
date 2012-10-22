@@ -34,6 +34,7 @@ def get_collector_config(key, value):
     config['server']['collectors_config_path'] = ''
     config['collectors'] = {}
     config['collectors']['default'] = {}
+    config['collectors']['default']['hostname_method'] = "uname_short"
     config['collectors'][key] = value
     return config
 
