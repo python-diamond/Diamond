@@ -57,10 +57,13 @@ class PostfixCollector(diamond.collector.Collector):
             return None
     
     def getData(self):
-        jsondata = self.getJson()
-        io = StringIO(jsondata)
-        data = json.load(io)
-        return data
+        try:
+            jsondata = self.getJson()
+            io = StringIO(jsondata)
+            data = json.load(io)
+            return data
+        except ValueError:
+            return None
 
     def collect(self):
         data = self.getData()
