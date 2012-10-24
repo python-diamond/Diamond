@@ -46,12 +46,15 @@ class PostfixCollector(diamond.collector.Collector):
         return config
     
     def getJson(self):
-        sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
-        sock.connect( (self.config['host'], int(self.config['port'])) )
-        sock.send("stats\n")
-        jsondata = sock.recv(4096)
-        sock.close()
-        return jsondata
+        try:
+            sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
+            sock.connect( (self.config['host'], int(self.config['port'])) )
+            sock.send("stats\n")
+            jsondata = sock.recv(4096)
+            sock.close()
+            return jsondata
+        except socket.error:
+            return None
     
     def getData(self):
         jsondata = self.getJson()
@@ -61,6 +64,9 @@ class PostfixCollector(diamond.collector.Collector):
 
     def collect(self):
         data = self.getData()
+        
+        if not data:
+            return
         
         for nodetype in data.keys():
             for nodesubtype in data[nodetype].keys():
