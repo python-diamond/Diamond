@@ -1,7 +1,7 @@
 DESTDIR=/
 PROJECT=diamond
-VERSION=3.0.2
-RELEASE := $(shell ls -1 dist/*.noarch.rpm 2>/dev/null | wc -l )
+VERSION :=$(shell bash version.sh )
+RELEASE :=$(shell ls -1 dist/*.noarch.rpm 2>/dev/null | wc -l )
 
 all:
 	@echo "make run      - Run Diamond from this directory"
@@ -30,16 +30,16 @@ watch:
 test:
 	./test.py
 
-docs:
+docs: version
 	./build_doc.py --configfile=conf/diamond.conf
 
-sdist:
+sdist: version
 	./setup.py sdist --prune
 
-bdist:
+bdist: version
 	./setup.py bdist --prune
 
-install:
+install: version
 	./setup.py install --root $(DESTDIR)
 
 rpm: buildrpm
@@ -53,10 +53,13 @@ buildrpm: sdist
 
 deb: builddeb
 
-builddeb: sdist
+builddeb: version 
+	dch --newversion $(VERSION) --distribution unstable --force-distribution -b "Last Commit: $(shell git log -1 --pretty=format:'(%ai) %H %cn <%ce>')"
+	dch --release  "new upstream"
+	./setup.py sdist --prune
 	mkdir -p build
 	tar -C build -zxf dist/$(PROJECT)-$(VERSION).tar.gz
-	(cd build/$(PROJECT)-$(VERSION) && debuild -us -uc)
+	(cd build/$(PROJECT)-$(VERSION) && debuild -us -uc -v$(VERSION))
 
 tar: sdist
 
@@ -68,7 +71,13 @@ clean:
 cleanws:
 	find . -name '*.py' -exec sed -i'' -e 's/[ \t]*$$//' {} \;
 
-reltest:
-	echo "${RELEASE}"
+version:
+	./version.sh > version.txt
 
-.PHONY: run watch config test docs sdist bdist install rpm buildrpm deb builddeb tar clean cleanws reltest
+vertest: version 
+	echo "${VERSION}"
+
+reltest:
+	echo "$(RELEASE)"
+
+.PHONY: run watch config test docs sdist bdist install rpm buildrpm deb builddeb tar clean cleanws version reltest vertest
