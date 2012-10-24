@@ -41,7 +41,8 @@ else:
 
 def get_version():
     f = open('version.txt')
-    version = "".join(f.readlines()).rstrip()
+    version = ''.join(f.readlines()).rstrip()
+    f.close()
     return version
 
 def pkgPath(root, path, rpath="/"):
