@@ -47,7 +47,7 @@ class PostfixCollector(diamond.collector.Collector):
     
     def getJson(self):
         sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
-        sock.connect( (self.config['host'], self.config['port']) )
+        sock.connect( (self.config['host'], int(self.config['port'])) )
         sock.send("stats\n")
         jsondata = sock.recv(4096)
         sock.close()
