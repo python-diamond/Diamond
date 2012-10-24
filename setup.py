@@ -12,7 +12,7 @@ else:
     setup_kwargs = dict()
 
 data_files = [
-    ('share/diamond', ['LICENSE', 'README.md']),
+    ('share/diamond', ['LICENSE', 'README.md', 'version.txt']),
     ('share/diamond/user_scripts', []),
 ]
 
@@ -39,6 +39,10 @@ else:
             data_files.append(('/etc/init',
                                ['rpm/upstart/diamond.conf']))
 
+def get_version():
+    f = open('version.txt')
+    version = "".join(f.readlines()).rstrip()
+    return version
 
 def pkgPath(root, path, rpath="/"):
     global data_files
@@ -60,9 +64,11 @@ def pkgPath(root, path, rpath="/"):
 
 pkgPath('share/diamond/collectors', 'src/collectors')
 
+version = get_version()
+
 setup(
     name='diamond',
-    version='3.0.2',
+    version=version,
     url='https://github.com/BrightcoveOS/Diamond',
     author='The Diamond Team',
     author_email='https://github.com/BrightcoveOS/Diamond',
