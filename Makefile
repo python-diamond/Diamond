@@ -54,8 +54,8 @@ buildrpm: sdist
 deb: builddeb
 
 builddeb: version 
-	dch --newversion $(VERSION) -b "Last Commit: $(shell git log -1 --pretty=format:'(%ai) %H %cn <%ce>')"
-	dch --release --distribution unstable --force-distribution "release"
+	dch --newversion $(VERSION) --distribution unstable --force-distribution -b "Last Commit: $(shell git log -1 --pretty=format:'(%ai) %H %cn <%ce>')"
+	dch --release  "new upstream"
 	./setup.py sdist --prune
 	mkdir -p build
 	tar -C build -zxf dist/$(PROJECT)-$(VERSION).tar.gz
