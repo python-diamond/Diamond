@@ -48,6 +48,8 @@ class RedisCollector(diamond.collector.Collector):
              'pubsub.channels': 'pubsub_channels',
              'pubsub.patterns': 'pubsub_patterns',
              'slaves.connected': 'connected_slaves'}
+    _RENAMED_KEYS = {'last_save.changes_since': 'rdb_changes_since_last_save',
+             'last_save.time': 'rdb_last_save_time'}
 
     def get_default_config_help(self):
         config_help = super(RedisCollector, self).get_default_config_help()
@@ -132,6 +134,11 @@ class RedisCollector(diamond.collector.Collector):
             if self._KEYS[key] in info:
                 data[key] = info[self._KEYS[key]]
 
+        # Iterate over renamed keys for 2.6 support
+        for key in self._RENAMED_KEYS:
+            if self._RENAMED_KEYS[key] in info:
+                data[key] = info[self._RENAMED_KEYS[key]]
+
         # Look for databaase speific stats
         for dbnum in range(0, self.config.get('databases',
                                               self._DATABASE_COUNT)):
@@ -141,7 +148,9 @@ class RedisCollector(diamond.collector.Collector):
                     data['%s.%s' % (db, key)] = info[db][key]
 
         # Time since last save
-        data['last_save.time_since'] = int(time.time()) - info['last_save_time']
+        for key in ['last_save_time', 'rdb_last_save_time']:
+            if key in info:
+                data['last_save.time_since'] = int(time.time()) - info[key]
 
         # Publish the data to graphite
         for key in data:
