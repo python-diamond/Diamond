@@ -27,6 +27,7 @@ def main():
         parser = optparse.OptionParser()
         parser.add_option("-c", "--configfile", dest="configfile", default="/etc/diamond/diamond.conf", help="config file")
         parser.add_option("-f", "--foreground", dest="foreground", default=False, action="store_true", help="run in foreground")
+        parser.add_option("-l", "--log-stdout", dest="log_stdout", default=False, action="store_true", help="log to stdout")
         parser.add_option("-p", "--pidfile", dest="pidfile", default=None, help="pid file")
         parser.add_option("-r", "--run", dest="collector", default=None, help="run a given collector once and exit")
     
@@ -44,9 +45,8 @@ def main():
             
         # Initialize Logging
         log = logging.getLogger('diamond')
-    
-        # Running in foreground, configure Log Stream Handler with debug severity
-        if options.foreground:
+
+        if options.log_stdout:
             log.setLevel(logging.DEBUG)
             # Configure Logging Format
             formatter = logging.Formatter('[%(asctime)s] [%(threadName)s] %(message)s')
@@ -56,7 +56,6 @@ def main():
             streamHandler.setLevel(logging.DEBUG)
             log.addHandler(streamHandler)
         else:
-            # if running in background, configure loggers from config file
             try:
                 if sys.version_info >= (2,6):
                     logging.config.fileConfig(options.configfile,
