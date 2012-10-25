@@ -7,6 +7,13 @@ Collects data from a Redis Server
 
  * redis
 
+#### Notes
+
+The collector is named an odd redisstat because of an import issue with
+having the python library called redis and this collector's module being called
+redis, so we use an odd name for this collector. This doesn't affect the usage
+of this collector.
+
 """
 
 import diamond.collector
