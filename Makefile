@@ -19,7 +19,7 @@ all:
 	@echo "make cleanws  - Strip trailing whitespaces from files"
 
 run:
-	./bin/diamond --configfile=conf/diamond.conf --foreground
+	./bin/diamond --configfile=conf/diamond.conf --foreground --log-stdout
 
 config:
 	./bin/diamond-setup --configfile=conf/diamond.conf
