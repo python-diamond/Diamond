@@ -172,7 +172,9 @@ class StatsCollector(diamond.collector.Collector):
         reload_i = self.full_config['server']['collectors_reload_interval']
         stats['server']['collectors_reload_interval'] = reload_i
 
-        host_meth = self.full_config['collectors']['default']['hostname_method']
+        host_meth = 'Default'
+        if 'hostname_method' in self.full_config['collectors']['default']:
+            host_meth = self.full_config['collectors']['default']['hostname_method']
         stats['server']['hostname_method'] = host_meth
 
         data = urllib.urlencode({'stats': json.dumps(stats)})
