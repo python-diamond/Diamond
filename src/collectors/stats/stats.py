@@ -10,7 +10,7 @@ app engine instance run by Rob Smith. The stats collected are:
  * Global collector reload interval
  * Global handlers
  * Any custom collector set stats
- 
+
 These stats are stored anonymously (other then UUID), processed and the results
 are at [http://diamond-stats.appspot.com/](http://diamond-stats.appspot.com/).
 
@@ -150,7 +150,7 @@ class StatsCollector(diamond.collector.Collector):
 
         stats['collectors']['Default'] = self.get_stats_for_upload(
             config=self.full_config['collectors']['default'])
-        
+
         for collector in collectors:
             if not hasattr(collectors[collector], collector):
                 continue
@@ -171,7 +171,10 @@ class StatsCollector(diamond.collector.Collector):
 
         reload_i = self.full_config['server']['collectors_reload_interval']
         stats['server']['collectors_reload_interval'] = reload_i
-        
+
+        host_meth = self.full_config['collectors']['default']['hostname_method']
+        stats['server']['hostname_method'] = host_meth
+
         data = urllib.urlencode({'stats': json.dumps(stats)})
         f = urllib.urlopen(self.config['url'], data)
         f.read()
