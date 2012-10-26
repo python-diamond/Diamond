@@ -140,7 +140,6 @@ class StatsCollector(diamond.collector.Collector):
         stats['version'] = get_diamond_version()
         stats['python_version'] = platform.python_version()
         
-        stats['os_version'] = ''
         if platform.system() == 'Darwin':
             ver = platform.mac_ver()
             os_version = ('Darwin', ver[0], '')
