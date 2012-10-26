@@ -79,5 +79,7 @@ class IPMISensorCollector(diamond.collector.Collector):
                 self.publish(metric_name, metric_value)
             except ValueError:
                 continue
+            except IndexError:
+                continue
 
         return True
