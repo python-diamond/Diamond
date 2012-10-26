@@ -22,31 +22,65 @@ if platform.architecture()[0] == '64bit':
 else:
     MAX_COUNTER = (2 ** 32) - 1
 
-def get_hostname(config):
+def get_hostname(config, method=None):
     """
     Returns a hostname as configured by the user
     """
     if 'hostname' in config:
         return config['hostname']
-    if ('hostname_method' not in config
-        or config['hostname_method'] == 'fqdn_short'):
+    
+    if method is None:
+        if 'hostname_method' in config:
+            method = config['hostname_method']
+        else:
+            method = 'smart'
+            
+    # case insensitive method
+    method = method.lower()
+    
+    if method == 'smart':
+        hostname = get_hostname(config, 'fqdn_short')
+        if hostname != 'localhost':
+            return hostname
+        hostname = get_hostname(config, 'hostname_short')
+        return hostname
+    
+    if method == 'fqdn_short':
         return socket.getfqdn().split('.')[0]
-    if config['hostname_method'] == 'fqdn':
+    
+    if method == 'fqdn':
         return socket.getfqdn().replace('.', '_')
-    if config['hostname_method'] == 'fqdn_rev':
+    
+    if method == 'fqdn_rev':
         hostname = socket.getfqdn().split('.')
         hostname.reverse()
         hostname = '.'.join(hostname)
         return hostname
-    if config['hostname_method'] == 'uname_short':
+    
+    if method == 'uname_short':
         return os.uname()[1].split('.')[0]
-    if config['hostname_method'] == 'uname_rev':
+    
+    if method == 'uname_rev':
         hostname = os.uname()[1].split('.')
         hostname.reverse()
         hostname = '.'.join(hostname)
         return hostname
-    if config['hostname_method'].lower() == 'none':
+    
+    if method == 'hostname':
+        return socket.gethostname()
+    
+    if method == 'hostname_short':
+        return socket.gethostname().split('.')[0]
+    
+    if method == 'hostname_rev':
+        hostname = socket.gethostname().split('.')
+        hostname.reverse()
+        hostname = '.'.join(hostname)
+        return hostname
+    
+    if method == 'none':
         return None
+    
     raise NotImplementedError(config['hostname_method'])
 
 class Collector(object):
