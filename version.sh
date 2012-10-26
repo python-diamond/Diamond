@@ -32,4 +32,11 @@ while getopts "mnr" opt; do
     esac
 done
 
-echo $VERSION_MAJ.$VERSION_MIN.$VERSION_REV
+VERSION="${VERSION_MAJ}.${VERSION_MIN}.${VERSION_REV}"
+
+if [ -e src/diamond/version.py.tmpl ]
+then
+    cat src/diamond/version.py.tmpl | sed "s/__VERSIONTOKENHERE__/${VERSION}/g" > src/diamond/version.py
+fi
+
+echo $VERSION

@@ -8,3 +8,4 @@ conf/diamond.conf
 storage
 conf/collectors
 version.txt
+src/diamond/version.py

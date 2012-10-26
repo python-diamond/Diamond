@@ -5,7 +5,11 @@ import sys
 import inspect
 
 def get_diamond_version():
-    return "3.0.2"
+    try:
+        from diamond.version import __VERSION__
+        return __VERSION__
+    except ImportError:
+        return "Unknown"
 
 def load_modules_from_path(path):
     """
