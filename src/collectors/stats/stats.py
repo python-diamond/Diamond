@@ -48,7 +48,7 @@ import diamond
 import urllib
 import os
 import sys
-import traceback
+import platform
 
 try:
     import json
@@ -94,10 +94,7 @@ def getCollectors(path):
                             break
                     except TypeError:
                         continue
-                # print "Imported module: %s %s" % (modname, cls.__name__)
             except Exception:
-                print "Failed to import module: %s. %s" % (
-                    modname, traceback.format_exc())
                 collectors[modname] = False
                 continue
 
@@ -141,6 +138,24 @@ class StatsCollector(diamond.collector.Collector):
         stats = {}
 
         stats['version'] = get_diamond_version()
+        stats['python_version'] = platform.python_version()
+        
+        stats['os_version'] = ''
+        if platform.system() == 'Darwin':
+            ver = platform.mac_ver()
+            os_version = ('Darwin', ver[0], '')
+            
+        elif platform.system() == 'Linux':
+            os_version = platform.linux_distribution()
+            
+        elif platform.system() == 'Windows':
+            ver = platform.win32_ver()
+            os_version = ('Windows', ver[0], ver[2])
+            
+        stats['os'] = "%s %s" % (os_version[0], os_version[1])
+        stats['os_distname'] = os_version[0]
+        stats['os_version'] = os_version[1]
+        stats['os_id'] = os_version[2]
 
         uuid_file = open(self.config['uuidfile'])
         stats['uuid'] = uuid_file.read().strip()
