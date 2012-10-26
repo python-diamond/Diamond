@@ -37,11 +37,12 @@ class UsersCollector(diamond.collector.Collector):
 
     def collect(self):
         metrics = {}
+        metrics['total'] = 0
         
         for utmp in UtmpFile():
             if utmp.ut_user_process:
                 metrics[utmp.ut_user] = metrics.get(utmp.ut_user, 0)+1
-                metrics['total'] = metrics.get('total', 0)+1
+                metrics['total'] = metrics['total']+1
 
         for metric_name in metrics.keys():
             self.publish(metric_name, metrics[metric_name])
