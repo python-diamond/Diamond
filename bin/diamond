@@ -16,6 +16,7 @@ for path in [
 
 from diamond import *
 from diamond.server import Server
+from diamond.util import get_diamond_version
 
 import optparse
 import signal
@@ -30,9 +31,14 @@ def main():
         parser.add_option("-l", "--log-stdout", dest="log_stdout", default=False, action="store_true", help="log to stdout")
         parser.add_option("-p", "--pidfile", dest="pidfile", default=None, help="pid file")
         parser.add_option("-r", "--run", dest="collector", default=None, help="run a given collector once and exit")
-    
+        parser.add_option("-v", "--version", dest="version", default=False, action="store_true", help="display the version and exit")
+        
         # Parse Command Line Args
         (options, args) = parser.parse_args()
+        
+        if options.version:
+            print "Diamond version %s" % (get_diamond_version())
+            sys.exit(0)
     
         # Initialize Config
         if os.path.exists(options.configfile):
