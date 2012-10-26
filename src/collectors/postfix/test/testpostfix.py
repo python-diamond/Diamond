@@ -29,19 +29,20 @@ class TestPostfixCollector(CollectorTestCase):
     def test_should_work_with_synthetic_data(self, publish_mock):
         with patch.object(PostfixCollector,
                           'getJson',
-                          Mock(return_value='{"local": {}, "clients": {}, "recv": {"status": {}, "resp_codes": {}}, "send": {"status": {"sent": 0}, "resp_codes": {"2.0.0": 0}}, "in": {"status": {}, "resp_codes": {}}}')):
+                          Mock(return_value='{"local": {}, "clients": {"127.0.0.1": 1}, "recv": {"status": {}, "resp_codes": {}}, "send": {"status": {"sent": 0}, "resp_codes": {"2.0.0": 0}}, "in": {"status": {}, "resp_codes": {}}}')):
             self.collector.collect()
             
         self.assertPublishedMany(publish_mock, {})
 
         with patch.object(PostfixCollector,
                           'getJson',
-                          Mock(return_value='{"local": {}, "clients": {}, "recv": {"status": {}, "resp_codes": {}}, "send": {"status": {"sent": 4}, "resp_codes": {"2.0.0": 5}}, "in": {"status": {}, "resp_codes": {}}}')):
+                          Mock(return_value='{"local": {}, "clients": {"127.0.0.1": 2}, "recv": {"status": {}, "resp_codes": {}}, "send": {"status": {"sent": 4}, "resp_codes": {"2.0.0": 5}}, "in": {"status": {}, "resp_codes": {}}}')):
             self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
             'send.status.sent': 4,
             'send.resp_codes.2_0_0': 5,
+            'clients.127_0_0_1': 1,
         })
 
 ################################################################################

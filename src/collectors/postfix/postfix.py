@@ -71,7 +71,18 @@ class PostfixCollector(diamond.collector.Collector):
         if not data:
             return
         
-        for nodetype in data.keys():
+        if 'clients' in data:
+            for client in data['clients'].keys():
+                # Clients are sometimes ip addresses
+                clientname = client.replace('.', '_')
+                metric_value = data['clients'][client]
+                metric_name = "clients.%s" % (clientname)
+                metric_value = self.derivative(metric_name, metric_value)
+                self.publish(metric_name, metric_value)
+                
+        for nodetype in ['recv', 'send', 'in']:
+            if nodetype not in data:
+                continue
             for nodesubtype in data[nodetype].keys():
                 for metric in data[nodetype][nodesubtype].keys():
                     
