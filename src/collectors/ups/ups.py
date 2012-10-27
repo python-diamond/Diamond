@@ -52,9 +52,9 @@ class UPSCollector(diamond.collector.Collector):
             command.insert(0, self.config['sudo_cmd'])
 
         p = subprocess.Popen(command,
-                             stdout=subprocess.PIPE).communicate()[0][:-1]
+                             stdout=subprocess.PIPE).communicate()[0]
 
-        for ln in p.communicate()[0].splitlines():
+        for ln in p.strip().splitlines():
             datapoint = ln.split(": ")
 
             try:
@@ -68,5 +68,5 @@ class UPSCollector(diamond.collector.Collector):
                 name = ".".join([datapoint[0], datapoint[0].split(".")[1]])
             else:
                 name = datapoint[0]
-
+                
             self.publish(name, val)

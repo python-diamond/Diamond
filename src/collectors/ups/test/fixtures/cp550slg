@@ -1,0 +1,37 @@
+battery.charge: 100
+battery.charge.low: 10
+battery.charge.warning: 20
+battery.mfr.date: CPS
+battery.runtime: 960
+battery.runtime.low: 300
+battery.type: PbAcid
+battery.voltage: 4.9
+battery.voltage.nominal: 12
+device.mfr: CPS
+device.model: CP550HG
+device.type: ups
+driver.name: usbhid-ups
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 2
+driver.parameter.port: auto
+driver.version: 2.4.3
+driver.version.data: CyberPower HID 0.3
+driver.version.internal: 0.34
+input.transfer.high: 0
+input.transfer.low: 0
+input.voltage: 121.0
+input.voltage.nominal: 120
+output.voltage: 120.0
+ups.beeper.status: enabled
+ups.delay.shutdown: 20
+ups.delay.start: 30
+ups.load: 46
+ups.mfr: CPS
+ups.model: CP550HG
+ups.productid: 0501
+ups.realpower.nominal: 330
+ups.status: OL
+ups.test.result: No test initiated
+ups.timer.shutdown: -60
+ups.timer.start: 0
+ups.vendorid: 0764
