@@ -109,7 +109,7 @@ class ProcessMemoryCollector(diamond.collector.Collector):
             # finally publish the results for each process group
             metric_name = process
             metric_value = (sum(p.get_memory_info().rss for p in cfg['procs'])
-                            / (2 ** self.UNIT_MAPPING))
+                            / (2 ** self.UNIT_MAPPING[self.config['unit']]))
             # Publish Metric
             self.publish(metric_name, metric_value)
 
