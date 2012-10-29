@@ -54,12 +54,16 @@ class ProcessMemoryCollector(diamond.collector.Collector):
             })
         return config
 
-    def collect(self):
+    def setup_config(self):
         """
-        Collects the RSS memory usage of each process defined under the
-        `process` subsection of the config file
+        prepare self.processes, which is a descriptor dictionary in
+        processgroup --> {
+            exe: [regex],
+            name: [regex],
+            procs: [psutil.Process]
+            }
         """
-        processes = {}
+        self.processes = {}
         for process, cfg in self.config['process'].items():
             # first we build a dictionary with the process aliases and the
             #  matching regexps
@@ -71,12 +75,13 @@ class ProcessMemoryCollector(diamond.collector.Collector):
             if not isinstance(name, list):
                 name = [name]
             name = [re.compile(n) for n in name]
-            processes[process] = {
+            self.processes[process] = {
                 'exe': exe,
                 'name': name,
                 'procs': []
             }
 
+    def filter_processes(self):
         def process_filter(proc, cfg):
             """
             Decides whether a process matches with a given process descriptor
@@ -100,16 +105,24 @@ class ProcessMemoryCollector(diamond.collector.Collector):
         for proc in psutil.process_iter():
             # filter and divide the system processes amongst the different
             #  process groups defined in the config file
-            for procname, cfg in processes.items():
+            for procname, cfg in self.processes.items():
                 if process_filter(proc, cfg):
                     cfg['procs'].append(proc)
                     break
 
-        for process, cfg in processes.items():
+
+    def collect(self):
+        """
+        Collects the RSS memory usage of each process defined under the
+        `process` subsection of the config file
+        """
+        self.setup_config()
+        self.filter_processes()
+
+        for process, cfg in self.processes.items():
             # finally publish the results for each process group
             metric_name = process
             metric_value = (sum(p.get_memory_info().rss for p in cfg['procs'])
                             / (2 ** self.UNIT_MAPPING[self.config['unit']]))
             # Publish Metric
             self.publish(metric_name, metric_value)
-
