@@ -179,11 +179,38 @@ if __name__ == "__main__":
         docFile.write("%s\n" % (collector))
         docFile.write("=====\n")
         docFile.write("%s" % (collectors[collector].__doc__))
-        docFile.write("#### Options\n")
+        docFile.write("#### Options - [Generic Options](Configuration)\n")
         docFile.write("\n")
-        docFile.write(" * [Generic Options](Configuration)\n")
+        
+        docFile.write("<table>")
+        
+        docFile.write("<tr>")
+        docFile.write("<th>Setting</th>")
+        docFile.write("<th>Default</th>")
+        docFile.write("<th>Description</th>")
+        docFile.write("<th>Type</th>")
+        docFile.write("</tr>\n")
+        
         for option in options:
-            docFile.write(" * %s: %s\n" % (option, options[option]))
+            defaultOption = ''
+            defaultOptionType = ''
+            if option in defaultOptions:
+                defaultOptionType = defaultOptions[option].__class__.__name__
+                if isinstance(defaultOptions[option], list):
+                    defaultOption = ', '.join(map( str, defaultOptions[option]))
+                    defaultOption += ','
+                else:
+                    defaultOption = str(defaultOptions[option])
+            
+            docFile.write("<tr>")
+            docFile.write("<td>%s</td>" % (option))
+            docFile.write("<td>%s</td>" % (defaultOption))
+            docFile.write("<td>%s</td>" % (options[option].replace("\n", '<br>\n')))
+            docFile.write("<td>%s</td>" % (defaultOptionType))
+            docFile.write("</tr>\n")
+        
+        docFile.write("</table>\n")
+        
         docFile.write("\n")
         docFile.write("#### Example Output\n")
         docFile.write("\n")
