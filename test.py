@@ -41,7 +41,7 @@ def get_collector_config(key, value):
 
 class CollectorTestCase(unittest.TestCase):
 
-    def setDocExample(self, collector, metrics):
+    def setDocExample(self, collector, metrics, defaultpath=None):
         if not len(metrics):
             return False
 
@@ -65,7 +65,14 @@ class CollectorTestCase(unittest.TestCase):
             for line in content:
                 if line.strip() == '__EXAMPLESHERE__':
                     for metric in sorted(metrics.iterkeys()):
-                        metricPath = 'servers.hostname.' + metric
+                        
+                        metricPath  = 'servers.hostname.'
+                        
+                        if defaultpath :
+                            metricPath += defaultpath + '.'
+                        
+                        metricPath += metric
+                        
                         metricPath = metricPath.replace('..', '.')
                         fp.write(metricPath + ' ' + str(metrics[metric]) + '\n')
                 else:

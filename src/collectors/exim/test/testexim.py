@@ -35,7 +35,9 @@ class TestEximCollector(CollectorTestCase):
             'queuesize': 33.0
         }
 
-        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch('os.access', Mock(return_value=True))

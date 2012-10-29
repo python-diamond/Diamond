@@ -34,7 +34,9 @@ class TestUsersCollector(CollectorTestCase):
             'total':    5,
         }
     
-        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
         
         # Because of the compiled nature of pyutmp, we can't actually test
         # different operating system versions then the currently running

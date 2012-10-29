@@ -33,7 +33,8 @@ class TestUserScriptsCollector(CollectorTestCase):
             'example.2': 24,
         }
 
-        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics)
         self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################

@@ -39,11 +39,17 @@ class TestPostfixCollector(CollectorTestCase):
                           Mock(return_value='{"local": {}, "clients": {"127.0.0.1": 2}, "recv": {"status": {}, "resp_codes": {}}, "send": {"status": {"sent": 4}, "resp_codes": {"2.0.0": 5}}, "in": {"status": {}, "resp_codes": {}}}')):
             self.collector.collect()
 
-        self.assertPublishedMany(publish_mock, {
+        metrics = {
             'send.status.sent': 4,
             'send.resp_codes.2_0_0': 5,
             'clients.127_0_0_1': 1,
-        })
+        }
+
+        self.assertPublishedMany(publish_mock, metrics)
+        
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
 
 ################################################################################
 if __name__ == "__main__":

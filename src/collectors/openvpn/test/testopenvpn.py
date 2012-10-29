@@ -41,7 +41,9 @@ class TestOpenVPNCollector(CollectorTestCase):
             'status.global.max_bcast-mcast_queue_length': 14.000000,
         }
 
-        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################

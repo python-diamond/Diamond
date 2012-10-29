@@ -39,7 +39,9 @@ class TestIPVSCollector(CollectorTestCase):
             "172_16_1_56:443.10_68_15_66:443.outbytes": 216873,
         }
 
-        self.setDocExample(self.collector.__class__.__name__, metrics)
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
