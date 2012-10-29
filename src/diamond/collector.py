@@ -10,6 +10,7 @@ import platform
 import logging
 import configobj
 import traceback
+import time
 
 from diamond.metric import Metric
 
@@ -136,6 +137,7 @@ class Collector(object):
         return {
             'enabled': 'Enable collecting these metrics',
             'byte_unit': 'Default numeric output(s)',
+            'measure_collector_time': 'Collect the collector run time in ms',
         }
 
     def get_default_config(self):
@@ -179,6 +181,9 @@ class Collector(object):
 
             # Default numeric output
             'byte_unit': 'byte',
+            
+            # Collect the collector run time in ms
+            'measure_collector_time': False,
         }
 
     def get_stats_for_upload(self, config=None):
@@ -318,8 +323,19 @@ class Collector(object):
         self.log.debug("Collecting data from: %s" % self.__class__.__name__)
         try:
             try:
+                start_time = time.time()
+                
                 # Collect Data
                 self.collect()
+                
+                end_time = time.time()
+                
+                if 'measure_collector_time' in self.config:
+                    if self.config['measure_collector_time']:
+                        metric_name = 'collector_time_ms'
+                        metric_value = int((end_time - start_time) * 1000)
+                        self.publish(metric_name, metric_value)
+                
             except Exception:
                 # Log Error
                 self.log.error(traceback.format_exc())
