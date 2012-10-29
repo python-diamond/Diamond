@@ -41,7 +41,7 @@ class ProcessStatCollector(diamond.collector.Collector):
         """
         config = super(ProcessStatCollector, self).get_default_config()
         config.update({
-            'path':     'softirq'
+            'path':     'proc'
         })
         return config
 
