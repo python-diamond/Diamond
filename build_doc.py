@@ -191,7 +191,7 @@ if __name__ == "__main__":
         docFile.write("<th>Type</th>")
         docFile.write("</tr>\n")
         
-        for option in options:
+        for option in sorted(options.keys()):
             defaultOption = ''
             defaultOptionType = ''
             if option in defaultOptions:
