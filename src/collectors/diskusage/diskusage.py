@@ -57,7 +57,7 @@ class DiskUsageCollector(diamond.collector.Collector):
             'path':     'iostat',
             'devices':  ('md[0-9]+$'
                          + '|sd[a-z]+[0-9]*$'
-                         + '|xvd[a-z]+[0-9]*$'
+                         + '|x?vd[a-z]+[0-9]*$'
                          + '|disk[0-9]+$'
                          + '|dm\-[0-9]+$'),
             'sector_size': 512
