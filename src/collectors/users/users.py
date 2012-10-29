@@ -32,6 +32,7 @@ class UsersCollector(diamond.collector.Collector):
         config.update({
             'path':     'users',
             'method':   'Threaded',
+            'utmp':     None,
         })
         return config
 
@@ -39,7 +40,7 @@ class UsersCollector(diamond.collector.Collector):
         metrics = {}
         metrics['total'] = 0
         
-        for utmp in UtmpFile():
+        for utmp in UtmpFile(path=self.config['utmp']):
             if utmp.ut_user_process:
                 metrics[utmp.ut_user] = metrics.get(utmp.ut_user, 0)+1
                 metrics['total'] = metrics['total']+1
