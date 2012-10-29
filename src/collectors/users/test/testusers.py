@@ -36,8 +36,8 @@ class TestUsersCollector(CollectorTestCase):
                 
             metrics = {
                 'kormoc':   2,
-                'root':     2,
-                'total':    4,
+                'root':     3,
+                'total':    5,
             }
     
             self.setDocExample(self.collector.__class__.__name__, metrics)
