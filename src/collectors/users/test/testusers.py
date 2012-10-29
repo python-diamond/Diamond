@@ -28,19 +28,20 @@ class TestUsersCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         
+        metrics = {
+            'kormoc':   2,
+            'root':     3,
+            'total':    5,
+        }
+    
+        self.setDocExample(self.collector.__class__.__name__, metrics)
+        
         # Because of the compiled nature of pyutmp, we can't actually test
         # different operating system versions then the currently running
         # one
         if sys.platform.startswith('linux'):
             self.collector.collect()
                 
-            metrics = {
-                'kormoc':   2,
-                'root':     3,
-                'total':    5,
-            }
-    
-            self.setDocExample(self.collector.__class__.__name__, metrics)
             self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
