@@ -8,6 +8,7 @@ Example config file ProcessMemoryCollector.conf
 
 ```
 enabled=True
+unit=kB
 [process]
 [[postgres]]
 exe=^\/usr\/lib\/postgresql\/+d.+d\/bin\/postgres$
@@ -114,9 +115,16 @@ class ProcessMemoryCollector(diamond.collector.Collector):
         unit = self.config['unit']
         for process, cfg in self.processes.items():
             # finally publish the results for each process group
-            metric_name = process
+            metric_name = "{}.rss".format(process)
             metric_value = diamond.convertor.binary.convert(
                 sum(p.get_memory_info().rss for p in cfg['procs']),
+                oldUnit='byte', newUnit=unit)
+            # Publish Metric
+            self.publish(metric_name, metric_value)
+
+            metric_name = "{}.vms".format(process)
+            metric_value = diamond.convertor.binary.convert(
+                sum(p.get_memory_info().vms for p in cfg['procs']),
                 oldUnit='byte', newUnit=unit)
             # Publish Metric
             self.publish(metric_name, metric_value)
