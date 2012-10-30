@@ -18,23 +18,16 @@ exe and name are both lists of comma-separated regexps.
 """
 import re
 
-import diamond.collector
+import diamond.collector, diamond.convertor
 import psutil
 
 class ProcessMemoryCollector(diamond.collector.Collector):
-    UNIT_MAPPING = {
-        'b': 0,
-        'kb': 10,
-        'mb': 20,
-        'gb': 30,
-        }
 
     def get_default_config_help(self):
         config_help = super(ProcessMemoryCollector,
                             self).get_default_config_help()
         config_help.update({
-            'unit': ('The unit in which memory data is collected.'
-                     'Can be one of b, kb, mb, gb'),
+            'unit': 'The unit in which memory data is collected.',
             'process': ("A subcategory of settings inside of which each "
                         "collected process has it's configuration")
         })
@@ -44,12 +37,12 @@ class ProcessMemoryCollector(diamond.collector.Collector):
         """
         Default settings are:
             path: 'memory.process'
-            unit: 'b'
+            unit: 'B'
         """
         config = super(ProcessMemoryCollector, self).get_default_config()
         config.update({
             'path': 'memory.process',
-            'unit': 'b',
+            'unit': 'B',
             'process': '',
             })
         return config
@@ -118,11 +111,12 @@ class ProcessMemoryCollector(diamond.collector.Collector):
         """
         self.setup_config()
         self.filter_processes()
-
+        unit = self.config['unit']
         for process, cfg in self.processes.items():
             # finally publish the results for each process group
             metric_name = process
-            metric_value = (sum(p.get_memory_info().rss for p in cfg['procs'])
-                            / (2 ** self.UNIT_MAPPING[self.config['unit']]))
+            metric_value = diamond.convertor.binary.convert(
+                sum(p.get_memory_info().rss for p in cfg['procs']),
+                oldUnit='byte', newUnit=unit)
             # Publish Metric
             self.publish(metric_name, metric_value)
