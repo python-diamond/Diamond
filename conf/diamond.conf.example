@@ -23,8 +23,11 @@ pid_file = /var/run/diamond.pid
 # Directory to load collector modules from
 collectors_path = /usr/share/diamond/collectors/
 
-# Directory to load collector config from
+# Directory to load collector configs from
 collectors_config_path = /etc/diamond/collectors/
+
+# Directory to load handler configs from
+handlers_config_path = /etc/diamond/handlers/
 
 # Interval to reload collectors
 collectors_reload_interval = 3600

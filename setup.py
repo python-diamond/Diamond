@@ -21,11 +21,15 @@ if os.getenv('VIRTUAL_ENV', False):
                        glob('conf/*.conf.*')))
     data_files.append(('etc/diamond/collectors',
                        glob('conf/collectors/*')))
+    data_files.append(('etc/diamond/handlers',
+                       glob('conf/handlers/*')))
 else:
     data_files.append(('/etc/diamond',
                        glob('conf/*.conf.*')))
     data_files.append(('/etc/diamond/collectors',
                        glob('conf/collectors/*')))
+    data_files.append(('/etc/diamond/handlers',
+                       glob('conf/handlers/*')))
 
     if platform.dist()[0] == 'Ubuntu':
         data_files.append(('/etc/init',
