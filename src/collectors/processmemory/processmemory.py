@@ -76,14 +76,19 @@ class ProcessMemoryCollector(diamond.collector.Collector):
             }
 
     def filter_processes(self):
+        """
+        Populates self.processes[processname]['procs'] with the corresponding
+        list of psutil.Process instances
+        """
         def process_filter(proc, cfg):
             """
             Decides whether a process matches with a given process descriptor
 
-            @param proc: a psutil.Process instance
-            @param cfg: the dictionary from processes that describes with the
+            :param proc: a psutil.Process instance
+            :param cfg: the dictionary from processes that describes with the
                 process group we're testing for
-            @return: True|False
+            :return: True if it matches
+            :rtype: bool
             """
             for exe in cfg['exe']:
                 try:
