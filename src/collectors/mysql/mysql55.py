@@ -25,6 +25,7 @@ except ImportError:
     MySQLdb = None
 import diamond
 import time
+import re
 
 
 class MySQLPerfCollector(diamond.collector.Collector):
@@ -32,8 +33,6 @@ class MySQLPerfCollector(diamond.collector.Collector):
     def __init__(self, *args, **kwargs):
         super(MySQLPerfCollector, self).__init__(*args, **kwargs)
         self.db = None
-        self.cursor = None
-        self.connect()
         self.last_wait_count = {}
         self.last_wait_sum = {}
         self.last_timestamp = {}
@@ -89,14 +88,24 @@ class MySQLPerfCollector(diamond.collector.Collector):
             }
         }
 
+        if self.config['hosts'].__class__.__name__ != 'list':
+            self.config['hosts'] = [self.config['hosts']]
+
+            # Move legacy config format to new format
+        if 'host' in self.config:
+            hoststr = "%s:%s@%s:%s/%s" % (
+                self.config['user'],
+                self.config['passwd'],
+                self.config['host'],
+                self.config['port'],
+                self.config['db'],
+                )
+            self.config['hosts'].append(hoststr)
+
     def get_default_config_help(self):
         config_help = super(MySQLPerfCollector, self).get_default_config_help()
         config_help.update({
-            'host': 'Hostname',
-            'port': 'Port',
-            'db': 'Database',
-            'user': 'Username',
-            'passwd': 'Password',
+            'hosts': 'List of hosts to collect from. Format is yourusername:yourpassword@host:port/performance_schema[/nickname]',
             'slave': 'Collect Slave Replication Metrics',
         })
         return config_help
@@ -109,27 +118,16 @@ class MySQLPerfCollector(diamond.collector.Collector):
         config.update({
             'path':     'mysql',
             # Connection settings
-            'host':     'localhost',
-            'port':     3306,
-            'db':       'performance_schema',
-            'user':     'yourusername',
-            'passwd':   'yourpassword',
+            'hosts':    [],
 
             'slave':    'False',
         })
         return config
 
-    def connect(self):
+    def connect(self, params):
         if MySQLdb is None:
             self.log.error('Unable to import MySQLdb')
             return
-
-        params = {}
-        params['host'] = self.config['host']
-        params['port'] = int(self.config['port'])
-        params['db'] = self.config['db']
-        params['user'] = self.config['user']
-        params['passwd'] = self.config['passwd']
 
         try:
             self.db = MySQLdb.connect(**params)
@@ -137,12 +135,15 @@ class MySQLPerfCollector(diamond.collector.Collector):
             self.log.error('MySQLPerfCollector couldnt connect to database %s',
                            e)
             return {}
-
         self.log.info('MySQLPerfCollector: Connected to database.')
 
-    def slave_load(self, thread):
+    def query_list(self, query, params):
         cursor = self.db.cursor()
-        cursor.execute("""
+        cursor.execute(query, params)
+        return list(cursor.fetchall())
+
+    def slave_load(self, nickname, thread):
+        data = self.query_list("""
             SELECT
                 his.event_name,
                 his.sum_timer_wait,
@@ -159,7 +160,6 @@ class MySQLPerfCollector(diamond.collector.Collector):
                 his.event_name
             """, (thread,))
 
-        data = list(cursor.fetchall())
         wait_sum = sum([x[1] for x in data])
         wait_count = sum([x[2] for x in data])
         timestamp = int(time.time())
@@ -177,6 +177,9 @@ class MySQLPerfCollector(diamond.collector.Collector):
 
         wait_delta = wait_sum - self.last_wait_sum[thread]
         time_delta = (timestamp - self.last_timestamp[thread]) * 1000000000000
+
+        if time_delta == 0:
+            return
 
         # Summarize a few things
         thread_name = thread[thread.rfind('/') + 1:]
@@ -198,12 +201,12 @@ class MySQLPerfCollector(diamond.collector.Collector):
 
         for d in zip(self.last_data[thread], data):
             if d[0][0] in self.monitors[thread_name]:
-                self.publish(thread_name + '.'
+                self.publish(nickname + thread_name + '.'
                              + self.monitors[thread_name][d[0][0]],
                              (d[1][1] - d[0][1]) / time_delta * 100)
 
         # Also log what's unaccounted for. This is where Actual Work gets done
-        self.publish(thread_name + '.other_work',
+        self.publish(nickname + thread_name + '.other_work',
                      float(time_delta - wait_delta) / time_delta * 100)
 
         self.last_wait_sum[thread] = wait_sum
@@ -212,11 +215,26 @@ class MySQLPerfCollector(diamond.collector.Collector):
         self.last_data[thread] = data
 
     def collect(self):
-        if self.config['slave']:
-            try:
-                self.slave_load('thread/sql/slave_io')
-                self.slave_load('thread/sql/slave_sql')
-            except MySQLdb.OperationalError:
-                self.connect()
-                self.slave_load('thread/sql/slave_io')
-                self.slave_load('thread/sql/slave_sql')
+        for host in self.config['hosts']:
+            matches = re.search('^([^:]*):([^@]*)@([^:]*):([^/]*)/([^/]*)/?(.*)$', host)
+
+            if not matches:
+                continue
+
+            params = {}
+
+            params['host'] = matches.group(3)
+            params['port'] = int(matches.group(4))
+            params['db'] = matches.group(5)
+            params['user'] = matches.group(1)
+            params['passwd'] = matches.group(2)
+
+            nickname = matches.group(6)
+            if len(nickname):
+                nickname += '.'
+
+            self.connect(params=params)
+            if self.config['slave']:
+                self.slave_load(nickname, 'thread/sql/slave_io')
+                self.slave_load(nickname, 'thread/sql/slave_sql')
+            self.db.close()

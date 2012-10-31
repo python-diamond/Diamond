@@ -200,20 +200,32 @@ class MySQLCollector(diamond.collector.Collector):
             self.innodb_status_keys[key] = re.compile(
                 self.innodb_status_keys[key])
 
+        if self.config['hosts'].__class__.__name__ != 'list':
+            self.config['hosts'] = [self.config['hosts']]
+
+        # Move legacy config format to new format
+        if 'host' in self.config:
+            hoststr = "%s:%s@%s:%s/%s" % (
+                self.config['user'],
+                self.config['passwd'],
+                self.config['host'],
+                self.config['port'],
+                self.config['db'],
+                )
+            self.config['hosts'].append(hoststr)
+
+        self.db = None
+
     def get_default_config_help(self):
         config_help = super(MySQLCollector, self).get_default_config_help()
         config_help.update({
-            'host': 'Hostname',
-            'port': 'Port',
-            'db': 'Database',
-            'user': 'Username',
-            'passwd': 'Password',
             'publish': "Which rows of '[SHOW GLOBAL STATUS](http://dev.mysql."
                        + "com/doc/refman/5.1/en/show-status.html)' you would "
                        + "like to publish. Leave unset to publish all",
             'slave': 'Collect SHOW SLAVE STATUS',
             'master': 'Collect SHOW MASTER STATUS',
             'innodb': 'Collect SHOW ENGINE INNODB STATUS',
+            'hosts': 'List of hosts to collect from. Format is yourusername:yourpassword@host:port/db[/nickname]'
         })
         return config_help
 
@@ -225,49 +237,57 @@ class MySQLCollector(diamond.collector.Collector):
         config.update({
             'path':     'mysql',
             # Connection settings
-            'host':     'localhost',
-            'port':     3306,
-            'db':       'yourdatabase',
-            'user':     'yourusername',
-            'passwd':   'yourpassword',
+            'hosts':    [],
 
             # Which rows of 'SHOW GLOBAL STATUS' you would like to publish.
             # http://dev.mysql.com/doc/refman/5.1/en/show-status.html
             # Leave unset to publish all
             #'publish': '',
 
-            'slave':    'False',
-            'master':   'False',
-            'innodb':   'False',
+            'slave':    False,
+            'master':   False,
+            'innodb':   False,
         })
         return config
 
-    def get_stats(self):
-        params = {}
-        metrics = {}
+    def get_db_stats(self, query):
+        cursor = self.db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
 
-        if MySQLdb is None:
-            self.log.error('Unable to import MySQLdb')
-            return {}
+        cursor.execute(query)
 
-        params['host'] = self.config['host']
-        params['port'] = int(self.config['port'])
-        params['db'] = self.config['db']
-        params['user'] = self.config['user']
-        params['passwd'] = self.config['passwd']
+        return cursor.fetchall()
 
+    def connect(self, params):
         try:
-            db = MySQLdb.connect(**params)
+            self.db = MySQLdb.connect(**params)
+            self.log.info('MySQLCollector: Connected to database.')
         except MySQLError, e:
             self.log.error('MySQLCollector couldnt connect to database %s', e)
-            return {}
 
-        self.log.info('MySQLCollector: Connected to database.')
+    def disconnect(self):
+        self.db.close()
 
-        cursor = db.cursor()
+    def get_db_global_status(self):
+        return self.get_db_stats('SHOW GLOBAL STATUS')
 
-        cursor.execute('SHOW GLOBAL STATUS')
-        metrics['status'] = dict(cursor.fetchall())
+    def get_db_master_status(self):
+        return self.get_db_stats('SHOW MASTER STATUS')
+
+    def get_db_slave_status(self):
+        return self.get_db_stats('SHOW SLAVE STATUS')
+
+    def get_db_innodb_status(self):
+        return self.get_db_stats('SHOW ENGINE INNODB STATUS')
+
+    def get_stats(self, params):
+        metrics = {}
+
+        self.connect(params)
+
+        metrics['status'] = {}
+        rows = self.get_db_global_status()
+        for row in rows:
+            metrics['status'][row['Variable_name']] = row['Value']
         for key in metrics['status']:
             try:
                 metrics[key] = float(metrics['status'][key])
@@ -275,44 +295,41 @@ class MySQLCollector(diamond.collector.Collector):
                 pass
 
         if self.config['master'] == 'True':
-            cursor = db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
-            cursor.execute('SHOW MASTER STATUS')
             try:
-                row_master = cursor.fetchone()
-                for key, value in row_master.items():
-                    if key in self._IGNORE_KEYS:
-                        continue
-                    try:
-                        metrics[key] = float(row_master[key])
-                    except:
-                        pass
+                rows = self.get_db_master_status()
+                for row_master in rows:
+                    for key, value in row_master.items():
+                        if key in self._IGNORE_KEYS:
+                            continue
+                        try:
+                            metrics[key] = float(row_master[key])
+                        except:
+                            pass
             except:
                 self.log.error('MySQLCollector: Couldnt get master status')
                 pass
 
         if self.config['slave'] == 'True':
-            cursor = db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
-            cursor.execute('SHOW SLAVE STATUS')
             try:
-                row_slave = cursor.fetchone()
-                for key, value in row_slave.items():
-                    if key in self._IGNORE_KEYS:
-                        continue
-                    try:
-                        metrics[key] = float(row_slave[key])
-                    except:
-                        pass
+                rows = self.get_db_slave_status()
+                for row_slave in rows:
+                    for key, value in row_slave.items():
+                        if key in self._IGNORE_KEYS:
+                            continue
+                        try:
+                            metrics[key] = float(row_slave[key])
+                        except:
+                            pass
             except:
                 self.log.error('MySQLCollector: Couldnt get slave status')
                 pass
 
         if self.config['innodb'] == 'True':
             innodb_status_timer = time.time()
-            cursor = db.cursor()
             try:
-                cursor.execute('SHOW ENGINE INNODB STATUS')
+                rows = self.get_db_innodb_status()
 
-                innodb_status_output = cursor.fetchone()
+                innodb_status_output = rows[0]
 
                 todo = self.innodb_status_keys.keys()
                 for line in innodb_status_output[2].split('\n'):
@@ -349,34 +366,57 @@ class MySQLCollector(diamond.collector.Collector):
                            Innodb_status_process_time)
             metrics["Innodb_status_process_time"] = Innodb_status_process_time
 
-        db.close()
+        self.disconnect()
 
         return metrics
 
     def collect(self):
-        metrics = self.get_stats()
 
-        for metric_name in metrics:
-            metric_value = metrics[metric_name]
+        if MySQLdb is None:
+            self.log.error('Unable to import MySQLdb')
+            return False
 
-            if type(metric_value) is not float:
+        for host in self.config['hosts']:
+            matches = re.search('^([^:]*):([^@]*)@([^:]*):([^/]*)/([^/]*)/?(.*)', host)
+
+            if not matches:
                 continue
 
-            if ('publish' not in self.config
-                    or metric_name in self.config['publish']):
-                if metric_name not in self._GAUGE_KEYS:
-                    metric_value = self.derivative(metric_name, metric_value)
-                    # All these values are incrementing counters, so if we've
-                    # gone negative then someone's restarted mysqld and reset
-                    # all the counters. Best not record a massive negative
-                    # number. Skip this value.
-                    if metric_value < 0:
-                        continue
-                self.publish(metric_name, metric_value)
-            else:
-                for k in self.config['publish'].split():
-                    if k not in metrics:
-                        self.log.error("No such key '%s' available, issue 'show"
-                                       + "global status' for a full list", k)
-                    else:
-                        self.publish(k, metrics[k])
+            params = {}
+
+            params['host'] = matches.group(3)
+            params['port'] = int(matches.group(4))
+            params['db'] = matches.group(5)
+            params['user'] = matches.group(1)
+            params['passwd'] = matches.group(2)
+
+            nickname = matches.group(6)
+            if len(nickname):
+                nickname += '.'
+
+            metrics = self.get_stats(params=params)
+
+            for metric_name in metrics:
+                metric_value = metrics[metric_name]
+
+                if type(metric_value) is not float:
+                    continue
+
+                if ('publish' not in self.config
+                        or metric_name in self.config['publish']):
+                    if metric_name not in self._GAUGE_KEYS:
+                        metric_value = self.derivative(metric_name, metric_value)
+                        # All these values are incrementing counters, so if we've
+                        # gone negative then someone's restarted mysqld and reset
+                        # all the counters. Best not record a massive negative
+                        # number. Skip this value.
+                        if metric_value < 0:
+                            continue
+                    self.publish(nickname+metric_name, metric_value)
+                else:
+                    for k in self.config['publish'].split():
+                        if k not in metrics:
+                            self.log.error("No such key '%s' available, issue 'show"
+                                           + "global status' for a full list", k)
+                        else:
+                            self.publish(nickname+k, metrics[k])

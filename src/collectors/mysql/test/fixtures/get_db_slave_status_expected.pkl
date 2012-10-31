@@ -1,0 +1,17 @@
+(dp1
+S'Relay_Log_Space'
+p2
+I2000
+sS'Seconds_Behind_Master'
+p3
+I28
+sS'Exec_Master_Log_Pos'
+p4
+I200
+sS'Read_Master_Log_Pos'
+p5
+I200
+sS'Relay_Log_Pos'
+p6
+I2000
+s.
