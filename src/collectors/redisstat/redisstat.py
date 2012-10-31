@@ -64,7 +64,7 @@ class RedisCollector(diamond.collector.Collector):
             'host': 'Hostname to collect from',
             'port': 'Port number to collect from',
             'db': '',
-            'databases': '',
+            'databases': 'how many database instances to collect',
         })
         return config_help
 
@@ -80,7 +80,9 @@ class RedisCollector(diamond.collector.Collector):
             'host': self._DEFAULT_HOST,
             'port': self._DEFAULT_PORT,
             'db': self._DEFAULT_DB,
-            'databases': self._DATABASE_COUNT})
+            'databases': self._DATABASE_COUNT,
+            'path': 'redis',
+            })
         return config
 
     def _client(self):
@@ -119,6 +121,12 @@ class RedisCollector(diamond.collector.Collector):
         """
         return '%s.%s' % (self.config.get('port', self._DEFAULT_PORT), key)
 
+    def _get_info(self):
+        client = self._client()
+        info = client.info()
+        del client
+        return info
+
     def collect(self):
         """Collect the stats from the redis instance and publish them.
 
@@ -127,10 +135,8 @@ class RedisCollector(diamond.collector.Collector):
             self.log.error('Unable to import module redis')
             return {}
 
-        # Connect to redis
-        client = self._client()
-        info = client.info()
-        del client
+        # Connect to redis and get the info
+        info = self._get_info()
 
         # The structure should include the port for multiple instances per
         # server
