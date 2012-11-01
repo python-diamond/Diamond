@@ -24,6 +24,12 @@ class TestProcessMemoryCollector(CollectorTestCase):
             'foo': {
                 'exe': '^foobar',
             },
+            'bar': {
+                'name': '^bar',
+            },
+            'barexe': {
+                'exe': 'bar$'
+            }
         }
     }
 
@@ -64,6 +70,19 @@ class TestProcessMemoryCollector(CollectorTestCase):
              'rss': 999999999999,
              'vms': 999999999999,
             },
+            # bar process
+            {'name': 'bar',
+             'exe': '/usr/bin/foo',
+             'pid': 9998,
+             'rss': 1,
+             'vms': 1
+            },
+            {'exe': '/usr/bin/bar',
+             'name': '',
+             'pid': 9998,
+             'rss': 10,
+             'vms': 10,
+            },
         ]
 
         class ProcessMock:
@@ -101,7 +120,8 @@ class TestProcessMemoryCollector(CollectorTestCase):
                              106852352+106835968+106835968+109023232+
                              75829248)
         self.assertPublished(publish_mock, 'foo.rss', 0)
-        self.assertPublished(publish_mock, 'foo.vms', 0)
+        self.assertPublished(publish_mock, 'bar.rss', 1)
+        self.assertPublished(publish_mock, 'barexe.rss', 10)
 
 ################################################################################
 if __name__ == "__main__":
