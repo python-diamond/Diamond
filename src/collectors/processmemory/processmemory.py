@@ -92,12 +92,12 @@ class ProcessMemoryCollector(diamond.collector.Collector):
             """
             for exe in cfg['exe']:
                 try:
-                    if exe.match(proc.exe):
+                    if exe.search(proc.exe):
                         return True
                 except psutil.AccessDenied:
                     break
             for name in cfg['name']:
-                if name.match(proc.name):
+                if name.search(proc.name):
                     return True
             return False
 
