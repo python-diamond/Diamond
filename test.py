@@ -106,7 +106,10 @@ class CollectorTestCase(unittest.TestCase):
     def setPickledResults(self, results_name, data):
         pickle.dump(data, open(self.getFixturePath(results_name), "wb"))
 
-    def assertPublished(self, mock, key, value):
+    def assertUnpublished(self, mock, key, value, expected_value = 0):
+        return self.assertPublished(mock, key, value, expected_value)
+
+    def assertPublished(self, mock, key, value, expected_value = 1):
         calls = filter(lambda x: x[0][0] == key, mock.call_args_list)
 
         actual_value = len(calls)
@@ -136,18 +139,23 @@ class CollectorTestCase(unittest.TestCase):
         else:
             self.assertEqual(actual_value, expected_value, message)
 
-    def assertPublishedMany(self, mock, dict):
+    def assertUnpublishedMany(self, mock, dict, expected_value = 0):
+        return self.assertPublishedMany( mock, dict, expected_value)
+
+    def assertPublishedMany(self, mock, dict, expected_value = 1):
         for key, value in dict.iteritems():
-            self.assertPublished(mock, key, value)
+            self.assertPublished(mock, key, value, expected_value)
 
         mock.reset_mock()
 
-    def assertPublishedMetric(self, mock, key, value):
+    def assertUnpublishedMetric(self, mock, key, value, expected_value = 0):
+        return self.assertPublishedMetric(mock, key, value, expected_value)
+
+    def assertPublishedMetric(self, mock, key, value, expected_value = 1):
         calls = filter(lambda x: x[0][0].path.find(key) != -1,
                        mock.call_args_list)
 
         actual_value = len(calls)
-        expected_value = 1
         message = '%s: actual number of calls %d, expected %d' % (
             key, actual_value, expected_value)
 
@@ -172,10 +180,13 @@ class CollectorTestCase(unittest.TestCase):
                                    msg=message)
         else:
             self.assertEqual(actual_value, expected_value, message)
+            
+    def assertUnpublishedMetricMany(self, mock, dict, expected_value=0):
+        return self.assertPublishedMetricMany(mock, dict, expected_value)
 
-    def assertPublishedMetricMany(self, mock, dict):
+    def assertPublishedMetricMany(self, mock, dict, expected_value=1):
         for key, value in dict.iteritems():
-            self.assertPublishedMetric(mock, key, value)
+            self.assertPublishedMetric(mock, key, value, expected_value)
 
         mock.reset_mock()
 
