@@ -12,3 +12,4 @@ version.txt
 src/diamond/version.py
 .idea
 src/*.egg-info
+.tox
