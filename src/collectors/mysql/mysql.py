@@ -211,7 +211,7 @@ class MySQLCollector(diamond.collector.Collector):
                 self.config['host'],
                 self.config['port'],
                 self.config['db'],
-                )
+            )
             self.config['hosts'].append(hoststr)
 
         self.db = None
@@ -225,7 +225,8 @@ class MySQLCollector(diamond.collector.Collector):
             'slave': 'Collect SHOW SLAVE STATUS',
             'master': 'Collect SHOW MASTER STATUS',
             'innodb': 'Collect SHOW ENGINE INNODB STATUS',
-            'hosts': 'List of hosts to collect from. Format is yourusername:yourpassword@host:port/db[/nickname]'
+            'hosts': 'List of hosts to collect from. Format is '
+            + 'yourusername:yourpassword@host:port/db[/nickname]'
         })
         return config_help
 
@@ -377,7 +378,8 @@ class MySQLCollector(diamond.collector.Collector):
             return False
 
         for host in self.config['hosts']:
-            matches = re.search('^([^:]*):([^@]*)@([^:]*):([^/]*)/([^/]*)/?(.*)', host)
+            matches = re.search(
+                '^([^:]*):([^@]*)@([^:]*):([^/]*)/([^/]*)/?(.*)', host)
 
             if not matches:
                 continue
@@ -405,18 +407,20 @@ class MySQLCollector(diamond.collector.Collector):
                 if ('publish' not in self.config
                         or metric_name in self.config['publish']):
                     if metric_name not in self._GAUGE_KEYS:
-                        metric_value = self.derivative(metric_name, metric_value)
-                        # All these values are incrementing counters, so if we've
-                        # gone negative then someone's restarted mysqld and reset
-                        # all the counters. Best not record a massive negative
-                        # number. Skip this value.
+                        metric_value = self.derivative(metric_name,
+                                                       metric_value)
+                        # All these values are incrementing counters, so if
+                        # we've gone negative then someone's restarted mysqld
+                        # and reset all the counters. Best not record a massive
+                        # negative number. Skip this value.
                         if metric_value < 0:
                             continue
-                    self.publish(nickname+metric_name, metric_value)
+                    self.publish(nickname + metric_name, metric_value)
                 else:
                     for k in self.config['publish'].split():
                         if k not in metrics:
-                            self.log.error("No such key '%s' available, issue 'show"
-                                           + "global status' for a full list", k)
+                            self.log.error("No such key '%s' available, issue"
+                                           + " 'show global status' for a full"
+                                           + " list", k)
                         else:
-                            self.publish(nickname+k, metrics[k])
+                            self.publish(nickname + k, metrics[k])

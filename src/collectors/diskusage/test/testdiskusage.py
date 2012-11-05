@@ -193,7 +193,6 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, metrics)
 
-
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_verify_supporting_md_dm(self, publish_mock):
@@ -267,7 +266,6 @@ class TestDiskUsageCollector(CollectorTestCase):
         }
 
         self.assertPublishedMany(publish_mock, metrics)
-
 
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')

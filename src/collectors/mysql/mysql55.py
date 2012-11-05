@@ -99,13 +99,15 @@ class MySQLPerfCollector(diamond.collector.Collector):
                 self.config['host'],
                 self.config['port'],
                 self.config['db'],
-                )
+            )
             self.config['hosts'].append(hoststr)
 
     def get_default_config_help(self):
         config_help = super(MySQLPerfCollector, self).get_default_config_help()
         config_help.update({
-            'hosts': 'List of hosts to collect from. Format is yourusername:yourpassword@host:port/performance_schema[/nickname]',
+            'hosts': 'List of hosts to collect from. Format is '
+            + 'yourusername:yourpassword@host:'
+            + 'port/performance_schema[/nickname]',
             'slave': 'Collect Slave Replication Metrics',
         })
         return config_help
@@ -163,7 +165,7 @@ class MySQLPerfCollector(diamond.collector.Collector):
         wait_sum = sum([x[1] for x in data])
         wait_count = sum([x[2] for x in data])
         timestamp = int(time.time())
-        
+
         if 0 in data and len(data[0]) > 5:
             cur_event_name, timestamp = data[0][3:]
 
@@ -216,7 +218,8 @@ class MySQLPerfCollector(diamond.collector.Collector):
 
     def collect(self):
         for host in self.config['hosts']:
-            matches = re.search('^([^:]*):([^@]*)@([^:]*):([^/]*)/([^/]*)/?(.*)$', host)
+            matches = re.search(
+                '^([^:]*):([^@]*)@([^:]*):([^/]*)/([^/]*)/?(.*)$', host)
 
             if not matches:
                 continue

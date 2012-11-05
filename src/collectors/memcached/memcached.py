@@ -51,7 +51,7 @@ class MemcachedCollector(diamond.collector.Collector):
             #'publish': ''
 
             # Connection settings
-            'hosts': [ 'localhost:11211' ]
+            'hosts': ['localhost:11211']
         })
         return config
 
@@ -88,33 +88,33 @@ class MemcachedCollector(diamond.collector.Collector):
 
     def collect(self):
         hosts = self.config.get('hosts')
-        
+
         # Convert a string config value to be an array
         if isinstance(hosts, basestring):
             hosts = [hosts]
-            
+
         for host in hosts:
             matches = re.search('((.+)\@)?([^:]+):(\d+)', host)
             alias = matches.group(2)
             hostname = matches.group(3)
             port = matches.group(4)
-            
+
             if alias is None:
                 alias = hostname
-            
+
             stats = self.get_stats(hostname, port)
-            
+
             # figure out what we're configured to get, defaulting to everything
             desired = self.config.get('publish', stats.keys())
-            
+
             # for everything we want
             for stat in desired:
                 if stat in stats:
-                    
+
                     # we have it
                     self.publish(alias + "." + stat, stats[stat])
                 else:
-                    
+
                     # we don't, must be somehting configured in publish so we
                     # should log an error about it
                     self.log.error("No such key '%s' available, issue 'stats' "

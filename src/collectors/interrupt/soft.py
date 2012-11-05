@@ -30,7 +30,8 @@ class SoftInterruptCollector(diamond.collector.Collector):
     PROC = '/proc/stat'
 
     def get_default_config_help(self):
-        config_help = super(SoftInterruptCollector, self).get_default_config_help()
+        config_help = super(SoftInterruptCollector,
+                            self).get_default_config_help()
         config_help.update({
         })
         return config_help
@@ -54,26 +55,28 @@ class SoftInterruptCollector(diamond.collector.Collector):
 
         #Open PROC file
         file = open(self.PROC, 'r')
-        
+
         #Get data
         for line in file:
-            
+
             if not line.startswith('softirq'):
                 continue
-            
+
             data = line.split()
-            
+
             metric_name = 'total'
             metric_value = int(data[1])
-            metric_value = int(self.derivative(metric_name,
-                                    long(metric_value), counter))
+            metric_value = int(self.derivative(
+                metric_name,
+                long(metric_value), counter))
             self.publish(metric_name, metric_value)
-            
+
             for i in range(2, len(data)):
-                metric_name = str(i-2)
+                metric_name = str(i - 2)
                 metric_value = int(data[i])
-                metric_value = int(self.derivative(metric_name,
-                                        long(metric_value), counter))
+                metric_value = int(self.derivative(
+                    metric_name,
+                    long(metric_value), counter))
                 self.publish(metric_name, metric_value)
 
         #Close file

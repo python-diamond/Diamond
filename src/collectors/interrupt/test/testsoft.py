@@ -74,17 +74,17 @@ class TestSoftInterruptCollector(CollectorTestCase):
         self.collector.collect()
 
         metrics = {
-            'total': 4971, 
-            '0': 0, 
-            '1': 1729, 
-            '2': 2, 
-            '3': 240, 
-            '4': 31, 
-            '5': 0, 
-            '6': 0, 
-            '7': 1480, 
-            '8': 0, 
-            '9': 1489, 
+            'total': 4971,
+            '0': 0,
+            '1': 1729,
+            '2': 2,
+            '3': 240,
+            '4': 31,
+            '5': 0,
+            '6': 0,
+            '7': 1480,
+            '8': 0,
+            '9': 1489,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
