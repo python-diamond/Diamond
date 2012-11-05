@@ -28,13 +28,15 @@ class TestPowerDNSCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_fake_data(self, publish_mock):
         with patch('subprocess.Popen.communicate', Mock(return_value=(
-                self.getFixture('pdns_control-2.9.22.6-1.el6-A').getvalue(), ''))):
+                self.getFixture('pdns_control-2.9.22.6-1.el6-A').getvalue(),
+                ''))):
             self.collector.collect()
-            
+
         self.assertPublishedMany(publish_mock, {})
-            
+
         with patch('subprocess.Popen.communicate', Mock(return_value=(
-                self.getFixture('pdns_control-2.9.22.6-1.el6-B').getvalue(), ''))):
+                self.getFixture('pdns_control-2.9.22.6-1.el6-B').getvalue(),
+                ''))):
             self.collector.collect()
 
         metrics = {

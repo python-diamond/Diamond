@@ -22,7 +22,8 @@ try:
     import json
 except ImportError:
     import simplejson as json
-    
+
+
 class PostfixCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
@@ -44,18 +45,18 @@ class PostfixCollector(diamond.collector.Collector):
             'port':     7777,
         })
         return config
-    
+
     def getJson(self):
         try:
-            sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
-            sock.connect( (self.config['host'], int(self.config['port'])) )
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((self.config['host'], int(self.config['port'])))
             sock.send("stats\n")
             jsondata = sock.recv(4096)
             sock.close()
             return jsondata
         except socket.error:
             return None
-    
+
     def getData(self):
         try:
             jsondata = self.getJson()
@@ -67,10 +68,10 @@ class PostfixCollector(diamond.collector.Collector):
 
     def collect(self):
         data = self.getData()
-        
+
         if not data:
             return
-        
+
         if 'clients' in data:
             for client in data['clients'].keys():
                 # Clients are sometimes ip addresses
@@ -79,19 +80,20 @@ class PostfixCollector(diamond.collector.Collector):
                 metric_name = "clients.%s" % (clientname)
                 metric_value = self.derivative(metric_name, metric_value)
                 self.publish(metric_name, metric_value)
-                
+
         for nodetype in ['recv', 'send', 'in']:
             if nodetype not in data:
                 continue
             for nodesubtype in data[nodetype].keys():
                 for metric in data[nodetype][nodesubtype].keys():
-                    
+
                     # End metrics are sometimes codes like 2.0.0
                     metricname = metric.replace('.', '_')
-                    
-                    metric_name = "%s.%s.%s" % (nodetype, nodesubtype, metricname)
+
+                    metric_name = "%s.%s.%s" % (nodetype,
+                                                nodesubtype, metricname)
                     metric_value = data[nodetype][nodesubtype][metric]
-                    
+
                     metric_value = self.derivative(metric_name, metric_value)
-        
+
                     self.publish(metric_name, metric_value)

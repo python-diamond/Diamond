@@ -56,7 +56,7 @@ class RedisCollector(diamond.collector.Collector):
              'pubsub.patterns': 'pubsub_patterns',
              'slaves.connected': 'connected_slaves'}
     _RENAMED_KEYS = {'last_save.changes_since': 'rdb_changes_since_last_save',
-             'last_save.time': 'rdb_last_save_time'}
+                     'last_save.time': 'rdb_last_save_time'}
 
     def get_default_config_help(self):
         config_help = super(RedisCollector, self).get_default_config_help()
@@ -82,7 +82,7 @@ class RedisCollector(diamond.collector.Collector):
             'db': self._DEFAULT_DB,
             'databases': self._DATABASE_COUNT,
             'path': 'redis',
-            })
+        })
         return config
 
     def _client(self):

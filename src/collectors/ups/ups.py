@@ -68,5 +68,5 @@ class UPSCollector(diamond.collector.Collector):
                 name = ".".join([datapoint[0], datapoint[0].split(".")[1]])
             else:
                 name = datapoint[0]
-                
+
             self.publish(name, val)

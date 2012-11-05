@@ -10,7 +10,6 @@ from mock import patch
 
 from diamond.collector import Collector
 from redisstat import RedisCollector
-import time
 
 ################################################################################
 
@@ -20,10 +19,9 @@ class TestRedisCollector(CollectorTestCase):
         config = get_collector_config('RedisCollector', {
             'interval': '1',
             'databases': 1,
-            })
+        })
 
         self.collector = RedisCollector(config, None)
-
 
     @patch.object(Collector, 'publish')
     def test_real_data(self, publish_mock):
@@ -71,7 +69,7 @@ class TestRedisCollector(CollectorTestCase):
                   'changes_since_last_save': 0,
                   'redis_git_dirty': 0,
                   'keyspace_hits': 0
-        }
+                  }
         data_2 = {'pubsub_channels': 1,
                   'used_memory_peak_human': '1700.71K',
                   'bgrewriteaof_in_progress': 4,
@@ -115,15 +113,17 @@ class TestRedisCollector(CollectorTestCase):
                   'changes_since_last_save': 759,
                   'redis_git_dirty': 0,
                   'keyspace_hits': 5700
-        }
+                  }
 
-        with patch.object(RedisCollector, '_get_info', Mock(return_value=data_1)):
+        with patch.object(RedisCollector, '_get_info',
+                          Mock(return_value=data_1)):
             with patch('time.time', Mock(return_value=10)):
                 self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {})
 
-        with patch.object(RedisCollector, '_get_info', Mock(return_value=data_2)):
+        with patch.object(RedisCollector, '_get_info',
+                          Mock(return_value=data_2)):
             with patch('time.time', Mock(return_value=20)):
                 self.collector.collect()
 
@@ -148,13 +148,13 @@ class TestRedisCollector(CollectorTestCase):
                    '6379.keys.expired': 0,
                    '6379.keys.evicted': 0,
                    '6379.keyspace.hits': 5700,
-        }
+                   }
 
         self.assertPublishedMany(publish_mock, metrics)
 
         self.setDocExample(collector=self.collector.__class__.__name__,
-            metrics=metrics,
-            defaultpath=self.collector.config['path'])
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
 
 ################################################################################
 if __name__ == "__main__":

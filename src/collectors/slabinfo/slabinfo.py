@@ -54,33 +54,37 @@ class SlabInfoCollector(diamond.collector.Collector):
 
         #Open PROC file
         file = open(self.PROC, 'r')
-        
+
         #Get data
         for line in file:
             if line.startswith('slabinfo'):
                 continue
-            
+
             if line.startswith('#'):
                 keys = line.split()[1:]
                 continue
-            
+
             data = line.split()
-            
-            for key in ['<active_objs>', '<num_objs>', '<objsize>', '<objperslab>', '<pagesperslab>']:
+
+            for key in ['<active_objs>', '<num_objs>', '<objsize>',
+                        '<objperslab>', '<pagesperslab>']:
                 i = keys.index(key)
-                metric_name = data[0] + '.' + key.replace('<', '').replace('>', '')
+                metric_name = data[0] + '.' + key.replace(
+                    '<', '').replace('>', '')
                 metric_value = int(data[i])
                 self.publish(metric_name, metric_value)
-                
+
             for key in ['<limit>', '<batchcount>', '<sharedfactor>']:
                 i = keys.index(key)
-                metric_name = data[0] + '.tunables.' + key.replace('<', '').replace('>', '')
+                metric_name = data[0] + '.tunables.' + key.replace(
+                    '<', '').replace('>', '')
                 metric_value = int(data[i])
                 self.publish(metric_name, metric_value)
-                
+
             for key in ['<active_slabs>', '<num_slabs>', '<sharedavail>']:
                 i = keys.index(key)
-                metric_name = data[0] + '.slabdata.' + key.replace('<', '').replace('>', '')
+                metric_name = data[0] + '.slabdata.' + key.replace(
+                    '<', '').replace('>', '')
                 metric_value = int(data[i])
                 self.publish(metric_name, metric_value)
 

@@ -14,7 +14,6 @@ from postfix import PostfixCollector
 ################################################################################
 
 
-
 class TestPostfixCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('PostfixCollector', {
@@ -24,19 +23,29 @@ class TestPostfixCollector(CollectorTestCase):
         })
 
         self.collector = PostfixCollector(config, None)
-        
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
         with patch.object(PostfixCollector,
                           'getJson',
-                          Mock(return_value='{"local": {}, "clients": {"127.0.0.1": 1}, "recv": {"status": {}, "resp_codes": {}}, "send": {"status": {"sent": 0}, "resp_codes": {"2.0.0": 0}}, "in": {"status": {}, "resp_codes": {}}}')):
+                          Mock(return_value='{"local": {}, '
+                               + ' "clients": {"127.0.0.1": 1},'
+                               + ' "recv": {"status": {}, "resp_codes": {}},'
+                               + ' "send": {"status": {"sent": 0},'
+                               + ' "resp_codes": {"2.0.0": 0}},'
+                               + ' "in": {"status": {}, "resp_codes": {}}}')):
             self.collector.collect()
-            
+
         self.assertPublishedMany(publish_mock, {})
 
         with patch.object(PostfixCollector,
                           'getJson',
-                          Mock(return_value='{"local": {}, "clients": {"127.0.0.1": 2}, "recv": {"status": {}, "resp_codes": {}}, "send": {"status": {"sent": 4}, "resp_codes": {"2.0.0": 5}}, "in": {"status": {}, "resp_codes": {}}}')):
+                          Mock(return_value='{"local": {}, '
+                               + '"clients": {"127.0.0.1": 2}, '
+                               + '"recv": {"status": {}, "resp_codes": {}}, '
+                               + '"send": {"status": {"sent": 4}, '
+                               + '"resp_codes": {"2.0.0": 5}}, '
+                               + '"in": {"status": {}, "resp_codes": {}}}')):
             self.collector.collect()
 
         metrics = {
@@ -46,7 +55,7 @@ class TestPostfixCollector(CollectorTestCase):
         }
 
         self.assertPublishedMany(publish_mock, metrics)
-        
+
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])

@@ -139,18 +139,18 @@ class StatsCollector(diamond.collector.Collector):
 
         stats['version'] = get_diamond_version()
         stats['python_version'] = platform.python_version()
-        
+
         if platform.system() == 'Darwin':
             ver = platform.mac_ver()
             os_version = ('Darwin', ver[0], '')
-            
+
         elif platform.system() == 'Linux':
             os_version = platform.linux_distribution()
-            
+
         elif platform.system() == 'Windows':
             ver = platform.win32_ver()
             os_version = ('Windows', ver[0], ver[2])
-            
+
         stats['os'] = "%s %s" % (os_version[0], os_version[1])
         stats['os_distname'] = os_version[0]
         stats['os_version'] = os_version[1]
@@ -186,10 +186,10 @@ class StatsCollector(diamond.collector.Collector):
         reload_i = self.full_config['server']['collectors_reload_interval']
         stats['server']['collectors_reload_interval'] = reload_i
 
-        host_meth = 'Default'
+        hmeth = 'Default'
         if 'hostname_method' in self.full_config['collectors']['default']:
-            host_meth = self.full_config['collectors']['default']['hostname_method']
-        stats['server']['hostname_method'] = host_meth
+            hmeth = self.full_config['collectors']['default']['hostname_method']
+        stats['server']['hostname_method'] = hmeth
 
         data = urllib.urlencode({'stats': json.dumps(stats)})
         f = urllib.urlopen(self.config['url'], data)

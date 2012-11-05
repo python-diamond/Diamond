@@ -28,7 +28,7 @@ class TestPostqueueCollector(CollectorTestCase):
                           Mock(return_value=self.getFixture(
                               'postqueue_emails').getvalue())):
             self.collector.collect()
-            
+
         metrics = {
             'count': 3
         }
@@ -46,7 +46,7 @@ class TestPostqueueCollector(CollectorTestCase):
                           Mock(return_value=self.getFixture(
                               'postqueue_empty').getvalue())):
             self.collector.collect()
-            
+
         metrics = {
             'count': 0
         }

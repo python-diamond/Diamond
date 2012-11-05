@@ -25,55 +25,55 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
     """
     SNMPCollector for Netscaler Metrics
     """
-    
+
     """
     EntityProtocolType ::=
-    INTEGER{    http(0), 
-                ftp(1), 
-                tcp(2), 
-                udp(3), 
-                sslBridge(4), 
-                monitor(5), 
-                monitorUdp(6), 
-                nntp(7), 
-                httpserver(8), 
-                httpclient(9), 
-                rpcserver(10), 
-                rpcclient(11), 
-                nat(12), 
-                any(13), 
-                ssl(14), 
-                dns(15), 
-                adns(16), 
-                snmp(17), 
-                ha(18), 
-                monitorPing(19), 
-                sslOtherTcp(20), 
-                aaa(21), 
-                secureMonitor(23), 
-                sslvpnUdp(24), 
-                rip(25), 
-                dnsClient(26), 
-                rpcServer(27), 
-                rpcClient(28), 
-                dhcrpa(36), 
-                sipudp(39), 
-                dnstcp(44), 
-                adnstcp(45), 
-                rtsp(46), 
-                push(48), 
-                sslPush(49), 
-                dhcpClient(50), 
-                radius(51), 
+    INTEGER{    http(0),
+                ftp(1),
+                tcp(2),
+                udp(3),
+                sslBridge(4),
+                monitor(5),
+                monitorUdp(6),
+                nntp(7),
+                httpserver(8),
+                httpclient(9),
+                rpcserver(10),
+                rpcclient(11),
+                nat(12),
+                any(13),
+                ssl(14),
+                dns(15),
+                adns(16),
+                snmp(17),
+                ha(18),
+                monitorPing(19),
+                sslOtherTcp(20),
+                aaa(21),
+                secureMonitor(23),
+                sslvpnUdp(24),
+                rip(25),
+                dnsClient(26),
+                rpcServer(27),
+                rpcClient(28),
+                dhcrpa(36),
+                sipudp(39),
+                dnstcp(44),
+                adnstcp(45),
+                rtsp(46),
+                push(48),
+                sslPush(49),
+                dhcpClient(50),
+                radius(51),
                 serviceUnknown(62) }
-    
+
     EntityState ::=
-    INTEGER{    down(1), 
-                unknown(2), 
-                busy(3), 
-                outOfService(4), 
-                transitionToOutOfService(5), 
-                up(7), 
+    INTEGER{    down(1),
+                unknown(2),
+                busy(3),
+                outOfService(4),
+                transitionToOutOfService(5),
+                up(7),
                 transitionToOutOfServiceDown(8) }
     """
 
@@ -128,8 +128,10 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
             'host': 'netscaler dns address',
             'port': 'Netscaler port to collect snmp data',
             'community': 'SNMP community',
-            'exclude_service_type': "list of service types to exclude (see MIB EntityProtocolType)",
-            'exclude_vserver_type': "list of vserver types to exclude (see MIB EntityProtocolType)" 
+            'exclude_service_type': "list of service types to exclude"
+            + " (see MIB EntityProtocolType)",
+            'exclude_vserver_type': "list of vserver types to exclude"
+            + " (see MIB EntityProtocolType)"
         })
         return config_help
 
@@ -208,9 +210,10 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
                                        host,
                                        port,
                                        community)[serviceTypeOid].strip("\'"))
-            
+
             # Filter excluded service types
-            if serviceType in map(lambda v: int(v), self.config.get('exclude_service_type')):
+            if serviceType in map(lambda v: int(v),
+                                  self.config.get('exclude_service_type')):
                 continue
 
             # Get Service State
@@ -220,9 +223,10 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
                                         host,
                                         port,
                                         community)[serviceStateOid].strip("\'"))
-            
-            # Filter excluded service states 
-            if serviceState in map(lambda v: int(v), self.config.get('exclude_service_state')):
+
+            # Filter excluded service states
+            if serviceState in map(lambda v: int(v),
+                                   self.config.get('exclude_service_state')):
                 continue
 
             for k, v in self.NETSCALER_SERVICE_GUAGES.items():
@@ -245,8 +249,8 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
                 metric = Metric(metricPath, metricValue, timestamp, 0)
                 # Publish Metric
                 self.publish_metric(metric)
- 
-        # Collect Netscaler Vservers 
+
+        # Collect Netscaler Vservers
         vserverNames = [v.strip("\'") for v in self.walk(
             self.NETSCALER_VSERVER_NAMES, host, port, community).values()]
 
@@ -263,7 +267,8 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
                                        community)[vserverTypeOid].strip("\'"))
 
             # filter excluded vserver types
-            if vserverType in map(lambda v: int(v), self.config.get('exclude_vserver_type')):
+            if vserverType in map(lambda v: int(v),
+                                  self.config.get('exclude_vserver_type')):
                 continue
 
             # Get Service State
@@ -273,9 +278,10 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
                                         host,
                                         port,
                                         community)[vserverStateOid].strip("\'"))
-            
-            # Filter excluded vserver state 
-            if vserverState in map(lambda v: int(v), self.config.get('exclude_vserver_state')):
+
+            # Filter excluded vserver state
+            if vserverState in map(lambda v: int(v),
+                                   self.config.get('exclude_vserver_state')):
                 continue
 
             for k, v in self.NETSCALER_VSERVER_GUAGES.items():

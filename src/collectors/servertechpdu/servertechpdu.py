@@ -8,22 +8,19 @@ http://www.servertech.com/
 
 """
 
-import sys
-import os
 import time
-import logging
-import struct
 import re
 
 from diamond.metric import Metric
 from snmp import SNMPCollector as parent_SNMPCollector
 
+
 class ServerTechPDUCollector(parent_SNMPCollector):
     """
-    SNMPCollector for ServerTech PDUs  
+    SNMPCollector for ServerTech PDUs
     """
 
-    PDU_SYSTEM_GAUGES = { 
+    PDU_SYSTEM_GAUGES = {
         "systemTotalWatts": "1.3.6.1.4.1.1718.3.1.6"
     }
 
@@ -31,9 +28,9 @@ class ServerTechPDUCollector(parent_SNMPCollector):
 
     PDU_INFEED_GAUGES = {
         "infeedCapacityAmps": "1.3.6.1.4.1.1718.3.2.2.1.10",
-        "infeedVolts" : "1.3.6.1.4.1.1718.3.2.2.1.11",
-        "infeedAmps" : "1.3.6.1.4.1.1718.3.2.2.1.7",
-        "infeedWatts" : "1.3.6.1.4.1.1718.3.2.2.1.12"
+        "infeedVolts": "1.3.6.1.4.1.1718.3.2.2.1.11",
+        "infeedAmps": "1.3.6.1.4.1.1718.3.2.2.1.7",
+        "infeedWatts": "1.3.6.1.4.1.1718.3.2.2.1.12"
     }
 
     def get_default_config_help(self):
@@ -61,19 +58,19 @@ class ServerTechPDUCollector(parent_SNMPCollector):
     def collect_snmp(self, device, host, port, community):
         """
         Collect stats from device
-        """ 
+        """
         # Log
-        self.log.info("Collecting ServerTech PDU statistics from: %s" % (device))
+        self.log.info("Collecting ServerTech PDU statistics from: %s" % device)
 
         # Set timestamp
         timestamp = time.time()
 
         inputFeeds = {}
-        
+
         # Collect PDU input gauge values
-        for gaugeName,gaugeOid in self.PDU_SYSTEM_GAUGES.items():
+        for gaugeName, gaugeOid in self.PDU_SYSTEM_GAUGES.items():
             systemGauges = self.walk(gaugeOid, host, port, community)
-            for o,gaugeValue in systemGauges.items():
+            for o, gaugeValue in systemGauges.items():
                 # Get Metric Name
                 metricName = gaugeName
                 # Get Metric Value
@@ -87,20 +84,22 @@ class ServerTechPDUCollector(parent_SNMPCollector):
 
         # Collect PDU input feed names
         inputFeedNames = self.walk(self.PDU_INFEED_NAMES, host, port, community)
-        for o,inputFeedName in inputFeedNames.items():
+        for o, inputFeedName in inputFeedNames.items():
             # Extract input feed name
-            inputFeed = ".".join(o.split(".")[-2:]) 
+            inputFeed = ".".join(o.split(".")[-2:])
             inputFeeds[inputFeed] = inputFeedName
-            
+
         # Collect PDU input gauge values
-        for gaugeName,gaugeOid in self.PDU_INFEED_GAUGES.items():
+        for gaugeName, gaugeOid in self.PDU_INFEED_GAUGES.items():
             inputFeedGauges = self.walk(gaugeOid, host, port, community)
-            for o,gaugeValue in inputFeedGauges.items():
+            for o, gaugeValue in inputFeedGauges.items():
                 # Extract input feed name
-                inputFeed = ".".join(o.split(".")[-2:]) 
+                inputFeed = ".".join(o.split(".")[-2:])
 
                 # Get Metric Name
-                metricName = '.'.join([re.sub(r'\.|\\', '_', inputFeeds[inputFeed]), gaugeName])
+                metricName = '.'.join([re.sub(r'\.|\\', '_',
+                                              inputFeeds[inputFeed]),
+                                       gaugeName])
 
                 # Get Metric Value
                 if gaugeName == "infeedVolts":

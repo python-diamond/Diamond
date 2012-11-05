@@ -5,7 +5,6 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import Mock
 from mock import patch
 
 from diamond.collector import Collector
@@ -27,23 +26,23 @@ class TestUsersCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        
+
         metrics = {
             'kormoc':   2,
             'root':     3,
             'total':    5,
         }
-    
+
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
-        
+
         # Because of the compiled nature of pyutmp, we can't actually test
         # different operating system versions then the currently running
         # one
         if sys.platform.startswith('linux'):
             self.collector.collect()
-                
+
             self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
