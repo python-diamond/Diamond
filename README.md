@@ -1,7 +1,9 @@
 About
 =====
 
-Diamond is a python daemon that collects system metrics and publishes them to Graphite. It is
+Diamond is a python daemon that collects system metrics and publishes them to
+[Graphite](https://github.com/BrightcoveOS/Diamond/wiki/handler-GraphiteHandler)
+(and [others](https://github.com/BrightcoveOS/Diamond/wiki/Handlers)). It is
 capable of collecting cpu, memory, network, i/o, load and disk metrics.  Additionally,
 it features an API for implementing custom collectors for gathering metrics from almost any source.
 
