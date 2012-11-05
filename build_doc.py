@@ -141,7 +141,8 @@ if __name__ == "__main__":
     collectorIndexFile = open(os.path.join(docs_path, "Collectors.md"), 'w')
     collectorIndexFile.write("## Collectors\n")
     collectorIndexFile.write("\n")
-    collectorIndexFile.write("Note that the default collectors are noted via the super-script symbol <sup>♦</sup>.\n")
+    collectorIndexFile.write("Note that the default collectors are noted via "
+                             + "the super-script symbol <sup>♦</sup>.\n")
     collectorIndexFile.write("\n")
 
     for collector in sorted(collectors.iterkeys()):
@@ -162,7 +163,7 @@ if __name__ == "__main__":
         obj = cls(config=config, handlers={})
 
         options = obj.get_default_config_help()
-        
+
         defaultOptions = obj.get_default_config()
 
         docFile = open(os.path.join(docs_path,
@@ -171,7 +172,7 @@ if __name__ == "__main__":
         enabled = ''
         if defaultOptions['enabled']:
             enabled = ' <sup>♦</sup>'
-            
+
         collectorIndexFile.write(" - [%s](collectors-%s)%s\n" % (collector,
                                                                  collector,
                                                                  enabled))
@@ -181,36 +182,37 @@ if __name__ == "__main__":
         docFile.write("%s" % (collectors[collector].__doc__))
         docFile.write("#### Options - [Generic Options](Configuration)\n")
         docFile.write("\n")
-        
+
         docFile.write("<table>")
-        
+
         docFile.write("<tr>")
         docFile.write("<th>Setting</th>")
         docFile.write("<th>Default</th>")
         docFile.write("<th>Description</th>")
         docFile.write("<th>Type</th>")
         docFile.write("</tr>\n")
-        
+
         for option in sorted(options.keys()):
             defaultOption = ''
             defaultOptionType = ''
             if option in defaultOptions:
                 defaultOptionType = defaultOptions[option].__class__.__name__
                 if isinstance(defaultOptions[option], list):
-                    defaultOption = ', '.join(map( str, defaultOptions[option]))
+                    defaultOption = ', '.join(map(str, defaultOptions[option]))
                     defaultOption += ','
                 else:
                     defaultOption = str(defaultOptions[option])
-            
+
             docFile.write("<tr>")
             docFile.write("<td>%s</td>" % (option))
             docFile.write("<td>%s</td>" % (defaultOption))
-            docFile.write("<td>%s</td>" % (options[option].replace("\n", '<br>\n')))
+            docFile.write("<td>%s</td>" % (options[option].replace(
+                "\n", '<br>\n')))
             docFile.write("<td>%s</td>" % (defaultOptionType))
             docFile.write("</tr>\n")
-        
+
         docFile.write("</table>\n")
-        
+
         docFile.write("\n")
         docFile.write("#### Example Output\n")
         docFile.write("\n")

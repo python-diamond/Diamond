@@ -65,14 +65,14 @@ class CollectorTestCase(unittest.TestCase):
             for line in content:
                 if line.strip() == '__EXAMPLESHERE__':
                     for metric in sorted(metrics.iterkeys()):
-                        
-                        metricPath  = 'servers.hostname.'
-                        
-                        if defaultpath :
+
+                        metricPath = 'servers.hostname.'
+
+                        if defaultpath:
                             metricPath += defaultpath + '.'
-                        
+
                         metricPath += metric
-                        
+
                         metricPath = metricPath.replace('..', '.')
                         fp.write(metricPath + ' ' + str(metrics[metric]) + '\n')
                 else:
@@ -106,10 +106,10 @@ class CollectorTestCase(unittest.TestCase):
     def setPickledResults(self, results_name, data):
         pickle.dump(data, open(self.getFixturePath(results_name), "wb"))
 
-    def assertUnpublished(self, mock, key, value, expected_value = 0):
+    def assertUnpublished(self, mock, key, value, expected_value=0):
         return self.assertPublished(mock, key, value, expected_value)
 
-    def assertPublished(self, mock, key, value, expected_value = 1):
+    def assertPublished(self, mock, key, value, expected_value=1):
         calls = filter(lambda x: x[0][0] == key, mock.call_args_list)
 
         actual_value = len(calls)
@@ -139,19 +139,19 @@ class CollectorTestCase(unittest.TestCase):
         else:
             self.assertEqual(actual_value, expected_value, message)
 
-    def assertUnpublishedMany(self, mock, dict, expected_value = 0):
-        return self.assertPublishedMany( mock, dict, expected_value)
+    def assertUnpublishedMany(self, mock, dict, expected_value=0):
+        return self.assertPublishedMany(mock, dict, expected_value)
 
-    def assertPublishedMany(self, mock, dict, expected_value = 1):
+    def assertPublishedMany(self, mock, dict, expected_value=1):
         for key, value in dict.iteritems():
             self.assertPublished(mock, key, value, expected_value)
 
         mock.reset_mock()
 
-    def assertUnpublishedMetric(self, mock, key, value, expected_value = 0):
+    def assertUnpublishedMetric(self, mock, key, value, expected_value=0):
         return self.assertPublishedMetric(mock, key, value, expected_value)
 
-    def assertPublishedMetric(self, mock, key, value, expected_value = 1):
+    def assertPublishedMetric(self, mock, key, value, expected_value=1):
         calls = filter(lambda x: x[0][0].path.find(key) != -1,
                        mock.call_args_list)
 
@@ -180,7 +180,7 @@ class CollectorTestCase(unittest.TestCase):
                                    msg=message)
         else:
             self.assertEqual(actual_value, expected_value, message)
-            
+
     def assertUnpublishedMetricMany(self, mock, dict, expected_value=0):
         return self.assertPublishedMetricMany(mock, dict, expected_value)
 

@@ -45,15 +45,17 @@ else:
 
 # Support packages being called differently on different distros
 if platform.dist()[0] in ['centos', 'redhat']:
-    install_requires=['python-configobj', 'psutil', ],
+    install_requires = ['python-configobj', 'psutil', ],
 else:
-    install_requires=['ConfigObj', 'psutil', ],
+    install_requires = ['ConfigObj', 'psutil', ],
+
 
 def get_version():
     f = open('version.txt')
     version = ''.join(f.readlines()).rstrip()
     f.close()
     return version
+
 
 def pkgPath(root, path, rpath="/"):
     global data_files

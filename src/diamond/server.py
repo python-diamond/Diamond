@@ -57,9 +57,11 @@ class Server(object):
                 if handlername not in self.config['handlers']:
                     self.config['handlers'][handlername] = configobj.ConfigObj()
 
-                configfile = os.path.join(config['server']['handlers_config_path'],
+                configfile = os.path.join(
+                    config['server']['handlers_config_path'],
                     configname)
-                self.config['handlers'][handlername].merge(configobj.ConfigObj(configfile))
+                self.config['handlers'][handlername].merge(
+                    configobj.ConfigObj(configfile))
 
         self.config = config
 

@@ -39,17 +39,20 @@ from Handler import Handler
 from diamond.collector import get_hostname
 from configobj import Section
 
+
 class InvalidRule(ValueError):
     """
     invalid rule
     """
     pass
 
+
 class BaseResult(object):
     """
     Base class for a Rule minimum/maximum check result
     """
     adjective = None
+
     def __init__(self, value, threshold):
         """
         @type value: float
@@ -93,25 +96,30 @@ class BaseResult(object):
             return '%s: %.1f no threshold' % (name, self.value)
         return '%.1f (%s: %.1f)' % (self.value, name, self.threshold)
 
+
 class Minimum(BaseResult):
     """
     Minimum result
     """
     adjective = 'lower'
+
     @property
     def _is_error(self):
         """if it's too low"""
         return self.value < self.threshold
+
 
 class Maximum(BaseResult):
     """
     Maximum result
     """
     adjective = 'higher'
+
     @property
     def _is_error(self):
         """if it's too high"""
         return self.value > self.threshold
+
 
 class Rule(object):
     """
@@ -147,7 +155,7 @@ class Rule(object):
             self.max = None
 
         if self.min is None and self.max is None:
-            raise InvalidRule("%s: %s: both min and max are unset or invalid" \
+            raise InvalidRule("%s: %s: both min and max are unset or invalid"
                               % (name, path))
 
         if self.min is not None and self.max is not None:
@@ -175,27 +183,28 @@ class Rule(object):
             if minimum.is_error or maximum.is_error:
                 self.counter_errors += 1
                 message = "%s Warning on %s: %.1f" % (self.name,
-                                                     handler.hostname, metric.value)
+                                                      handler.hostname,
+                                                      metric.value)
                 culprit = "%s %s" % (handler.hostname, match.group('path'))
                 handler.raven_logger.error(message, extra={
-                        'culprit': culprit,
-                        'data':{
-                            'metric prefix': match.group('prefix'),
-                            'metric path': match.group('path'),
-                            'minimum check': minimum.verbose_message,
-                            'maximum check': maximum.verbose_message,
-                            'metric original path': metric.path,
-                            'metric value': metric.value,
-                            'metric precision': metric.precision,
-                            'metric timestamp': metric.timestamp,
-                            'minimum threshold': self.min,
-                            'maximum threshold': self.max,
-                            'path regular expression': self.regexp.pattern,
-                            'total errors': self.counter_errors,
-                            'total pass': self.counter_pass,
-                            'hostname': handler.hostname
-                        }
+                    'culprit': culprit,
+                    'data': {
+                        'metric prefix': match.group('prefix'),
+                        'metric path': match.group('path'),
+                        'minimum check': minimum.verbose_message,
+                        'maximum check': maximum.verbose_message,
+                        'metric original path': metric.path,
+                        'metric value': metric.value,
+                        'metric precision': metric.precision,
+                        'metric timestamp': metric.timestamp,
+                        'minimum threshold': self.min,
+                        'maximum threshold': self.max,
+                        'path regular expression': self.regexp.pattern,
+                        'total errors': self.counter_errors,
+                        'total pass': self.counter_pass,
+                        'hostname': handler.hostname
                     }
+                }
                 )
             else:
                 self.counter_pass += 1
@@ -203,6 +212,7 @@ class Rule(object):
     def __repr__(self):
         return '%s: min:%s max:%s %s' % (self.name, self.min, self.max,
                                          self.regexp.pattern)
+
 
 class SentryHandler(Handler):
     """

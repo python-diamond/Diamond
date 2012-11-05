@@ -23,66 +23,68 @@ if platform.architecture()[0] == '64bit':
 else:
     MAX_COUNTER = (2 ** 32) - 1
 
+
 def get_hostname(config, method=None):
     """
     Returns a hostname as configured by the user
     """
     if 'hostname' in config:
         return config['hostname']
-    
+
     if method is None:
         if 'hostname_method' in config:
             method = config['hostname_method']
         else:
             method = 'smart'
-            
+
     # case insensitive method
     method = method.lower()
-    
+
     if method == 'smart':
         hostname = get_hostname(config, 'fqdn_short')
         if hostname != 'localhost':
             return hostname
         hostname = get_hostname(config, 'hostname_short')
         return hostname
-    
+
     if method == 'fqdn_short':
         return socket.getfqdn().split('.')[0]
-    
+
     if method == 'fqdn':
         return socket.getfqdn().replace('.', '_')
-    
+
     if method == 'fqdn_rev':
         hostname = socket.getfqdn().split('.')
         hostname.reverse()
         hostname = '.'.join(hostname)
         return hostname
-    
+
     if method == 'uname_short':
         return os.uname()[1].split('.')[0]
-    
+
     if method == 'uname_rev':
         hostname = os.uname()[1].split('.')
         hostname.reverse()
         hostname = '.'.join(hostname)
         return hostname
-    
+
     if method == 'hostname':
         return socket.gethostname()
-    
+
     if method == 'hostname_short':
         return socket.gethostname().split('.')[0]
-    
+
     if method == 'hostname_rev':
         hostname = socket.gethostname().split('.')
         hostname.reverse()
         hostname = '.'.join(hostname)
         return hostname
-    
+
     if method == 'none':
         return None
-    
+
     raise NotImplementedError(config['hostname_method'])
+
 
 class Collector(object):
     """
@@ -181,7 +183,7 @@ class Collector(object):
 
             # Default numeric output
             'byte_unit': 'byte',
-            
+
             # Collect the collector run time in ms
             'measure_collector_time': False,
         }
@@ -212,7 +214,6 @@ class Collector(object):
                                           None,
                                           int(self.config['splay']),
                                           int(self.config['interval']))}
-
 
     def get_metric_path(self, name):
         """
@@ -248,7 +249,7 @@ class Collector(object):
             return '.'.join([prefix, name])
         else:
             return '.'.join([prefix, path, name])
-        
+
     def get_hostname(self):
         return get_hostname(self.config)
 
@@ -324,23 +325,23 @@ class Collector(object):
         try:
             try:
                 start_time = time.time()
-                
+
                 # Collect Data
                 self.collect()
-                
+
                 end_time = time.time()
-                
+
                 if 'measure_collector_time' in self.config:
                     if self.config['measure_collector_time']:
                         metric_name = 'collector_time_ms'
                         metric_value = int((end_time - start_time) * 1000)
                         self.publish(metric_name, metric_value)
-                
+
             except Exception:
                 # Log Error
                 self.log.error(traceback.format_exc())
         finally:
             # After collector run, invoke a flush
-            # method on each handler. 
+            # method on each handler.
             for handler in self.handlers:
                 handler.flush()
