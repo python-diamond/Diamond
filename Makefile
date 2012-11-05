@@ -12,6 +12,7 @@ all:
 	@echo "make sdist    - Create source package"
 	@echo "make bdist    - Create binary package"
 	@echo "make install  - Install on local system"
+	@echo "make develop  - Install on local system in development mode"
 	@echo "make rpm      - Generate a rpm package"
 	@echo "make deb      - Generate a deb package"
 	@echo "make tar      - Generate a tar ball"
@@ -41,6 +42,9 @@ bdist: version
 
 install: version
 	./setup.py install --root $(DESTDIR)
+
+develop: version
+	USE_SETUPTOOLS=1 ./setup.py develop
 
 rpm: buildrpm
 
