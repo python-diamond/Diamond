@@ -43,6 +43,12 @@ else:
             data_files.append(('/etc/init',
                                ['rpm/upstart/diamond.conf']))
 
+# Support packages being called differently on different distros
+if platform.dist()[0] in ['centos', 'redhat']:
+    install_requires=['python-configobj', 'psutil', ],
+else:
+    install_requires=['ConfigObj', 'psutil', ],
+
 def get_version():
     f = open('version.txt')
     version = ''.join(f.readlines()).rstrip()
@@ -83,8 +89,7 @@ setup(
     packages=['diamond', 'diamond.handler'],
     scripts=['bin/diamond', 'bin/diamond-setup'],
     data_files=data_files,
-    install_requires=[
-        'ConfigObj', 'psutil', ],
+    install_requires=install_requires,
     #test_suite='test.main',
     ** setup_kwargs
 )
