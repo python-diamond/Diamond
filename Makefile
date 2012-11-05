@@ -69,7 +69,7 @@ tar: sdist
 
 clean:
 	./setup.py clean
-	rm -rf dist build MANIFEST
+	rm -rf dist build MANIFEST .tox *.log
 	find . -name '*.pyc' -delete
 
 cleanws:
