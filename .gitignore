@@ -13,3 +13,4 @@ src/diamond/version.py
 .idea
 src/*.egg-info
 *.log
+.tox
