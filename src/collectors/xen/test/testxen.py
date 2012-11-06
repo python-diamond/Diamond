@@ -11,7 +11,25 @@ from mock import patch
 from diamond.collector import Collector
 from xen import XENCollector
 
+
 ###############################################################################
+
+def run_only(func, predicate):
+    if predicate():
+        return func
+    else:
+        def f(arg):
+            pass
+        return f
+
+
+def run_only_if_libvirt_is_available(func):
+    try:
+        import libvirt
+    except ImportError:
+        libvirt = None
+    pred = lambda: libvirt is not None
+    return run_only(func, pred)
 
 
 class TestXENCollector(CollectorTestCase):
@@ -20,6 +38,7 @@ class TestXENCollector(CollectorTestCase):
         })
         self.collector = XENCollector(config, None)
 
+    @run_only_if_libvirt_is_available
     @patch('os.statvfs')
     @patch('libvirt.openReadOnly')
     @patch.object(Collector, 'publish')
@@ -75,6 +94,7 @@ class TestXENCollector(CollectorTestCase):
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
+
 
 ###############################################################################
 if __name__ == "__main__":

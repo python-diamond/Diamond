@@ -275,4 +275,18 @@ if __name__ == "__main__":
             tests.append(loader.loadTestsFromTestCase(c))
     tests.append(loader.loadTestsFromTestCase(BaseCollectorTest))
     suite = unittest.TestSuite(tests)
-    unittest.TextTestRunner(verbosity=options.verbose).run(suite)
+    results = unittest.TextTestRunner(verbosity=options.verbose).run(suite)
+
+    results = str(results)
+    results = results.replace('>', '').split()[1:]
+    resobj = {}
+    for result in results:
+        result = result.split('=')
+        resobj[result[0]] = int(result[1])
+
+    if resobj['failures'] > 0:
+        sys.exit(1)
+    if resobj['errors'] > 0:
+        sys.exit(2)
+
+    sys.exit(0)
