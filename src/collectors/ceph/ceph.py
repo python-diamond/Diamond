@@ -1,7 +1,9 @@
 # coding=utf-8
 
 """
-The CephCollector collects utilization info from the Ceph storage system
+The CephCollector collects utilization info from the Ceph storage system.
+
+Documentation for ceph perf counters: http://ceph.com/docs/master/dev/perf_counters/
 
 #### Dependencies
 
