@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-################################################################################
+###############################################################################
 
 import os
 import sys
@@ -21,7 +21,8 @@ except ImportError:
     from StringIO import StringIO
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                             'src')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                              'src', 'collectors')))
 
@@ -74,7 +75,7 @@ class CollectorTestCase(unittest.TestCase):
                         metricPath += metric
 
                         metricPath = metricPath.replace('..', '.')
-                        fp.write(metricPath + ' ' + str(metrics[metric]) + '\n')
+                        fp.write('%s %s\n' % (metricPath, metrics[metric]))
                 else:
                     fp.write(line)
             fp.close()
@@ -92,15 +93,13 @@ class CollectorTestCase(unittest.TestCase):
         return file
 
     def getFixture(self, fixture_name):
-        file = open(self.getFixturePath(fixture_name), 'r')
-        data = StringIO(file.read())
-        file.close()
+        with open(self.getFixturePath(fixture_name), 'r') as f:
+            data = StringIO(f.read())
         return data
 
     def getPickledResults(self, results_name):
-        file = open(self.getFixturePath(results_name), 'r')
-        data = pickle.load(file)
-        file.close()
+        with open(self.getFixturePath(results_name), 'r') as f:
+            data = pickle.load(f)
         return data
 
     def setPickledResults(self, results_name, data):
@@ -235,7 +234,7 @@ class BaseCollectorTest(unittest.TestCase):
         c = Collector(config, [])
         self.assertEquals('custom.localhost', c.get_hostname())
 
-################################################################################
+###############################################################################
 
 if __name__ == "__main__":
 
@@ -266,13 +265,14 @@ if __name__ == "__main__":
                                          options.collector))
     getCollectorTests(cPath)
 
+    loader = unittest.TestLoader()
     tests = []
     for test in collectorTests:
-        for attr in dir(collectorTests[test]):
-            if not attr.startswith('Test') or not attr.endswith('Collector'):
+        for name, c in inspect.getmembers(collectorTests[test],
+                                          inspect.isclass):
+            if not issubclass(c, unittest.TestCase):
                 continue
-            c = getattr(collectorTests[test], attr)
-            tests.append(unittest.TestLoader().loadTestsFromTestCase(c))
-    tests.append(unittest.TestLoader().loadTestsFromTestCase(BaseCollectorTest))
+            tests.append(loader.loadTestsFromTestCase(c))
+    tests.append(loader.loadTestsFromTestCase(BaseCollectorTest))
     suite = unittest.TestSuite(tests)
     unittest.TextTestRunner(verbosity=options.verbose).run(suite)
