@@ -266,10 +266,10 @@ if __name__ == "__main__":
 
     tests = []
     for test in collectorTests:
-        for attr in dir(collectorTests[test]):
-            if not attr.startswith('Test') or not attr.endswith('Collector'):
+        for name, c in inspect.getmembers(collectorTests[test],
+                                          inspect.isclass):
+            if not issubclass(c, unittest.TestCase):
                 continue
-            c = getattr(collectorTests[test], attr)
             tests.append(unittest.TestLoader().loadTestsFromTestCase(c))
     tests.append(unittest.TestLoader().loadTestsFromTestCase(BaseCollectorTest))
     suite = unittest.TestSuite(tests)
