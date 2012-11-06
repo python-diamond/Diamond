@@ -92,15 +92,13 @@ class CollectorTestCase(unittest.TestCase):
         return file
 
     def getFixture(self, fixture_name):
-        file = open(self.getFixturePath(fixture_name), 'r')
-        data = StringIO(file.read())
-        file.close()
+        with open(self.getFixturePath(fixture_name), 'r') as f:
+            data = StringIO(f.read())
         return data
 
     def getPickledResults(self, results_name):
-        file = open(self.getFixturePath(results_name), 'r')
-        data = pickle.load(file)
-        file.close()
+        with open(self.getFixturePath(results_name), 'r') as f:
+            data = pickle.load(f)
         return data
 
     def setPickledResults(self, results_name, data):
