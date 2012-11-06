@@ -1,0 +1,7 @@
+MySQL-python
+configobj
+psutil
+pymongo
+pyrabbit
+pyutmp
+redis
