@@ -59,6 +59,22 @@ class TestMongoDBCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
+    @patch('pymongo.Connection')
+    @patch.object(Collector, 'publish')
+    def test_should_publish_stats_with_long_type(self,
+                                                 publish_mock,
+                                                 connector_mock):
+        data = {'more_keys': long(1), 'key': 2, 'string': 'str'}
+        self._annotate_connection(connector_mock, data)
+
+        self.collector.collect()
+
+        self.connection.db.command.assert_called_once_with('serverStatus')
+        self.assertPublishedMany(publish_mock, {
+            'more_keys': 1,
+            'key': 2
+        })
+
     def _annotate_connection(self, connector_mock, data):
         connector_mock.return_value = self.connection
         self.connection.db.command.return_value = data
