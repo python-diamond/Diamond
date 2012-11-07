@@ -12,44 +12,70 @@ from mock import patch, call
 import ceph
 
 
+def run_only(func, predicate):
+    if predicate():
+        return func
+    else:
+        def f(arg):
+            pass
+        return f
+
+
+def run_only_if_assertSequenceEqual_is_available(func):
+    pred = lambda: 'assertSequenceEqual' in dir(unittest.TestCase)
+    return run_only(func, pred)
+
+
+def run_only_if_subprocess_check_output_is_available(func):
+    pred = lambda: 'check_output' in dir(subprocess)
+    return run_only(func, pred)
+
+
 class TestCounterIterator(unittest.TestCase):
 
+    @run_only_if_assertSequenceEqual_is_available
     def test_empty(self):
         data = {}
         expected = []
         actual = list(ceph.flatten_dictionary(data))
         self.assertSequenceEqual(actual, expected)
 
+    @run_only_if_assertSequenceEqual_is_available
     def test_simple(self):
         data = {'a': 1, 'b': 2}
         expected = [('a', 1), ('b', 2)]
         actual = list(ceph.flatten_dictionary(data))
         self.assertSequenceEqual(actual, expected)
 
+    @run_only_if_assertSequenceEqual_is_available
     def test_prefix(self):
         data = {'a': 1, 'b': 2}
         expected = [('Z.a', 1), ('Z.b', 2)]
         actual = list(ceph.flatten_dictionary(data, prefix='Z'))
         self.assertSequenceEqual(actual, expected)
 
+    @run_only_if_assertSequenceEqual_is_available
     def test_sep(self):
         data = {'a': 1, 'b': 2}
         expected = [('Z:a', 1), ('Z:b', 2)]
         actual = list(ceph.flatten_dictionary(data, prefix='Z', sep=':'))
         self.assertSequenceEqual(actual, expected)
 
+    @run_only_if_assertSequenceEqual_is_available
     def test_nested(self):
         data = {'a': 1, 'b': 2, 'c': {'d': 3}}
         expected = [('a', 1), ('b', 2), ('c.d', 3)]
         actual = list(ceph.flatten_dictionary(data))
         self.assertSequenceEqual(actual, expected)
 
+    @run_only_if_assertSequenceEqual_is_available
     def test_doubly_nested(self):
         data = {'a': 1, 'b': 2, 'c': {'d': 3}, 'e': {'f': {'g': 1}}}
         expected = [('a', 1), ('b', 2), ('c.d', 3), ('e.f.g', 1)]
         actual = list(ceph.flatten_dictionary(data))
         self.assertSequenceEqual(actual, expected)
 
+    @run_only_if_assertSequenceEqual_is_available
     def test_complex(self):
         data = {"val": 0,
                 "max": 524288000,
@@ -108,6 +134,7 @@ class TestCephCollectorGettingStats(CollectorTestCase):
         })
         self.collector = ceph.CephCollector(config, None)
 
+    @run_only_if_subprocess_check_output_is_available
     def test_load_works(self):
         expected = {'a': 1,
                     'b': 2,
@@ -123,6 +150,7 @@ class TestCephCollectorGettingStats(CollectorTestCase):
                                              ])
         self.assertEqual(actual, expected)
 
+    @run_only_if_subprocess_check_output_is_available
     def test_ceph_command_fails(self):
         with patch('subprocess.check_output') as check_output:
             check_output.side_effect = subprocess.CalledProcessError(
@@ -137,6 +165,7 @@ class TestCephCollectorGettingStats(CollectorTestCase):
                                              ])
         self.assertEqual(actual, {})
 
+    @run_only_if_subprocess_check_output_is_available
     def test_json_decode_fails(self):
         input = {'a': 1,
                  'b': 2,
