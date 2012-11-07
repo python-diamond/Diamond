@@ -14,14 +14,10 @@ http://ceph.com/docs/master/dev/perf_counters/
 
 import glob
 import json
-import logging
 import os
 import subprocess
 
 import diamond.collector
-
-
-LOG = logging.getLogger('diamond.' + __name__)
 
 
 def flatten_dictionary(input, sep='.', prefix=None):
@@ -110,17 +106,17 @@ class CephCollector(diamond.collector.Collector):
                  'dump',
                  ])
         except subprocess.CalledProcessError as err:
-            LOG.info('Could not get stats from %s: %s',
-                     name, err)
-            LOG.exception('Could not get stats from %s' % name)
+            self.log.info('Could not get stats from %s: %s',
+                          name, err)
+            self.log.exception('Could not get stats from %s' % name)
             return {}
 
         try:
             json_data = json.loads(json_blob)
         except Exception as err:
-            LOG.info('Could not parse stats from %s: %s',
-                     name, err)
-            LOG.exception('Could not parse stats from %s' % name)
+            self.log.info('Could not parse stats from %s: %s',
+                          name, err)
+            self.log.exception('Could not parse stats from %s' % name)
             return {}
 
         return json_data
@@ -133,7 +129,7 @@ class CephCollector(diamond.collector.Collector):
             stats,
             prefix=counter_prefix,
         ):
-            LOG.debug('%s = %s', stat_name, stat_value)
+            self.log.debug('%s = %s', stat_name, stat_value)
             self.publish(stat_name, stat_value)
 
     def collect(self):
@@ -141,7 +137,7 @@ class CephCollector(diamond.collector.Collector):
         Collect stats
         """
         for path in self._get_socket_paths():
-            LOG.debug('checking %s', path)
+            self.log.debug('checking %s', path)
             counter_prefix = self._get_counter_prefix_from_socket_name(path)
             stats = self._get_stats_from_socket(path)
             self._publish_stats(counter_prefix, stats)
