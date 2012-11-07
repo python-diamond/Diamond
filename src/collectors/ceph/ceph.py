@@ -3,7 +3,8 @@
 """
 The CephCollector collects utilization info from the Ceph storage system.
 
-Documentation for ceph perf counters: http://ceph.com/docs/master/dev/perf_counters/
+Documentation for ceph perf counters:
+http://ceph.com/docs/master/dev/perf_counters/
 
 #### Dependencies
 
@@ -131,7 +132,7 @@ class CephCollector(diamond.collector.Collector):
         for stat_name, stat_value in flatten_dictionary(
             stats,
             prefix=counter_prefix,
-            ):
+        ):
             LOG.debug('%s = %s', stat_name, stat_value)
             self.publish(stat_name, stat_value)
 

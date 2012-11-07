@@ -63,7 +63,7 @@ class TestCounterIterator(unittest.TestCase):
             ('val', 0),
             ('wait.avgcount', 0),
             ('wait.sum', 0),
-            ]
+        ]
         actual = list(ceph.flatten_dictionary(data))
         self.assertSequenceEqual(actual, expected)
 
@@ -90,10 +90,10 @@ class TestCephCollectorSocketNameHandling(CollectorTestCase):
 
     def test_get_socket_paths(self):
         config = get_collector_config('CephCollector', {
-                'socket_path': '/path/',
-                'socket_prefix': 'prefix-',
-                'socket_ext': 'ext',
-                })
+            'socket_path': '/path/',
+            'socket_prefix': 'prefix-',
+            'socket_ext': 'ext',
+        })
         collector = ceph.CephCollector(config, None)
         with patch('glob.glob') as glob:
             collector._get_socket_paths()
@@ -127,7 +127,7 @@ class TestCephCollectorGettingStats(CollectorTestCase):
         with patch('subprocess.check_output') as check_output:
             check_output.side_effect = subprocess.CalledProcessError(
                 255, ['/usr/bin/ceph'], 'error!',
-                )
+            )
             actual = self.collector._get_stats_from_socket('a_socket_name')
             check_output.assert_called_with(['/usr/bin/ceph',
                                              '--admin-daemon',
