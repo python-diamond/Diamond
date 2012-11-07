@@ -10,7 +10,12 @@ Collects the number of users logged in and shells per user
 """
 
 import diamond.collector
-from pyutmp import UtmpFile
+
+try:
+    from pyutmp import UtmpFile
+    UtmpFile  # workaround for pyflakes issue #13
+except ImportError:
+    UtmpFile = None
 
 
 class UsersCollector(diamond.collector.Collector):
@@ -37,6 +42,10 @@ class UsersCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
+        if UtmpFile is None:
+            self.log.error('Unable to import either pyutmp')
+            return False
+
         metrics = {}
         metrics['total'] = 0
 

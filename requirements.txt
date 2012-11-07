@@ -3,6 +3,4 @@ configobj
 psutil
 pymongo
 pyrabbit
-Cython
-pyutmp
 redis

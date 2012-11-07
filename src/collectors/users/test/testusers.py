@@ -15,6 +15,24 @@ import sys
 
 ################################################################################
 
+def run_only(func, predicate):
+    if predicate():
+        return func
+    else:
+        def f(arg):
+            pass
+        return f
+
+
+def run_only_if_pyutmp_is_available(func):
+    try:
+        import pyutmp
+        pyutmp  # workaround for pyflakes issue #13
+    except ImportError:
+        pyutmp = None
+    pred = lambda: pyutmp is not None
+    return run_only(func, pred)
+
 
 class TestUsersCollector(CollectorTestCase):
     def setUp(self):
@@ -24,6 +42,7 @@ class TestUsersCollector(CollectorTestCase):
 
         self.collector = UsersCollector(config, None)
 
+    @run_only_if_pyutmp_is_available
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
 
