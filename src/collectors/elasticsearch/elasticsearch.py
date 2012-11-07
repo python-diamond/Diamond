@@ -15,7 +15,7 @@ try:
     import json
     json  # workaround for pyflakes issue #13
 except ImportError:
-    json = None
+    import simplejson as json
 
 import diamond.collector
 
