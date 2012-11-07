@@ -2,6 +2,8 @@
 # coding=utf-8
 ################################################################################
 
+from __future__ import with_statement
+
 import os
 
 from test import CollectorTestCase

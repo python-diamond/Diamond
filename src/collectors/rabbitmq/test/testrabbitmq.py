@@ -14,6 +14,25 @@ from rabbitmq import RabbitMQCollector
 ################################################################################
 
 
+def run_only(func, predicate):
+    if predicate():
+        return func
+    else:
+        def f(arg):
+            pass
+        return f
+
+
+def run_only_if_pyrabbit_is_available(func):
+    try:
+        import pyrabbit
+        pyrabbit  # workaround for pyflakes issue #13
+    except ImportError:
+        pyrabbit = None
+    pred = lambda: pyrabbit is not None
+    return run_only(func, pred)
+
+
 class TestRabbitMQCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('RabbitMQCollector', {
@@ -23,6 +42,7 @@ class TestRabbitMQCollector(CollectorTestCase):
         })
         self.collector = RabbitMQCollector(config, None)
 
+    @run_only_if_pyrabbit_is_available
     @patch('pyrabbit.api.Client')
     @patch.object(Collector, 'publish')
     def test_should_publish_nested_keys(self, publish_mock, client_mock):

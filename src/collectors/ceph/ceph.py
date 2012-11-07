@@ -12,8 +12,13 @@ http://ceph.com/docs/master/dev/perf_counters/
 
 """
 
+try:
+    import json
+    json  # workaround for pyflakes issue #13
+except ImportError:
+    import simplejson as json
+
 import glob
-import json
 import os
 import subprocess
 
@@ -105,7 +110,7 @@ class CephCollector(diamond.collector.Collector):
                  'perf',
                  'dump',
                  ])
-        except subprocess.CalledProcessError as err:
+        except subprocess.CalledProcessError, err:
             self.log.info('Could not get stats from %s: %s',
                           name, err)
             self.log.exception('Could not get stats from %s' % name)
@@ -113,7 +118,7 @@ class CephCollector(diamond.collector.Collector):
 
         try:
             json_data = json.loads(json_blob)
-        except Exception as err:
+        except Exception, err:
             self.log.info('Could not parse stats from %s: %s',
                           name, err)
             self.log.exception('Could not parse stats from %s' % name)

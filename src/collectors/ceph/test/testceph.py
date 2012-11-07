@@ -1,7 +1,14 @@
 #!/usr/bin/python
 # coding=utf-8
 
-import json
+from __future__ import with_statement
+
+try:
+    import json
+    json  # workaround for pyflakes issue #13
+except ImportError:
+    import simplejson as json
+
 import subprocess
 
 from test import CollectorTestCase
