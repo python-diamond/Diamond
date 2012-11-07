@@ -14,6 +14,7 @@ import socket
 try:
     import pysnmp.entity.rfc3413.oneliner.cmdgen as cmdgen
     import pysnmp.debug
+    pysnmp  # workaround for pyflakes issue #13
 except ImportError:
     pysnmp = None
 

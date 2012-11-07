@@ -27,6 +27,7 @@ from graphite import GraphiteHandler
 
 try:
     import cPickle as pickle
+    pickle  # workaround for pyflakes issue #13
 except ImportError:
     import pickle as pickle
 

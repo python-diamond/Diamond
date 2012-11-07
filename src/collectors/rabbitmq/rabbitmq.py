@@ -13,6 +13,7 @@ import diamond.collector
 
 try:
     from numbers import Number
+    Number  # workaround for pyflakes issue #13
     import pyrabbit.api
 except ImportError:
     Number = None

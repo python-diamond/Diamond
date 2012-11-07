@@ -13,6 +13,7 @@ import urllib2
 
 try:
     import json
+    json  # workaround for pyflakes issue #13
 except ImportError:
     json = None
 

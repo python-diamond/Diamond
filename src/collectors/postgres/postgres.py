@@ -13,6 +13,7 @@ import diamond.collector
 
 try:
     import psycopg2
+    psycopg2  # workaround for pyflakes issue #13
 except ImportError:
     psycopg2 = None
 

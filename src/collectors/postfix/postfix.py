@@ -16,10 +16,16 @@ get realtime cumulative stats.
 
 import diamond.collector
 import socket
-from StringIO import StringIO
+
+try:
+    from cStringIO import StringIO
+    StringIO  # workaround for pyflakes issue #13
+except ImportError:
+    from StringIO import StringIO
 
 try:
     import json
+    json  # workaround for pyflakes issue #13
 except ImportError:
     import simplejson as json
 

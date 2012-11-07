@@ -263,6 +263,7 @@ class Scheduler:
 
         def _clearschedqueue(self):
             self.sched._queue[:] = []
+
     else:
         # code for sched module of python 2.5 and older
         def _getqueuetoptime(self):

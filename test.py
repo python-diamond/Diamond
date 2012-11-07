@@ -12,11 +12,13 @@ import configobj
 
 try:
     import cPickle as pickle
+    pickle  # workaround for pyflakes issue #13
 except ImportError:
     import pickle as pickle
 
 try:
     from cStringIO import StringIO
+    StringIO  # workaround for pyflakes issue #13
 except ImportError:
     from StringIO import StringIO
 

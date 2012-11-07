@@ -26,6 +26,7 @@ def run_only(func, predicate):
 def run_only_if_libvirt_is_available(func):
     try:
         import libvirt
+        libvirt  # workaround for pyflakes issue #13
     except ImportError:
         libvirt = None
     pred = lambda: libvirt is not None

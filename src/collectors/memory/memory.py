@@ -17,6 +17,7 @@ import os
 
 try:
     import psutil
+    psutil  # workaround for pyflakes issue #13
 except ImportError:
     psutil = None
 

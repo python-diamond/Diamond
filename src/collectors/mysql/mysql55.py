@@ -21,6 +21,7 @@ from __future__ import division
 try:
     import MySQLdb
     from MySQLdb import MySQLError
+    MySQLdb  # workaround for pyflakes issue #13
 except ImportError:
     MySQLdb = None
 import diamond
