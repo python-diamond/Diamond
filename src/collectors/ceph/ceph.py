@@ -69,7 +69,6 @@ class CephCollector(diamond.collector.Collector):
         """
         config = super(CephCollector, self).get_default_config()
         config.update({
-            'enabled': 'True',
             'socket_path': '/var/run/ceph',
             'socket_prefix': 'ceph-',
             'socket_ext': 'asok',
