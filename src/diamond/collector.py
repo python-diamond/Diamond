@@ -267,7 +267,7 @@ class Collector(object):
         path = self.get_metric_path(name)
 
         # Create Metric
-        metric = Metric(path, value, None, precision)
+        metric = Metric(path, value, None, precision, host=self.get_hostname())
 
         # Publish Metric
         self.publish_metric(metric)

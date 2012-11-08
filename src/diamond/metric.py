@@ -7,7 +7,7 @@ from error import DiamondException
 
 class Metric(object):
 
-    def __init__(self, path, value, timestamp=None, precision=0):
+    def __init__(self, path, value, timestamp=None, precision=0, host=None):
         """
         Create new instance of the Metric class
 
@@ -49,6 +49,7 @@ class Metric(object):
         self.value = value
         self.timestamp = timestamp
         self.precision = precision
+        self.host = host
 
     def __repr__(self):
         """

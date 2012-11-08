@@ -103,6 +103,10 @@ host = 127.0.0.1
 port = 4242
 timeout = 15
 
+[[LibratoHandler]]
+user = user@example.com
+apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
+
 ################################################################################
 ### Options for collectors
 [collectors]
