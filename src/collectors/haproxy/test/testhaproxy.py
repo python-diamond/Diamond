@@ -46,7 +46,7 @@ class TestHAProxyCollector(CollectorTestCase):
         with patch('urllib2.urlopen', Mock(
                 return_value=self.getFixture('stats.csv'))):
             self.collector.collect()
-            
+
         metrics = self.getPickledResults('real_data_ignore_servers.pkl')
 
         self.assertPublishedMany(publish_mock, metrics)
