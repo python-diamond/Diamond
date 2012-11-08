@@ -107,7 +107,7 @@ class CollectorTestCase(unittest.TestCase):
         return data
 
     def setPickledResults(self, results_name, data):
-        pickle.dump(data, open(self.getFixturePath(results_name), "wb"))
+        pickle.dump(data, open(self.getFixturePath(results_name), "w+b"))
 
     def assertUnpublished(self, mock, key, value, expected_value=0):
         return self.assertPublished(mock, key, value, expected_value)
