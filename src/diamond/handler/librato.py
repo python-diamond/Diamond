@@ -1,7 +1,7 @@
 # coding=utf-8
 
 """
-[Librato](librato.com) is an infrastructure software as a service company
+[Librato](http://librato.com) is an infrastructure software as a service company
 dedicated to delivering beautiful, easy to use tools that make managing your
 operations more fun and efficient.
 
