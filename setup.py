@@ -52,6 +52,11 @@ else:
 
 
 def get_version():
+    """
+        Read the version.txt file to get the new version string
+        Generate it if version.txt is not available. Generation
+        is required for pip installs
+    """
     try:
         f = open('version.txt')
     except IOError:
@@ -62,6 +67,9 @@ def get_version():
     return version
 
 def pkgPath(root, path, rpath="/"):
+    """
+        Package up a path recursively
+    """
     global data_files
     if not os.path.exists(path):
         return
