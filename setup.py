@@ -52,11 +52,14 @@ else:
 
 
 def get_version():
-    f = open('version.txt')
+    try:
+        f = open('version.txt')
+    except IOError:
+        os.system("./version.sh > version.txt")
+        f = open('version.txt')
     version = ''.join(f.readlines()).rstrip()
     f.close()
     return version
-
 
 def pkgPath(root, path, rpath="/"):
     global data_files
