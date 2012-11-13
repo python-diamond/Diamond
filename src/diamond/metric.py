@@ -82,7 +82,7 @@ class Metric(object):
 
     def getPathPrefix(self):
         """
-            Returns the path prefix path 
+            Returns the path prefix path
             servers.host.cpu.total.idle
             return "servers"
         """

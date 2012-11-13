@@ -9,7 +9,8 @@ Send metrics to [Riemann](http://aphyr.github.com/riemann/).
 
 #### Configuration
 
-Add `diamond.handler.riemann.RiemannHandler` to your handlers. It has these options:
+Add `diamond.handler.riemann.RiemannHandler` to your handlers.
+It has these options:
 
  * `host` - The Riemann host to connect to.
  * `port` - The port it's on.
@@ -19,6 +20,7 @@ Add `diamond.handler.riemann.RiemannHandler` to your handlers. It has these opti
 
 from Handler import Handler
 import bernhard
+
 
 class RiemannHandler(Handler):
     def __init__(self, config=None):
@@ -47,7 +49,8 @@ class RiemannHandler(Handler):
         try:
             self.client.send(event)
         except Exception, e:
-            self.log.error("RiemannHandler: Error sending event to Riemann: %s", e)
+            self.log.error("RiemannHandler: Error sending event to Riemann: %s",
+                           e)
 
         self.lock.release()
 
@@ -63,13 +66,13 @@ class RiemannHandler(Handler):
                 path = '.'.join(bits[1:])
             else:
                 path = '.'.join(bits[0:1] + bits[2:])
+
         return {
             'host': metric.host,
             'service': path,
             'time': metric.timestamp,
             'metric': float(metric.value),
         }
-
 
     def _close(self):
         """
@@ -79,4 +82,3 @@ class RiemannHandler(Handler):
 
     def __del__(self):
         self._close()
-

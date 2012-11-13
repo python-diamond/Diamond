@@ -30,8 +30,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                              'src', 'collectors')))
 
-from diamond.collector import Collector
-
 
 def get_collector_config(key, value):
     config = configobj.ConfigObj()
@@ -253,11 +251,11 @@ if __name__ == "__main__":
                                          'src',
                                          'collectors',
                                          options.collector))
-    
+
     dPath = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                          'src',
                                          'diamond'))
-    
+
     getCollectorTests(cPath)
     getCollectorTests(dPath)
 
