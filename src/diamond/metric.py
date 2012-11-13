@@ -86,6 +86,11 @@ class Metric(object):
             servers.host.cpu.total.idle
             return "servers"
         """
+        # If we don't have a host name, assume it's just the first part of the
+        # metric path
+        if self.host is None:
+            return self.path.split('.')[0]
+
         offset = self.path.index(self.host) - 1
         return self.path[0:offset]
 
@@ -95,6 +100,11 @@ class Metric(object):
             servers.host.cpu.total.idle
             return "cpu"
         """
+        # If we don't have a host name, assume it's just the third part of the
+        # metric path
+        if self.host is None:
+            return self.path.split('.')[2]
+
         offset = self.path.index(self.host)
         offset += len(self.host) + 1
         endoffset = self.path.index('.', offset)
@@ -106,6 +116,12 @@ class Metric(object):
             servers.host.cpu.total.idle
             return "total.idle"
         """
+        # If we don't have a host name, assume it's just the fourth+ part of the
+        # metric path
+        if self.host is None:
+            path = self.path.split('.')[3:]
+            return '.'.join(path)
+
         prefix = self.getPathPrefix()
         prefix += '.'
         prefix += self.host
