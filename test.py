@@ -224,20 +224,6 @@ def getCollectorTests(path):
         if os.path.isdir(cPath):
             getCollectorTests(cPath)
 
-
-class BaseCollectorTest(unittest.TestCase):
-
-    def test_SetCustomHostname(self):
-        config = configobj.ConfigObj()
-        config['server'] = {}
-        config['server']['collectors_config_path'] = ''
-        config['collectors'] = {}
-        config['collectors']['default'] = {
-            'hostname': 'custom.localhost',
-        }
-        c = Collector(config, [])
-        self.assertEquals('custom.localhost', c.get_hostname())
-
 ###############################################################################
 
 if __name__ == "__main__":
@@ -283,7 +269,6 @@ if __name__ == "__main__":
             if not issubclass(c, unittest.TestCase):
                 continue
             tests.append(loader.loadTestsFromTestCase(c))
-    tests.append(loader.loadTestsFromTestCase(BaseCollectorTest))
     suite = unittest.TestSuite(tests)
     results = unittest.TextTestRunner(verbosity=options.verbose).run(suite)
 
