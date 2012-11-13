@@ -1,7 +1,20 @@
 # coding=utf-8
 
 """
-Send metrics to [Riemann](http://aphyr.github.com/riemann/). Requires [Bernhard](https://github.com/banjiewen/bernhard).
+Send metrics to [Riemann](http://aphyr.github.com/riemann/).
+
+#### Dependencies
+
+ * [Bernhard](https://github.com/banjiewen/bernhard).
+
+#### Configuration
+
+Add `diamond.handler.riemann.RiemannHandler` to your handlers. It has these options:
+
+ * `host` - The Riemann host to connect to.
+ * `port` - The port it's on.
+ * `transport` - Either `tcp` or `udp`. (default: `tcp`)
+
 """
 
 from Handler import Handler
