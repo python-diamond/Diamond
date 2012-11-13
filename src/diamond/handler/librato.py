@@ -60,7 +60,9 @@ class LibratoHandler(Handler):
         # Acquire lock
         self.lock.acquire()
 
-        path = metric.path.replace('servers.' + metric.host + '.', '')
+        path = metric.getCollectorPath()
+        path += '.'
+        path += metric.getMetricPath()
 
         data = {
             'source': metric.host,

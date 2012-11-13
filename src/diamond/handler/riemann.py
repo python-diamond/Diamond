@@ -59,13 +59,9 @@ class RiemannHandler(Handler):
         Convert a metric to a dictionary representing a Riemann event.
         """
         # Riemann has a separate "host" field, so remove from the path.
-        path = metric.path
-        if metric.host is not None:
-            bits = path.split('.')
-            if bits[0] == metric.host:
-                path = '.'.join(bits[1:])
-            else:
-                path = '.'.join(bits[0:1] + bits[2:])
+        path = metric.getCollectorPath()
+        path += '.'
+        path += metric.getMetricPath()
 
         return {
             'host': metric.host,
