@@ -267,7 +267,13 @@ if __name__ == "__main__":
                                          'src',
                                          'collectors',
                                          options.collector))
+    
+    dPath = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                         'src',
+                                         'diamond'))
+    
     getCollectorTests(cPath)
+    getCollectorTests(dPath)
 
     loader = unittest.TestLoader()
     tests = []

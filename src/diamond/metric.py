@@ -79,3 +79,39 @@ class Metric(object):
         except:
             raise DiamondException(
                 "Metric could not be parsed from string: %s." % string)
+
+    def getPathPrefix(self):
+        """
+            Returns the path prefix path 
+            servers.host.cpu.total.idle
+            return "servers"
+        """
+        offset = self.path.index(self.host) - 1
+        return self.path[0:offset]
+
+    def getCollectorPath(self):
+        """
+            Returns collector path
+            servers.host.cpu.total.idle
+            return "cpu"
+        """
+        offset = self.path.index(self.host)
+        offset += len(self.host) + 1
+        endoffset = self.path.index('.', offset)
+        return self.path[offset:endoffset]
+
+    def getMetricPath(self):
+        """
+            Returns the metric path after the collector name
+            servers.host.cpu.total.idle
+            return "total.idle"
+        """
+        prefix = self.getPathPrefix()
+        prefix += '.'
+        prefix += self.host
+        prefix += '.'
+        prefix += self.getCollectorPath()
+        prefix += '.'
+
+        offset = len(prefix)
+        return self.path[offset:]
