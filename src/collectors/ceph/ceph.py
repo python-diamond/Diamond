@@ -133,7 +133,6 @@ class CephCollector(diamond.collector.Collector):
             stats,
             prefix=counter_prefix,
         ):
-            self.log.debug('%s = %s', stat_name, stat_value)
             self.publish(stat_name, stat_value)
 
     def collect(self):
