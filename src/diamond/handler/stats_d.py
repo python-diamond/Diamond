@@ -73,12 +73,8 @@ class StatsdHandler(Handler):
         # to work with the statsd module's view of the world.
         # It will get re-joined by the python-statsd module.
         (prefix, name) = metric.path.rsplit(".", 1)
-        logging.debug("Sending {0} {1} {2}|r".format(name,
-                                                     metric.value,
-                                                     metric.timestamp))
-        statsd.Raw(prefix, self.connection).send(name,
-                                                 metric.value,
-                                                 metric.timestamp)
+        logging.debug("Sending {0} {1}|g".format(name, metric.value))
+        statsd.Gauge(prefix, self.connection).send(name, metric.value)
 
     def _connect(self):
         """
