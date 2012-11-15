@@ -8,6 +8,7 @@ It's OK.
 #### Dependencies
 
  * [python-statsd](http://pypi.python.org/pypi/python-statsd/)
+ * [statsd](https://github.com/etsy/statsd) v0.1.1 or newer.
 
 #### Configuration
 
