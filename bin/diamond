@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
 import os
 import sys
@@ -32,6 +32,9 @@ def main():
         parser.add_option("-p", "--pidfile", dest="pidfile", default=None, help="pid file")
         parser.add_option("-r", "--run", dest="collector", default=None, help="run a given collector once and exit")
         parser.add_option("-v", "--version", dest="version", default=False, action="store_true", help="display the version and exit")
+        parser.add_option("--skip-pidfile", dest="skip_pidfile", default=False, action="store_true", help="Skip creating PID file")
+        parser.add_option("--skip-change-user", dest="skip_change_user", default=False, action="store_true", help="Skip changing to an unprivilegd user")
+        parser.add_option("--skip-fork", dest="skip_fork", default=False, action="store_true", help="Skip forking (damonizing) process")
         
         # Parse Command Line Args
         (options, args) = parser.parse_args()
@@ -90,121 +93,128 @@ def main():
         
     # Switch to using the logging system
     try:
-            
-        # Initialize Pid file
-        if not options.pidfile:
-            options.pidfile = str(config['server']['pid_file'])
+        # PID MANAGEMENT
+        if not options.skip_pidfile:
+            # Initialize Pid file
+            if not options.pidfile:
+                options.pidfile = str(config['server']['pid_file'])
     
-        # Read existing pid file
-        try:
-            pf = file(options.pidfile,'r')
-            pid = int(pf.read().strip())
-            pf.close()
-        except IOError:
-            pid = None
-    
-        # Check existing pid file
-        if pid:
-            # Check if pid is real
-            if not os.path.exists("/".join(["/proc", str(pid), "cmdline"])):
-                # Pid is not real
-                os.unlink(options.pidfile)
+            # Read existing pid file
+            try:
+                pf = file(options.pidfile,'r')
+                pid = int(pf.read().strip())
+                pf.close()
+            except IOError:
                 pid = None
-                print >> sys.stderr, "WARN: Bogus pid file was found. I deleted it."
-            else:
-                print >> sys.stderr, "ERROR: Pidfile already exists. Server already running?"
-                sys.exit(1)
+    
+            # Check existing pid file
+            if pid:
+                # Check if pid is real
+                if not os.path.exists("/".join(["/proc", str(pid), "cmdline"])):
+                    # Pid is not real
+                    os.unlink(options.pidfile)
+                    pid = None
+                    print >> sys.stderr, "WARN: Bogus pid file was found. I deleted it."
+                else:
+                    print >> sys.stderr, "ERROR: Pidfile already exists. Server already running?"
+                    sys.exit(1)
             
-        # Get final GIDs
-        gid = -1
-        if len(config['server']['group']) :
-            gid = grp.getgrnam(config['server']['group']).gr_gid
+            # Get final GIDs
+            gid = -1
+            if len(config['server']['group']) :
+                gid = grp.getgrnam(config['server']['group']).gr_gid
         
-        # Get final UID
-        uid = -1
-        if len(config['server']['user']) :
-            uid = pwd.getpwnam(config['server']['user']).pw_uid
+            # Get final UID
+            uid = -1
+            if len(config['server']['user']) :
+                uid = pwd.getpwnam(config['server']['user']).pw_uid
         
-        # Fix up pid permissions
-        if not options.foreground and not options.collector:
-            # Write pid file
-            pid = str(os.getpid())
+            # Fix up pid permissions
+            if not options.foreground and not options.collector:
+                # Write pid file
+                pid = str(os.getpid())
+                try:
+                    pf = file(options.pidfile,'w+')
+                except IOError, e:
+                    print >> sys.stderr, "Failed to write PID file: %s" % (e)
+                    sys.exit(1)
+                pf.write("%s\n" % pid)
+                pf.close()
+                os.chown(options.pidfile, uid, gid) 
+                # Log
+                log.debug("Wrote First PID file: %s" % (options.pidfile))
+    
+        # USER MANAGEMENT
+        if not options.skip_change_user:
+            # Switch user to specified user/group if required
             try:
-                pf = file(options.pidfile,'w+')
-            except IOError, e:
-                print >> sys.stderr, "Failed to write PID file: %s" % (e)
+                if gid != -1 and os.getgid() != gid:
+                    # Set GID
+                    os.setgid(gid)
+    
+                if uid != -1 and os.getuid() != uid:
+                    # Set UID
+                    os.setuid(uid)
+    
+            except Exception, e:
+                print >> sys.stderr, "ERROR: Failed to set UID/GID. %s" % (e)
                 sys.exit(1)
-            pf.write("%s\n" % pid)
-            pf.close()
-            os.chown(options.pidfile, uid, gid) 
+    
             # Log
-            log.debug("Wrote First PID file: %s" % (options.pidfile))
+            log.info('Changed UID: %d (%s) GID: %d (%s).' % (os.getuid(), config['server']['user'], os.getgid(), config['server']['group']))
     
-        # Switch user to specified user/group if required
-        try:
-            if gid != -1 and os.getgid() != gid:
-                # Set GID
-                os.setgid(gid)
+        # DAEMONIZE MANAGEMENT
+        if not options.skip_fork:
+            # Detatch Process
+            if not options.foreground and not options.collector:
     
-            if uid != -1 and os.getuid() != uid:
-                # Set UID
-                os.setuid(uid)
+                # Double fork to serverize process
+                log.info('Detaching Process.')
     
-        except Exception, e:
-            print >> sys.stderr, "ERROR: Failed to set UID/GID. %s" % (e)
-            sys.exit(1)
+                # Fork 1
+                try:
+                    pid = os.fork()
+                    if pid > 0:
+                        # Exit first paren
+                        sys.exit(0)
+                except OSError, e:
+                    print >> sys.stderr, "Failed to fork process." % (e)
+                    sys.exit(1)
+                # Decouple from parent environmen
+                os.setsid()
+                os.umask(0)
+                # Fork 2
+                try:
+                    pid = os.fork()
+                    if pid > 0:
+                        # Exit second paren
+                        sys.exit(0)
+                except OSError, e:
+                    print >> sys.stderr, "Failed to fork process." % (e)
+                    sys.exit(1)
+                # Close file descriptors so that we can detach
+                sys.stdout.close()
+                sys.stderr.close()
+                sys.stdin.close()
+                os.close(0)
+                os.close(1)
+                os.close(2)
     
-        # Log
-        log.info('Changed UID: %d (%s) GID: %d (%s).' % (os.getuid(), config['server']['user'], os.getgid(), config['server']['group']))
-    
-        # Detatch Process
-        if not options.foreground and not options.collector:
-    
-            # Double fork to serverize process
-            log.info('Detaching Process.')
-    
-            # Fork 1
-            try:
-                pid = os.fork()
-                if pid > 0:
-                    # Exit first paren
-                    sys.exit(0)
-            except OSError, e:
-                print >> sys.stderr, "Failed to fork process." % (e)
-                sys.exit(1)
-            # Decouple from parent environmen
-            os.setsid()
-            os.umask(0)
-            # Fork 2
-            try:
-                pid = os.fork()
-                if pid > 0:
-                    # Exit second paren
-                    sys.exit(0)
-            except OSError, e:
-                print >> sys.stderr, "Failed to fork process." % (e)
-                sys.exit(1)
-            # Close file descriptors so that we can detach
-            sys.stdout.close()
-            sys.stderr.close()
-            sys.stdin.close()
-            os.close(0)
-            os.close(1)
-            os.close(2)
-    
-        # Finish Initialize PID file
-        if not options.foreground and not options.collector:
-            # Write pid file
-            pid = str(os.getpid())
-            try:
-                pf = file(options.pidfile,'w+')
-            except IOError, e:
-                log.error("Failed to write child PID file: %s" % (e))
-                sys.exit(1)
-            pf.write("%s\n" % pid)
-            pf.close()
-            # Log
-            log.debug("Wrote child PID file: %s" % (options.pidfile))
+        # PID MANAGEMENT
+        if not options.skip_pidfile:
+            # Finish Initialize PID file
+            if not options.foreground and not options.collector:
+                # Write pid file
+                pid = str(os.getpid())
+                try:
+                    pf = file(options.pidfile,'w+')
+                except IOError, e:
+                    log.error("Failed to write child PID file: %s" % (e))
+                    sys.exit(1)
+                pf.write("%s\n" % pid)
+                pf.close()
+                # Log
+                log.debug("Wrote child PID file: %s" % (options.pidfile))
     
         # Initialize Server
         server = Server(config)
