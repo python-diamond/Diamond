@@ -21,7 +21,6 @@ for path in [
         sys.path.append(path)
         break
 
-from diamond import *
 from diamond.server import Server
 from diamond.util import get_diamond_version
 
