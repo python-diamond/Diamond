@@ -24,6 +24,12 @@ try:
 except ImportError:
     from StringIO import StringIO
 
+try:
+    from setproctitle import setproctitle
+    setproctitle  # workaround for pyflakes issue #13
+except ImportError:
+    setproctitle = None
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                              'src')))
@@ -225,6 +231,8 @@ def getCollectorTests(path):
 ###############################################################################
 
 if __name__ == "__main__":
+    if setproctitle:
+        setproctitle('test.py')
 
     # Disable log output for the unit tests
     log = logging.getLogger("diamond")

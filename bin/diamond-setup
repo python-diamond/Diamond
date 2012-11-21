@@ -8,6 +8,12 @@ import traceback
 
 from configobj import ConfigObj
 
+try:
+    from setproctitle import setproctitle
+    setproctitle  # workaround for pyflakes issue #13
+except ImportError:
+    setproctitle = None
+
 for path in [
     os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')),
     os.path.join('opt', 'diamond', 'lib'),
@@ -154,6 +160,9 @@ def configureKey(key):
 ################################################################################
 
 if __name__ == "__main__":
+    
+    if setproctitle:
+        setproctitle('diamond-setup')
 
     # Initialize Options
     parser = optparse.OptionParser()

@@ -7,6 +7,12 @@ import configobj
 import pwd
 import grp
 
+try:
+    from setproctitle import setproctitle
+    setproctitle  # workaround for pyflakes issue #13
+except ImportError:
+    setproctitle = None
+
 for path in [
     os.path.join('opt', 'diamond', 'lib'),
     os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src'))
@@ -295,4 +301,6 @@ def main():
         sys.exit(1)
 
 if __name__ == "__main__":
+    if setproctitle:
+        setproctitle('diamond')
     main()
