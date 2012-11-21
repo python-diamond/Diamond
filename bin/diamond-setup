@@ -160,7 +160,7 @@ def configureKey(key):
 ################################################################################
 
 if __name__ == "__main__":
-    
+
     if setproctitle:
         setproctitle('diamond-setup')
 
