@@ -2,6 +2,7 @@ DESTDIR=/
 PROJECT=diamond
 VERSION :=$(shell bash version.sh )
 RELEASE :=$(shell ls -1 dist/*.noarch.rpm 2>/dev/null | wc -l )
+HASH	:=$(shell git rev-parse HEAD )
 
 all:
 	@echo "make run      - Run Diamond from this directory"
@@ -15,6 +16,7 @@ all:
 	@echo "make develop  - Install on local system in development mode"
 	@echo "make rpm      - Generate a rpm package"
 	@echo "make deb      - Generate a deb package"
+	@echo "make ebuild   - Generate a ebuild package"
 	@echo "make tar      - Generate a tar ball"
 	@echo "make clean    - Get rid of scratch and byte files"
 	@echo "make cleanws  - Strip trailing whitespaces from files"
@@ -65,6 +67,11 @@ builddeb: version
 	tar -C build -zxf dist/$(PROJECT)-$(VERSION).tar.gz
 	(cd build/$(PROJECT)-$(VERSION) && debuild -us -uc -v$(VERSION))
 
+ebuild: buildebuild
+
+buildebuild: version
+	cat gentoo/diamond.ebuild | sed "s/GIT_HASH/${HASH}/" >> gentoo/diamond-$(VERSION).ebuild
+
 tar: sdist
 
 clean:
@@ -84,4 +91,4 @@ vertest: version
 reltest:
 	echo "$(RELEASE)"
 
-.PHONY: run watch config test docs sdist bdist install rpm buildrpm deb builddeb tar clean cleanws version reltest vertest
+.PHONY: run watch config test docs sdist bdist install rpm buildrpm deb builddeb ebuild buildebuild tar clean cleanws version reltest vertest
