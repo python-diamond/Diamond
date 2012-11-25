@@ -14,6 +14,26 @@ from mongodb import MongoDBCollector
 ################################################################################
 
 
+def run_only(func, predicate):
+    if predicate():
+        return func
+    else:
+        def f(arg):
+            pass
+        return f
+
+
+def run_only_if_pymongo_is_available(func):
+    try:
+        import pymongo
+        pymongo  # workaround for pyflakes issue #13
+    except ImportError:
+        pymongo = None
+    pred = lambda: pymongo is not None
+    return run_only(func, pred)
+
+
+@run_only_if_pymongo_is_available
 class TestMongoDBCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MongoDBCollector', {
