@@ -13,12 +13,28 @@ DESCRIPTION="Diamond is a python daemon that collects system metrics and publish
 HOMEPAGE="https://github.com/BrightcoveOS/Diamond"
 LICENSE="MIT"
 
-IUSE=""
 KEYWORDS="amd64 x86"
 SLOT="0"
 
-RDEPEND=""
-DEPEND="${RDEPEND}"
+IUSE="
+    -test
+    -mongo
+    -mysql
+    -snmp
+    -redis
+"
+
+RDEPEND="
+    dev-python/configobj
+    test?  ( dev-python/mock )
+    mongo? ( dev-python/pymongo )
+    mysql? ( dev-python/mysql-python )
+    snmp?  ( dev-python/pysnmp )
+    redis? ( dev-python/redis-py )
+"
+DEPEND="
+    ${RDEPEND}
+"
 
 EGIT_REPO_URI="https://github.com/BrightcoveOS/Diamond.git"
 EGIT_COMMIT="GIT_HASH"
