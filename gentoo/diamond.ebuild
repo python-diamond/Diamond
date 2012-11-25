@@ -26,6 +26,7 @@ IUSE="
 
 RDEPEND="
     dev-python/configobj
+    dev-python/setproctitle
     test?  ( dev-python/mock )
     mongo? ( dev-python/pymongo )
     mysql? ( dev-python/mysql-python )
