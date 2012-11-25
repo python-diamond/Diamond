@@ -16,6 +16,25 @@ from redisstat import RedisCollector
 ################################################################################
 
 
+def run_only(func, predicate):
+    if predicate():
+        return func
+    else:
+        def f(arg):
+            pass
+        return f
+
+
+def run_only_if_redis_is_available(func):
+    try:
+        import redis
+        redis  # workaround for pyflakes issue #13
+    except ImportError:
+        redis = None
+    pred = lambda: redis is not None
+    return run_only(func, pred)
+
+
 class TestRedisCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('RedisCollector', {
@@ -25,6 +44,7 @@ class TestRedisCollector(CollectorTestCase):
 
         self.collector = RedisCollector(config, None)
 
+    @run_only_if_redis_is_available
     @patch.object(Collector, 'publish')
     def test_real_data(self, publish_mock):
 

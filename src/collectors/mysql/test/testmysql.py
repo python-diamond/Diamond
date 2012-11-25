@@ -16,6 +16,25 @@ from mysql import MySQLCollector
 ################################################################################
 
 
+def run_only(func, predicate):
+    if predicate():
+        return func
+    else:
+        def f(arg):
+            pass
+        return f
+
+
+def run_only_if_MySQLdb_is_available(func):
+    try:
+        import MySQLdb
+        MySQLdb  # workaround for pyflakes issue #13
+    except ImportError:
+        MySQLdb = None
+    pred = lambda: MySQLdb is not None
+    return run_only(func, pred)
+
+
 class TestMySQLCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MySQLCollector', {
@@ -28,6 +47,7 @@ class TestMySQLCollector(CollectorTestCase):
 
         self.collector = MySQLCollector(config, None)
 
+    @run_only_if_MySQLdb_is_available
     @patch.object(MySQLCollector, 'connect', Mock(return_value=True))
     @patch.object(MySQLCollector, 'disconnect', Mock(return_value=True))
     @patch.object(Collector, 'publish')

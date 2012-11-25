@@ -33,7 +33,6 @@ def run_only_if_pymongo_is_available(func):
     return run_only(func, pred)
 
 
-@run_only_if_pymongo_is_available
 class TestMongoDBCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MongoDBCollector', {
@@ -42,6 +41,7 @@ class TestMongoDBCollector(CollectorTestCase):
         self.collector = MongoDBCollector(config, None)
         self.connection = MagicMock()
 
+    @run_only_if_pymongo_is_available
     @patch('pymongo.Connection')
     @patch.object(Collector, 'publish')
     def test_should_publish_nested_keys_for_server_stats(self,
@@ -58,6 +58,7 @@ class TestMongoDBCollector(CollectorTestCase):
             'key': 2
         })
 
+    @run_only_if_pymongo_is_available
     @patch('pymongo.Connection')
     @patch.object(Collector, 'publish')
     def test_should_publish_nested_keys_for_db_stats(self,
@@ -79,6 +80,7 @@ class TestMongoDBCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
+    @run_only_if_pymongo_is_available
     @patch('pymongo.Connection')
     @patch.object(Collector, 'publish')
     def test_should_publish_stats_with_long_type(self,
