@@ -66,11 +66,13 @@ builddeb: version
 	mkdir -p build
 	tar -C build -zxf dist/$(PROJECT)-$(VERSION).tar.gz
 	(cd build/$(PROJECT)-$(VERSION) && debuild -us -uc -v$(VERSION))
+	@echo "Package is at build/$(PROJECT)_$(VERSION)_all.deb"
 
 ebuild: buildebuild
 
 buildebuild: version
 	cat gentoo/diamond.ebuild | sed "s/GIT_HASH/${HASH}/" >> gentoo/diamond-$(VERSION).ebuild
+	@echo "ebuild is at gentoo/diamond-$(VERSION).ebuild"
 
 tar: sdist
 
