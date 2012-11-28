@@ -59,7 +59,7 @@ class NetworkCollector(diamond.collector.Collector):
         config = super(NetworkCollector, self).get_default_config()
         config.update({
             'path':         'network',
-            'interfaces':   ['eth', 'bond'],
+            'interfaces':   ['eth', 'bond', 'em'],
             'byte_unit':    ['megabit', 'megabyte'],
             'greedy':       'true',
         })
