@@ -182,14 +182,14 @@ def main():
 
             # Get final GIDs
             gid = -1
-            if len(options.group):
+            if options.group is not None:
                 gid = grp.getgrnam(options.group).gr_gid
             elif len(config['server']['group']):
                 gid = grp.getgrnam(config['server']['group']).gr_gid
 
             # Get final UID
             uid = -1
-            if len(options.user):
+            if options.user is not None:
                 uid = pwd.getpwnam(options.user).pw_uid
             elif len(config['server']['user']):
                 uid = pwd.getpwnam(config['server']['user']).pw_uid
