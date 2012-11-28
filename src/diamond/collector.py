@@ -131,7 +131,7 @@ class Collector(object):
         # Handle some config file changes transparently
         if isinstance(self.config['byte_unit'], basestring):
             self.config['byte_unit'] = self.config['byte_unit'].split()
-            
+
         if isinstance(self.config['enabled'], basestring):
             if self.config['enabled'].strip().lower() == 'true':
                 self.config['enabled'] = True
