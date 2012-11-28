@@ -50,7 +50,11 @@ class TestNetworkCollector(CollectorTestCase):
             'eth0.rx_megabyte': (2.504, 2),
             'eth0.tx_megabyte': (4.707, 2),
             'eth1.rx_megabyte': (0.0, 2),
-            'eth1.tx_megabyte': (0.0, 2)
+            'eth1.tx_megabyte': (0.0, 2),
+            'em2.rx_megabyte': (2.504, 2),
+            'em2.tx_megabyte': (4.707, 2),
+            'bond3.rx_megabyte': (2.504, 2),
+            'bond3.tx_megabyte': (4.707, 2)
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
