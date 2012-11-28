@@ -284,7 +284,7 @@ class Collector(object):
         """
         # Process Metric
         for handler in self.handlers:
-            handler.process(metric)
+            handler._process(metric)
 
     def derivative(self, name, new, max_value=0,
                    time_delta=True, interval=None):

@@ -52,9 +52,6 @@ class rmqHandler (Handler):
         """
           Process a metric and send it to zmq pub socket
         """
-        # Acquire a lock
-        self.lock.acquire()
-
         # Send the data as ......
 
         try:
@@ -64,6 +61,3 @@ class rmqHandler (Handler):
         except Exception:  # Rough connection re-try logic.
             self.log.info("Failed publishing to rabbitMQ. Attempting reconnect")
         self._bind()
-
-        # Release lock
-        self.lock.release()

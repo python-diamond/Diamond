@@ -57,9 +57,6 @@ class LibratoHandler(Handler):
         """
         Process a metric by sending it to Librato
         """
-        # Acquire lock
-        self.lock.acquire()
-
         path = metric.getCollectorPath()
         path += '.'
         path += metric.getMetricPath()
@@ -87,9 +84,6 @@ class LibratoHandler(Handler):
                 'counters': [],
                 'gauges': [],
             }
-
-        # Release lock
-        self.lock.release()
 
     def _send(self):
         """

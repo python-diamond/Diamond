@@ -43,16 +43,12 @@ class RiemannHandler(Handler):
         """
         Send a metric to Riemann.
         """
-        self.lock.acquire()
-
         event = self._metric_to_riemann_event(metric)
         try:
             self.client.send(event)
         except Exception, e:
             self.log.error("RiemannHandler: Error sending event to Riemann: %s",
                            e)
-
-        self.lock.release()
 
     def _metric_to_riemann_event(self, metric):
         """
