@@ -349,6 +349,7 @@ class Server(object):
         self.load_config()
 
         # Load collectors
+        self.load_include_path(os.path.dirname(file))
         collectors = self.load_collectors(os.path.dirname(file), file)
 
         # Setup Collectors
