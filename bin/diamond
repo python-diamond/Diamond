@@ -33,43 +33,60 @@ def main():
     try:
         # Initialize Options
         parser = optparse.OptionParser()
+        
         parser.add_option("-c", "--configfile",
                           dest="configfile",
                           default="/etc/diamond/diamond.conf",
                           help="config file")
+        
         parser.add_option("-f", "--foreground",
                           dest="foreground",
                           default=False,
                           action="store_true",
                           help="run in foreground")
+        
         parser.add_option("-l", "--log-stdout",
                           dest="log_stdout",
                           default=False,
                           action="store_true",
                           help="log to stdout")
+        
         parser.add_option("-p", "--pidfile",
                           dest="pidfile",
                           default=None,
                           help="pid file")
+        
         parser.add_option("-r", "--run",
                           dest="collector",
                           default=None,
                           help="run a given collector once and exit")
+        
         parser.add_option("-v", "--version",
                           dest="version",
                           default=False,
                           action="store_true",
                           help="display the version and exit")
+        
         parser.add_option("--skip-pidfile",
                           dest="skip_pidfile",
                           default=False,
                           action="store_true",
                           help="Skip creating PID file")
+        
+        parser.add_option("-u", "--user",
+                          dest="user",
+                          default=None,
+                          help="Change to specified unprivilegd user")
+        parser.add_option("-g", "--group",
+                          dest="group",
+                          default=None,
+                          help="Change to specified unprivilegd group")
         parser.add_option("--skip-change-user",
                           dest="skip_change_user",
                           default=False,
                           action="store_true",
                           help="Skip changing to an unprivilegd user")
+        
         parser.add_option("--skip-fork",
                           dest="skip_fork",
                           default=False,
@@ -165,12 +182,16 @@ def main():
 
             # Get final GIDs
             gid = -1
-            if len(config['server']['group']):
+            if len(options.group):
+                gid = grp.getgrnam(options.group).gr_gid
+            elif len(config['server']['group']):
                 gid = grp.getgrnam(config['server']['group']).gr_gid
 
             # Get final UID
             uid = -1
-            if len(config['server']['user']):
+            if len(options.user):
+                uid = pwd.getpwnam(options.user).pw_uid
+            elif len(config['server']['user']):
                 uid = pwd.getpwnam(config['server']['user']).pw_uid
 
             # Fix up pid permissions
