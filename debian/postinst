@@ -46,4 +46,8 @@ chmod -x /usr/bin/diamond
 # Enable startup
 chmod +x /usr/bin/diamond
 
+# Log directory permissions
+chown -R diamond:diamond /var/log/diamond
+ln -f -s /lib/init/upstart-job /etc/init.d/diamond
+
 exit 0
