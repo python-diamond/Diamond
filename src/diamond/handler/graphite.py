@@ -54,12 +54,8 @@ class GraphiteHandler(Handler):
         """
         Process a metric by sending it to graphite
         """
-        # Acquire lock
-        self.lock.acquire()
         # Just send the data as a string
         self._send(str(metric))
-        # Release lock
-        self.lock.release()
 
     def _send(self, data):
         """

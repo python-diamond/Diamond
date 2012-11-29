@@ -49,8 +49,6 @@ class GraphitePickleHandler(GraphiteHandler):
         self.batch_size = int(self.config['batch'])
 
     def process(self, metric):
-        # Acquire lock
-        self.lock.acquire()
         # Convert metric to pickle format
         m = (metric.path, (metric.timestamp, metric.value))
         # Add the metric to the match
@@ -66,8 +64,6 @@ class GraphitePickleHandler(GraphiteHandler):
             self._send(data)
             # Clear Batch
             self.batch = []
-        # Release lock
-        self.lock.release()
 
     def _pickle_batch(self):
         """
