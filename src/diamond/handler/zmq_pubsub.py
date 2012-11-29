@@ -53,10 +53,6 @@ class zmqHandler (Handler):
         """
           Process a metric and send it to zmq pub socket
         """
-        # Acquire a lock
-        self.lock.acquire()
 
         # Send the data as ......
         self.socket.send("%s" % str(metric))
-        # Release lock
-        self.lock.release()

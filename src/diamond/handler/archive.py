@@ -40,9 +40,5 @@ class ArchiveHandler(Handler):
         """
         Send a Metric to the Archive.
         """
-        # Acquire Lock
-        self.lock.acquire()
         # Archive Metric
         self.archive.info(str(metric).strip())
-        # Release Lock
-        self.lock.release()
