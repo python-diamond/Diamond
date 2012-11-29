@@ -255,7 +255,7 @@ class Server(object):
                           c.__class__.__name__)
             return
 
-        if c.config['enabled'] != 'True':
+        if c.config['enabled'] != True:
             self.log.warn("Skipped loading disabled Collector: %s",
                           c.__class__.__name__)
             return
