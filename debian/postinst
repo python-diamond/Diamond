@@ -20,11 +20,8 @@ set -e
 
 case "$1" in
     configure)
-        if ! getent group diamond >/dev/null; then
-            addgroup diamond
-        fi
         if ! getent passwd diamond >/dev/null; then
-            adduser --quiet --system --no-create-home --group diamond --home /var/log/diamond --shell /usr/sbin/nologin diamond
+            adduser --quiet --system --no-create-home --home /var/log/diamond --shell /usr/sbin/nologin diamond
         fi
     ;;
 
@@ -49,8 +46,9 @@ chmod -x /usr/bin/diamond
 # Enable startup
 chmod +x /usr/bin/diamond
 
-# Log directory permissions
-chown -R diamond:diamond /var/log/diamond
+# Log / Run directory permissions
+chown -R diamond /var/log/diamond
+chown -R diamond /var/run/diamond
 ln -f -s /lib/init/upstart-job /etc/init.d/diamond
 
 exit 0
