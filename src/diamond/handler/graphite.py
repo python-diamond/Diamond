@@ -24,7 +24,7 @@ class GraphiteHandler(Handler):
     """
     Implements the abstract Handler class, sending data to graphite
     """
-    RETRY = 3
+
 
     def __init__(self, config=None):
         """
@@ -40,9 +40,12 @@ class GraphiteHandler(Handler):
         self.host = self.config['host']
         self.port = int(self.config['port'])
         self.timeout = int(self.config['timeout'])
+        self.batch = int(self.config['batch'])
+        self.metrics = []
 
         # Connect
         self._connect()
+
 
     def __del__(self):
         """
@@ -50,44 +53,44 @@ class GraphiteHandler(Handler):
         """
         self._close()
 
+
     def process(self, metric):
         """
         Process a metric by sending it to graphite
         """
-        # Just send the data as a string
-        self._send(str(metric))
+        # Append the data to the array as a string
+        self.metrics.append(str(metric))
+        if len(self.metrics) >= self.batch:
+            self.log.info("GraphiteHandler: Sending metrics. Graphite batch size is %s." % (len(self.metrics)))
+            self._send()
 
-    def _send(self, data):
+
+    def flush(self):
+        """Flush metrics in queue"""
+        self.log.info("GraphiteHandler: Flush invoked. Batch size is %s." % (len(self.metrics)))
+        self._send()
+
+
+    def _send(self):
         """
         Send data to graphite. Data that can not be sent will be queued.
         """
-        retry = self.RETRY
-        # Attempt to send any data in the queue
-        while retry > 0:
-            # Check socket
-            if not self.socket:
-                # Log Error
-                self.log.error("GraphiteHandler: Socket unavailable.")
-                # Attempt to restablish connection
+        # Check to see if we have a valid socket. If not, try to connect.
+        try:
+            if self.socket is None:
+                self.log.debug("GraphiteHandler: Socket is not connected. Reconnecting.")
                 self._connect()
-                # Decrement retry
-                retry -= 1
-                # Try again
-                continue
-            try:
-                # Send data to socket
-                self.socket.sendall(data)
-                # Done
-                break
-            except socket.error, e:
-                # Log Error
-                self.log.error("GraphiteHandler: Failed sending data. %s.", e)
-                # Attempt to restablish connection
-                self._close()
-                # Decrement retry
-                retry -= 1
-                # try again
-                continue
+            # Send data to socket
+            self.socket.sendall("\n".join(self.metrics))
+            self.log.info("GraphiteHandler: Metrics sent.")
+        except Exception:
+            self._close()
+            self.log.error("GraphiteHandler: Error sending metrics.")
+            raise
+        finally:
+            # Clear metrics no matter what the result
+            self.metrics = []
+
 
     def _connect(self):
         """
@@ -107,15 +110,16 @@ class GraphiteHandler(Handler):
         try:
             self.socket.connect((self.host, self.port))
             # Log
-            self.log.debug("Established connection to graphite server %s:%d",
+            self.log.debug("GraphiteHandler: Established connection to graphite server %s:%d.",
                            self.host, self.port)
         except Exception, ex:
             # Log Error
-            self.log.error("GraphiteHandler: Failed to connect to %s:%i. %s",
+            self.log.error("GraphiteHandler: Failed to connect to %s:%i. %s.",
                            self.host, self.port, ex)
             # Close Socket
             self._close()
             return
+
 
     def _close(self):
         """
