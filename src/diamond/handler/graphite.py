@@ -25,7 +25,6 @@ class GraphiteHandler(Handler):
     Implements the abstract Handler class, sending data to graphite
     """
 
-
     def __init__(self, config=None):
         """
         Create a new instance of the GraphiteHandler class
@@ -46,13 +45,11 @@ class GraphiteHandler(Handler):
         # Connect
         self._connect()
 
-
     def __del__(self):
         """
         Destroy instance of the GraphiteHandler class
         """
         self._close()
-
 
     def process(self, metric):
         """
@@ -61,15 +58,15 @@ class GraphiteHandler(Handler):
         # Append the data to the array as a string
         self.metrics.append(str(metric))
         if len(self.metrics) >= self.batch:
-            self.log.info("GraphiteHandler: Sending metrics. Graphite batch size is %s." % (len(self.metrics)))
+            self.log.info("GraphiteHandler: Sending metrics. Graphite batch "
+                          "size is %s." % (len(self.metrics)))
             self._send()
-
 
     def flush(self):
         """Flush metrics in queue"""
-        self.log.info("GraphiteHandler: Flush invoked. Batch size is %s." % (len(self.metrics)))
+        self.log.info("GraphiteHandler: Flush invoked. Batch size is %s."
+                      % (len(self.metrics)))
         self._send()
-
 
     def _send(self):
         """
@@ -78,7 +75,8 @@ class GraphiteHandler(Handler):
         # Check to see if we have a valid socket. If not, try to connect.
         try:
             if self.socket is None:
-                self.log.debug("GraphiteHandler: Socket is not connected. Reconnecting.")
+                self.log.debug("GraphiteHandler: Socket is not connected. "
+                               "Reconnecting.")
                 self._connect()
             # Send data to socket
             self.socket.sendall("\n".join(self.metrics))
@@ -90,7 +88,6 @@ class GraphiteHandler(Handler):
         finally:
             # Clear metrics no matter what the result
             self.metrics = []
-
 
     def _connect(self):
         """
@@ -110,7 +107,8 @@ class GraphiteHandler(Handler):
         try:
             self.socket.connect((self.host, self.port))
             # Log
-            self.log.debug("GraphiteHandler: Established connection to graphite server %s:%d.",
+            self.log.debug("GraphiteHandler: Established connection to "
+                           "graphite server %s:%d.",
                            self.host, self.port)
         except Exception, ex:
             # Log Error
@@ -119,7 +117,6 @@ class GraphiteHandler(Handler):
             # Close Socket
             self._close()
             return
-
 
     def _close(self):
         """
