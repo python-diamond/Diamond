@@ -62,6 +62,9 @@ port = 2003
 # Socket timeout (seconds)
 timeout = 15
 
+# Batch size for metrics
+batch = 1
+
 [[GraphitePickleHandler]]
 ### Options for GraphitePickleHandler
 

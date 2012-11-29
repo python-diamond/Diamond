@@ -131,7 +131,7 @@ class Collector(object):
         # Handle some config file changes transparently
         if isinstance(self.config['byte_unit'], basestring):
             self.config['byte_unit'] = self.config['byte_unit'].split()
-            
+
         if isinstance(self.config['enabled'], basestring):
             if self.config['enabled'].strip().lower() == 'true':
                 self.config['enabled'] = True
@@ -284,10 +284,7 @@ class Collector(object):
         """
         # Process Metric
         for handler in self.handlers:
-            try:
-                handler.process(metric)
-            except Exception:
-                self.log.error(traceback.format_exc())
+            handler._process(metric)
 
     def derivative(self, name, new, max_value=0,
                    time_delta=True, interval=None):

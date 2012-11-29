@@ -2,6 +2,7 @@
 
 import logging
 import threading
+import traceback
 
 
 class Handler(object):
@@ -18,6 +19,19 @@ class Handler(object):
         self.config = config
         # Initialize Lock
         self.lock = threading.Condition(threading.Lock())
+
+    def _process(self, metric):
+        """
+        Decorator for processing handlers with a lock, catching exceptions
+        """
+        try:
+            self.log.debug("Running Handler %s locked" % (self))
+            with self.lock:
+                self.process(metric)
+        except Exception:
+                self.log.error(traceback.format_exc())
+        finally:
+            self.log.debug("Unlocked Handler %s" % (self))
 
     def process(self, metric):
         """

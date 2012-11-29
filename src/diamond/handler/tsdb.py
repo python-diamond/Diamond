@@ -74,12 +74,8 @@ class TSDBHandler(Handler):
         """
         Process a metric by sending it to TSDB
         """
-        # Acquire lock
-        self.lock.acquire()
         # Just send the data as a string
         self._send("put " + str(metric))
-        # Release lock
-        self.lock.release()
 
     def _send(self, data):
         """
