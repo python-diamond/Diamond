@@ -96,6 +96,10 @@ def main():
         # Parse Command Line Args
         (options, args) = parser.parse_args()
 
+        # Initial variables
+        uid = -1
+        gid = -1
+
         if options.version:
             print "Diamond version %s" % (get_diamond_version())
             sys.exit(0)
@@ -181,14 +185,12 @@ def main():
                     sys.exit(1)
 
             # Get final GIDs
-            gid = -1
             if options.group is not None:
                 gid = grp.getgrnam(options.group).gr_gid
             elif len(config['server']['group']):
                 gid = grp.getgrnam(config['server']['group']).gr_gid
 
             # Get final UID
-            uid = -1
             if options.user is not None:
                 uid = pwd.getpwnam(options.user).pw_uid
             elif len(config['server']['user']):
