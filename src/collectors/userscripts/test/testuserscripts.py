@@ -31,6 +31,7 @@ class TestUserScriptsCollector(CollectorTestCase):
         metrics = {
             'example.1': 42,
             'example.2': 24,
+            'example.3': 12.1212,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,

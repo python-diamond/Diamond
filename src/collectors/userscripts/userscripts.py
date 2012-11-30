@@ -45,6 +45,7 @@ class UserScriptsCollector(diamond.collector.Collector):
             'path':         '.',
             'scripts_path': '/etc/diamond/user_scripts/',
             'method':       'Threaded',
+            'floatprecision': 4,
         })
         return config
 
@@ -61,4 +62,7 @@ class UserScriptsCollector(diamond.collector.Collector):
                 continue
             for line in out.split('\n'):
                 name, value = line.split()
-                self.publish(name, value)
+                floatprecision = 0
+                if "." in value:
+                    floatprecision = self.config['floatprecision']
+                self.publish(name, value, floatprecision)
