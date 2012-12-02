@@ -15,12 +15,15 @@ import diamond.collector
 
 try:
     import beanstalkc
+    beanstalkc  # workaround for pyflakes issue #13
 except ImportError:
     beanstalkc = None
 
+
 class BeanstalkdCollector(diamond.collector.Collector):
     def get_default_config_help(self):
-        config_help = super(BeanstalkdCollector, self).get_default_config_help()
+        config_help = super(BeanstalkdCollector,
+                            self).get_default_config_help()
         config_help.update({
             'host': 'Hostname',
             'port': 'Port',
