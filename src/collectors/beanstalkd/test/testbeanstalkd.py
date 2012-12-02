@@ -34,6 +34,7 @@ def run_only_if_beanstalkc_is_available(func):
     pred = lambda: beanstalkc is not None
     return run_only(func, pred)
 
+
 class TestBeanstalkdCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('BeanstalkdCollector', {
