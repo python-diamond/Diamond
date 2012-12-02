@@ -16,6 +16,24 @@ from beanstalkd import BeanstalkdCollector
 ################################################################################
 
 
+def run_only(func, predicate):
+    if predicate():
+        return func
+    else:
+        def f(arg):
+            pass
+        return f
+
+
+def run_only_if_beanstalkc_is_available(func):
+    try:
+        import beanstalkc
+        beanstalkc  # workaround for pyflakes issue #13
+    except ImportError:
+        beanstalkc = None
+    pred = lambda: beanstalkc is not None
+    return run_only(func, pred)
+
 class TestBeanstalkdCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('BeanstalkdCollector', {
@@ -25,6 +43,7 @@ class TestBeanstalkdCollector(CollectorTestCase):
 
         self.collector = BeanstalkdCollector(config, None)
 
+    @run_only_if_beanstalkc_is_available
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         stats = {
