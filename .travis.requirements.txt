@@ -4,3 +4,4 @@ psutil
 pymongo
 pyrabbit
 redis
+beanstalkc
