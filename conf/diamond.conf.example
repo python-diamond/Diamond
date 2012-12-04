@@ -170,6 +170,7 @@ keys = default
 # to increase verbosity, set DEBUG
 level = INFO
 handlers = rotated_file
+propagate = 1
 
 [handler_rotated_file]
 
