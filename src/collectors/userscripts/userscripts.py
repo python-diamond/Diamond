@@ -54,11 +54,19 @@ class UserScriptsCollector(diamond.collector.Collector):
         if not os.access(scripts_path, os.R_OK):
             return None
         for script in os.listdir(scripts_path):
-            if not os.access(os.path.join(scripts_path, script), os.X_OK):
+            absolutescriptpath = os.path.join(scripts_path, script)
+            if not os.access(absolutescriptpath, os.X_OK):
+                self.log.info("%s is not executable" % absolutescriptpath)
                 continue
-            stat, out = commands.getstatusoutput(os.path.join(scripts_path,
-                                                              script))
+            out = None
+            self.log.debug("Executing %s" % absolutescriptpath)
+            stat, out = commands.getstatusoutput(absolutescriptpath)
             if stat != 0:
+                self.log.error("%s return exit value %s; skipping" %
+                        (absolutescriptpath, stat))
+                continue
+            if not out:
+                self.log.info("%s return no output" % absolutescriptpath)
                 continue
             for line in out.split('\n'):
                 name, value = line.split()
