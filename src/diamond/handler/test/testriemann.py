@@ -10,6 +10,7 @@ import configobj
 from diamond.handler.riemann import RiemannHandler
 from diamond.metric import Metric
 
+
 class TestRiemannHandler(unittest.TestCase):
     def test_metric_to_riemann_event(self):
         config = configobj.ConfigObj()
@@ -30,6 +31,3 @@ class TestRiemannHandler(unittest.TestCase):
             'time': 1234567,
             'metric': 0.0,
         })
-
-
-
