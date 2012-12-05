@@ -17,7 +17,7 @@ set -e
 # the debian-policy package
 
 # Stop diamond if it's running
-stop diamond
+stop diamond || true
 
 case "$1" in
     remove|upgrade|deconfigure)
