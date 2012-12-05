@@ -39,7 +39,10 @@ class GraphiteHandler(Handler):
         self.host = self.config['host']
         self.port = int(self.config['port'])
         self.timeout = int(self.config['timeout'])
-        self.batch = int(self.config['batch'])
+        if 'batch' in self.config:
+            self.batch = int(self.config['batch'])
+        else:
+            self.batch = 1
         self.metrics = []
 
         # Connect
