@@ -59,9 +59,9 @@ class GraphitePickleHandler(GraphiteHandler):
             self.log.debug("GraphitePickleHandler: Sending batch size: %d",
                            self.batch_size)
             # Pickle the batch of metrics
-            data = self._pickle_batch()
+            self.metrics = [ self._pickle_batch() ]
             # Send pickled batch
-            self._send(data)
+            self._send()
             # Clear Batch
             self.batch = []
 
