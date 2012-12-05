@@ -26,11 +26,13 @@ class Handler(object):
         """
         try:
             self.log.debug("Running Handler %s locked" % (self))
-            with self.lock:
-                self.process(metric)
+            self.lock.acquire()
+            self.process(metric)
+            self.lock.release()
         except Exception:
                 self.log.error(traceback.format_exc())
         finally:
+            self.lock.release()
             self.log.debug("Unlocked Handler %s" % (self))
 
     def process(self, metric):
