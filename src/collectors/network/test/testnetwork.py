@@ -23,7 +23,8 @@ from network import NetworkCollector
 class TestNetworkCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('NetworkCollector', {
-            'interval': 10,
+            'interval':  10,
+            'byte_unit': ['megabit', 'megabyte'],
         })
 
         self.collector = NetworkCollector(config, None)
