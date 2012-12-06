@@ -106,7 +106,7 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
         default_config = super(SNMPInterfaceCollector,
                                self).get_default_config()
         default_config['path'] = 'interface'
-        default_config['byte_unit'] = ['Mbit', 'Mbyte']
+        default_config['byte_unit'] = ['bit', 'byte']
         return default_config
 
     def collect_snmp(self, device, host, port, community):

@@ -76,7 +76,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             'method': 'Threaded',
 
             # Default numeric output
-            'byte_unit': ['gigabyte']
+            'byte_unit': ['byte']
         })
         return config
 
