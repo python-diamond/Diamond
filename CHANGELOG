@@ -1,2 +1,7 @@
 This file is a log of any potentially user affecting changes to Diamond.
 
+master 41167b9 2012-12-06
+*** BREAKING CHANGE ***
+This changes the default byte unit for diskspace, network, and snmp interfaces
+to their basic units (bytes/bits). This will change your metric paths if you
+haven't hardcoded a specific setting for these collectors.
