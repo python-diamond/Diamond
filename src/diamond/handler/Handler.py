@@ -29,7 +29,6 @@ class Handler(object):
                 self.log.debug("Running Handler %s locked" % (self))
                 self.lock.acquire()
                 self.process(metric)
-                self.lock.release()
             except Exception:
                     self.log.error(traceback.format_exc())
         finally:
