@@ -18,7 +18,7 @@ class Handler(object):
         # Initialize Data
         self.config = config
         # Initialize Lock
-        self.lock = threading.Condition(threading.Lock())
+        self.lock = threading.Lock()
 
     def _process(self, metric):
         """
@@ -31,9 +31,10 @@ class Handler(object):
                 self.process(metric)
                 self.lock.release()
             except Exception:
-                    self.log.error(traceback.format_exc())
+                self.log.error(traceback.format_exc())
         finally:
-            self.lock.release()
+            if self.lock.locked():
+                self.lock.release()
             self.log.debug("Unlocked Handler %s" % (self))
 
     def process(self, metric):
