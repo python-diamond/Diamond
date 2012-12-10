@@ -1,7 +1,7 @@
 # coding=utf-8
 
 """
-Collect dropwizard stats for the local node
+Collect [dropwizard](http://dropwizard.codahale.com/) stats for the local node
 
 #### Dependencies
 
