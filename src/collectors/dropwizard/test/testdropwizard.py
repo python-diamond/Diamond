@@ -30,7 +30,7 @@ class TestDropwizardCollector(CollectorTestCase):
             self.collector.collect()
 
         metrics = {
-       	    'jvm.memory.totalInit': 9.142272E7,
+            'jvm.memory.totalInit': 9.142272E7,
             'jvm.memory.totalUsed': 1.29674584E8,
             'jvm.memory.totalMax': 1.13901568E9,
             'jvm.memory.totalCommitted': 1.62267136E8,
