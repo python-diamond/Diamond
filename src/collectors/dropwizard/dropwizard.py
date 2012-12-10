@@ -64,13 +64,6 @@ class DropwizardCollector(diamond.collector.Collector):
 
         metrics = {}
 
-
-        #
-        # http connections to ES
-        #metrics['http.current'] = data['http']['current_open']
-
-        #
-        # jvm memory
         metrics['jvm.memory.totalInit'] = result['jvm']['memory']['totalInit']
         metrics['jvm.memory.totalUsed'] = result['jvm']['memory']['totalUsed']
         metrics['jvm.memory.totalMax'] = result['jvm']['memory']['totalMax']
