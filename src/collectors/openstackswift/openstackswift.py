@@ -53,11 +53,11 @@ class OpenstackSwiftCollector(diamond.collector.Collector):
         if (self.config['enable_dispersion_report']):
             p = Popen(['swift-dispersion-report', '-j'], stdout=PIPE, stderr=PIPE)
             stdout, stderr = p.communicate()
-            self.publish('swift.dispersion.errors', len(stderr.split('\n')) - 1)
+            self.publish('dispersion.errors', len(stderr.split('\n')) - 1)
             data = json.loads(stdout)
             for t in ('object', 'container'):
                 for (k,v) in data[t].items():
-                    self.publish('swift.dispersion.%s.%s' % (t, k), v)
+                    self.publish('dispersion.%s.%s' % (t, k), v)
 
         # counts of objects in container
         if(self.config['enable_counting']):
@@ -66,4 +66,4 @@ class OpenstackSwiftCollector(diamond.collector.Collector):
                 cmd = ['swift', '-A', self.config['auth_url'], '-U', account, '-K', self.config['password'], 'list', container]
                 p = Popen(cmd, stdout=PIPE, stderr=PIPE)
                 stdout, stderr = p.communicate()
-                self.publish('swift.counts.%s.%s' % (self.config['account'], container), len(stdout.split('\n')) - 1)
+                self.publish('counts.%s.%s' % (self.config['account'], container), len(stdout.split('\n')) - 1)
