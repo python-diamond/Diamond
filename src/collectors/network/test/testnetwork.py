@@ -174,7 +174,7 @@ class TestNetworkCollector(CollectorTestCase):
         }
 
         self.assertPublishedMany(publish_mock, metrics)
-        
+
     # Named test_z_* to run after test_should_open_proc_net_dev
     @patch.object(Collector, 'publish')
     def test_z_issue_208_b(self, publish_mock):
