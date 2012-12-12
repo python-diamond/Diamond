@@ -81,9 +81,12 @@ class GraphiteHandler(Handler):
                 self.log.debug("GraphiteHandler: Socket is not connected. "
                                "Reconnecting.")
                 self._connect()
-            # Send data to socket
-            self.socket.sendall("\n".join(self.metrics))
-            self.log.info("GraphiteHandler: Metrics sent.")
+            if self.socket is None:
+                self.log.debug("GraphiteHandler: Reconnect failed.")
+            else:
+                # Send data to socket
+                self.socket.sendall("\n".join(self.metrics))
+                self.log.info("GraphiteHandler: Metrics sent.")
         except Exception:
             self._close()
             self.log.error("GraphiteHandler: Error sending metrics.")
