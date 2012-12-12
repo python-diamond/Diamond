@@ -28,6 +28,7 @@ seconds. This might be a bit excessive and put unnecessary load on the
 devices being polled. You may wish to change this to every 300 seconds. However
 you need modify your graphite data retentions to handle this properly.
 
+```
     # Options for SNMPInterfaceCollector
     path = interface
     interval = 60
@@ -43,6 +44,7 @@ you need modify your graphite data retentions to handle this properly.
     host = router1.example.com
     port = 161
     community = public
+```
 
 Note: If you modify the SNMPInterfaceCollector configuration, you will need to
 restart diamond.
