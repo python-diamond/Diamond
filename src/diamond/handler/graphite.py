@@ -36,13 +36,11 @@ class GraphiteHandler(Handler):
         self.socket = None
 
         # Initialize Options
+        self.proto = self.config.get('proto', 'tcp').lower().strip()
         self.host = self.config['host']
-        self.port = int(self.config['port'])
-        self.timeout = int(self.config['timeout'])
-        if 'batch' in self.config:
-            self.batch = int(self.config['batch'])
-        else:
-            self.batch = 1
+        self.port = int(self.config.get('port', 2003))
+        self.timeout = int(self.config.get('timeout', 15))
+        self.batch_size = int(self.config.get('batch', 1))
         self.metrics = []
 
         # Connect
@@ -60,15 +58,11 @@ class GraphiteHandler(Handler):
         """
         # Append the data to the array as a string
         self.metrics.append(str(metric))
-        if len(self.metrics) >= self.batch:
-            self.log.info("GraphiteHandler: Sending metrics. Graphite batch "
-                          "size is %s." % (len(self.metrics)))
+        if len(self.metrics) >= self.batch_size:
             self._send()
 
     def flush(self):
         """Flush metrics in queue"""
-        self.log.info("GraphiteHandler: Flush invoked. Batch size is %s."
-                      % (len(self.metrics)))
         self._send()
 
     def _send(self):
@@ -87,7 +81,6 @@ class GraphiteHandler(Handler):
                 else:
                     # Send data to socket
                     self.socket.sendall("\n".join(self.metrics))
-                    self.log.info("GraphiteHandler: Metrics sent.")
             except Exception:
                 self._close()
                 self.log.error("GraphiteHandler: Error sending metrics.")
@@ -100,8 +93,13 @@ class GraphiteHandler(Handler):
         """
         Connect to the graphite server
         """
+        if (self.proto == 'udp'):
+            stream = socket.SOCK_DGRAM
+        else:
+            stream = socket.SOCK_STREAM
+
         # Create socket
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket = socket.socket(socket.AF_INET, stream)
         if socket is None:
             # Log Error
             self.log.error("GraphiteHandler: Unable to create socket.")

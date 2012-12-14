@@ -26,7 +26,6 @@ class Handler(object):
         """
         try:
             try:
-                self.log.debug("Running Handler %s locked" % (self))
                 self.lock.acquire()
                 self.process(metric)
             except Exception:
@@ -34,7 +33,6 @@ class Handler(object):
         finally:
             if self.lock.locked():
                 self.lock.release()
-            self.log.debug("Unlocked Handler %s" % (self))
 
     def process(self, metric):
         """

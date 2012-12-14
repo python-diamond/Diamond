@@ -46,7 +46,7 @@ class GraphitePickleHandler(GraphiteHandler):
         # Initialize Data
         self.batch = []
         # Initialize Options
-        self.batch_size = int(self.config['batch'])
+        self.batch_size = int(self.config.get('batch', 100))
 
     def process(self, metric):
         # Convert metric to pickle format
@@ -62,6 +62,8 @@ class GraphitePickleHandler(GraphiteHandler):
             self.metrics = [self._pickle_batch()]
             # Send pickled batch
             self._send()
+            # Flush the metric pack down the wire
+            self.flush()
             # Clear Batch
             self.batch = []
 
