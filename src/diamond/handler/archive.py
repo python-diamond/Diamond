@@ -28,10 +28,12 @@ class ArchiveHandler(Handler):
         formatter = logging.Formatter('%(message)s')
         # Create Archive Log Handler
         handler = logging.handlers.TimedRotatingFileHandler(
-            self.config['log_file'],
-            'midnight',
-            1,
-            backupCount=int(self.config['days']))
+            filename=self.config['log_file'],
+            when='midnight',
+            interval=1,
+            backupCount=int(self.config.get('days', 7)),
+            encoding=self.config.get('encoding', None)
+            )
         handler.setFormatter(formatter)
         handler.setLevel(logging.DEBUG)
         self.archive.addHandler(handler)
