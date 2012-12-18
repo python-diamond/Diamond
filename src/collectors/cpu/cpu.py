@@ -99,15 +99,34 @@ class CPUCollector(diamond.collector.Collector):
             # Close File
             file.close()
 
+            metrics = {}
+
             for cpu in results.keys():
                 stats = results[cpu]
                 for s in stats.keys():
                     # Get Metric Name
                     metric_name = '.'.join([cpu, s])
-                    # Publish Metric Derivative
-                    self.publish(metric_name,
-                                 self.derivative(metric_name, long(stats[s]),
-                                                 self.MAX_VALUES[s]))
+                    # Get actual data
+                    metrics[metric_name] = self.derivative(metric_name,
+                                                         long(stats[s]),
+                                                         self.MAX_VALUES[s])
+
+            # Check for a bug in xen where the idle time is doubled for guest
+            # See https://bugzilla.redhat.com/show_bug.cgi?id=624756
+            if os.path.isdir('/proc/xen'):
+                total = 0
+                for metric_name in metrics.keys():
+                    if 'cpu0.' in metric_name:
+                        total += int(metrics[metric_name])
+                if total > 110:
+                    for mname in metrics.keys():
+                        if '.idle' in mname:
+                            metrics[mname] = float(metrics[mname]) / 2
+
+            # Publish Metric Derivative
+            for metric_name in metrics.keys():
+                self.publish(metric_name,
+                             metrics[metric_name])
             return True
 
         elif psutil:
