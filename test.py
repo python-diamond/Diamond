@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 ###############################################################################
 
-from __future__ import with_statement
-
 import os
 import sys
 import unittest
@@ -101,14 +99,20 @@ class CollectorTestCase(unittest.TestCase):
         return file
 
     def getFixture(self, fixture_name):
-        with open(self.getFixturePath(fixture_name), 'r') as f:
+        try:
+            f = open(self.getFixturePath(fixture_name), 'r')
             data = StringIO(f.read())
-        return data
+            return data
+        finally:
+            f.close()
 
     def getPickledResults(self, results_name):
-        with open(self.getFixturePath(results_name), 'r') as f:
+        try:
+            f = open(self.getFixturePath(results_name), 'r')
             data = pickle.load(f)
-        return data
+            return data
+        finally:
+            f.close()
 
     def setPickledResults(self, results_name, data):
         pickle.dump(data, open(self.getFixturePath(results_name), "w+b"))

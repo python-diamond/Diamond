@@ -2,8 +2,6 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -26,9 +24,12 @@ class TestMonitCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch('urllib2.urlopen', Mock(
-                return_value=self.getFixture('status.xml'))):
-            self.collector.collect()
+        patch_urlopen = patch('urllib2.urlopen', Mock(
+            return_value=self.getFixture('status.xml')))
+        
+        patch_urlopen.start()
+        self.collector.collect()
+        patch_urlopen.stop()
 
         metrics = {
             'app_thin_8101.cpu.percent': 0.9,

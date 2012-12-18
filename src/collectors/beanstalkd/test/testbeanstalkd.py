@@ -2,8 +2,6 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -115,10 +113,13 @@ class TestBeanstalkdCollector(CollectorTestCase):
              ]
         }
 
-        with patch.object(BeanstalkdCollector,
-                          '_get_stats',
-                          Mock(return_value=stats)):
-            self.collector.collect()
+        patch_get_stats =  patch.object(BeanstalkdCollector,
+                                        '_get_stats',
+                                        Mock(return_value=stats))
+            
+        patch_get_stats.start()
+        self.collector.collect()
+        patch_get_stats.stop()
 
         metrics = {
             'current-connections': 10,

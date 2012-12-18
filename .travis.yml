@@ -1,5 +1,7 @@
 language: python
 python:
+  - "2.4"
+  - "2.5"
   - "2.6"
   - "2.7"
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
