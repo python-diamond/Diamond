@@ -48,13 +48,13 @@ def get_hostname(config, method=None):
         return hostname
 
     if method == 'fqdn_short':
-        return socket.getfqdn().split('.')[0]
+        return socket.gethostname().split('.')[0]
 
     if method == 'fqdn':
-        return socket.getfqdn().replace('.', '_')
+        return socket.gethostname().replace('.', '_')
 
     if method == 'fqdn_rev':
-        hostname = socket.getfqdn().split('.')
+        hostname = socket.gethostname().split('.')
         hostname.reverse()
         hostname = '.'.join(hostname)
         return hostname
