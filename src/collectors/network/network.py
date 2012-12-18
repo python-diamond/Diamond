@@ -62,7 +62,7 @@ class NetworkCollector(diamond.collector.Collector):
             # Build Regular Expression
             greed = ''
             if self.config['greedy'].lower() == 'true':
-                greed = '[0-9]+'
+                greed = '\S+'
 
             exp = ('^(?:\s*)((?:%s)%s):(?:\s*)'
                    + '(?P<rx_bytes>\d+)(?:\s*)'

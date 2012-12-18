@@ -23,6 +23,7 @@ from network import NetworkCollector
 class TestNetworkCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('NetworkCollector', {
+            'interfaces': ['eth', 'em', 'bond', 'veth', 'br-lxc'],
             'interval':  10,
             'byte_unit': ['bit', 'megabit', 'megabyte'],
         })
@@ -36,6 +37,36 @@ class TestNetworkCollector(CollectorTestCase):
         open_mock.return_value = StringIO('')
         self.collector.collect()
         open_mock.assert_called_once_with('/proc/net/dev')
+
+    @patch.object(Collector, 'publish')
+    def test_should_work_with_virtual_interfaces_and_bridges(self, publish_mock):
+        NetworkCollector.PROC = self.getFixturePath('proc_net_dev_1')
+        self.collector.collect()
+
+        self.assertPublishedMany(publish_mock, {})
+
+        NetworkCollector.PROC = self.getFixturePath('proc_net_dev_2')
+        self.collector.collect()
+
+        metrics = {
+            'eth0.rx_megabyte': (2.504, 2),
+            'eth0.tx_megabyte': (4.707, 2),
+            'eth1.rx_megabyte': (0.0, 2),
+            'eth1.tx_megabyte': (0.0, 2),
+            'em2.rx_megabyte': (2.504, 2),
+            'em2.tx_megabyte': (4.707, 2),
+            'bond3.rx_megabyte': (2.504, 2),
+            'bond3.tx_megabyte': (4.707, 2),
+            'vethmR3i5e.tx_megabyte': (0.223, 2),
+            'vethmR3i5e.rx_megabyte': (0.033, 2),
+            'br-lxc-247.tx_megabyte': (0.307, 2),
+            'br-lxc-247.rx_megabyte': (0.032, 2)
+        }
+
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
+        self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
