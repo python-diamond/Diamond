@@ -87,7 +87,7 @@ class MemoryCollector(diamond.collector.Collector):
                         value = diamond.convertor.binary.convert(value=value,
                                                                  oldUnit=units,
                                                                  newUnit=unit)
-                        self.publish(name, value)
+                        self.publish(name, value, metric_type='GAUGE')
 
                         # TODO: We only support one unit node here. Fix it!
                         break
@@ -103,19 +103,19 @@ class MemoryCollector(diamond.collector.Collector):
             for unit in self.config['byte_unit']:
                 value = diamond.convertor.binary.convert(
                     value=phymem_usage.total, oldUnit=units, newUnit=unit)
-                self.publish('MemTotal', value)
+                self.publish('MemTotal', value, metric_type='GAUGE')
 
                 value = diamond.convertor.binary.convert(
                     value=phymem_usage.free, oldUnit=units, newUnit=unit)
-                self.publish('MemFree', value)
+                self.publish('MemFree', value, metric_type='GAUGE')
 
                 value = diamond.convertor.binary.convert(
                     value=virtmem_usage.total, oldUnit=units, newUnit=unit)
-                self.publish('SwapTotal', value)
+                self.publish('SwapTotal', value, metric_type='GAUGE')
 
                 value = diamond.convertor.binary.convert(
                     value=virtmem_usage.free, oldUnit=units, newUnit=unit)
-                self.publish('SwapFree', value)
+                self.publish('SwapFree', value, metric_type='GAUGE')
 
                 # TODO: We only support one unit node here. Fix it!
                 break

@@ -191,20 +191,23 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     blocks_total - blocks_free)
                 metric_value = diamond.convertor.binary.convert(
                     value=metric_value, oldUnit='byte', newUnit=unit)
-                self.publish(metric_name, metric_value, 2)
+                self.publish(metric_name, metric_value, 2, 'GAUGE')
 
                 metric_name = '%s.%s_free' % (name, unit)
                 metric_value = float(block_size) * float(blocks_free)
                 metric_value = diamond.convertor.binary.convert(
                     value=metric_value, oldUnit='byte', newUnit=unit)
-                self.publish(metric_name, metric_value, 2)
+                self.publish(metric_name, metric_value, 2, 'GAUGE')
 
                 metric_name = '%s.%s_avail' % (name, unit)
                 metric_value = float(block_size) * float(blocks_avail)
                 metric_value = diamond.convertor.binary.convert(
                     value=metric_value, oldUnit='byte', newUnit=unit)
-                self.publish(metric_name, metric_value, 2)
+                self.publish(metric_name, metric_value, 2, 'GAUGE')
 
-            self.publish('%s.inodes_used' % name, inodes_total - inodes_free)
-            self.publish('%s.inodes_free' % name, inodes_free)
-            self.publish('%s.inodes_avail' % name, inodes_avail)
+            self.publish('%s.inodes_used' % name, inodes_total - inodes_free,
+                         metric_type='GAUGE')
+            self.publish('%s.inodes_free' % name, inodes_free,
+                         metric_type='GAUGE')
+            self.publish('%s.inodes_avail' % name, inodes_avail,
+                         metric_type='GAUGE')

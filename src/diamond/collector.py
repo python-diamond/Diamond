@@ -265,7 +265,7 @@ class Collector(object):
         """
         raise NotImplementedError()
 
-    def publish(self, name, value, precision=0):
+    def publish(self, name, value, precision=0, metric_type='COUNTER'):
         """
         Publish a metric with the given name
         """
@@ -273,7 +273,8 @@ class Collector(object):
         path = self.get_metric_path(name)
 
         # Create Metric
-        metric = Metric(path, value, None, precision, host=self.get_hostname())
+        metric = Metric(path, value, None, precision, host=self.get_hostname(),
+                        metric_type=metric_type)
 
         # Publish Metric
         self.publish_metric(metric)

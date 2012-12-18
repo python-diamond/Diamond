@@ -68,9 +68,12 @@ class LibratoHandler(Handler):
             'measure_time': metric.timestamp,
         }
 
-        self.batch['counters'].append(data)
+        if metric.metric_type == 'GAUGE':
+            self.batch['gauges'].append(data)
+        else:
+            self.batch['counters'].append(data)
 
-        if len(self.batch['counters']) >= self.batch_size:
+        if len(self.batch['counters']) + len(self.batch['gauges']) >= self.batch_size:
 
             # Log
             self.log.debug("LibratoHandler: Sending batch size: %d",

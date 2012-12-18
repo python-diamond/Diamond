@@ -62,4 +62,4 @@ class SockstatCollector(diamond.collector.Collector):
         file.close()
 
         for key, value in result.items():
-            self.publish(key, value)
+            self.publish(key, value, metric_type='GAUGE')
