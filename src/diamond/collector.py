@@ -39,52 +39,72 @@ def get_hostname(config, method=None):
 
     # case insensitive method
     method = method.lower()
+    
+    if method in get_hostname.cached_results:
+        return get_hostname.cached_results[method]
 
     if method == 'smart':
         hostname = get_hostname(config, 'fqdn_short')
         if hostname != 'localhost':
+            get_hostname.cached_results[method] = hostname
             return hostname
         hostname = get_hostname(config, 'hostname_short')
+        get_hostname.cached_results[method] = hostname
         return hostname
 
     if method == 'fqdn_short':
-        return socket.getfqdn().split('.')[0]
+        hostname = socket.getfqdn().split('.')[0]
+        get_hostname.cached_results[method] = hostname
+        return hostname
 
     if method == 'fqdn':
-        return socket.getfqdn().replace('.', '_')
+        hostname = socket.getfqdn().replace('.', '_')
+        get_hostname.cached_results[method] = hostname
+        return hostname
 
     if method == 'fqdn_rev':
         hostname = socket.getfqdn().split('.')
         hostname.reverse()
         hostname = '.'.join(hostname)
+        get_hostname.cached_results[method] = hostname
         return hostname
 
     if method == 'uname_short':
-        return os.uname()[1].split('.')[0]
+        hostname = os.uname()[1].split('.')[0]
+        get_hostname.cached_results[method] = hostname
+        return hostname
 
     if method == 'uname_rev':
         hostname = os.uname()[1].split('.')
         hostname.reverse()
         hostname = '.'.join(hostname)
+        get_hostname.cached_results[method] = hostname
         return hostname
 
     if method == 'hostname':
-        return socket.gethostname()
+        hostname = socket.gethostname()
+        get_hostname.cached_results[method] = hostname
+        return hostname
 
     if method == 'hostname_short':
-        return socket.gethostname().split('.')[0]
+        hostname = socket.gethostname().split('.')[0]
+        get_hostname.cached_results[method] = hostname
+        return hostname
 
     if method == 'hostname_rev':
         hostname = socket.gethostname().split('.')
         hostname.reverse()
         hostname = '.'.join(hostname)
+        get_hostname.cached_results[method] = hostname
         return hostname
 
     if method == 'none':
+        get_hostname.cached_results[method] = hostname
         return None
 
     raise NotImplementedError(config['hostname_method'])
 
+get_hostname.cached_results = {}
 
 class Collector(object):
     """
