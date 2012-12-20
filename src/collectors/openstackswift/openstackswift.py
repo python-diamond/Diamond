@@ -9,7 +9,7 @@ Openstack swift collector.
    if using this, make sure swift.conf and dispersion.conf are reable by diamond
    also get an idea of the runtime of a swift-dispersion-report call and make
    sure the collect interval is high enough to avoid contention.
- * swift commandline tool (for count report)
+ * swift commandline tool (for container_metrics)
 
 both of these should come installed with swift
 """
@@ -27,14 +27,14 @@ class OpenstackSwiftCollector(diamond.collector.Collector):
         config_help.update({
             'enable_dispersion_report': 'gather swift-dispersion-report metrics'
             + ' (default False)',
-            'enable_counting': 'gather counts of objects in containers '
-            + '(default True)',
-            'auth_url': 'authentication url (for enable_counting)',
-            'account': 'swift auth account (for enable_counting)',
-            'user': 'swift auth user (for enable_counting)',
-            'password': 'swift auth password (for enable_counting)',
+            'enable_container_metrics': 'gather containers metrics'
+            + '(# objects, bytes used, x_timestamp.  default True)',
+            'auth_url': 'authentication url (for enable_container_metrics)',
+            'account': 'swift auth account (for enable_container_metrics)',
+            'user': 'swift auth user (for enable_container_metrics)',
+            'password': 'swift auth password (for enable_container_metrics)',
             'containers': 'containers on which to count number of objects, '
-            + 'space separated list (for enable_counting)'
+            + 'space separated list (for enable_container_metrics)'
         })
         return config_help
 
@@ -46,7 +46,7 @@ class OpenstackSwiftCollector(diamond.collector.Collector):
         config.update({
             'path': 'openstackswift',
             'enable_dispersion_report': False,
-            'enable_counting': True,
+            'enable_container_metrics': True,
             # don't use the threaded model with this one.
             # for some reason it crashes.
             'interval': 1200,  # by default, every 20 minutes
@@ -65,16 +65,24 @@ class OpenstackSwiftCollector(diamond.collector.Collector):
                 for (k, v) in data[t].items():
                     self.publish('dispersion.%s.%s' % (t, k), v)
 
-        # counts of objects in container
-        if(self.config['enable_counting']):
+        # container metrics returned by stat <container>
+        if(self.config['enable_container_metrics']):
             account = '%s:%s' % (self.config['account'], self.config['user'])
             for container in self.config['containers'].split(','):
                 cmd = ['swift', '-A', self.config['auth_url'],
                        '-U', account,
                        '-K', self.config['password'],
-                       'list', container]
+                       'stat', container]
                 p = Popen(cmd, stdout=PIPE, stderr=PIPE)
                 stdout, stderr = p.communicate()
-                self.publish('counts.%s.%s' % (self.config['account'],
-                                               container),
-                             len(stdout.split('\n')) - 1)
+                stats = {}
+                # stdout is some lines in 'key   : val' format
+                for line in stdout.split('\n'):
+                    if line:
+                        line = line.split(':', 2)
+                        stats[line[0].strip()] = line[1].strip()
+                key = 'container_metrics.%s.%s' % (self.config['account'],
+                                                   container)
+                self.publish('%s.objects' % key, stats['Objects'])
+                self.publish('%s.bytes' % key, stats['Bytes'])
+                self.publish('%s.x_timestamp' % key, stats['X-Timestamp'])

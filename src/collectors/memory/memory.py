@@ -3,8 +3,6 @@
 """
 This class collects data on memory utilization
 
-/proc/meminfo is used to gather the data, which is returned in units of kB
-
 #### Dependencies
 
 * /proc/meminfo or psutil
