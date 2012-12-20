@@ -49,9 +49,6 @@ class TCPCollector(diamond.collector.Collector):
                 lines.append(line[7:].split())
         file.close()
 
-        if len(lines) == 0:
-            return
-
         if len(lines) != 2:
             return
 
