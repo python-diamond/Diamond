@@ -48,7 +48,8 @@ class CPUCollector(diamond.collector.Collector):
         config = super(CPUCollector, self).get_default_config()
         config.update({
             'enabled':  'True',
-            'path':     'cpu'
+            'path':     'cpu',
+            'xenfix':   None,
         })
         return config
 
@@ -99,15 +100,40 @@ class CPUCollector(diamond.collector.Collector):
             # Close File
             file.close()
 
+            metrics = {}
+
             for cpu in results.keys():
                 stats = results[cpu]
                 for s in stats.keys():
                     # Get Metric Name
                     metric_name = '.'.join([cpu, s])
-                    # Publish Metric Derivative
-                    self.publish(metric_name,
-                                 self.derivative(metric_name, long(stats[s]),
-                                                 self.MAX_VALUES[s]))
+                    # Get actual data
+                    metrics[metric_name] = self.derivative(metric_name,
+                                                         long(stats[s]),
+                                                         self.MAX_VALUES[s])
+
+            # Check for a bug in xen where the idle time is doubled for guest
+            # See https://bugzilla.redhat.com/show_bug.cgi?id=624756
+            if self.config['xenfix'] is None or self.config['xenfix'] == True:
+                if os.path.isdir('/proc/xen'):
+                    total = 0
+                    for metric_name in metrics.keys():
+                        if 'cpu0.' in metric_name:
+                            total += int(metrics[metric_name])
+                    if total > 110:
+                        self.config['xenfix'] = True
+                        for mname in metrics.keys():
+                            if '.idle' in mname:
+                                metrics[mname] = float(metrics[mname]) / 2
+                    elif total > 0:
+                        self.config['xenfix'] = False
+                else:
+                    self.config['xenfix'] = False
+
+            # Publish Metric Derivative
+            for metric_name in metrics.keys():
+                self.publish(metric_name,
+                             metrics[metric_name])
             return True
 
         elif psutil:
