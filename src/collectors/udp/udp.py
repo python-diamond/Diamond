@@ -2,7 +2,6 @@
 
 """
 The UDPCollector class collects metrics on UDP stats (surprise!)
-It's a copy of the TCPCollector with minor adjustments
 
 #### Dependencies
 
