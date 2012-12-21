@@ -39,7 +39,7 @@ def get_hostname(config, method=None):
 
     # case insensitive method
     method = method.lower()
-    
+
     if method in get_hostname.cached_results:
         return get_hostname.cached_results[method]
 
@@ -105,6 +105,7 @@ def get_hostname(config, method=None):
     raise NotImplementedError(config['hostname_method'])
 
 get_hostname.cached_results = {}
+
 
 class Collector(object):
     """
@@ -285,7 +286,7 @@ class Collector(object):
         """
         raise NotImplementedError()
 
-    def publish(self, name, value, precision=0):
+    def publish(self, name, value, precision=0, metric_type='COUNTER'):
         """
         Publish a metric with the given name
         """
@@ -293,7 +294,8 @@ class Collector(object):
         path = self.get_metric_path(name)
 
         # Create Metric
-        metric = Metric(path, value, None, precision, host=self.get_hostname())
+        metric = Metric(path, value, None, precision, host=self.get_hostname(),
+                        metric_type=metric_type)
 
         # Publish Metric
         self.publish_metric(metric)
@@ -305,6 +307,15 @@ class Collector(object):
         # Process Metric
         for handler in self.handlers:
             handler._process(metric)
+
+    def publish_counter(self, name, value, precision=0):
+        return self.publish(name=name, value=value, percision=percision)
+
+    def publish_gague(self, name, value, precision=0, max_value=0,
+                      time_delta=True, interval=None):
+        value = self.derivative(name=name, value=value, max_value=max_value,
+                                time_delta=time_delta, interval=interval)
+        return self.publish(name=name, value=value, percision=percision)
 
     def derivative(self, name, new, max_value=0,
                    time_delta=True, interval=None):

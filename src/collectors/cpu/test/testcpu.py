@@ -107,9 +107,6 @@ class TestCPUCollector(CollectorTestCase):
             'total.user': 16.666666666666668
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################

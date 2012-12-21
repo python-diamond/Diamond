@@ -47,9 +47,14 @@ class LoadAverageCollector(diamond.collector.Collector):
         for line in file:
             match = _RE.match(line)
             if match:
-                self.publish('01', float(match.group(1)), 2)
-                self.publish('05', float(match.group(2)), 2)
-                self.publish('15', float(match.group(3)), 2)
-                self.publish('processes_running', int(match.group(4)))
-                self.publish('processes_total',   int(match.group(5)))
+                self.publish('01', float(match.group(1)), 2,
+                             metric_type='GAUGE')
+                self.publish('05', float(match.group(2)), 2,
+                             metric_type='GAUGE')
+                self.publish('15', float(match.group(3)), 2,
+                             metric_type='GAUGE')
+                self.publish('processes_running', int(match.group(4)),
+                             metric_type='GAUGE')
+                self.publish('processes_total',   int(match.group(5)),
+                             metric_type='GAUGE')
         file.close()

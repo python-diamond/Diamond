@@ -2,6 +2,20 @@
 
 """
 
+#### Grants
+
+ * Normal usage
+```
+GRANT SELECT, REPLICATION CLIENT on *.* TO 'user'@'hostname' IDENTIFIED BY
+'password';
+```
+
+ * For innodb engine status
+```
+GRANT SUPER ON *.* TO 'user'@'hostname' IDENTIFIED BY
+'password';
+```
+
 #### Dependencies
 
  * MySQLdb

@@ -68,19 +68,27 @@ class NginxCollector(diamond.collector.Collector):
                 if activeConnectionsRE.match(l):
                     self.publish(
                         'active_connections',
-                        int(activeConnectionsRE.match(l).group('conn')))
+                        int(activeConnectionsRE.match(l).group('conn')),
+                        metric_type='GAUGE')
                 elif totalConnectionsRE.match(l):
                     m = totalConnectionsRE.match(l)
                     req_per_conn = float(m.group('req')) / float(m.group('acc'))
-                    self.publish('conn_accepted', int(m.group('conn')))
-                    self.publish('conn_handled', int(m.group('acc')))
-                    self.publish('req_handled', int(m.group('req')))
-                    self.publish('req_per_conn', float(req_per_conn))
+                    self.publish('conn_accepted', int(m.group('conn')),
+                                 metric_type='GAUGE')
+                    self.publish('conn_handled', int(m.group('acc')),
+                                 metric_type='GAUGE')
+                    self.publish('req_handled', int(m.group('req')),
+                                 metric_type='GAUGE')
+                    self.publish('req_per_conn', float(req_per_conn),
+                                 metric_type='GAUGE')
                 elif connectionStatusRE.match(l):
                     m = connectionStatusRE.match(l)
-                    self.publish('act_reads', int(m.group('reading')))
-                    self.publish('act_writes', int(m.group('writing')))
-                    self.publish('act_waits', int(m.group('waiting')))
+                    self.publish('act_reads', int(m.group('reading')),
+                                 metric_type='GAUGE')
+                    self.publish('act_writes', int(m.group('writing')),
+                                 metric_type='GAUGE')
+                    self.publish('act_waits', int(m.group('waiting')),
+                                 metric_type='GAUGE')
         except IOError, e:
             self.log.error("Unable to open http://%s:%i:%s",
                            self.config['req_host'],
