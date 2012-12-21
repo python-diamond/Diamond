@@ -308,10 +308,10 @@ class Collector(object):
         for handler in self.handlers:
             handler._process(metric)
 
-    def publish_counter(self, name, value, precision=0):
+    def publish_gauge(self, name, value, precision=0):
         return self.publish(name=name, value=value, percision=percision)
 
-    def publish_gague(self, name, value, precision=0, max_value=0,
+    def publish_counter(self, name, value, precision=0, max_value=0,
                       time_delta=True, interval=None):
         value = self.derivative(name=name, value=value, max_value=max_value,
                                 time_delta=time_delta, interval=interval)

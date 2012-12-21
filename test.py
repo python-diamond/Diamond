@@ -240,6 +240,7 @@ if __name__ == "__main__":
 
     # Disable log output for the unit tests
     log = logging.getLogger("diamond")
+    log.addHandler(logging.StreamHandler(sys.stderr))
     log.disabled = True
 
     # Initialize Options

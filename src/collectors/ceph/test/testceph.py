@@ -12,7 +12,8 @@ import subprocess
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import patch, call
+from mock import Mock
+from mock import patch
 
 import ceph
 
@@ -126,10 +127,11 @@ class TestCephCollectorSocketNameHandling(CollectorTestCase):
             'socket_ext': 'ext',
         })
         collector = ceph.CephCollector(config, None)
-        glob = patch('glob.glob')
-        glob.start()
+        glob_mock = patch('glob.glob', Mock(return_value=False))
+        glob_mock.start()
         collector._get_socket_paths()
-        glob.assert_called_with('/path/prefix-*.ext')
+        glob_mock.stop()
+        glob_mock.assert_called_with('/path/prefix-*.ext')
 
 
 class TestCephCollectorGettingStats(CollectorTestCase):

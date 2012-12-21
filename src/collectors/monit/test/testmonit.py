@@ -61,9 +61,14 @@ class TestMonitCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        with patch('urllib2.urlopen', Mock(
-                return_value=self.getFixture('status_blank.xml'))):
-            self.collector.collect()
+        patch_urlopen = patch('urllib2.urlopen',
+                              Mock(
+                                return_value=self.getFixture(
+                                    'status_blank.xml')))
+        
+        patch_urlopen.start()
+        self.collector.collect()
+        patch_urlopen.stop()
 
         self.assertPublishedMany(publish_mock, {})
 

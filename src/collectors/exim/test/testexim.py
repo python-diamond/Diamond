@@ -2,8 +2,6 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -28,10 +26,12 @@ class TestEximCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value=(
-            '33', '')
-        )):
-            self.collector.collect()
+        patch_communicate = patch('subprocess.Popen.communicate',
+                                  Mock(return_value=('33', '')))
+        
+        patch_communicate.start()
+        self.collector.collect()
+        patch_communicate.stop()
 
         metrics = {
             'queuesize': 33.0
@@ -45,10 +45,12 @@ class TestEximCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value=(
-            '', '')
-        )):
-            self.collector.collect()
+        patch_communicate = patch('subprocess.Popen.communicate',
+                                  Mock(return_value=('', '')))
+        
+        patch_communicate.start()
+        self.collector.collect()
+        patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {})
 
