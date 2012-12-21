@@ -425,12 +425,7 @@ class MySQLCollector(diamond.collector.Collector):
                     if metric_name not in self._GAUGE_KEYS:
                         metric_value = self.derivative(metric_name,
                                                        metric_value)
-                        # All these values are incrementing counters, so if
-                        # we've gone negative then someone's restarted mysqld
-                        # and reset all the counters. Best not record a massive
-                        # negative number. Skip this value.
-                        if metric_value < 0:
-                            continue
+
                     self.publish(nickname + metric_name, metric_value)
                 else:
                     for k in self.config['publish'].split():
