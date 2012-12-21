@@ -45,7 +45,10 @@ class FilestatCollector(diamond.collector.Collector):
         for line in file:
             match = _RE.match(line)
             if match:
-                self.publish('assigned', int(match.group(1)))
-                self.publish('unused',   int(match.group(2)))
-                self.publish('max',      int(match.group(3)))
+                self.publish('assigned', int(match.group(1)),
+                             metric_type='GAUGE')
+                self.publish('unused',   int(match.group(2)),
+                             metric_type='GAUGE')
+                self.publish('max',      int(match.group(3)),
+                             metric_type='GAUGE')
         file.close()

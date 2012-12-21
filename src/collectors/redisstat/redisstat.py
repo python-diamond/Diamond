@@ -170,4 +170,5 @@ class RedisCollector(diamond.collector.Collector):
         for key in data:
             self.publish(self._publish_key(key),
                          data[key],
-                         self._precision(data[key]))
+                         self._precision(data[key]),
+                         'GAUGE')
