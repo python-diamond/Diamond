@@ -11,13 +11,22 @@ The TCPCollector class collects metrics on TCP stats
 #### Allowed Metric Names
 <table>
 <tr><th>Name</th><th>Description</th></tr>
-<tr><td>SyncookiesSent</td><td>An application wasn't able to accept a connection fast enough, so the kernel couldn't store an entry in the queue for this connection. Instead of dropping it, it sent a cookie to the client.</td></tr>
-<tr><td>SyncookiesRecv</td><td>After sending a cookie, it came back to us and passed the check.</td></tr>
-<tr><td>SyncookiesFailed</td><td>After sending a cookie, it came back to us but looked invalid.</td></tr>
+<tr><td>SyncookiesSent</td><td>An application wasn't able to accept a
+connection fast enough, so the kernel couldn't store an entry in the queue for
+this connection. Instead of dropping it, it sent a cookie to the client.
+</td></tr>
+<tr><td>SyncookiesRecv</td><td>After sending a cookie, it came back to us
+and passed the check.</td></tr>
+<tr><td>SyncookiesFailed</td><td>After sending a cookie, it came back to us
+but looked invalid.</td></tr>
 <tr><td>EmbryonicRsts</td><td></td></tr>
 <tr><td>PruneCalled</td><td></td></tr>
-<tr><td>RcvPruned</td><td>If the kernel is really really desperate and cannot give more memory to this socket even after dropping the ofo queue, it will simply discard the packet it received.  This is Really Bad.</td></tr>
-<tr><td>OfoPruned</td><td>When a socket is using too much memory (rmem), the kernel will first discard any out-of-order packet that has been queued (with SACK).</td></tr>
+<tr><td>RcvPruned</td><td>If the kernel is really really desperate and cannot
+give more memory to this socket even after dropping the ofo queue, it will
+simply discard the packet it received.  This is Really Bad.</td></tr>
+<tr><td>OfoPruned</td><td>When a socket is using too much memory (rmem), the
+kernel will first discard any out-of-order packet that has been queued (with
+SACK).</td></tr>
 <tr><td>OutOfWindowIcmps</td><td></td></tr>
 <tr><td>LockDroppedIcmps</td><td></td></tr>
 <tr><td>ArpFilter</td><td></td></tr>
@@ -27,11 +36,18 @@ The TCPCollector class collects metrics on TCP stats
 <tr><td>PAWSPassive</td><td></td></tr>
 <tr><td>PAWSActive</td><td></td></tr>
 <tr><td>PAWSEstab</td><td></td></tr>
-<tr><td>DelayedACKs</td><td>We waited for another packet to send an ACK, but didn't see any, so a timer ended up sending a delayed ACK.</td></tr>
-<tr><td>DelayedACKLocked</td><td>We wanted to send a delayed ACK but failed because the socket was locked.  So the timer was reset.</td></tr>
-<tr><td>DelayedACKLost</td><td>We sent a delayed and duplicated ACK because the remote peer retransmitted a packet, thinking that it didn't get to us.</td></tr>
-<tr><td>ListenOverflows</td><td>We completed a 3WHS but couldn't put the socket on the accept queue, so we had to discard the connection.</td></tr>
-<tr><td>ListenDrops</td><td>We couldn't accept a connection because one of: we had no route to the destination, we failed to allocate a socket, we failed to allocate a new local port bind bucket.  Note: this counter also include all the increments made to ListenOverflows</td></tr>
+<tr><td>DelayedACKs</td><td>We waited for another packet to send an ACK, but
+didn't see any, so a timer ended up sending a delayed ACK.</td></tr>
+<tr><td>DelayedACKLocked</td><td>We wanted to send a delayed ACK but failed
+because the socket was locked.  So the timer was reset.</td></tr>
+<tr><td>DelayedACKLost</td><td>We sent a delayed and duplicated ACK because the
+remote peer retransmitted a packet, thinking that it didn't get to us.</td></tr>
+<tr><td>ListenOverflows</td><td>We completed a 3WHS but couldn't put the socket
+on the accept queue, so we had to discard the connection.</td></tr>
+<tr><td>ListenDrops</td><td>We couldn't accept a connection because one of: we
+had no route to the destination, we failed to allocate a socket, we failed to
+allocate a new local port bind bucket.  Note: this counter also include all the
+increments made to ListenOverflows</td></tr>
 <tr><td>TCPPrequeued</td><td></td></tr>
 <tr><td>TCPDirectCopyFromBacklog</td><td></td></tr>
 <tr><td>TCPDirectCopyFromPrequeue</td><td></td></tr>
@@ -40,17 +56,29 @@ The TCPCollector class collects metrics on TCP stats
 <tr><td>TCPHPHitsToUser</td><td></td></tr>
 <tr><td>TCPPureAcks</td><td></td></tr>
 <tr><td>TCPHPAcks</td><td></td></tr>
-<tr><td>TCPRenoRecovery</td><td>A packet was lost and we recovered after a fast retransmit.</td></tr>
-<tr><td>TCPSackRecovery</td><td>A packet was lost and we recovered by using selective acknowledgements.</td></tr>
+<tr><td>TCPRenoRecovery</td><td>A packet was lost and we recovered after a
+fast retransmit.</td></tr>
+<tr><td>TCPSackRecovery</td><td>A packet was lost and we recovered by using
+selective acknowledgements.</td></tr>
 <tr><td>TCPSACKReneging</td><td></td></tr>
-<tr><td>TCPFACKReorder</td><td>We detected re-ordering using FACK (Forward ACK -- the highest sequence number known to have been received by the peer when using SACK -- FACK is used during congestion control).</td></tr>
+<tr><td>TCPFACKReorder</td><td>We detected re-ordering using FACK (Forward ACK
+-- the highest sequence number known to have been received by the peer when
+using SACK -- FACK is used during congestion control).</td></tr>
 <tr><td>TCPSACKReorder</td><td>We detected re-ordering using SACK.</td></tr>
-<tr><td>TCPRenoReorder</td><td>We detected re-ordering using fast retransmit.</td></tr>
-<tr><td>TCPTSReorder</td><td>We detected re-ordering using the timestamp option.</td></tr>
-<tr><td>TCPFullUndo</td><td>We detected some erroneous retransmits and undid our CWND reduction.</td></tr>
-<tr><td>TCPPartialUndo</td><td>We detected some erroneous retransmits, a partial ACK arrived while we were fast retransmitting, so we were able to partially undo some of our CWND reduction.</td></tr>
-<tr><td>TCPDSACKUndo</td><td>We detected some erroneous retransmits, a D-SACK arrived and ACK'ed all the retransmitted data, so we undid our CWND reduction.</td></tr>
-<tr><td>TCPLossUndo</td><td>We detected some erroneous retransmits, a partial ACK arrived, so we undid our CWND reduction.</td></tr>
+<tr><td>TCPRenoReorder</td><td>We detected re-ordering using fast retransmit.
+</td></tr>
+<tr><td>TCPTSReorder</td><td>We detected re-ordering using the timestamp option.
+</td></tr>
+<tr><td>TCPFullUndo</td><td>We detected some erroneous retransmits and undid our
+CWND reduction.</td></tr>
+<tr><td>TCPPartialUndo</td><td>We detected some erroneous retransmits, a partial
+ACK arrived while we were fast retransmitting, so we were able to partially undo
+some of our CWND reduction.</td></tr>
+<tr><td>TCPDSACKUndo</td><td>We detected some erroneous retransmits, a D-SACK
+arrived and ACK'ed all the retransmitted data, so we undid our CWND reduction.
+</td></tr>
+<tr><td>TCPLossUndo</td><td>We detected some erroneous retransmits, a partial
+ACK arrived, so we undid our CWND reduction.</td></tr>
 <tr><td>TCPLoss</td><td></td></tr>
 <tr><td>TCPLostRetransmit</td><td></td></tr>
 <tr><td>TCPRenoFailures</td><td></td></tr>
@@ -69,20 +97,37 @@ The TCPCollector class collects metrics on TCP stats
 <tr><td>TCPDSACKRecv</td><td></td></tr>
 <tr><td>TCPDSACKOfoRecv</td><td></td></tr>
 
-<tr><td>TCPSACKDiscard</td><td>We got a completely invalid SACK block and discarded it.</td></tr>
-<tr><td>TCPDSACKIgnoredOld</td><td>We got a duplicate SACK while retransmitting so we discarded it.</td></tr>
-<tr><td>TCPDSACKIgnoredNoUndo</td><td>We got a duplicate SACK and discarded it.</td></tr>
+<tr><td>TCPSACKDiscard</td><td>We got a completely invalid SACK block and
+discarded it.</td></tr>
+<tr><td>TCPDSACKIgnoredOld</td><td>We got a duplicate SACK while retransmitting
+so we discarded it.</td></tr>
+<tr><td>TCPDSACKIgnoredNoUndo</td><td>We got a duplicate SACK and discarded it.
+</td></tr>
 
-<tr><td>TCPAbortOnSyn</td><td>We received an unexpected SYN so we sent a RST to the peer.</td></tr>
-<tr><td>TCPAbortOnData</td><td>We were in FIN_WAIT1 yet we received a data packet with a sequence number that's beyond the last one for this connection, so we RST'ed.</td></tr>
-<tr><td>TCPAbortOnClose</td><td>We received data but the user has closed the socket, so we have no wait of handing it to them, so we RST'ed.</td></tr>
-<tr><td>TCPAbortOnMemory</td><td>This is Really Bad.  It happens when there are too many orphaned sockets (not attached a FD) and the kernel has to drop a connection. Sometimes it will send a reset to the peer, sometimes it wont.</td></tr>
-<tr><td>TCPAbortOnTimeout</td><td>The connection timed out really hard.</td></tr>
-<tr><td>TCPAbortOnLinger</td><td>We killed a socket that was closed by the application and lingered around for long enough.</td></tr>
-<tr><td>TCPAbortFailed</td><td>We tried to send a reset, probably during one of teh TCPABort* situations above, but we failed e.g. because we couldn't allocate enough memory (very bad).</td></tr>
-<tr><td>TCPMemoryPressures</td><td>Number of times a socket was put in "memory pressure" due to a non fatal memory allocation failure (reduces the send buffer size etc).</td></tr>
+<tr><td>TCPAbortOnSyn</td><td>We received an unexpected SYN so we sent a RST to
+the peer.</td></tr>
+<tr><td>TCPAbortOnData</td><td>We were in FIN_WAIT1 yet we received a data
+packet with a sequence number that's beyond the last one for this connection,
+so we RST'ed.</td></tr>
+<tr><td>TCPAbortOnClose</td><td>We received data but the user has closed the
+socket, so we have no wait of handing it to them, so we RST'ed.</td></tr>
+<tr><td>TCPAbortOnMemory</td><td>This is Really Bad.  It happens when there are
+too many orphaned sockets (not attached a FD) and the kernel has to drop a
+connection. Sometimes it will send a reset to the peer, sometimes it wont.
+</td></tr>
+<tr><td>TCPAbortOnTimeout</td><td>The connection timed out really hard.
+</td></tr>
+<tr><td>TCPAbortOnLinger</td><td>We killed a socket that was closed by the
+application and lingered around for long enough.</td></tr>
+<tr><td>TCPAbortFailed</td><td>We tried to send a reset, probably during one of
+teh TCPABort* situations above, but we failed e.g. because we couldn't allocate
+enough memory (very bad).</td></tr>
+<tr><td>TCPMemoryPressures</td><td>Number of times a socket was put in "memory
+pressure" due to a non fatal memory allocation failure (reduces the send buffer
+size etc).</td></tr>
 
-<tr><td>TCPBacklogDrop</td><td>We received something but had to drop it because the socket's receive queue was full.</td></tr>
+<tr><td>TCPBacklogDrop</td><td>We received something but had to drop it because
+the socket's receive queue was full.</td></tr>
 
 <tr><td>RtoAlgorithm</td><td></td></tr>
 <tr><td>RtoMin</td><td></td></tr>
@@ -112,7 +157,7 @@ class TCPCollector(diamond.collector.Collector):
         '/proc/net/netstat',
         '/proc/net/snmp'
     ]
-    
+
     def __init__(self, config, handlers):
         super(TCPCollector, self).__init__(config, handlers)
         if self.config['allowed_names'] is None:
@@ -140,58 +185,58 @@ class TCPCollector(diamond.collector.Collector):
 
     def collect(self):
         metrics = {}
-        
+
         for filepath in self.PROC:
             if not os.access(filepath, os.R_OK):
                 self.log.error('Permission to access %s denied', filepath)
                 continue
-            
+
             header = ''
             data = ''
-            
+
             # Seek the file for the lines that start with Tcp
             file = open(filepath)
-            
+
             if not file:
                 self.log.error('Failed to open %s', filepath)
                 continue
-            
+
             while True:
                 line = file.readline()
-                
+
                 # Reached EOF?
                 if len(line) == 0:
-                    break;
-                    
+                    break
+
                 # Line has metrics?
                 if line.startswith("Tcp"):
                     header = line
                     data = file.readline()
                     break
             file.close()
-                
+
             # No data from the file?
             if header == '' or data == '':
                 self.log.error('%s has no lines with Tcp', filepath)
                 continue
-            
+
             header = header.split()
             data = data.split()
-            
+
             for i in xrange(1, len(header)):
                 metrics[header[i]] = data[i]
-                
+
         for metric_name in metrics.keys():
-            if ( len(self.config['allowed_names']) > 0
+            if (len(self.config['allowed_names']) > 0
                 and metric_name not in self.config['allowed_names']):
                 continue
-            
+
             value = metrics[metric_name]
             value = self.derivative(metric_name, long(value))
-            
+
             # Why is this here?
             if value < 0:
                 continue
-            
+
             # Publish the metric
             self.publish(metric_name, value, 0)

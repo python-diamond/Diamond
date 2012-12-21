@@ -39,7 +39,7 @@ def get_hostname(config, method=None):
 
     # case insensitive method
     method = method.lower()
-    
+
     if method in get_hostname.cached_results:
         return get_hostname.cached_results[method]
 
@@ -105,6 +105,7 @@ def get_hostname(config, method=None):
     raise NotImplementedError(config['hostname_method'])
 
 get_hostname.cached_results = {}
+
 
 class Collector(object):
     """
@@ -309,7 +310,7 @@ class Collector(object):
 
     def publish_counter(self, name, value, precision=0):
         return self.publish(name=name, value=value, percision=percision)
-    
+
     def publish_gague(self, name, value, precision=0, max_value=0,
                       time_delta=True, interval=None):
         value = self.derivative(name=name, value=value, max_value=max_value,

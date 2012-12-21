@@ -39,7 +39,8 @@ class TestNetworkCollector(CollectorTestCase):
         open_mock.assert_called_once_with('/proc/net/dev')
 
     @patch.object(Collector, 'publish')
-    def test_should_work_with_virtual_interfaces_and_bridges(self, publish_mock):
+    def test_should_work_with_virtual_interfaces_and_bridges(self,
+                                                             publish_mock):
         NetworkCollector.PROC = self.getFixturePath('proc_net_dev_1')
         self.collector.collect()
 
