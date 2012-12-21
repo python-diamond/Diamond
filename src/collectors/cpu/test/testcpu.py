@@ -83,6 +83,32 @@ class TestCPUCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
+    @patch.object(Collector, 'publish')
+    def test_should_work_with_ec2_data(self, publish_mock):
+        self.collector.config['interval'] = 30
+        patch_open = patch('os.path.isdir', Mock(return_value=True))
+        patch_open.start()
+
+        CPUCollector.PROC = self.getFixturePath('ec2_stat_1')
+        self.collector.collect()
+
+        self.assertPublishedMany(publish_mock, {})
+
+        CPUCollector.PROC = self.getFixturePath('ec2_stat_2')
+        self.collector.collect()
+
+        patch_open.stop()
+
+        metrics = {
+            'total.idle': 68.4,
+            'total.iowait': 0.6,
+            'total.nice': 0.0,
+            'total.system': 13.7,
+            'total.user': 16.666666666666668
+        }
+
+        self.assertPublishedMany(publish_mock, metrics)
+
 ################################################################################
 if __name__ == "__main__":
     unittest.main()

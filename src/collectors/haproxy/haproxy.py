@@ -119,4 +119,4 @@ class HAProxyCollector(diamond.collector.Collector):
                 except ValueError:
                     continue
                 stat_name = '%s.%s' % (metric_name, headings[index])
-                self.publish(stat_name, metric_value)
+                self.publish(stat_name, metric_value, metric_type='GAUGE')

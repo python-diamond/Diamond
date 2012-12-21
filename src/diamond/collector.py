@@ -40,50 +40,71 @@ def get_hostname(config, method=None):
     # case insensitive method
     method = method.lower()
 
+    if method in get_hostname.cached_results:
+        return get_hostname.cached_results[method]
+
     if method == 'smart':
         hostname = get_hostname(config, 'fqdn_short')
         if hostname != 'localhost':
+            get_hostname.cached_results[method] = hostname
             return hostname
         hostname = get_hostname(config, 'hostname_short')
+        get_hostname.cached_results[method] = hostname
         return hostname
 
     if method == 'fqdn_short':
-        return socket.getfqdn().split('.')[0]
+        hostname = socket.getfqdn().split('.')[0]
+        get_hostname.cached_results[method] = hostname
+        return hostname
 
     if method == 'fqdn':
-        return socket.getfqdn().replace('.', '_')
+        hostname = socket.getfqdn().replace('.', '_')
+        get_hostname.cached_results[method] = hostname
+        return hostname
 
     if method == 'fqdn_rev':
         hostname = socket.getfqdn().split('.')
         hostname.reverse()
         hostname = '.'.join(hostname)
+        get_hostname.cached_results[method] = hostname
         return hostname
 
     if method == 'uname_short':
-        return os.uname()[1].split('.')[0]
+        hostname = os.uname()[1].split('.')[0]
+        get_hostname.cached_results[method] = hostname
+        return hostname
 
     if method == 'uname_rev':
         hostname = os.uname()[1].split('.')
         hostname.reverse()
         hostname = '.'.join(hostname)
+        get_hostname.cached_results[method] = hostname
         return hostname
 
     if method == 'hostname':
-        return socket.gethostname()
+        hostname = socket.gethostname()
+        get_hostname.cached_results[method] = hostname
+        return hostname
 
     if method == 'hostname_short':
-        return socket.gethostname().split('.')[0]
+        hostname = socket.gethostname().split('.')[0]
+        get_hostname.cached_results[method] = hostname
+        return hostname
 
     if method == 'hostname_rev':
         hostname = socket.gethostname().split('.')
         hostname.reverse()
         hostname = '.'.join(hostname)
+        get_hostname.cached_results[method] = hostname
         return hostname
 
     if method == 'none':
+        get_hostname.cached_results[method] = hostname
         return None
 
     raise NotImplementedError(config['hostname_method'])
+
+get_hostname.cached_results = {}
 
 
 class Collector(object):
@@ -265,7 +286,7 @@ class Collector(object):
         """
         raise NotImplementedError()
 
-    def publish(self, name, value, precision=0):
+    def publish(self, name, value, precision=0, metric_type='COUNTER'):
         """
         Publish a metric with the given name
         """
@@ -273,7 +294,8 @@ class Collector(object):
         path = self.get_metric_path(name)
 
         # Create Metric
-        metric = Metric(path, value, None, precision, host=self.get_hostname())
+        metric = Metric(path, value, None, precision, host=self.get_hostname(),
+                        metric_type=metric_type)
 
         # Publish Metric
         self.publish_metric(metric)
@@ -285,6 +307,15 @@ class Collector(object):
         # Process Metric
         for handler in self.handlers:
             handler._process(metric)
+
+    def publish_counter(self, name, value, precision=0):
+        return self.publish(name=name, value=value, percision=percision)
+
+    def publish_gague(self, name, value, precision=0, max_value=0,
+                      time_delta=True, interval=None):
+        value = self.derivative(name=name, value=value, max_value=max_value,
+                                time_delta=time_delta, interval=interval)
+        return self.publish(name=name, value=value, percision=percision)
 
     def derivative(self, name, new, max_value=0,
                    time_delta=True, interval=None):

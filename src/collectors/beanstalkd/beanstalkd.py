@@ -75,4 +75,5 @@ class BeanstalkdCollector(diamond.collector.Collector):
             tube = tube_stats['name']
             for stat, value in tube_stats.items():
                 if stat != 'name':
-                    self.publish('tubes.%s.%s' % (tube, stat), value)
+                    self.publish('tubes.%s.%s' % (tube, stat), value,
+                                 metric_type='GAUGE')
