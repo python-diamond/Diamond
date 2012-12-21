@@ -42,12 +42,12 @@ else:
                            ['bin/init.d/diamond']))
         data_files.append(('/var/log/diamond',
                            ['.keep']))
-        if os >= '6' and not distro == 'debian':
+        if distro >= '6' and not distro == 'debian':
             data_files.append(('/etc/init',
                                ['rpm/upstart/diamond.conf']))
 
 # Support packages being called differently on different distros
-if platform.dist()[0] in ['centos', 'redhat']:
+if distro in ['centos', 'redhat']:
     install_requires = ['python-configobj', 'psutil', ],
 elif distro == 'debian':
     install_requires = ['python-configobj', 'python-psutil', ],
