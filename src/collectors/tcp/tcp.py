@@ -207,7 +207,9 @@ class TCPCollector(diamond.collector.Collector):
             'path':             'tcp',
             'allowed_names':    'ListenOverflows, ListenDrops, TCPLoss, '
             + 'TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, '
-            + 'TCPForwardRetrans, TCPSlowStartRetrans'
+            + 'TCPForwardRetrans, TCPSlowStartRetrans, CurrEstab, '
+            + 'TCPAbortOnMemory, TCPBacklogDrop, AttemptFails, '
+            + 'EstabResets, InErrs'
         })
         return config
 
