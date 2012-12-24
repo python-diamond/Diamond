@@ -18,6 +18,9 @@ data_files = [
     ('share/diamond/user_scripts', []),
 ]
 
+distro = platform.dist()[0]
+distro_major_version = platform.dist()[1].split('.')[0]
+
 if os.getenv('VIRTUAL_ENV', False):
     data_files.append(('etc/diamond',
                        glob('conf/*.conf.*')))
@@ -32,9 +35,6 @@ else:
                        glob('conf/collectors/*')))
     data_files.append(('/etc/diamond/handlers',
                        glob('conf/handlers/*')))
-
-    distro = platform.dist()[0]
-    distro_major_version = platform.dist()[1].split('.')[0]
 
     if distro == 'Ubuntu':
         data_files.append(('/etc/init',
