@@ -33,15 +33,16 @@ else:
     data_files.append(('/etc/diamond/handlers',
                        glob('conf/handlers/*')))
 
-    if platform.dist()[0] == 'Ubuntu':
+    distro = platform.dist()[0]
+    if distro == 'Ubuntu':
         data_files.append(('/etc/init',
                            ['debian/upstart/diamond.conf']))
-    if platform.dist()[0] in ['centos', 'redhat']:
+    if distro in ['centos', 'redhat', 'debian']:
         data_files.append(('/etc/init.d',
                            ['bin/init.d/diamond']))
         data_files.append(('/var/log/diamond',
                            ['.keep']))
-        if platform.dist()[1].split('.')[0] >= '6':
+        if os >= '6' and not distro == 'debian':
             data_files.append(('/etc/init',
                                ['rpm/upstart/diamond.conf']))
 
