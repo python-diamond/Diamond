@@ -18,6 +18,9 @@ data_files = [
     ('share/diamond/user_scripts', []),
 ]
 
+distro = platform.dist()[0]
+distro_major_version = platform.dist()[1].split('.')[0]
+
 if os.getenv('VIRTUAL_ENV', False):
     data_files.append(('etc/diamond',
                        glob('conf/*.conf.*')))
@@ -33,21 +36,23 @@ else:
     data_files.append(('/etc/diamond/handlers',
                        glob('conf/handlers/*')))
 
-    if platform.dist()[0] == 'Ubuntu':
+    if distro == 'Ubuntu':
         data_files.append(('/etc/init',
                            ['debian/upstart/diamond.conf']))
-    if platform.dist()[0] in ['centos', 'redhat']:
+    if distro in ['centos', 'redhat', 'debian']:
         data_files.append(('/etc/init.d',
                            ['bin/init.d/diamond']))
         data_files.append(('/var/log/diamond',
                            ['.keep']))
-        if platform.dist()[1].split('.')[0] >= '6':
+        if distro_major_version >= '6' and not distro == 'debian':
             data_files.append(('/etc/init',
                                ['rpm/upstart/diamond.conf']))
 
 # Support packages being called differently on different distros
-if platform.dist()[0] in ['centos', 'redhat']:
+if distro in ['centos', 'redhat']:
     install_requires = ['python-configobj', 'psutil', ],
+elif distro == 'debian':
+    install_requires = ['python-configobj', 'python-psutil', ],
 else:
     install_requires = ['ConfigObj', 'psutil', ],
 

@@ -19,10 +19,25 @@ import diamond.collector
 
 class HttpdCollector(diamond.collector.Collector):
 
+    def __init__(self, *args, **kwargs):
+        super(HttpdCollector, self).__init__(*args, **kwargs)
+        if 'url' in self.config:
+            self.config['urls'].append(self.config['url'])
+
+        self.urls = {}
+        for url in self.config['urls']:
+            if ' ' in url:
+                parts = url.split()
+                self.urls[parts[0]] = parts[1]
+            else:
+                self.urls[''] = url
+
     def get_default_config_help(self):
         config_help = super(HttpdCollector, self).get_default_config_help()
         config_help.update({
-            'url': "Url to server-status in auto format",
+            'urls': "Urls to server-status in auto format, comma seperated,"
+            + " Format 'nickname http://host:port/server-status?auto, "
+            + ", nickname http://host:port/server-status?auto, etc'",
         })
         return config_help
 
@@ -33,48 +48,57 @@ class HttpdCollector(diamond.collector.Collector):
         config = super(HttpdCollector, self).get_default_config()
         config.update({
             'path':     'httpd',
-            'url':      'http://localhost:8080/server-status?auto'
+            'urls':     ['localhost http://localhost:8080/server-status?auto']
         })
         return config
 
     def collect(self):
-        # Parse Url
-        parts = urlparse.urlparse(self.config['url'])
+        for nickname in self.urls.keys():
+            url = self.urls[nickname]
 
-        # Parse host and port
-        endpoint = parts[1].split(':')
-        if len(endpoint) > 1:
-            service_host = endpoint[0]
-            service_port = int(endpoint[1])
-        else:
-            service_host = endpoint[0]
-            service_port = 80
+            # Parse Url
+            parts = urlparse.urlparse(url)
 
-        metrics = ['ReqPerSec', 'BytesPerSec', 'BytesPerReq',
-                   'BusyWorkers', 'IdleWorkers', 'Total Accesses']
+            # Parse host and port
+            endpoint = parts[1].split(':')
+            if len(endpoint) > 1:
+                service_host = endpoint[0]
+                service_port = int(endpoint[1])
+            else:
+                service_host = endpoint[0]
+                service_port = 80
 
-        # Setup Connection
-        connection = httplib.HTTPConnection(service_host, service_port)
+            metrics = ['ReqPerSec', 'BytesPerSec', 'BytesPerReq',
+                       'BusyWorkers', 'IdleWorkers', 'Total Accesses']
 
-        try:
-            connection.request("GET", "%s?%s" % (parts[2], parts[4]))
-        except Exception, e:
-            self.log.error("Error retrieving HTTPD stats. %s", e)
-            return
+            # Setup Connection
+            connection = httplib.HTTPConnection(service_host, service_port)
 
-        response = connection.getresponse()
-        data = response.read()
-        exp = re.compile('^([A-Za-z ]+):\s+(.+)$')
-        for line in data.split('\n'):
-            if line:
-                m = exp.match(line)
-                if m:
-                    k = m.group(1)
-                    v = m.group(2)
-                    if k in metrics:
-                        # Get Metric Name
-                        metric_name = "%s" % re.sub('\s+', '', k)
-                        # Get Metric Value
-                        metric_value = "%d" % float(v)
-                        # Publish Metric
-                        self.publish(metric_name, metric_value)
+            try:
+                connection.request("GET", "%s?%s" % (parts[2], parts[4]))
+            except Exception, e:
+                self.log.error("Error retrieving HTTPD stats. %s", e)
+                return
+
+            response = connection.getresponse()
+            data = response.read()
+            exp = re.compile('^([A-Za-z ]+):\s+(.+)$')
+            for line in data.split('\n'):
+                if line:
+                    m = exp.match(line)
+                    if m:
+                        k = m.group(1)
+                        v = m.group(2)
+                        if k in metrics:
+                            # Get Metric Name
+                            metric_name = "%s" % re.sub('\s+', '', k)
+
+                            # Prefix with the nickname?
+                            if len(nickname) > 0:
+                                metric_name = nickname + '.' + metric_name
+
+                            # Get Metric Value
+                            metric_value = "%d" % float(v)
+
+                            # Publish Metric
+                            self.publish(metric_name, metric_value)
