@@ -163,7 +163,8 @@ state is either ESTABLISHED or CLOSE- WAIT.</td></tr>
 received in error. This count includes segments received on currently
 established connections.</td></tr>
 <tr><td>OutSegs</td><td>The total number of segments sent, including those on
-current connections but excluding those containing only retransmitted octets.</td></tr>
+current connections but excluding those containing only retransmitted octets.
+</td></tr>
 <tr><td>RetransSegs</td><td>The total number of segments retransmitted - that
 is, the number of TCP segments transmitted containing one or more previously
 transmitted octets.</td></tr>
