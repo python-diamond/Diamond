@@ -49,6 +49,8 @@ else:
 # Support packages being called differently on different distros
 if platform.dist()[0] in ['centos', 'redhat']:
     install_requires = ['python-configobj', 'psutil', ],
+elif distro == 'debian':
+    install_requires = ['python-configobj', 'python-psutil', ],
 else:
     install_requires = ['ConfigObj', 'psutil', ],
 
