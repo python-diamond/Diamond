@@ -34,6 +34,8 @@ else:
                        glob('conf/handlers/*')))
 
     distro = platform.dist()[0]
+    distro_major_version = platform.dist()[1].split('.')[0]
+
     if distro == 'Ubuntu':
         data_files.append(('/etc/init',
                            ['debian/upstart/diamond.conf']))
@@ -42,7 +44,7 @@ else:
                            ['bin/init.d/diamond']))
         data_files.append(('/var/log/diamond',
                            ['.keep']))
-        if distro >= '6' and not distro == 'debian':
+        if distro_major_version >= '6' and not distro == 'debian':
             data_files.append(('/etc/init',
                                ['rpm/upstart/diamond.conf']))
 
