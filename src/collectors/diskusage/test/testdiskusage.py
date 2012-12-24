@@ -30,11 +30,11 @@ class TestDiskUsageCollector(CollectorTestCase):
         patch_open = patch('__builtin__.open',
                            Mock(return_value=self.getFixture('diskstats')))
 
-        patch_open.start()
+        open_mock = patch_open.start()
         result = self.collector.get_disk_statistics()
         patch_open.stop()
 
-        patch_open.assert_called_once_with('/proc/diskstats')
+        open_mock.assert_called_once_with('/proc/diskstats')
 
         self.assertEqual(
             sorted(result.keys()),
