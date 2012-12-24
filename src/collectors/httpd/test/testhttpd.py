@@ -26,11 +26,14 @@ class TestHTTPResponse(httplib.HTTPResponse):
 
 
 class TestHttpdCollector(CollectorTestCase):
-    def setUp(self):
-        config = get_collector_config('HttpdCollector', {
-            'interval': '10',
-            'url':      ''
-        })
+    def setUp(self, config=None):
+        if config is None:
+            config = get_collector_config('HttpdCollector', {
+                'interval': '10',
+                'url':      ''
+            })
+        else:
+            config = get_collector_config('HttpdCollector', config)
 
         self.collector = HttpdCollector(config, None)
 
@@ -42,6 +45,8 @@ class TestHttpdCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
+        self.setUp()
+
         with patch.object(TestHTTPResponse,
                           'read',
                           Mock(return_value=self.getFixture(
@@ -67,6 +72,8 @@ class TestHttpdCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
+        self.setUp()
+
         with patch.object(TestHTTPResponse,
                           'read',
                           Mock(return_value=self.getFixture(
@@ -88,6 +95,46 @@ class TestHttpdCollector(CollectorTestCase):
             'BytesPerReq': 5418,
             'BusyWorkers': 9,
             'IdleWorkers': 0,
+        }
+        self.assertPublishedMany(publish_mock, metrics)
+
+    @patch.object(Collector, 'publish')
+    def test_should_work_with_multiple_servers(self, publish_mock):
+        self.setUp(config={
+            'urls': [
+                'nickname1 http://localhost:8080/server-status?auto',
+                'nickname2 http://localhost:8080/server-status?auto',
+            ],
+        })
+
+        with patch.object(TestHTTPResponse,
+                          'read',
+                          Mock(return_value=self.getFixture(
+                              'server-status-live-1').getvalue())):
+            self.collector.collect()
+
+        self.assertPublishedMany(publish_mock, {})
+
+        with patch.object(TestHTTPResponse,
+                          'read',
+                          Mock(return_value=self.getFixture(
+                              'server-status-live-2').getvalue())):
+            self.collector.collect()
+
+        metrics = {
+            'nickname1.TotalAccesses': 8314,
+            'nickname1.ReqPerSec': 0,
+            'nickname1.BytesPerSec': 165,
+            'nickname1.BytesPerReq': 5418,
+            'nickname1.BusyWorkers': 9,
+            'nickname1.IdleWorkers': 0,
+
+            'nickname2.TotalAccesses': 8314,
+            'nickname2.ReqPerSec': 0,
+            'nickname2.BytesPerSec': 165,
+            'nickname2.BytesPerReq': 5418,
+            'nickname2.BusyWorkers': 9,
+            'nickname2.IdleWorkers': 0,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
