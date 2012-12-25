@@ -14,6 +14,7 @@ from test import get_collector_config
 from test import unittest
 from mock import Mock
 from mock import patch
+from mock import call
 
 import ceph
 
@@ -128,10 +129,10 @@ class TestCephCollectorSocketNameHandling(CollectorTestCase):
         })
         collector = ceph.CephCollector(config, None)
         glob_mock = patch('glob.glob', Mock(return_value=False))
-        glob_mock.start()
+        gmock = glob_mock.start()
         collector._get_socket_paths()
         glob_mock.stop()
-        glob_mock.assert_called_with('/path/prefix-*.ext')
+        gmock.assert_called_with('/path/prefix-*.ext')
 
 
 class TestCephCollectorGettingStats(CollectorTestCase):
@@ -149,14 +150,14 @@ class TestCephCollectorGettingStats(CollectorTestCase):
                     }
         check_output = patch('subprocess.check_output')
         check_output.return_value = json.dumps(expected)
-        check_output.start()
+        comock = check_output.start()
         actual = self.collector._get_stats_from_socket('a_socket_name')
-        check_output.assert_called_with(['/usr/bin/ceph',
-                                         '--admin-daemon',
-                                         'a_socket_name',
-                                         'perf',
-                                         'dump',
-                                         ])
+        comock.assert_called_with(['/usr/bin/ceph',
+                                   '--admin-daemon',
+                                   'a_socket_name',
+                                   'perf',
+                                   'dump',
+                                   ])
         self.assertEqual(actual, expected)
 
     @run_only_if_subprocess_check_output_is_available
@@ -165,14 +166,14 @@ class TestCephCollectorGettingStats(CollectorTestCase):
         check_output.side_effect = subprocess.CalledProcessError(
             255, ['/usr/bin/ceph'], 'error!',
         )
-        check_output.start()
+        comock = check_output.start()
         actual = self.collector._get_stats_from_socket('a_socket_name')
-        check_output.assert_called_with(['/usr/bin/ceph',
-                                         '--admin-daemon',
-                                         'a_socket_name',
-                                         'perf',
-                                         'dump',
-                                         ])
+        comock.assert_called_with(['/usr/bin/ceph',
+                                   '--admin-daemon',
+                                   'a_socket_name',
+                                   'perf',
+                                   'dump',
+                                   ])
         self.assertEqual(actual, {})
 
     @run_only_if_subprocess_check_output_is_available
@@ -182,18 +183,18 @@ class TestCephCollectorGettingStats(CollectorTestCase):
                  }
         check_output = patch('subprocess.check_output')
         check_output.return_value = json.dumps(input)
-        check_output.start()
+        comock = check_output.start()
         loads = patch('json.loads')
         loads.side_effect = ValueError('bad data')
-        loads.start()
+        loads_mock = loads.start()
         actual = self.collector._get_stats_from_socket('a_socket_name')
-        check_output.assert_called_with(['/usr/bin/ceph',
-                                         '--admin-daemon',
-                                         'a_socket_name',
-                                         'perf',
-                                         'dump',
-                                         ])
-        loads.assert_called_with(json.dumps(input))
+        comock.assert_called_with(['/usr/bin/ceph',
+                                   '--admin-daemon',
+                                   'a_socket_name',
+                                   'perf',
+                                   'dump',
+                                   ])
+        loads_mock.assert_called_with(json.dumps(input))
         self.assertEqual(actual, {})
 
 
@@ -207,17 +208,17 @@ class TestCephCollectorPublish(CollectorTestCase):
 
     def test_simple(self):
         publish = patch.object(self.collector, 'publish')
-        publish.start()
+        publish_mock = publish.start()
         self.collector._publish_stats('prefix', {'a': 1})
-        publish.assert_called_with('prefix.a', 1)
+        publish_mock.assert_called_with('prefix.a', 1)
 
     def test_multiple(self):
         publish = patch.object(self.collector, 'publish')
-        publish.start()
+        publish_mock = publish.start()
         self.collector._publish_stats('prefix', {'a': 1, 'b': 2})
-        publish.assert_has_calls([call('prefix.a', 1),
-                                  call('prefix.b', 2),
-                                  ])
+        publish_mock.assert_has_calls([call('prefix.a', 1),
+                                       call('prefix.b', 2),
+                                       ])
 
 if __name__ == "__main__":
     unittest.main()
