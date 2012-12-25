@@ -28,28 +28,31 @@ class TestDiskSpaceCollector(CollectorTestCase):
         result = None
 
         os_stat_mock = patch('os.stat')
-        os_major_mock =patch('os.major')
-        os_minor_mock =patch('os.minor')
+        os_major_mock = patch('os.major')
+        os_minor_mock = patch('os.minor')
         open_mock = patch('__builtin__.open',
                           Mock(return_value=self.getFixture('proc_mounts')))
 
-        os_stat_mock.return_value.st_dev = 42
-        os_major_mock.return_value = 9
-        os_minor_mock.return_value = 0
-
-        os_stat_mock.start()
-        os_major_mock.start()
-        os_minor_mock.start()
-        open_mock.start()
+        stat_mock = os_stat_mock.start()
+        stat_mock.return_value.st_dev = 42
+        
+        major_mock = os_major_mock.start()
+        major_mock.return_value = 9
+        
+        minor_mock = os_minor_mock.start()
+        minor_mock.return_value = 0
+        
+        omock = open_mock.start()
+        
         result = self.collector.get_file_systems()
         os_stat_mock.stop()
         os_major_mock.stop()
         os_minor_mock.stop()
         open_mock.stop()
 
-        os_stat_mock.assert_called_once_with('/')
-        os_major_mock.assert_called_once_with(42)
-        os_minor_mock.assert_called_once_with(42)
+        stat_mock.assert_called_once_with('/')
+        major_mock.assert_called_once_with(42)
+        minor_mock.assert_called_once_with(42)
 
         self.assertEqual(result, {
             (9, 0): {
@@ -59,7 +62,7 @@ class TestDiskSpaceCollector(CollectorTestCase):
                 'mount_point': '/'}
         })
 
-        open_mock.assert_called_once_with('/proc/mounts')
+        omock.assert_called_once_with('/proc/mounts')
         return result
 
     @patch('os.access', Mock(return_value=True))
