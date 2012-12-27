@@ -76,12 +76,13 @@ class HttpdCollector(diamond.collector.Collector):
 
             try:
                 connection.request("GET", "%s?%s" % (parts[2], parts[4]))
+                response = connection.getresponse()
+                data = response.read()
+                connection.close()
             except Exception, e:
                 self.log.error("Error retrieving HTTPD stats. %s", e)
-                return
-
-            response = connection.getresponse()
-            data = response.read()
+                continue
+            
             exp = re.compile('^([A-Za-z ]+):\s+(.+)$')
             for line in data.split('\n'):
                 if line:
