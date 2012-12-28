@@ -61,19 +61,13 @@ class ProcessMemoryCollector(diamond.collector.Collector):
         for process, cfg in self.config['process'].items():
             # first we build a dictionary with the process aliases and the
             #  matching regexps
-            exe = cfg.get('exe', [])
-            if not isinstance(exe, list):
-                exe = [exe]
-            exe = [re.compile(e) for e in exe]
-            name = cfg.get('name', [])
-            if not isinstance(name, list):
-                name = [name]
-            name = [re.compile(n) for n in name]
-            self.processes[process] = {
-                'exe': exe,
-                'name': name,
-                'procs': []
-            }
+            proc = {'procs': []}
+            for key in ('exe', 'name', 'cmdline'):
+                proc[key] = cfg.get(key, [])
+                if not isinstance(proc[key], list):
+                    proc[key] = [proc[key]]
+                proc[key] = [re.compile(proc[key]) for e in proc[key]]
+            self.processes[process] = proc
 
     def filter_processes(self):
         """
@@ -98,6 +92,9 @@ class ProcessMemoryCollector(diamond.collector.Collector):
                     break
             for name in cfg['name']:
                 if name.search(proc.name):
+                    return True
+            for cmdline in cfg['cmdline']:
+                if cmdline.search(' '.join(proc.cmdline)):
                     return True
             return False
 
