@@ -17,10 +17,38 @@ name=^postgres,^pg
 
 exe and name are both lists of comma-separated regexps.
 """
+
 import re
 
-import diamond.collector, diamond.convertor
+import diamond.collector
+import diamond.convertor
 import psutil
+
+
+def process_filter(proc, cfg):
+    """
+    Decides whether a process matches with a given process descriptor
+
+    :param proc: a psutil.Process instance
+    :param cfg: the dictionary from processes that describes with the
+        process group we're testing for
+    :return: True if it matches
+    :rtype: bool
+    """
+    for exe in cfg['exe']:
+        try:
+            if exe.search(proc.exe):
+                return True
+        except psutil.AccessDenied:
+            break
+    for name in cfg['name']:
+        if name.search(proc.name):
+            return True
+    for cmdline in cfg['cmdline']:
+        if cmdline.search(' '.join(proc.cmdline)):
+            return True
+    return False
+
 
 class ProcessMemoryCollector(diamond.collector.Collector):
 
@@ -45,7 +73,7 @@ class ProcessMemoryCollector(diamond.collector.Collector):
             'path': 'memory.process',
             'unit': 'B',
             'process': '',
-            })
+        })
         return config
 
     def setup_config(self):
@@ -54,8 +82,9 @@ class ProcessMemoryCollector(diamond.collector.Collector):
         processgroup --> {
             exe: [regex],
             name: [regex],
+            cmdline: [regex],
             procs: [psutil.Process]
-            }
+        }
         """
         self.processes = {}
         for process, cfg in self.config['process'].items():
@@ -74,29 +103,6 @@ class ProcessMemoryCollector(diamond.collector.Collector):
         Populates self.processes[processname]['procs'] with the corresponding
         list of psutil.Process instances
         """
-        def process_filter(proc, cfg):
-            """
-            Decides whether a process matches with a given process descriptor
-
-            :param proc: a psutil.Process instance
-            :param cfg: the dictionary from processes that describes with the
-                process group we're testing for
-            :return: True if it matches
-            :rtype: bool
-            """
-            for exe in cfg['exe']:
-                try:
-                    if exe.search(proc.exe):
-                        return True
-                except psutil.AccessDenied:
-                    break
-            for name in cfg['name']:
-                if name.search(proc.name):
-                    return True
-            for cmdline in cfg['cmdline']:
-                if cmdline.search(' '.join(proc.cmdline)):
-                    return True
-            return False
 
         for proc in psutil.process_iter():
             # filter and divide the system processes amongst the different
@@ -105,7 +111,6 @@ class ProcessMemoryCollector(diamond.collector.Collector):
                 if process_filter(proc, cfg):
                     cfg['procs'].append(proc)
                     break
-
 
     def collect(self):
         """
