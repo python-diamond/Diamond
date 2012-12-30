@@ -5,3 +5,4 @@ pymongo
 pyrabbit
 redis
 beanstalkc
+bernhard
