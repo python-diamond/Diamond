@@ -3,6 +3,8 @@
 
 ###############################################################################
 
+from __future__ import with_statement
+
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -35,30 +37,28 @@ class TestOneWireCollector(CollectorTestCase):
     def test(self, publish_mock, listdir_mock, isfile_mock):
 
         open_name = 'onewire.open'
-        open_mock = patch(open_name, create=True)
+        with patch(open_name, create=True) as open_mock:
 
-        self.mock_data = {
-            "28.A76569020000": None,
-            "28.A76569020000/temperature": StringIO("22.4375"),
-            "28.A76569020000/presure": StringIO("error"),
-            "28.2F702A010000": None,
-            "28.2F702A010000/presure": StringIO("999"),
-            "01.AE5426040000": None,
-            "alarm": None,
-            "bus.0": None,
-            "settings": None, }
+            self.mock_data = {
+                "28.A76569020000": None,
+                "28.A76569020000/temperature": StringIO("22.4375"),
+                "28.A76569020000/presure": StringIO("error"),
+                "28.2F702A010000": None,
+                "28.2F702A010000/presure": StringIO("999"),
+                "01.AE5426040000": None,
+                "alarm": None,
+                "bus.0": None,
+                "settings": None, }
 
-        self.mock_root = "/mnt/1wire"
+            self.mock_root = "/mnt/1wire"
 
-        open_mock.side_effect = self._ret_open_mock
-        listdir_mock.side_effect = self._ret_listdir_mock
-        isfile_mock.side_effect = self._ret_isfile_mock
+            open_mock.side_effect = self._ret_open_mock
+            listdir_mock.side_effect = self._ret_listdir_mock
+            isfile_mock.side_effect = self._ret_isfile_mock
 
-        open_mock.start()
-        self.collector.collect()
-        open_mock.stop()
+            self.collector.collect()
 
-        listdir_mock.assert_called_once_with(self.mock_root)
+            listdir_mock.assert_called_once_with(self.mock_root)
 
         metrics = {
             '28_A76569020000.t': 22.4375,

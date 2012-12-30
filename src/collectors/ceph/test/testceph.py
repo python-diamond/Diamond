@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # coding=utf-8
 
+from __future__ import with_statement
+
 try:
     import json
     json  # workaround for pyflakes issue #13
@@ -12,9 +14,7 @@ import subprocess
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import Mock
-from mock import patch
-from mock import call
+from mock import patch, call
 
 import ceph
 
@@ -128,11 +128,9 @@ class TestCephCollectorSocketNameHandling(CollectorTestCase):
             'socket_ext': 'ext',
         })
         collector = ceph.CephCollector(config, None)
-        glob_mock = patch('glob.glob', Mock(return_value=False))
-        gmock = glob_mock.start()
-        collector._get_socket_paths()
-        glob_mock.stop()
-        gmock.assert_called_with('/path/prefix-*.ext')
+        with patch('glob.glob') as glob:
+            collector._get_socket_paths()
+            glob.assert_called_with('/path/prefix-*.ext')
 
 
 class TestCephCollectorGettingStats(CollectorTestCase):
@@ -148,32 +146,30 @@ class TestCephCollectorGettingStats(CollectorTestCase):
         expected = {'a': 1,
                     'b': 2,
                     }
-        check_output = patch('subprocess.check_output')
-        check_output.return_value = json.dumps(expected)
-        comock = check_output.start()
-        actual = self.collector._get_stats_from_socket('a_socket_name')
-        comock.assert_called_with(['/usr/bin/ceph',
-                                   '--admin-daemon',
-                                   'a_socket_name',
-                                   'perf',
-                                   'dump',
-                                   ])
+        with patch('subprocess.check_output') as check_output:
+            check_output.return_value = json.dumps(expected)
+            actual = self.collector._get_stats_from_socket('a_socket_name')
+            check_output.assert_called_with(['/usr/bin/ceph',
+                                             '--admin-daemon',
+                                             'a_socket_name',
+                                             'perf',
+                                             'dump',
+                                             ])
         self.assertEqual(actual, expected)
 
     @run_only_if_subprocess_check_output_is_available
     def test_ceph_command_fails(self):
-        check_output = patch('subprocess.check_output')
-        check_output.side_effect = subprocess.CalledProcessError(
-            255, ['/usr/bin/ceph'], 'error!',
-        )
-        comock = check_output.start()
-        actual = self.collector._get_stats_from_socket('a_socket_name')
-        comock.assert_called_with(['/usr/bin/ceph',
-                                   '--admin-daemon',
-                                   'a_socket_name',
-                                   'perf',
-                                   'dump',
-                                   ])
+        with patch('subprocess.check_output') as check_output:
+            check_output.side_effect = subprocess.CalledProcessError(
+                255, ['/usr/bin/ceph'], 'error!',
+            )
+            actual = self.collector._get_stats_from_socket('a_socket_name')
+            check_output.assert_called_with(['/usr/bin/ceph',
+                                             '--admin-daemon',
+                                             'a_socket_name',
+                                             'perf',
+                                             'dump',
+                                             ])
         self.assertEqual(actual, {})
 
     @run_only_if_subprocess_check_output_is_available
@@ -181,20 +177,18 @@ class TestCephCollectorGettingStats(CollectorTestCase):
         input = {'a': 1,
                  'b': 2,
                  }
-        check_output = patch('subprocess.check_output')
-        check_output.return_value = json.dumps(input)
-        comock = check_output.start()
-        loads = patch('json.loads')
-        loads.side_effect = ValueError('bad data')
-        loads_mock = loads.start()
-        actual = self.collector._get_stats_from_socket('a_socket_name')
-        comock.assert_called_with(['/usr/bin/ceph',
-                                   '--admin-daemon',
-                                   'a_socket_name',
-                                   'perf',
-                                   'dump',
-                                   ])
-        loads_mock.assert_called_with(json.dumps(input))
+        with patch('subprocess.check_output') as check_output:
+            check_output.return_value = json.dumps(input)
+            with patch('json.loads') as loads:
+                loads.side_effect = ValueError('bad data')
+                actual = self.collector._get_stats_from_socket('a_socket_name')
+                check_output.assert_called_with(['/usr/bin/ceph',
+                                                 '--admin-daemon',
+                                                 'a_socket_name',
+                                                 'perf',
+                                                 'dump',
+                                                 ])
+                loads.assert_called_with(json.dumps(input))
         self.assertEqual(actual, {})
 
 
@@ -207,18 +201,16 @@ class TestCephCollectorPublish(CollectorTestCase):
         self.collector = ceph.CephCollector(config, None)
 
     def test_simple(self):
-        publish = patch.object(self.collector, 'publish')
-        publish_mock = publish.start()
-        self.collector._publish_stats('prefix', {'a': 1})
-        publish_mock.assert_called_with('prefix.a', 1)
+        with patch.object(self.collector, 'publish') as publish:
+            self.collector._publish_stats('prefix', {'a': 1})
+            publish.assert_called_with('prefix.a', 1)
 
     def test_multiple(self):
-        publish = patch.object(self.collector, 'publish')
-        publish_mock = publish.start()
-        self.collector._publish_stats('prefix', {'a': 1, 'b': 2})
-        publish_mock.assert_has_calls([call('prefix.a', 1),
-                                       call('prefix.b', 2),
-                                       ])
+        with patch.object(self.collector, 'publish') as publish:
+            self.collector._publish_stats('prefix', {'a': 1, 'b': 2})
+            publish.assert_has_calls([call('prefix.a', 1),
+                                      call('prefix.b', 2),
+                                      ])
 
 if __name__ == "__main__":
     unittest.main()
