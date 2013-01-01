@@ -12,6 +12,24 @@ from processmemory import ProcessMemoryCollector
 
 ################################################################################
 
+def run_only(func, predicate):
+    if predicate():
+        return func
+    else:
+        def f(arg):
+            pass
+        return f
+
+
+def run_only_if_psutil_is_available(func):
+    try:
+        import psutil
+        psutil  # workaround for pyflakes issue #13
+    except ImportError:
+        psutil = None
+    pred = lambda: psutil is not None
+    return run_only(func, pred)
+
 
 class TestProcessMemoryCollector(CollectorTestCase):
     TEST_CONFIG = {
@@ -39,6 +57,7 @@ class TestProcessMemoryCollector(CollectorTestCase):
 
         self.collector = ProcessMemoryCollector(config, None)
 
+    @run_only_if_psutil_is_available
     @patch.object(Collector, 'publish')
     def test(self, publish_mock):
         process_info_list = [
@@ -104,20 +123,28 @@ class TestProcessMemoryCollector(CollectorTestCase):
                         self.rss = rss
                         self.vms = vms
                 return MemInfo(self.rss, self.vms)
-        process_iter_mock = (ProcessMock(
-            pid=x['pid'],
-            name=x['name'],
-            rss=x['rss'],
-            vms=x['vms'],
-            exe=x['exe']) if 'exe' in x else ProcessMock(pid=x['pid'],
-                                                         name=x['name'],
-                                                         rss=x['rss'],
-                                                         vms=x['vms'],
-                                                         exe='')
-            for x in process_info_list)
-
-        with patch('psutil.process_iter', return_value=process_iter_mock):
-            self.collector.collect()
+            
+        for x in process_info_list:
+            if 'exe' in x:
+                process_iter_mock = ProcessMock(
+                    pid=x['pid'],
+                    name=x['name'],
+                    rss=x['rss'],
+                    vms=x['vms'],
+                    exe=x['exe'])
+            else:
+                process_iter_mock = ProcessMock(
+                    pid=x['pid'],
+                    name=x['name'],
+                    rss=x['rss'],
+                    vms=x['vms'],
+                    exe='')
+            
+        patch_psutil_process_iter = patch('psutil.process_iter',
+                                          return_value=process_iter_mock)
+        patch_psutil_process_iter.start()
+        self.collector.collect()
+        patch_psutil_process_iter.stop()
 
         self.assertPublished(publish_mock, 'postgres.rss',
                              9875456+1753088+1503232+3989504+2400256)

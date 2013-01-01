@@ -22,7 +22,12 @@ import re
 
 import diamond.collector
 import diamond.convertor
-import psutil
+
+try:
+    import psutil
+    psutil
+except ImportError:
+    psutil = None
 
 
 def process_filter(proc, cfg):

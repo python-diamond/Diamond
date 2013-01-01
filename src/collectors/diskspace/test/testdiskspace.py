@@ -13,6 +13,25 @@ from diskspace import DiskSpaceCollector
 
 ################################################################################
 
+def run_only(func, predicate):
+    if predicate():
+        return func
+    else:
+        def f(arg):
+            pass
+        return f
+
+
+def run_only_if_major_is_available(func):
+    try:
+        import os
+        os.major
+        major = True
+    except AttributeError:
+        major = None
+    pred = lambda: major is not None
+    return run_only(func, pred)
+
 
 class TestDiskSpaceCollector(CollectorTestCase):
     def setUp(self):
@@ -23,6 +42,7 @@ class TestDiskSpaceCollector(CollectorTestCase):
 
         self.collector = DiskSpaceCollector(config, None)
 
+    @run_only_if_major_is_available
     @patch('os.access', Mock(return_value=True))
     def test_get_file_systems(self):
         result = None
@@ -65,6 +85,7 @@ class TestDiskSpaceCollector(CollectorTestCase):
         omock.assert_called_once_with('/proc/mounts')
         return result
 
+    @run_only_if_major_is_available
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
