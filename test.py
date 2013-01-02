@@ -35,6 +35,15 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                              'src', 'collectors')))
 
 
+def run_only(func, predicate):
+    if predicate():
+        return func
+    else:
+        def f(arg):
+            pass
+        return f
+
+
 def get_collector_config(key, value):
     config = configobj.ConfigObj()
     config['server'] = {}

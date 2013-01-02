@@ -12,19 +12,11 @@ import subprocess
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
+from test import run_only
 from mock import patch, call
 
 from diamond.collector import Collector
 import ceph
-
-
-def run_only(func, predicate):
-    if predicate():
-        return func
-    else:
-        def f(arg):
-            pass
-        return f
 
 
 def run_only_if_assertSequenceEqual_is_available(func):
