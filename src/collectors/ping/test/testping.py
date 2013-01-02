@@ -31,7 +31,7 @@ class TestPingCollector(CollectorTestCase):
                                   Mock(return_value=(
                                     self.getFixture('bad_gentoo').getvalue(),
                                     '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()
@@ -47,7 +47,7 @@ class TestPingCollector(CollectorTestCase):
                                   Mock(return_value=(
                                     self.getFixture('host_gentoo').getvalue(),
                                     '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()
@@ -68,11 +68,11 @@ class TestPingCollector(CollectorTestCase):
                                   Mock(return_value=(
                                     self.getFixture('ip_gentoo').getvalue(),
                                     '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()
-        
+
         self.assertPublishedMany(publish_mock, {
             'localhost': 0
         })
@@ -82,13 +82,14 @@ class TestPingCollector(CollectorTestCase):
     def test_should_work_with_real_data_longhost_gentoo(self, publish_mock):
         patch_communicate = patch('subprocess.Popen.communicate',
                                   Mock(return_value=(
-                                    self.getFixture('longhost_gentoo').getvalue(),
+                                    self.getFixture(
+                                        'longhost_gentoo').getvalue(),
                                     '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()
-        
+
         self.assertPublishedMany(publish_mock, {
             'localhost': 10
         })
@@ -98,13 +99,14 @@ class TestPingCollector(CollectorTestCase):
     def test_should_work_with_real_data_timeout_gentoo(self, publish_mock):
         patch_communicate = patch('subprocess.Popen.communicate',
                                   Mock(return_value=(
-                                    self.getFixture('timeout_gentoo').getvalue(),
+                                    self.getFixture(
+                                        'timeout_gentoo').getvalue(),
                                     '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()
-        
+
         self.assertPublishedMany(publish_mock, {
             'localhost': 10000
         })
@@ -116,11 +118,11 @@ class TestPingCollector(CollectorTestCase):
                                   Mock(return_value=(
                                     self.getFixture('host_osx').getvalue(),
                                     '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()
-        
+
         self.assertPublishedMany(publish_mock, {
             'localhost': 38
         })
@@ -132,7 +134,7 @@ class TestPingCollector(CollectorTestCase):
                                   Mock(return_value=(
                                     self.getFixture('ip_osx').getvalue(),
                                     '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()
@@ -148,7 +150,7 @@ class TestPingCollector(CollectorTestCase):
                                   Mock(return_value=(
                                     self.getFixture('longhost_osx').getvalue(),
                                     '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()
@@ -164,7 +166,7 @@ class TestPingCollector(CollectorTestCase):
                                   Mock(return_value=(
                                     self.getFixture('timeout_osx').getvalue(),
                                     '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()

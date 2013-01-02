@@ -85,7 +85,7 @@ class TestSmartCollector(CollectorTestCase):
                                   Mock(return_value=(
                                     self.getFixture('centos5.5_hdd').getvalue(),
                                     '')))
-        
+
         patch_listdir.start()
         patch_communicate.start()
         self.collector.collect()

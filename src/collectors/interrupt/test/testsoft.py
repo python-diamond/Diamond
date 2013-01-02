@@ -41,7 +41,7 @@ class TestSoftInterruptCollector(CollectorTestCase):
         patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
             'softirq 0 0 0 0 0 0 0 0 0 0 0'
         )))
-        
+
         patch_open.start()
         self.collector.collect()
         patch_open.stop()
@@ -51,7 +51,7 @@ class TestSoftInterruptCollector(CollectorTestCase):
         patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
             'softirq 55 1 2 3 4 5 6 7 8 9 10'
         )))
-        
+
         patch_open.start()
         self.collector.collect()
         patch_open.stop()

@@ -49,7 +49,7 @@ class TestHttpdCollector(CollectorTestCase):
                                   'read',
                                   Mock(return_value=self.getFixture(
                                     'server-status-fake-1').getvalue()))
-        
+
         patch_read.start()
         self.collector.collect()
         patch_read.stop()
@@ -60,7 +60,7 @@ class TestHttpdCollector(CollectorTestCase):
                                   'read',
                                   Mock(return_value=self.getFixture(
                                     'server-status-fake-2').getvalue()))
-        
+
         patch_read.start()
         self.collector.collect()
         patch_read.stop()
@@ -77,12 +77,12 @@ class TestHttpdCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         self.setUp()
-        
+
         patch_read = patch.object(TestHTTPResponse,
                                   'read',
                                   Mock(return_value=self.getFixture(
                                     'server-status-live-1').getvalue()))
-        
+
         patch_read.start()
         self.collector.collect()
         patch_read.stop()
@@ -93,7 +93,7 @@ class TestHttpdCollector(CollectorTestCase):
                                   'read',
                                   Mock(return_value=self.getFixture(
                                     'server-status-live-2').getvalue()))
-        
+
         patch_read.start()
         self.collector.collect()
         patch_read.stop()
@@ -121,7 +121,7 @@ class TestHttpdCollector(CollectorTestCase):
                                   'read',
                                   Mock(return_value=self.getFixture(
                                     'server-status-live-1').getvalue()))
-        
+
         patch_read.start()
         self.collector.collect()
         patch_read.stop()
@@ -132,7 +132,7 @@ class TestHttpdCollector(CollectorTestCase):
                                   'read',
                                   Mock(return_value=self.getFixture(
                                     'server-status-live-2').getvalue()))
-        
+
         patch_read.start()
         self.collector.collect()
         patch_read.stop()

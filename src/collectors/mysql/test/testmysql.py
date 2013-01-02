@@ -50,7 +50,7 @@ class TestMySQLCollector(CollectorTestCase):
     @patch.object(MySQLCollector, 'disconnect', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_real_data(self, publish_mock):
-        
+
         p_global_status = patch.object(MySQLCollector,
                                        'get_db_global_status',
                                        Mock(return_value=self.getPickledResults(
@@ -66,7 +66,7 @@ class TestMySQLCollector(CollectorTestCase):
         p_innodb_status = patch.object(MySQLCollector,
                                        'get_db_innodb_status',
                                        Mock(return_value=[{}]))
-        
+
         p_global_status.start()
         p_master_status.start()
         p_slave_status.start()

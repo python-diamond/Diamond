@@ -138,7 +138,7 @@ class TestRedisCollector(CollectorTestCase):
         patch_collector = patch.object(RedisCollector, '_get_info',
                                        Mock(return_value=data_1))
         patch_time = patch('time.time', Mock(return_value=10))
-        
+
         patch_collector.start()
         patch_time.start()
         self.collector.collect()
@@ -149,8 +149,8 @@ class TestRedisCollector(CollectorTestCase):
 
         patch_collector = patch.object(RedisCollector, '_get_info',
                                        Mock(return_value=data_2))
-        patch_time= patch('time.time', Mock(return_value=20))
-        
+        patch_time = patch('time.time', Mock(return_value=20))
+
         patch_collector.start()
         patch_time.start()
         self.collector.collect()

@@ -127,7 +127,7 @@ class TestVarnishCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        collector_mock =  patch.object(VarnishCollector, 'poll', Mock(
+        collector_mock = patch.object(VarnishCollector, 'poll', Mock(
                 return_value=self.getFixture(
                     'varnish_stats_blank').getvalue()))
         collector_mock.start()

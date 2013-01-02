@@ -25,7 +25,7 @@ class TestDropwizardCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
         patch_urlopen = patch('urllib2.urlopen',
                               Mock(return_value=self.getFixture('stats')))
-        
+
         patch_urlopen.start()
         self.collector.collect()
         patch_urlopen.stop()
@@ -67,7 +67,7 @@ class TestDropwizardCollector(CollectorTestCase):
         patch_urlopen = patch('urllib2.urlopen',
                               Mock(
                                 return_value=self.getFixture('stats_blank')))
-        
+
         patch_urlopen.start()
         self.collector.collect()
         patch_urlopen.stop()

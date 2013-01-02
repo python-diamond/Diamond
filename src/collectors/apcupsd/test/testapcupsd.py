@@ -24,7 +24,7 @@ class TestApcupsdCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        patch_getdata =  patch.object(ApcupsdCollector, 'getData', Mock(
+        patch_getdata = patch.object(ApcupsdCollector, 'getData', Mock(
             return_value='APC      : 001,039,1056\n\x00\'DATE     : 2012-07-16 '
             + '12:53:58 -0700  \n\x00 HOSTNAME : localhost\n\x00+VERSION  : 3.1'
             + '4.8 (16 January 2010) redhat\n\x00 UPSNAME  : localhost\n\x00'
@@ -46,7 +46,7 @@ class TestApcupsdCollector(CollectorTestCase):
             + '-10-08\n\x00\x1aSERIALNO : 3B0941X40219  \n\x00\x16BATTDATE :'
             + ' 2009-10-08\n\x00\x15NOMINV   : 120 Volts\n\x00\x17NOMBATTV :'
                 + '  24.0 '))
-        
+
         patch_getdata.start()
         self.collector.collect()
         patch_getdata.stop()

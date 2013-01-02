@@ -13,6 +13,7 @@ from diskspace import DiskSpaceCollector
 
 ################################################################################
 
+
 def run_only(func, predicate):
     if predicate():
         return func
@@ -55,15 +56,15 @@ class TestDiskSpaceCollector(CollectorTestCase):
 
         stat_mock = os_stat_mock.start()
         stat_mock.return_value.st_dev = 42
-        
+
         major_mock = os_major_mock.start()
         major_mock.return_value = 9
-        
+
         minor_mock = os_minor_mock.start()
         minor_mock.return_value = 0
-        
+
         omock = open_mock.start()
-        
+
         result = self.collector.get_file_systems()
         os_stat_mock.stop()
         os_major_mock.stop()
@@ -108,7 +109,7 @@ class TestDiskSpaceCollector(CollectorTestCase):
         open_mock = patch('__builtin__.open',
                           Mock(return_value=self.getFixture('proc_mounts')))
         os_statvfs_mock = patch('os.statvfs', Mock(return_value=statvfs_mock))
-        
+
         os_stat_mock.start()
         os_major_mock.start()
         os_minor_mock.start()

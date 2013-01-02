@@ -73,7 +73,7 @@ class OneWireCollector(diamond.collector.Collector):
 
         oid_path = os.path.join(self.config['owfs'], oid)
         oid = oid.replace('.', '_')
-        
+
         for fn, alias in files.iteritems():
             fv = os.path.join(oid_path, fn)
             if os.path.isfile(fv):

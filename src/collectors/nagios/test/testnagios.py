@@ -31,7 +31,7 @@ class TestNagiosStatsCollector(CollectorTestCase):
                                   Mock(return_value=(
                                     self.getFixture('nagiostat').getvalue(),
                                     '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()

@@ -40,7 +40,7 @@ class TestCPUCollector(CollectorTestCase):
     def test_should_work_with_synthetic_data(self, publish_mock):
         patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
             'cpu 100 200 300 400 500 0 0 0 0 0')))
-        
+
         patch_open.start()
         self.collector.collect()
         patch_open.stop()
@@ -49,7 +49,7 @@ class TestCPUCollector(CollectorTestCase):
 
         patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
             'cpu 110 220 330 440 550 0 0 0 0 0')))
-        
+
         patch_open.start()
         self.collector.collect()
         patch_open.stop()

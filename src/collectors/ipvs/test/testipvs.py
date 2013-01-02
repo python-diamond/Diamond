@@ -27,11 +27,11 @@ class TestIPVSCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        patch_communicate =  patch('subprocess.Popen.communicate',
+        patch_communicate = patch('subprocess.Popen.communicate',
                                    Mock(return_value=(
                                     self.getFixture('ipvsadm').getvalue(),
                                     '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()

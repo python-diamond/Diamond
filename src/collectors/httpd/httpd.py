@@ -82,7 +82,7 @@ class HttpdCollector(diamond.collector.Collector):
             except Exception, e:
                 self.log.error("Error retrieving HTTPD stats. %s", e)
                 continue
-            
+
             exp = re.compile('^([A-Za-z ]+):\s+(.+)$')
             for line in data.split('\n'):
                 if line:

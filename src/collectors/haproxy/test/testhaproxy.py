@@ -28,7 +28,7 @@ class TestHAProxyCollector(CollectorTestCase):
 
         patch_urlopen = patch('urllib2.urlopen',
                               Mock(return_value=self.getFixture('stats.csv')))
-        
+
         patch_urlopen.start()
         self.collector.collect()
         patch_urlopen.stop()
@@ -46,7 +46,7 @@ class TestHAProxyCollector(CollectorTestCase):
 
         patch_urlopen = patch('urllib2.urlopen',
                               Mock(return_value=self.getFixture('stats.csv')))
-        
+
         patch_urlopen.start()
         self.collector.collect()
         patch_urlopen.stop()

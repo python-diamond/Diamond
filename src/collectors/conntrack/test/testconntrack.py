@@ -30,7 +30,7 @@ class TestConnTrackCollector(CollectorTestCase):
                                   Mock(return_value=(
                                     'net.netfilter.nf_conntrack_count = 33',
                                     '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()
@@ -53,7 +53,7 @@ class TestConnTrackCollector(CollectorTestCase):
                                         'sysctl: cannot stat /proc/sys/net/net'
                                         + 'filter/nf_conntrack_count: '
                                         + 'No such file or directory', '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()

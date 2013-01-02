@@ -12,6 +12,7 @@ from processmemory import ProcessMemoryCollector
 
 ################################################################################
 
+
 def run_only(func, predicate):
     if predicate():
         return func
@@ -123,14 +124,14 @@ class TestProcessMemoryCollector(CollectorTestCase):
                 self.vms = vms
                 if exe is not None:
                     self.exe = exe
+
             def get_memory_info(self):
                 class MemInfo:
                     def __init__(self, rss, vms):
                         self.rss = rss
                         self.vms = vms
                 return MemInfo(self.rss, self.vms)
-            
-        
+
         process_iter_mock = (ProcessMock(
             pid=x['pid'],
             name=x['name'],
@@ -138,7 +139,7 @@ class TestProcessMemoryCollector(CollectorTestCase):
             vms=x['vms'],
             exe=x['exe'])
             for x in process_info_list)
-            
+
         patch_psutil_process_iter = patch('psutil.process_iter',
                                           return_value=process_iter_mock)
         patch_psutil_process_iter.start()
@@ -146,9 +147,9 @@ class TestProcessMemoryCollector(CollectorTestCase):
         patch_psutil_process_iter.stop()
 
         self.assertPublished(publish_mock, 'postgres.rss',
-                             9875456+1753088+1503232+3989504+2400256)
+                             9875456 + 1753088 + 1503232 + 3989504 + 2400256)
         self.assertPublished(publish_mock, 'postgres.vms',
-                             106852352+106835968+106835968+109023232+
+                             106852352 + 106835968 + 106835968 + 109023232 +
                              75829248)
         self.assertPublished(publish_mock, 'foo.rss', 0)
         self.assertPublished(publish_mock, 'bar.rss', 2)

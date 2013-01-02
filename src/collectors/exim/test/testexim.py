@@ -28,7 +28,7 @@ class TestEximCollector(CollectorTestCase):
     def test_should_work_with_synthetic_data(self, publish_mock):
         patch_communicate = patch('subprocess.Popen.communicate',
                                   Mock(return_value=('33', '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()
@@ -47,7 +47,7 @@ class TestEximCollector(CollectorTestCase):
     def test_should_fail_gracefully(self, publish_mock):
         patch_communicate = patch('subprocess.Popen.communicate',
                                   Mock(return_value=('', '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()

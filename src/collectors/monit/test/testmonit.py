@@ -26,7 +26,7 @@ class TestMonitCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
         patch_urlopen = patch('urllib2.urlopen', Mock(
             return_value=self.getFixture('status.xml')))
-        
+
         patch_urlopen.start()
         self.collector.collect()
         patch_urlopen.stop()
@@ -65,7 +65,7 @@ class TestMonitCollector(CollectorTestCase):
                               Mock(
                                 return_value=self.getFixture(
                                     'status_blank.xml')))
-        
+
         patch_urlopen.start()
         self.collector.collect()
         patch_urlopen.stop()

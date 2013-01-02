@@ -29,7 +29,7 @@ class TestMemcachedCollector(CollectorTestCase):
                                        'get_raw_stats',
                                        Mock(return_value=self.getFixture(
                                         'stats').getvalue()))
-        
+
         patch_raw_stats.start()
         self.collector.collect()
         patch_raw_stats.stop()

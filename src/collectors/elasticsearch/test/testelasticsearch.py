@@ -25,7 +25,7 @@ class TestElasticSearchCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
         urlopen_mock = patch('urllib2.urlopen', Mock(
             return_value=self.getFixture('stats')))
-        
+
         urlopen_mock.start()
         self.collector.collect()
         urlopen_mock.stop()
@@ -58,7 +58,7 @@ class TestElasticSearchCollector(CollectorTestCase):
     def test_should_fail_gracefully(self, publish_mock):
         urlopen_mock = patch('urllib2.urlopen', Mock(
                 return_value=self.getFixture('stats_blank')))
-        
+
         urlopen_mock.start()
         self.collector.collect()
         urlopen_mock.stop()

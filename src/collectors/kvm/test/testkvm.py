@@ -38,7 +38,7 @@ class TestKVMCollector(CollectorTestCase):
             '0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0'
             + '\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n'
         )))
-        
+
         patch_open.start()
         self.collector.collect()
         patch_open.stop()

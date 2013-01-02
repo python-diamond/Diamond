@@ -33,17 +33,18 @@ class TestPowerDNSCollector(CollectorTestCase):
                                         'pdns_control-2.9.22.6-1.el6-A'
                                         ).getvalue(),
                                     '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {})
 
-        patch_communicate = patch('subprocess.Popen.communicate', Mock(return_value=(
+        patch_communicate = patch('subprocess.Popen.communicate',
+                                  Mock(return_value=(
                 self.getFixture('pdns_control-2.9.22.6-1.el6-B').getvalue(),
                 '')))
-        
+
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()

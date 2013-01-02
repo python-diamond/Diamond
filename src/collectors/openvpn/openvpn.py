@@ -63,7 +63,7 @@ class OpenVPNCollector(diamond.collector.Collector):
             'timeout':   '10',
         })
         return config
-    
+
     def parse_url(self, uri):
         """
         Convert urlparse from a python 2.4 layout to a python 2.7 layout

@@ -128,7 +128,7 @@ class TestCephCollectorSocketNameHandling(CollectorTestCase):
             'socket_ext': 'ext',
         })
         collector = ceph.CephCollector(config, None)
-        
+
         collector._get_socket_paths()
         glob_mock.assert_called_with('/path/prefix-*.ext')
 

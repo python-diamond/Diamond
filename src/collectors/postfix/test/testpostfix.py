@@ -26,7 +26,7 @@ class TestPostfixCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        patch_collector =  patch.object(PostfixCollector,
+        patch_collector = patch.object(PostfixCollector,
                                         'getJson',
                                         Mock(return_value='{"local": {}, '
                                              + ' "clients": {"127.0.0.1": 1},'
@@ -37,7 +37,7 @@ class TestPostfixCollector(CollectorTestCase):
                                              + ' "resp_codes": {"2.0.0": 0}},'
                                              + ' "in": {"status": {},'
                                              + ' "resp_codes": {}}}'))
-        
+
         patch_collector.start()
         self.collector.collect()
         patch_collector.stop()
@@ -55,7 +55,7 @@ class TestPostfixCollector(CollectorTestCase):
                                             + '"resp_codes": {"2.0.0": 5}}, '
                                             + '"in": {"status": {},'
                                             + ' "resp_codes": {}}}'))
-        
+
         patch_collector.start()
         self.collector.collect()
         patch_collector.stop()
