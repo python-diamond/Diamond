@@ -16,7 +16,12 @@ both of these should come installed with swift
 
 import diamond.collector
 from subprocess import Popen, PIPE
-import json
+
+try:
+    import json
+    json  # workaround for pyflakes issue #13
+except ImportError:
+    import simplejson as json
 
 
 class OpenstackSwiftCollector(diamond.collector.Collector):
