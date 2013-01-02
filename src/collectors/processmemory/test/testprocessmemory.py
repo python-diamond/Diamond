@@ -67,36 +67,42 @@ class TestProcessMemoryCollector(CollectorTestCase):
              'pid': 1427,
              'rss': 9875456,
              'vms': 106852352},
-            {'name': 'postgres: writer process   ',
+            {'exe': '',
+             'name': 'postgres: writer process   ',
              'pid': 1445,
              'rss': 1753088,
              'vms': 106835968},
-            {'name': 'postgres: wal writer process   ',
+            {'exe': '',
+             'name': 'postgres: wal writer process   ',
              'pid': 1446,
              'rss': 1503232,
              'vms': 106835968},
-            {'name': 'postgres: autovacuum launcher process   ',
+            {'exe': '',
+             'name': 'postgres: autovacuum launcher process   ',
              'pid': 1447,
              'rss': 3989504,
              'vms': 109023232},
-            {'name': 'postgres: stats collector process   ',
+            {'exe': '',
+             'name': 'postgres: stats collector process   ',
              'pid': 1448,
              'rss': 2400256,
              'vms': 75829248},
             # postgres-y process
-            {'name': 'posgre: not really',
+            {'exe': '',
+             'name': 'posgre: not really',
              'pid': 9999,
              'rss': 999999999999,
              'vms': 999999999999,
             },
             # bar process
-            {'name': 'bar',
-             'exe': '/usr/bin/foo',
+            {'exe': '/usr/bin/foo',
+             'name': 'bar',
              'pid': 9998,
              'rss': 1,
              'vms': 1
             },
-            {'name': 'barein',
+            {'exe': '',
+             'name': 'barein',
              'pid': 9997,
              'rss': 1,
              'vms': 1
@@ -124,21 +130,14 @@ class TestProcessMemoryCollector(CollectorTestCase):
                         self.vms = vms
                 return MemInfo(self.rss, self.vms)
             
-        for x in process_info_list:
-            if 'exe' in x:
-                process_iter_mock = ProcessMock(
-                    pid=x['pid'],
-                    name=x['name'],
-                    rss=x['rss'],
-                    vms=x['vms'],
-                    exe=x['exe'])
-            else:
-                process_iter_mock = ProcessMock(
-                    pid=x['pid'],
-                    name=x['name'],
-                    rss=x['rss'],
-                    vms=x['vms'],
-                    exe='')
+        
+        process_iter_mock = (ProcessMock(
+            pid=x['pid'],
+            name=x['name'],
+            rss=x['rss'],
+            vms=x['vms'],
+            exe=x['exe'])
+            for x in process_info_list)
             
         patch_psutil_process_iter = patch('psutil.process_iter',
                                           return_value=process_iter_mock)

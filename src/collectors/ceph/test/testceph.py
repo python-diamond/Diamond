@@ -142,13 +142,12 @@ class TestCephCollectorGettingStats(CollectorTestCase):
         self.collector = ceph.CephCollector(config, None)
 
     @run_only_if_subprocess_check_output_is_available
-    def test_load_works(self):
+    @patch('subprocess.check_output')
+    def test_load_works(self, check_output):
         expected = {'a': 1,
                     'b': 2,
                     }
-        check_output = patch('subprocess.check_output')
         check_output.return_value = json.dumps(expected)
-        check_output.start()
         actual = self.collector._get_stats_from_socket('a_socket_name')
         check_output.assert_called_with(['/usr/bin/ceph',
                                          '--admin-daemon',
@@ -156,16 +155,14 @@ class TestCephCollectorGettingStats(CollectorTestCase):
                                          'perf',
                                          'dump',
                                          ])
-        check_output.stop()
         self.assertEqual(actual, expected)
 
     @run_only_if_subprocess_check_output_is_available
-    def test_ceph_command_fails(self):
-        check_output = patch('subprocess.check_output')
+    @patch('subprocess.check_output')
+    def test_ceph_command_fails(self, check_output):
         check_output.side_effect = subprocess.CalledProcessError(
             255, ['/usr/bin/ceph'], 'error!',
         )
-        check_output.start()
         actual = self.collector._get_stats_from_socket('a_socket_name')
         check_output.assert_called_with(['/usr/bin/ceph',
                                          '--admin-daemon',
@@ -173,20 +170,17 @@ class TestCephCollectorGettingStats(CollectorTestCase):
                                          'perf',
                                          'dump',
                                          ])
-        check_output.stop()
         self.assertEqual(actual, {})
 
     @run_only_if_subprocess_check_output_is_available
-    def test_json_decode_fails(self):
+    @patch('json.loads')
+    @patch('subprocess.check_output')
+    def test_json_decode_fails(self, check_output, loads):
         input = {'a': 1,
                  'b': 2,
                  }
-        check_output = patch('subprocess.check_output')
         check_output.return_value = json.dumps(input)
-        check_output.start()
-        loads = patch('json.loads')
         loads.side_effect = ValueError('bad data')
-        loads.start()
         actual = self.collector._get_stats_from_socket('a_socket_name')
         check_output.assert_called_with(['/usr/bin/ceph',
                                          '--admin-daemon',
@@ -195,8 +189,6 @@ class TestCephCollectorGettingStats(CollectorTestCase):
                                          'dump',
                                          ])
         loads.assert_called_with(json.dumps(input))
-        loads.stop()
-        check_output.stop()
         self.assertEqual(actual, {})
 
 
