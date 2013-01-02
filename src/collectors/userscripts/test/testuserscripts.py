@@ -24,6 +24,9 @@ class TestUserScriptsCollector(CollectorTestCase):
 
         self.collector = UserScriptsCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(UserScriptsCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_example(self, publish_mock):
         self.collector.collect()

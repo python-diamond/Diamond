@@ -24,6 +24,9 @@ class TestIPMISensorCollector(CollectorTestCase):
 
         self.collector = IPMISensorCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(IPMISensorCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):

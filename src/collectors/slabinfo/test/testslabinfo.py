@@ -28,6 +28,9 @@ class TestSlabInfoCollector(CollectorTestCase):
 
         self.collector = SlabInfoCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(SlabInfoCollector)
+
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')

@@ -24,6 +24,9 @@ class TestPostfixCollector(CollectorTestCase):
 
         self.collector = PostfixCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(PostfixCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
         patch_collector = patch.object(PostfixCollector,

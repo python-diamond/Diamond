@@ -24,6 +24,9 @@ class TestPingCollector(CollectorTestCase):
 
         self.collector = PingCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(PingCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_bad_gentoo(self, publish_mock):

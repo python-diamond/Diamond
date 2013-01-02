@@ -21,6 +21,9 @@ class TestNginxCollector(CollectorTestCase):
 
         self.collector = NginxCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(NginxCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         patch_urlopen = patch('urllib2.urlopen', Mock(

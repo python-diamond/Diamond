@@ -29,6 +29,9 @@ class TestOneWireCollector(CollectorTestCase):
             'id:28.2F702A010000': {'presure': 'p11'}})
         self.collector = OneWireCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(OneWireCollector)
+
     @patch.object(Collector, 'publish')
     def test(self, publish_mock):
 

@@ -30,6 +30,9 @@ class TestUDPCollector(CollectorTestCase):
         })
         self.collector = UDPCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(UDPCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch('__builtin__.open')
     @patch.object(Collector, 'publish')

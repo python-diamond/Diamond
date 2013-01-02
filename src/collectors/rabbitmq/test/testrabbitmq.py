@@ -42,6 +42,9 @@ class TestRabbitMQCollector(CollectorTestCase):
         })
         self.collector = RabbitMQCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(RabbitMQCollector)
+
     @run_only_if_pyrabbit_is_available
     @patch('pyrabbit.api.Client')
     @patch.object(Collector, 'publish')

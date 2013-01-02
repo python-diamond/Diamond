@@ -31,6 +31,9 @@ class TestKVMCollector(CollectorTestCase):
         self.collector = KVMCollector(config, None)
         self.collector.PROC = os.path.dirname(__file__) + '/fixtures/'
 
+    def test_import(self):
+        self.assertTrue(KVMCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):

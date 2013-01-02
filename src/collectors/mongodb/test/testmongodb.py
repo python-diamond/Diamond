@@ -41,6 +41,9 @@ class TestMongoDBCollector(CollectorTestCase):
         self.collector = MongoDBCollector(config, None)
         self.connection = MagicMock()
 
+    def test_import(self):
+        self.assertTrue(MongoDBCollector)
+
     @run_only_if_pymongo_is_available
     @patch('pymongo.Connection')
     @patch.object(Collector, 'publish')

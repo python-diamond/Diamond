@@ -39,6 +39,9 @@ class TestXENCollector(CollectorTestCase):
         })
         self.collector = XENCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(XENCollector)
+
     @run_only_if_libvirt_is_available
     @patch('os.statvfs')
     @patch('libvirt.openReadOnly')

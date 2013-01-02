@@ -5,18 +5,18 @@
 from test import CollectorTestCase
 from test import get_collector_config
 
-from mysql import MySQLPerfCollector
+from servertechpdu import ServerTechPDUCollector
 
 
-class TestMySQLPerfCollector(CollectorTestCase):
+class TestServerTechPDUCollector(CollectorTestCase):
     def setUp(self, allowed_names=None):
         if not allowed_names:
             allowed_names = []
-        config = get_collector_config('MySQLPerfCollector', {
+        config = get_collector_config('ServerTechPDUCollector', {
             'allowed_names': allowed_names,
             'interval': 1
         })
-        self.collector = MySQLPerfCollector(config, None)
+        self.collector = ServerTechPDUCollector(config, None)
 
     def test_import(self):
-        self.assertTrue(MySQLPerfCollector)
+        self.assertTrue(ServerTechPDUCollector)

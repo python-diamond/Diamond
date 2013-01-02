@@ -42,6 +42,9 @@ class TestRedisCollector(CollectorTestCase):
 
         self.collector = RedisCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(RedisCollector)
+
     @run_only_if_redis_is_available
     @patch.object(Collector, 'publish')
     def test_real_data(self, publish_mock):

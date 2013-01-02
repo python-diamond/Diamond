@@ -5,18 +5,18 @@
 from test import CollectorTestCase
 from test import get_collector_config
 
-from mysql import MySQLPerfCollector
+from openstackswift import OpenstackSwiftCollector
 
 
-class TestMySQLPerfCollector(CollectorTestCase):
+class TestOpenstackSwiftCollector(CollectorTestCase):
     def setUp(self, allowed_names=None):
         if not allowed_names:
             allowed_names = []
-        config = get_collector_config('MySQLPerfCollector', {
+        config = get_collector_config('OpenstackSwiftCollector', {
             'allowed_names': allowed_names,
             'interval': 1
         })
-        self.collector = MySQLPerfCollector(config, None)
+        self.collector = OpenstackSwiftCollector(config, None)
 
     def test_import(self):
-        self.assertTrue(MySQLPerfCollector)
+        self.assertTrue(OpenstackSwiftCollector)

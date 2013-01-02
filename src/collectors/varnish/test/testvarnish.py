@@ -21,6 +21,9 @@ class TestVarnishCollector(CollectorTestCase):
 
         self.collector = VarnishCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(VarnishCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         collector_mock = patch.object(VarnishCollector, 'poll', Mock(

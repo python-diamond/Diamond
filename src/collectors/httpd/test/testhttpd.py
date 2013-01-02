@@ -41,6 +41,9 @@ class TestHttpdCollector(CollectorTestCase):
         httplib.HTTPConnection.getresponse = Mock(
             return_value=self.HTTPResponse)
 
+    def test_import(self):
+        self.assertTrue(HttpdCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
         self.setUp()

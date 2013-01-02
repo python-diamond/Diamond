@@ -23,6 +23,9 @@ class TestMemcachedCollector(CollectorTestCase):
 
         self.collector = MemcachedCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(MemcachedCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         patch_raw_stats = patch.object(MemcachedCollector,

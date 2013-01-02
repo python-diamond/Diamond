@@ -42,6 +42,9 @@ class TestBeanstalkdCollector(CollectorTestCase):
 
         self.collector = BeanstalkdCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(BeanstalkdCollector)
+
     @run_only_if_beanstalkc_is_available
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):

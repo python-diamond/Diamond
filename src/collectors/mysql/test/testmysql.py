@@ -45,6 +45,9 @@ class TestMySQLCollector(CollectorTestCase):
 
         self.collector = MySQLCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(MySQLCollector)
+
     @run_only_if_MySQLdb_is_available
     @patch.object(MySQLCollector, 'connect', Mock(return_value=True))
     @patch.object(MySQLCollector, 'disconnect', Mock(return_value=True))

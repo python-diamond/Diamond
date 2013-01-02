@@ -23,6 +23,9 @@ class TestHadoopCollector(CollectorTestCase):
 
         self.collector = HadoopCollector(config, {})
 
+    def test_import(self):
+        self.assertTrue(HadoopCollector)
+
     @patch.object(Collector, 'publish_metric')
     def test_should_work_with_real_data(self, publish_mock):
         self.collector.collect()

@@ -24,6 +24,9 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         self.collector = DiskUsageCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(DiskUsageCollector)
+
     @patch('os.access', Mock(return_value=True))
     def test_get_disk_statistics(self):
 

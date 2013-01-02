@@ -23,6 +23,9 @@ class TestOpenVPNCollector(CollectorTestCase):
 
         self.collector = OpenVPNCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(OpenVPNCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         self.collector.collect()

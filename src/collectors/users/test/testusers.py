@@ -42,6 +42,9 @@ class TestUsersCollector(CollectorTestCase):
 
         self.collector = UsersCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(UsersCollector)
+
     @run_only_if_pyutmp_is_available
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):

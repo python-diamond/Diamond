@@ -21,6 +21,9 @@ class TestElasticSearchCollector(CollectorTestCase):
 
         self.collector = ElasticSearchCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(ElasticSearchCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         urlopen_mock = patch('urllib2.urlopen', Mock(

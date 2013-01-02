@@ -43,6 +43,9 @@ class TestDiskSpaceCollector(CollectorTestCase):
 
         self.collector = DiskSpaceCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(DiskSpaceCollector)
+
     @run_only_if_major_is_available
     @patch('os.access', Mock(return_value=True))
     def test_get_file_systems(self):

@@ -28,6 +28,9 @@ class TestInterruptCollector(CollectorTestCase):
 
         self.collector = InterruptCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(InterruptCollector)
+
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')

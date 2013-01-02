@@ -28,6 +28,9 @@ class TestSockstatCollector(CollectorTestCase):
 
         self.collector = SockstatCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(SockstatCollector)
+
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')

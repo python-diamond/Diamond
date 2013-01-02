@@ -22,6 +22,9 @@ class TestApcupsdCollector(CollectorTestCase):
 
         self.collector = ApcupsdCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(ApcupsdCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
         patch_getdata = patch.object(ApcupsdCollector, 'getData', Mock(

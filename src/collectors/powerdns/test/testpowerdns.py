@@ -24,6 +24,9 @@ class TestPowerDNSCollector(CollectorTestCase):
 
         self.collector = PowerDNSCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(PowerDNSCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_fake_data(self, publish_mock):

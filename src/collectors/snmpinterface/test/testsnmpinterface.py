@@ -5,18 +5,16 @@
 from test import CollectorTestCase
 from test import get_collector_config
 
-from mysql import MySQLPerfCollector
+from snmpinterface import SNMPInterfaceCollector
 
 
-class TestMySQLPerfCollector(CollectorTestCase):
+class TestSNMPInterfaceCollector(CollectorTestCase):
     def setUp(self, allowed_names=None):
         if not allowed_names:
             allowed_names = []
-        config = get_collector_config('MySQLPerfCollector', {
-            'allowed_names': allowed_names,
-            'interval': 1
+        config = get_collector_config('SNMPInterfaceCollector', {
         })
-        self.collector = MySQLPerfCollector(config, None)
+        self.collector = SNMPInterfaceCollector(config, None)
 
     def test_import(self):
-        self.assertTrue(MySQLPerfCollector)
+        self.assertTrue(SNMPInterfaceCollector)

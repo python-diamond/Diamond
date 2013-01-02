@@ -141,6 +141,9 @@ class TestCephCollectorGettingStats(CollectorTestCase):
         })
         self.collector = ceph.CephCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(ceph.CephCollector)
+
     @run_only_if_subprocess_check_output_is_available
     @patch('subprocess.check_output')
     def test_load_works(self, check_output):

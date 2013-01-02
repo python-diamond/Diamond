@@ -24,6 +24,9 @@ class TestUPSCollector(CollectorTestCase):
 
         self.collector = UPSCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(UPSCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_cp550slg(self, publish_mock):

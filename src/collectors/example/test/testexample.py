@@ -21,6 +21,9 @@ class TestExampleCollector(CollectorTestCase):
 
         self.collector = ExampleCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(ExampleCollector)
+
     @patch.object(Collector, 'publish')
     def test(self, publish_mock):
         self.collector.collect()

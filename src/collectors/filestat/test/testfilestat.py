@@ -28,6 +28,9 @@ class TestFilestatCollector(CollectorTestCase):
 
         self.collector = FilestatCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(FilestatCollector)
+
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')

@@ -22,6 +22,9 @@ class TestHAProxyCollector(CollectorTestCase):
 
         self.collector = HAProxyCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(HAProxyCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         self.collector.config['ignore_servers'] = False

@@ -21,6 +21,9 @@ class TestPostqueueCollector(CollectorTestCase):
 
         self.collector = PostqueueCollector(config, {})
 
+    def test_import(self):
+        self.assertTrue(PostqueueCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_emails_in_queue(self, publish_mock):
         patch_collector = patch.object(PostqueueCollector,

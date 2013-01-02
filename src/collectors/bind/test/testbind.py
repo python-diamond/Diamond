@@ -22,6 +22,9 @@ class TestBindCollector(CollectorTestCase):
 
         self.collector = BindCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(BindCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         patch_urlopen = patch('urllib2.urlopen', Mock(

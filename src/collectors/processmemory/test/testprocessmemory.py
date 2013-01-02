@@ -58,6 +58,9 @@ class TestProcessMemoryCollector(CollectorTestCase):
 
         self.collector = ProcessMemoryCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(ProcessMemoryCollector)
+
     @run_only_if_psutil_is_available
     @patch.object(Collector, 'publish')
     def test(self, publish_mock):

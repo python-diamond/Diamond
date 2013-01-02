@@ -30,6 +30,9 @@ class TestNetworkCollector(CollectorTestCase):
 
         self.collector = NetworkCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(NetworkCollector)
+
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
