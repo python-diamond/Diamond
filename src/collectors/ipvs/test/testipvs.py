@@ -2,8 +2,6 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -26,13 +24,20 @@ class TestIPVSCollector(CollectorTestCase):
 
         self.collector = IPVSCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(IPVSCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value=(
-            self.getFixture('ipvsadm').getvalue(), '')
-        )):
-            self.collector.collect()
+        patch_communicate = patch('subprocess.Popen.communicate',
+                                   Mock(return_value=(
+                                    self.getFixture('ipvsadm').getvalue(),
+                                    '')))
+
+        patch_communicate.start()
+        self.collector.collect()
+        patch_communicate.stop()
 
         metrics = {
             "172_16_1_56:80.total.conns": 116,

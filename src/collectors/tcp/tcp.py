@@ -129,20 +129,49 @@ size etc).</td></tr>
 <tr><td>TCPBacklogDrop</td><td>We received something but had to drop it because
 the socket's receive queue was full.</td></tr>
 
-<tr><td>RtoAlgorithm</td><td></td></tr>
-<tr><td>RtoMin</td><td></td></tr>
-<tr><td>RtoMax</td><td></td></tr>
-<tr><td>MaxConn</td><td></td></tr>
-<tr><td>ActiveOpens</td><td></td></tr>
-<tr><td>PassiveOpens</td><td></td></tr>
-<tr><td>AttemptFails</td><td></td></tr>
-<tr><td>EstabResets</td><td></td></tr>
-<tr><td>CurrEstab</td><td></td></tr>
-<tr><td>InSegs</td><td></td></tr>
-<tr><td>OutSegs</td><td></td></tr>
-<tr><td>RetransSegs</td><td></td></tr>
-<tr><td>InErrs</td><td></td></tr>
-<tr><td>OutRsts</td><td></td></tr>
+<tr><td>RtoAlgorithm</td><td>The algorithm used to determine the timeout value
+used for retransmitting unacknowledged octets.</td></tr>
+<tr><td>RtoMin</td><td>The minimum value permitted by a TCP implementation
+for the retransmission timeout, measured in milliseconds.
+More refined semantics for objects of this type depend upon the algorithm used
+to determine the retransmission timeout. In particular,
+when the timeout algorithm is ``rsre '' (3), an object of this type has the
+semantics of the LBOUND quantity described in RFC 793.</td></tr>
+<tr><td>RtoMax</td><td>The maximum value permitted by a TCP implementation for
+the retransmission timeout, measured in milliseconds. More refined semantics
+for objects of this type depend upon the algorithm used to determine the
+retransmission timeout. In particular, when the timeout algorithm is ``rsre''
+(3), an object of this type has the semantics of the UBOUND quantity described
+in RFC 793.</td></tr>
+<tr><td>MaxConn</td><td>The limit on the total number of TCP connections the
+entity can support. In entities where the maximum number of connections is
+dynamic, this object should contain the value -1.</td></tr>
+<tr><td>ActiveOpens</td><td>The number of times TCP connections have made a
+direct transition to the SYN-SENT state from the CLOSED state.</td></tr>
+<tr><td>PassiveOpens</td><td>The number of times TCP connections have made a
+direct transition to the SYN-RCVD state from the LISTEN state.</td></tr>
+<tr><td>AttemptFails</td><td>The number of times TCP connections have made a
+direct transition to the CLOSED state from either the SYN-SENT state or the
+SYN-RCVD state, plus the number of times TCP connections have made a direct
+transition to the LISTEN state from the SYN-RCVD state.</td></tr>
+<tr><td>EstabResets</td><td>The number of times TCP connections have made a
+direct transition to the CLOSED state from either the ESTABLISHED state or the
+CLOSE-WAIT state.</td></tr>
+<tr><td>CurrEstab</td><td>The number of TCP connections for which the current
+state is either ESTABLISHED or CLOSE- WAIT.</td></tr>
+<tr><td>InSegs</td><td>The total number of segments received, including those
+received in error. This count includes segments received on currently
+established connections.</td></tr>
+<tr><td>OutSegs</td><td>The total number of segments sent, including those on
+current connections but excluding those containing only retransmitted octets.
+</td></tr>
+<tr><td>RetransSegs</td><td>The total number of segments retransmitted - that
+is, the number of TCP segments transmitted containing one or more previously
+transmitted octets.</td></tr>
+<tr><td>InErrs</td><td>The total number of segments received in error (for
+example, bad TCP checksums).</td></tr>
+<tr><td>OutRsts</td><td>The number of TCP segments sent containing the RST
+flag.</td></tr>
 </table>
 
 """
@@ -179,7 +208,9 @@ class TCPCollector(diamond.collector.Collector):
             'path':             'tcp',
             'allowed_names':    'ListenOverflows, ListenDrops, TCPLoss, '
             + 'TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, '
-            + 'TCPForwardRetrans, TCPSlowStartRetrans'
+            + 'TCPForwardRetrans, TCPSlowStartRetrans, CurrEstab, '
+            + 'TCPAbortOnMemory, TCPBacklogDrop, AttemptFails, '
+            + 'EstabResets, InErrs'
         })
         return config
 

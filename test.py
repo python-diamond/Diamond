@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 ###############################################################################
 
-from __future__ import with_statement
-
 import os
 import sys
 import unittest
@@ -35,6 +33,15 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                              'src')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                              'src', 'collectors')))
+
+
+def run_only(func, predicate):
+    if predicate():
+        return func
+    else:
+        def f(arg):
+            pass
+        return f
 
 
 def get_collector_config(key, value):
@@ -101,14 +108,20 @@ class CollectorTestCase(unittest.TestCase):
         return file
 
     def getFixture(self, fixture_name):
-        with open(self.getFixturePath(fixture_name), 'r') as f:
+        try:
+            f = open(self.getFixturePath(fixture_name), 'r')
             data = StringIO(f.read())
-        return data
+            return data
+        finally:
+            f.close()
 
     def getPickledResults(self, results_name):
-        with open(self.getFixturePath(results_name), 'r') as f:
+        try:
+            f = open(self.getFixturePath(results_name), 'r')
             data = pickle.load(f)
-        return data
+            return data
+        finally:
+            f.close()
 
     def setPickledResults(self, results_name, data):
         pickle.dump(data, open(self.getFixturePath(results_name), "w+b"))
@@ -236,6 +249,7 @@ if __name__ == "__main__":
 
     # Disable log output for the unit tests
     log = logging.getLogger("diamond")
+    log.addHandler(logging.StreamHandler(sys.stderr))
     log.disabled = True
 
     # Initialize Options

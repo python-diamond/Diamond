@@ -2,8 +2,6 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -26,20 +24,33 @@ class TestPowerDNSCollector(CollectorTestCase):
 
         self.collector = PowerDNSCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(PowerDNSCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_fake_data(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value=(
-                self.getFixture('pdns_control-2.9.22.6-1.el6-A').getvalue(),
-                ''))):
-            self.collector.collect()
+        patch_communicate = patch('subprocess.Popen.communicate',
+                                  Mock(return_value=(
+                                    self.getFixture(
+                                        'pdns_control-2.9.22.6-1.el6-A'
+                                        ).getvalue(),
+                                    '')))
+
+        patch_communicate.start()
+        self.collector.collect()
+        patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {})
 
-        with patch('subprocess.Popen.communicate', Mock(return_value=(
+        patch_communicate = patch('subprocess.Popen.communicate',
+                                  Mock(return_value=(
                 self.getFixture('pdns_control-2.9.22.6-1.el6-B').getvalue(),
-                ''))):
-            self.collector.collect()
+                '')))
+
+        patch_communicate.start()
+        self.collector.collect()
+        patch_communicate.stop()
 
         metrics = {
             'corrupt-packets': 1.0,

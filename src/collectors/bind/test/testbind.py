@@ -2,8 +2,6 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -24,11 +22,17 @@ class TestBindCollector(CollectorTestCase):
 
         self.collector = BindCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(BindCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch('urllib2.urlopen', Mock(
-                return_value=self.getFixture('bind.xml'))):
-            self.collector.collect()
+        patch_urlopen = patch('urllib2.urlopen', Mock(
+            return_value=self.getFixture('bind.xml')))
+
+        patch_urlopen.start()
+        self.collector.collect()
+        patch_urlopen.stop()
 
         metrics = {
             'view._default.resstat.Queryv4': 0.000000,

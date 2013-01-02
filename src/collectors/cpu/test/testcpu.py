@@ -2,8 +2,6 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -30,6 +28,9 @@ class TestCPUCollector(CollectorTestCase):
 
         self.collector = CPUCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(CPUCollector)
+
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
@@ -40,17 +41,21 @@ class TestCPUCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        with patch('__builtin__.open', Mock(return_value=StringIO(
-            'cpu 100 200 300 400 500 0 0 0 0 0'
-        ))):
-            self.collector.collect()
+        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
+            'cpu 100 200 300 400 500 0 0 0 0 0')))
+
+        patch_open.start()
+        self.collector.collect()
+        patch_open.stop()
 
         self.assertPublishedMany(publish_mock, {})
 
-        with patch('__builtin__.open', Mock(return_value=StringIO(
-            'cpu 110 220 330 440 550 0 0 0 0 0'
-        ))):
-            self.collector.collect()
+        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
+            'cpu 110 220 330 440 550 0 0 0 0 0')))
+
+        patch_open.start()
+        self.collector.collect()
+        patch_open.stop()
 
         self.assertPublishedMany(publish_mock, {
             'total.idle': 4.0,

@@ -5,6 +5,7 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
+from test import run_only
 from mock import patch
 
 from diamond.collector import Collector
@@ -14,14 +15,6 @@ import sys
 
 
 ################################################################################
-
-def run_only(func, predicate):
-    if predicate():
-        return func
-    else:
-        def f(arg):
-            pass
-        return f
 
 
 def run_only_if_pyutmp_is_available(func):
@@ -41,6 +34,9 @@ class TestUsersCollector(CollectorTestCase):
         })
 
         self.collector = UsersCollector(config, None)
+
+    def test_import(self):
+        self.assertTrue(UsersCollector)
 
     @run_only_if_pyutmp_is_available
     @patch.object(Collector, 'publish')

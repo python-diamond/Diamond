@@ -2,8 +2,6 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -24,13 +22,19 @@ class TestHAProxyCollector(CollectorTestCase):
 
         self.collector = HAProxyCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(HAProxyCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         self.collector.config['ignore_servers'] = False
 
-        with patch('urllib2.urlopen', Mock(
-                return_value=self.getFixture('stats.csv'))):
-            self.collector.collect()
+        patch_urlopen = patch('urllib2.urlopen',
+                              Mock(return_value=self.getFixture('stats.csv')))
+
+        patch_urlopen.start()
+        self.collector.collect()
+        patch_urlopen.stop()
 
         metrics = self.getPickledResults('real_data.pkl')
 
@@ -43,9 +47,12 @@ class TestHAProxyCollector(CollectorTestCase):
     def test_should_work_with_real_data_and_ignore_servers(self, publish_mock):
         self.collector.config['ignore_servers'] = True
 
-        with patch('urllib2.urlopen', Mock(
-                return_value=self.getFixture('stats.csv'))):
-            self.collector.collect()
+        patch_urlopen = patch('urllib2.urlopen',
+                              Mock(return_value=self.getFixture('stats.csv')))
+
+        patch_urlopen.start()
+        self.collector.collect()
+        patch_urlopen.stop()
 
         metrics = self.getPickledResults('real_data_ignore_servers.pkl')
 

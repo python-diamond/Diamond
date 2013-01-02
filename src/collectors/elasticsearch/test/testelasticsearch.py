@@ -2,8 +2,6 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -23,11 +21,17 @@ class TestElasticSearchCollector(CollectorTestCase):
 
         self.collector = ElasticSearchCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(ElasticSearchCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch('urllib2.urlopen', Mock(
-                return_value=self.getFixture('stats'))):
-            self.collector.collect()
+        urlopen_mock = patch('urllib2.urlopen', Mock(
+            return_value=self.getFixture('stats')))
+
+        urlopen_mock.start()
+        self.collector.collect()
+        urlopen_mock.stop()
 
         metrics = {
             'http.current': 1,
@@ -55,9 +59,12 @@ class TestElasticSearchCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        with patch('urllib2.urlopen', Mock(
-                return_value=self.getFixture('stats_blank'))):
-            self.collector.collect()
+        urlopen_mock = patch('urllib2.urlopen', Mock(
+                return_value=self.getFixture('stats_blank')))
+
+        urlopen_mock.start()
+        self.collector.collect()
+        urlopen_mock.stop()
 
         self.assertPublishedMany(publish_mock, {})
 

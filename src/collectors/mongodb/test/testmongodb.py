@@ -5,6 +5,7 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
+from test import run_only
 from mock import MagicMock
 from mock import patch
 
@@ -12,15 +13,6 @@ from diamond.collector import Collector
 from mongodb import MongoDBCollector
 
 ################################################################################
-
-
-def run_only(func, predicate):
-    if predicate():
-        return func
-    else:
-        def f(arg):
-            pass
-        return f
 
 
 def run_only_if_pymongo_is_available(func):
@@ -40,6 +32,9 @@ class TestMongoDBCollector(CollectorTestCase):
         })
         self.collector = MongoDBCollector(config, None)
         self.connection = MagicMock()
+
+    def test_import(self):
+        self.assertTrue(MongoDBCollector)
 
     @run_only_if_pymongo_is_available
     @patch('pymongo.Connection')

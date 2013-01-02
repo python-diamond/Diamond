@@ -5,6 +5,7 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
+from test import run_only
 from mock import Mock
 from mock import patch
 
@@ -13,14 +14,6 @@ from xen import XENCollector
 
 
 ###############################################################################
-
-def run_only(func, predicate):
-    if predicate():
-        return func
-    else:
-        def f(arg):
-            pass
-        return f
 
 
 def run_only_if_libvirt_is_available(func):
@@ -38,6 +31,9 @@ class TestXENCollector(CollectorTestCase):
         config = get_collector_config('XENCollector', {
         })
         self.collector = XENCollector(config, None)
+
+    def test_import(self):
+        self.assertTrue(XENCollector)
 
     @run_only_if_libvirt_is_available
     @patch('os.statvfs')

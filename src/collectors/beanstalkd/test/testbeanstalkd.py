@@ -2,11 +2,10 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
+from test import run_only
 from mock import Mock
 from mock import patch
 
@@ -14,15 +13,6 @@ from diamond.collector import Collector
 from beanstalkd import BeanstalkdCollector
 
 ################################################################################
-
-
-def run_only(func, predicate):
-    if predicate():
-        return func
-    else:
-        def f(arg):
-            pass
-        return f
 
 
 def run_only_if_beanstalkc_is_available(func):
@@ -43,6 +33,9 @@ class TestBeanstalkdCollector(CollectorTestCase):
         })
 
         self.collector = BeanstalkdCollector(config, None)
+
+    def test_import(self):
+        self.assertTrue(BeanstalkdCollector)
 
     @run_only_if_beanstalkc_is_available
     @patch.object(Collector, 'publish')
@@ -115,10 +108,13 @@ class TestBeanstalkdCollector(CollectorTestCase):
              ]
         }
 
-        with patch.object(BeanstalkdCollector,
-                          '_get_stats',
-                          Mock(return_value=stats)):
-            self.collector.collect()
+        patch_get_stats = patch.object(BeanstalkdCollector,
+                                        '_get_stats',
+                                        Mock(return_value=stats))
+
+        patch_get_stats.start()
+        self.collector.collect()
+        patch_get_stats.stop()
 
         metrics = {
             'current-connections': 10,

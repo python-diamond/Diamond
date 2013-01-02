@@ -2,8 +2,6 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -23,13 +21,18 @@ class TestPostqueueCollector(CollectorTestCase):
 
         self.collector = PostqueueCollector(config, {})
 
+    def test_import(self):
+        self.assertTrue(PostqueueCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_emails_in_queue(self, publish_mock):
-        with patch.object(PostqueueCollector,
-                          'get_postqueue_output',
-                          Mock(return_value=self.getFixture(
-                              'postqueue_emails').getvalue())):
-            self.collector.collect()
+        patch_collector = patch.object(PostqueueCollector,
+                                       'get_postqueue_output',
+                                       Mock(return_value=self.getFixture(
+                                        'postqueue_emails').getvalue()))
+        patch_collector.start()
+        self.collector.collect()
+        patch_collector.stop()
 
         metrics = {
             'count': 3
@@ -43,11 +46,13 @@ class TestPostqueueCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_empty_queue(self, publish_mock):
-        with patch.object(PostqueueCollector,
-                          'get_postqueue_output',
-                          Mock(return_value=self.getFixture(
-                              'postqueue_empty').getvalue())):
-            self.collector.collect()
+        patch_collector = patch.object(PostqueueCollector,
+                                       'get_postqueue_output',
+                                       Mock(return_value=self.getFixture(
+                                        'postqueue_empty').getvalue()))
+        patch_collector.start()
+        self.collector.collect()
+        patch_collector.stop()
 
         metrics = {
             'count': 0

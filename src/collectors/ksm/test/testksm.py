@@ -25,6 +25,9 @@ class TestKSMCollector(CollectorTestCase):
 
         self.collector = KSMCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(KSMCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):

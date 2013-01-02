@@ -2,19 +2,28 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
+from test import run_only
 from mock import Mock
 from mock import patch
-from contextlib import nested
 
 from diamond.collector import Collector
 from diskspace import DiskSpaceCollector
 
 ################################################################################
+
+
+def run_only_if_major_is_available(func):
+    try:
+        import os
+        os.major
+        major = True
+    except AttributeError:
+        major = None
+    pred = lambda: major is not None
+    return run_only(func, pred)
 
 
 class TestDiskSpaceCollector(CollectorTestCase):
@@ -26,38 +35,53 @@ class TestDiskSpaceCollector(CollectorTestCase):
 
         self.collector = DiskSpaceCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(DiskSpaceCollector)
+
+    @run_only_if_major_is_available
     @patch('os.access', Mock(return_value=True))
     def test_get_file_systems(self):
         result = None
 
-        with nested(
-            patch('os.stat'),
-            patch('os.major'),
-            patch('os.minor'),
-            patch('__builtin__.open', Mock(
-                return_value=self.getFixture('proc_mounts')))
-        ) as (os_stat_mock, os_major_mock, os_minor_mock, open_mock):
-            os_stat_mock.return_value.st_dev = 42
-            os_major_mock.return_value = 9
-            os_minor_mock.return_value = 0
+        os_stat_mock = patch('os.stat')
+        os_major_mock = patch('os.major')
+        os_minor_mock = patch('os.minor')
+        open_mock = patch('__builtin__.open',
+                          Mock(return_value=self.getFixture('proc_mounts')))
 
-            result = self.collector.get_file_systems()
+        stat_mock = os_stat_mock.start()
+        stat_mock.return_value.st_dev = 42
 
-            os_stat_mock.assert_called_once_with('/')
-            os_major_mock.assert_called_once_with(42)
-            os_minor_mock.assert_called_once_with(42)
+        major_mock = os_major_mock.start()
+        major_mock.return_value = 9
 
-            self.assertEqual(result, {
-                (9, 0): {
-                    'device':
-                    '/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba',
-                    'fs_type': 'ext3',
-                    'mount_point': '/'}
-            })
+        minor_mock = os_minor_mock.start()
+        minor_mock.return_value = 0
 
-            open_mock.assert_called_once_with('/proc/mounts')
+        omock = open_mock.start()
+
+        result = self.collector.get_file_systems()
+        os_stat_mock.stop()
+        os_major_mock.stop()
+        os_minor_mock.stop()
+        open_mock.stop()
+
+        stat_mock.assert_called_once_with('/')
+        major_mock.assert_called_once_with(42)
+        minor_mock.assert_called_once_with(42)
+
+        self.assertEqual(result, {
+            (9, 0): {
+                'device':
+                '/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba',
+                'fs_type': 'ext3',
+                'mount_point': '/'}
+        })
+
+        omock.assert_called_once_with('/proc/mounts')
         return result
 
+    @run_only_if_major_is_available
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
@@ -73,16 +97,27 @@ class TestDiskSpaceCollector(CollectorTestCase):
         statvfs_mock.f_flag = 4096
         statvfs_mock.f_namemax = 255
 
-        with nested(
-            patch('os.stat'),
-            patch('os.major', Mock(return_value=9)),
-            patch('os.minor', Mock(return_value=0)),
-            patch('os.path.isdir', Mock(return_value=False)),
-            patch('__builtin__.open', Mock(
-                return_value=self.getFixture('proc_mounts'))),
-            patch('os.statvfs', Mock(return_value=statvfs_mock))
-        ):
-            self.collector.collect()
+        os_stat_mock = patch('os.stat')
+        os_major_mock = patch('os.major', Mock(return_value=9))
+        os_minor_mock = patch('os.minor', Mock(return_value=0))
+        os_path_isdir_mock = patch('os.path.isdir', Mock(return_value=False))
+        open_mock = patch('__builtin__.open',
+                          Mock(return_value=self.getFixture('proc_mounts')))
+        os_statvfs_mock = patch('os.statvfs', Mock(return_value=statvfs_mock))
+
+        os_stat_mock.start()
+        os_major_mock.start()
+        os_minor_mock.start()
+        os_path_isdir_mock.start()
+        open_mock.start()
+        os_statvfs_mock.start()
+        self.collector.collect()
+        os_stat_mock.stop()
+        os_major_mock.stop()
+        os_minor_mock.stop()
+        os_path_isdir_mock.stop()
+        open_mock.stop()
+        os_statvfs_mock.stop()
 
         metrics = {
             'root.gigabyte_used': (284.525, 2),

@@ -28,6 +28,9 @@ class TestLoadAverageCollector(CollectorTestCase):
 
         self.collector = LoadAverageCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(LoadAverageCollector)
+
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')

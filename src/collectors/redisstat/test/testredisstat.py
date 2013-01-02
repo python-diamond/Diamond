@@ -2,11 +2,10 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
+from test import run_only
 from mock import Mock
 from mock import patch
 
@@ -14,15 +13,6 @@ from diamond.collector import Collector
 from redisstat import RedisCollector
 
 ################################################################################
-
-
-def run_only(func, predicate):
-    if predicate():
-        return func
-    else:
-        def f(arg):
-            pass
-        return f
 
 
 def run_only_if_redis_is_available(func):
@@ -43,6 +33,9 @@ class TestRedisCollector(CollectorTestCase):
         })
 
         self.collector = RedisCollector(config, None)
+
+    def test_import(self):
+        self.assertTrue(RedisCollector)
 
     @run_only_if_redis_is_available
     @patch.object(Collector, 'publish')
@@ -137,17 +130,27 @@ class TestRedisCollector(CollectorTestCase):
                   'keyspace_hits': 5700
                   }
 
-        with patch.object(RedisCollector, '_get_info',
-                          Mock(return_value=data_1)):
-            with patch('time.time', Mock(return_value=10)):
-                self.collector.collect()
+        patch_collector = patch.object(RedisCollector, '_get_info',
+                                       Mock(return_value=data_1))
+        patch_time = patch('time.time', Mock(return_value=10))
+
+        patch_collector.start()
+        patch_time.start()
+        self.collector.collect()
+        patch_collector.stop()
+        patch_time.stop()
 
         self.assertPublishedMany(publish_mock, {})
 
-        with patch.object(RedisCollector, '_get_info',
-                          Mock(return_value=data_2)):
-            with patch('time.time', Mock(return_value=20)):
-                self.collector.collect()
+        patch_collector = patch.object(RedisCollector, '_get_info',
+                                       Mock(return_value=data_2))
+        patch_time = patch('time.time', Mock(return_value=20))
+
+        patch_collector.start()
+        patch_time.start()
+        self.collector.collect()
+        patch_collector.stop()
+        patch_time.stop()
 
         metrics = {'6379.process.uptime': 95732,
                    '6379.pubsub.channels': 1,

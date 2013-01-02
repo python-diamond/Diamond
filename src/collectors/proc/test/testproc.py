@@ -28,6 +28,9 @@ class TestProcessStatCollector(CollectorTestCase):
 
         self.collector = ProcessStatCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(ProcessStatCollector)
+
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')

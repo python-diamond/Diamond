@@ -30,6 +30,9 @@ class TestTCPCollector(CollectorTestCase):
         })
         self.collector = TCPCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(TCPCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch('__builtin__.open')
     @patch.object(Collector, 'publish')

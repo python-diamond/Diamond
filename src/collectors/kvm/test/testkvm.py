@@ -2,8 +2,6 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 import os
 
 from test import CollectorTestCase
@@ -33,14 +31,20 @@ class TestKVMCollector(CollectorTestCase):
         self.collector = KVMCollector(config, None)
         self.collector.PROC = os.path.dirname(__file__) + '/fixtures/'
 
+    def test_import(self):
+        self.assertTrue(KVMCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        with patch('__builtin__.open', Mock(return_value=StringIO(
+        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
             '0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0'
             + '\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n'
-        ))):
-            self.collector.collect()
+        )))
+
+        patch_open.start()
+        self.collector.collect()
+        patch_open.stop()
 
         self.assertPublishedMany(publish_mock, {})
 

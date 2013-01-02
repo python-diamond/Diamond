@@ -2,8 +2,6 @@
 # coding=utf-8
 ###############################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -23,11 +21,16 @@ class TestVarnishCollector(CollectorTestCase):
 
         self.collector = VarnishCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(VarnishCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch.object(VarnishCollector, 'poll', Mock(
-                return_value=self.getFixture('varnish_stats').getvalue())):
-            self.collector.collect()
+        collector_mock = patch.object(VarnishCollector, 'poll', Mock(
+                return_value=self.getFixture('varnish_stats').getvalue()))
+        collector_mock.start()
+        self.collector.collect()
+        collector_mock.stop()
 
         metrics = {
             'client_conn': 10799,
@@ -127,10 +130,12 @@ class TestVarnishCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        with patch.object(VarnishCollector, 'poll', Mock(
+        collector_mock = patch.object(VarnishCollector, 'poll', Mock(
                 return_value=self.getFixture(
-                    'varnish_stats_blank').getvalue())):
-            self.collector.collect()
+                    'varnish_stats_blank').getvalue()))
+        collector_mock.start()
+        self.collector.collect()
+        collector_mock.stop()
 
         self.assertPublishedMany(publish_mock, {})
 

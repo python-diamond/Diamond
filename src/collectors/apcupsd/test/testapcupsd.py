@@ -2,8 +2,6 @@
 # coding=utf-8
 ################################################################################
 
-from __future__ import with_statement
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -24,9 +22,12 @@ class TestApcupsdCollector(CollectorTestCase):
 
         self.collector = ApcupsdCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(ApcupsdCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        with patch.object(ApcupsdCollector, 'getData', Mock(
+        patch_getdata = patch.object(ApcupsdCollector, 'getData', Mock(
             return_value='APC      : 001,039,1056\n\x00\'DATE     : 2012-07-16 '
             + '12:53:58 -0700  \n\x00 HOSTNAME : localhost\n\x00+VERSION  : 3.1'
             + '4.8 (16 January 2010) redhat\n\x00 UPSNAME  : localhost\n\x00'
@@ -47,8 +48,11 @@ class TestApcupsdCollector(CollectorTestCase):
             + '\x00"STATFLAG : 0x07000008 Status Flag\n\x00\x16MANDATE  : 2009'
             + '-10-08\n\x00\x1aSERIALNO : 3B0941X40219  \n\x00\x16BATTDATE :'
             + ' 2009-10-08\n\x00\x15NOMINV   : 120 Volts\n\x00\x17NOMBATTV :'
-                + '  24.0 ')):
-            self.collector.collect()
+                + '  24.0 '))
+
+        patch_getdata.start()
+        self.collector.collect()
+        patch_getdata.stop()
 
         metrics = {
             'localhost.LINEV': 124.000000,

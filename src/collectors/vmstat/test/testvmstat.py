@@ -28,6 +28,9 @@ class TestVMStatCollector(CollectorTestCase):
 
         self.collector = VMStatCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(VMStatCollector)
+
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
