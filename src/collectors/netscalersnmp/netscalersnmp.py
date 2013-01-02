@@ -14,8 +14,11 @@ import time
 import struct
 import re
 
-# Fix Path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
+# Fix Path for locating the SNMPCollector
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                             '../',
+                                             'snmp',
+                                             )))
 
 from diamond.metric import Metric
 from snmp import SNMPCollector as parent_SNMPCollector
