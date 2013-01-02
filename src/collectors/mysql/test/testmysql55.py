@@ -5,7 +5,7 @@
 from test import CollectorTestCase
 from test import get_collector_config
 
-from mysql import MySQLPerfCollector
+from mysql55 import MySQLPerfCollector
 
 
 class TestMySQLPerfCollector(CollectorTestCase):
