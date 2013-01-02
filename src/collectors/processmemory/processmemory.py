@@ -127,14 +127,14 @@ class ProcessMemoryCollector(diamond.collector.Collector):
         unit = self.config['unit']
         for process, cfg in self.processes.items():
             # finally publish the results for each process group
-            metric_name = "{}.rss".format(process)
+            metric_name = "%s.rss" % process
             metric_value = diamond.convertor.binary.convert(
                 sum(p.get_memory_info().rss for p in cfg['procs']),
                 oldUnit='byte', newUnit=unit)
             # Publish Metric
             self.publish(metric_name, metric_value)
 
-            metric_name = "{}.vms".format(process)
+            metric_name = "%s.vms" % process
             metric_value = diamond.convertor.binary.convert(
                 sum(p.get_memory_info().vms for p in cfg['procs']),
                 oldUnit='byte', newUnit=unit)
