@@ -99,7 +99,7 @@ def get_hostname(config, method=None):
         return hostname
 
     if method == 'none':
-        get_hostname.cached_results[method] = hostname
+        get_hostname.cached_results[method] = None
         return None
 
     raise NotImplementedError(config['hostname_method'])
