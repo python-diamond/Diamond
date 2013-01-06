@@ -130,7 +130,13 @@ class CollectorTestCase(unittest.TestCase):
         return self.assertPublished(mock, key, value, expected_value)
 
     def assertPublished(self, mock, key, value, expected_value=1):
-        calls = filter(lambda x: x[0][0] == key, mock.call_args_list)
+        if type(mock) is list:
+            for m in mock:
+                calls = (filter(lambda x: x[0][0] == key, m.call_args_list))
+                if len(calls) > 0:
+                    break
+        else:
+            calls = filter(lambda x: x[0][0] == key, mock.call_args_list)
 
         actual_value = len(calls)
         expected_value = 1
@@ -166,7 +172,11 @@ class CollectorTestCase(unittest.TestCase):
         for key, value in dict.iteritems():
             self.assertPublished(mock, key, value, expected_value)
 
-        mock.reset_mock()
+        if type(mock) is list:
+            for m in mock:
+                m.reset_mock()
+        else:
+            mock.reset_mock()
 
     def assertUnpublishedMetric(self, mock, key, value, expected_value=0):
         return self.assertPublishedMetric(mock, key, value, expected_value)

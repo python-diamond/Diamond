@@ -25,7 +25,10 @@ class TestNginxCollector(CollectorTestCase):
         self.assertTrue(NginxCollector)
 
     @patch.object(Collector, 'publish')
-    def test_should_work_with_real_data(self, publish_mock):
+    @patch.object(Collector, 'publish_gauge')
+    @patch.object(Collector, 'publish_counter')
+    def test_should_work_with_real_data(self, publish_counter_mock,
+                                        publish_gauge_mock, publish_mock):
         patch_urlopen = patch('urllib2.urlopen', Mock(
             return_value=self.getFixture('status')))
 
@@ -46,7 +49,10 @@ class TestNginxCollector(CollectorTestCase):
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
-        self.assertPublishedMany(publish_mock, metrics)
+        self.assertPublishedMany([publish_mock,
+                                  publish_gauge_mock,
+                                  publish_counter_mock
+                                  ], metrics)
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
