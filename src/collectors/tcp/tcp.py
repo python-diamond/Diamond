@@ -210,7 +210,8 @@ class TCPCollector(diamond.collector.Collector):
             + 'TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, '
             + 'TCPForwardRetrans, TCPSlowStartRetrans, CurrEstab, '
             + 'TCPAbortOnMemory, TCPBacklogDrop, AttemptFails, '
-            + 'EstabResets, InErrs'
+            + 'EstabResets, InErrs, ActiveOpens, PassiveOpens',
+            'gauges': 'CurrEstab'
         })
         return config
 
@@ -263,7 +264,10 @@ class TCPCollector(diamond.collector.Collector):
                 continue
 
             value = metrics[metric_name]
-            value = self.derivative(metric_name, long(value))
+            if metric_name in self.config['gauges']:
+                value = long(value)
+            else:
+                value = self.derivative(metric_name, long(value))
 
             # Why is this here?
             if value < 0:
