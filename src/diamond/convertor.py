@@ -183,3 +183,49 @@ class binary:
             return self.zettabyte() / 1024
         else:
             self.zettabyte(value * 1024)
+
+
+class time:
+    """
+    Store the value in miliseconds so we can convert between things easily
+    """
+    value = None
+
+    def __init__(self, value=None, unit=None):
+        self.do(value=value, unit=unit)
+
+    @staticmethod
+    def convert(value=None, oldUnit=None, newUnit=None):
+        convertor = time(value=value, unit=oldUnit)
+        return convertor.get(unit=newUnit)
+
+    def set(self, value, unit=None):
+        return self.do(value=value, unit=unit)
+
+    def get(self, unit=None):
+        return self.do(unit=unit)
+
+    def do(self, value=None, unit=None):
+        if not unit:
+            return self.millisecond(value=value)
+        else:
+            unit = unit.lower()
+
+        if unit in ['millisecond', 'milliseconds', 'ms']:
+            return self.millisecond(value=value)
+        if unit in ['second', 'seconds', 's']:
+            return self.second(value=value)
+
+        raise NotImplementedError("unit %s" % unit)
+
+    def millisecond(self, value=None):
+        if value is None:
+            return self.value
+        else:
+            self.value = float(value)
+
+    def second(self, value=None):
+        if value is None:
+            return self.millisecond() / 1000
+        else:
+            self.millisecond(value * 1000)
