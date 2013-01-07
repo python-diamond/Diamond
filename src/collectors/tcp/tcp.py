@@ -186,7 +186,7 @@ class TCPCollector(diamond.collector.Collector):
         '/proc/net/netstat',
         '/proc/net/snmp'
     ]
-    
+
     GAUGES = [
         'CurrEstab',
         'MaxConn',
@@ -268,7 +268,7 @@ class TCPCollector(diamond.collector.Collector):
                 continue
 
             value = long(metrics[metric_name])
-            
+
             # Publish the metric
             if metric_name in self.GAUGES:
                 self.publish_gauge(metric_name, value, 0)

@@ -64,7 +64,7 @@ TcpExt: 0 1 2
         self.collector.collect()
 
         self.assertEqual(len(publish_mock.call_args_list), 2)
-        
+
         metrics = {
             'A': 0,
             'C': 2,
@@ -115,7 +115,7 @@ TcpExt: 0 1 2
             'TCPBacklogDrop':               0.0,
             'TCPDSACKRecv':                 1580.0,
             'TCPDSACKIgnoredOld':           292.0,
-            'MaxConn':                      -1.0,
+            'MaxConn':                      (-1.0),
             'RcvPruned':                    0.0,
             'TCPSackMerged':                1121.0,
             'OutOfWindowIcmps':             10.0,
