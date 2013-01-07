@@ -1,5 +1,5 @@
 #!/bin/bash
-DESC=($(git describe | sed "s/v\([0-9\.]*\)-*\([0-9]*\)-*\([0-9a-z]*\)/\1 \2 \3/"))
+DESC=($(git describe --match 'v*' | sed "s/v\([0-9\.]*\)-*\([0-9]*\)-*\([0-9a-z]*\)/\1 \2 \3/"))
 VERSION=($(echo ${DESC[0]} | tr "." " "))
 COMMIT=${DESC[1]}
 VERSION_MAJ=${VERSION[0]}
