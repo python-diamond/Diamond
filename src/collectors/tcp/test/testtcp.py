@@ -35,7 +35,7 @@ class TestTCPCollector(CollectorTestCase):
 
     @patch('os.access', Mock(return_value=True))
     @patch('__builtin__.open')
-    @patch.object(Collector, 'publish')
+    @patch('diamond.collector.Collector.publish')
     def test_should_open_proc_net_netstat(self, publish_mock, open_mock):
         TCPCollector.PROC = ['/proc/net/netstat']
         open_mock.return_value = StringIO('')
@@ -44,7 +44,7 @@ class TestTCPCollector(CollectorTestCase):
 
     @patch('os.access', Mock(return_value=True))
     @patch('__builtin__.open')
-    @patch.object(Collector, 'publish')
+    @patch('diamond.collector.Collector.publish')
     def test_should_work_with_synthetic_data(self, publish_mock, open_mock):
         TCPCollector.PROC = ['/proc/net/netstat']
         self.setUp(['A', 'C'])
@@ -64,12 +64,15 @@ TcpExt: 0 1 2
         self.collector.collect()
 
         self.assertEqual(len(publish_mock.call_args_list), 2)
-        self.assertEqual(publish_mock.call_args_list, [
-            (('A', 0.0, 0), {}),
-            (('C', 2.0, 0), {})
-        ])
+        
+        metrics = {
+            'A': 0,
+            'C': 2,
+        }
 
-    @patch.object(Collector, 'publish')
+        self.assertPublishedMany(publish_mock, metrics)
+
+    @patch('diamond.collector.Collector.publish')
     def test_should_work_with_real_data(self, publish_mock):
         self.setUp(['ListenOverflows', 'ListenDrops', 'TCPLoss', 'TCPTimeouts'])
 
@@ -89,7 +92,7 @@ TcpExt: 0 1 2
 
         self.assertPublishedMany(publish_mock, metrics)
 
-    @patch.object(Collector, 'publish')
+    @patch('diamond.collector.Collector.publish')
     def test_should_work_with_all_data(self, publish_mock):
         self.setUp([])
 
@@ -112,7 +115,7 @@ TcpExt: 0 1 2
             'TCPBacklogDrop':               0.0,
             'TCPDSACKRecv':                 1580.0,
             'TCPDSACKIgnoredOld':           292.0,
-            'MaxConn':                      0.0,
+            'MaxConn':                      -1.0,
             'RcvPruned':                    0.0,
             'TCPSackMerged':                1121.0,
             'OutOfWindowIcmps':             10.0,
@@ -187,7 +190,7 @@ TcpExt: 0 1 2
             'InSegs':                       1.0,
             'PAWSPassive':                  0.0,
             'TCPRenoReorder':               0.0,
-            'CurrEstab':                    0.0,
+            'CurrEstab':                    3.0,
             'TW':                           89479.0,
             'AttemptFails':                 0.0,
             'PAWSActive':                   0.0,
