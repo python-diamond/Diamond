@@ -3,6 +3,9 @@
 """
 Collect IO Stats
 
+Note: You may need to artifically generate some IO load on a disk/partition
+before graphite will generate the metrics.
+
  * http://www.kernel.org/doc/Documentation/iostats.txt
 
 #### Dependencies
