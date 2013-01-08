@@ -11,7 +11,6 @@ Collect metrics from Puppet DB Dashboard
 """
 
 import urllib2
-import re
 import diamond.collector
 from diamond.convertor import time as time_convertor
 

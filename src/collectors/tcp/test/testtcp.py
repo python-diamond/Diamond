@@ -14,7 +14,6 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-from diamond.collector import Collector
 from tcp import TCPCollector
 
 ################################################################################

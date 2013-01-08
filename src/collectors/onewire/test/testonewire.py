@@ -8,14 +8,8 @@ from test import get_collector_config
 from test import unittest
 from mock import patch
 
-try:
-    from cStringIO import StringIO
-    StringIO  # workaround for pyflakes issue #13
-except ImportError:
-    from StringIO import StringIO
-
 from diamond.collector import Collector
-from onewire import *
+from onewire import OneWireCollector
 
 ###############################################################################
 
