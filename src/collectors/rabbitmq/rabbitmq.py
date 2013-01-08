@@ -53,8 +53,8 @@ class RabbitMQCollector(diamond.collector.Collector):
                                          self.config['user'],
                                          self.config['password'])
 
-            for vhost in client.get_vhosts():
-                for queue in client.get_queues(vhost=vhost):
+            for vhost in client.get_all_vhosts():
+                for queue in client.get_queues(vhost=vhost['name']):
                     for key in queue:
                         name = '{0}.{1}'.format('queues', queue['name'])
                         self._publish_metrics(name, [], key, queue)
