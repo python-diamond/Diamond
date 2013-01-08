@@ -53,6 +53,11 @@ class TestHttpdCollector(CollectorTestCase):
                                   Mock(return_value=self.getFixture(
                                     'server-status-fake-1').getvalue()))
 
+        patch_headers = patch.object(TestHTTPResponse,
+                                     'getheaders',
+                                     Mock(return_value={}))
+
+        patch_headers.start()
         patch_read.start()
         self.collector.collect()
         patch_read.stop()
@@ -67,6 +72,7 @@ class TestHttpdCollector(CollectorTestCase):
         patch_read.start()
         self.collector.collect()
         patch_read.stop()
+        patch_headers.stop()
 
         self.assertPublishedMany(publish_mock, {
             'TotalAccesses': 100,
@@ -86,6 +92,11 @@ class TestHttpdCollector(CollectorTestCase):
                                   Mock(return_value=self.getFixture(
                                     'server-status-live-1').getvalue()))
 
+        patch_headers = patch.object(TestHTTPResponse,
+                                     'getheaders',
+                                     Mock(return_value={}))
+
+        patch_headers.start()
         patch_read.start()
         self.collector.collect()
         patch_read.stop()
@@ -100,6 +111,7 @@ class TestHttpdCollector(CollectorTestCase):
         patch_read.start()
         self.collector.collect()
         patch_read.stop()
+        patch_headers.stop()
 
         metrics = {
             'TotalAccesses': 8314,
@@ -125,6 +137,11 @@ class TestHttpdCollector(CollectorTestCase):
                                   Mock(return_value=self.getFixture(
                                     'server-status-live-1').getvalue()))
 
+        patch_headers = patch.object(TestHTTPResponse,
+                                     'getheaders',
+                                     Mock(return_value={}))
+
+        patch_headers.start()
         patch_read.start()
         self.collector.collect()
         patch_read.stop()
@@ -139,6 +156,7 @@ class TestHttpdCollector(CollectorTestCase):
         patch_read.start()
         self.collector.collect()
         patch_read.stop()
+        patch_headers.stop()
 
         metrics = {
             'nickname1.TotalAccesses': 8314,

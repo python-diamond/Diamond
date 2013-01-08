@@ -75,10 +75,18 @@ class HttpdCollector(diamond.collector.Collector):
             connection = httplib.HTTPConnection(service_host, service_port)
 
             try:
-                connection.request("GET", "%s?%s" % (parts[2], parts[4]))
-                response = connection.getresponse()
-                data = response.read()
-                connection.close()
+                url = "%s?%s" % (parts[2], parts[4])
+                while True:
+                    connection.request("GET", url)
+                    response = connection.getresponse()
+                    data = response.read()
+                    headers = dict(response.getheaders())
+                    if ('location' not in headers
+                        or headers['location'] == url):
+                        connection.close()
+                        break
+                    url = headers['location']
+                    connection.close()
             except Exception, e:
                 self.log.error("Error retrieving HTTPD stats. %s", e)
                 continue
