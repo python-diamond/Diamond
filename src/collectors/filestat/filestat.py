@@ -138,7 +138,7 @@ class FilestatCollector(diamond.collector.Collector):
         for u in tmplist:
             if self.config['user_include'] is None or u not in self.config['user_include']:
                 if u not in addedByGroup:
-                uid = int(os.popen("id -u %s" % (u)).read())
+                    uid = int(os.popen("id -u %s" % (u)).read())
                     if uid < self.config['uid_min'] and self.config['uid_min'] != None and u in userlist: userlist.remove(u)
                     if uid > self.config['uid_max'] and self.config['uid_max'] != None and u in userlist: userlist.remove(u)
 
@@ -186,7 +186,7 @@ class FilestatCollector(diamond.collector.Collector):
         d = {}
         for u in users:
             d[u] = {}
-            tmp = os.popen("lsof -u %s | awk '{ print $5 }'" % (u)).read().split()
+            tmp = os.popen("lsof -bu %s | awk '{ print $5 }'" % (u)).read().split()
             for t in types:
               d[u][t] = tmp.count(t)
         return d
