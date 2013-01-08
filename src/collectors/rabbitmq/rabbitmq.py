@@ -3,6 +3,9 @@
 """
 Collects data from RabbitMQ through the admin interface
 
+#### Notes
+ * if two vhosts have the queues with the same name, the metrics will collide
+
 #### Dependencies
 
  * pyrabbit
