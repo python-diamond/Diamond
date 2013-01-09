@@ -69,7 +69,7 @@ class PostfixCollector(diamond.collector.Collector):
             io = StringIO(jsondata)
             data = json.load(io)
             return data
-        except ValueError:
+        except (ValueError, TypeError):
             return None
 
     def collect(self):
