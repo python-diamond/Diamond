@@ -50,15 +50,21 @@ class XENCollector(Collector):
         #Initialize variables
         memallocated = 0
         coresallocated = 0
+        totalcores = 0
         results = {}
+        domIds = conn.listDomainsID()
+        if 0 in domIds:
         #Total cores
-        domU = conn.lookupByID(0)
-        totalcores = domU.info()[3]
+            domU = conn.lookupByID(0)
+            totalcores = domU.info()[3]
         #Free Space
         s = os.statvfs('/')
         freeSpace = (s.f_bavail * s.f_frsize) / 1024
         #Calculate allocated memory and cores
-        for i in conn.listDomainsID():
+        for i in domIds:
+            # Ignore 0
+            if i == 0:
+                continue;
             domU = conn.lookupByID(i)
             dominfo = domU.info()
             memallocated += dominfo[2]

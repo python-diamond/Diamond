@@ -59,7 +59,7 @@ class TestXENCollector(CollectorTestCase):
 
         libvirt_m = Mock()
         libvirt_m.getInfo.return_value = ['x86_64', 48262, 8, 1200, 2, 1, 4, 1]
-        libvirt_m.listDomainsID.return_value = [2, 1, 4, 3]
+        libvirt_m.listDomainsID.return_value = [0, 2, 1, 4, 3]
 
         def lookupByIdMock(id):
             lookup = info(id)
