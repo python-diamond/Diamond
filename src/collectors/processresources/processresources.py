@@ -5,7 +5,7 @@ A Diamond collector that collects memory usage of each process defined in it's
 config file by matching them with their executable filepath or the process name.
 This collector can also be used to collect memory usage for the Diamond process.
 
-Example config file ProcessMemoryCollector.conf
+Example config file ProcessResourcesCollector.conf
 
 ```
 enabled=True
@@ -75,10 +75,10 @@ def process_filter(proc, cfg):
     return False
 
 
-class ProcessMemoryCollector(diamond.collector.Collector):
+class ProcessResourcesCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
-        config_help = super(ProcessMemoryCollector,
+        config_help = super(ProcessResourcesCollector,
                             self).get_default_config_help()
         config_help.update({
             'unit': 'The unit in which memory data is collected.',
@@ -101,7 +101,7 @@ calls."""),
             path: 'memory.process'
             unit: 'B'
         """
-        config = super(ProcessMemoryCollector, self).get_default_config()
+        config = super(ProcessResourcesCollector, self).get_default_config()
         config.update({
             'path': 'memory.process',
             'unit': 'B',
