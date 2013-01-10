@@ -140,6 +140,9 @@ class TestProcessResourcesCollector(CollectorTestCase):
                         self.vms = vms
                 return MemInfo(self.rss, self.vms)
 
+            def get_cpu_percent(self, interval=0.1):
+                return 7
+
         process_iter_mock = (ProcessMock(
             pid=x['pid'],
             name=x['name'],
@@ -166,6 +169,8 @@ class TestProcessResourcesCollector(CollectorTestCase):
         self.assertPublished(publish_mock, 'barexe.rss', 10)
         self.assertPublished(publish_mock, 'diamond-selfmon.rss', 1234)
         self.assertPublished(publish_mock, 'diamond-selfmon.vms', 90210)
+        self.assertPublished(publish_mock, 'bar.cpu_percent', 7*2)
+        self.assertPublished(publish_mock, 'barexe.cpu_percent', 7)
 
 ################################################################################
 if __name__ == "__main__":
