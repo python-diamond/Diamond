@@ -78,7 +78,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
         metrics['indices.datastore.size'] = indices['store']['size_in_bytes']
 
-        transport = indices['transport']
+        transport = data['transport']
         metrics['transport.rx.count'] = transport['rx_count']
         metrics['transport.rx.size'] = transport['rx_size_in_bytes']
         metrics['transport.tx.count'] = transport['tx_count']
