@@ -78,6 +78,21 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
         metrics['indices.datastore.size'] = indices['store']['size_in_bytes']
 
+        transport = indices['transport']
+        metrics['transport.rx.count'] = transport['rx_count']
+        metrics['transport.rx.size'] = transport['rx_size_in_bytes']
+        metrics['transport.tx.count'] = transport['tx_count']
+        metrics['transport.tx.size'] = transport['tx_size_in_bytes']
+
+        cache = indices['cache']
+        metrics['cache.bloom.size'] = cache['bloom_size_in_bytes']
+        metrics['cache.field.evictions'] = cache['field_evictions']
+        metrics['cache.field.size'] = cache['field_size_in_bytes']
+        metrics['cache.filter.count'] = cache['filter_count']
+        metrics['cache.filter.evictions'] = cache['filter_evictions']
+        metrics['cache.filter.size'] = cache['filter_size_in_bytes']
+        metrics['cache.id.size'] = cache['id_cache_size_in_bytes']
+
         #
         # process mem/cpu
         process = data['process']
