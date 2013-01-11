@@ -64,7 +64,7 @@ class XENCollector(Collector):
         for i in domIds:
             # Ignore 0
             if i == 0:
-                continue;
+                continue
             domU = conn.lookupByID(i)
             dominfo = domU.info()
             memallocated += dominfo[2]
