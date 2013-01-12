@@ -368,12 +368,12 @@ class Collector(object):
         try:
             try:
                 start_time = time.time()
-                self.collect_runnig = True
+                self.collect_running = True
 
                 # Collect Data
                 self.collect()
 
-                self.collect_runnig = False
+                self.collect_running = False
                 end_time = time.time()
 
                 if 'measure_collector_time' in self.config:
