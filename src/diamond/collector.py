@@ -159,6 +159,8 @@ class Collector(object):
             else:
                 self.config['enabled'] = False
 
+        self.collect_running = False
+
     def get_default_config_help(self):
         """
         Returns the help text for the configuration options for this collector
@@ -357,17 +359,21 @@ class Collector(object):
 
     def _run(self):
         """
-        Run the collector
+        Run the collector unless it's already running
         """
+        if self.collect_running:
+            return
         # Log
         self.log.debug("Collecting data from: %s" % self.__class__.__name__)
         try:
             try:
                 start_time = time.time()
+                self.collect_runnig = True
 
                 # Collect Data
                 self.collect()
 
+                self.collect_runnig = False
                 end_time = time.time()
 
                 if 'measure_collector_time' in self.config:
