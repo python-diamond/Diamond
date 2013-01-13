@@ -6,3 +6,4 @@ pyrabbit
 redis
 beanstalkc
 bernhard
+simplejson
