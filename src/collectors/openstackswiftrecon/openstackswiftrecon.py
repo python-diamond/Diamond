@@ -70,5 +70,5 @@ class OpenstackSwiftReconCollector(diamond.collector.Collector):
                         metric_name = '%s.%s' % (recon_type, ".".join(k))
                         if isinstance(v, (int, float)):
                             self.publish(metric_name, v)
-                except ValueError:
+                except (ValueError, IndexError):
                     continue
