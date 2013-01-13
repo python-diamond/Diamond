@@ -61,6 +61,9 @@ class TestOpenstackSwiftReconCollector(CollectorTestCase):
                    'object.object_auditor_stats_ZBF.bytes_processed': 0}
         self.assertPublishedMany(publish_mock, metrics)
 
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
 
 ##########################################################################
 if __name__ == "__main__":
