@@ -11,7 +11,12 @@ reports their current metrics.
 """
 
 import os
-import json
+try:
+    import json
+    json  # workaround for pyflakes issue #13
+except ImportError:
+    import simplejson as json
+
 import diamond.collector
 
 
@@ -61,7 +66,8 @@ class OpenstackSwiftReconCollector(diamond.collector.Collector):
         for recon_type in recon_cache:
             if not os.access(recon_cache[recon_type], os.R_OK):
                 continue
-            with open(recon_cache[recon_type]) as f:
+            try:
+                f = open(recon_cache[recon_type])
                 try:
                     rmetrics = json.loads(f.readlines()[0].strip())
                     self.metrics = []
@@ -72,3 +78,5 @@ class OpenstackSwiftReconCollector(diamond.collector.Collector):
                             self.publish(metric_name, v)
                 except (ValueError, IndexError):
                     continue
+            finally:
+                f.close()
