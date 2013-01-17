@@ -16,7 +16,8 @@ class CpuAcctCgroupCollector(diamond.collector.Collector):
     CPUACCT_PATH = '/sys/fs/cgroup/cpuacct/'
 
     def get_default_config_help(self):
-        config_help = super(CpuAcctCgroupCollector, self).get_default_config_help()
+        config_help = super(
+            CpuAcctCgroupCollector, self).get_default_config_help()
         config_help.update({
         })
         return config_help
@@ -41,7 +42,8 @@ class CpuAcctCgroupCollector(diamond.collector.Collector):
                 if filename == 'cpuacct.stat':
                     # matches will contain a tuple contain path to cpuacct.stat
                     # and the parent of the stat
-                    parent = root.replace(self.CPUACCT_PATH, "").replace("/", ".")
+                    parent = root.replace(self.CPUACCT_PATH,
+                                          "").replace("/", ".")
                     if parent == '':
                         parent = 'system'
                     matches.append((parent, os.path.join(root, filename)))

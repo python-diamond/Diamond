@@ -41,7 +41,8 @@ class TestCpuAcctCgroupCollector(CollectorTestCase):
     def test_should_open_all_cpuacct_stat(self, publish_mock, open_mock):
         open_mock.side_effect = lambda x: StringIO('')
         self.collector.collect()
-        open_mock.assert_any_call(fixtures_path + 'lxc/testcontainer/cpuacct.stat')
+        open_mock.assert_any_call(
+            fixtures_path + 'lxc/testcontainer/cpuacct.stat')
         open_mock.assert_any_call(fixtures_path + 'lxc/cpuacct.stat')
         open_mock.assert_any_call(fixtures_path + 'cpuacct.stat')
 
