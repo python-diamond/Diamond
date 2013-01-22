@@ -338,7 +338,6 @@ class Collector(object):
                 old = old - max_value
             # Get Change in X (value)
             derivative_x = new - old
-                
 
             # If we pass in a interval, use it rather then the configured one
             if interval is None:
