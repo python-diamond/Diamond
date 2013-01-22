@@ -81,6 +81,7 @@ class TestMemcachedCollector(CollectorTestCase):
             'localhost.delete_hits': 0.000000,
             'localhost.decr_misses': 0.000000,
             'localhost.get_hits': 0.000000,
+            'localhost.repcached_qi_free': 0.000000,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
