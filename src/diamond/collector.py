@@ -315,14 +315,16 @@ class Collector(object):
                             metric_type='GAUGE')
 
     def publish_counter(self, name, value, precision=0, max_value=0,
-                      time_delta=True, interval=None):
+                      time_delta=True, interval=None, allow_negative=False):
         value = self.derivative(name, value, max_value=max_value,
-                                time_delta=time_delta, interval=interval)
+                                time_delta=time_delta, interval=interval,
+                                allow_negative=allow_negative)
         return self.publish(name, value, precision=precision,
                             metric_type='COUNTER')
 
     def derivative(self, name, new, max_value=0,
-                   time_delta=True, interval=None):
+                   time_delta=True, interval=None,
+                   allow_negative=False):
         """
         Calculate the derivative of the metric.
         """
@@ -336,6 +338,7 @@ class Collector(object):
                 old = old - max_value
             # Get Change in X (value)
             derivative_x = new - old
+                
 
             # If we pass in a interval, use it rather then the configured one
             if interval is None:
@@ -348,6 +351,8 @@ class Collector(object):
                 derivative_y = 1
 
             result = float(derivative_x) / float(derivative_y)
+            if result < 0 and not allow_negative:
+                result = 0
         else:
             result = 0
 
