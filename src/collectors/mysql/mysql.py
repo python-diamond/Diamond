@@ -304,12 +304,10 @@ class MySQLCollector(diamond.collector.Collector):
         metrics['status'] = {}
         rows = self.get_db_global_status()
         for row in rows:
-            metrics['status'][row['Variable_name']] = row['Value']
-        for key in metrics['status']:
-            try:
-                metrics['status'][key] = float(metrics['status'][key])
-            except:
-                pass
+	    try:
+                metrics['status'][row['Variable_name']] = float(row['Value'])
+	    except: 
+	        pass
 
         if self.config['master'] == 'True':
             metrics['master'] = {}
