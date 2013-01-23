@@ -110,6 +110,15 @@ timeout = 15
 user = user@example.com
 apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
 
+
+[[HttpPostHandler]]
+
+### Urp to post the metrics
+url = http://localhost:8888/
+### Metrics batch size
+batch = 100
+
+
 ################################################################################
 ### Options for collectors
 [collectors]
