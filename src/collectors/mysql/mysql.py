@@ -10,7 +10,13 @@ GRANT SELECT, REPLICATION CLIENT on *.* TO 'user'@'hostname' IDENTIFIED BY
 'password';
 ```
 
- * For innodb engine status
+ * For innodb engine status 
+```
+GRANT SUPER ON *.* TO 'user'@'hostname' IDENTIFIED BY
+'password';
+```
+
+ * For innodb engine status on MySQL versions 5.1.24+
 ```
 GRANT PROCESS ON *.* TO 'user'@'hostname' IDENTIFIED BY
 'password';
