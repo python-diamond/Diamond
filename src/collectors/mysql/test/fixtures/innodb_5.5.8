@@ -1,0 +1,369 @@
+=====================================
+130123 15:00:53 INNODB MONITOR OUTPUT
+=====================================
+Per second averages calculated from the last 27 seconds
+-----------------
+BACKGROUND THREAD
+-----------------
+srv_master_thread loops: 645703 1_second, 645702 sleeps, 61405 10_second, 31875 background, 31875 flush
+srv_master_thread log flush and writes: 645845
+----------
+SEMAPHORES
+----------
+OS WAIT ARRAY INFO: reservation count 48966, signal count 49675
+Mutex spin waits 67170, rounds 316646, OS waits 4587
+RW-shared spins 42146, rounds 1257982, OS waits 41898
+RW-excl spins 2237, rounds 76298, OS waits 2436
+Spin rounds per wait: 4.71 mutex, 29.85 RW-shared, 34.11 RW-excl
+------------------------
+LATEST DETECTED DEADLOCK
+------------------------
+130122 15:12:50
+*** (1) TRANSACTION:
+TRANSACTION 3133150, ACTIVE 0 sec, process no 6591, OS thread id 1358338368
+mysql tables in use 5, locked 5
+LOCK WAIT 2314 lock struct(s), heap size 227768, 763 row lock(s)
+MySQL thread id 43511, query id 3781815 111.111.111.111 userid Copying to tmp table
+
+*** (1) WAITING FOR THIS LOCK TO BE GRANTED:
+RECORD LOCKS space id 45102 page no 8603 n bits 136 index `PRIMARY` of table `Database_name`.`table_name` trx id 3133150 lock mode S locks rec but not gap waiting
+Record lock, heap no 63 PHYSICAL RECORD: n_fields 30; compact format; info bits 0
+ 0: len 16; hex 667eb53bf8644cdc852e21fbbd963ab2; asc f~ ; dL  .!   : ;;
+ 1: len 6; hex 00000313314f; asc     1O;;
+ 2: len 7; hex 06000005970cb6; asc        ;;
+ 3: len 16; hex c24d24d8bb4a4fa6b268d52440aa884d; asc  M$  JO  h $@  M;;
+ 4: len 8; hex 80000100332abda1; asc     3*  ;;
+ 5: len 18; hex 43616d706169676e2062617365204e616d65; asc Campaign base Name;;
+ 6: len 20; hex 43616d706169676e204465736372697074696f6e; asc Campaign Description;;
+ 7: len 4; hex 80000001; asc     ;;
+ 8: len 13; hex 313335383838353536352e3432; asc 1358885565.42;;
+ 9: len 4; hex 80000001; asc     ;;
+ 10: len 4; hex 61707058; asc appX;;
+ 11: len 18; hex 6e657720636f6e7461637420736f75726365; asc new contact source;;
+ 12: len 20; hex 6e657720636f6e746163742070726f7669646572; asc new contact provider;;
+ 13: len 8; hex 8000124ee8c7b54b; asc    N   K;;
+ 14: SQL NULL;
+ 15: SQL NULL;
+ 16: SQL NULL;
+ 17: len 4; hex 80000004; asc     ;;
+ 18: len 8; hex 8000124ee8c7b54c; asc    N   L;;
+ 19: len 8; hex 8000124ee8c7b54c; asc    N   L;;
+ 20: len 16; hex de594524769446038ce9ed48fed0b3c7; asc  YE$v F    H    ;;
+ 21: len 4; hex 80000003; asc     ;;
+ 22: len 4; hex 80000001; asc     ;;
+ 23: len 8; hex 6c616e6775616765; asc language;;
+ 24: len 4; hex 800003ea; asc     ;;
+ 25: len 13; hex 31313030333732383530373937; asc 1100372850797;;
+ 26: len 22; hex 7b2243223a5b312c325d2c22434c223a5b312c325d7d; asc {"C":[1,2],"CL":[1,2]};;
+ 27: SQL NULL;
+ 28: SQL NULL;
+ 29: len 4; hex 80000002; asc     ;;
+
+*** (2) TRANSACTION:
+TRANSACTION 313314F, ACTIVE 0 sec, process no 6591, OS thread id 1350883648 updating or deleting
+mysql tables in use 5, locked 5
+2321 lock struct(s), heap size 227768, 774 row lock(s), undo log entries 1
+MySQL thread id 43405, query id 3781814 111.111.111.111 userid updating reference tables
+*** (2) HOLDS THE LOCK(S):
+RECORD LOCKS space id 45102 page no 8603 n bits 136 index `PRIMARY` of table `Database_name`.`table_name` trx id 313314F lock_mode X locks rec but not gap
+Record lock, heap no 63 PHYSICAL RECORD: n_fields 30; compact format; info bits 0
+ 0: len 16; hex 667eb53bf8644cdc852e21fbbd963ab2; asc f~ ; dL  .!   : ;;
+ 1: len 6; hex 00000313314f; asc     1O;;
+ 2: len 7; hex 06000005970cb6; asc        ;;
+ 3: len 16; hex c24d24d8bb4a4fa6b268d52440aa884d; asc  M$  JO  h $@  M;;
+ 4: len 8; hex 80000100332abda1; asc     3*  ;;
+ 5: len 18; hex 43616d706169676e2062617365204e616d65; asc Campaign base Name;;
+ 6: len 20; hex 43616d706169676e204465736372697074696f6e; asc Campaign Description;;
+ 7: len 4; hex 80000001; asc     ;;
+ 8: len 13; hex 313335383838353536352e3432; asc 1358885565.42;;
+ 9: len 4; hex 80000001; asc     ;;
+ 10: len 4; hex 61707058; asc appX;;
+ 11: len 18; hex 6e657720636f6e7461637420736f75726365; asc new contact source;;
+ 12: len 20; hex 6e657720636f6e746163742070726f7669646572; asc new contact provider;;
+ 13: len 8; hex 8000124ee8c7b54b; asc    N   K;;
+ 14: SQL NULL;
+ 15: SQL NULL;
+ 16: SQL NULL;
+ 17: len 4; hex 80000004; asc     ;;
+ 18: len 8; hex 8000124ee8c7b54c; asc    N   L;;
+ 19: len 8; hex 8000124ee8c7b54c; asc    N   L;;
+ 20: len 16; hex de594524769446038ce9ed48fed0b3c7; asc  YE$v F    H    ;;
+ 21: len 4; hex 80000003; asc     ;;
+ 22: len 4; hex 80000001; asc     ;;
+ 23: len 8; hex 6c616e6775616765; asc language;;
+ 24: len 4; hex 800003ea; asc     ;;
+ 25: len 13; hex 31313030333732383530373937; asc 1100372850797;;
+ 26: len 22; hex 7b2243223a5b312c325d2c22434c223a5b312c325d7d; asc {"C":[1,2],"CL":[1,2]};;
+ 27: SQL NULL;
+ 28: SQL NULL;
+ 29: len 4; hex 80000002; asc     ;;
+
+*** (2) WAITING FOR THIS LOCK TO BE GRANTED:
+RECORD LOCKS space id 45102 page no 23633 n bits 544 index `index` of table `Database_name`.`table_name` trx id 313314F lock_mode X locks rec but not gap waiting
+Record lock, heap no 342 PHYSICAL RECORD: n_fields 3; compact format; info bits 0
+ 0: len 4; hex 80000003; asc     ;;
+ 1: len 8; hex 8000124ee8c7b54b; asc    N   K;;
+ 2: len 16; hex 667eb53bf8644cdc852e21fbbd963ab2; asc f~ ; dL  .!   : ;;
+
+*** WE ROLL BACK TRANSACTION (1)
+------------
+TRANSACTIONS
+------------
+Trx id counter 3156524
+Purge done for trx's n:o < 315622C undo n:o < 0
+History list length 2553
+LIST OF TRANSACTIONS FOR EACH SESSION:
+---TRANSACTION 0, not started, process no 6591, OS thread id 1359935808
+MySQL thread id 49106, query id 4366119 localhost root
+show engine innodb status
+---TRANSACTION 0, not started, process no 6591, OS thread id 1104845120
+MySQL thread id 49104, query id 4366108 111.111.111.111 another_user
+---TRANSACTION 315650D, not started, process no 6591, OS thread id 1348487488
+MySQL thread id 49101, query id 4366002 111.111.111.111 userid
+---TRANSACTION 31562EE, not started, process no 6591, OS thread id 1354078528
+MySQL thread id 49102, query id 4363627 111.111.111.111 userid
+---TRANSACTION 31562ED, not started, process no 6591, OS thread id 1351416128
+MySQL thread id 49100, query id 4363604 111.111.111.111 userid
+---TRANSACTION 31562E6, not started, process no 6591, OS thread id 1078442304
+MySQL thread id 49099, query id 4366038 111.111.111.111 another_user
+---TRANSACTION 315620C, not started, process no 6591, OS thread id 1097308480
+MySQL thread id 49049, query id 4366097 111.111.241.87 another_user
+---TRANSACTION 3156521, not started, process no 6591, OS thread id 1359669568
+MySQL thread id 49092, query id 4366106 111.111.188.23 socialusr
+---TRANSACTION 0, not started, process no 6591, OS thread id 1103247680
+MySQL thread id 48019, query id 4361491 111.111.242.176 username
+---TRANSACTION 31561F5, not started, process no 6591, OS thread id 1349552448
+MySQL thread id 49071, query id 4362343 111.111.190.155 ipmapp1
+---TRANSACTION 3156523, not started, process no 6591, OS thread id 1355143488
+MySQL thread id 49018, query id 4366115 111.111.111.111 userid
+---TRANSACTION 0, not started, process no 6591, OS thread id 1094998336
+MySQL thread id 49015, query id 4352966 111.111.190.195 roving
+---TRANSACTION 3155434, not started, process no 6591, OS thread id 1357805888
+MySQL thread id 48909, query id 4363216 111.111.111.111 syndiusr
+---TRANSACTION 0, not started, process no 6591, OS thread id 1361799488
+MySQL thread id 48604, query id 4361152 111.111.240.179 another_user
+---TRANSACTION 3155A8B, not started, process no 6591, OS thread id 1352214848
+MySQL thread id 48586, query id 4366039 111.111.111.111 user
+---TRANSACTION 315651F, not started, process no 6591, OS thread id 1358338368
+MySQL thread id 48567, query id 4366117 111.111.111.111 scschedapp1
+---TRANSACTION 31551AC, not started, process no 6591, OS thread id 1351682368
+MySQL thread id 48530, query id 4366109 111.111.111.111 roving
+---TRANSACTION 3153204, not started, process no 6591, OS thread id 1350084928
+MySQL thread id 48488, query id 4303686 111.111.111.111 qauser1
+---TRANSACTION 3155D72, not started, process no 6591, OS thread id 1358072128
+MySQL thread id 48344, query id 4356744 111.111.111.111 another_user
+---TRANSACTION 3151EE9, not started, process no 6591, OS thread id 1358604608
+MySQL thread id 47484, query id 4360110 111.111.242.77 another_user
+---TRANSACTION 0, not started, process no 6591, OS thread id 1359403328
+MySQL thread id 47483, query id 4360110 111.111.242.77 another_user
+---TRANSACTION 3153743, not started, process no 6591, OS thread id 1349019968
+MySQL thread id 48246, query id 4366084 111.111.111.111 roving
+---TRANSACTION 0, not started, process no 6591, OS thread id 1360468288
+MySQL thread id 48238, query id 4274305 111.111.111.111 user
+---TRANSACTION 0, not started, process no 6591, OS thread id 1096509760
+MySQL thread id 48237, query id 4274286 111.111.111.111 user
+---TRANSACTION 0, not started, process no 6591, OS thread id 1361267008
+MySQL thread id 48236, query id 4274267 111.111.111.111 user
+---TRANSACTION 0, not started, process no 6591, OS thread id 1348221248
+MySQL thread id 48235, query id 4274270 111.111.111.111 user
+---TRANSACTION 0, not started, process no 6591, OS thread id 1357007168
+MySQL thread id 48233, query id 4273908 111.111.111.111 user
+---TRANSACTION 0, not started, process no 6591, OS thread id 1078708544
+MySQL thread id 48232, query id 4273910 111.111.111.111 user
+---TRANSACTION 0, not started, process no 6591, OS thread id 1357539648
+MySQL thread id 48231, query id 4273906 111.111.111.111 user
+---TRANSACTION 0, not started, process no 6591, OS thread id 1106348352
+MySQL thread id 48230, query id 4273900 111.111.111.111 user
+---TRANSACTION 31516A9, not started, process no 6591, OS thread id 1352481088
+MySQL thread id 48179, query id 4269519 111.111.111.111 dealsabapp1
+---TRANSACTION 3154C2B, not started, process no 6591, OS thread id 1095264576
+MySQL thread id 48007, query id 4364212 111.111.240.252 another_user
+---TRANSACTION 31516C1, not started, process no 6591, OS thread id 1358870848
+MySQL thread id 47702, query id 4269642 111.111.111.111 dealsabapp1
+---TRANSACTION 31562A9, not started, process no 6591, OS thread id 1354344768
+MySQL thread id 47660, query id 4363215 111.111.188.23 socialusr
+---TRANSACTION 315651B, not started, process no 6591, OS thread id 1352747328
+MySQL thread id 40588, query id 4366083 111.111.190.223 user
+---TRANSACTION 0, not started, process no 6591, OS thread id 1097574720
+MySQL thread id 39717, query id 4362685 111.111.188.15 user
+---TRANSACTION 0, not started, process no 6591, OS thread id 1104578880
+MySQL thread id 22, query id 4366022 111.111.188.15 user
+--------
+FILE I/O
+--------
+I/O thread 0 state: waiting for completed aio requests (insert buffer thread)
+I/O thread 1 state: waiting for completed aio requests (log thread)
+I/O thread 2 state: waiting for completed aio requests (read thread)
+I/O thread 3 state: waiting for completed aio requests (read thread)
+I/O thread 4 state: waiting for completed aio requests (read thread)
+I/O thread 5 state: waiting for completed aio requests (read thread)
+I/O thread 6 state: waiting for completed aio requests (read thread)
+I/O thread 7 state: waiting for completed aio requests (read thread)
+I/O thread 8 state: waiting for completed aio requests (read thread)
+I/O thread 9 state: waiting for completed aio requests (read thread)
+I/O thread 10 state: waiting for completed aio requests (write thread)
+I/O thread 11 state: waiting for completed aio requests (write thread)
+I/O thread 12 state: waiting for completed aio requests (write thread)
+I/O thread 13 state: waiting for completed aio requests (write thread)
+I/O thread 14 state: waiting for completed aio requests (write thread)
+I/O thread 15 state: waiting for completed aio requests (write thread)
+I/O thread 16 state: waiting for completed aio requests (write thread)
+I/O thread 17 state: waiting for completed aio requests (write thread)
+Pending normal aio reads: 0 [0, 0, 0, 0, 0, 0, 0, 0] , aio writes: 0 [0, 0, 0, 0, 0, 0, 0, 0] ,
+ ibuf aio reads: 0, log i/o's: 0, sync i/o's: 0
+Pending flushes (fsync) log: 0; buffer pool: 0
+602241 OS file reads, 1225158 OS file writes, 793485 OS fsyncs
+0.00 reads/s, 0 avg bytes/read, 0.44 writes/s, 0.44 fsyncs/s
+-------------------------------------
+INSERT BUFFER AND ADAPTIVE HASH INDEX
+-------------------------------------
+Ibuf: size 1, free list len 6685, seg size 6687, 4493 merges
+merged operations:
+ insert 5068, delete mark 46, delete 0
+discarded operations:
+ insert 0, delete mark 0, delete 0
+Hash table size 17700827, node heap has 672 buffer(s)
+1116.85 hash searches/s, 74.40 non-hash searches/s
+---
+LOG
+---
+Log sequence number 31138543771
+Log flushed up to   31138543771
+Last checkpoint at  31138543283
+0 pending log writes, 0 pending chkp writes
+420138 log i/o's done, 0.19 log i/o's/second
+----------------------
+BUFFER POOL AND MEMORY
+----------------------
+Total memory allocated 8791261184; in additional pool allocated 0
+Dictionary memory allocated 2912285
+Buffer pool size   65536
+Free buffers       3
+Database pages     65450
+Old database pages 24140
+Modified db pages  2
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 5976, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 74787, created 2389, written 229098
+0.00 reads/s, 0.00 creates/s, 0.04 writes/s
+Buffer pool hit rate 1000 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s
+LRU len: 65450, unzip_LRU len: 0
+I/O sum[8]:cur[0], unzip sum[0]:cur[0]
+Buffer pool size   65536
+Free buffers       3
+Database pages     65451
+Old database pages 24140
+Modified db pages  0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 5554, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 75467, created 1112, written 43528
+0.00 reads/s, 0.00 creates/s, 0.00 writes/s
+Buffer pool hit rate 1000 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s
+LRU len: 65451, unzip_LRU len: 0
+I/O sum[8]:cur[0], unzip sum[0]:cur[0]
+Buffer pool size   65536
+Free buffers       3
+Database pages     65448
+Old database pages 24139
+Modified db pages  0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 4842, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 75005, created 1068, written 34119
+0.00 reads/s, 0.00 creates/s, 0.00 writes/s
+Buffer pool hit rate 1000 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s
+LRU len: 65448, unzip_LRU len: 0
+I/O sum[8]:cur[0], unzip sum[0]:cur[0]
+Buffer pool size   65536
+Free buffers       3
+Database pages     65451
+Old database pages 24140
+Modified db pages  2
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 5122, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 75125, created 1016, written 114900
+0.00 reads/s, 0.00 creates/s, 0.07 writes/s
+Buffer pool hit rate 1000 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s
+LRU len: 65451, unzip_LRU len: 0
+I/O sum[8]:cur[0], unzip sum[0]:cur[0]
+Buffer pool size   65536
+Free buffers       3
+Database pages     65446
+Old database pages 24138
+Modified db pages  0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 5219, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 74792, created 1439, written 75474
+0.00 reads/s, 0.00 creates/s, 0.04 writes/s
+Buffer pool hit rate 1000 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s
+LRU len: 65446, unzip_LRU len: 0
+I/O sum[8]:cur[0], unzip sum[0]:cur[0]
+Buffer pool size   65536
+Free buffers       3
+Database pages     65451
+Old database pages 24140
+Modified db pages  0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 5640, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 75398, created 993, written 44715
+0.00 reads/s, 0.00 creates/s, 0.00 writes/s
+Buffer pool hit rate 1000 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s
+LRU len: 65451, unzip_LRU len: 0
+I/O sum[8]:cur[0], unzip sum[0]:cur[0]
+Buffer pool size   65536
+Free buffers       3
+Database pages     65446
+Old database pages 24138
+Modified db pages  0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 5555, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 75608, created 1063, written 53163
+0.00 reads/s, 0.00 creates/s, 0.00 writes/s
+Buffer pool hit rate 1000 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s
+LRU len: 65446, unzip_LRU len: 0
+I/O sum[8]:cur[0], unzip sum[0]:cur[0]
+Buffer pool size   65535
+Free buffers       3
+Database pages     65448
+Old database pages 24140
+Modified db pages  0
+Pending reads 0
+Pending writes: LRU 0, flush list 0, single page 0
+Pages made young 5662, not young 0
+0.00 youngs/s, 0.00 non-youngs/s
+Pages read 75692, created 1167, written 65245
+0.00 reads/s, 0.00 creates/s, 0.00 writes/s
+Buffer pool hit rate 1000 / 1000, young-making rate 0 / 1000 not 0 / 1000
+Pages read ahead 0.00/s, evicted without access 0.00/s
+LRU len: 65448, unzip_LRU len: 0
+I/O sum[8]:cur[0], unzip sum[0]:cur[0]
+--------------
+ROW OPERATIONS
+--------------
+0 queries inside InnoDB, 0 queries in queue
+1 read views open inside InnoDB
+Main thread process no. 6591, id 1305995584, state: sleeping
+Number of rows inserted 121888, updated 111209, deleted 62247, read 369891135
+0.00 inserts/s, 0.07 updates/s, 0.00 deletes/s, 1176.47 reads/s
+----------------------------
+END OF INNODB MONITOR OUTPUT
