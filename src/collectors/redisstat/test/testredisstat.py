@@ -16,6 +16,9 @@ from redisstat import RedisCollector
 
 
 def run_only_if_redis_is_available(func):
+    """Decorator for checking if python-redis is available.
+    Note: this test will be silently skipped if python-redis is missing.
+    """
     try:
         import redis
         redis  # workaround for pyflakes issue #13
@@ -180,6 +183,49 @@ class TestRedisCollector(CollectorTestCase):
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
+
+    @run_only_if_redis_is_available
+    @patch.object(Collector, 'publish')
+    def test_multi_instance(self, publish_mock):
+
+        testcases = {
+            'default': {
+                'config': {},
+                'callargs': ( '6379', 'localhost', '6379' ),
+            },
+            'default_2': {
+                'config': { 'host': 'myhost' },
+                'callargs': ( '6379', 'myhost', '6379' ),
+            },
+            'default_3': {
+                'config': { 'port': 5005 },
+                'callargs': ( '5005', 'localhost', '5005' ),
+            },
+            'instance_1': {
+                'config': { 'instances': [ 'nick hostX' ] },
+                'callargs': ( 'nick', 'hostX', '6379' ),
+            },
+            'instance_2': {
+                'config': { 'instances': [ 'foo hostX', 'bar :1000' ] },
+                'callargs': ( 'foo', 'hostX', '6379' ),
+            },
+        }
+
+        for testname, data in testcases.items():
+            config = get_collector_config('RedisCollector', data['config'])
+
+            collector = RedisCollector(config, None)
+
+            mock = Mock(return_value={}, name=testname)
+            patch_collector = patch.object(RedisCollector, 'collect_instance',
+                                            mock)
+
+            patch_collector.start()
+            collector.collect()
+            patch_collector.stop()
+
+            mock.assert_called_with(*data['callargs'])
+
 
 ################################################################################
 if __name__ == "__main__":

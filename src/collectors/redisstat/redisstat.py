@@ -1,7 +1,7 @@
 # coding=utf-8
 
 """
-Collects data from a Redis Server
+Collects data from one or more Redis Servers
 
 #### Dependencies
 
@@ -59,6 +59,38 @@ class RedisCollector(diamond.collector.Collector):
     _RENAMED_KEYS = {'last_save.changes_since': 'rdb_changes_since_last_save',
                      'last_save.time': 'rdb_last_save_time'}
 
+    def __init__(self, *args, **kwargs):
+        super(RedisCollector, self).__init__(*args, **kwargs)
+        # process original single redis instance
+        if len(self.config['instances']) == 0:
+            port = self.config['port']
+            self.config['instances'].append(str(port) + ' ' +
+                                            self.config['host'] + ':' + str(port))
+
+        self.instances = {}
+        for instance in self.config['instances']:
+            parts = instance.split()
+            if len(parts) != 2:
+                self.log.warn('Invalid Redis instance format \'%s\'', instance)
+                continue
+
+            nickname = parts[0]
+            hostport = parts[1]
+
+            if ':' in hostport:
+                if hostport[0] == ':':
+                    host = self._DEFAULT_HOST
+                    port = hostport[1:]
+                else:
+                    parts = hostport.split(':')
+                    host = parts[0]
+                    port = parts[1]
+            else:
+                host = hostport
+                port = str(self._DEFAULT_PORT)
+
+            self.instances[nickname] = (host, port)
+
     def get_default_config_help(self):
         config_help = super(RedisCollector, self).get_default_config_help()
         config_help.update({
@@ -66,6 +98,9 @@ class RedisCollector(diamond.collector.Collector):
             'port': 'Port number to collect from',
             'db': '',
             'databases': 'how many database instances to collect',
+            'instances': "Redis instances addresses (takes precedence over"
+            + " host+port), comma seperated, example/allowed formats:"
+            + " 'nick1 host:port, nick2 :port, nick3 host, etc'",
         })
         return config_help
 
@@ -83,19 +118,19 @@ class RedisCollector(diamond.collector.Collector):
             'db': self._DEFAULT_DB,
             'databases': self._DATABASE_COUNT,
             'path': 'redis',
+            'instances': [],
         })
         return config
 
-    def _client(self):
+    def _client(self, host, port):
         """Return a redis client for the configuration.
 
+:param str host: redis host
+:param str port: redis port
 :rtype: redis.Redis
 
         """
-        return redis.Redis(host=self.config.get('host',
-                                                self._DEFAULT_HOST),
-                           port=int(self.config.get('port',
-                                                    self._DEFAULT_PORT)),
+        return redis.Redis(host=host, port=int(port),
                            db=int(self.config.get('db',
                                                   self._DEFAULT_DB)))
 
@@ -112,32 +147,41 @@ class RedisCollector(diamond.collector.Collector):
             return 0
         return len(value) - decimal - 1
 
-    def _publish_key(self, key):
-        """Return the full key for the partial key. Prefix the redis port
-        in case there are multiple running on one machine.
+    def _publish_key(self, nick, key):
+        """Return the full key for the partial key.
 
+:param str nick: Nickname for Redis instance
 :param str key: The key name
 :rtype: str
 
         """
-        return '%s.%s' % (self.config.get('port', self._DEFAULT_PORT), key)
+        return '%s.%s' % (nick, key)
 
-    def _get_info(self):
-        client = self._client()
+    def _get_info(self, host, port):
+        """Return info dict from specified Redis instance
+
+:param str host: redis host
+:param str port: redis port
+:rtype: dict
+
+        """
+
+        client = self._client(host, port)
         info = client.info()
         del client
         return info
 
-    def collect(self):
-        """Collect the stats from the redis instance and publish them.
+    def collect_instance(self, nick, host, port):
+        """Collect metrics from a single Redis instance
+
+:param str nick: nickname of redis instance
+:param str host: redis host
+:param str port: redis port
 
         """
-        if redis is None:
-            self.log.error('Unable to import module redis')
-            return {}
 
         # Connect to redis and get the info
-        info = self._get_info()
+        info = self._get_info(host, port)
 
         # The structure should include the port for multiple instances per
         # server
@@ -168,7 +212,19 @@ class RedisCollector(diamond.collector.Collector):
 
         # Publish the data to graphite
         for key in data:
-            self.publish(self._publish_key(key),
+            self.publish(self._publish_key(nick, key),
                          data[key],
                          self._precision(data[key]),
                          'GAUGE')
+
+    def collect(self):
+        """Collect the stats from the redis instance and publish them.
+
+        """
+        if redis is None:
+            self.log.error('Unable to import module redis')
+            return {}
+
+        for nick in self.instances.keys():
+            (host, port) = self.instances[nick]
+            self.collect_instance(nick, host, port)
