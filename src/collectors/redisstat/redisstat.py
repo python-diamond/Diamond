@@ -63,9 +63,9 @@ class RedisCollector(diamond.collector.Collector):
         super(RedisCollector, self).__init__(*args, **kwargs)
         # process original single redis instance
         if len(self.config['instances']) == 0:
-            port = self.config['port']
-            self.config['instances'].append(str(port) + ' ' +
-                                            self.config['host'] + ':' + str(port))
+            port = str(self.config['port'])
+            self.config['instances'].append(
+                port + ' ' + self.config['host'] + ':' + port)
 
         self.instances = {}
         for instance in self.config['instances']:
