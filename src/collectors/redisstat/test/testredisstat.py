@@ -191,39 +191,39 @@ class TestRedisCollector(CollectorTestCase):
         testcases = {
             'default': {
                 'config': {},
-                'calls': [call('6379', 'localhost', '6379')],
+                'calls': [call('6379', 'localhost', 6379)],
             },
             'host_set': {
                 'config': {'host': 'myhost'},
-                'calls': [call('6379', 'myhost', '6379')],
+                'calls': [call('6379', 'myhost', 6379)],
             },
             'port_set': {
                 'config': {'port': 5005},
-                'calls': [call('5005', 'localhost', '5005')],
+                'calls': [call('5005', 'localhost', 5005)],
             },
             'hostport_set': {
                 'config': {'host': 'megahost', 'port': 5005},
-                'calls': [call('5005', 'megahost', '5005')],
+                'calls': [call('5005', 'megahost', 5005)],
             },
             'instance_1_host': {
                 'config': {'instances': ['nick myhost']},
-                'calls': [call('nick', 'myhost', '6379')],
+                'calls': [call('nick', 'myhost', 6379)],
             },
             'instance_1_port': {
                 'config': {'instances': ['nick :9191']},
-                'calls': [call('nick', 'localhost', '9191')],
+                'calls': [call('nick', 'localhost', 9191)],
             },
             'instance_1_hostport': {
                 'config': {'instances': ['nick host1:8765']},
-                'calls': [call('nick', 'host1', '8765')],
+                'calls': [call('nick', 'host1', 8765)],
             },
             'instance_2': {
                 'config': {'instances': ['foo hostX', 'bar :1000']},
-                'calls': [call('foo', 'hostX', '6379'), call('bar', 'localhost', '1000')],
+                'calls': [call('foo', 'hostX', 6379), call('bar', 'localhost', 1000)],
             },
             'instance_3': {
                 'config': {'instances': ['foo hostX', 'bar :1000']},
-                'calls': [call('foo', 'hostX', '6379'), call('bar', 'localhost', '1000')],
+                'calls': [call('foo', 'hostX', 6379), call('bar', 'localhost', 1000)],
             },
         }
 

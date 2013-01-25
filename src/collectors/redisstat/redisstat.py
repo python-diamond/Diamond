@@ -61,6 +61,11 @@ class RedisCollector(diamond.collector.Collector):
 
     def __init__(self, *args, **kwargs):
         super(RedisCollector, self).__init__(*args, **kwargs)
+
+        # configobj makes str if value doesn't contain a comma, cast to list
+        if isinstance(self.config['instances'], basestring):
+            self.config['instances'] = list(self.config['instances'])
+
         # process original single redis instance
         if len(self.config['instances']) == 0:
             port = str(self.config['port'])
@@ -126,13 +131,18 @@ class RedisCollector(diamond.collector.Collector):
         """Return a redis client for the configuration.
 
 :param str host: redis host
-:param str port: redis port
+:param int port: redis port
 :rtype: redis.Redis
 
         """
-        return redis.Redis(host=host, port=int(port),
-                           db=int(self.config.get('db',
-                                                  self._DEFAULT_DB)))
+        db = int(self.config.get('db', self._DEFAULT_DB))
+        try:
+            cli = redis.Redis(host=host, port=port, db=db)
+            cli.ping()
+            return cli
+        except Exception, ex:
+            self.log.error("RedisCollector: failed to connect to %s:%i. %s.",
+                            host, port, ex)
 
     def _precision(self, value):
         """Return the precision of the number
@@ -161,12 +171,15 @@ class RedisCollector(diamond.collector.Collector):
         """Return info dict from specified Redis instance
 
 :param str host: redis host
-:param str port: redis port
+:param int port: redis port
 :rtype: dict
 
         """
 
         client = self._client(host, port)
+        if client is None:
+            return None
+
         info = client.info()
         del client
         return info
@@ -176,12 +189,14 @@ class RedisCollector(diamond.collector.Collector):
 
 :param str nick: nickname of redis instance
 :param str host: redis host
-:param str port: redis port
+:param int port: redis port
 
         """
 
         # Connect to redis and get the info
         info = self._get_info(host, port)
+        if info is None:
+            return
 
         # The structure should include the port for multiple instances per
         # server
@@ -198,8 +213,8 @@ class RedisCollector(diamond.collector.Collector):
                 data[key] = info[self._RENAMED_KEYS[key]]
 
         # Look for databaase speific stats
-        for dbnum in range(0, self.config.get('databases',
-                                              self._DATABASE_COUNT)):
+        for dbnum in range(0, int(self.config.get('databases',
+                                              self._DATABASE_COUNT))):
             db = 'db%i' % dbnum
             if db in info:
                 for key in info[db]:
@@ -227,4 +242,4 @@ class RedisCollector(diamond.collector.Collector):
 
         for nick in self.instances.keys():
             (host, port) = self.instances[nick]
-            self.collect_instance(nick, host, port)
+            self.collect_instance(nick, host, int(port))
