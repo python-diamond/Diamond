@@ -10,9 +10,15 @@ GRANT SELECT, REPLICATION CLIENT on *.* TO 'user'@'hostname' IDENTIFIED BY
 'password';
 ```
 
- * For innodb engine status
+ * For innodb engine status 
 ```
 GRANT SUPER ON *.* TO 'user'@'hostname' IDENTIFIED BY
+'password';
+```
+
+ * For innodb engine status on MySQL versions 5.1.24+
+```
+GRANT PROCESS ON *.* TO 'user'@'hostname' IDENTIFIED BY
 'password';
 ```
 
@@ -304,14 +310,13 @@ class MySQLCollector(diamond.collector.Collector):
         metrics['status'] = {}
         rows = self.get_db_global_status()
         for row in rows:
-            metrics['status'][row['Variable_name']] = row['Value']
-        for key in metrics['status']:
-            try:
-                metrics[key] = float(metrics['status'][key])
-            except:
-                pass
+	    try:
+                metrics['status'][row['Variable_name']] = float(row['Value'])
+	    except: 
+	        pass
 
         if self.config['master'] == 'True':
+            metrics['master'] = {}
             try:
                 rows = self.get_db_master_status()
                 for row_master in rows:
@@ -319,7 +324,7 @@ class MySQLCollector(diamond.collector.Collector):
                         if key in self._IGNORE_KEYS:
                             continue
                         try:
-                            metrics[key] = float(row_master[key])
+                            metrics['master'][key] = float(row_master[key])
                         except:
                             pass
             except:
@@ -327,6 +332,7 @@ class MySQLCollector(diamond.collector.Collector):
                 pass
 
         if self.config['slave'] == 'True':
+            metrics['slave'] = {}
             try:
                 rows = self.get_db_slave_status()
                 for row_slave in rows:
@@ -334,7 +340,7 @@ class MySQLCollector(diamond.collector.Collector):
                         if key in self._IGNORE_KEYS:
                             continue
                         try:
-                            metrics[key] = float(row_slave[key])
+                            metrics['slave'][key] = float(row_slave[key])
                         except:
                             pass
             except:
@@ -342,6 +348,7 @@ class MySQLCollector(diamond.collector.Collector):
                 pass
 
         if self.config['innodb'] == 'True':
+            metrics['innodb'] = {}
             innodb_status_timer = time.time()
             try:
                 rows = self.get_db_innodb_status()
@@ -349,7 +356,7 @@ class MySQLCollector(diamond.collector.Collector):
                 innodb_status_output = rows[0]
 
                 todo = self.innodb_status_keys.keys()
-                for line in innodb_status_output[2].split('\n'):
+                for line in innodb_status_output['Status'].split('\n'):
                     for key in todo:
                         match = self.innodb_status_keys[key].match(line)
                         if match is not None:
@@ -365,27 +372,46 @@ class MySQLCollector(diamond.collector.Collector):
                                                        + " ignoring new value",
                                                        key_index)
                                     else:
-                                        metrics[key_index] = value
+                                        metrics['innodb'][key_index] = value
                                     match_index += 1
                                 except IndexError:
                                     self.log.debug("MySQLCollector: Cannot find"
-                                                   + " value in innodb status"
+                                                   + " value in innodb status "
                                                    + "for %s", key_index)
                 for key in todo:
                     self.log.error("MySQLCollector: %s regexp not matched in"
-                                   + "innodb status", key)
+                                   + " innodb status", key)
             except Exception, innodb_status_error:
                 self.log.error('MySQLCollector: Couldnt get engine innodb'
-                               + 'status, check user permissions: %s',
+                               + ' status, check user permissions: %s',
                                innodb_status_error)
             Innodb_status_process_time = time.time() - innodb_status_timer
             self.log.debug("MySQLCollector: innodb status process time: %f",
                            Innodb_status_process_time)
-            metrics["Innodb_status_process_time"] = Innodb_status_process_time
+            metrics['innodb']["Innodb_status_process_time"] = Innodb_status_process_time
 
         self.disconnect()
 
         return metrics
+
+    def _publish_stats(self, nickname, metrics):
+
+       for key in metrics:
+        for metric_name in metrics[key]:
+            metric_value = metrics[key][metric_name]
+
+            if type(metric_value) is not float:
+                continue
+
+            if metric_name not in self._GAUGE_KEYS:
+                   metric_value = self.derivative(metric_name,
+                                                  metric_value)
+            if key == 'status':
+                if ('publish' not in self.config
+                         or metric_name in self.config['publish']):
+                    self.publish(nickname + metric_name, metric_value)
+            else:
+                self.publish(nickname + metric_name, metric_value)
 
     def collect(self):
 
@@ -414,24 +440,11 @@ class MySQLCollector(diamond.collector.Collector):
 
             metrics = self.get_stats(params=params)
 
-            for metric_name in metrics:
-                metric_value = metrics[metric_name]
-
-                if type(metric_value) is not float:
-                    continue
-
-                if ('publish' not in self.config
-                        or metric_name in self.config['publish']):
-                    if metric_name not in self._GAUGE_KEYS:
-                        metric_value = self.derivative(metric_name,
-                                                       metric_value)
-
-                    self.publish(nickname + metric_name, metric_value)
-                else:
-                    for k in self.config['publish'].split():
-                        if k not in metrics:
-                            self.log.error("No such key '%s' available, issue"
-                                           + " 'show global status' for a full"
-                                           + " list", k)
-                        else:
-                            self.publish(nickname + k, metrics[k])
+	    # Warn if publish contains an unknown variable
+	    if 'publish' in self.config:
+                for k in self.config['publish'].split():
+                    if k not in metrics['status']:
+                        self.log.error("No such key '%s' available, issue"
+                                       + " 'show global status' for a full"
+                                       + " list", k)
+            self._publish_stats(nickname, metrics)
