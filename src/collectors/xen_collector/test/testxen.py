@@ -10,7 +10,7 @@ from mock import Mock
 from mock import patch
 
 from diamond.collector import Collector
-from xen import XENCollector
+from xen_collector import XENCollector
 
 
 ###############################################################################
