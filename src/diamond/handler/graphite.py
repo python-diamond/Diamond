@@ -41,8 +41,10 @@ class GraphiteHandler(Handler):
         self.port = int(self.config.get('port', 2003))
         self.timeout = int(self.config.get('timeout', 15))
         self.batch_size = int(self.config.get('batch', 1))
-        self.max_backlog_multiplier = int(self.config.get('max_backlog_multiplier', 5))
-        self.trim_backlog_multiplier = int(self.config.get('trim_backlog_multiplier', 4))
+        self.max_backlog_multiplier = int(
+            self.config.get('max_backlog_multiplier', 5))
+        self.trim_backlog_multiplier = int(
+            self.config.get('trim_backlog_multiplier', 4))
         self.metrics = []
 
         # Connect
@@ -89,8 +91,10 @@ class GraphiteHandler(Handler):
                 self.log.error("GraphiteHandler: Error sending metrics.")
                 raise
         finally:
-            if len(self.metrics) >= self.batch_size * self.max_backlog_multiplier:
-                trim_offset = self.batch_size * self.trim_backlog_multiplier * -1
+            if len(self.metrics) >= (
+                self.batch_size * self.max_backlog_multiplier):
+                trim_offset = (self.batch_size
+                               * self.trim_backlog_multiplier * -1)
                 self.metrics = self.metrics[trim_offset:]
 
     def _connect(self):
