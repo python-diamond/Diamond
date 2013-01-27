@@ -11,6 +11,7 @@ values are ignored.
 """
 
 import diamond.collector
+import re
 
 try:
     import pymongo
@@ -31,6 +32,8 @@ class MongoDBCollector(diamond.collector.Collector):
         config_help = super(MongoDBCollector, self).get_default_config_help()
         config_help.update({
             'host': 'Hostname',
+            'databases': 'A regex of which databases to gather metrics for.'
+                        ' Defaults to all databases.'
         })
         return config_help
 
@@ -40,8 +43,9 @@ class MongoDBCollector(diamond.collector.Collector):
         """
         config = super(MongoDBCollector, self).get_default_config()
         config.update({
-            'path':     'mongo',
-            'host':     'localhost'
+            'path':      'mongo',
+            'host':      'localhost',
+            'databases': '.*'
         })
         return config
 
@@ -65,7 +69,10 @@ class MongoDBCollector(diamond.collector.Collector):
         data = conn.db.command('serverStatus')
         self._publish_dict_with_prefix(data, [])
 
+        db_name_filter = re.compile(self.config['databases'])
         for db_name in conn.database_names():
+            if not db_name_filter.search(db_name):
+                continue
             db_stats = conn[db_name].command('dbStats')
             self._publish_dict_with_prefix(db_stats, ['databases', db_name])
             for collection_name in conn[db_name].collection_names():
