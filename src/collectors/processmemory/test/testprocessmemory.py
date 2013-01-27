@@ -47,7 +47,7 @@ class TestProcessMemoryCollector(CollectorTestCase):
             }
         }
     }
-    SELFMON_PID = 10001 # used for selfmonitoring
+    SELFMON_PID = 10001  # used for selfmonitoring
 
     def setUp(self):
         config = get_collector_config('ProcessMemoryCollector',
