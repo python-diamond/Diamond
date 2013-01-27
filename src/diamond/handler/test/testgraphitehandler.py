@@ -139,7 +139,8 @@ class TestGraphiteHandler(unittest.TestCase):
 
         handler = GraphiteHandler(config)
 
-        # simulate an unreachable graphite host, thus force backlog functionality
+        # simulate an unreachable graphite host
+        # thus force backlog functionality
         connect_mock = Mock()
         patch_connect = patch.object(GraphiteHandler, '_connect', connect_mock)
         send_mock = Mock()
