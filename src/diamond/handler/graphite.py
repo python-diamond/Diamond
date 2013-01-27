@@ -69,6 +69,12 @@ class GraphiteHandler(Handler):
         """Flush metrics in queue"""
         self._send()
 
+    def _send_data(self, data):
+        """
+        Try to send all data in buffer.
+        """
+        self.socket.sendall(data)
+
     def _send(self):
         """
         Send data to graphite. Data that can not be sent will be queued.
@@ -84,7 +90,7 @@ class GraphiteHandler(Handler):
                     self.log.debug("GraphiteHandler: Reconnect failed.")
                 else:
                     # Send data to socket
-                    self.socket.sendall("\n".join(self.metrics))
+                    self._send_data(''.join(self.metrics))
                     self.metrics = []
             except Exception:
                 self._close()
@@ -95,6 +101,10 @@ class GraphiteHandler(Handler):
                 self.batch_size * self.max_backlog_multiplier):
                 trim_offset = (self.batch_size
                                * self.trim_backlog_multiplier * -1)
+                self.log.warn('GraphiteHandler: Trimming backlog. Removing'
+                              + ' oldest %d and keeping newest %d metrics',
+                              len(self.metrics) - abs(trim_offset),
+                              abs(trim_offset))
                 self.metrics = self.metrics[trim_offset:]
 
     def _connect(self):
