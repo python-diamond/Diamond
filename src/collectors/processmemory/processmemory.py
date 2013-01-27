@@ -3,6 +3,7 @@
 """
 A Diamond collector that collects memory usage of each process defined in it's
 config file by matching them with their executable filepath or the process name.
+This collector can also be used to collect memory usage for the Diamond process.
 
 Example config file ProcessMemoryCollector.conf
 
@@ -13,11 +14,15 @@ unit=kB
 [[postgres]]
 exe=^\/usr\/lib\/postgresql\/+d.+d\/bin\/postgres$
 name=^postgres,^pg
+
+[[diamond]]
+selfmon=True
 ```
 
 exe and name are both lists of comma-separated regexps.
 """
 
+import os
 import re
 
 import diamond.collector
@@ -40,6 +45,8 @@ def process_filter(proc, cfg):
     :return: True if it matches
     :rtype: bool
     """
+    if cfg['selfmon'] and proc.pid == os.getpid():
+        return True
     for exe in cfg['exe']:
         try:
             if exe.search(proc.exe):
@@ -88,6 +95,7 @@ class ProcessMemoryCollector(diamond.collector.Collector):
             exe: [regex],
             name: [regex],
             cmdline: [regex],
+            selfmon: [boolean],
             procs: [psutil.Process]
         }
         """
@@ -101,6 +109,8 @@ class ProcessMemoryCollector(diamond.collector.Collector):
                 if not isinstance(proc[key], list):
                     proc[key] = [proc[key]]
                 proc[key] = [re.compile(e) for e in proc[key]]
+            selfmon = cfg.get('selfmon', 'false').strip().lower()
+            proc['selfmon'] = True if selfmon == 'true' else False
             self.processes[process] = proc
 
     def filter_processes(self):

@@ -2,6 +2,7 @@
 # coding=utf-8
 ################################################################################
 
+import os
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -40,9 +41,13 @@ class TestProcessMemoryCollector(CollectorTestCase):
             },
             'barexe': {
                 'exe': 'bar$'
+            },
+            'diamond-selfmon': {
+                'selfmon': 'true',
             }
         }
     }
+    SELFMON_PID = 10001 # used for selfmonitoring
 
     def setUp(self):
         config = get_collector_config('ProcessMemoryCollector',
@@ -54,8 +59,9 @@ class TestProcessMemoryCollector(CollectorTestCase):
         self.assertTrue(ProcessMemoryCollector)
 
     @run_only_if_psutil_is_available
+    @patch.object(os, 'getpid')
     @patch.object(Collector, 'publish')
-    def test(self, publish_mock):
+    def test(self, publish_mock, getpid_mock):
         process_info_list = [
             # postgres processes
             {'exe': '/usr/lib/postgresql/9.1/bin/postgres',
@@ -109,6 +115,13 @@ class TestProcessMemoryCollector(CollectorTestCase):
              'rss': 10,
              'vms': 10,
             },
+            # diamond self mon process
+            {'exe': 'DUMMY',
+             'name': 'DUMMY',
+             'pid': self.SELFMON_PID,
+             'rss': 1234,
+             'vms': 90210,
+            },
         ]
 
         class ProcessMock:
@@ -135,6 +148,8 @@ class TestProcessMemoryCollector(CollectorTestCase):
             exe=x['exe'])
             for x in process_info_list)
 
+        getpid_mock.return_value = self.SELFMON_PID
+
         patch_psutil_process_iter = patch('psutil.process_iter',
                                           return_value=process_iter_mock)
         patch_psutil_process_iter.start()
@@ -149,6 +164,8 @@ class TestProcessMemoryCollector(CollectorTestCase):
         self.assertPublished(publish_mock, 'foo.rss', 0)
         self.assertPublished(publish_mock, 'bar.rss', 2)
         self.assertPublished(publish_mock, 'barexe.rss', 10)
+        self.assertPublished(publish_mock, 'diamond-selfmon.rss', 1234)
+        self.assertPublished(publish_mock, 'diamond-selfmon.vms', 90210)
 
 ################################################################################
 if __name__ == "__main__":
