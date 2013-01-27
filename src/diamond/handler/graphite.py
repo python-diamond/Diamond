@@ -101,6 +101,10 @@ class GraphiteHandler(Handler):
                 self.batch_size * self.max_backlog_multiplier):
                 trim_offset = (self.batch_size
                                * self.trim_backlog_multiplier * -1)
+                self.log.warn('GraphiteHandler: Trimming backlog. Removing'
+                              + ' oldest %d and keeping newest %d metrics',
+                              len(self.metrics) - abs(trim_offset),
+                              abs(trim_offset))
                 self.metrics = self.metrics[trim_offset:]
 
     def _connect(self):
