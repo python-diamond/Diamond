@@ -109,8 +109,7 @@ class ProcessMemoryCollector(diamond.collector.Collector):
                 if not isinstance(proc[key], list):
                     proc[key] = [proc[key]]
                 proc[key] = [re.compile(e) for e in proc[key]]
-            selfmon = cfg.get('selfmon', 'false').strip().lower()
-            proc['selfmon'] = True if selfmon == 'true' else False
+            proc['selfmon'] = cfg.get('selfmon', '').lower() == 'true'
             self.processes[process] = proc
 
     def filter_processes(self):
