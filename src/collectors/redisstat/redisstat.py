@@ -14,6 +14,26 @@ having the python library called redis and this collector's module being called
 redis, so we use an odd name for this collector. This doesn't affect the usage
 of this collector.
 
+Example config file RedisCollector.conf
+
+```
+enabled=True
+host=redis.example.com
+port=16379
+```
+
+or for multi-instance mode:
+
+```
+enabled=True
+instances = nick1@host1:port1, nick2@host2:port2, ...
+```
+
+Note: when using the host/port config mode, the port number is used in
+the metric key. When using the multi-instance mode, the nick will be used.
+If not specified the port will be used.
+
+
 """
 
 import diamond.collector
@@ -32,6 +52,7 @@ class RedisCollector(diamond.collector.Collector):
     _DEFAULT_DB = 0
     _DEFAULT_HOST = 'localhost'
     _DEFAULT_PORT = 6379
+    _DEFAULT_SOCK_TIMEOUT = 5
     _KEYS = {'clients.blocked': 'blocked_clients',
              'clients.connected': 'connected_clients',
              'clients.longest_output_list': 'client_longest_output_list',
@@ -62,37 +83,40 @@ class RedisCollector(diamond.collector.Collector):
     def __init__(self, *args, **kwargs):
         super(RedisCollector, self).__init__(*args, **kwargs)
 
-        # configobj makes str if value doesn't contain a comma, cast to list
-        if isinstance(self.config['instances'], basestring):
-            self.config['instances'] = list(self.config['instances'])
+        instance_list = self.config['instances']
+        # configobj make str of single-element list, let's convert
+        if isinstance(instance_list, basestring):
+            instance_list = [instance_list]
 
         # process original single redis instance
-        if len(self.config['instances']) == 0:
-            port = str(self.config['port'])
-            self.config['instances'].append(
-                port + ' ' + self.config['host'] + ':' + port)
+        if len(instance_list) == 0:
+            host = self.config['host']
+            port = self.config['port']
+            instance_list.append('%s:%d' % (host, port))
 
         self.instances = {}
-        for instance in self.config['instances']:
-            parts = instance.split()
-            if len(parts) != 2:
-                self.log.warn('Invalid Redis instance format \'%s\'', instance)
-                continue
+        for instance in instance_list:
 
-            nickname = parts[0]
-            hostport = parts[1]
+            if '@' in instance:
+                (nickname, hostport) = instance.split('@', 2)
+            else:
+                nickname = None
+                hostport = instance
 
             if ':' in hostport:
                 if hostport[0] == ':':
                     host = self._DEFAULT_HOST
-                    port = hostport[1:]
+                    port = int(hostport[1:])
                 else:
                     parts = hostport.split(':')
                     host = parts[0]
-                    port = parts[1]
+                    port = int(parts[1])
             else:
                 host = hostport
-                port = str(self._DEFAULT_PORT)
+                port = self._DEFAULT_PORT
+
+            if nickname is None:
+                nickname = str(port)
 
             self.instances[nickname] = (host, port)
 
@@ -101,11 +125,11 @@ class RedisCollector(diamond.collector.Collector):
         config_help.update({
             'host': 'Hostname to collect from',
             'port': 'Port number to collect from',
+            'timeout': 'Socket timeout',
             'db': '',
             'databases': 'how many database instances to collect',
-            'instances': "Redis instances addresses (takes precedence over"
-            + " host+port), comma seperated, example/allowed formats:"
-            + " 'nick1 host:port, nick2 :port, nick3 host, etc'",
+            'instances': "Redis addresses, comma separated, syntax:"
+            + " nick1@host:port, nick2@:port or nick3@host"
         })
         return config_help
 
@@ -120,6 +144,7 @@ class RedisCollector(diamond.collector.Collector):
         config.update({
             'host': self._DEFAULT_HOST,
             'port': self._DEFAULT_PORT,
+            'timeout': self._DEFAULT_SOCK_TIMEOUT,
             'db': self._DEFAULT_DB,
             'databases': self._DATABASE_COUNT,
             'path': 'redis',
@@ -135,14 +160,16 @@ class RedisCollector(diamond.collector.Collector):
 :rtype: redis.Redis
 
         """
-        db = int(self.config.get('db', self._DEFAULT_DB))
+        db = int(self.config['db'])
+        timeout = int(self.config['timeout'])
         try:
-            cli = redis.Redis(host=host, port=port, db=db)
+            cli = redis.Redis(host=host, port=port,
+                              db=db, socket_timeout=timeout)
             cli.ping()
             return cli
         except Exception, ex:
             self.log.error("RedisCollector: failed to connect to %s:%i. %s.",
-                            host, port, ex)
+                           host, port, ex)
 
     def _precision(self, value):
         """Return the precision of the number
@@ -214,7 +241,7 @@ class RedisCollector(diamond.collector.Collector):
 
         # Look for databaase speific stats
         for dbnum in range(0, int(self.config.get('databases',
-                                              self._DATABASE_COUNT))):
+                                  self._DATABASE_COUNT))):
             db = 'db%i' % dbnum
             if db in info:
                 for key in info[db]:
