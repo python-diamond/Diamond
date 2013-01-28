@@ -7,7 +7,7 @@ from test import get_collector_config
 from test import unittest
 from test import run_only
 from mock import Mock
-from mock import patch
+from mock import patch, call
 
 from diamond.collector import Collector
 from redisstat import RedisCollector
@@ -16,6 +16,9 @@ from redisstat import RedisCollector
 
 
 def run_only_if_redis_is_available(func):
+    """Decorator for checking if python-redis is available.
+    Note: this test will be silently skipped if python-redis is missing.
+    """
     try:
         import redis
         redis  # workaround for pyflakes issue #13
@@ -180,6 +183,131 @@ class TestRedisCollector(CollectorTestCase):
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
+
+    @run_only_if_redis_is_available
+    @patch.object(Collector, 'publish')
+    def test_hostport_or_instance_config(self, publish_mock):
+
+        testcases = {
+            'default': {
+                'config': {},  # test default settings
+                'calls': [call('6379', 'localhost', 6379)],
+            },
+            'host_set': {
+                'config': {'host': 'myhost'},
+                'calls': [call('6379', 'myhost', 6379)],
+            },
+            'port_set': {
+                'config': {'port': 5005},
+                'calls': [call('5005', 'localhost', 5005)],
+            },
+            'hostport_set': {
+                'config': {'host': 'megahost', 'port': 5005},
+                'calls': [call('5005', 'megahost', 5005)],
+            },
+            'instance_1_host': {
+                'config': {'instances': ['nick@myhost']},
+                'calls': [call('nick', 'myhost', 6379)],
+            },
+            'instance_1_port': {
+                'config': {'instances': ['nick@:9191']},
+                'calls': [call('nick', 'localhost', 9191)],
+            },
+            'instance_1_hostport': {
+                'config': {'instances': ['nick@host1:8765']},
+                'calls': [call('nick', 'host1', 8765)],
+            },
+            'instance_2': {
+                'config': {'instances': ['foo@hostX', 'bar@:1000']},
+                'calls': [
+                    call('foo', 'hostX', 6379),
+                    call('bar', 'localhost', 1000)
+                ],
+            },
+            'old_and_new': {
+                'config': {
+                    'host': 'myhost',
+                    'port': 1234,
+                    'instances': [
+                        'foo@hostX',
+                        'bar@:1000',
+                        'hostonly',
+                        ':1234'
+                    ]
+                },
+                'calls': [
+                    call('foo', 'hostX', 6379),
+                    call('bar', 'localhost', 1000),
+                    call('6379', 'hostonly', 6379),
+                    call('1234', 'localhost', 1234),
+                ],
+            },
+        }
+
+        for testname, data in testcases.items():
+            config = get_collector_config('RedisCollector', data['config'])
+
+            collector = RedisCollector(config, None)
+
+            mock = Mock(return_value={}, name=testname)
+            patch_c = patch.object(RedisCollector, 'collect_instance', mock)
+
+            patch_c.start()
+            collector.collect()
+            patch_c.stop()
+
+            expected_call_count = len(data['calls'])
+            self.assertEqual(mock.call_count, expected_call_count,
+                             msg='[%s] mock.calls=%d != expected_calls=%d' %
+                             (testname, mock.call_count, expected_call_count))
+            for exp_call in data['calls']:
+                # Test expected calls 1 by 1,
+                # because self.instances is a dict (=random order)
+                mock.assert_has_calls(exp_call)
+
+    @run_only_if_redis_is_available
+    @patch.object(Collector, 'publish')
+    def test_key_naming_when_using_instances(self, publish_mock):
+
+        config_data = {
+            'instances': [
+                'nick1@host1:1111',
+                'nick2@:2222',
+                'nick3@host3',
+                'bla'
+            ]
+        }
+        get_info_data = {
+            'total_connections_received': 200,
+            'total_commands_processed': 100,
+        }
+        expected_calls = [
+            call('nick1.process.connections_received', 200, 0, 'GAUGE'),
+            call('nick1.process.commands_processed', 100, 0, 'GAUGE'),
+            call('nick2.process.connections_received', 200, 0, 'GAUGE'),
+            call('nick2.process.commands_processed', 100, 0, 'GAUGE'),
+            call('nick3.process.connections_received', 200, 0, 'GAUGE'),
+            call('nick3.process.commands_processed', 100, 0, 'GAUGE'),
+            call('6379.process.connections_received', 200, 0, 'GAUGE'),
+            call('6379.process.commands_processed', 100, 0, 'GAUGE'),
+        ]
+
+        config = get_collector_config('RedisCollector', config_data)
+        collector = RedisCollector(config, None)
+
+        patch_c = patch.object(RedisCollector, '_get_info',
+                               Mock(return_value=get_info_data))
+
+        patch_c.start()
+        collector.collect()
+        patch_c.stop()
+
+        self.assertEqual(publish_mock.call_count, len(expected_calls))
+        for exp_call in expected_calls:
+            # Test expected calls 1 by 1,
+            # because self.instances is a dict (=random order)
+            publish_mock.assert_has_calls(exp_call)
+
 
 ################################################################################
 if __name__ == "__main__":
