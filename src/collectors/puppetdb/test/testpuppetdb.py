@@ -6,21 +6,21 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 
-from puppetdashboard import PuppetDashboardCollector
+from puppetdb import PuppetDBCollector
 
 ################################################################################
 
 
 class TestPuppetDashboardCollector(CollectorTestCase):
     def setUp(self):
-        config = get_collector_config('PuppetDashboardCollector', {
+        config = get_collector_config('PuppetDBCollector', {
             'interval': 10
         })
 
-        self.collector = PuppetDashboardCollector(config, None)
+        self.collector = PuppetDBCollector(config, None)
 
     def test_import(self):
-        self.assertTrue(PuppetDashboardCollector)
+        self.assertTrue(PuppetDBCollector)
 
 ################################################################################
 if __name__ == "__main__":
