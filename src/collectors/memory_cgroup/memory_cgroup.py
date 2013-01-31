@@ -39,7 +39,6 @@ class MemoryCgroupCollector(diamond.collector.Collector):
         """
         config = super(MemoryCgroupCollector, self).get_default_config()
         config.update({
-            'enabled':  'False',
             'path':     'memory_cgroup',
             'method':   'Threaded',
         })

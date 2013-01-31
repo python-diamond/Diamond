@@ -28,7 +28,6 @@ class CpuAcctCgroupCollector(diamond.collector.Collector):
         """
         config = super(CpuAcctCgroupCollector, self).get_default_config()
         config.update({
-            'enabled':  'False',
             'path':     'cpuacct',
             'xenfix':   None,
         })
