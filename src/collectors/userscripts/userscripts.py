@@ -16,14 +16,20 @@ no metrics are collected.
 
 #### Dependencies
 
- * [commands](http://docs.python.org/library/commands.html)
+ * [subprocess](http://docs.python.org/library/subprocess.html)
+ * [kitchen](http://packages.python.org/kitchen/index.html)
 
 """
 
 import diamond.collector
 import diamond.convertor
 import os
-import commands
+import sys
+# Get a subprocess capable of check_output
+if sys.version_info < (2, 7):
+    from kitchen.pycompat27 import subprocess
+else:
+    import subprocess
 
 
 class UserScriptsCollector(diamond.collector.Collector):
@@ -60,15 +66,17 @@ class UserScriptsCollector(diamond.collector.Collector):
                 continue
             out = None
             self.log.debug("Executing %s" % absolutescriptpath)
-            stat, out = commands.getstatusoutput(absolutescriptpath)
-            if stat != 0:
+            try:
+                out = subprocess.check_output([absolutescriptpath])
+            except subprocess.CalledProcessError, e:
                 self.log.error("%s return exit value %s; skipping" %
-                        (absolutescriptpath, stat))
+                        (absolutescriptpath, e.returncode))
                 continue
             if not out:
                 self.log.info("%s return no output" % absolutescriptpath)
                 continue
-            for line in out.split('\n'):
+            # Use filter to remove empty lines of output
+            for line in filter(None, out.split('\n')):
                 name, value = line.split()
                 floatprecision = 0
                 if "." in value:

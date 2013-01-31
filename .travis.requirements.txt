@@ -7,3 +7,4 @@ redis
 beanstalkc
 bernhard
 simplejson
+kitchen
