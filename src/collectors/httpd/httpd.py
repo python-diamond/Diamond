@@ -88,7 +88,7 @@ class HttpdCollector(diamond.collector.Collector):
                     url = headers['location']
                     connection.close()
             except Exception, e:
-                self.log.error("Error retrieving HTTPD stats. %s", e)
+                self.log.error("Error retrieving HTTPD stats for url '%s': %s", url, e)
                 continue
 
             exp = re.compile('^([A-Za-z ]+):\s+(.+)$')
