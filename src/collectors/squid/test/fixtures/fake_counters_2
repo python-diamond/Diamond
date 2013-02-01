@@ -1,0 +1,66 @@
+HTTP/1.0 200 OK
+Server: squid/3.1.10
+Mime-Version: 1.0
+Date: Fri, 01 Feb 2013 06:43:54 GMT
+Content-Type: text/plain
+Expires: Fri, 01 Feb 2013 06:43:54 GMT
+Last-Modified: Fri, 01 Feb 2013 06:43:54 GMT
+X-Cache: MISS from squid.example.com
+X-Cache-Lookup: MISS from squid.example.com:3128
+Via: 1.0 squid.example.com (squid/3.1.10)
+Connection: close
+
+sample_time = 20 (Thu, 01 Jan 1970 00:00:20 GMT)
+client_http.requests = 1
+client_http.hits = 2
+client_http.errors = 3
+client_http.kbytes_in = 4
+client_http.kbytes_out = 5
+client_http.hit_kbytes_out = 6
+server.all.requests = 7
+server.all.errors = 8
+server.all.kbytes_in = 9
+server.all.kbytes_out = 10
+server.http.requests = 1
+server.http.errors = 12
+server.http.kbytes_in = 13
+server.http.kbytes_out = 14
+server.ftp.requests = 15
+server.ftp.errors = 16
+server.ftp.kbytes_in = 17
+server.ftp.kbytes_out = 18
+server.other.requests = 19
+server.other.errors = 20
+server.other.kbytes_in = 21
+server.other.kbytes_out = 22
+icp.pkts_sent = 23
+icp.pkts_recv = 24
+icp.queries_sent = 25
+icp.replies_sent = 26
+icp.queries_recv = 27
+icp.replies_recv = 28
+icp.query_timeouts = 29
+icp.replies_queued = 30
+icp.kbytes_sent = 31
+icp.kbytes_recv = 32
+icp.q_kbytes_sent = 33
+icp.r_kbytes_sent = 34
+icp.q_kbytes_recv = 35
+icp.r_kbytes_recv = 36
+icp.times_used = 37
+cd.times_used = 38
+cd.msgs_sent = 39
+cd.msgs_recv = 40
+cd.memory = 41
+cd.local_memory = 42
+cd.kbytes_sent = 43
+cd.kbytes_recv = 44
+unlink.requests = 45
+page_faults = 46
+select_loops = 47
+cpu_time = 48.1234567890
+wall_time = 49.1234567890
+swap.outs = 50
+swap.ins = 51
+swap.files_cleaned = 52
+aborted_requests = 53

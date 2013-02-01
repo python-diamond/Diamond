@@ -1,0 +1,66 @@
+HTTP/1.0 200 OK
+Server: squid/3.1.10
+Mime-Version: 1.0
+Date: Fri, 01 Feb 2013 06:43:54 GMT
+Content-Type: text/plain
+Expires: Fri, 01 Feb 2013 06:43:54 GMT
+Last-Modified: Fri, 01 Feb 2013 06:43:54 GMT
+X-Cache: MISS from squid.example.com
+X-Cache-Lookup: MISS from squid.example.com:3128
+Via: 1.0 squid.example.com (squid/3.1.10)
+Connection: close
+
+sample_time = 1359699829.897788 (Fri, 01 Feb 2013 06:23:49 GMT)
+client_http.requests = 372140
+client_http.hits = 289232
+client_http.errors = 0
+client_http.kbytes_in = 195169
+client_http.kbytes_out = 3349939
+client_http.hit_kbytes_out = 2355837
+server.all.requests = 75940
+server.all.errors = 0
+server.all.kbytes_in = 819601
+server.all.kbytes_out = 78803
+server.http.requests = 75940
+server.http.errors = 0
+server.http.kbytes_in = 819601
+server.http.kbytes_out = 78803
+server.ftp.requests = 0
+server.ftp.errors = 0
+server.ftp.kbytes_in = 0
+server.ftp.kbytes_out = 0
+server.other.requests = 0
+server.other.errors = 0
+server.other.kbytes_in = 0
+server.other.kbytes_out = 0
+icp.pkts_sent = 98966
+icp.pkts_recv = 98966
+icp.queries_sent = 74334
+icp.replies_sent = 24632
+icp.queries_recv = 24632
+icp.replies_recv = 74334
+icp.query_timeouts = 0
+icp.replies_queued = 0
+icp.kbytes_sent = 10020
+icp.kbytes_recv = 9826
+icp.q_kbytes_sent = 7598
+icp.r_kbytes_sent = 2422
+icp.q_kbytes_recv = 2518
+icp.r_kbytes_recv = 7308
+icp.times_used = 0
+cd.times_used = 0
+cd.msgs_sent = 469
+cd.msgs_recv = 469
+cd.memory = 53
+cd.local_memory = 26
+cd.kbytes_sent = 49
+cd.kbytes_recv = 3348
+unlink.requests = 642
+page_faults = 4
+select_loops = 370128074
+cpu_time = 593.172823
+wall_time = 57.389747
+swap.outs = 21457
+swap.ins = 57862
+swap.files_cleaned = 0
+aborted_requests = 373
