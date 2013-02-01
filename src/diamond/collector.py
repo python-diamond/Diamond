@@ -107,6 +107,19 @@ def get_hostname(config, method=None):
 get_hostname.cached_results = {}
 
 
+def str_to_bool(value):
+    """
+    Converts string ('true', 'false') to bool
+    """
+    if isinstance(value, basestring):
+        if value.strip().lower() == 'true':
+            return True
+        else:
+            return False
+
+    return value
+ 
+
 class Collector(object):
     """
     The Collector class is a base class for all metric collectors.
@@ -153,11 +166,9 @@ class Collector(object):
         if isinstance(self.config['byte_unit'], basestring):
             self.config['byte_unit'] = self.config['byte_unit'].split()
 
-        if isinstance(self.config['enabled'], basestring):
-            if self.config['enabled'].strip().lower() == 'true':
-                self.config['enabled'] = True
-            else:
-                self.config['enabled'] = False
+        self.config['enabled'] = str_to_bool(self.config['enabled'])
+
+        self.config['measure_collector_time'] = str_to_bool(self.config['measure_collector_time'])
 
         self.collect_running = False
 
