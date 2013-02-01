@@ -118,7 +118,7 @@ def str_to_bool(value):
             return False
 
     return value
- 
+
 
 class Collector(object):
     """
@@ -168,7 +168,8 @@ class Collector(object):
 
         self.config['enabled'] = str_to_bool(self.config['enabled'])
 
-        self.config['measure_collector_time'] = str_to_bool(self.config['measure_collector_time'])
+        self.config['measure_collector_time'] = str_to_bool(
+            self.config['measure_collector_time'])
 
         self.collect_running = False
 
