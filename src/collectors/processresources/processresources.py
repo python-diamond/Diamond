@@ -139,14 +139,32 @@ calls."""),
         Populates self.processes[processname]['procs'] with the corresponding
         list of psutil.Process instances
         """
-
+        class Dummy(object):
+            def __init__(self, **kwargs):
+                for name, val in kwargs.items():
+                    setattr(self, name, val)
+        # requires setup_config to be run before this
+        interval = float(self.config['cpu_interval'])
         for proc in psutil.process_iter():
-            # filter and divide the system processes amongst the different
-            #  process groups defined in the config file
-            for procname, cfg in self.processes.items():
-                if process_filter(proc, cfg):
-                    cfg['procs'].append(proc)
-                    break
+            # get process data
+            loaded = None
+            try:
+                proc_dummy = Dummy(
+                    rss = proc.get_memory_info().rss,
+                    vms = proc.get_memory_info().vms,
+                    cpu_percent = proc.get_cpu_percent(interval=interval)
+                )
+                loaded = True
+            except psutil.NoSuchProcess:
+                loaded = False
+
+            if loaded:
+                # filter and divide the system processes amongst the different
+                #  process groups defined in the config file
+                for procname, cfg in self.processes.items():
+                    if process_filter(proc, cfg):
+                        cfg['procs'].append(proc_dummy)
+                        break
 
     def collect(self):
         """
@@ -161,21 +179,20 @@ calls."""),
             # finally publish the results for each process group
             metric_name = "%s.rss" % process
             metric_value = diamond.convertor.binary.convert(
-                sum(p.get_memory_info().rss for p in cfg['procs']),
+                sum(p.rss for p in cfg['procs']),
                 oldUnit='byte', newUnit=unit)
             # Publish Metric
             self.publish(metric_name, metric_value)
 
             metric_name = "%s.vms" % process
             metric_value = diamond.convertor.binary.convert(
-                sum(p.get_memory_info().vms for p in cfg['procs']),
+                sum(p.vms for p in cfg['procs']),
                 oldUnit='byte', newUnit=unit)
             # Publish Metric
             self.publish(metric_name, metric_value)
 
             # CPU percent
             metric_name = "%s.cpu_percent" % process
-            metric_value = sum(p.get_cpu_percent(interval=interval)
-                for p in cfg['procs'])
+            metric_value = sum(p.cpu_percent for p in cfg['procs'])
             # Publish Metric
             self.publish(metric_name, metric_value)
