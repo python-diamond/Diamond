@@ -7,8 +7,7 @@ operations more fun and efficient.
 
 #### Dependencies
 
- * SimpleJson
- * [requests](http://docs.python-requests.org/)
+ * [librato-metrics](https://github.com/librato/python-librato)
 
 #### Configuration
 
@@ -23,16 +22,7 @@ Enable this handler
 
 from Handler import Handler
 import logging
-
-try:
-    import json
-    json  # workaround for pyflakes issue #13
-except ImportError:
-    import simplejson as json
-
-import requests
-from requests.auth import HTTPBasicAuth
-
+import librato
 
 class LibratoHandler(Handler):
 
@@ -44,14 +34,11 @@ class LibratoHandler(Handler):
         Handler.__init__(self, config)
         logging.debug("Initialized statsd handler.")
         # Initialize Options
-        self.user = self.config['user']
-        self.apikey = self.config['apikey']
-        self.url = 'https://metrics-api.librato.com/v1/metrics'
-        self.batch_size = 300
-        self.batch = {
-            'counters': [],
-            'gauges': [],
-        }
+        api                         = librato.connect(self.conf['user'],
+                                                      self.conf['apikey'])
+        self.queue                  = api.new_queue()
+        self.batch_size             = 300
+        self.current_n_measurements = 0
 
     def process(self, metric):
         """
@@ -61,45 +48,22 @@ class LibratoHandler(Handler):
         path += '.'
         path += metric.getMetricPath()
 
-        data = {
-            'source': metric.host,
-            'name': path,
-            'value': float(metric.value),
-            'measure_time': metric.timestamp,
-        }
+        m_type = 'gauge' if metric.metric_type == 'GAUGE' else 'counter'
+        self.queue.add(path,                # name
+                       float(metric.value), # value
+                       type=m_type,
+                       source=metric.host,
+                       measure_time=metric.timestamp)
+        self.current_n_measurements += 1
 
-        if metric.metric_type == 'GAUGE':
-            self.batch['gauges'].append(data)
-        else:
-            self.batch['counters'].append(data)
-
-        if (len(self.batch['counters'])
-            + len(self.batch['gauges']) >= self.batch_size):
-
-            # Log
+        if current_n_measurements >= self.batch_size:
             self.log.debug("LibratoHandler: Sending batch size: %d",
-                           self.batch_size)
-
-            # Send json batch
+                            self.current_n_measurements)
             self._send()
 
-            # Clear Batch
-            self.batch = {
-                'counters': [],
-                'gauges': [],
-            }
-
     def _send(self):
-        """
-        Send data to Librato.
-        """
-
-        self.log.debug(self.batch)
-
-        headers = {'Content-type': 'application/json', }
-
-        requests.post(self.url,
-                      data=json.dumps(self.batch),
-                      headers=headers,
-                      auth=HTTPBasicAuth(self.user, self.apikey)
-                      )
+         """
+         Send data to Librato.
+         """
+        self.queue.submit()
+        self.current_n_measurements = 0
