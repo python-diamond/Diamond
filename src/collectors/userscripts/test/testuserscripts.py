@@ -16,6 +16,7 @@ from userscripts import UserScriptsCollector
 
 ################################################################################
 
+
 def run_only_if_kitchen_is_available(func):
     if sys.version_info < (2, 7):
         try:
@@ -27,6 +28,7 @@ def run_only_if_kitchen_is_available(func):
         import subprocess
     pred = lambda: subprocess is not None
     return run_only(func, pred)
+
 
 class TestUserScriptsCollector(CollectorTestCase):
     def setUp(self):

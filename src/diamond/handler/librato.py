@@ -24,6 +24,7 @@ from Handler import Handler
 import logging
 import librato
 
+
 class LibratoHandler(Handler):
 
     def __init__(self, config=None):
@@ -34,10 +35,10 @@ class LibratoHandler(Handler):
         Handler.__init__(self, config)
         logging.debug("Initialized statsd handler.")
         # Initialize Options
-        api                         = librato.connect(self.conf['user'],
-                                                      self.conf['apikey'])
-        self.queue                  = api.new_queue()
-        self.batch_size             = 300
+        api = librato.connect(self.conf['user'],
+                              self.conf['apikey'])
+        self.queue = api.new_queue()
+        self.batch_size = 300
         self.current_n_measurements = 0
 
     def process(self, metric):
@@ -53,7 +54,7 @@ class LibratoHandler(Handler):
         else:
             m_type = 'counter'
         self.queue.add(path,                # name
-                       float(metric.value), # value
+                       float(metric.value),  # value
                        type=m_type,
                        source=metric.host,
                        measure_time=metric.timestamp)
