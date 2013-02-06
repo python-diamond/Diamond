@@ -121,7 +121,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                         or mount_point.startswith('/sys')):
                     continue
 
-                if device.startswith('/') and mount_point.startswith('/'):
+                if '/' in device and mount_point.startswith('/'):
                     stat = os.stat(mount_point)
                     major = os.major(stat.st_dev)
                     minor = os.minor(stat.st_dev)
