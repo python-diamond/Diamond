@@ -48,7 +48,10 @@ class LibratoHandler(Handler):
         path += '.'
         path += metric.getMetricPath()
 
-        m_type = 'gauge' if metric.metric_type == 'GAUGE' else 'counter'
+        if metric.metric_type == 'GAUGE':
+            m_type = 'gauge'
+        else:
+            m_type = 'counter'
         self.queue.add(path,                # name
                        float(metric.value), # value
                        type=m_type,
@@ -62,8 +65,8 @@ class LibratoHandler(Handler):
             self._send()
 
     def _send(self):
-         """
-         Send data to Librato.
-         """
+        """
+        Send data to Librato.
+        """
         self.queue.submit()
         self.current_n_measurements = 0
