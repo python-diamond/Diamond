@@ -3,6 +3,7 @@
 ################################################################################
 
 import os
+import sys
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -16,12 +17,15 @@ from userscripts import UserScriptsCollector
 ################################################################################
 
 def run_only_if_kitchen_is_available(func):
-    try:
-        import kitchen
-        kitchen  # workaround for pyflakes issue #13
-    except ImportError:
-        kitchen = None
-    pred = lambda: kitchen is not None
+    if sys.version_info < (2, 7):
+        try:
+            from kitchen.pycompat27 import subprocess
+            subprocess  # workaround for pyflakes issue #13
+        except ImportError:
+            subprocess = None
+    else:
+        import subprocess
+    pred = lambda: subprocess is not None
     return run_only(func, pred)
 
 class TestUserScriptsCollector(CollectorTestCase):
