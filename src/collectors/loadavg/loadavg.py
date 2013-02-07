@@ -41,6 +41,7 @@ class LoadAverageCollector(diamond.collector.Collector):
 
     def collect(self):
         if not os.access(self.PROC, os.R_OK):
+            self.log.error("Can not read path %s" % self.PROC)
             return None
 
         file = open(self.PROC)
