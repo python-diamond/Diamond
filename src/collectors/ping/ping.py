@@ -56,6 +56,8 @@ class PingCollector(diamond.collector.Collector):
                 metric_name = host.replace('.', '_')
 
                 if not os.access(self.config['bin'], os.X_OK):
+                    self.log.error("Path %s does not exist or is not executable"
+                                   % self.config['bin'])
                     return
 
                 command = [self.config['bin'], '-nq', '-c 1', host]
