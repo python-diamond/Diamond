@@ -442,7 +442,11 @@ class MySQLCollector(diamond.collector.Collector):
             if len(nickname):
                 nickname += '.'
 
-            metrics = self.get_stats(params=params)
+            try:
+                metrics = self.get_stats(params=params)
+            except Exception, e:
+                self.log.error('Collection failed for %s %s', nickname, e)
+                continue
 
             # Warn if publish contains an unknown variable
             if 'publish' in self.config:
