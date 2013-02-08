@@ -444,11 +444,11 @@ class MySQLCollector(diamond.collector.Collector):
 
             metrics = self.get_stats(params=params)
 
-        # Warn if publish contains an unknown variable
-        if 'publish' in self.config:
-                for k in self.config['publish'].split():
-                    if k not in metrics['status']:
-                        self.log.error("No such key '%s' available, issue"
-                                       + " 'show global status' for a full"
-                                       + " list", k)
-        self._publish_stats(nickname, metrics)
+            # Warn if publish contains an unknown variable
+            if 'publish' in self.config:
+                    for k in self.config['publish'].split():
+                        if k not in metrics['status']:
+                            self.log.error("No such key '%s' available, issue"
+                                           + " 'show global status' for a full"
+                                           + " list", k)
+            self._publish_stats(nickname, metrics)
