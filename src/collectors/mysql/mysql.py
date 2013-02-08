@@ -286,6 +286,8 @@ class MySQLCollector(diamond.collector.Collector):
             self.log.info('MySQLCollector: Connected to database.')
         except MySQLError, e:
             self.log.error('MySQLCollector couldnt connect to database %s', e)
+            return False
+        return True
 
     def disconnect(self):
         self.db.close()
@@ -305,7 +307,8 @@ class MySQLCollector(diamond.collector.Collector):
     def get_stats(self, params):
         metrics = {}
 
-        self.connect(params)
+        if not self.connect(params):
+            return metrics
 
         metrics['status'] = {}
         rows = self.get_db_global_status()
