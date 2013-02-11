@@ -80,7 +80,9 @@ class DiskUsageCollector(diamond.collector.Collector):
         result = {}
 
         if os.access('/proc/diskstats', os.R_OK):
-            with open('/proc/diskstats') as fp:
+            fp = open('/proc/diskstats')
+
+            try:
                 for line in fp:
                     try:
                         columns = line.split()
@@ -112,6 +114,8 @@ class DiskUsageCollector(diamond.collector.Collector):
                         }
                     except ValueError:
                         continue
+            finally:
+                fp.close()
         elif psutil:
             disks = psutil.disk_io_counters(True)
             for disk in disks:
