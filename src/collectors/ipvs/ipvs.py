@@ -46,7 +46,7 @@ class IPVSCollector(diamond.collector.Collector):
             return
 
         command = [self.config['bin'], '--list',
-                   '--stats', '--numeric', '--exact']
+                   '--stats', '--numeric']
 
         if self.config['use_sudo']:
             command.insert(0, self.config['sudo_cmd'])
@@ -79,6 +79,16 @@ class IPVSCollector(diamond.collector.Collector):
 
             for metric, column in columns.iteritems():
                 metric_name = ".".join([external, backend, metric])
-                metric_value = int(row[column])
+                # metric_value = int(row[column])
+                value = row[column]
+                if (value.endswith('K')):
+                        metric_value = int(value[0:len(value)-1]) * 1024
+                elif (value.endswith('M')):
+                        metric_value = int(value[0:len(value)-1]) * 1024 * 1024
+                elif (value.endswith('G')):
+                        metric_value = int(value[0:len(value)-1]) * 1024.0 * 1024.0 * 1024.0
+                else:
+                        metric_value = float(value)
+
 
                 self.publish(metric_name, metric_value)
