@@ -75,7 +75,7 @@ class TestDiskUsageCollector(CollectorTestCase):
         patch_time.stop()
 
         metrics = self.getPickledResults('test_should_work_with_real_data.pkl')
-        
+
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
@@ -112,7 +112,7 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         metrics = self.getPickledResults(
             'test_verify_supporting_vda_and_xvdb.pkl')
-        
+
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch('os.access', Mock(return_value=True))
@@ -145,7 +145,7 @@ class TestDiskUsageCollector(CollectorTestCase):
         patch_time.stop()
 
         metrics = self.getPickledResults('test_verify_supporting_md_dm.pkl')
-        
+
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch('os.access', Mock(return_value=True))
@@ -210,7 +210,7 @@ class TestDiskUsageCollector(CollectorTestCase):
         patch_time.stop()
 
         metrics = self.getPickledResults('test_service_Time.pkl')
-        
+
         self.assertPublishedMany(publish_mock, metrics)
 
 

@@ -87,15 +87,16 @@ class DiskUsageCollector(diamond.collector.Collector):
                     try:
                         columns = line.split()
                         # On early linux v2.6 versions, partitions have only 4
-                        # output fields not 11. From linux 2.6.25 partitions have
-                        # the full stats set.
+                        # output fields not 11. From linux 2.6.25 partitions
+                        # have the full stats set.
                         if len(columns) < 14:
                             continue
                         major = int(columns[0])
                         minor = int(columns[1])
                         device = columns[2]
 
-                        if device.startswith('ram') or device.startswith('loop'):
+                        if (device.startswith('ram')
+                            or device.startswith('loop')):
                             continue
 
                         result[(major, minor)] = {
@@ -216,9 +217,10 @@ class DiskUsageCollector(diamond.collector.Collector):
 
             metrics['io'] = metrics['reads'] + metrics['writes']
 
-            metrics['average_queue_length'] = (metrics['io_milliseconds_weighted']
-                                               / time_delta
-                                               / 1000.0)
+            metrics['average_queue_length'] = (
+                metrics['io_milliseconds_weighted']
+                / time_delta
+                / 1000.0)
 
             metrics['util_percentage'] = (metrics['io_milliseconds']
                                           / time_delta
