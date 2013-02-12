@@ -13,7 +13,7 @@ operations more fun and efficient.
 
 Enable this handler
 
- * handers = diamond.handler.librato.LibratoHandler
+ * handers = diamond.handler.libratohandler.LibratoHandler
 
  * user = LIBRATO_USERNAME
  * apikey = LIBRATO_API_KEY
