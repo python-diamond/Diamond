@@ -35,8 +35,8 @@ class LibratoHandler(Handler):
         Handler.__init__(self, config)
         logging.debug("Initialized statsd handler.")
         # Initialize Options
-        api = librato.connect(self.conf['user'],
-                              self.conf['apikey'])
+        api = librato.connect(self.config['user'],
+                              self.config['apikey'])
         self.queue = api.new_queue()
         self.batch_size = 300
         self.current_n_measurements = 0
@@ -60,7 +60,7 @@ class LibratoHandler(Handler):
                        measure_time=metric.timestamp)
         self.current_n_measurements += 1
 
-        if current_n_measurements >= self.batch_size:
+        if self.current_n_measurements >= self.batch_size:
             self.log.debug("LibratoHandler: Sending batch size: %d",
                             self.current_n_measurements)
             self._send()
