@@ -11,10 +11,17 @@ SNMPCollector is a special collector for collecting data from using SNMP
 
 import socket
 
+
+import warnings
 try:
-    import pysnmp.entity.rfc3413.oneliner.cmdgen as cmdgen
-    import pysnmp.debug
-    pysnmp  # workaround for pyflakes issue #13
+    #pysnmp packages on debian 6.0 use sha and md5 which are deprecated packages
+    #there is nothing to be done about it until pysnmp 
+    #updates to use new hashlib module -- ignoring warning for now
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        import pysnmp.entity.rfc3413.oneliner.cmdgen as cmdgen
+        import pysnmp.debug
+        pysnmp  # workaround for pyflakes issue #13
 except ImportError:
     pysnmp = None
 
