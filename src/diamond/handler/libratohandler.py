@@ -17,12 +17,16 @@ Enable this handler
 
  * user = LIBRATO_USERNAME
  * apikey = LIBRATO_API_KEY
+  
+ * queue_max_size = [optional | 300] max measurements to queue before submitting
+ * queue_max_interval [optional | 60] @max seconds to wait before submitting
 
 """
 
 from Handler import Handler
 import logging
 import librato
+import time
 
 
 class LibratoHandler(Handler):
@@ -38,7 +42,9 @@ class LibratoHandler(Handler):
         api = librato.connect(self.config['user'],
                               self.config['apikey'])
         self.queue = api.new_queue()
-        self.batch_size = 300
+        self.queue_max_size = self.config.get('queue_max_size',300)
+        self.queue_max_interval = self.config.get('queue_max_interval',60)
+        self.queue_max_timestamp = int(time.time() + self.queue_max_interval)
         self.current_n_measurements = 0
 
     def process(self, metric):
@@ -60,7 +66,8 @@ class LibratoHandler(Handler):
                        measure_time=metric.timestamp)
         self.current_n_measurements += 1
 
-        if self.current_n_measurements >= self.batch_size:
+        if (self.current_n_measurements >= self.queue_max_size or
+            time.time() >= self.queue_max_timestamp):
             self.log.debug("LibratoHandler: Sending batch size: %d",
                             self.current_n_measurements)
             self._send()
@@ -70,4 +77,5 @@ class LibratoHandler(Handler):
         Send data to Librato.
         """
         self.queue.submit()
+        self.queue_max_timestamp = int(time.time() + self.queue_max_interval)
         self.current_n_measurements = 0
