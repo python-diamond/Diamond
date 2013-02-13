@@ -11,6 +11,7 @@ The CPUCollector collects CPU utilization metric using /proc/stat.
 
 import diamond.collector
 import os
+import time
 
 try:
     import psutil
@@ -22,6 +23,8 @@ except ImportError:
 class CPUCollector(diamond.collector.Collector):
 
     PROC = '/proc/stat'
+    INTERVAL = 1
+
     MAX_VALUES = {
         'user': diamond.collector.MAX_COUNTER,
         'nice': diamond.collector.MAX_COUNTER,
@@ -50,6 +53,7 @@ class CPUCollector(diamond.collector.Collector):
             'enabled':  'True',
             'path':     'cpu',
             'xenfix':   None,
+            'simple':   'False',
         })
         return config
 
@@ -57,7 +61,36 @@ class CPUCollector(diamond.collector.Collector):
         """
         Collector cpu stats
         """
+
+        def cpu_time_list():
+            """
+            get cpu time list
+            """
+            with open(self.PROC, "r") as statFile:
+                timeList = statFile.readline().split(" ")[2:6]
+                for i in range(len(timeList)):
+                    timeList[i] = int(timeList[i])
+                return timeList
+
+        def cpu_delta_time(interval):
+            """
+            Get before and after cpu times for usage calc
+            """
+            pre_check = cpu_time_list()
+            time.sleep(interval)
+            post_check = cpu_time_list()
+            for i in range(len(pre_check)):
+                post_check[i] -= pre_check[i]
+            return post_check
+
         if os.access(self.PROC, os.R_OK):
+
+            #If simple only return aggregate CPU% metric
+            if self.config['simple'] == 'True':
+                dt = cpu_delta_time(self.INTERVAL)
+                cpuPct = 100 - (dt[len(dt) - 1] * 100.00 / sum(dt))
+                self.publish('percent', str('%.4f' %cpuPct))
+                return True
 
             results = {}
             # Open file
