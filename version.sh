@@ -8,6 +8,17 @@ VERSION_REV=${COMMIT}
 if [ -z "${VERSION_REV}" ]; then
     VERSION_REV="0"
 fi
+
+#Allow local revision identifiers
+#mimicing backports this is "-<identifier>"
+if [ -e localversion ]; then
+    LOCAL_REV=$(cat localversion)
+    if [ -n "${LOCAL_REV}" ];
+    then
+        LOCAL_REV="-${LOCAL_REV}"
+    fi
+fi
+
 while getopts "mnr" opt; do
     case $opt in
         m)
@@ -32,7 +43,7 @@ while getopts "mnr" opt; do
     esac
 done
 
-VERSION="${VERSION_MAJ}.${VERSION_MIN}.${VERSION_REV}"
+VERSION="${VERSION_MAJ}.${VERSION_MIN}.${VERSION_REV}${LOCAL_REV}"
 
 if [ -e src/diamond/version.py.tmpl ]
 then
