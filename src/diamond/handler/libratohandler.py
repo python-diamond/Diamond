@@ -19,15 +19,24 @@ Enable this handler
  * apikey = LIBRATO_API_KEY
   
  * queue_max_size = [optional | 300] max measurements to queue before submitting
- * queue_max_interval [optional | 60] @max seconds to wait before submitting
-
+ * queue_max_interval [optional | 60] @max seconds to wait before submitting 
+     For best behavior, be sure your highest collector poll interval is lower
+     than or equal to the queue_max_interval setting. 
+ 
+ * include_filters = [optional | '^.*'] A list of regex patterns.  
+     Only measurements whose path matches a filter will be submitted.
+     Useful for limiting usage to *only* desired measurements, e.g.
+       include_filters = "^diskspace\..*\.byte_avail$", "^loadavg\.01"
+       include_filters = "^sockets\.",
+                                     ^ note trailing comma to indicate a list
+     
 """
 
 from Handler import Handler
 import logging
 import librato
 import time
-
+import re
 
 class LibratoHandler(Handler):
 
@@ -42,10 +51,13 @@ class LibratoHandler(Handler):
         api = librato.connect(self.config['user'],
                               self.config['apikey'])
         self.queue = api.new_queue()
-        self.queue_max_size = self.config.get('queue_max_size',300)
-        self.queue_max_interval = self.config.get('queue_max_interval',60)
-        self.queue_max_timestamp = int(time.time() + self.queue_max_interval)
+        self.queue_max_size = int(self.config.get('queue_max_size',300))
+        self.queue_max_interval = int(self.config.get('queue_max_interval',60))
+        self.queue_max_timestamp = int(time.time() + self.queue_max_interval)  
         self.current_n_measurements = 0
+        
+        self.include_reg = re.compile(r'(?:%s)' % '|'.join(
+          self.config.get('include_filters',['^.*'])))
 
     def process(self, metric):
         """
@@ -54,18 +66,22 @@ class LibratoHandler(Handler):
         path = metric.getCollectorPath()
         path += '.'
         path += metric.getMetricPath()
-
-        if metric.metric_type == 'GAUGE':
-            m_type = 'gauge'
+        
+        if self.include_reg.match(path):
+            if metric.metric_type == 'GAUGE':
+                m_type = 'gauge'
+            else:
+                m_type = 'counter'
+            self.queue.add(path,                # name
+                           float(metric.value),  # value
+                           type=m_type,
+                           source=metric.host,
+                           measure_time=metric.timestamp)
+            self.current_n_measurements += 1
         else:
-            m_type = 'counter'
-        self.queue.add(path,                # name
-                       float(metric.value),  # value
-                       type=m_type,
-                       source=metric.host,
-                       measure_time=metric.timestamp)
-        self.current_n_measurements += 1
-
+            self.log.debug("LibratoHandler: Skip %s, no include_filters match",
+                            path)
+   
         if (self.current_n_measurements >= self.queue_max_size or
             time.time() >= self.queue_max_timestamp):
             self.log.debug("LibratoHandler: Sending batch size: %d",
