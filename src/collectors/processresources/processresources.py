@@ -139,7 +139,7 @@ calls."""),
         Populates self.processes[processname]['procs'] with the corresponding
         list of psutil.Process instances
         """
-        class Dummy(object):
+        class ProcessResources(object):
             def __init__(self, **kwargs):
                 for name, val in kwargs.items():
                     setattr(self, name, val)
@@ -149,7 +149,7 @@ calls."""),
             # get process data
             loaded = None
             try:
-                proc_dummy = Dummy(
+                proc_dummy = ProcessResources(
                     rss = proc.get_memory_info().rss,
                     vms = proc.get_memory_info().vms,
                     cpu_percent = proc.get_cpu_percent(interval=interval)
