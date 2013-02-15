@@ -66,11 +66,12 @@ class CPUCollector(diamond.collector.Collector):
             """
             get cpu time list
             """
-            with open(self.PROC, "r") as statFile:
-                timeList = statFile.readline().split(" ")[2:6]
-                for i in range(len(timeList)):
-                    timeList[i] = int(timeList[i])
-                return timeList
+            statFile = open(self.PROC, "r")
+            timeList = statFile.readline().split(" ")[2:6]
+            for i in range(len(timeList)):
+                timeList[i] = int(timeList[i])
+            statFile.close()
+            return timeList
 
         def cpu_delta_time(interval):
             """
