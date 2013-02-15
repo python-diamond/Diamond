@@ -5,11 +5,12 @@ A Diamond collector that collects memory usage of each process defined in it's
 config file by matching them with their executable filepath or the process name.
 This collector can also be used to collect memory usage for the Diamond process.
 
-Example config file ProcessMemoryCollector.conf
+Example config file ProcessResourcesCollector.conf
 
 ```
 enabled=True
 unit=kB
+cpu_interval=0.1
 [process]
 [[postgres]]
 exe=^\/usr\/lib\/postgresql\/+d.+d\/bin\/postgres$
@@ -20,6 +21,18 @@ selfmon=True
 ```
 
 exe and name are both lists of comma-separated regexps.
+
+cpu_interval is the interval in seconds used to calculate cpu usage percentage.
+From psutil's docs:
+
+'''get_cpu_percent(interval=0.1)'''
+Return a float representing the process CPU utilization as a percentage.
+* When interval is > 0.0 compares process times to system CPU times elapsed
+    before and after the interval (blocking).
+* When interval is 0.0 compares process times to system CPU times
+    elapsed since last call, returning immediately. In this case is recommended
+    for accuracy that this function be called with at least 0.1 seconds between
+    calls.
 """
 
 import os
@@ -62,15 +75,23 @@ def process_filter(proc, cfg):
     return False
 
 
-class ProcessMemoryCollector(diamond.collector.Collector):
+class ProcessResourcesCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
-        config_help = super(ProcessMemoryCollector,
+        config_help = super(ProcessResourcesCollector,
                             self).get_default_config_help()
         config_help.update({
             'unit': 'The unit in which memory data is collected.',
             'process': ("A subcategory of settings inside of which each "
-                        "collected process has it's configuration")
+                        "collected process has it's configuration"),
+            'cpu_interval': (
+                """The time interval used to calculate cpu percentage
+* When interval is > 0.0 compares process times to system CPU times elapsed
+before and after the interval (blocking).
+* When interval is 0.0 compares process times to system CPU times
+elapsed since last call, returning immediately. In this case is recommended
+for accuracy that this function be called with at least 0.1 seconds between
+calls."""),
         })
         return config_help
 
@@ -80,11 +101,12 @@ class ProcessMemoryCollector(diamond.collector.Collector):
             path: 'memory.process'
             unit: 'B'
         """
-        config = super(ProcessMemoryCollector, self).get_default_config()
+        config = super(ProcessResourcesCollector, self).get_default_config()
         config.update({
             'path': 'memory.process',
             'unit': 'B',
             'process': '',
+            'cpu_interval': 0.1
         })
         return config
 
@@ -117,14 +139,32 @@ class ProcessMemoryCollector(diamond.collector.Collector):
         Populates self.processes[processname]['procs'] with the corresponding
         list of psutil.Process instances
         """
-
+        class Dummy(object):
+            def __init__(self, **kwargs):
+                for name, val in kwargs.items():
+                    setattr(self, name, val)
+        # requires setup_config to be run before this
+        interval = float(self.config['cpu_interval'])
         for proc in psutil.process_iter():
-            # filter and divide the system processes amongst the different
-            #  process groups defined in the config file
-            for procname, cfg in self.processes.items():
-                if process_filter(proc, cfg):
-                    cfg['procs'].append(proc)
-                    break
+            # get process data
+            loaded = None
+            try:
+                proc_dummy = Dummy(
+                    rss = proc.get_memory_info().rss,
+                    vms = proc.get_memory_info().vms,
+                    cpu_percent = proc.get_cpu_percent(interval=interval)
+                )
+                loaded = True
+            except psutil.NoSuchProcess:
+                loaded = False
+
+            if loaded:
+                # filter and divide the system processes amongst the different
+                #  process groups defined in the config file
+                for procname, cfg in self.processes.items():
+                    if process_filter(proc, cfg):
+                        cfg['procs'].append(proc_dummy)
+                        break
 
     def collect(self):
         """
@@ -134,18 +174,25 @@ class ProcessMemoryCollector(diamond.collector.Collector):
         self.setup_config()
         self.filter_processes()
         unit = self.config['unit']
+        interval = float(self.config['cpu_interval'])
         for process, cfg in self.processes.items():
             # finally publish the results for each process group
             metric_name = "%s.rss" % process
             metric_value = diamond.convertor.binary.convert(
-                sum(p.get_memory_info().rss for p in cfg['procs']),
+                sum(p.rss for p in cfg['procs']),
                 oldUnit='byte', newUnit=unit)
             # Publish Metric
             self.publish(metric_name, metric_value)
 
             metric_name = "%s.vms" % process
             metric_value = diamond.convertor.binary.convert(
-                sum(p.get_memory_info().vms for p in cfg['procs']),
+                sum(p.vms for p in cfg['procs']),
                 oldUnit='byte', newUnit=unit)
+            # Publish Metric
+            self.publish(metric_name, metric_value)
+
+            # CPU percent
+            metric_name = "%s.cpu_percent" % process
+            metric_value = sum(p.cpu_percent for p in cfg['procs'])
             # Publish Metric
             self.publish(metric_name, metric_value)
