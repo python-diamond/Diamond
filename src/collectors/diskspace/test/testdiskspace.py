@@ -31,6 +31,10 @@ class TestDiskSpaceCollector(CollectorTestCase):
         config = get_collector_config('DiskSpaceCollector', {
             'interval': 10,
             'byte_unit': ['gigabyte'],
+            'exclude_filters': [
+                '^/export/home',
+                '^/tmpfs',
+            ]
         })
 
         self.collector = DiskSpaceCollector(config, None)

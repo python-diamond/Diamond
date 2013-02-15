@@ -69,7 +69,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             # exclude everything that begins /boot or /mnt
             #       exclude_filters = m,
             # exclude everything that includes the letter "m"
-            'exclude_filters': '^/export/home',
+            'exclude_filters': ['^/export/home'],
 
             # We don't use any derivative data to calculate this value
             # Thus we can use a threaded model
@@ -150,7 +150,11 @@ class DiskSpaceCollector(diamond.collector.Collector):
         return result
 
     def collect(self):
-        exclude_reg = re.compile('|'.join(self.config['exclude_filters']))
+        exclude_filters = self.config['exclude_filters']
+        if isinstance(exclude_filters, basestring):
+            exclude_filters = [exclude_filters]
+
+        exclude_reg = re.compile('|'.join(exclude_filters))
 
         filesystems = []
         for filesystem in self.config['filesystems'].split(','):
