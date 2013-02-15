@@ -13,23 +13,23 @@ operations more fun and efficient.
 
 Enable this handler
 
- * handers = diamond.handler.libratohandler.LibratoHandler
+ * handlers = diamond.handler.libratohandler.LibratoHandler,
 
  * user = LIBRATO_USERNAME
  * apikey = LIBRATO_API_KEY
-  
+
  * queue_max_size = [optional | 300] max measurements to queue before submitting
- * queue_max_interval [optional | 60] @max seconds to wait before submitting 
+ * queue_max_interval [optional | 60] @max seconds to wait before submitting
      For best behavior, be sure your highest collector poll interval is lower
-     than or equal to the queue_max_interval setting. 
- 
- * include_filters = [optional | '^.*'] A list of regex patterns.  
+     than or equal to the queue_max_interval setting.
+
+ * include_filters = [optional | '^.*'] A list of regex patterns.
      Only measurements whose path matches a filter will be submitted.
      Useful for limiting usage to *only* desired measurements, e.g.
        include_filters = "^diskspace\..*\.byte_avail$", "^loadavg\.01"
        include_filters = "^sockets\.",
                                      ^ note trailing comma to indicate a list
-     
+
 """
 
 from Handler import Handler
@@ -37,6 +37,7 @@ import logging
 import librato
 import time
 import re
+
 
 class LibratoHandler(Handler):
 
@@ -51,13 +52,17 @@ class LibratoHandler(Handler):
         api = librato.connect(self.config['user'],
                               self.config['apikey'])
         self.queue = api.new_queue()
-        self.queue_max_size = int(self.config.get('queue_max_size',300))
-        self.queue_max_interval = int(self.config.get('queue_max_interval',60))
-        self.queue_max_timestamp = int(time.time() + self.queue_max_interval)  
+        self.queue_max_size = int(self.config.get('queue_max_size', 300))
+        self.queue_max_interval = int(self.config.get('queue_max_interval', 60))
+        self.queue_max_timestamp = int(time.time() + self.queue_max_interval)
         self.current_n_measurements = 0
-        
-        self.include_reg = re.compile(r'(?:%s)' % '|'.join(
-          self.config.get('include_filters',['^.*'])))
+
+        # If a user leaves off the ending comma, cast to a array for them
+        include_filters = self.config.get('include_filters', ['^.*'])
+        if isinstance(include_filters, basestring):
+            include_filters = [include_filters]
+
+        self.include_reg = re.compile(r'(?:%s)' % '|'.join(include_filters))
 
     def process(self, metric):
         """
@@ -66,7 +71,7 @@ class LibratoHandler(Handler):
         path = metric.getCollectorPath()
         path += '.'
         path += metric.getMetricPath()
-        
+
         if self.include_reg.match(path):
             if metric.metric_type == 'GAUGE':
                 m_type = 'gauge'
@@ -81,7 +86,7 @@ class LibratoHandler(Handler):
         else:
             self.log.debug("LibratoHandler: Skip %s, no include_filters match",
                             path)
-   
+
         if (self.current_n_measurements >= self.queue_max_size or
             time.time() >= self.queue_max_timestamp):
             self.log.debug("LibratoHandler: Sending batch size: %d",
