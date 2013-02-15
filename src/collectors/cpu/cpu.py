@@ -89,7 +89,7 @@ class CPUCollector(diamond.collector.Collector):
             if self.config['simple'] == 'True':
                 dt = cpu_delta_time(self.INTERVAL)
                 cpuPct = 100 - (dt[len(dt) - 1] * 100.00 / sum(dt))
-                self.publish('percent', str('%.4f' %cpuPct))
+                self.publish('percent', str('%.4f' % cpuPct))
                 return True
 
             results = {}

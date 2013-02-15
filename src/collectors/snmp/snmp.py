@@ -14,14 +14,18 @@ import socket
 
 import warnings
 try:
-    #pysnmp packages on debian 6.0 use sha and md5 which are deprecated packages
-    #there is nothing to be done about it until pysnmp 
-    #updates to use new hashlib module -- ignoring warning for now
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        import pysnmp.entity.rfc3413.oneliner.cmdgen as cmdgen
-        import pysnmp.debug
-        pysnmp  # workaround for pyflakes issue #13
+    # pysnmp packages on debian 6.0 use sha and md5 which are deprecated
+    # packages. there is nothing to be done about it until pysnmp
+    # updates to use new hashlib module -- ignoring warning for now
+    old_showwarning = warnings.showwarning
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+    import pysnmp.entity.rfc3413.oneliner.cmdgen as cmdgen
+    import pysnmp.debug
+    pysnmp  # workaround for pyflakes issue #13
+
+    warnings.showwarning = old_showwarning
+
 except ImportError:
     pysnmp = None
 
