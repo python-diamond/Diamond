@@ -150,9 +150,9 @@ calls."""),
             loaded = None
             try:
                 proc_dummy = ProcessResources(
-                    rss = proc.get_memory_info().rss,
-                    vms = proc.get_memory_info().vms,
-                    cpu_percent = proc.get_cpu_percent(interval=interval)
+                    rss=proc.get_memory_info().rss,
+                    vms=proc.get_memory_info().vms,
+                    cpu_percent=proc.get_cpu_percent(interval=interval)
                 )
                 loaded = True
             except psutil.NoSuchProcess:

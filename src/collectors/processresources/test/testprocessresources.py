@@ -169,7 +169,7 @@ class TestProcessResourcesCollector(CollectorTestCase):
         self.assertPublished(publish_mock, 'barexe.rss', 10)
         self.assertPublished(publish_mock, 'diamond-selfmon.rss', 1234)
         self.assertPublished(publish_mock, 'diamond-selfmon.vms', 90210)
-        self.assertPublished(publish_mock, 'bar.cpu_percent', 7*2)
+        self.assertPublished(publish_mock, 'bar.cpu_percent', 7 * 2)
         self.assertPublished(publish_mock, 'barexe.cpu_percent', 7)
 
 ################################################################################
