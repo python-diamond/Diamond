@@ -150,7 +150,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
         return result
 
     def collect(self):
-        exclude_reg = re.compile(self.config['exclude_filters'])
+        exclude_reg = re.compile('|'.join(self.config['exclude_filters']))
 
         filesystems = []
         for filesystem in self.config['filesystems'].split(','):
