@@ -1,5 +1,8 @@
 This file is a log of any potentially user affecting changes to Diamond.
 
+2013-02-14 master 87abc21bbd75dc7b0eeb582e688cf5eadb375347
+Collector processmemory has been renamed processresources
+
 2013-01-21 master 89c1dfff17df5faf621dd942f00056abe7f5d547
 We now default to not allowing negative values returned from derivative.
 Overridable with allow_negative=True
