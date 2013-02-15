@@ -10,7 +10,7 @@ from test import run_only
 from mock import patch
 
 from diamond.collector import Collector
-from processmemory import ProcessMemoryCollector
+from processresources import ProcessResourcesCollector
 
 ################################################################################
 
@@ -25,7 +25,7 @@ def run_only_if_psutil_is_available(func):
     return run_only(func, pred)
 
 
-class TestProcessMemoryCollector(CollectorTestCase):
+class TestProcessResourcesCollector(CollectorTestCase):
     TEST_CONFIG = {
         'interval': 10,
         'process': {
@@ -50,13 +50,13 @@ class TestProcessMemoryCollector(CollectorTestCase):
     SELFMON_PID = 10001  # used for selfmonitoring
 
     def setUp(self):
-        config = get_collector_config('ProcessMemoryCollector',
+        config = get_collector_config('ProcessResourcesCollector',
                                       self.TEST_CONFIG)
 
-        self.collector = ProcessMemoryCollector(config, None)
+        self.collector = ProcessResourcesCollector(config, None)
 
     def test_import(self):
-        self.assertTrue(ProcessMemoryCollector)
+        self.assertTrue(ProcessResourcesCollector)
 
     @run_only_if_psutil_is_available
     @patch.object(os, 'getpid')
@@ -140,6 +140,9 @@ class TestProcessMemoryCollector(CollectorTestCase):
                         self.vms = vms
                 return MemInfo(self.rss, self.vms)
 
+            def get_cpu_percent(self, interval=0.1):
+                return 7
+
         process_iter_mock = (ProcessMock(
             pid=x['pid'],
             name=x['name'],
@@ -166,6 +169,8 @@ class TestProcessMemoryCollector(CollectorTestCase):
         self.assertPublished(publish_mock, 'barexe.rss', 10)
         self.assertPublished(publish_mock, 'diamond-selfmon.rss', 1234)
         self.assertPublished(publish_mock, 'diamond-selfmon.vms', 90210)
+        self.assertPublished(publish_mock, 'bar.cpu_percent', 7*2)
+        self.assertPublished(publish_mock, 'barexe.cpu_percent', 7)
 
 ################################################################################
 if __name__ == "__main__":
