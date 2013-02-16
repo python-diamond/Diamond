@@ -17,6 +17,22 @@ import string
 
 class IPVSCollector(diamond.collector.Collector):
 
+    def __init__(self, config, handlers):
+        super(IPVSCollector, self).__init__(config, handlers)
+
+        # Verify the --exact flag works
+        self.command = [self.config['bin'], '--list', '--stats', '--numeric',
+                        '--exact']
+
+        if self.config['use_sudo']:
+            self.command.insert(0, self.config['sudo_cmd'])
+
+        p = subprocess.Popen(self.command, stdout=subprocess.PIPE)
+        p.wait()
+
+        if p.returncode == 255:
+            self.command = filter(lambda a: a != '--exact', x)
+
     def get_default_config_help(self):
         config_help = super(IPVSCollector, self).get_default_config_help()
         config_help.update({
@@ -40,18 +56,16 @@ class IPVSCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        if (not os.access(self.config['bin'], os.X_OK)
-            or (self.config['use_sudo']
-                and not os.access(self.config['sudo_cmd'], os.X_OK))):
-            return
+        if not os.access(self.config['bin'], os.X_OK):
+            self.log.error("%s is not executable", self.config['bin'])
+            return False
 
-        command = [self.config['bin'], '--list',
-                   '--stats', '--numeric']
+        if (self.config['use_sudo']
+            and not os.access(self.config['sudo_cmd'], os.X_OK)):
+            self.log.error("%s is not executable", self.config['sudo_cmd'])
+            return False
 
-        if self.config['use_sudo']:
-            command.insert(0, self.config['sudo_cmd'])
-
-        p = subprocess.Popen(command,
+        p = subprocess.Popen(self.command,
                              stdout=subprocess.PIPE).communicate()[0][:-1]
 
         columns = {
@@ -82,13 +96,14 @@ class IPVSCollector(diamond.collector.Collector):
                 # metric_value = int(row[column])
                 value = row[column]
                 if (value.endswith('K')):
-                        metric_value = int(value[0:len(value)-1]) * 1024
+                        metric_value = int(value[0:len(value) - 1]) * 1024
                 elif (value.endswith('M')):
-                        metric_value = int(value[0:len(value)-1]) * 1024 * 1024
+                        metric_value = (int(value[0:len(value) - 1]) * 1024
+                                        * 1024)
                 elif (value.endswith('G')):
-                        metric_value = int(value[0:len(value)-1]) * 1024.0 * 1024.0 * 1024.0
+                        metric_value = (int(value[0:len(value) - 1]) * 1024.0
+                                        * 1024.0 * 1024.0)
                 else:
                         metric_value = float(value)
-
 
                 self.publish(metric_name, metric_value)
