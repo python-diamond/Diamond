@@ -31,7 +31,7 @@ class IPVSCollector(diamond.collector.Collector):
         p.wait()
 
         if p.returncode == 255:
-            self.command = filter(lambda a: a != '--exact', x)
+            self.command = filter(lambda a: a != '--exact', self.command)
 
     def get_default_config_help(self):
         config_help = super(IPVSCollector, self).get_default_config_help()
