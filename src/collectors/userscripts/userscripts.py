@@ -25,7 +25,6 @@ import diamond.collector
 import diamond.convertor
 import os
 import sys
-from numpy.ma.core import absolute
 # Get a subprocess capable of check_output
 if sys.version_info < (2, 7):
     try:
