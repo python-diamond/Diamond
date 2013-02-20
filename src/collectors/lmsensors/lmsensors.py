@@ -55,7 +55,8 @@ class LMSensorsCollector(diamond.collector.Collector):
         try:
             for chip in sensors.iter_detected_chips():
                 for feature in chip:
-                    self.publish(".".join([str(chip), feature.label.replace(' ', '-')]),
+                    self.publish(".".join([str(chip),
+                                           feature.label.replace(' ', '-')]),
                                  feature.get_value())
         finally:
             sensors.cleanup()

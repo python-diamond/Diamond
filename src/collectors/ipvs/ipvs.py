@@ -15,6 +15,7 @@ import os
 import string
 from diamond.collector import str_to_bool
 
+
 class IPVSCollector(diamond.collector.Collector):
 
     def __init__(self, config, handlers):
