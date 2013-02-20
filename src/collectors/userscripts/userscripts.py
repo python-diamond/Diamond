@@ -25,6 +25,7 @@ import diamond.collector
 import diamond.convertor
 import os
 import sys
+from numpy.ma.core import absolute
 # Get a subprocess capable of check_output
 if sys.version_info < (2, 7):
     try:
@@ -75,14 +76,23 @@ class UserScriptsCollector(diamond.collector.Collector):
             out = None
             self.log.debug("Executing %s" % absolutescriptpath)
             try:
-                out = subprocess.check_output([absolutescriptpath])
+                proc = subprocess.Popen([absolutescriptpath],
+                                        stdout=subprocess.PIPE,
+                                        stderr=subprocess.PIPE)
+                (out, err) = proc.communicate()
             except subprocess.CalledProcessError, e:
-                self.log.error("%s return exit value %s; skipping" %
-                        (absolutescriptpath, e.returncode))
+                self.log.error("%s error launching: %s; skipping" %
+                        (absolutescriptpath, e))
                 continue
+            if proc.returncode:
+                self.log.error("%s return exit value %s; skipping" %
+                               (absolutescriptpath, proc.returncode))
             if not out:
                 self.log.info("%s return no output" % absolutescriptpath)
                 continue
+            if err:
+                self.log.error("%s return error output: %s" %
+                               (absolutescriptpath, err))
             # Use filter to remove empty lines of output
             for line in filter(None, out.split('\n')):
                 name, value = line.split()
