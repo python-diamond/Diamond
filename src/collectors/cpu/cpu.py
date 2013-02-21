@@ -52,6 +52,7 @@ class CPUCollector(diamond.collector.Collector):
         config.update({
             'enabled':  'True',
             'path':     'cpu',
+            'percore':  'True',
             'xenfix':   None,
             'simple':   'False',
         })
@@ -107,6 +108,8 @@ class CPUCollector(diamond.collector.Collector):
 
                 if cpu == 'cpu':
                     cpu = 'total'
+                elif self.config['percore'] == 'False':
+                    continue
 
                 results[cpu] = {}
 
