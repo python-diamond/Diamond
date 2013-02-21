@@ -72,8 +72,9 @@ class MemcachedCollector(diamond.collector.Collector):
 
     def get_stats(self, host, port):
         # stuff that's always ignored, aren't 'stats'
-        ignored = ('libevent', 'pid', 'pointer_size', 'time', 'version',
+        ignored = ('libevent', 'pointer_size', 'time', 'version',
                    'repcached_version', 'replication')
+        pid = None
 
         stats = {}
         data = self.get_raw_stats(host, int(port))
@@ -83,7 +84,23 @@ class MemcachedCollector(diamond.collector.Collector):
             pieces = line.split(' ')
             if pieces[0] != 'STAT' or pieces[1] in ignored:
                 continue
+            elif pieces[1] == 'pid':
+                pid = pieces[2]
+                continue
             stats[pieces[1]] = pieces[2]
+
+        # get max connection limit
+        self.log.debug('pid %s', pid)
+        try:
+            cmdline = "/proc/%s/cmdline" % pid
+            f = open(cmdline, 'r')
+            m = re.search("-c\x00(\d+)", f.readline())
+            if m is not None:
+                self.log.debug('limit connections %s', m.group(1))
+                stats['limit_maxconn'] = m.group(1)
+            f.close()
+        except:
+            self.log.debug("Cannot parse command line options for memcached")
 
         return stats
 
