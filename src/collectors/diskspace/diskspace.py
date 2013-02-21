@@ -127,7 +127,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                         major = os.major(stat.st_dev)
                         minor = os.minor(stat.st_dev)
                     except OSError:
-                        self.log.debug("Path %s is not mounted - skipping.") % mount_point
+                        self.log.debug("Path %s is not mounted - skipping.") % str(mount_point)
                         continue
 
                     if (major, minor) in result:
