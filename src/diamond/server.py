@@ -166,7 +166,8 @@ class Server(object):
             elif (os.path.isfile(fpath)
                   and len(f) > 3
                   and f[-3:] == '.py'
-                  and f[0:4] != 'test'):
+                  and f[0:4] != 'test'
+                  and f[0] != '.'):
 
                 # Check filter
                 if filter and os.path.join(path, f) != filter:
