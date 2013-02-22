@@ -6,6 +6,8 @@ Collects the number of users logged in and shells per user
 #### Dependencies
 
  * [pyutmp](http://software.clapper.org/pyutmp/)
+or
+ * [utmp] (python-utmp on Debian and derivatives)
 
 """
 
@@ -16,6 +18,12 @@ try:
     UtmpFile  # workaround for pyflakes issue #13
 except ImportError:
     UtmpFile = None
+try:
+    from utmp import UtmpRecord
+    import UTMPCONST
+    UtmpRecord  # workaround for pyflakes issue #13
+except ImportError:
+    UtmpRecord = None
 
 
 class UsersCollector(diamond.collector.Collector):
@@ -42,17 +50,24 @@ class UsersCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        if UtmpFile is None:
-            self.log.error('Unable to import either pyutmp')
+        if UtmpFile is None and UtmpRecord is None:
+            self.log.error('Unable to import either pyutmp or python-utmp')
             return False
 
         metrics = {}
         metrics['total'] = 0
 
-        for utmp in UtmpFile(path=self.config['utmp']):
-            if utmp.ut_user_process:
-                metrics[utmp.ut_user] = metrics.get(utmp.ut_user, 0) + 1
-                metrics['total'] = metrics['total'] + 1
+        if UtmpFile:
+            for utmp in UtmpFile(path=self.config['utmp']):
+                if utmp.ut_user_process:
+                    metrics[utmp.ut_user] = metrics.get(utmp.ut_user, 0) + 1
+                    metrics['total'] = metrics['total'] + 1
+
+        if UtmpRecord:
+            for utmp in UtmpRecord(fname=self.config['utmp']):
+                if utmp.ut_type == UTMPCONST.USER_PROCESS:
+                    metrics[utmp.ut_user] = metrics.get(utmp.ut_user, 0) + 1
+                    metrics['total'] = metrics['total'] + 1
 
         for metric_name in metrics.keys():
             self.publish(metric_name, metrics[metric_name])
