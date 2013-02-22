@@ -104,6 +104,16 @@ class DiskSpaceCollector(diamond.collector.Collector):
         Returns:
           (major, minor) -> FileSystem(device, mount_point)
         """
+        exclude_filters = self.config['exclude_filters']
+        if isinstance(exclude_filters, basestring):
+            exclude_filters = [exclude_filters]
+
+        exclude_reg = re.compile('|'.join(exclude_filters))
+
+        filesystems = []
+        for filesystem in self.config['filesystems'].split(','):
+            filesystems.append(filesystem.strip())
+
         result = {}
         if os.access('/proc/mounts', os.R_OK):
             file = open('/proc/mounts')
@@ -114,6 +124,16 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     mount_point = mount[1]
                     fs_type = mount[2]
                 except (IndexError, ValueError):
+                    continue
+
+                # Skip the filesystem if it is not in the list of valid filesystems
+                if fs_type not in filesystems:
+                    self.log.debug("Ignoring %s since it is of type %s which is not in the list of filesystems." % (mount_point, fs_type))
+                    continue
+
+                # Process the filters
+                if exclude_reg.match(mount_point):
+                    self.log.debug("Ignoring %s since it is in the exclude_filter list." % mount_point)
                     continue
 
                 if (mount_point.startswith('/dev')
@@ -154,26 +174,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
         return result
 
     def collect(self):
-        exclude_filters = self.config['exclude_filters']
-        if isinstance(exclude_filters, basestring):
-            exclude_filters = [exclude_filters]
-
-        exclude_reg = re.compile('|'.join(exclude_filters))
-
-        filesystems = []
-        for filesystem in self.config['filesystems'].split(','):
-            filesystems.append(filesystem.strip())
-
         labels = self.get_disk_labels()
         for key, info in self.get_file_systems().iteritems():
-        # Skip the filesystem if it is not in the list of valid filesystems
-            if info['fs_type'] not in filesystems:
-                continue
-
-        # Process the filters
-            if exclude_reg.match(info['mount_point']):
-                continue
-
             if info['device'] in labels:
                 name = labels[info['device']]
             else:
