@@ -27,6 +27,9 @@ class IPVSCollector(diamond.collector.Collector):
 
         if str_to_bool(self.config['use_sudo']):
             self.command.insert(0, self.config['sudo_cmd'])
+            # The -n (non-interactive) option prevents sudo from
+            # prompting the user for a password.
+            self.command.insert(1, '-n')
 
         p = subprocess.Popen(self.command, stdout=subprocess.PIPE)
         p.wait()
