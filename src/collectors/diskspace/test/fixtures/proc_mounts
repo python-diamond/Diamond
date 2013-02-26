@@ -10,3 +10,4 @@ none /sys/kernel/security securityfs rw,relatime 0 0
 none /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0
 none /var/run tmpfs rw,nosuid,relatime,mode=755 0 0
 none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
+/etc/auto.misc /misc autofs rw,relatime,fd=6,pgrp=1171,timeout=300,minproto=5,maxproto=5,indirect 0 0
