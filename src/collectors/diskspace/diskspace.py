@@ -80,6 +80,20 @@ class DiskSpaceCollector(diamond.collector.Collector):
         })
         return config
 
+    def __init__(self, config, handlers):
+        super(DiskSpaceCollector, self).__init__(config, handlers)
+
+        # Precompile things
+        self.exclude_filters = self.config['exclude_filters']
+        if isinstance(self.exclude_filters, basestring):
+            self.exclude_filters = [self.exclude_filters]
+
+        self.exclude_reg = re.compile('|'.join(self.exclude_filters))
+
+        self.filesystems = []
+        for filesystem in self.config['filesystems'].split(','):
+            self.filesystems.append(filesystem.strip())
+
     def get_disk_labels(self):
         """
         Creates a mapping of device nodes to filesystem labels
@@ -104,16 +118,6 @@ class DiskSpaceCollector(diamond.collector.Collector):
         Returns:
           (major, minor) -> FileSystem(device, mount_point)
         """
-        exclude_filters = self.config['exclude_filters']
-        if isinstance(exclude_filters, basestring):
-            exclude_filters = [exclude_filters]
-
-        exclude_reg = re.compile('|'.join(exclude_filters))
-
-        filesystems = []
-        for filesystem in self.config['filesystems'].split(','):
-            filesystems.append(filesystem.strip())
-
         result = {}
         if os.access('/proc/mounts', os.R_OK):
             file = open('/proc/mounts')
@@ -126,14 +130,18 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 except (IndexError, ValueError):
                     continue
 
-                # Skip the filesystem if it is not in the list of valid filesystems
-                if fs_type not in filesystems:
-                    self.log.debug("Ignoring %s since it is of type %s which is not in the list of filesystems." % (mount_point, fs_type))
+                # Skip the filesystem if it is not in the list of valid
+                # filesystems
+                if fs_type not in self.filesystems:
+                    self.log.debug("Ignoring %s since it is of type %s which "
+                                   + " is not in the list of filesystems.",
+                                   mount_point, fs_type)
                     continue
 
                 # Process the filters
-                if exclude_reg.match(mount_point):
-                    self.log.debug("Ignoring %s since it is in the exclude_filter list." % mount_point)
+                if self.exclude_reg.match(mount_point):
+                    self.log.debug("Ignoring %s since it is in the "
+                                   + "exclude_filter list.", mount_point)
                     continue
 
                 if (mount_point.startswith('/dev')
@@ -147,7 +155,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
                         major = os.major(stat.st_dev)
                         minor = os.minor(stat.st_dev)
                     except OSError:
-                        self.log.debug("Path %s is not mounted - skipping." % mount_point)
+                        self.log.debug("Path %s is not mounted - skipping.",
+                                       mount_point)
                         continue
 
                     if (major, minor) in result:
