@@ -1,0 +1,8 @@
+pll offset:           -5.427e-06 s
+pll frequency:        -14.240 ppm
+maximum error:        0.039793 s
+estimated error:      5.1e-05 s
+status:               6001  pll nano mode=fll
+pll time constant:    10
+precision:            1e-09 s
+frequency tolerance:  500 ppm
