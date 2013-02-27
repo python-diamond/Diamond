@@ -1,0 +1,22 @@
+{
+    "local": {},
+    "clients": {
+        "127.0.0.1": 1
+    },
+    "recv": {
+        "status": {},
+        "resp_codes": {}
+    },
+    "send": {
+        "status": {
+            "sent": 0
+        },
+        "resp_codes": {
+            "2.0.0": 0
+        }
+    },
+    "in": {
+        "status": {},
+        "resp_codes": {}
+    }
+}
