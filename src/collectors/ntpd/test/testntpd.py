@@ -31,7 +31,7 @@ class TestNtpdCollector(CollectorTestCase):
         collector_mock = patch.multiple(NtpdCollector,
                                         get_ntpq_output=ntpq_data,
                                         get_ntpdc_output=ntpdc_data)
-            
+
         collector_mock.start()
         self.collector.collect()
         collector_mock.stop()

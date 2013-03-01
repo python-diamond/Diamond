@@ -4,19 +4,21 @@
 SNMPCollector for Fusion IO DRives Metrics. ( Subclass of snmpCollector )
 Based heavily on the NetscalerSNMPCollector.
 
-This collecter currently assumes a single IODrive I or IODrive II and not the DUO, Octals, or multiple
-IODrive I or IIs. It needs to be enhanced to account for multiple fio devices. ( Donations being accepted ) 
+This collecter currently assumes a single IODrive I or IODrive II and not the
+DUO, Octals, or multiple IODrive I or IIs. It needs to be enhanced to account
+for multiple fio devices. ( Donations being accepted )
 
-The metric path is configured to be under servers.<host>.<device> where host and device is defined in the 
-IODriveSNMPCollector.conf.  So given the example conf below the metricpath would be  
-"servers.my_host.iodrive.<metric> name.  
+The metric path is configured to be under servers.<host>.<device> where host
+and device is defined in the IODriveSNMPCollector.conf.  So given the example
+conf below the metricpath would be
+"servers.my_host.iodrive.<metric> name.
 
 # EXAMPLE CONF file
 
 enabled = True
 [devices]
 [[iodrive]]
-host = my_host 
+host = my_host
 port = 161
 community = mycommunitystring
 
@@ -43,27 +45,24 @@ class IODriveSNMPCollector(parent_SNMPCollector):
     SNMPCollector for a single Fusion IO Drive
     """
 
-
     IODRIVE_STATS = {
 
-        "InternalTemp" : "1.3.6.1.4.1.30018.1.2.1.1.1.24.5",
+        "InternalTemp": "1.3.6.1.4.1.30018.1.2.1.1.1.24.5",
 
-        "MilliVolts"   : "1.3.6.1.4.1.30018.1.2.1.1.1.32.5",
-        "MilliWatts"   : "1.3.6.1.4.1.30018.1.2.1.1.1.35.5",
-        "MilliAmps"    : "1.3.6.1.4.1.30018.1.2.1.1.1.37.5",
+        "MilliVolts": "1.3.6.1.4.1.30018.1.2.1.1.1.32.5",
+        "MilliWatts": "1.3.6.1.4.1.30018.1.2.1.1.1.35.5",
+        "MilliAmps": "1.3.6.1.4.1.30018.1.2.1.1.1.37.5",
     }
-
 
     IODRIVE_BYTE_STATS = {
 
-        "BytesReadU"    : "1.3.6.1.4.1.30018.1.2.2.1.1.12.5",
-        "BytesReadL"    : "1.3.6.1.4.1.30018.1.2.2.1.1.13.5",
+        "BytesReadU": "1.3.6.1.4.1.30018.1.2.2.1.1.12.5",
+        "BytesReadL": "1.3.6.1.4.1.30018.1.2.2.1.1.13.5",
 
-        "BytesWrittenU" : "1.3.6.1.4.1.30018.1.2.2.1.1.14.5",
-        "BytesWrittenL" : "1.3.6.1.4.1.30018.1.2.2.1.1.15.5",
+        "BytesWrittenU": "1.3.6.1.4.1.30018.1.2.2.1.1.14.5",
+        "BytesWrittenL": "1.3.6.1.4.1.30018.1.2.2.1.1.15.5",
 
     }
-
 
     MAX_VALUE = 18446744073709551615
 
@@ -100,7 +99,8 @@ class IODriveSNMPCollector(parent_SNMPCollector):
     def collect_snmp(self, device, host, port, community):
         """
         Collect Fusion IO Drive SNMP stats from device
-        host and device are from the conf file. In the future device should be changed to be what IODRive device it being checked.
+        host and device are from the conf file. In the future device should be
+        changed to be what IODRive device it being checked.
         i.e. fioa, fiob.
         """
 
@@ -137,6 +137,3 @@ class IODriveSNMPCollector(parent_SNMPCollector):
 
             # Publish Metric
             self.publish_metric(metric)
-
-
-

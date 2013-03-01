@@ -67,13 +67,13 @@ class UnboundCollector(diamond.collector.Collector):
             elif intv < 1.0:
                 # Convert to ms and since we're using the upper limit
                 # divide by 2 for lower limit
-                intv_name = ''.join([str(int(intv/0.001024/2)), 'ms+'])
+                intv_name = ''.join([str(int(intv / 0.001024 / 2)), 'ms+'])
                 histogram[intv_name] = raw_histogram[intv]
             elif intv == 1.0:
                 histogram['512ms+'] = raw_histogram[intv]
             elif intv > 1.0 and intv <= 64.0:
                 # Convert upper limit into lower limit seconds
-                intv_name = ''.join([str(int(intv/2)), 's+'])
+                intv_name = ''.join([str(int(intv / 2)), 's+'])
                 histogram[intv_name] = raw_histogram[intv]
             else:
                 # Compress everything >64s into 1 data point
