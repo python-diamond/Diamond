@@ -6,13 +6,16 @@ Collect stats from the unbound resolver
 #### Dependencies
 
     * subprocess
-    * collections.defaultdict
+    * collections.defaultdict or kitchen
 
 """
 
 import subprocess
 
-from collections import defaultdict
+try:
+    from collections import defaultdict
+except ImportError:
+    from kitchen.pycompat25.collections import defaultdict
 
 import diamond.collector
 
