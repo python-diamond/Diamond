@@ -14,6 +14,7 @@ get realtime cumulative stats.
 """
 
 import socket
+import sys
 
 try:
     import json
@@ -23,7 +24,11 @@ except ImportError:
 
 import diamond.collector
 
-DOTS_TO_UNDERS = {ord(u'.'): u'_'}
+if sys.version_info < (2, 6):
+    from string import maketrans
+    DOTS_TO_UNDERS = maketrans('.', '_')
+else:
+    DOTS_TO_UNDERS = {ord(u'.'): u'_'}
 
 
 class PostfixCollector(diamond.collector.Collector):
