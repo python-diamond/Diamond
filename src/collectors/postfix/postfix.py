@@ -65,9 +65,9 @@ class PostfixCollector(diamond.collector.Collector):
         try:
             try:
                 s = socket.create_connection(address, timeout=1)
-    
+
                 s.sendall('stats\n')
-    
+
                 while 1:
                     data = s.recv(4096)
                     if not data:

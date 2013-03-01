@@ -28,7 +28,6 @@ import sys
 import os
 import time
 import struct
-import re
 
 # Fix Path for locating the SNMPCollector
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
