@@ -6,6 +6,7 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 from mock import Mock
+from mock import call
 from mock import patch
 
 from diamond.collector import Collector
@@ -118,6 +119,46 @@ class TestSmartCollector(CollectorTestCase):
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
+        self.assertPublishedMany(publish_mock, metrics)
+
+    @patch('os.access', Mock(return_value=True))
+    @patch.object(Collector, 'publish')
+    def test_should_work_with_real_data_debian_invalid_checksum_warning(self, publish_mock):
+        fixture_data = self.getFixture('debian_invalid_checksum_warning').getvalue()
+        patch_listdir = patch('os.listdir', Mock(return_value=['sda']))
+        patch_communicate = patch('subprocess.Popen.communicate',
+                                  Mock(return_value=(fixture_data, '')))
+
+        patch_listdir.start()
+        patch_communicate.start()
+        self.collector.collect()
+        patch_listdir.stop()
+        patch_communicate.stop()
+
+        metrics = {
+            'sda.Raw_Read_Error_Rate': 0,
+            'sda.Spin_Up_Time': 4225,
+            'sda.Start_Stop_Count': 13,
+            'sda.Reallocated_Sector_Ct': 0,
+            'sda.Seek_Error_Rate': 0,
+            'sda.Power_On_Hours': 88,
+            'sda.Spin_Retry_Count': 0,
+            'sda.Calibration_Retry_Count': 0,
+            'sda.Power_Cycle_Count': 13,
+            'sda.Power-Off_Retract_Count': 7,
+            'sda.Load_Cycle_Count': 5,
+            'sda.Temperature_Celsius': 35,
+            'sda.Reallocated_Event_Count': 0,
+            'sda.Current_Pending_Sector': 0,
+            'sda.Offline_Uncorrectable': 0,
+            'sda.UDMA_CRC_Error_Count': 0,
+            'sda.Multi_Zone_Error_Rate': 0,
+        }
+
+        header_call = call('sda.ATTRIBUTE_NAME', 'RAW_VALUE')
+        published_metric_for_header = header_call in publish_mock.mock_calls
+        assert not published_metric_for_header, "published metric for header row"
+
         self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
