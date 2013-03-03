@@ -161,6 +161,22 @@ class TestSmartCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, metrics)
 
+    def test_find_attr_start_line(self):
+        def get_fixture_lines(fixture):
+            return self.getFixture(fixture).getvalue().strip().splitlines()
+
+        def assert_attrs_start_at(expected, fixture):
+            lines = get_fixture_lines(fixture)
+            self.assertEqual(expected,
+                             self.collector.find_attr_start_line(lines))
+
+        lines = get_fixture_lines('osx_missing')
+        self.assertEqual(5, self.collector.find_attr_start_line(lines, 2, 4))
+
+        assert_attrs_start_at(7, 'osx_ssd')
+        assert_attrs_start_at(7, 'centos5.5_hdd')
+        assert_attrs_start_at(8, 'debian_invalid_checksum_warning')
+
 ################################################################################
 if __name__ == "__main__":
     unittest.main()
