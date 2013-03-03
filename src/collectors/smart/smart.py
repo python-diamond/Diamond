@@ -99,7 +99,7 @@ class SmartCollector(diamond.collector.Collector):
             if len(col) > 1 and col[1] == 'ATTRIBUTE_NAME':
                 return idx + min_line + 1
 
-        self.log.debug('ATTRIBUTE_NAME not found in second column of'
+        self.log.warn( 'ATTRIBUTE_NAME not found in second column of'
                        ' smartctl output between lines %d and %d.'
                        % (min_line, max_line))
 
