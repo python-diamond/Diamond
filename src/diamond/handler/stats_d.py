@@ -51,6 +51,9 @@ class StatsdHandler(Handler):
         # Initialize Options
         self.host = self.config['host']
         self.port = int(self.config['port'])
+        self.batch_size = int(self.config.get('batch', 1))
+        self.metrics = []
+        self.old_values = {}
 
         # Connect
         self._connect()
@@ -59,19 +62,40 @@ class StatsdHandler(Handler):
         """
         Process a metric by sending it to statsd
         """
-        # Just send the data as a string
-        self._send(metric)
+
+        self.metrics.append(metric)
+
+        if len(self.metrics) >= self.batch_size:
+            self._send(metric)
 
     def _send(self, metric):
         """
         Send data to statsd. Fire and forget.  Cross fingers and it'll arrive.
         """
-        # Split the path into a prefix and a name
-        # to work with the statsd module's view of the world.
-        # It will get re-joined by the python-statsd module.
-        (prefix, name) = metric.path.rsplit(".", 1)
-        logging.debug("Sending {0} {1}|g".format(name, metric.value))
-        statsd.Gauge(prefix, self.connection).send(name, metric.value)
+        for metric in self.metrics:
+
+            # Split the path into a prefix and a name
+            # to work with the statsd module's view of the world.
+            # It will get re-joined by the python-statsd module.
+            (prefix, name) = metric.path.rsplit(".", 1)
+            logging.debug("Sending %s %s|g", name, metric.value)
+
+            if metric.metric_type == 'GAUGE':
+                statsd.Gauge(prefix, self.connection).send(name, metric.value)
+            else:
+                # To send a counter, we need to just send the delta
+                # but without any time delta changes
+                value = metric.raw_value
+                if metric.path in self.old_values:
+                    value = value - self.old_values[metric.path]
+                self.old_values[metric.path] = metric.raw_value
+                statsd.Counter(prefix, self.connection).increment(name, value)
+
+        self.metrics = []
+
+    def flush(self):
+        """Flush metrics in queue"""
+        self._send()
 
     def _connect(self):
         """
