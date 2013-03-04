@@ -16,6 +16,11 @@ MemcachedCollector.conf
     hosts = localhost:11211, app-1@localhost:11212, app-2@localhost:11213, etc
 ```
 
+TO use a unix socket, set a host string like this
+
+```
+    hosts = /path/to/blah.sock, app-1@/path/to/bleh.sock,
+```
 """
 
 import diamond.collector
@@ -59,8 +64,12 @@ class MemcachedCollector(diamond.collector.Collector):
         data = ''
         # connect
         try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((host, int(port)))
+            if port is None:
+                sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                sock.connect(host)
+            else:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.connect((host, int(port)))
             # request stats
             sock.send('stats\n')
             # something big enough to get whatever is sent back
@@ -77,7 +86,7 @@ class MemcachedCollector(diamond.collector.Collector):
         pid = None
 
         stats = {}
-        data = self.get_raw_stats(host, int(port))
+        data = self.get_raw_stats(host, port)
 
         # parse stats
         for line in data.splitlines():
@@ -112,10 +121,10 @@ class MemcachedCollector(diamond.collector.Collector):
             hosts = [hosts]
 
         for host in hosts:
-            matches = re.search('((.+)\@)?([^:]+):(\d+)', host)
+            matches = re.search('((.+)\@)?([^:]+)(:(\d+))?', host)
             alias = matches.group(2)
             hostname = matches.group(3)
-            port = matches.group(4)
+            port = matches.group(5)
 
             if alias is None:
                 alias = hostname
