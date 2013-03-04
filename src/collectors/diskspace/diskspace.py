@@ -224,6 +224,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     value=metric_value, oldUnit='byte', newUnit=unit)
                 self.publish_gauge(metric_name, metric_value, 2)
 
-            self.publish_gauge('%s.inodes_used' % name, inodes_total - inodes_free)
+            self.publish_gauge('%s.inodes_used' % name,
+                               inodes_total - inodes_free)
             self.publish_gauge('%s.inodes_free' % name, inodes_free)
             self.publish_gauge('%s.inodes_avail' % name, inodes_avail)

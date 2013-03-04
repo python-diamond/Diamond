@@ -123,8 +123,10 @@ class TestSmartCollector(CollectorTestCase):
 
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
-    def test_should_work_with_real_data_debian_invalid_checksum_warning(self, publish_mock):
-        fixture_data = self.getFixture('debian_invalid_checksum_warning').getvalue()
+    def test_should_work_with_real_data_debian_invalid_checksum_warning(self,
+                                                                publish_mock):
+        fixture_data = self.getFixture(
+            'debian_invalid_checksum_warning').getvalue()
         patch_listdir = patch('os.listdir', Mock(return_value=['sda']))
         patch_communicate = patch('subprocess.Popen.communicate',
                                   Mock(return_value=(fixture_data, '')))
@@ -156,8 +158,8 @@ class TestSmartCollector(CollectorTestCase):
         }
 
         header_call = call('sda.ATTRIBUTE_NAME', 'RAW_VALUE')
-        published_metric_for_header = header_call in publish_mock.mock_calls
-        assert not published_metric_for_header, "published metric for header row"
+        published_metric_header = header_call in publish_mock.mock_calls
+        assert not published_metric_header, "published metric for header row"
 
         self.assertPublishedMany(publish_mock, metrics)
 
