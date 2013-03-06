@@ -97,11 +97,11 @@ class PostgresqlCollector(diamond.collector.Collector):
                 database = database.replace("_", ".")
 
             for (metric, value) in ret[database].items():
-                    self.publish("%s.database.%s" % (
+                    self.publish("database.%s.%s" % (
                         database, metric), value)
 
         for (database, connection) in connections:
-            self.publish("%s.database.connections" % (
+            self.publish("database.%s.connections" % (
                 database), connection)
 
         self.cursor.close()
