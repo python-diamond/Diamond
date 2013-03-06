@@ -1,5 +1,8 @@
 This file is a log of any potentially user affecting changes to Diamond.
 
+2013-03-06 master 390f999274ed3bc9a31264377b48da432824333f
+Changes the layout of the postgresql collector metrics to be layed out correctly
+
 2013-02-14 master 87abc21bbd75dc7b0eeb582e688cf5eadb375347
 Collector processmemory has been renamed processresources
 
