@@ -29,17 +29,10 @@ class TestPostfixCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
+        first_resp = self.getFixture('postfix-stats.1.json').getvalue()
         patch_collector = patch.object(PostfixCollector,
-                                        'getJson',
-                                        Mock(return_value='{"local": {}, '
-                                             + ' "clients": {"127.0.0.1": 1},'
-                                             + ' "recv": {"status": {},'
-                                             + ' "resp_codes": {}},'
-                                             + ' "send": {"status":'
-                                             + ' {"sent": 0},'
-                                             + ' "resp_codes": {"2.0.0": 0}},'
-                                             + ' "in": {"status": {},'
-                                             + ' "resp_codes": {}}}'))
+                                        'get_json',
+                                        Mock(return_value=first_resp))
 
         patch_collector.start()
         self.collector.collect()
@@ -47,17 +40,10 @@ class TestPostfixCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
+        second_resp = self.getFixture('postfix-stats.2.json').getvalue()
         patch_collector = patch.object(PostfixCollector,
-                                       'getJson',
-                                       Mock(return_value='{"local": {}, '
-                                            + '"clients": {"127.0.0.1": 2}, '
-                                            + '"recv": {"status": {},'
-                                            + ' "resp_codes": {}}, '
-                                            + '"send": {"status":'
-                                            + ' {"sent": 4}, '
-                                            + '"resp_codes": {"2.0.0": 5}}, '
-                                            + '"in": {"status": {},'
-                                            + ' "resp_codes": {}}}'))
+                                       'get_json',
+                                       Mock(return_value=second_resp))
 
         patch_collector.start()
         self.collector.collect()

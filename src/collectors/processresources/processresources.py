@@ -174,7 +174,6 @@ calls."""),
         self.setup_config()
         self.filter_processes()
         unit = self.config['unit']
-        interval = float(self.config['cpu_interval'])
         for process, cfg in self.processes.items():
             # finally publish the results for each process group
             metric_name = "%s.rss" % process

@@ -300,7 +300,8 @@ class Collector(object):
         """
         raise NotImplementedError()
 
-    def publish(self, name, value, precision=0, metric_type='COUNTER'):
+    def publish(self, name, value, raw_value=None, precision=0,
+                metric_type='COUNTER'):
         """
         Publish a metric with the given name
         """
@@ -308,7 +309,8 @@ class Collector(object):
         path = self.get_metric_path(name)
 
         # Create Metric
-        metric = Metric(path, value, None, precision, host=self.get_hostname(),
+        metric = Metric(path, value, raw_value=raw_value, timestamp=None,
+                        precision=precision, host=self.get_hostname(),
                         metric_type=metric_type)
 
         # Publish Metric
@@ -328,11 +330,12 @@ class Collector(object):
 
     def publish_counter(self, name, value, precision=0, max_value=0,
                       time_delta=True, interval=None, allow_negative=False):
+        raw_value = value
         value = self.derivative(name, value, max_value=max_value,
                                 time_delta=time_delta, interval=interval,
                                 allow_negative=allow_negative)
-        return self.publish(name, value, precision=precision,
-                            metric_type='COUNTER')
+        return self.publish(name, value, raw_value=raw_value,
+                            precision=precision, metric_type='COUNTER')
 
     def derivative(self, name, new, max_value=0,
                    time_delta=True, interval=None,

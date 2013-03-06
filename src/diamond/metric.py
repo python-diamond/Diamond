@@ -9,8 +9,8 @@ class Metric(object):
 
     _METRIC_TYPES = ['COUNTER', 'GAUGE']
 
-    def __init__(self, path, value, timestamp=None, precision=0, host=None,
-                 metric_type='COUNTER'):
+    def __init__(self, path, value, raw_value=None, timestamp=None, precision=0,
+                 host=None, metric_type='COUNTER'):
         """
         Create new instance of the Metric class
 
@@ -52,6 +52,7 @@ class Metric(object):
 
         self.path = path
         self.value = value
+        self.raw_value = raw_value
         self.timestamp = timestamp
         self.precision = precision
         self.host = host

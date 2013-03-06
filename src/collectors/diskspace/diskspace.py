@@ -80,6 +80,20 @@ class DiskSpaceCollector(diamond.collector.Collector):
         })
         return config
 
+    def __init__(self, config, handlers):
+        super(DiskSpaceCollector, self).__init__(config, handlers)
+
+        # Precompile things
+        self.exclude_filters = self.config['exclude_filters']
+        if isinstance(self.exclude_filters, basestring):
+            self.exclude_filters = [self.exclude_filters]
+
+        self.exclude_reg = re.compile('|'.join(self.exclude_filters))
+
+        self.filesystems = []
+        for filesystem in self.config['filesystems'].split(','):
+            self.filesystems.append(filesystem.strip())
+
     def get_disk_labels(self):
         """
         Creates a mapping of device nodes to filesystem labels
@@ -116,6 +130,20 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 except (IndexError, ValueError):
                     continue
 
+                # Skip the filesystem if it is not in the list of valid
+                # filesystems
+                if fs_type not in self.filesystems:
+                    self.log.debug("Ignoring %s since it is of type %s which "
+                                   + " is not in the list of filesystems.",
+                                   mount_point, fs_type)
+                    continue
+
+                # Process the filters
+                if self.exclude_reg.match(mount_point):
+                    self.log.debug("Ignoring %s since it is in the "
+                                   + "exclude_filter list.", mount_point)
+                    continue
+
                 if (mount_point.startswith('/dev')
                     or mount_point.startswith('/proc')
                         or mount_point.startswith('/sys')):
@@ -126,8 +154,9 @@ class DiskSpaceCollector(diamond.collector.Collector):
                         stat = os.stat(mount_point)
                         major = os.major(stat.st_dev)
                         minor = os.minor(stat.st_dev)
-                    except:
-                        self.log.error('DiskUsageCollector: Cannot get fs information for %s' % mount_point)
+                    except OSError:
+                        self.log.debug("Path %s is not mounted - skipping.",
+                                       mount_point)
                         continue
 
                     if (major, minor) in result:
@@ -154,26 +183,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
         return result
 
     def collect(self):
-        exclude_filters = self.config['exclude_filters']
-        if isinstance(exclude_filters, basestring):
-            exclude_filters = [exclude_filters]
-
-        exclude_reg = re.compile('|'.join(exclude_filters))
-
-        filesystems = []
-        for filesystem in self.config['filesystems'].split(','):
-            filesystems.append(filesystem.strip())
-
         labels = self.get_disk_labels()
         for key, info in self.get_file_systems().iteritems():
-        # Skip the filesystem if it is not in the list of valid filesystems
-            if info['fs_type'] not in filesystems:
-                continue
-
-        # Process the filters
-            if exclude_reg.match(info['mount_point']):
-                continue
-
             if info['device'] in labels:
                 name = labels[info['device']]
             else:
@@ -199,23 +210,21 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     blocks_total - blocks_free)
                 metric_value = diamond.convertor.binary.convert(
                     value=metric_value, oldUnit='byte', newUnit=unit)
-                self.publish(metric_name, metric_value, 2, 'GAUGE')
+                self.publish_gauge(metric_name, metric_value, 2)
 
                 metric_name = '%s.%s_free' % (name, unit)
                 metric_value = float(block_size) * float(blocks_free)
                 metric_value = diamond.convertor.binary.convert(
                     value=metric_value, oldUnit='byte', newUnit=unit)
-                self.publish(metric_name, metric_value, 2, 'GAUGE')
+                self.publish_gauge(metric_name, metric_value, 2)
 
                 metric_name = '%s.%s_avail' % (name, unit)
                 metric_value = float(block_size) * float(blocks_avail)
                 metric_value = diamond.convertor.binary.convert(
                     value=metric_value, oldUnit='byte', newUnit=unit)
-                self.publish(metric_name, metric_value, 2, 'GAUGE')
+                self.publish_gauge(metric_name, metric_value, 2)
 
-            self.publish('%s.inodes_used' % name, inodes_total - inodes_free,
-                         metric_type='GAUGE')
-            self.publish('%s.inodes_free' % name, inodes_free,
-                         metric_type='GAUGE')
-            self.publish('%s.inodes_avail' % name, inodes_avail,
-                         metric_type='GAUGE')
+            self.publish_gauge('%s.inodes_used' % name,
+                               inodes_total - inodes_free)
+            self.publish_gauge('%s.inodes_free' % name, inodes_free)
+            self.publish_gauge('%s.inodes_avail' % name, inodes_avail)

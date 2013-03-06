@@ -7,21 +7,14 @@ get realtime cumulative stats.
 
 #### Dependencies
 
- * json
  * socket
- * StringIO
+ * json (or simeplejson)
  * [postfix-stats](https://github.com/disqus/postfix-stats)
 
 """
 
-import diamond.collector
 import socket
-
-try:
-    from cStringIO import StringIO
-    StringIO  # workaround for pyflakes issue #13
-except ImportError:
-    from StringIO import StringIO
+import sys
 
 try:
     import json
@@ -29,14 +22,24 @@ try:
 except ImportError:
     import simplejson as json
 
+import diamond.collector
+
+if sys.version_info < (2, 6):
+    from string import maketrans
+    DOTS_TO_UNDERS = maketrans('.', '_')
+else:
+    DOTS_TO_UNDERS = {ord(u'.'): u'_'}
+
 
 class PostfixCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
-        config_help = super(PostfixCollector, self).get_default_config_help()
+        config_help = super(PostfixCollector,
+                            self).get_default_config_help()
         config_help.update({
-            'host': 'Hostname to coonect to',
-            'port': 'Port to connect to',
+            'host':             'Hostname to coonect to',
+            'port':             'Port to connect to',
+            'include_clients':  'Include client connection stats',
         })
         return config_help
 
@@ -46,60 +49,84 @@ class PostfixCollector(diamond.collector.Collector):
         """
         config = super(PostfixCollector, self).get_default_config()
         config.update({
-            'path':     'postfix',
-            'host':     'localhost',
-            'port':     7777,
+            'path':             'postfix',
+            'host':             'localhost',
+            'port':             7777,
+            'include_clients':  True,
+            'method':           'Threaded',
         })
         return config
 
-    def getJson(self):
+    def get_json(self):
+        json_string = ''
+
+        address = (self.config['host'], int(self.config['port']))
+
         try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((self.config['host'], int(self.config['port'])))
-            sock.send("stats\n")
-            jsondata = sock.recv(4096)
-            sock.close()
-            return jsondata
-        except socket.error:
+            try:
+                s = socket.create_connection(address, timeout=1)
+
+                s.sendall('stats\n')
+
+                while 1:
+                    data = s.recv(4096)
+                    if not data:
+                        break
+                    json_string += data
+            except socket.error:
+                self.log.exception("Error talking to postfix-stats")
+                return ''
+        finally:
+            if s:
+                s.close()
+
+        return json_string
+
+    def get_data(self):
+        json_string = self.get_json()
+
+        try:
+            data = json.loads(json_string)
+        except (ValueError, TypeError):
+            self.log.exception("Error parsing json from postfix-stats")
             return None
 
-    def getData(self):
-        try:
-            jsondata = self.getJson()
-            io = StringIO(jsondata)
-            data = json.load(io)
-            return data
-        except (ValueError, TypeError):
-            return None
+        return data
 
     def collect(self):
-        data = self.getData()
+        data = self.get_data()
 
         if not data:
             return
 
-        if 'clients' in data:
-            for client in data['clients'].keys():
-                # Clients are sometimes ip addresses
-                clientname = client.replace('.', '_')
-                metric_value = data['clients'][client]
-                metric_name = "clients.%s" % (clientname)
-                metric_value = self.derivative(metric_name, metric_value)
-                self.publish(metric_name, metric_value)
+        if self.config['include_clients'] and u'clients' in data:
+            for client, value in data['clients'].iteritems():
+                # translate dots to underscores in client names
+                metric = u'.'.join(['clients',
+                                    client.translate(DOTS_TO_UNDERS)])
 
-        for nodetype in ['recv', 'send', 'in']:
-            if nodetype not in data:
+                dvalue = self.derivative(metric, value)
+
+                self.publish(metric, dvalue)
+
+        for action in (u'in', u'recv', u'send'):
+            if action not in data:
                 continue
-            for nodesubtype in data[nodetype].keys():
-                for metric in data[nodetype][nodesubtype].keys():
 
-                    # End metrics are sometimes codes like 2.0.0
-                    metricname = metric.replace('.', '_')
+            for sect, stats in data[action].iteritems():
+                for status, value in stats.iteritems():
+                    metric = '.'.join([action,
+                                       sect,
+                                       status.translate(DOTS_TO_UNDERS)])
 
-                    metric_name = "%s.%s.%s" % (nodetype,
-                                                nodesubtype, metricname)
-                    metric_value = data[nodetype][nodesubtype][metric]
+                    dvalue = self.derivative(metric, value)
 
-                    metric_value = self.derivative(metric_name, metric_value)
+                    self.publish(metric, dvalue)
 
-                    self.publish(metric_name, metric_value)
+        if u'local' in data:
+            for key, value in data[u'local'].iteritems():
+                metric = '.'.join(['local', key])
+
+                dvalue = self.derivative(metric, value)
+
+                self.publish(metric, dvalue)
