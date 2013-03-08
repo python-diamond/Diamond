@@ -256,8 +256,8 @@ class RedisCollector(diamond.collector.Collector):
         for key in data:
             self.publish(self._publish_key(nick, key),
                          data[key],
-                         self._precision(data[key]),
-                         'GAUGE')
+                         precision=self._precision(data[key]),
+                         metric_type='GAUGE')
 
     def collect(self):
         """Collect the stats from the redis instance and publish them.

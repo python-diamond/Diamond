@@ -282,14 +282,22 @@ class TestRedisCollector(CollectorTestCase):
             'total_commands_processed': 100,
         }
         expected_calls = [
-            call('nick1.process.connections_received', 200, 0, 'GAUGE'),
-            call('nick1.process.commands_processed', 100, 0, 'GAUGE'),
-            call('nick2.process.connections_received', 200, 0, 'GAUGE'),
-            call('nick2.process.commands_processed', 100, 0, 'GAUGE'),
-            call('nick3.process.connections_received', 200, 0, 'GAUGE'),
-            call('nick3.process.commands_processed', 100, 0, 'GAUGE'),
-            call('6379.process.connections_received', 200, 0, 'GAUGE'),
-            call('6379.process.commands_processed', 100, 0, 'GAUGE'),
+            call('nick1.process.connections_received', 200, precision=0,
+                 metric_type='GAUGE'),
+            call('nick1.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
+            call('nick2.process.connections_received', 200, precision=0,
+                 metric_type='GAUGE'),
+            call('nick2.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
+            call('nick3.process.connections_received', 200, precision=0,
+                 metric_type='GAUGE'),
+            call('nick3.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
+            call('6379.process.connections_received', 200, precision=0,
+                 metric_type='GAUGE'),
+            call('6379.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
         ]
 
         config = get_collector_config('RedisCollector', config_data)

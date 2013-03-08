@@ -67,18 +67,26 @@ class MonitCollector(diamond.collector.Collector):
         for service in dom.getElementsByTagName('service'):
             if int(service.getAttribute('type')) == 3:
                 name = service.getElementsByTagName('name')[0].firstChild.data
-                cpu = service.getElementsByTagName(
-                    'cpu')[0].getElementsByTagName('percent')[0].firstChild.data
-                mem = int(service.getElementsByTagName(
-                    'memory')[0].getElementsByTagName(
-                        'kilobyte')[0].firstChild.data)
+                if (service.getElementsByTagName(
+                    'status')[0].firstChild.data == '0'
+                    and service.getElementsByTagName(
+                        'monitor')[0].firstChild.data == '1'):
+                    cpu = service.getElementsByTagName(
+                        'cpu')[0].getElementsByTagName(
+                        'percent')[0].firstChild.data
+                    mem = int(service.getElementsByTagName(
+                        'memory')[0].getElementsByTagName(
+                            'kilobyte')[0].firstChild.data)
+                    uptime = service.getElementsByTagName(
+                        'uptime')[0].firstChild.data
 
-                metrics["%s.cpu.percent" % name] = cpu
-                for unit in self.config['byte_unit']:
-                    metrics["%s.memory.%s_usage" % (name, unit)] = (
-                        diamond.convertor.binary.convert(value=mem,
-                                                         oldUnit='kilobyte',
-                                                         newUnit=unit))
+                    metrics["%s.cpu.percent" % name] = cpu
+                    for unit in self.config['byte_unit']:
+                        metrics["%s.memory.%s_usage" % (name, unit)] = (
+                            diamond.convertor.binary.convert(value=mem,
+                                                             oldUnit='kilobyte',
+                                                             newUnit=unit))
+                    metrics["%s.uptime" % name] = uptime
 
         for key in metrics:
             self.publish(key, metrics[key])
