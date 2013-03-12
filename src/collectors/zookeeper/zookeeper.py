@@ -135,9 +135,9 @@ class ZookeeperCollector(diamond.collector.Collector):
 
                     # we have it
                     if alias is not None:
-                      self.publish(alias + "." + stat, stats[stat])
+                        self.publish(alias + "." + stat, stats[stat])
                     else:
-                      self.publish(stat, stats[stat])
+                        self.publish(stat, stats[stat])
                 else:
 
                     # we don't, must be somehting configured in publish so we
