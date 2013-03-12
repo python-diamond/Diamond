@@ -8,6 +8,7 @@ from test import unittest
 from test import run_only
 from mock import MagicMock
 from mock import patch
+from mock import call
 
 from diamond.collector import Collector
 from mongodb import MongoDBCollector
@@ -29,6 +30,7 @@ class TestMongoDBCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MongoDBCollector', {
             'host': 'localhost:27017',
+            'databases': '^db',
         })
         self.collector = MongoDBCollector(config, None)
         self.connection = MagicMock()
@@ -92,10 +94,51 @@ class TestMongoDBCollector(CollectorTestCase):
             'key': 2
         })
 
+    @run_only_if_pymongo_is_available
+    @patch('pymongo.Connection')
+    @patch.object(Collector, 'publish')
+    def test_should_ignore_unneeded_databases(self,
+                                              publish_mock,
+                                              connector_mock):
+        self._annotate_connection(connector_mock, {})
+
+        self.collector.collect()
+
+        assert call('baddb') not in self.connection.__getitem__.call_args_list
+
+    @run_only_if_pymongo_is_available
+    @patch('pymongo.Connection')
+    @patch.object(Collector, 'publish')
+    def test_should_ignore_unneeded_collections(self,
+                                                publish_mock,
+                                                connector_mock):
+        data = {'more_keys': long(1), 'key': 2, 'string': 'str'}
+        self._annotate_connection(connector_mock, data)
+
+        self.connection['db1'].collection_names.return_value = ['collection1',
+                                                                'tmp.mr.tmp1']
+        self.connection['db1'].command.return_value = {'key': 2,
+                                                       'string': 'str'}
+
+        self.collector.collect()
+
+        self.connection.db.command.assert_called_once_with('serverStatus')
+        self.connection['db1'].collection_names.assert_called_once_with()
+        self.connection['db1'].command.assert_any_call('dbStats')
+        self.connection['db1'].command.assert_any_call('collstats',
+                                                       'collection1')
+        assert call('collstats', 'tmp.mr.tmp1') not in \
+                self.connection['db1'].command.call_args_list
+        metrics = {
+            'databases.db1.collection1.key': 2,
+        }
+
+        self.assertPublishedMany(publish_mock, metrics)
+
     def _annotate_connection(self, connector_mock, data):
         connector_mock.return_value = self.connection
         self.connection.db.command.return_value = data
-        self.connection.database_names.return_value = ['db1']
+        self.connection.database_names.return_value = ['db1', 'baddb']
 
 
 ################################################################################

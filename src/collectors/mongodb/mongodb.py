@@ -33,7 +33,11 @@ class MongoDBCollector(diamond.collector.Collector):
         config_help.update({
             'host': 'Hostname',
             'databases': 'A regex of which databases to gather metrics for.'
-                        ' Defaults to all databases.'
+                        ' Defaults to all databases.',
+            'ignore_collections': 'A regex of which collections to ignore.'
+                                 ' MapReduce temporary collections (tmp.mr.*)'
+                                 ' are ignored by default.',
+
         })
         return config_help
 
@@ -45,7 +49,8 @@ class MongoDBCollector(diamond.collector.Collector):
         config.update({
             'path':      'mongo',
             'host':      'localhost',
-            'databases': '.*'
+            'databases': '.*',
+            'ignore_collections': '^tmp\.mr\.',
         })
         return config
 
@@ -70,12 +75,15 @@ class MongoDBCollector(diamond.collector.Collector):
         self._publish_dict_with_prefix(data, [])
 
         db_name_filter = re.compile(self.config['databases'])
+        ignored_collections = re.compile(self.config['ignore_collections'])
         for db_name in conn.database_names():
             if not db_name_filter.search(db_name):
                 continue
             db_stats = conn[db_name].command('dbStats')
             self._publish_dict_with_prefix(db_stats, ['databases', db_name])
             for collection_name in conn[db_name].collection_names():
+                if ignored_collections.search(collection_name):
+                    continue
                 collection_stats = conn[db_name].command('collstats',
                                                          collection_name)
                 self._publish_dict_with_prefix(collection_stats,
