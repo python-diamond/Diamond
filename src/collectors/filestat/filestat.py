@@ -76,8 +76,8 @@ class FilestatCollector(diamond.collector.Collector):
             'user_exclude': None,
             'group_include': None,
             'group_exclude': None,
-            'uid_min': None,
-            'uid_max': None,
+            'uid_min': 0,
+            'uid_max': 65536,
             'type_include': None,
             'type_exclude': None,
             'collect_user_data': False
