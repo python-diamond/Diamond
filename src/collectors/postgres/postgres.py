@@ -62,7 +62,6 @@ class PostgresqlCollector(diamond.collector.Collector):
         for klass in registry.itervalues():
             stat = klass(self.connections)
             stat.fetch()
-            [self.log.error(metric, value) for metric, value in stat]
             [self.publish(metric, value) for metric, value in stat]
 
         # Cleanup
@@ -111,18 +110,28 @@ class QueryStats(object):
             cursor.execute(self.query)
 
             for row in cursor.fetchall():
-                for key, value in row.iteritems():
-                    if key in ('datname', 'schemaname', 'relname', 'indexrelname',):
-                        continue
-
+                # If row is length 2, assume col1, col2 forms key: value
+                if len(row) == 2:
                     self.data.append({
                         'datname': db,
-                        'schemaname': row.get('schemaname', None),
-                        'relname': row.get('relname', None),
-                        'indexrelname': row.get('indexrelname', None),
-                        'metric': key,
-                        'value': value,
+                        'metric': row[0],
+                        'value': row[1],
                     })
+
+                # If row > length 2, assume each column name maps to a key: value
+                else:
+                    for key, value in row.iteritems():
+                        if key in ('datname', 'schemaname', 'relname', 'indexrelname',):
+                            continue
+
+                        self.data.append({
+                            'datname': db,
+                            'schemaname': row.get('schemaname', None),
+                            'relname': row.get('relname', None),
+                            'indexrelname': row.get('indexrelname', None),
+                            'metric': key,
+                            'value': value,
+                        })
 
     def __iter__(self):
         for data_point in self.data:
@@ -219,11 +228,12 @@ class UserIndexIOStats(QueryStats):
     """
 
 
+@register
 class ConnectionStateStats(QueryStats):
     path = "%(datname)s.connections.%(metric)s"
     multi_db = True
     query = """
-        SELECT COALESCE(count,0) FROM
+        SELECT tmp.state AS key,COALESCE(count,0) FROM
                (VALUES ('active'),
                        ('waiting'),
                        ('idle'),
@@ -248,12 +258,13 @@ class ConnectionStateStats(QueryStats):
     """
 
 
+@register
 class LockStats(QueryStats):
     path = "%(datname)s.locks.%(metric)s"
     multi_db = False
     query = """
-        SELECT lower(mode) AS mode,
-               count(*)
+        SELECT lower(mode) AS key,
+               count(*) AS value
         FROM pg_locks
         WHERE database IS NOT NULL
         GROUP BY mode ORDER BY 1
@@ -304,6 +315,7 @@ class WalSegmentStats(QueryStats):
     """
 
 
+@register
 class TransactionCount(QueryStats):
     path = "transactions.%(metric)s"
     multi_db = False
@@ -318,11 +330,12 @@ class TransactionCount(QueryStats):
     """
 
 
+@register
 class IdleInTransactions(QueryStats):
     path = "%(datname)s.longest_running.%(metric)s"
     multi_db = True
     query = """
-        SELECT datname,
+        SELECT 'idle_in_transaction',
                max(COALESCE(ROUND(EXTRACT(epoch FROM now()-query_start)),0)) as idle_in_transaction
         FROM pg_stat_activity
         WHERE current_query = '<IDLE> in transaction'
@@ -330,20 +343,24 @@ class IdleInTransactions(QueryStats):
     """
 
 
+@register
 class LongestRunningQueries(QueryStats):
     path = "%(datname)s.longest_running.%(metric)s"
     multi_db = True
     query = """
-        SELECT COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-query_start)),0) AS query
+        SELECT 'query',
+               COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-query_start)),0)
         FROM pg_stat_activity
         WHERE current_query NOT LIKE '<IDLE%'
         UNION ALL
-        SELECT COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-xact_start)),0) AS transaction
+        SELECT 'transaction',
+               COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-xact_start)),0)
         FROM pg_stat_activity
         WHERE 1=1
     """
 
 
+@register
 class UserConnectionCount(QueryStats):
     path = "%(datname)s.user_connections.%(metric)s"
     multi_db = True
