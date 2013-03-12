@@ -12,11 +12,12 @@ Collect metrics from postgresql
 import diamond.collector
 
 try:
-    import psycopg2
+    import psycopg2, psycopg2.extras
     psycopg2  # workaround for pyflakes issue #13
 except ImportError:
     psycopg2 = None
 
+registry = {}
 
 class PostgresqlCollector(diamond.collector.Collector):
 
@@ -52,26 +53,20 @@ class PostgresqlCollector(diamond.collector.Collector):
             self.log.error('Unable to import module psycopg2')
             return {}
 
-        self.dsn = dict(
-            host = self.config['host'],
-            user = self.config['user'],
-            password = self.config['password'],
-            port = self.config['port'],
-        )
-
         # Create database-specific connections
         self.connections = {}
         for db in self._get_db_names():
             self.connections[db] = self._connect(database=db)
 
         # Iterate every QueryStats class
-        for klass in (DatabaseStats,):
+        for klass in registry.itervalues():
             stat = klass(self.connections)
             stat.fetch()
-            stat.publish()
+            [self.log.error(metric, value) for metric, value in stat]
+            [self.publish(metric, value) for metric, value in stat]
 
         # Cleanup
-        [conn.close() for conn in self.connections]
+        [conn.close() for conn in self.connections.itervalues()]
 
     def _get_db_names(self):
         query = """
@@ -84,8 +79,13 @@ class PostgresqlCollector(diamond.collector.Collector):
         conn.close()
         return datnames
 
-    def _connect(self, database='postgres'):
-        conn = psycopg2.connect(self.dsn, database=database)
+    def _connect(self, database=''):
+        conn = psycopg2.connect(
+            host = self.config['host'],
+            user = self.config['user'],
+            password = self.config['password'],
+            port = self.config['port'],
+            database=database)
         conn.set_isolation_level(0)
         return conn
 
@@ -93,50 +93,43 @@ class PostgresqlCollector(diamond.collector.Collector):
         data = {}
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cursor.execute(query)
-        return (cursor.description, cursor.fetchmany(),)
+        return cursor.fetchmany()
 
+def register(cls):
+    registry[cls.__name__] = cls
+    return cls
 
 class QueryStats(object):
     def __init__(self, conns):
-        if self.multi_db:
-            self.connections = conns
-        else:
-            self.connections = dict(postgres=conns['postgres'])
+        self.connections = conns
 
     def fetch(self):
-        data = list()
+        self.data = list()
 
-        for db, conn in self.connections:
-            raw_data = self.cursor.execute(self.query)
+        for db, conn in self.connections.iteritems():
+            cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            cursor.execute(self.query)
 
-            for row in raw_data.fetchall():
-                row_dict = {}
-
-                # Construct dict of column: value
-                for idx, value in enumerate(row):
-                    column_name = self.cursor.description[idx]
-                    row_dict[column_name] = value
-
-                # Create data points
-                for key, value in row_dict:
-                    if key in ('datname', 'relname', 'indexrelname',):
+            for row in cursor.fetchall():
+                for key, value in row.iteritems():
+                    if key in ('datname', 'schemaname', 'relname', 'indexrelname',):
                         continue
 
-                    data.append({
+                    self.data.append({
                         'datname': db,
-                        'relname': row_dict.get('relname', None),
-                        'indexrelname': row_dict.get('indexrelname', None),
+                        'schemaname': row.get('schemaname', None),
+                        'relname': row.get('relname', None),
+                        'indexrelname': row.get('indexrelname', None),
                         'metric': key,
                         'value': value,
                     })
 
-        return data
-
-    def publish(self):
+    def __iter__(self):
         for data_point in self.data:
-            publish(self.path % data_point, data_point['value'])
+            yield (self.path % data_point, data_point['value'])
 
 
+@register
 class DatabaseStats(QueryStats):
     """
     Database-level summary stats
@@ -165,6 +158,7 @@ class DatabaseStats(QueryStats):
     """
 
 
+@register
 class UserTableStats(QueryStats):
     path = "%(datname)s.tables.%(schemaname)s.%(relname)s.%(metric)s"
     multi_db = True
@@ -185,6 +179,7 @@ class UserTableStats(QueryStats):
     """
 
 
+@register
 class UserIndexStats(QueryStats):
     path = "%(datname)s.indexes.%(schemaname)s.%(relname)s.%(indexrelname)s.%(metric)s"
     multi_db = True
@@ -198,25 +193,19 @@ class UserIndexStats(QueryStats):
         FROM pg_stat_user_indexes
     """
 
-
+@register
 class UserTableIOStats(QueryStats):
     path = "%(datname)s.tables.%(schemaname)s.%(relname)s.%(metric)s"
     multi_db = True
     query = """
         SELECT relname,
                schemaname,
-               heap_blks_read,
-               heap_blks_hit,
-               idx_blks_read,
-               idx_blks_hit,
-               toast_blks_read,
-               toast_blks_hit,
-               tidx_blks_read,
-               tidx_blks_hit
+               heap_blks_hit
         FROM pg_statio_user_tables
     """
 
 
+@register
 class UserIndexIOStats(QueryStats):
     path = "%(datname)s.indexes.%(schemaname)s.%(relname)s.%(metric)s"
     multi_db = True
@@ -234,7 +223,7 @@ class ConnectionStateStats(QueryStats):
     path = "%(datname)s.connections.%(metric)s"
     multi_db = True
     query = """
-        SELECT tmp.state,COALESCE(count,0) FROM
+        SELECT COALESCE(count,0) FROM
                (VALUES ('active'),
                        ('waiting'),
                        ('idle'),
@@ -271,6 +260,7 @@ class LockStats(QueryStats):
     """
 
 
+@register
 class RelationSizeStats(QueryStats):
     path = "%(datname)s.sizes.%(schemaname)s.%(relname)s.%(metric)s"
     multi_db = True
@@ -286,12 +276,24 @@ class RelationSizeStats(QueryStats):
     """
 
 
+@register
 class BackgroundWriterStats(QueryStats):
     path = "bgwriter.%(metric)s"
     multi_db = False
-    query = 'SELECT * from pg_stat_bgwriter'
+    query = """
+        SELECT checkpoints_timed,
+               checkpoints_req,
+               buffers_checkpoint,
+               buffers_clean,
+               maxwritten_clean,
+               buffers_backend,
+               buffers_backend_fsync,
+               buffers_alloc
+        FROM pg_stat_bgwriter
+    """
 
 
+@register
 class WalSegmentStats(QueryStats):
     path = "wals.%(metric)s"
     multi_db = False
@@ -332,13 +334,11 @@ class LongestRunningQueries(QueryStats):
     path = "%(datname)s.longest_running.%(metric)s"
     multi_db = True
     query = """
-        SELECT 'query' AS type,
-               COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-query_start)),0)
+        SELECT COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-query_start)),0) AS query
         FROM pg_stat_activity
         WHERE current_query NOT LIKE '<IDLE%'
         UNION ALL
-        SELECT 'transaction',
-               COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-xact_start)),0)
+        SELECT COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-xact_start)),0) AS transaction
         FROM pg_stat_activity
         WHERE 1=1
     """
@@ -349,7 +349,7 @@ class UserConnectionCount(QueryStats):
     multi_db = True
     query = """
         SELECT usename,
-               count(*) as count,
+               count(*) as count
         FROM pg_stat_activity
         WHERE procpid != pg_backend_pid()
         GROUP BY usename
@@ -357,17 +357,7 @@ class UserConnectionCount(QueryStats):
     """
 
 
-class DatabaseSizeStast(QueryStats):
-    path = "%(datname)s.%(metric)s"
-    multi_db = False
-    query = """
-        SELECT datname,
-               pg_database_size(oid) as database_size
-        FROM pg_database
-        ORDER BY 1
-    """
-
-
+@register
 class TableScanStats(QueryStats):
     path = "%(datname)s.scans.%(metric)s"
     multi_db = True
@@ -378,6 +368,7 @@ class TableScanStats(QueryStats):
     """
 
 
+@register
 class TupleAccessStats(QueryStats):
     path = "%(datname)s.tuples.%(metric)s"
     multi_db = True
