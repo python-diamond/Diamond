@@ -4,17 +4,6 @@ import logging
 import threading
 import traceback
 
-def str_to_bool(value):
-    """
-    Converts string ('true', 'false') to bool
-    """
-    if isinstance(value, basestring):
-        if value.strip().lower() == 'true':
-            return True
-        else:
-            return False
-
-    return value
 
 class Handler(object):
     """
