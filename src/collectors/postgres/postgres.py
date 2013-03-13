@@ -379,7 +379,8 @@ class TableScanStats(QueryStats):
     path = "%(datname)s.scans.%(metric)s"
     multi_db = True
     query = """
-        SELECT COALESCE(sum(seq_scan),0) AS sequential,
+        SELECT 'relname' AS relname,
+               COALESCE(sum(seq_scan),0) AS sequential,
                COALESCE(sum(idx_scan),0) AS index
         FROM pg_stat_user_tables
     """
