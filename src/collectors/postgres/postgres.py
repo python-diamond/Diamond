@@ -138,6 +138,9 @@ class QueryStats(object):
                             'value': value,
                         })
 
+            if not self.multi_db:
+                break
+
     def __iter__(self):
         for data_point in self.data:
             yield (self.path % data_point, data_point['value'])
