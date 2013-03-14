@@ -71,11 +71,16 @@ class PostgresqlCollector(diamond.collector.Collector):
         query = """
             SELECT datname FROM pg_database
             WHERE datallowconn AND NOT datistemplate
-            ORDER BY 1
+            AND NOT datname='postgres' ORDER BY 1
         """
         conn = self._connect()
         datnames = [d[0] for d in self._query(conn, query)]
         conn.close()
+
+        # Exclude `postgres` database list, unless it is the
+        # only database available (required for querying pg_stat_database)
+        if not datnames:
+            datnames = ['postgres']
         return datnames
 
     def _connect(self, database=''):
