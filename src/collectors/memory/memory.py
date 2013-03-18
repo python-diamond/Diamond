@@ -27,6 +27,7 @@ _KEY_MAPPING = [
     'Active',
     'Dirty',
     'Inactive',
+    'Shmem',
     'SwapTotal',
     'SwapFree',
     'SwapCached',

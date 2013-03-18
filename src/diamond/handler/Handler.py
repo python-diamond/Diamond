@@ -42,6 +42,20 @@ class Handler(object):
         """
         raise NotImplementedError
 
+    def _flush(self):
+        """
+        Decorator for flushing handlers with an lock, catching exceptions
+        """
+        try:
+            try:
+                self.lock.acquire()
+                self.flush()
+            except Exception:
+                self.log.error(traceback.format_exc())
+        finally:
+            if self.lock.locked():
+                self.lock.release()
+
     def flush(self):
         """
         Flush metrics

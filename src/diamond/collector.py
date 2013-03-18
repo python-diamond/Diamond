@@ -408,4 +408,4 @@ class Collector(object):
             # After collector run, invoke a flush
             # method on each handler.
             for handler in self.handlers:
-                handler.flush()
+                handler._flush()
