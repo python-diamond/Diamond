@@ -138,7 +138,7 @@ class MySQLPerfCollector(diamond.collector.Collector):
             self.log.error('MySQLPerfCollector couldnt connect to database %s',
                            e)
             return {}
-        self.log.info('MySQLPerfCollector: Connected to database.')
+        self.log.debug('MySQLPerfCollector: Connected to database.')
 
     def query_list(self, query, params):
         cursor = self.db.cursor()
