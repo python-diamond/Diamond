@@ -283,7 +283,7 @@ class MySQLCollector(diamond.collector.Collector):
     def connect(self, params):
         try:
             self.db = MySQLdb.connect(**params)
-            self.log.info('MySQLCollector: Connected to database.')
+            self.log.debug('MySQLCollector: Connected to database.')
         except MySQLError, e:
             self.log.error('MySQLCollector couldnt connect to database %s', e)
             return False
@@ -382,7 +382,7 @@ class MySQLCollector(diamond.collector.Collector):
                                                    + " value in innodb status "
                                                    + "for %s", key_index)
                 for key in todo:
-                    self.log.error("MySQLCollector: %s regexp not matched in"
+                    self.log.debug("MySQLCollector: %s regexp not matched in"
                                    + " innodb status", key)
             except Exception, innodb_status_error:
                 self.log.error('MySQLCollector: Couldnt get engine innodb'
