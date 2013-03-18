@@ -91,8 +91,11 @@ class DiskSpaceCollector(diamond.collector.Collector):
         self.exclude_reg = re.compile('|'.join(self.exclude_filters))
 
         self.filesystems = []
-        for filesystem in self.config['filesystems'].split(','):
-            self.filesystems.append(filesystem.strip())
+        if isinstance(self.config['filesystems'], basestring):
+            for filesystem in self.config['filesystems'].split(','):
+                self.filesystems.append(filesystem.strip())
+        elif isinstance(self.config['filesystems'], list):
+            self.filesystems = self.config['filesystems']
 
     def get_disk_labels(self):
         """
