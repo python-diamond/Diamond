@@ -147,7 +147,7 @@ class DatabaseStats(QueryStats):
     """
     Database-level summary stats
     """
-    path = "%(datname)s.database.%(metric)s"
+    path = "database.%(datname)s.%(metric)s"
     multi_db = False
     query = """
         SELECT pg_stat_database.datname as datname,
