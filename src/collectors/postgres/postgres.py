@@ -102,9 +102,12 @@ class PostgresqlCollector(diamond.collector.Collector):
         conn.set_isolation_level(0)
         return conn
 
-def register(cls, stat_type=['extended']):
-    for stat in stat_type:
-        registry[stat][cls.__name__] = cls
+def basic(cls):
+    registry['basic'][cls.__name__] = cls
+    return cls
+
+def extended(cls):
+    registry['extended'][cls.__name__] = cls
     return cls
 
 class QueryStats(object):
@@ -150,7 +153,8 @@ class QueryStats(object):
             yield (self.path % data_point, data_point['value'])
 
 
-@register(['basic', 'extended'])
+@basic
+@extended
 class DatabaseStats(QueryStats):
     """
     Database-level summary stats
@@ -179,7 +183,7 @@ class DatabaseStats(QueryStats):
     """
 
 
-@register
+@extended
 class UserTableStats(QueryStats):
     path = "%(datname)s.tables.%(schemaname)s.%(relname)s.%(metric)s"
     multi_db = True
@@ -200,7 +204,7 @@ class UserTableStats(QueryStats):
     """
 
 
-@register
+@extended
 class UserIndexStats(QueryStats):
     path = "%(datname)s.indexes.%(schemaname)s.%(relname)s.%(indexrelname)s.%(metric)s"
     multi_db = True
@@ -214,7 +218,7 @@ class UserIndexStats(QueryStats):
         FROM pg_stat_user_indexes
     """
 
-@register
+@extended
 class UserTableIOStats(QueryStats):
     path = "%(datname)s.tables.%(schemaname)s.%(relname)s.%(metric)s"
     multi_db = True
@@ -243,7 +247,7 @@ class UserIndexIOStats(QueryStats):
     """
 
 
-@register
+@extended
 class ConnectionStateStats(QueryStats):
     path = "%(datname)s.connections.%(metric)s"
     multi_db = True
@@ -273,7 +277,7 @@ class ConnectionStateStats(QueryStats):
     """
 
 
-@register
+@extended
 class LockStats(QueryStats):
     path = "%(datname)s.locks.%(metric)s"
     multi_db = False
@@ -286,7 +290,7 @@ class LockStats(QueryStats):
     """
 
 
-@register
+@extended
 class RelationSizeStats(QueryStats):
     path = "%(datname)s.sizes.%(schemaname)s.%(relname)s.%(metric)s"
     multi_db = True
@@ -304,7 +308,7 @@ class RelationSizeStats(QueryStats):
     """
 
 
-@register
+@extended
 class BackgroundWriterStats(QueryStats):
     path = "bgwriter.%(metric)s"
     multi_db = False
@@ -321,7 +325,7 @@ class BackgroundWriterStats(QueryStats):
     """
 
 
-@register
+@extended
 class WalSegmentStats(QueryStats):
     path = "wals.%(metric)s"
     multi_db = False
@@ -332,7 +336,7 @@ class WalSegmentStats(QueryStats):
     """
 
 
-@register
+@extended
 class TransactionCount(QueryStats):
     path = "transactions.%(metric)s"
     multi_db = False
@@ -347,7 +351,7 @@ class TransactionCount(QueryStats):
     """
 
 
-@register
+@extended
 class IdleInTransactions(QueryStats):
     path = "%(datname)s.longest_running.%(metric)s"
     multi_db = True
@@ -360,7 +364,7 @@ class IdleInTransactions(QueryStats):
     """
 
 
-@register
+@extended
 class LongestRunningQueries(QueryStats):
     path = "%(datname)s.longest_running.%(metric)s"
     multi_db = True
@@ -377,7 +381,7 @@ class LongestRunningQueries(QueryStats):
     """
 
 
-@register
+@extended
 class UserConnectionCount(QueryStats):
     path = "%(datname)s.user_connections.%(metric)s"
     multi_db = True
@@ -391,7 +395,8 @@ class UserConnectionCount(QueryStats):
     """
 
 
-@register(['basic', 'extended'])
+@basic
+@extended
 class DatabaseConnectionCount(QueryStats):
     path = "database.%(datname)s.connections"
     multi_db = False
@@ -403,7 +408,7 @@ class DatabaseConnectionCount(QueryStats):
     """
 
 
-@register
+@extended
 class TableScanStats(QueryStats):
     path = "%(datname)s.scans.%(metric)s"
     multi_db = True
@@ -415,7 +420,7 @@ class TableScanStats(QueryStats):
     """
 
 
-@register
+@extended
 class TupleAccessStats(QueryStats):
     path = "%(datname)s.tuples.%(metric)s"
     multi_db = True
