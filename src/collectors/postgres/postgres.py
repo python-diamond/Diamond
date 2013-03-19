@@ -288,6 +288,8 @@ class RelationSizeStats(QueryStats):
           pg_namespace
         ON pg_namespace.oid = pg_class.relnamespace
         WHERE reltype != 0
+        AND relkind != 'S'
+        AND nspname NOT IN ('pg_catalog', 'information_schema')
     """
 
 
