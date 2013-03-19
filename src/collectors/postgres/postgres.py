@@ -121,6 +121,11 @@ class QueryStats(object):
     def __init__(self, conns):
         self.connections = conns
 
+    def _translate_datname(self, db):
+        if self.config['underscore']:
+            db = db.replace("_", ".")
+        return db
+
     def fetch(self):
         self.data = list()
 
@@ -132,7 +137,7 @@ class QueryStats(object):
                 # If row is length 2, assume col1, col2 forms key: value
                 if len(row) == 2:
                     self.data.append({
-                        'datname': db,
+                        'datname': self._translate_datname(db),
                         'metric': row[0],
                         'value': row[1],
                     })
@@ -146,7 +151,7 @@ class QueryStats(object):
                             continue
 
                         self.data.append({
-                            'datname': row.get('datname', db),
+                            'datname': self._translate_datname(row.get('datname', db)),
                             'schemaname': row.get('schemaname', None),
                             'relname': row.get('relname', None),
                             'indexrelname': row.get('indexrelname', None),
