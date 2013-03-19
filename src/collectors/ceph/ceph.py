@@ -133,7 +133,7 @@ class CephCollector(diamond.collector.Collector):
             stats,
             prefix=counter_prefix,
         ):
-            self.publish(stat_name, stat_value, metric_type='GAUGE')
+            self.publish_gauge(stat_name, stat_value)
 
     def collect(self):
         """
