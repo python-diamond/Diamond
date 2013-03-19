@@ -74,7 +74,9 @@ class PostgresqlCollector(diamond.collector.Collector):
             AND NOT datname='postgres' ORDER BY 1
         """
         conn = self._connect()
-        datnames = [d[0] for d in self._query(conn, query)]
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute(query)
+        datnames = [d['datname'] for d in cursor.fetchall()]
         conn.close()
 
         # Exclude `postgres` database list, unless it is the
@@ -92,12 +94,6 @@ class PostgresqlCollector(diamond.collector.Collector):
             database=database)
         conn.set_isolation_level(0)
         return conn
-
-    def _query(self, conn, query):
-        data = {}
-        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cursor.execute(query)
-        return cursor.fetchmany()
 
 def register(cls):
     registry[cls.__name__] = cls
