@@ -213,7 +213,10 @@ class UserTableIOStats(QueryStats):
     query = """
         SELECT relname,
                schemaname,
-               heap_blks_hit
+               heap_blks_read,
+               heap_blks_hit,
+               idx_blks_read,
+               idx_blks_hit
         FROM pg_statio_user_tables
     """
 
