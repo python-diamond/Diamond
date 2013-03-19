@@ -154,6 +154,12 @@ class QueryStats(object):
                             'value': value,
                         })
 
+            # Setting multi_db to True will run this query on all known
+            # databases. This is bad for queries that hit views like
+            # pg_database, which are shared across databases.
+            #
+            # If multi_db is False, bail early after the first query
+            # iteration. Otherwise, continue to remaining databases.
             if not self.multi_db:
                 break
 
