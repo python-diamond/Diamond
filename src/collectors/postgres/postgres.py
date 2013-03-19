@@ -233,9 +233,9 @@ class UserTableIOStats(QueryStats):
     """
 
 
-@register
+@extended
 class UserIndexIOStats(QueryStats):
-    path = "%(datname)s.indexes.%(schemaname)s.%(relname)s.%(metric)s"
+    path = "%(datname)s.indexes.%(schemaname)s.%(relname)s.%(indexrelname)s.%(metric)s"
     multi_db = True
     query = """
         SELECT relname,
@@ -398,11 +398,11 @@ class UserConnectionCount(QueryStats):
 @basic
 @extended
 class DatabaseConnectionCount(QueryStats):
-    path = "database.%(datname)s.connections"
+    path = "database.%(metric)s.connections"
     multi_db = False
     query = """
         SELECT datname,
-               count(datname)
+               count(datname) as connections
         FROM pg_stat_activity
         GROUP BY pg_stat_activity.datname
     """
