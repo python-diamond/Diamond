@@ -384,6 +384,18 @@ class UserConnectionCount(QueryStats):
 
 
 @register
+class DatabaseConnectionCount(QueryStats):
+    path = "database.%(datname)s.connections"
+    multi_db = False
+    query = """
+        SELECT datname,
+               count(datname)
+        FROM pg_stat_activity
+        GROUP BY pg_stat_activity.datname
+    """
+
+
+@register
 class TableScanStats(QueryStats):
     path = "%(datname)s.scans.%(metric)s"
     multi_db = True
