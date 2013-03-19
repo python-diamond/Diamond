@@ -12,12 +12,14 @@ Collect metrics from postgresql
 import diamond.collector
 
 try:
-    import psycopg2, psycopg2.extras
+    import psycopg2
+    import psycopg2.extras
     psycopg2  # workaround for pyflakes issue #13
 except ImportError:
     psycopg2 = None
 
 registry = dict(basic={}, extended={})
+
 
 class PostgresqlCollector(diamond.collector.Collector):
 
@@ -94,21 +96,24 @@ class PostgresqlCollector(diamond.collector.Collector):
 
     def _connect(self, database=''):
         conn = psycopg2.connect(
-            host = self.config['host'],
-            user = self.config['user'],
-            password = self.config['password'],
-            port = self.config['port'],
+            host=self.config['host'],
+            user=self.config['user'],
+            password=self.config['password'],
+            port=self.config['port'],
             database=database)
         conn.set_isolation_level(0)
         return conn
+
 
 def basic(cls):
     registry['basic'][cls.__name__] = cls
     return cls
 
+
 def extended(cls):
     registry['extended'][cls.__name__] = cls
     return cls
+
 
 class QueryStats(object):
     def __init__(self, conns):
@@ -130,10 +135,12 @@ class QueryStats(object):
                         'value': row[1],
                     })
 
-                # If row > length 2, assume each column name maps to a key: value
+                # If row > length 2, assume each column name maps to
+                # key => value
                 else:
                     for key, value in row.iteritems():
-                        if key in ('datname', 'schemaname', 'relname', 'indexrelname',):
+                        if key in ('datname', 'schemaname', 'relname',
+                                   'indexrelname',):
                             continue
 
                         self.data.append({
@@ -206,7 +213,8 @@ class UserTableStats(QueryStats):
 
 @extended
 class UserIndexStats(QueryStats):
-    path = "%(datname)s.indexes.%(schemaname)s.%(relname)s.%(indexrelname)s.%(metric)s"
+    path = "%(datname)s.indexes.%(schemaname)s.%(relname)s." \
+           "%(indexrelname)s.%(metric)s"
     multi_db = True
     query = """
         SELECT relname,
@@ -217,6 +225,7 @@ class UserIndexStats(QueryStats):
                idx_tup_fetch
         FROM pg_stat_user_indexes
     """
+
 
 @extended
 class UserTableIOStats(QueryStats):
@@ -235,7 +244,8 @@ class UserTableIOStats(QueryStats):
 
 @extended
 class UserIndexIOStats(QueryStats):
-    path = "%(datname)s.indexes.%(schemaname)s.%(relname)s.%(indexrelname)s.%(metric)s"
+    path = "%(datname)s.indexes.%(schemaname)s.%(relname)s." \
+           "%(indexrelname)s.%(metric)s"
     multi_db = True
     query = """
         SELECT relname,
@@ -262,16 +272,20 @@ class ConnectionStateStats(QueryStats):
         LEFT JOIN
              (SELECT CASE WHEN waiting THEN 'waiting'
                           WHEN current_query='<IDLE>' THEN 'idle'
-                          WHEN current_query='<IDLE> in transaction' THEN 'idletransaction'
-                          WHEN current_query='<insufficient privilege>' THEN 'unknown'
+                          WHEN current_query='<IDLE> in transaction'
+                              THEN 'idletransaction'
+                          WHEN current_query='<insufficient privilege>'
+                              THEN 'unknown'
                           ELSE 'active' END AS state,
                      count(*) AS count
                FROM pg_stat_activity
                WHERE procpid != pg_backend_pid()
                GROUP BY CASE WHEN waiting THEN 'waiting'
                              WHEN current_query='<IDLE>' THEN 'idle'
-                             WHEN current_query='<IDLE> in transaction' THEN 'idletransaction'
-                             WHEN current_query='<insufficient privilege>' THEN 'unknown' ELSE 'active' END
+                             WHEN current_query='<IDLE> in transaction'
+                                 THEN 'idletransaction'
+                             WHEN current_query='<insufficient privilege>'
+                                 THEN 'unknown' ELSE 'active' END
              ) AS tmp2
         ON tmp.state=tmp2.state ORDER BY 1
     """
@@ -357,7 +371,8 @@ class IdleInTransactions(QueryStats):
     multi_db = True
     query = """
         SELECT 'idle_in_transaction',
-               max(COALESCE(ROUND(EXTRACT(epoch FROM now()-query_start)),0)) as idle_in_transaction
+               max(COALESCE(ROUND(EXTRACT(epoch FROM now()-query_start)),0))
+                   AS idle_in_transaction
         FROM pg_stat_activity
         WHERE current_query = '<IDLE> in transaction'
         GROUP BY 1
@@ -370,12 +385,12 @@ class LongestRunningQueries(QueryStats):
     multi_db = True
     query = """
         SELECT 'query',
-               COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-query_start)),0)
+            COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-query_start)),0)
         FROM pg_stat_activity
         WHERE current_query NOT LIKE '<IDLE%'
         UNION ALL
         SELECT 'transaction',
-               COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-xact_start)),0)
+            COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-xact_start)),0)
         FROM pg_stat_activity
         WHERE 1=1
     """
