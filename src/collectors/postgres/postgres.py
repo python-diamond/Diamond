@@ -126,7 +126,7 @@ class QueryStats(object):
                             continue
 
                         self.data.append({
-                            'datname': db,
+                            'datname': row.get('datname', db),
                             'schemaname': row.get('schemaname', None),
                             'relname': row.get('relname', None),
                             'indexrelname': row.get('indexrelname', None),
