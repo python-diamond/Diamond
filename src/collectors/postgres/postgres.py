@@ -69,7 +69,7 @@ class PostgresqlCollector(diamond.collector.Collector):
 
         # Iterate every QueryStats class
         for klass in metrics.itervalues():
-            stat = klass(self.connections)
+            stat = klass(self.connections, underscore=self.config['underscore'])
             stat.fetch()
             [self.publish(metric, value) for metric, value in stat]
 
@@ -118,11 +118,12 @@ def extended(cls):
 
 
 class QueryStats(object):
-    def __init__(self, conns):
+    def __init__(self, conns, underscore=False):
         self.connections = conns
+        self.underscore = underscore
 
     def _translate_datname(self, db):
-        if self.config['underscore']:
+        if self.underscore:
             db = db.replace("_", ".")
         return db
 
