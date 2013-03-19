@@ -29,6 +29,7 @@ class PostgresqlCollector(diamond.collector.Collector):
             'password': 'Password',
             'port': 'Port number',
             'underscore': 'Convert _ to .',
+            'extended': 'Enable collection of extended database stats',
         })
         return config_help
 
@@ -44,6 +45,7 @@ class PostgresqlCollector(diamond.collector.Collector):
             'password': 'postgres',
             'port': 5432,
             'underscore': False,
+            'extended': False,
             'method': 'Threaded'
         })
         return config
@@ -57,6 +59,11 @@ class PostgresqlCollector(diamond.collector.Collector):
         self.connections = {}
         for db in self._get_db_names():
             self.connections[db] = self._connect(database=db)
+
+        if self.config['extended']:
+            plugins = registry['extended']
+        else:
+            plugins = registry['basic']
 
         # Iterate every QueryStats class
         for klass in registry.itervalues():
@@ -95,8 +102,9 @@ class PostgresqlCollector(diamond.collector.Collector):
         conn.set_isolation_level(0)
         return conn
 
-def register(cls):
-    registry[cls.__name__] = cls
+def register(cls, stat_type=['extended']):
+    for stat in stat_type:
+        registry[stat][cls.__name__] = cls
     return cls
 
 class QueryStats(object):
@@ -142,7 +150,7 @@ class QueryStats(object):
             yield (self.path % data_point, data_point['value'])
 
 
-@register
+@register(['basic', 'extended'])
 class DatabaseStats(QueryStats):
     """
     Database-level summary stats
@@ -383,7 +391,7 @@ class UserConnectionCount(QueryStats):
     """
 
 
-@register
+@register(['basic', 'extended'])
 class DatabaseConnectionCount(QueryStats):
     path = "database.%(datname)s.connections"
     multi_db = False
