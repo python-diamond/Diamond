@@ -101,6 +101,8 @@ class PostgresqlCollector(diamond.collector.Collector):
             password=self.config['password'],
             port=self.config['port'],
             database=database)
+
+        # Avoid using transactions, set isolation level to autocommit
         conn.set_isolation_level(0)
         return conn
 
