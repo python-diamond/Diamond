@@ -17,7 +17,7 @@ try:
 except ImportError:
     psycopg2 = None
 
-registry = {}
+registry = dict(basic={}, extended={})
 
 class PostgresqlCollector(diamond.collector.Collector):
 
@@ -61,12 +61,12 @@ class PostgresqlCollector(diamond.collector.Collector):
             self.connections[db] = self._connect(database=db)
 
         if self.config['extended']:
-            plugins = registry['extended']
+            metrics = registry['extended']
         else:
-            plugins = registry['basic']
+            metrics = registry['basic']
 
         # Iterate every QueryStats class
-        for klass in registry.itervalues():
+        for klass in metrics.itervalues():
             stat = klass(self.connections)
             stat.fetch()
             [self.publish(metric, value) for metric, value in stat]
