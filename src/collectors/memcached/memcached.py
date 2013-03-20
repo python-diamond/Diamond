@@ -3,6 +3,8 @@
 """
 Collect memcached stats
 
+
+
 #### Dependencies
 
  * subprocess
@@ -29,6 +31,18 @@ import re
 
 
 class MemcachedCollector(diamond.collector.Collector):
+    GAUGES = [
+        'bytes',
+        'connection_structures',
+        'curr_connections',
+        'curr_items',
+        'threads',
+        'reserved_fds',
+        'limit_maxbytes',
+        'hash_power_level',
+        'hash_bytes',
+        'hash_is_expanding',
+    ]
 
     def get_default_config_help(self):
         config_help = super(MemcachedCollector, self).get_default_config_help()
@@ -82,7 +96,8 @@ class MemcachedCollector(diamond.collector.Collector):
     def get_stats(self, host, port):
         # stuff that's always ignored, aren't 'stats'
         ignored = ('libevent', 'pointer_size', 'time', 'version',
-                   'repcached_version', 'replication')
+                   'repcached_version', 'replication', 'accepting_conns',
+                   'pid')
         pid = None
 
         stats = {}
@@ -139,7 +154,11 @@ class MemcachedCollector(diamond.collector.Collector):
                 if stat in stats:
 
                     # we have it
-                    self.publish(alias + "." + stat, stats[stat])
+                    if stat in self.GAUGES:
+                        self.publish_gauge(alias + "." + stat, stats[stat])
+                    else:
+                        self.publish_counter(alias + "." + stat, stats[stat])
+
                 else:
 
                     # we don't, must be somehting configured in publish so we
