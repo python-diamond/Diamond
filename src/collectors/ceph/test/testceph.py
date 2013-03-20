@@ -197,7 +197,7 @@ class TestCephCollectorPublish(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_simple(self, publish_mock):
-        self.collector._publish_stats('prefix', {'a': 1,})
+        self.collector._publish_stats('prefix', {'a': 1})
         publish_mock.assert_called_with('prefix.a', 1,
                                         metric_type='GAUGE', precision=0)
 

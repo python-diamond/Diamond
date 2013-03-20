@@ -140,7 +140,8 @@ class QueryStats(object):
                             continue
 
                         self.data.append({
-                            'datname': self._translate_datname(row.get('datname', db)),
+                            'datname': self._translate_datname(row.get(
+                                'datname', db)),
                             'schemaname': row.get('schemaname', None),
                             'relname': row.get('relname', None),
                             'indexrelname': row.get('indexrelname', None),
@@ -395,6 +396,7 @@ class UserConnectionCount(QueryStats):
         GROUP BY usename
         ORDER BY 1
     """
+
 
 class DatabaseConnectionCount(QueryStats):
     path = "database.%(metric)s.connections"
