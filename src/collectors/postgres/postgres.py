@@ -435,7 +435,7 @@ class TupleAccessStats(QueryStats):
 registry = {
     'basic': (
         DatabaseStats,
-        DatabaseConnectionCount
+        DatabaseConnectionCount,
     ),
     'extended': (
         DatabaseStats,
