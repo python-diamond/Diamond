@@ -43,23 +43,40 @@ class ElasticSearchCollector(diamond.collector.Collector):
         })
         return config
 
-    def collect(self):
-        if json is None:
-            self.log.error('Unable to import json')
-            return {}
-        url = 'http://%s:%i/_cluster/nodes/_local/stats?all=true' % (
-            self.config['host'], int(self.config['port']))
+    def _get(self, path):
+        url = 'http://%s:%i/%s' % (
+            self.config['host'], int(self.config['port']), path)
         try:
             response = urllib2.urlopen(url)
         except urllib2.HTTPError, err:
             self.log.error("%s: %s", url, err)
-            return
+            return False
 
         try:
-            result = json.load(response)
+            return json.load(response)
         except (TypeError, ValueError):
             self.log.error("Unable to parse response from elasticsearch as a"
                            + " json object")
+            return False
+
+    def _index_metrics(self, metrics, prefix, index):
+        metrics['%s.docs.count' % prefix] = index['docs']['count']
+        metrics['%s.docs.deleted' % prefix] = index['docs']['deleted']
+        metrics['%s.datastore.size' % prefix] = index['store']['size_in_bytes']
+
+        # publish all 'total' and 'time_in_millis' stats
+        for group, stats in index.iteritems():
+            for key, value in stats.iteritems():
+                if key.endswith('total') or key.endswith('time_in_millis'):
+                    metrics['%s.%s.%s' % (prefix, group, key)] = value
+
+    def collect(self):
+        if json is None:
+            self.log.error('Unable to import json')
+            return {}
+
+        result = self._get('_cluster/nodes/_local/stats?all=true')
+        if not result:
             return
 
         metrics = {}
@@ -112,6 +129,18 @@ class ElasticSearchCollector(diamond.collector.Collector):
             metrics['disk.reads.size'] = fs_data['disk_read_size_in_bytes']
             metrics['disk.writes.count'] = fs_data['disk_writes']
             metrics['disk.writes.size'] = fs_data['disk_write_size_in_bytes']
+
+        #
+        # individual index stats
+        result = self._get('_stats?clear=true&docs=true&store=true&indexing=true&get=true&search=true')
+        if not result:
+            return
+
+        _all = result['_all']
+        self._index_metrics(metrics, 'indices._all', _all['primaries'])
+        indices = _all['indices']
+        for name, index in indices.iteritems():
+            self._index_metrics(metrics, 'indices.%s' % name, index['primaries'])
 
         for key in metrics:
             self.publish(key, metrics[key])

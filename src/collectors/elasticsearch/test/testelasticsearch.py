@@ -26,8 +26,9 @@ class TestElasticSearchCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
+        returns = [self.getFixture('stats'), self.getFixture('indices_stats')]
         urlopen_mock = patch('urllib2.urlopen', Mock(
-            return_value=self.getFixture('stats')))
+            side_effect=lambda *args: returns.pop(0)))
 
         urlopen_mock.start()
         self.collector.collect()
@@ -39,6 +40,14 @@ class TestElasticSearchCollector(CollectorTestCase):
             'indices.docs.count': 11968062,
             'indices.docs.deleted': 2692068,
             'indices.datastore.size': 22724243633,
+
+            'indices._all.docs.count': 4,
+            'indices._all.docs.deleted': 0,
+            'indices._all.datastore.size': 2674,
+
+            'indices.test.docs.count': 4,
+            'indices.test.docs.deleted': 0,
+            'indices.test.datastore.size': 2674,
 
             'process.cpu.percent': 58,
 
