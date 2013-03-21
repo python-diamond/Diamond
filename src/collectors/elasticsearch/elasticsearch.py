@@ -106,11 +106,12 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
         #
         # filesystem
-        fs_data = data['fs']['data'][0]
-        metrics['disk.reads.count'] = fs_data['disk_reads']
-        metrics['disk.reads.size'] = fs_data['disk_read_size_in_bytes']
-        metrics['disk.writes.count'] = fs_data['disk_writes']
-        metrics['disk.writes.size'] = fs_data['disk_write_size_in_bytes']
+        if 'fs' in data:
+            fs_data = data['fs']['data'][0]
+            metrics['disk.reads.count'] = fs_data['disk_reads']
+            metrics['disk.reads.size'] = fs_data['disk_read_size_in_bytes']
+            metrics['disk.writes.count'] = fs_data['disk_writes']
+            metrics['disk.writes.size'] = fs_data['disk_write_size_in_bytes']
 
         for key in metrics:
             self.publish(key, metrics[key])
