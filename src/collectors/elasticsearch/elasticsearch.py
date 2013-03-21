@@ -104,8 +104,10 @@ class ElasticSearchCollector(diamond.collector.Collector):
         cache = indices['cache']
         if 'bloom_size_in_bytes' in cache:
             metrics['cache.bloom.size'] = cache['bloom_size_in_bytes']
-        metrics['cache.field.evictions'] = cache['field_evictions']
-        metrics['cache.field.size'] = cache['field_size_in_bytes']
+        if 'field_evictions' in cache:
+            metrics['cache.field.evictions'] = cache['field_evictions']
+        if 'field_size_in_bytes' in cache:
+            metrics['cache.field.size'] = cache['field_size_in_bytes']
         metrics['cache.filter.count'] = cache['filter_count']
         metrics['cache.filter.evictions'] = cache['filter_evictions']
         metrics['cache.filter.size'] = cache['filter_size_in_bytes']
