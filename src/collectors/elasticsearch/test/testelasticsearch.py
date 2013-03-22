@@ -59,6 +59,10 @@ class TestElasticSearchCollector(CollectorTestCase):
             'disk.reads.size': 1235387392,
             'disk.writes.count': 5808198,
             'disk.writes.size': 23287275520,
+
+            'thread_pool.generic.threads': 1,
+
+            'network.tcp.active_opens': 2299,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,

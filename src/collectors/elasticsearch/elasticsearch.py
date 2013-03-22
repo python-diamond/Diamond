@@ -28,6 +28,10 @@ class ElasticSearchCollector(diamond.collector.Collector):
         config_help.update({
             'host': "",
             'port': "",
+            'stats': "Available stats: \n"
+            + " - jvm (JVM information) \n"
+            + " - thread_pool (Thread pool information) \n"
+            + " - indices (Individual index stats)\n",
         })
         return config_help
 
@@ -40,6 +44,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             'host':     '127.0.0.1',
             'port':     9200,
             'path':     'elasticsearch',
+            'stats':    ['jvm','thread_pool','indices'],
         })
         return config
 
@@ -59,16 +64,23 @@ class ElasticSearchCollector(diamond.collector.Collector):
                            + " json object")
             return False
 
+    def _copy_one_level(self, metrics, prefix, data, filter=lambda key: True):
+        for key, value in data.iteritems():
+            if filter(key):
+                metrics['%s.%s' % (prefix, key)] = value
+
+    def _copy_two_level(self, metrics, prefix, data, filter=lambda key: True):
+        for key1, d1 in data.iteritems():
+            self._copy_one_level(metrics, '%s.%s' % (prefix, key1), d1, filter)
+
     def _index_metrics(self, metrics, prefix, index):
         metrics['%s.docs.count' % prefix] = index['docs']['count']
         metrics['%s.docs.deleted' % prefix] = index['docs']['deleted']
         metrics['%s.datastore.size' % prefix] = index['store']['size_in_bytes']
 
         # publish all 'total' and 'time_in_millis' stats
-        for group, stats in index.iteritems():
-            for key, value in stats.iteritems():
-                if key.endswith('total') or key.endswith('time_in_millis'):
-                    metrics['%s.%s.%s' % (prefix, group, key)] = value
+        self._copy_two_level(metrics, prefix, index,
+            lambda key: key.endswith('total') or key.endswith('time_in_millis'))
 
     def collect(self):
         if json is None:
@@ -114,6 +126,10 @@ class ElasticSearchCollector(diamond.collector.Collector):
         if 'id_cache_size_in_bytes' in cache:
             metrics['cache.id.size'] = cache['id_cache_size_in_bytes']
 
+        # elasticsearch >= 0.90
+        if 'field_data' in indices:
+            metrics['field_data.memory_size'] = indices['field_data']['memory_size']
+
         #
         # process mem/cpu
         process = data['process']
@@ -133,16 +149,47 @@ class ElasticSearchCollector(diamond.collector.Collector):
             metrics['disk.writes.size'] = fs_data['disk_write_size_in_bytes']
 
         #
-        # individual index stats
-        result = self._get('_stats?clear=true&docs=true&store=true&indexing=true&get=true&search=true')
-        if not result:
-            return
+        # jvm
+        if 'jvm' in self.config['stats']:
+            jvm = data['jvm']
+            mem = jvm['mem']
+            for k in ('heap_used', 'heap_committed', 'non_heap_used', 'non_heap_committed'):
+                metrics['jvm.mem.%s' % k] = mem['%s_in_bytes' % k]
 
-        _all = result['_all']
-        self._index_metrics(metrics, 'indices._all', _all['primaries'])
-        indices = _all['indices']
-        for name, index in indices.iteritems():
-            self._index_metrics(metrics, 'indices.%s' % name, index['primaries'])
+            for pool, d in mem['pools'].iteritems():
+                metrics['jvm.mem.pools.%s.used' % pool] = d['used_in_bytes']
+                metrics['jvm.mem.pools.%s.max' % pool] = d['max_in_bytes']
+
+            metrics['jvm.threads.count'] = jvm['threads']['count']
+
+            gc = jvm['gc']
+            metrics['jvm.gc.collection.count'] = gc['collection_count']
+            metrics['jvm.gc.collection.time'] = gc['collection_time_in_millis']
+            for collector, d in gc['collectors'].iteritems():
+                metrics['jvm.gc.collection.%s.count' % collector] = d['collection_count']
+                metrics['jvm.gc.collection.%s.time' % collector] = d['collection_time_in_millis']
+
+        #
+        # thread_pool
+        if 'thread_pool' in self.config['stats']:
+            self._copy_two_level(metrics, 'thread_pool', data['thread_pool'])
+
+        #
+        # network
+        self._copy_two_level(metrics, 'network', data['network'])
+
+        if 'indices' in self.config['stats']:
+            #
+            # individual index stats
+            result = self._get('_stats?clear=true&docs=true&store=true&indexing=true&get=true&search=true')
+            if not result:
+                return
+
+            _all = result['_all']
+            self._index_metrics(metrics, 'indices._all', _all['primaries'])
+            indices = _all['indices']
+            for name, index in indices.iteritems():
+                self._index_metrics(metrics, 'indices.%s' % name, index['primaries'])
 
         for key in metrics:
             self.publish(key, metrics[key])
