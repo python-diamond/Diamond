@@ -347,7 +347,6 @@ class BackgroundWriterStats(QueryStats):
                buffers_clean,
                maxwritten_clean,
                buffers_backend,
-               buffers_backend_fsync,
                buffers_alloc
         FROM pg_stat_bgwriter
     """
