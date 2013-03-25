@@ -100,7 +100,7 @@ class PostgresqlCollector(diamond.collector.Collector):
             datnames = ['postgres']
         return datnames
 
-    def _connect(self, database=''):
+    def _connect(self, database='postgres'):
         conn = psycopg2.connect(
             host=self.config['host'],
             user=self.config['user'],
