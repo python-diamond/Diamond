@@ -71,10 +71,16 @@ class PostgresqlCollector(diamond.collector.Collector):
         for klass in metrics.itervalues():
             stat = klass(self.connections, underscore=self.config['underscore'])
             stat.fetch()
-            [self.publish(metric, value) for metric, value in stat if value]
+            [self.publish(metric, value) for metric, value in stat]
 
         # Cleanup
         [conn.close() for conn in self.connections.itervalues()]
+
+    def publish(self, metric, value, **kwargs):
+        # Don't publish empty values
+        if not value or value == '0':
+            return
+        super(PostgresqlCollector, self).publish(metric, value, **kwargs)
 
     def _get_db_names(self):
         query = """
