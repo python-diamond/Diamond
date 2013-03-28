@@ -44,7 +44,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             'host':     '127.0.0.1',
             'port':     9200,
             'path':     'elasticsearch',
-            'stats':    ['jvm','thread_pool','indices'],
+            'stats':    ['jvm', 'thread_pool', 'indices'],
         })
         return config
 
@@ -128,7 +128,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
         # elasticsearch >= 0.90
         if 'field_data' in indices:
-            metrics['field_data.memory_size'] = indices['field_data']['memory_size']
+            metrics['field_data.memory_size'] = indices['field_data'][
+                'memory_size']
 
         #
         # process mem/cpu
@@ -153,7 +154,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
         if 'jvm' in self.config['stats']:
             jvm = data['jvm']
             mem = jvm['mem']
-            for k in ('heap_used', 'heap_committed', 'non_heap_used', 'non_heap_committed'):
+            for k in ('heap_used', 'heap_committed', 'non_heap_used',
+                      'non_heap_committed'):
                 metrics['jvm.mem.%s' % k] = mem['%s_in_bytes' % k]
 
             for pool, d in mem['pools'].iteritems():
@@ -166,8 +168,10 @@ class ElasticSearchCollector(diamond.collector.Collector):
             metrics['jvm.gc.collection.count'] = gc['collection_count']
             metrics['jvm.gc.collection.time'] = gc['collection_time_in_millis']
             for collector, d in gc['collectors'].iteritems():
-                metrics['jvm.gc.collection.%s.count' % collector] = d['collection_count']
-                metrics['jvm.gc.collection.%s.time' % collector] = d['collection_time_in_millis']
+                metrics['jvm.gc.collection.%s.count' % collector] = d[
+                    'collection_count']
+                metrics['jvm.gc.collection.%s.time' % collector] = d[
+                    'collection_time_in_millis']
 
         #
         # thread_pool
@@ -181,7 +185,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
         if 'indices' in self.config['stats']:
             #
             # individual index stats
-            result = self._get('_stats?clear=true&docs=true&store=true&indexing=true&get=true&search=true')
+            result = self._get('_stats?clear=true&docs=true&store=true&'
+                               + 'indexing=true&get=true&search=true')
             if not result:
                 return
 
@@ -189,7 +194,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
             self._index_metrics(metrics, 'indices._all', _all['primaries'])
             indices = _all['indices']
             for name, index in indices.iteritems():
-                self._index_metrics(metrics, 'indices.%s' % name, index['primaries'])
+                self._index_metrics(metrics, 'indices.%s' % name,
+                                    index['primaries'])
 
         for key in metrics:
             self.publish(key, metrics[key])

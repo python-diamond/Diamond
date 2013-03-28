@@ -84,9 +84,10 @@ class MonitCollector(diamond.collector.Collector):
                         metrics["%s.cpu.percent" % name] = cpu
                         for unit in self.config['byte_unit']:
                             metrics["%s.memory.%s_usage" % (name, unit)] = (
-                                diamond.convertor.binary.convert(value=mem,
-                                                                 oldUnit='kilobyte',
-                                                                 newUnit=unit))
+                                diamond.convertor.binary.convert(
+                                    value=mem,
+                                    oldUnit='kilobyte',
+                                    newUnit=unit))
                         metrics["%s.uptime" % name] = uptime
                     except:
                         pass
