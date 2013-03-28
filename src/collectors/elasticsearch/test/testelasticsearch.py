@@ -63,6 +63,8 @@ class TestElasticSearchCollector(CollectorTestCase):
             'thread_pool.generic.threads': 1,
 
             'network.tcp.active_opens': 2299,
+
+            'jvm.mem.pools.CMS_Old_Gen.used': 530915016,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
