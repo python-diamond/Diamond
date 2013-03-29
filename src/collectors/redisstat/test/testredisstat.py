@@ -191,37 +191,37 @@ class TestRedisCollector(CollectorTestCase):
         testcases = {
             'default': {
                 'config': {},  # test default settings
-                'calls': [call('6379', 'localhost', 6379)],
+                'calls': [call('6379', 'localhost', 6379, None)],
             },
             'host_set': {
                 'config': {'host': 'myhost'},
-                'calls': [call('6379', 'myhost', 6379)],
+                'calls': [call('6379', 'myhost', 6379, None)],
             },
             'port_set': {
                 'config': {'port': 5005},
-                'calls': [call('5005', 'localhost', 5005)],
+                'calls': [call('5005', 'localhost', 5005, None)],
             },
             'hostport_set': {
                 'config': {'host': 'megahost', 'port': 5005},
-                'calls': [call('5005', 'megahost', 5005)],
+                'calls': [call('5005', 'megahost', 5005, None)],
             },
             'instance_1_host': {
                 'config': {'instances': ['nick@myhost']},
-                'calls': [call('nick', 'myhost', 6379)],
+                'calls': [call('nick', 'myhost', 6379, None)],
             },
             'instance_1_port': {
                 'config': {'instances': ['nick@:9191']},
-                'calls': [call('nick', 'localhost', 9191)],
+                'calls': [call('nick', 'localhost', 9191, None)],
             },
             'instance_1_hostport': {
                 'config': {'instances': ['nick@host1:8765']},
-                'calls': [call('nick', 'host1', 8765)],
+                'calls': [call('nick', 'host1', 8765, None)],
             },
             'instance_2': {
                 'config': {'instances': ['foo@hostX', 'bar@:1000']},
                 'calls': [
-                    call('foo', 'hostX', 6379),
-                    call('bar', 'localhost', 1000)
+                    call('foo', 'hostX', 6379, None),
+                    call('bar', 'localhost', 1000, None)
                 ],
             },
             'old_and_new': {
@@ -236,10 +236,10 @@ class TestRedisCollector(CollectorTestCase):
                     ]
                 },
                 'calls': [
-                    call('foo', 'hostX', 6379),
-                    call('bar', 'localhost', 1000),
-                    call('6379', 'hostonly', 6379),
-                    call('1234', 'localhost', 1234),
+                    call('foo', 'hostX', 6379, None),
+                    call('bar', 'localhost', 1000, None),
+                    call('6379', 'hostonly', 6379, None),
+                    call('1234', 'localhost', 1234, None),
                 ],
             },
         }

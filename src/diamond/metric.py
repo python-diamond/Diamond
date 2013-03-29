@@ -63,7 +63,7 @@ class Metric(object):
         """
         Return the Metric as a string
         """
-        if not isinstance( self.precision, ( int, long ) ):
+        if not isinstance(self.precision, (int, long)):
             log = logging.getLogger('diamond')
             log.warn('Metric %s does not have a valid precision', self.path)
             self.precision = 0

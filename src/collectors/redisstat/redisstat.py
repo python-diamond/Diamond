@@ -95,9 +95,9 @@ class RedisCollector(diamond.collector.Collector):
             port = int(self.config['port'])
             auth = self.config['auth']
             if auth != None:
-              instance_list.append('%s:%d/%s' % (host, port, auth))
+                instance_list.append('%s:%d/%s' % (host, port, auth))
             else:
-              instance_list.append('%s:%d' % (host, port))
+                instance_list.append('%s:%d' % (host, port))
 
         self.instances = {}
         for instance in instance_list:
@@ -109,11 +109,11 @@ class RedisCollector(diamond.collector.Collector):
                 hostport = instance
 
             if '/' in hostport:
-              parts = hostport.split('/')
-              hostport = parts[0]
-              auth = parts[1]
+                parts = hostport.split('/')
+                hostport = parts[0]
+                auth = parts[1]
             else:
-              auth = None
+                auth = None
 
             if ':' in hostport:
                 if hostport[0] == ':':
@@ -139,6 +139,7 @@ class RedisCollector(diamond.collector.Collector):
             'port': 'Port number to collect from',
             'timeout': 'Socket timeout',
             'db': '',
+            'auth': 'Password?',
             'databases': 'how many database instances to collect',
             'instances': "Redis addresses, comma separated, syntax:"
             + " nick1@host:port, nick2@:port or nick3@host"
@@ -158,6 +159,7 @@ class RedisCollector(diamond.collector.Collector):
             'port': self._DEFAULT_PORT,
             'timeout': self._DEFAULT_SOCK_TIMEOUT,
             'db': self._DEFAULT_DB,
+            'auth': None,
             'databases': self._DATABASE_COUNT,
             'path': 'redis',
             'instances': [],
