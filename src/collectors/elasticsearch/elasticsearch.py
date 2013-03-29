@@ -159,6 +159,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
                 metrics['jvm.mem.%s' % k] = mem['%s_in_bytes' % k]
 
             for pool, d in mem['pools'].iteritems():
+                pool = pool.replace(' ', '_')
                 metrics['jvm.mem.pools.%s.used' % pool] = d['used_in_bytes']
                 metrics['jvm.mem.pools.%s.max' % pool] = d['max_in_bytes']
 
