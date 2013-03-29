@@ -20,13 +20,14 @@ Example config file RedisCollector.conf
 enabled=True
 host=redis.example.com
 port=16379
+auth=PASSWORD
 ```
 
 or for multi-instance mode:
 
 ```
 enabled=True
-instances = nick1@host1:port1, nick2@host2:port2, ...
+instances = nick1@host1:port1, nick2@host2:port2/PASSWORD, ...
 ```
 
 Note: when using the host/port config mode, the port number is used in
@@ -92,7 +93,11 @@ class RedisCollector(diamond.collector.Collector):
         if len(instance_list) == 0:
             host = self.config['host']
             port = int(self.config['port'])
-            instance_list.append('%s:%d' % (host, port))
+            auth = self.config['auth']
+            if auth != None:
+              instance_list.append('%s:%d/%s' % (host, port, auth))
+            else:
+              instance_list.append('%s:%d' % (host, port))
 
         self.instances = {}
         for instance in instance_list:
@@ -102,6 +107,13 @@ class RedisCollector(diamond.collector.Collector):
             else:
                 nickname = None
                 hostport = instance
+
+            if '/' in hostport:
+              parts = hostport.split('/')
+              hostport = parts[0]
+              auth = parts[1]
+            else:
+              auth = None
 
             if ':' in hostport:
                 if hostport[0] == ':':
@@ -118,7 +130,7 @@ class RedisCollector(diamond.collector.Collector):
             if nickname is None:
                 nickname = str(port)
 
-            self.instances[nickname] = (host, port)
+            self.instances[nickname] = (host, port, auth)
 
     def get_default_config_help(self):
         config_help = super(RedisCollector, self).get_default_config_help()
@@ -152,7 +164,7 @@ class RedisCollector(diamond.collector.Collector):
         })
         return config
 
-    def _client(self, host, port):
+    def _client(self, host, port, auth):
         """Return a redis client for the configuration.
 
 :param str host: redis host
@@ -164,7 +176,7 @@ class RedisCollector(diamond.collector.Collector):
         timeout = int(self.config['timeout'])
         try:
             cli = redis.Redis(host=host, port=port,
-                              db=db, socket_timeout=timeout)
+                              db=db, socket_timeout=timeout, password=auth)
             cli.ping()
             return cli
         except Exception, ex:
@@ -194,7 +206,7 @@ class RedisCollector(diamond.collector.Collector):
         """
         return '%s.%s' % (nick, key)
 
-    def _get_info(self, host, port):
+    def _get_info(self, host, port, auth):
         """Return info dict from specified Redis instance
 
 :param str host: redis host
@@ -203,7 +215,7 @@ class RedisCollector(diamond.collector.Collector):
 
         """
 
-        client = self._client(host, port)
+        client = self._client(host, port, auth)
         if client is None:
             return None
 
@@ -211,7 +223,7 @@ class RedisCollector(diamond.collector.Collector):
         del client
         return info
 
-    def collect_instance(self, nick, host, port):
+    def collect_instance(self, nick, host, port, auth):
         """Collect metrics from a single Redis instance
 
 :param str nick: nickname of redis instance
@@ -221,7 +233,7 @@ class RedisCollector(diamond.collector.Collector):
         """
 
         # Connect to redis and get the info
-        info = self._get_info(host, port)
+        info = self._get_info(host, port, auth)
         if info is None:
             return
 
@@ -268,5 +280,5 @@ class RedisCollector(diamond.collector.Collector):
             return {}
 
         for nick in self.instances.keys():
-            (host, port) = self.instances[nick]
-            self.collect_instance(nick, host, int(port))
+            (host, port, auth) = self.instances[nick]
+            self.collect_instance(nick, host, int(port), auth)
