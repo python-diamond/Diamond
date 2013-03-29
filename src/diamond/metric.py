@@ -2,6 +2,7 @@
 
 import time
 import re
+import logging
 from error import DiamondException
 
 
@@ -62,6 +63,11 @@ class Metric(object):
         """
         Return the Metric as a string
         """
+        if not isinstance( self.precision, ( int, long ) ):
+            log = logging.getLogger('diamond')
+            log.warn('Metric %s does not have a valid precision', self.path)
+            self.precision = 0
+
         # Set the format string
         fstring = "%%s %%0.%if %%i\n" % self.precision
 
