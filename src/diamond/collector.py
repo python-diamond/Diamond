@@ -392,7 +392,6 @@ class Collector(object):
                 # Collect Data
                 self.collect()
 
-                self.collect_running = False
                 end_time = time.time()
 
                 if 'measure_collector_time' in self.config:
@@ -405,6 +404,7 @@ class Collector(object):
                 # Log Error
                 self.log.error(traceback.format_exc())
         finally:
+            self.collect_running = False
             # After collector run, invoke a flush
             # method on each handler.
             for handler in self.handlers:
