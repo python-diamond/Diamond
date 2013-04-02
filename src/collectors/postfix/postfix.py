@@ -24,6 +24,8 @@ except ImportError:
 
 import diamond.collector
 
+from diamond.collector import str_to_bool
+
 if sys.version_info < (2, 6):
     from string import maketrans
     DOTS_TO_UNDERS = maketrans('.', '_')
@@ -52,7 +54,7 @@ class PostfixCollector(diamond.collector.Collector):
             'path':             'postfix',
             'host':             'localhost',
             'port':             7777,
-            'include_clients':  'true',
+            'include_clients':  True,
             'method':           'Threaded',
         })
         return config
@@ -99,7 +101,7 @@ class PostfixCollector(diamond.collector.Collector):
         if not data:
             return
 
-        if self.config['include_clients'] == 'true' and u'clients' in data:
+        if str_to_bool(self.config['include_clients']) and u'clients' in data:
             for client, value in data['clients'].iteritems():
                 # translate dots to underscores in client names
                 metric = u'.'.join(['clients',
