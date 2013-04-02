@@ -52,7 +52,7 @@ class PostfixCollector(diamond.collector.Collector):
             'path':             'postfix',
             'host':             'localhost',
             'port':             7777,
-            'include_clients':  True,
+            'include_clients':  'true',
             'method':           'Threaded',
         })
         return config
@@ -99,7 +99,7 @@ class PostfixCollector(diamond.collector.Collector):
         if not data:
             return
 
-        if self.config['include_clients'] and u'clients' in data:
+        if self.config['include_clients'] == 'true' and u'clients' in data:
             for client, value in data['clients'].iteritems():
                 # translate dots to underscores in client names
                 metric = u'.'.join(['clients',
