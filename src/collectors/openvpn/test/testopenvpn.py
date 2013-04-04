@@ -41,6 +41,7 @@ class TestOpenVPNCollector(CollectorTestCase):
             'status.clients.d_example_org.bytes_tx': 11133831.000000,
             'status.clients.e_example_org.bytes_rx': 13090090.000000,
             'status.clients.e_example_org.bytes_tx': 13401853.000000,
+            'status.clients.connected': 5,
             'status.global.max_bcast-mcast_queue_length': 14.000000,
         }
 
