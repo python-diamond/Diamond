@@ -11,6 +11,7 @@ Collects the following from beanstalkd:
 
 """
 
+import re
 import diamond.collector
 
 try:
@@ -19,8 +20,9 @@ try:
 except ImportError:
     beanstalkc = None
 
-
 class BeanstalkdCollector(diamond.collector.Collector):
+    COUNTERS_REGEX = re.compile(r'^(cmd-.*|job-timeouts|total-jobs|total-connections)$')
+
     def get_default_config_help(self):
         config_help = super(BeanstalkdCollector,
                             self).get_default_config_help()
@@ -69,11 +71,15 @@ class BeanstalkdCollector(diamond.collector.Collector):
 
         for stat, value in info['instance'].items():
             if stat != 'version':
-                self.publish(stat, value)
+                self.publish(stat, value, metric_type=self.get_metric_type(stat))
 
         for tube_stats in info['tubes']:
             tube = tube_stats['name']
             for stat, value in tube_stats.items():
                 if stat != 'name':
                     self.publish('tubes.%s.%s' % (tube, stat), value,
-                                 metric_type='GAUGE')
+                                 metric_type=self.get_metric_type(stat))
+    def get_metric_type(self, stat):
+        if self.COUNTERS_REGEX.match(stat):
+            return 'COUNTER'
+        return 'GAUGE'
