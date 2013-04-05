@@ -79,6 +79,7 @@ class BeanstalkdCollector(diamond.collector.Collector):
                 if stat != 'name':
                     self.publish('tubes.%s.%s' % (tube, stat), value,
                                  metric_type=self.get_metric_type(stat))
+
     def get_metric_type(self, stat):
         if self.COUNTERS_REGEX.match(stat):
             return 'COUNTER'
