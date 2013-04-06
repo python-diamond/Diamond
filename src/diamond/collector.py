@@ -301,7 +301,7 @@ class Collector(object):
         raise NotImplementedError()
 
     def publish(self, name, value, raw_value=None, precision=0,
-                metric_type='COUNTER'):
+                metric_type='GAUGE'):
         """
         Publish a metric with the given name
         """
