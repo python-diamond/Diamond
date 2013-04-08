@@ -111,7 +111,10 @@ class MemcachedCollector(diamond.collector.Collector):
             elif pieces[1] == 'pid':
                 pid = pieces[2]
                 continue
-            stats[pieces[1]] = pieces[2]
+            if '.' in pieces[2]:
+                stats[pieces[1]] = float(pieces[2])
+            else:
+                stats[pieces[1]] = int(pieces[2])
 
         # get max connection limit
         self.log.debug('pid %s', pid)
