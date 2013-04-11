@@ -19,6 +19,7 @@ except ImportError:
     from kitchen.pycompat25.collections import defaultdict
 
 import diamond.collector
+from diamond.collector import str_to_bool
 
 
 class UnboundCollector(diamond.collector.Collector):
@@ -51,7 +52,7 @@ class UnboundCollector(diamond.collector.Collector):
         try:
             command = [self.config['bin'] + ' stats']
 
-            if self.config['use_sudo']:
+            if str_to_bool(self.config['use_sudo']):
                 command.insert(0, self.config['sudo_cmd'])
 
             return subprocess.Popen(command,

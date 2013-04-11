@@ -23,6 +23,7 @@ We extract out the key after target_ and use it in the graphite node we push.
 import subprocess
 import diamond.collector
 import os
+from diamond.collector import str_to_bool
 
 
 class PingCollector(diamond.collector.Collector):
@@ -62,7 +63,7 @@ class PingCollector(diamond.collector.Collector):
 
                 command = [self.config['bin'], '-nq', '-c 1', host]
 
-                if self.config['use_sudo']:
+                if str_to_bool(self.config['use_sudo']):
                     command.insert(0, self.config['sudo_cmd'])
 
                 ping = subprocess.Popen(

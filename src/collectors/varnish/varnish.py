@@ -12,6 +12,7 @@ VarnishCollector grabs stats from Varnish and submits them the Graphite
 import diamond.collector
 import re
 import subprocess
+from diamond.collector import str_to_bool
 
 
 class VarnishCollector(diamond.collector.Collector):
@@ -78,7 +79,7 @@ class VarnishCollector(diamond.collector.Collector):
         try:
             command = [self.config['bin'], '-1']
 
-            if self.config['use_sudo']:
+            if str_to_bool(self.config['use_sudo']):
                 command.insert(0, self.config['sudo_cmd'])
 
             output = subprocess.Popen(command,

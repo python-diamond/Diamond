@@ -64,7 +64,7 @@ class IPVSCollector(diamond.collector.Collector):
             self.log.error("%s is not executable", self.config['bin'])
             return False
 
-        if (self.config['use_sudo']
+        if (str_to_bool(self.config['use_sudo'])
             and not os.access(self.config['sudo_cmd'], os.X_OK)):
             self.log.error("%s is not executable", self.config['sudo_cmd'])
             return False

@@ -11,6 +11,7 @@ Collect the emails in the postfix queue
 
 import subprocess
 import diamond.collector
+from diamond.collector import str_to_bool
 
 
 class PostqueueCollector(diamond.collector.Collector):
@@ -41,7 +42,7 @@ class PostqueueCollector(diamond.collector.Collector):
         try:
             command = [self.config['bin'], '-p']
 
-            if self.config['use_sudo']:
+            if str_to_bool(self.config['use_sudo']):
                 command.insert(0, self.config['sudo_cmd'])
 
             return subprocess.Popen(command,
