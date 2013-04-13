@@ -12,6 +12,7 @@ This class collects data from NUT, a UPS interface for linux.
 import diamond.collector
 import os
 import subprocess
+from diamond.collector import str_to_bool
 
 
 class UPSCollector(diamond.collector.Collector):
@@ -48,7 +49,7 @@ class UPSCollector(diamond.collector.Collector):
 
         command = [self.config['bin'], self.config['ups_name']]
 
-        if self.config['use_sudo']:
+        if str_to_bool(self.config['use_sudo']):
             command.insert(0, self.config['sudo_cmd'])
 
         p = subprocess.Popen(command,

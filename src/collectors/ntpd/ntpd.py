@@ -12,6 +12,7 @@ Collect stats from ntpd
 import subprocess
 
 import diamond.collector
+from diamond.collector import str_to_bool
 
 
 class NtpdCollector(diamond.collector.Collector):
@@ -42,7 +43,7 @@ class NtpdCollector(diamond.collector.Collector):
 
     def run_command(self, command):
         try:
-            if self.config['use_sudo']:
+            if str_to_bool(self.config['use_sudo']):
                 command.insert(0, self.config['sudo_cmd'])
 
             return subprocess.Popen(command,

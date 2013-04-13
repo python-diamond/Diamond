@@ -13,6 +13,7 @@ import diamond.collector
 import subprocess
 import os
 import re
+from diamond.collector import str_to_bool
 
 _RE = re.compile(r'^([a-z\._]*) = ([0-9]*)$')
 
@@ -48,7 +49,7 @@ class ConnTrackCollector(diamond.collector.Collector):
 
         command = [self.config['bin'], 'net.netfilter.nf_conntrack_count']
 
-        if self.config['use_sudo']:
+        if str_to_bool(self.config['use_sudo']):
             command.insert(0, self.config['sudo_cmd'])
 
         line = subprocess.Popen(command,

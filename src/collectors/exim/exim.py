@@ -12,6 +12,7 @@ Shells out to get the exim queue length
 import diamond.collector
 import subprocess
 import os
+from diamond.collector import str_to_bool
 
 
 class EximCollector(diamond.collector.Collector):
@@ -45,7 +46,7 @@ class EximCollector(diamond.collector.Collector):
 
         command = [self.config['bin'], '-bpc']
 
-        if self.config['use_sudo']:
+        if str_to_bool(self.config['use_sudo']):
             command.insert(0, self.config['sudo_cmd'])
 
         queuesize = subprocess.Popen(
