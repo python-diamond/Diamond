@@ -53,4 +53,3 @@ class MultiGraphiteHandler(Handler):
         """Flush metrics in queue"""
         for handler in self.handlers:
             handler.flush()
-

@@ -20,8 +20,10 @@ try:
 except ImportError:
     beanstalkc = None
 
+
 class BeanstalkdCollector(diamond.collector.Collector):
-    COUNTERS_REGEX = re.compile(r'^(cmd-.*|job-timeouts|total-jobs|total-connections)$')
+    COUNTERS_REGEX = re.compile(
+        r'^(cmd-.*|job-timeouts|total-jobs|total-connections)$')
 
     def get_default_config_help(self):
         config_help = super(BeanstalkdCollector,
@@ -71,7 +73,8 @@ class BeanstalkdCollector(diamond.collector.Collector):
 
         for stat, value in info['instance'].items():
             if stat != 'version':
-                self.publish(stat, value, metric_type=self.get_metric_type(stat))
+                self.publish(stat, value,
+                             metric_type=self.get_metric_type(stat))
 
         for tube_stats in info['tubes']:
             tube = tube_stats['name']
