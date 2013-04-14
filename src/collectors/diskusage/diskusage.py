@@ -257,7 +257,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                                      + metrics['writes_milliseconds'])
                                     / metrics['io'])
 
-                # http://www.scribd.com/doc/15013525/Your-Disk-Array-is-Slower-Than-it-Should-Be
+                # http://www.scribd.com/doc/15013525
                 # Page 28
                 metrics['concurrent_io'] = (metrics['reads_per_second']
                                             + metrics['writes_per_second']
