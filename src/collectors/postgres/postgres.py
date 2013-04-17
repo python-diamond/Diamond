@@ -92,13 +92,18 @@ class PostgresqlCollector(diamond.collector.Collector):
             datnames = ['postgres']
         return datnames
 
-    def _connect(self, database=''):
-        conn = psycopg2.connect(
-            host=self.config['host'],
-            user=self.config['user'],
-            password=self.config['password'],
-            port=self.config['port'],
-            database=database)
+    def _connect(self, database=None):
+        conn_args = {
+          'host':self.config['host'],
+          'user':self.config['user'],
+          'password':self.config['password'],
+          'port':self.config['port']
+        }
+
+        if database:
+          conn_args['database'] = database
+
+        conn = psycopg2.connect(**conn_args)
 
         # Avoid using transactions, set isolation level to autocommit
         conn.set_isolation_level(0)
