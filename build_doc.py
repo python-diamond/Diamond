@@ -220,6 +220,9 @@ if __name__ == "__main__":
         docFile.write("__EXAMPLESHERE__\n")
         docFile.write("```\n")
         docFile.write("\n")
+        docFile.write("### This file was generated from the python source\n")
+        docFile.write("### Please edit the source to make changes\n")
+        docFile.write("\n")
 
         docFile.close()
 
