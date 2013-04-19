@@ -12,6 +12,7 @@ The CPUCollector collects CPU utilization metric using /proc/stat.
 import diamond.collector
 import os
 import time
+from diamond.collector import str_to_bool
 
 try:
     import psutil
@@ -41,6 +42,8 @@ class CPUCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(CPUCollector, self).get_default_config_help()
         config_help.update({
+            'percore':  'Collect metrics per cpu core or just total',
+            'simple':   'only return aggregate CPU% metric',
         })
         return config_help
 
@@ -88,7 +91,7 @@ class CPUCollector(diamond.collector.Collector):
         if os.access(self.PROC, os.R_OK):
 
             #If simple only return aggregate CPU% metric
-            if self.config['simple'] == 'True':
+            if str_to_bool(self.config['simple']):
                 dt = cpu_delta_time(self.INTERVAL)
                 cpuPct = 100 - (dt[len(dt) - 1] * 100.00 / sum(dt))
                 self.publish('percent', str('%.4f' % cpuPct))
@@ -108,7 +111,7 @@ class CPUCollector(diamond.collector.Collector):
 
                 if cpu == 'cpu':
                     cpu = 'total'
-                elif self.config['percore'] == 'False':
+                elif not str_to_bool(self.config['percore']):
                     continue
 
                 results[cpu] = {}
