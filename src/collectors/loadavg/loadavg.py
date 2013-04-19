@@ -35,7 +35,8 @@ class LoadAverageCollector(diamond.collector.Collector):
         config.update({
             'enabled':  'True',
             'path':     'loadavg',
-            'method':   'Threaded'
+            'method':   'Threaded',
+            'simple':   'False'
         })
         return config
 
@@ -48,9 +49,12 @@ class LoadAverageCollector(diamond.collector.Collector):
         for line in file:
             match = _RE.match(line)
             if match:
-                self.publish_gauge('01', float(match.group(1)), 2)
-                self.publish_gauge('05', float(match.group(2)), 2)
-                self.publish_gauge('15', float(match.group(3)), 2)
+                if self.config['simple'] == 'False':
+                    self.publish_gauge('01', float(match.group(1)), 2)
+                    self.publish_gauge('05', float(match.group(2)), 2)
+                    self.publish_gauge('15', float(match.group(3)), 2)
+                else:
+                    self.publish_gauge('load', float(match.group(1)), 2)
                 self.publish_gauge('processes_running', int(match.group(4)))
                 self.publish_gauge('processes_total', int(match.group(5)))
         file.close()
