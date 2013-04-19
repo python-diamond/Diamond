@@ -12,6 +12,7 @@ Uses /proc/loadavg to collect data on load average
 import diamond.collector
 import re
 import os
+from diamond.collector import str_to_bool
 
 _RE = re.compile(r'([\d.]+) ([\d.]+) ([\d.]+) (\d+)/(\d+)')
 
@@ -24,6 +25,7 @@ class LoadAverageCollector(diamond.collector.Collector):
         config_help = super(LoadAverageCollector,
                             self).get_default_config_help()
         config_help.update({
+            'simple':   'Only collect the 1 minute load average'
         })
         return config_help
 
@@ -49,7 +51,7 @@ class LoadAverageCollector(diamond.collector.Collector):
         for line in file:
             match = _RE.match(line)
             if match:
-                if self.config['simple'] == 'False':
+                if not str_to_bool(self.config['simple']):
                     self.publish_gauge('01', float(match.group(1)), 2)
                     self.publish_gauge('05', float(match.group(2)), 2)
                     self.publish_gauge('15', float(match.group(3)), 2)
