@@ -84,6 +84,15 @@ class method:
     threaded = "threaded"
 
 
+class SchedulerNotRunning(Exception):
+    """Interrupt a running scheduler.
+    
+    This exception is used to break out of sched.sched.run when we
+    are not running.
+
+    """
+    pass
+
 class Scheduler:
     """The Scheduler itself."""
 
@@ -108,11 +117,14 @@ class Scheduler:
                     and stoptime > time.time()
                     and self._getqueuetoptime() == toptime):
                 time.sleep(period)
-            if not self.running or self._getqueuetoptime() != toptime:
-                return
-            now = time.time()
-            if endtime > now:
-                time.sleep(endtime - now)
+
+            if self.running and self._getqueuetoptime() == toptime:
+                now = time.time()
+                if endtime > now:
+                    time.sleep(endtime - now)
+
+        if not self.running:
+            raise SchedulerNotRunning()
 
     def _acquire_lock(self):
         pass
@@ -252,7 +264,7 @@ class Scheduler:
     def stop(self):
         """Remove all pending tasks and stop the Scheduler."""
         self.running = False
-        self._clearschedqueue()
+        # Pending tasks are removed in _run.
 
     def cancel(self, task):
         """Cancel given scheduled task."""
@@ -279,6 +291,8 @@ class Scheduler:
         while self.running:
             try:
                 self.sched.run()
+            except SchedulerNotRunning as e:
+                self._clearschedqueue()
             except Exception, x:
                 self.log.error("ERROR DURING SCHEDULER EXECUTION %s \n %s", x,
                         "".join(traceback.format_exception(*sys.exc_info())))
