@@ -154,6 +154,13 @@ batch = 100
 # path_prefix = servers
 # path_suffix =
 
+# Path Prefix for Virtual Machines
+# If the host supports virtual machines, collectors may report per
+# VM metrics. Following OpenStack nomenclature, the prefix for
+# reporting per VM metrics is "instances", and metric foo for VM
+# bar will be reported as: instances.bar.foo...
+# instance_prefix = instances
+
 # Default Poll Interval (seconds)
 # interval = 300
 

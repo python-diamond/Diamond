@@ -210,6 +210,9 @@ class Collector(object):
             # Path Prefix
             'path_prefix': 'servers',
 
+            # Path Prefix for Virtual Machine metrics
+            'instance_prefix': 'instances',
+
             # Path Suffix
             'path_suffix': '',
 
@@ -256,10 +259,28 @@ class Collector(object):
                                           int(self.config['splay']),
                                           int(self.config['interval']))}
 
-    def get_metric_path(self, name):
+    def get_metric_path(self, name, instance=None):
         """
-        Get metric path
+        Get metric path.
+        Instance indicates that this is a metric for a
+            virtual machine and should have a different
+            root prefix.
         """
+        if 'path' in self.config:
+            path = self.config['path']
+        else:
+            path = self.__class__.__name__
+
+        if instance is not None:
+            if 'instance_prefix' in self.config:
+                prefix = self.config['instance_prefix']
+            else:
+                prefix = 'instances'
+            if path == '.':
+                return '.'.join([prefix, instance, name])
+            else:
+                return '.'.join([prefix, instance, path, name])
+
         if 'path_prefix' in self.config:
             prefix = self.config['path_prefix']
         else:
@@ -281,11 +302,6 @@ class Collector(object):
         if suffix:
             prefix = '.'.join((prefix, suffix))
 
-        if 'path' in self.config:
-            path = self.config['path']
-        else:
-            path = self.__class__.__name__
-
         if path == '.':
             return '.'.join([prefix, name])
         else:
@@ -301,12 +317,12 @@ class Collector(object):
         raise NotImplementedError()
 
     def publish(self, name, value, raw_value=None, precision=0,
-                metric_type='GAUGE'):
+                metric_type='GAUGE', instance=None):
         """
         Publish a metric with the given name
         """
         # Get metric Path
-        path = self.get_metric_path(name)
+        path = self.get_metric_path(name, instance=instance)
 
         # Create Metric
         metric = Metric(path, value, raw_value=raw_value, timestamp=None,
@@ -324,27 +340,30 @@ class Collector(object):
         for handler in self.handlers:
             handler._process(metric)
 
-    def publish_gauge(self, name, value, precision=0):
+    def publish_gauge(self, name, value, precision=0, instance=None):
         return self.publish(name, value, precision=precision,
-                            metric_type='GAUGE')
+                            metric_type='GAUGE', instance=instance)
 
     def publish_counter(self, name, value, precision=0, max_value=0,
-                      time_delta=True, interval=None, allow_negative=False):
+                      time_delta=True, interval=None, allow_negative=False,
+                      instance=None):
         raw_value = value
         value = self.derivative(name, value, max_value=max_value,
                                 time_delta=time_delta, interval=interval,
-                                allow_negative=allow_negative)
+                                allow_negative=allow_negative,
+                                instance=instance)
         return self.publish(name, value, raw_value=raw_value,
-                            precision=precision, metric_type='COUNTER')
+                            precision=precision, metric_type='COUNTER',
+                            instance=instance)
 
     def derivative(self, name, new, max_value=0,
                    time_delta=True, interval=None,
-                   allow_negative=False):
+                   allow_negative=False, instance=None):
         """
         Calculate the derivative of the metric.
         """
         # Format Metric Path
-        path = self.get_metric_path(name)
+        path = self.get_metric_path(name, instance=instance)
 
         if path in self.last_values:
             old = self.last_values[path]
