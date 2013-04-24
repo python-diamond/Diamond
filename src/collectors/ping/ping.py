@@ -73,11 +73,11 @@ class PingCollector(diamond.collector.Collector):
                 # Linux
                 if ping.startswith('rtt'):
                     ping = ping.split()[3].split('/')[0]
-                    metric_value = int(round(float(ping)))
+                    metric_value = float(ping)
                 # OS X
                 elif ping.startswith('round-trip '):
                     ping = ping.split()[3].split('/')[0]
-                    metric_value = int(round(float(ping)))
+                    metric_value = float(ping)
                 # Unknown
                 else:
                     metric_value = 10000
