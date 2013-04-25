@@ -74,9 +74,12 @@ class ElasticSearchCollector(diamond.collector.Collector):
             self._copy_one_level(metrics, '%s.%s' % (prefix, key1), d1, filter)
 
     def _index_metrics(self, metrics, prefix, index):
-        metrics['%s.docs.count' % prefix] = index['docs']['count']
-        metrics['%s.docs.deleted' % prefix] = index['docs']['deleted']
-        metrics['%s.datastore.size' % prefix] = index['store']['size_in_bytes']
+        if 'docs' in index:
+            metrics['%s.docs.count' % prefix] = index['docs']['count']
+            metrics['%s.docs.deleted' % prefix] = index['docs']['deleted']
+
+        if 'store' in index:
+            metrics['%s.datastore.size' % prefix] = index['store']['size_in_bytes']
 
         # publish all 'total' and 'time_in_millis' stats
         self._copy_two_level(metrics, prefix, index,
@@ -113,18 +116,40 @@ class ElasticSearchCollector(diamond.collector.Collector):
         metrics['transport.tx.count'] = transport['tx_count']
         metrics['transport.tx.size'] = transport['tx_size_in_bytes']
 
-        cache = indices['cache']
-        if 'bloom_size_in_bytes' in cache:
-            metrics['cache.bloom.size'] = cache['bloom_size_in_bytes']
-        if 'field_evictions' in cache:
-            metrics['cache.field.evictions'] = cache['field_evictions']
-        if 'field_size_in_bytes' in cache:
-            metrics['cache.field.size'] = cache['field_size_in_bytes']
-        metrics['cache.filter.count'] = cache['filter_count']
-        metrics['cache.filter.evictions'] = cache['filter_evictions']
-        metrics['cache.filter.size'] = cache['filter_size_in_bytes']
-        if 'id_cache_size_in_bytes' in cache:
-            metrics['cache.id.size'] = cache['id_cache_size_in_bytes']
+        # elasticsearch < 0.90RC2
+        if 'cache' in indices:
+            cache = indices['cache']
+
+            if 'bloom_size_in_bytes' in cache:
+                metrics['cache.bloom.size'] = cache['bloom_size_in_bytes']
+            if 'field_evictions' in cache:
+                metrics['cache.field.evictions'] = cache['field_evictions']
+            if 'field_size_in_bytes' in cache:
+                metrics['cache.field.size'] = cache['field_size_in_bytes']
+            metrics['cache.filter.count'] = cache['filter_count']
+            metrics['cache.filter.evictions'] = cache['filter_evictions']
+            metrics['cache.filter.size'] = cache['filter_size_in_bytes']
+            if 'id_cache_size_in_bytes' in cache:
+                metrics['cache.id.size'] = cache['id_cache_size_in_bytes']
+
+        # elasticsearch >= 0.90RC2
+        if 'filter_cache' in indices:
+            cache = indices['filter_cache']
+
+            metrics['cache.filter.evictions'] = cache['evictions']
+            metrics['cache.filter.size'] = cache['memory_size_in_bytes']
+
+            if 'count' in cache:
+                metrics['cache.filter.count'] = cache['count']
+
+
+        # elasticsearch >= 0.90RC2
+        if 'id_cache' in indices:
+            cache = indices['id_cache']
+
+            if 'memory_size_in_bytes' in cache:
+                metrics['cache.id.size'] = cache['memory_size_in_bytes']
+
 
         # elasticsearch >= 0.90
         if 'field_data' in indices:
@@ -193,7 +218,14 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
             _all = result['_all']
             self._index_metrics(metrics, 'indices._all', _all['primaries'])
-            indices = _all['indices']
+
+            if 'indices' in _all:
+                indices = _all['indices']
+            elif 'indices' in result:          # elasticsearch >= 0.90RC2
+                indices = result['indices']
+            else:
+                return
+
             for name, index in indices.iteritems():
                 self._index_metrics(metrics, 'indices.%s' % name,
                                     index['primaries'])
