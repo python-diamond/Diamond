@@ -35,6 +35,10 @@ class LibvirtKVMCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(LibvirtKVMCollector, self).get_default_config_help()
         config_help.update({
+            'uri' : """The libvirt connection URI. By default it's 'qemu:///system'.
+One decent option is 'qemu+unix:///system?socket=/var/run/libvirt/libvit-sock-ro'.""",
+            'cpu_absolute' : """CPU stats reported as percentage by default, or as
+cummulative nanoseconds since VM creation if this is True."""
         })
         return config_help
 
@@ -45,8 +49,8 @@ class LibvirtKVMCollector(diamond.collector.Collector):
         config = super(LibvirtKVMCollector, self).get_default_config()
         config.update({
             'path':     'libvirt-kvm',
-            #'uri' :     'qemu+unix:///system?socket=/var/run/libvirt/libvit-sock-ro'   
-            'uri' :     'qemu:///system'
+            'uri' :     'qemu:///system',
+            'cpu_absolute' : False
         })
         return config
 
@@ -69,6 +73,17 @@ class LibvirtKVMCollector(diamond.collector.Collector):
     def get_network_devices(self, dom):
         return self.get_devices(dom, 'interface')
 
+    def report_cpu_metric(self, statname, value, instance):
+        # Value in cummulative nanoseconds
+        if self.config['cpu_absolute'] == True:
+            metric = value
+        else:
+            # Nanoseconds (10^9), however, we want to express in 100%
+            metric = self.derivative(statname, float(value) / 10000000.0,
+                                     max_value = diamond.collector.MAX_COUNTER,
+                                     instance = instance)
+        self.publish(statname, metric, instance = instance)
+
     def collect(self):
         conn = libvirt.openReadOnly(self.config['uri'])
         for dom in [ conn.lookupByID(n) for n in conn.listDomainsID() ]:
@@ -80,10 +95,10 @@ class LibvirtKVMCollector(diamond.collector.Collector):
             idx = 0
             for vcpu in vcpus:
                 cputime = vcpu['cpu_time']
-                self.publish('cpu.%s.time' % idx, cputime, instance = name)
+                self.report_cpu_metric('cpu.%s.time' % idx, cputime, name)
                 idx += 1
                 totalcpu += cputime
-            self.publish('cpu.total.time', totalcpu, instance = name)
+            self.report_cpu_metric('cpu.total.time', totalcpu, name)
 
             # Disk stats
             disks = self.get_disk_devices(dom)
