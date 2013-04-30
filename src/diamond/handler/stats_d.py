@@ -66,9 +66,9 @@ class StatsdHandler(Handler):
         self.metrics.append(metric)
 
         if len(self.metrics) >= self.batch_size:
-            self._send(metric)
+            self._send()
 
-    def _send(self, metric):
+    def _send(self):
         """
         Send data to statsd. Fire and forget.  Cross fingers and it'll arrive.
         """
