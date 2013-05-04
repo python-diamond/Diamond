@@ -8,5 +8,5 @@
 
 # Additional options that are passed to the Daemon.
 ENABLE_DIAMOND="yes"
-DIAMOND_PID="/var/run/diamond/diamond.pid"
+DIAMOND_PID="/var/run/diamond.pid"
 DIAMOND_USER="diamond"

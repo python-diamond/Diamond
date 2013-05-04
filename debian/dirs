@@ -1,3 +1,2 @@
 etc/diamond/collectors
 var/log/diamond
-var/run/diamond
