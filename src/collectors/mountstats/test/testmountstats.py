@@ -16,7 +16,7 @@ class TestMountStatsCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MountStatsCollector', {
             'exclude_filters': ['^/mnt/path2'],
-            'interval': 10
+            'interval': 1
         })
 
         self.collector = MountStatsCollector(config, None)
@@ -34,11 +34,16 @@ class TestMountStatsCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
+        # Test the first and last metric of each type
         published_metrics = {
+            '_mnt_path1.events.inoderevalidates': 27110.0,
             '_mnt_path1.events.delay': 0.0,
-            '_mnt_path1.bytes.serverwritebytes': 75.7,
-            '_mnt_path1.xprt.tcp.backlogutil': 3509.3,
-            '_mnt_path1.rpc.write.ops': 1.6
+            '_mnt_path1.bytes.normalreadbytes': 1424269.0,
+            '_mnt_path1.bytes.serverwritebytes': 69460.0,
+            '_mnt_path1.xprt.tcp.port': 0.0,
+            '_mnt_path1.xprt.tcp.backlogutil': 11896527.0,
+            '_mnt_path1.rpc.access.ops': 2988.0,
+            '_mnt_path1.rpc.write.ops': 16.0
         }
 
         unpublished_metrics = {

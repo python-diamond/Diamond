@@ -114,16 +114,16 @@ class MountStatsCollector(diamond.collector.Collector):
                 # anything that isn't the next device line
                 continue
             elif tokens[0] == 'events:':
-                for i in range(1, len(self.EVENTS_MAP)):
+                for i in range(0, len(self.EVENTS_MAP)):
                     metric_name = "{path}.events.{counter}".format(
                             path=path, counter=self.EVENTS_MAP[i])
-                    metric_value = long(tokens[i])
+                    metric_value = long(tokens[i + 1])
                     self.publish_counter(metric_name, metric_value)
             elif tokens[0] == 'bytes:':
-                for i in range(1, len(self.BYTES_MAP)):
+                for i in range(0, len(self.BYTES_MAP)):
                     metric_name = "{path}.bytes.{counter}".format(
                             path=path, counter=self.BYTES_MAP[i])
-                    metric_value = long(tokens[i])
+                    metric_value = long(tokens[i + 1])
                     self.publish_counter(metric_name, metric_value)
             elif tokens[0] == 'xprt:':
                 proto = tokens[1]
@@ -132,11 +132,11 @@ class MountStatsCollector(diamond.collector.Collector):
                             proto=proto))
                     continue
 
-                for i in range(2, len(self.XPRT_MAP[proto])):
+                for i in range(0, len(self.XPRT_MAP[proto])):
                     metric_name = "{path}.xprt.{proto}.{counter}".format(
                             path=path, proto=proto,
                             counter=self.XPRT_MAP[proto][i])
-                    metric_value = long(tokens[i])
+                    metric_value = long(tokens[i + 2])
                     self.publish_counter(metric_name, metric_value)
             elif tokens[0][:-1] in self.RPCS_MAP:
                 rpc = tokens[0][:-1]
