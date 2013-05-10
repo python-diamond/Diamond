@@ -109,9 +109,8 @@ class MountStatsCollector(diamond.collector.Collector):
                 path = tokens[4]
 
                 if self.exclude_reg and self.exclude_reg.match(path):
-                    self.log.debug("Ignoring {path} since it is in the "
-                                   + "exclude_filter list.".format(
-                                           path=path))
+                    self.log.debug("Ignoring %s since it is in the "
+                                   + "exclude_filter list.", path)
                     skip = True
                 else:
                     skip = False
@@ -124,27 +123,23 @@ class MountStatsCollector(diamond.collector.Collector):
                 continue
             elif tokens[0] == 'events:':
                 for i in range(0, len(self.EVENTS_MAP)):
-                    metric_name = "{path}.events.{counter}".format(
-                            path=path, counter=self.EVENTS_MAP[i])
+                    metric_name = "%s.events.%s" % (path, self.EVENTS_MAP[i])
                     metric_value = long(tokens[i + 1])
                     self.publish_counter(metric_name, metric_value)
             elif tokens[0] == 'bytes:':
                 for i in range(0, len(self.BYTES_MAP)):
-                    metric_name = "{path}.bytes.{counter}".format(
-                            path=path, counter=self.BYTES_MAP[i])
+                    metric_name = "%s.bytes.%s" % (path, self.BYTES_MAP[i])
                     metric_value = long(tokens[i + 1])
                     self.publish_counter(metric_name, metric_value)
             elif tokens[0] == 'xprt:':
                 proto = tokens[1]
                 if not self.XPRT_MAP[proto]:
-                    self.log.error("Unknown protocol {proto}".format(
-                            proto=proto))
+                    self.log.error("Unknown protocol %s", proto)
                     continue
 
                 for i in range(0, len(self.XPRT_MAP[proto])):
-                    metric_name = "{path}.xprt.{proto}.{counter}".format(
-                            path=path, proto=proto,
-                            counter=self.XPRT_MAP[proto][i])
+                    metric_name = "%s.xprt.%s.%s" % (path, proto,
+                                                     self.XPRT_MAP[proto][i])
                     metric_value = long(tokens[i + 2])
                     self.publish_counter(metric_name, metric_value)
             elif tokens[0][:-1] in self.RPCS_MAP:
@@ -153,13 +148,10 @@ class MountStatsCollector(diamond.collector.Collector):
                 rtt = long(tokens[7])
                 exe = long(tokens[8])
 
-                metric_fmt = "{path}.rpc.{rpc}.{counter}"
-                ops_name = metric_fmt.format(path=path,
-                        rpc=rpc.lower(), counter='ops')
-                rtt_name = metric_fmt.format(path=path,
-                        rpc=rpc.lower(), counter='rtt')
-                exe_name = metric_fmt.format(path=path,
-                        rpc=rpc.lower(), counter='exe')
+                metric_fmt = "%s.rpc.%s.%s"
+                ops_name = metric_fmt % (path, rpc.lower(), 'ops')
+                rtt_name = metric_fmt % (path, rpc.lower(), 'rtt')
+                exe_name = metric_fmt % (path, rpc.lower(), 'exe')
 
                 self.publish_counter(ops_name, ops)
                 self.publish_counter(rtt_name, rtt)
