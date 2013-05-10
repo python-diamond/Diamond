@@ -46,7 +46,8 @@ or
 
 ### To Graphite
 
-You may be interested in [mqtt2graphite](https://github.com/jpmens/mqtt2graphite)
+You may be interested in
+[mqtt2graphite](https://github.com/jpmens/mqtt2graphite)
 which subscribes to an MQTT broker and sends metrics off to Graphite.
 
 ### Notes
@@ -90,7 +91,7 @@ class MQTTHandler(Handler):
 
         # Initialize Options
         self.host = self.config.get('host', 'localhost')
-        self.port = 0       
+        self.port = 0
         self.qos = int(self.config.get('qos', 0))
         self.prefix = self.config.get('prefix', "")
         self.tls = self.config.get('tls', False)
@@ -105,7 +106,7 @@ class MQTTHandler(Handler):
             self.timestamp = 1
 
         # Initialize
-        self.mqttc = mqttc = mosquitto.Mosquitto(self.client_id, clean_session=True)
+        self.mqttc = mosquitto.Mosquitto(self.client_id, clean_session=True)
 
         if not self.tls:
             self.port = int(self.config.get('port', 1883))
@@ -118,7 +119,9 @@ class MQTTHandler(Handler):
             self.certfile = self.config.get('certfile', None)
             self.keyfile = self.config.get('keyfile', None)
 
-            if self.cafile is None or self.certfile is None or self.keyfile is None:
+            if (self.cafile is None
+                or self.certfile is None
+                or self.keyfile is None):
                 self.log.error("MQTTHandler: TLS configuration missing.")
                 return
 
@@ -131,8 +134,8 @@ class MQTTHandler(Handler):
                     tls_version=3,
                     ciphers=None)
             except:
-                self.log.error("MQTTHandler: Cannot set up TLS configuration. Files missing?")
-
+                self.log.error("MQTTHandler: Cannot set up TLS "
+                               + "configuration. Files missing?")
 
         self.mqttc.will_set("clients/diamond/%s" % (self.hostname),
                 payload="Adios!", qos=0, retain=False)

@@ -1,11 +1,20 @@
 # coding=utf-8
+"""
+The function of this plugin is to parse the detailed per-mount NFS performance
+statistics provided by `/proc/self/mountstats` (reads, writes, remote procedure
+call count/latency, etc.) and provide counters to Diamond. Filesystems may be
+excluded using a regular expression filter, like the existing disk check
+collectors.
+
+#### Dependencies
+
+"""
 
 import os
 import re
-from pprint import pprint
 
-from configobj import ConfigObj
 import diamond.collector
+
 
 class MountStatsCollector(diamond.collector.Collector):
     """Diamond collector for statistics from /proc/self/mountstats

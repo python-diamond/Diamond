@@ -79,7 +79,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
             metrics['%s.docs.deleted' % prefix] = index['docs']['deleted']
 
         if 'store' in index:
-            metrics['%s.datastore.size' % prefix] = index['store']['size_in_bytes']
+            metrics['%s.datastore.size' % prefix] = index[
+                'store']['size_in_bytes']
 
         # publish all 'total' and 'time_in_millis' stats
         self._copy_two_level(metrics, prefix, index,
@@ -142,14 +143,12 @@ class ElasticSearchCollector(diamond.collector.Collector):
             if 'count' in cache:
                 metrics['cache.filter.count'] = cache['count']
 
-
         # elasticsearch >= 0.90RC2
         if 'id_cache' in indices:
             cache = indices['id_cache']
 
             if 'memory_size_in_bytes' in cache:
                 metrics['cache.id.size'] = cache['memory_size_in_bytes']
-
 
         # elasticsearch >= 0.90
         if 'field_data' in indices:

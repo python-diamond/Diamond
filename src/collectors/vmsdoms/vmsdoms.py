@@ -1,7 +1,8 @@
 # coding=utf-8
 
 """
-Uses the vms suite to query per instance memory metrics, for VMS-enabled instance
+Uses the vms suite to query per instance memory metrics, for VMS-enabled
+instances
 
 #### Dependencies
 
@@ -18,19 +19,19 @@ Uses the vms suite to query per instance memory metrics, for VMS-enabled instanc
 
 import diamond.collector
 import vms
-import os
+
 
 class VMSDomsCollector(diamond.collector.Collector):
     PLUGIN_STATS = {
-        'nominal' : ('pages', 4096),
-        'current' : ('memory.current', 4096),
-        'clean'   : ('memory.clean', 4096),
-        'dirty'   : ('memory.dirty', 4096),
-        'limit'   : ('memory.limit', 4096),
-        'target'  : ('memory.target', 4096),
-        'evicted' : ('eviction.dropped', 4096),
+        'nominal': ('pages', 4096),
+        'current': ('memory.current', 4096),
+        'clean': ('memory.clean', 4096),
+        'dirty': ('memory.dirty', 4096),
+        'limit': ('memory.limit', 4096),
+        'target': ('memory.target', 4096),
+        'evicted': ('eviction.dropped', 4096),
         'pagedout': ('eviction.pagedout', 4096),
-        'pagedin' : ('eviction.pagedin', 4096),
+        'pagedin': ('eviction.pagedin', 4096),
     }
 
     def get_default_config_help(self):
@@ -71,7 +72,7 @@ class VMSDomsCollector(diamond.collector.Collector):
             ctrl = dom._wait_for_control(wait=False)
             if ctrl is None:
                 continue
-     
+
             try:
                 # Skip ghost domains.
                 if ctrl.get('gd.isghost') == '1':
@@ -87,11 +88,11 @@ class VMSDomsCollector(diamond.collector.Collector):
 
         # For each stat,
         for stat in self.PLUGIN_STATS:
-            key   = self.PLUGIN_STATS[stat][0]
+            key = self.PLUGIN_STATS[stat][0]
             scale = self.PLUGIN_STATS[stat][1]
             total = 0
 
-            # For each domain, 
+            # For each domain,
             for dom, ctrl in vms_domains:
                 try:
                     # Get value and scale.
@@ -100,11 +101,10 @@ class VMSDomsCollector(diamond.collector.Collector):
                     continue
 
                 # Dispatch.
-                self.publish(stat, value, instance = dom.name())
+                self.publish(stat, value, instance=dom.name())
 
                 # Add to total.
                 total = total + value
 
             # Dispatch total value.
             self.publish(stat, total)
-

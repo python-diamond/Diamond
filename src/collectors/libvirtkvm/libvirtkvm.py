@@ -13,32 +13,34 @@ import diamond.collector
 import libvirt
 from xml.etree import ElementTree
 
+
 class LibvirtKVMCollector(diamond.collector.Collector):
     blockStats = {
-                  'read_reqs'   : 0,
-                  'read_bytes'  : 1,
-                  'write_reqs'  : 2,
-                  'write_bytes' : 3
+                  'read_reqs':   0,
+                  'read_bytes':  1,
+                  'write_reqs':  2,
+                  'write_bytes': 3
                  }
 
     vifStats = {
-                  'rx_bytes'   : 0,
-                  'rx_packets' : 1,
-                  'rx_errors'  : 2,
-                  'rx_drops'   : 3,
-                  'tx_bytes'   : 4,
-                  'tx_packets' : 5,
-                  'tx_errors'  : 6,
-                  'tx_drops'   : 7
+                  'rx_bytes':   0,
+                  'rx_packets': 1,
+                  'rx_errors':  2,
+                  'rx_drops':   3,
+                  'tx_bytes':   4,
+                  'tx_packets': 5,
+                  'tx_errors':  6,
+                  'tx_drops':   7
                }
 
     def get_default_config_help(self):
         config_help = super(LibvirtKVMCollector, self).get_default_config_help()
         config_help.update({
-            'uri' : """The libvirt connection URI. By default it's 'qemu:///system'.
-One decent option is 'qemu+unix:///system?socket=/var/run/libvirt/libvit-sock-ro'.""",
-            'cpu_absolute' : """CPU stats reported as percentage by default, or as
-cummulative nanoseconds since VM creation if this is True."""
+            'uri': """The libvirt connection URI. By default it's
+'qemu:///system'. One decent option is
+'qemu+unix:///system?socket=/var/run/libvirt/libvit-sock-ro'.""",
+            'cpu_absolute': """CPU stats reported as percentage by default, or
+as cummulative nanoseconds since VM creation if this is True."""
         })
         return config_help
 
@@ -49,22 +51,22 @@ cummulative nanoseconds since VM creation if this is True."""
         config = super(LibvirtKVMCollector, self).get_default_config()
         config.update({
             'path':     'libvirt-kvm',
-            'uri' :     'qemu:///system',
-            'cpu_absolute' : False
+            'uri':      'qemu:///system',
+            'cpu_absolute': False
         })
         return config
 
     def get_devices(self, dom, type):
-        devices=[]
+        devices = []
 
         # Create a XML tree from the domain XML description.
-        tree=ElementTree.fromstring(dom.XMLDesc(0))
-      
+        tree = ElementTree.fromstring(dom.XMLDesc(0))
+
         for target in tree.findall("devices/%s/target" % type):
-            dev=target.get("dev")
+            dev = target.get("dev")
             if not dev in devices:
                 devices.append(dev)
-              
+
         return devices
 
     def get_disk_devices(self, dom):
@@ -80,13 +82,13 @@ cummulative nanoseconds since VM creation if this is True."""
         else:
             # Nanoseconds (10^9), however, we want to express in 100%
             metric = self.derivative(statname, float(value) / 10000000.0,
-                                     max_value = diamond.collector.MAX_COUNTER,
-                                     instance = instance)
-        self.publish(statname, metric, instance = instance)
+                                     max_value=diamond.collector.MAX_COUNTER,
+                                     instance=instance)
+        self.publish(statname, metric, instance=instance)
 
     def collect(self):
         conn = libvirt.openReadOnly(self.config['uri'])
-        for dom in [ conn.lookupByID(n) for n in conn.listDomainsID() ]:
+        for dom in [conn.lookupByID(n) for n in conn.listDomainsID()]:
             name = dom.name()
 
             # CPU stats
@@ -113,10 +115,10 @@ cummulative nanoseconds since VM creation if this is True."""
                     val = stats[idx]
                     accum[stat] += val
                     self.publish('block.%s.%s' % (disk, stat), val,
-                                    instance = name)
+                                    instance=name)
             for stat in self.blockStats.keys():
                 self.publish('block.total.%s' % stat, accum[stat],
-                                instance = name)
+                                instance=name)
 
             # Network stats
             vifs = self.get_network_devices(dom)
@@ -131,14 +133,13 @@ cummulative nanoseconds since VM creation if this is True."""
                     val = stats[idx]
                     accum[stat] += val
                     self.publish('net.%s.%s' % (vif, stat), val,
-                                    instance = name)
+                                    instance=name)
             for stat in self.vifStats.keys():
                 self.publish('net.total.%s' % stat, accum[stat],
-                                instance = name)
+                                instance=name)
 
             # Memory stats
             mem = dom.memoryStats()
             self.publish('memory.nominal', mem['actual'] * 1024,
-                            instance = name)
-            self.publish('memory.rss', mem['rss'] * 1024, instance = name)
-
+                            instance=name)
+            self.publish('memory.rss', mem['rss'] * 1024, instance=name)

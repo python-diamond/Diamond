@@ -94,14 +94,14 @@ class PostgresqlCollector(diamond.collector.Collector):
 
     def _connect(self, database=None):
         conn_args = {
-          'host':self.config['host'],
-          'user':self.config['user'],
-          'password':self.config['password'],
-          'port':self.config['port']
+          'host': self.config['host'],
+          'user': self.config['user'],
+          'password': self.config['password'],
+          'port': self.config['port']
         }
 
         if database:
-          conn_args['database'] = database
+            conn_args['database'] = database
 
         conn = psycopg2.connect(**conn_args)
 

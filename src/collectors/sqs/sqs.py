@@ -12,6 +12,7 @@ Amazon SQS collector.
 import diamond.collector
 from boto import sqs
 
+
 class SqsCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
@@ -36,9 +37,10 @@ class SqsCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        conn = sqs.connect_to_region(self.config['aws_region'],
-                                     aws_access_key_id=self.config['aws_access_key_id'],
-                                     aws_secret_access_key=self.config['aws_secret_access_key'])
+        conn = sqs.connect_to_region(
+            self.config['aws_region'],
+            aws_access_key_id=self.config['aws_access_key_id'],
+            aws_secret_access_key=self.config['aws_secret_access_key'])
         queue = conn.get_queue(self.config['sqs_queue'])
         attribs = ['ApproximateNumberOfMessages',
                    'ApproximateNumberOfMessagesNotVisible',
@@ -53,4 +55,7 @@ class SqsCollector(diamond.collector.Collector):
 
         for attrib in attribs:
             d = queue.get_attributes(attrib)
-	    self.publish('%s.%s.%s' % (self.config['aws_region'], self.config['sqs_queue'], attrib), d[attrib])
+            self.publish('%s.%s.%s' % (self.config['aws_region'],
+                                       self.config['sqs_queue'],
+                                       attrib),
+                         d[attrib])

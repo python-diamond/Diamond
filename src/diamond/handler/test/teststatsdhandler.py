@@ -3,9 +3,7 @@
 ################################################################################
 
 from test import unittest
-from mock import Mock
 from mock import patch
-from mock import call
 from mock import ANY
 
 import configobj

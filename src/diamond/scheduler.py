@@ -86,12 +86,13 @@ class method:
 
 class SchedulerNotRunning(Exception):
     """Interrupt a running scheduler.
-    
+
     This exception is used to break out of sched.sched.run when we
     are not running.
 
     """
     pass
+
 
 class Scheduler:
     """The Scheduler itself."""
@@ -291,7 +292,7 @@ class Scheduler:
         while self.running:
             try:
                 self.sched.run()
-            except SchedulerNotRunning as e:
+            except SchedulerNotRunning:
                 self._clearschedqueue()
             except Exception, x:
                 self.log.error("ERROR DURING SCHEDULER EXECUTION %s \n %s", x,

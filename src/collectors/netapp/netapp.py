@@ -1,6 +1,5 @@
 # coding=utf-8
 
-import os
 import sys
 import time
 import re
@@ -16,7 +15,8 @@ via SNMP.
 
 For this to work you'll the SDK available on the system.
 This module has been developed using v5.0 of the SDK.
-As of writing the SDK can be found at https://communities.netapp.com/docs/DOC-1152
+As of writing the SDK can be found at
+https://communities.netapp.com/docs/DOC-1152
 
 You'll also need to specify which NetApp instances the collecter should
 get data from.
@@ -41,12 +41,13 @@ https://communities.netapp.com/docs/DOC-1044
 
 """
 
+
 class NetAppCollector(diamond.collector.Collector):
 
     # This is the list of metrics to collect.
     # This is a dict of lists with tuples, which is parsed as such:
     # The dict name is the object name in the NetApp API.
-    # For each object we have a list of metrics to retrieve. 
+    # For each object we have a list of metrics to retrieve.
     # Each tuple is built like this;
     # ("metric name in netapp api", "output name of metric", multiplier)
     # The purpose of the output name is to enable replacement of reported
@@ -149,7 +150,6 @@ class NetAppCollector(diamond.collector.Collector):
             ],
     }
 
-    
     # For some metrics we need to divide one value from the API with another.
     # This is a key-value list of the connected values.
     DIVIDERS = {
@@ -200,7 +200,7 @@ class NetAppCollector(diamond.collector.Collector):
         default_config['path_prefix'] = "netapp"
         default_config['netappsdkpath'] = "/opt/netapp/lib/python/NetApp"
         return default_config
-        
+
     def get_schedule(self):
         """
         Override Collector.get_schedule, and create one per filer.
@@ -235,7 +235,8 @@ class NetAppCollector(diamond.collector.Collector):
         metric = Metric(newpath, value, precision=4, host=device)
         self.publish_metric(metric)
 
-    def _gen_delta_depend(self, path, derivative, multiplier, prettyname, device):
+    def _gen_delta_depend(self, path, derivative, multiplier, prettyname,
+                          device):
         """
         For some metrics we need to divide the delta for one metric
         with the delta of another.
@@ -253,19 +254,20 @@ class NetAppCollector(diamond.collector.Collector):
             secondary_delta = derivative[mateKey]
         else:
             return
-        
+
         # If we find a corresponding secondary_delta, publish a metric
         if primary_delta > 0 and secondary_delta > 0:
-            value = (float(primary_delta)/secondary_delta)*multiplier
+            value = (float(primary_delta) / secondary_delta) * multiplier
             self._replace_and_publish(path, prettyname, value, device)
 
-    def _gen_delta_per_sec(self, path, value_delta, time_delta, multiplier, prettyname, device):
+    def _gen_delta_per_sec(self, path, value_delta, time_delta, multiplier,
+                           prettyname, device):
         """
         Calulates the difference between to point, and scales is to per second.
         """
         if time_delta < 0:
             return
-        value = (value_delta/time_delta)*multiplier
+        value = (value_delta / time_delta) * multiplier
         # Only publish if there is any data.
         # This helps keep unused metrics out of Graphite
         if value > 0.0:
@@ -279,7 +281,8 @@ class NetAppCollector(diamond.collector.Collector):
         try:
             import NaServer
         except ImportError:
-            self.log.error("Unable to load NetApp SDK from %s" % NETAPPSDKPATH)
+            self.log.error("Unable to load NetApp SDK from %s" % (
+                self.config['netappsdkpath']))
             return
 
         # Set up the parameters
@@ -317,7 +320,8 @@ class NetAppCollector(diamond.collector.Collector):
 
             res = server.invoke_elem(query)
             if(res.results_status() == "failed"):
-                self.log.error("Connection to filer %s failed; %s" % (device, res.results_reason()))
+                self.log.error("Connection to filer %s failed; %s" % (
+                    device, res.results_reason()))
                 return
 
             iter_tag = res.child_get_string("tag")
@@ -330,41 +334,57 @@ class NetAppCollector(diamond.collector.Collector):
             raw = {}
 
             while(num_records != 0):
-                query = NaServer.NaElement("perf-object-get-instances-iter-next")
+                query = NaServer.NaElement(
+                    "perf-object-get-instances-iter-next")
                 query.child_add_string("tag", iter_tag)
                 query.child_add_string("maximum", max_records)
                 res = server.invoke_elem(query)
 
                 if(res.results_status() == "failed"):
-                    print "Connection to filer %s failed; %s" % (device, res.results_reason())
+                    print "Connection to filer %s failed; %s" % (
+                        device, res.results_reason())
                     return
 
                 num_records = res.child_get_int("records")
 
-                if(num_records > 0) :
+                if(num_records > 0):
                     instances_list = res.child_get("instances")
                     instances = instances_list.children_get()
 
                     for instance in instances:
-                        raw_name = unicodedata.normalize('NFKD',instance.child_get_string("name")).encode('ascii','ignore')
-                        # Shorten the name for disks as they are very long and padded with zeroes, eg:
-                        # 5000C500:3A236B0B:00000000:00000000:00000000:00000000:00000000:00000000:00000000:00000000
+                        raw_name = unicodedata.normalize(
+                            'NFKD',
+                            instance.child_get_string("name")).encode(
+                            'ascii', 'ignore')
+                        # Shorten the name for disks as they are very long and
+                        # padded with zeroes, eg:
+                        # 5000C500:3A236B0B:00000000:00000000:00000000:...
                         if na_object is "disk":
-                            non_zero_blocks = [block for block in raw_name.split(":") if block != "00000000"]
+                            non_zero_blocks = [
+                                block for block in raw_name.split(":")
+                                if block != "00000000"
+                                ]
                             raw_name = "".join(non_zero_blocks)
                         instance_name = re.sub(r'\W', '_', raw_name)
                         counters_list = instance.child_get("counters")
                         counters = counters_list.children_get()
 
                         for counter in counters:
-                            metricname = unicodedata.normalize('NFKD',counter.child_get_string("name")).encode('ascii','ignore')
+                            metricname = unicodedata.normalize(
+                                'NFKD',
+                                counter.child_get_string("name")).encode(
+                                'ascii', 'ignore')
                             metricvalue = counter.child_get_string("value")
-                            # We'll need a long complete pathname to not confuse self.derivative
-                            pathname = ".".join([self.config["path_prefix"], device, na_object, instance_name, metricname])
+                            # We'll need a long complete pathname to not
+                            # confuse self.derivative
+                            pathname = ".".join([self.config["path_prefix"],
+                                                 device, na_object,
+                                                 instance_name, metricname])
                             raw[pathname] = int(metricvalue)
 
             # Do the math
-            self.log.debug("Processing %i metrics for object %s" % (len(raw), na_object))
+            self.log.debug("Processing %i metrics for object %s" % (len(raw),
+                                                                    na_object))
 
             # Since the derivative function both returns the derivative
             # and saves a new point, we'll need to store all derivatives
@@ -381,6 +401,8 @@ class NetAppCollector(diamond.collector.Collector):
                 if metricname in self.DROPMETRICS:
                     continue
                 elif metricname in self.DIVIDERS.keys():
-                    self._gen_delta_depend(key, derivative, multiplier, prettyname, device)
+                    self._gen_delta_depend(key, derivative, multiplier,
+                                           prettyname, device)
                 else:
-                    self._gen_delta_per_sec(key, derivative[key], time_delta, multiplier, prettyname, device)
+                    self._gen_delta_per_sec(key, derivative[key], time_delta,
+                                            multiplier, prettyname, device)

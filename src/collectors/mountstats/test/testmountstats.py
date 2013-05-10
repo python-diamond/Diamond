@@ -10,7 +10,6 @@ from mock import patch
 from diamond.collector import Collector
 from mountstats import MountStatsCollector
 
-from pprint import pprint
 
 class TestMountStatsCollector(CollectorTestCase):
     def setUp(self):
