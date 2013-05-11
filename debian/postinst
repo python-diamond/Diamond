@@ -48,7 +48,6 @@ chmod +x /usr/bin/diamond
 
 # Log / Run directory permissions
 chown -R diamond /var/log/diamond
-chown -R diamond /var/run/diamond
 
 if [ -x /lib/init/upstart-job ]
 then
