@@ -481,7 +481,7 @@ try:
             self._lock.acquire()
 
         def _release_lock(self):
-            """Release the lock on th ethread's task queue."""
+            """Release the lock on the thread's task queue."""
             self._lock.release()
 
     class ThreadedTaskMixin:
