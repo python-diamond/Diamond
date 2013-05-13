@@ -578,7 +578,7 @@ if hasattr(os, "fork"):
         """Interval Task that executes in its own process."""
 
         def __init__(self, name, interval, action, args=None, kw=None, abs=False):
-            # Force abs to be False, as in threaded mode we reschedule
+            # Force abs to be False, as in forked mode we reschedule
             # immediately.
             super(ForkedIntervalTask, self).__init__(name, interval, action, args=args, kw=kw, abs=False)
 
