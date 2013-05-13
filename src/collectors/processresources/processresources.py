@@ -9,7 +9,7 @@ Example config file ProcessResourcesCollector.conf
 
 ```
 enabled=True
-unit=kB
+unit=B
 cpu_interval=0.1
 [process]
 [[postgres]]
