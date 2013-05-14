@@ -503,11 +503,13 @@ try:
     class ThreadedIntervalTask(ThreadedTaskMixin, IntervalTask):
         """Interval Task that executes in its own thread."""
 
-        def __init__(self, name, interval, action, args=None, kw=None, abs=False):
+        def __init__(self, name, interval, action, args=None, kw=None,
+                     abs=False):
             # Force abs to be False, as in threaded mode we reschedule
             # immediately.
-            super(ThreadedIntervalTask, self).__init__(name, interval, action, args=args, kw=kw, abs=False)
-
+            super(ThreadedIntervalTask, self).__init__(name, interval, action,
+                                                       args=args, kw=kw,
+                                                       abs=False)
 
     class ThreadedSingleTask(ThreadedTaskMixin, SingleTask):
         """Single Task that executes in its own thread."""
@@ -577,10 +579,13 @@ if hasattr(os, "fork"):
     class ForkedIntervalTask(ForkedTaskMixin, IntervalTask):
         """Interval Task that executes in its own process."""
 
-        def __init__(self, name, interval, action, args=None, kw=None, abs=False):
+        def __init__(self, name, interval, action, args=None, kw=None,
+                     abs=False):
             # Force abs to be False, as in forked mode we reschedule
             # immediately.
-            super(ForkedIntervalTask, self).__init__(name, interval, action, args=args, kw=kw, abs=False)
+            super(ForkedIntervalTask, self).__init__(name, interval, action,
+                                                     args=args, kw=kw,
+                                                     abs=False)
 
     class ForkedSingleTask(ForkedTaskMixin, SingleTask):
         """Single Task that executes in its own process."""

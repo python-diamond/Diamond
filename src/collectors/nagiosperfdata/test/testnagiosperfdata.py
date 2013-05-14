@@ -3,13 +3,12 @@
 
 from test import CollectorTestCase
 from test import get_collector_config
-from test import unittest
-from mock import MagicMock, Mock
 from mock import patch
 import os
 
 from diamond.collector import Collector
 from nagiosperfdata import NagiosPerfdataCollector
+
 
 class TestNagiosPerfdataCollector(CollectorTestCase):
     def setUp(self):
@@ -92,7 +91,7 @@ class TestNagiosPerfdataCollector(CollectorTestCase):
 
     def test_parse_perfdata_should_not_parse_invalid_perfdata(self):
         perf = self.collector._parse_perfdata(
-                'something with spaces=0.325ms;300.000;500.000;0; pl=0%;20;60;;')
+            'something with spaces=0.325ms;300.000;500.000;0; pl=0%;20;60;;')
         unexpected_result = [('something with spaces', 0.000325), ('pl', 0.0)]
         self.assertNotEqual(perf, unexpected_result)
 

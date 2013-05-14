@@ -1,7 +1,7 @@
 # coding=utf-8
 
 """
-The NagiosPerfdataCollector parses Nagios performance data in the 
+The NagiosPerfdataCollector parses Nagios performance data in the
 PNP4Nagios/Graphios/Metricinga key-value format.
 
 #### Dependencies
@@ -14,8 +14,8 @@ PNP4Nagios/Graphios/Metricinga key-value format.
 import os
 import re
 
-from configobj import ConfigObj
 import diamond.collector
+
 
 class NagiosPerfdataCollector(diamond.collector.Collector):
     """Diamond collector for Nagios performance data
@@ -24,7 +24,8 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
     GENERIC_FIELDS = ['DATATYPE', 'HOSTNAME', 'TIMET']
     HOST_FIELDS = ['HOSTPERFDATA']
     SERVICE_FIELDS = ['SERVICEDESC', 'SERVICEPERFDATA']
-    TOKENIZER_RE = r"([^\s]+|'[^']+')=([-.\d]+)(c|s|ms|us|B|KB|MB|GB|TB|%)?(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?"
+    TOKENIZER_RE = (r"([^\s]+|'[^']+')=([-.\d]+)(c|s|ms|us|B|KB|MB|GB|TB|%)?"
+    + r"(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?")
 
     def __init__(self, config, handlers):
         super(NagiosPerfdataCollector, self).__init__(config, handlers)
@@ -54,7 +55,7 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
 
         try:
             filenames = os.listdir(perfdata_dir)
-        except OSError, ex:
+        except OSError:
             self.log.error("Cannot read directory `{dir}'".format(
                     dir=perfdata_dir))
 
@@ -135,7 +136,7 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
             try:
                 norm_value = self._normalize_to_unit(float(value), uom)
                 metrics.append((key, norm_value))
-            except ValueError, ex:
+            except ValueError:
                 self.log.warning("Couldn't convert value '{value}' to float" \
                         .format(value=value))
 
