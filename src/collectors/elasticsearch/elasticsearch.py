@@ -74,13 +74,12 @@ class ElasticSearchCollector(diamond.collector.Collector):
             self._copy_one_level(metrics, '%s.%s' % (prefix, key1), d1, filter)
 
     def _index_metrics(self, metrics, prefix, index):
-        if 'docs' in index:
-            metrics['%s.docs.count' % prefix] = index['docs']['count']
-            metrics['%s.docs.deleted' % prefix] = index['docs']['deleted']
-
-        if 'store' in index:
-            metrics['%s.datastore.size' % prefix] = index[
-                'store']['size_in_bytes']
+        self._add_metric(metrics, '%s.docs.count' % prefix, index,
+                         ['docs', 'count'])
+        self._add_metric(metrics, '%s.docs.deleted' % prefix, index,
+                         ['docs', 'deleted'])
+        self._add_metric(metrics, '%s.datastore.size' % prefix, index,
+                         ['store', 'size_in_bytes'])
 
         # publish all 'total' and 'time_in_millis' stats
         self._copy_two_level(metrics, prefix, index,
