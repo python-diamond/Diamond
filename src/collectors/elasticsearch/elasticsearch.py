@@ -131,17 +131,17 @@ class ElasticSearchCollector(diamond.collector.Collector):
         if 'cache' in indices:
             cache = indices['cache']
 
-            if 'bloom_size_in_bytes' in cache:
-                metrics['cache.bloom.size'] = cache['bloom_size_in_bytes']
-            if 'field_evictions' in cache:
-                metrics['cache.field.evictions'] = cache['field_evictions']
-            if 'field_size_in_bytes' in cache:
-                metrics['cache.field.size'] = cache['field_size_in_bytes']
+            self._add_metric(metrics, 'cache.bloom.size', cache,
+                             ['bloom_size_in_bytes'])
+            self._add_metric(metrics, 'cache.field.evictions', cache,
+                             ['field_evictions'])
+            self._add_metric(metrics, 'cache.field.size', cache,
+                             ['field_size_in_bytes'])
             metrics['cache.filter.count'] = cache['filter_count']
             metrics['cache.filter.evictions'] = cache['filter_evictions']
             metrics['cache.filter.size'] = cache['filter_size_in_bytes']
-            if 'id_cache_size_in_bytes' in cache:
-                metrics['cache.id.size'] = cache['id_cache_size_in_bytes']
+            self._add_metric(metrics, 'cache.id.size', cache,
+                             ['id_cache_size_in_bytes'])
 
         # elasticsearch >= 0.90RC2
         if 'filter_cache' in indices:
@@ -149,16 +149,14 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
             metrics['cache.filter.evictions'] = cache['evictions']
             metrics['cache.filter.size'] = cache['memory_size_in_bytes']
-
-            if 'count' in cache:
-                metrics['cache.filter.count'] = cache['count']
+            self._add_metric(metrics, 'cache.filter.count', cache, ['count'])
 
         # elasticsearch >= 0.90RC2
         if 'id_cache' in indices:
             cache = indices['id_cache']
 
-            if 'memory_size_in_bytes' in cache:
-                metrics['cache.id.size'] = cache['memory_size_in_bytes']
+            self._add_metric(metrics, 'cache.id.size', cache,
+                             ['memory_size_in_bytes'])
 
         # elasticsearch >= 0.90
         if 'field_data' in indices:
