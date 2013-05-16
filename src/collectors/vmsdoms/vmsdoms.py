@@ -18,7 +18,11 @@ instances
 # should suffice
 
 import diamond.collector
-import vms
+try:
+    import vms
+    vms # Pyflakes
+except ImportError:
+    vms = None
 
 
 class VMSDomsCollector(diamond.collector.Collector):
@@ -51,6 +55,10 @@ class VMSDomsCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
+        if vms is None:
+            self.log.error('Unable to import vms')
+            return {}
+
         vms.virt.init()
         hypervisor = vms.virt.AUTO.Hypervisor()
 
