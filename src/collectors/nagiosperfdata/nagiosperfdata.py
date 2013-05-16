@@ -58,6 +58,7 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
         except OSError:
             self.log.error("Cannot read directory `{dir}'".format(
                     dir=perfdata_dir))
+            return
 
         for filename in filenames:
             self._process_file(os.path.join(perfdata_dir, filename))
