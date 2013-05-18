@@ -13,48 +13,61 @@ else:
     from distutils.core import setup
     setup_kwargs = dict()
 
-data_files = [
-    ('share/diamond', ['LICENSE', 'README.md', 'version.txt']),
-    ('share/diamond/user_scripts', []),
-]
-
-distro = platform.dist()[0]
-distro_major_version = platform.dist()[1].split('.')[0]
-
-if os.getenv('VIRTUAL_ENV', False):
-    data_files.append(('etc/diamond',
-                       glob('conf/*.conf.*')))
-    data_files.append(('etc/diamond/collectors',
-                       glob('conf/collectors/*')))
-    data_files.append(('etc/diamond/handlers',
-                       glob('conf/handlers/*')))
-else:
-    data_files.append(('/etc/diamond',
-                       glob('conf/*.conf.*')))
-    data_files.append(('/etc/diamond/collectors',
-                       glob('conf/collectors/*')))
-    data_files.append(('/etc/diamond/handlers',
-                       glob('conf/handlers/*')))
-
-    if distro == 'Ubuntu':
-        data_files.append(('/etc/init',
-                           ['debian/upstart/diamond.conf']))
-    if distro in ['centos', 'redhat', 'debian']:
-        data_files.append(('/etc/init.d',
-                           ['bin/init.d/diamond']))
-        data_files.append(('/var/log/diamond',
-                           ['.keep']))
-        if distro_major_version >= '6' and not distro == 'debian':
-            data_files.append(('/etc/init',
-                               ['rpm/upstart/diamond.conf']))
-
-# Support packages being called differently on different distros
-if distro in ['centos', 'redhat']:
-    install_requires = ['python-configobj', 'psutil', ],
-elif distro == 'debian':
-    install_requires = ['python-configobj', 'python-psutil', ],
-else:
+if os.name == 'nt':
+    pgm_files = os.environ["ProgramFiles"]
+    base_files = os.path.join(pgm_files, 'diamond')
+    data_files = [
+        (base_files, ['LICENSE', 'README.md', 'version.txt']),
+        (os.path.join(base_files, 'user_scripts'), []),
+        (os.path.join(base_files, 'conf'), glob('conf/*.conf.*')),
+        (os.path.join(base_files, 'collectors'), glob('conf/collectors/*')),
+        (os.path.join(base_files, 'handlers'), glob('conf/handlers/*')),
+    ]
     install_requires = ['ConfigObj', 'psutil', ],
+    
+else:
+    data_files = [
+        ('share/diamond', ['LICENSE', 'README.md', 'version.txt']),
+        ('share/diamond/user_scripts', []),
+    ]
+    
+    distro = platform.dist()[0]
+    distro_major_version = platform.dist()[1].split('.')[0]
+    
+    if os.getenv('VIRTUAL_ENV', False):
+        data_files.append(('etc/diamond',
+                           glob('conf/*.conf.*')))
+        data_files.append(('etc/diamond/collectors',
+                           glob('conf/collectors/*')))
+        data_files.append(('etc/diamond/handlers',
+                           glob('conf/handlers/*')))
+    else:
+        data_files.append(('/etc/diamond',
+                           glob('conf/*.conf.*')))
+        data_files.append(('/etc/diamond/collectors',
+                           glob('conf/collectors/*')))
+        data_files.append(('/etc/diamond/handlers',
+                           glob('conf/handlers/*')))
+    
+        if distro == 'Ubuntu':
+            data_files.append(('/etc/init',
+                               ['debian/upstart/diamond.conf']))
+        if distro in ['centos', 'redhat', 'debian']:
+            data_files.append(('/etc/init.d',
+                               ['bin/init.d/diamond']))
+            data_files.append(('/var/log/diamond',
+                               ['.keep']))
+            if distro_major_version >= '6' and not distro == 'debian':
+                data_files.append(('/etc/init',
+                                   ['rpm/upstart/diamond.conf']))
+    
+    # Support packages being called differently on different distros
+    if distro in ['centos', 'redhat']:
+        install_requires = ['python-configobj', 'psutil', ],
+    elif distro == 'debian':
+        install_requires = ['python-configobj', 'python-psutil', ],
+    else:
+        install_requires = ['ConfigObj', 'psutil', ],
 
 
 def get_version():
@@ -94,7 +107,10 @@ def pkgPath(root, path, rpath="/"):
         if os.path.isdir(subpath):
             pkgPath(root, subpath, spath)
 
-pkgPath('share/diamond/collectors', 'src/collectors')
+if os.name == 'nt':
+    pkgPath(os.path.join(base_files, 'collectors'), 'src/collectors', '\\')    
+else:
+    pkgPath('share/diamond/collectors', 'src/collectors')
 
 version = get_version()
 

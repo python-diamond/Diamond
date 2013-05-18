@@ -4,8 +4,9 @@
 import os
 import sys
 import configobj
-import pwd
-import grp
+if os.name != 'nt':
+	import pwd
+	import grp
 
 try:
     from setproctitle import setproctitle
@@ -185,16 +186,18 @@ def main():
                     sys.exit(1)
 
             # Get final GIDs
-            if options.group is not None:
-                gid = grp.getgrnam(options.group).gr_gid
-            elif len(config['server']['group']):
-                gid = grp.getgrnam(config['server']['group']).gr_gid
+            if os.name != 'nt':
+	            if options.group is not None:
+	                gid = grp.getgrnam(options.group).gr_gid
+	            elif len(config['server']['group']):
+	                gid = grp.getgrnam(config['server']['group']).gr_gid
 
             # Get final UID
-            if options.user is not None:
-                uid = pwd.getpwnam(options.user).pw_uid
-            elif len(config['server']['user']):
-                uid = pwd.getpwnam(config['server']['user']).pw_uid
+            if os.name != 'nt':
+	            if options.user is not None:
+	                uid = pwd.getpwnam(options.user).pw_uid
+	            elif len(config['server']['user']):
+	                uid = pwd.getpwnam(config['server']['user']).pw_uid
 
             # Fix up pid permissions
             if not options.foreground and not options.collector:
