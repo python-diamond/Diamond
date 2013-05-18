@@ -41,6 +41,7 @@ keys = rotated_file
 
 ### Defaults options for all Handlers
 [[default]]
+enabled = False
 
 [[ArchiveHandler]]
 
