@@ -185,10 +185,11 @@ class CPUCollector(diamond.collector.Collector):
                              self.derivative(metric_name + '.user',
                                              cpu_time[i].user,
                                              self.MAX_VALUES['user']))
-                self.publish(metric_name + '.nice',
-                             self.derivative(metric_name + '.nice',
-                                             cpu_time[i].nice,
-                                             self.MAX_VALUES['nice']))
+                if hasattr(cpu_time[i], 'nice'):
+                    self.publish(metric_name + '.nice',
+                                 self.derivative(metric_name + '.nice',
+                                                 cpu_time[i].nice,
+                                                 self.MAX_VALUES['nice']))
                 self.publish(metric_name + '.system',
                              self.derivative(metric_name + '.system',
                                              cpu_time[i].system,
@@ -203,10 +204,11 @@ class CPUCollector(diamond.collector.Collector):
                          self.derivative(metric_name + '.user',
                                          total_time.user,
                                          self.MAX_VALUES['user']))
-            self.publish(metric_name + '.nice',
-                         self.derivative(metric_name + '.nice',
-                                         total_time.nice,
-                                         self.MAX_VALUES['nice']))
+            if hasattr(total_time, 'nice'):
+                self.publish(metric_name + '.nice',
+                             self.derivative(metric_name + '.nice',
+                                             total_time.nice,
+                                             self.MAX_VALUES['nice']))
             self.publish(metric_name + '.system',
                          self.derivative(metric_name + '.system',
                                          total_time.system,
