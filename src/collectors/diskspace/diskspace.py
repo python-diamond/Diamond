@@ -209,7 +209,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 inodes_avail = data.f_favail
                 
             elif os.name == 'nt':       # Windows
-                # fixme: free still not exact compared to disk_usage.py from psutil
+                # fixme: used still not exact compared to disk_usage.py from psutil
                 raw_data = psutil.disk_usage(info['mount_point'])
                 
                 block_size = 1 # fixme: ?
@@ -224,11 +224,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
             for unit in self.config['byte_unit']:
 
                 metric_name = '%s.%s_used' % (name, unit)
-                if os.name == 'nt':
-                    metric_value = float(block_size) * float(blocks_used)
-                else:
-                    metric_value = float(block_size) * float(
-                        blocks_total - blocks_free)
+                metric_value = float(block_size) * float(
+                    blocks_total - blocks_free)
                 metric_value = diamond.convertor.binary.convert(
                     value=metric_value, oldUnit='byte', newUnit=unit)
                 self.publish_gauge(metric_name, metric_value, 2)
