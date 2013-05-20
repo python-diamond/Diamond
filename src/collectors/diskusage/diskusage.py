@@ -59,7 +59,8 @@ class DiskUsageCollector(diamond.collector.Collector):
         config.update({
             'enabled':  'True',
             'path':     'iostat',
-            'devices':  ('md[0-9]+$'
+            'devices':  ('PhysicalDrive[0-9]+$'
+                         + '|md[0-9]+$'
                          + '|sd[a-z]+[0-9]*$'
                          + '|x?vd[a-z]+[0-9]*$'
                          + '|disk[0-9]+$'
