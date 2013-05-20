@@ -43,6 +43,8 @@ class MongoDBCollector(diamond.collector.Collector):
             'ignore_collections': 'A regex of which collections to ignore.'
                                   ' MapReduce temporary collections (tmp.mr.*)'
                                   ' are ignored by default.',
+            'network_timeout': 'Timeout for mongodb connection (in seconds).'
+                               ' There is no timeout by default.'
 
         })
         return config_help
@@ -57,6 +59,7 @@ class MongoDBCollector(diamond.collector.Collector):
             'hosts':     ['localhost'],
             'databases': '.*',
             'ignore_collections': '^tmp\.mr\.',
+            'network_timeout': None,
         })
         return config
 
@@ -71,6 +74,11 @@ class MongoDBCollector(diamond.collector.Collector):
         if 'host' in self.config:
             self.config['hosts'] = [self.config['host']]
 
+        # convert network_timeout to integer
+        if self.config['network_timeout']:
+            self.config['network_timeout'] = int(
+                    self.config['network_timeout'])
+
         for host in self.config['hosts']:
             if len(self.config['hosts']) == 1:
                 # one host only, no need to have a prefix
@@ -80,11 +88,16 @@ class MongoDBCollector(diamond.collector.Collector):
 
             try:
                 if ReadPreference is None:
-                    conn = pymongo.Connection(host)
+                    conn = pymongo.Connection(
+                        host,
+                        network_timeout=self.config['network_timeout'],
+                    )
                 else:
                     conn = pymongo.Connection(
                         host,
-                        read_preference=ReadPreference.SECONDARY)
+                        network_timeout=self.config['network_timeout'],
+                        read_preference=ReadPreference.SECONDARY,
+                    )
             except Exception, e:
                 self.log.error('Couldnt connect to mongodb: %s', e)
                 return {}
