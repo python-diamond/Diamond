@@ -2,18 +2,8 @@
 
 """
 Send metrics to a [graphite](http://graphite.wikidot.com/) using the default
-interface.
-
-Graphite is an enterprise-scale monitoring tool that runs well on cheap
-hardware. It was originally designed and written by Chris Davis at Orbitz in
-2006 as side project that ultimately grew to be a foundational monitoring tool.
-In 2008, Orbitz allowed Graphite to be released under the open source Apache
-2.0 license. Since then Chris has continued to work on Graphite and has
-deployed it at other companies including Sears, where it serves as a pillar of
-the e-commerce monitoring system. Today many
-[large companies](http://graphite.readthedocs.org/en/latest/who-is-using.html)
-use it.
-
+interface. Unlike GraphiteHandler, this one supports multiple graphite servers.
+Specify them as a list of hosts divided by comma.
 """
 
 from Handler import Handler
@@ -23,7 +13,8 @@ from copy import deepcopy
 
 class MultiGraphiteHandler(Handler):
     """
-    Implements the abstract Handler class, sending data to graphite
+    Implements the abstract Handler class, sending data to multiple
+    graphite servers by using two instances of GraphiteHandler
     """
 
     def __init__(self, config=None):
@@ -44,7 +35,8 @@ class MultiGraphiteHandler(Handler):
 
     def process(self, metric):
         """
-        Process a metric by sending it to graphite
+        Process a metric by sending passing it to GraphiteHandler
+        instances
         """
         for handler in self.handlers:
             handler.process(metric)
