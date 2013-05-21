@@ -35,7 +35,7 @@ class MultiGraphiteHandler(Handler):
 
     def process(self, metric):
         """
-        Process a metric by sending passing it to GraphiteHandler
+        Process a metric by passing it to GraphiteHandler
         instances
         """
         for handler in self.handlers:
