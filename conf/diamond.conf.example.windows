@@ -1,0 +1,203 @@
+################################################################################
+# Diamond Configuration File
+################################################################################
+
+################################################################################
+### Options for the server
+[server]
+
+# Handlers for published metrics.
+handlers = diamond.handler.graphite.GraphiteHandler, diamond.handler.archive.ArchiveHandler
+
+# User diamond will run as
+# Leave empty to use the current user
+user =
+
+# Group diamond will run as
+# Leave empty to use the current group
+group =
+
+# Pid file
+pid_file = /var/run/diamond.pid
+
+# Directory to load collector modules from
+collectors_path = C:\\Program Files\\diamond\\collectors
+
+# Directory to load collector configs from
+collectors_config_path = C:\\Program Files\\diamond\\conf\\collectors
+
+# Directory to load handler configs from
+handlers_config_path = C:\\Program Files\\diamond\\handlers
+
+# Interval to reload collectors
+collectors_reload_interval = 3600
+
+################################################################################
+### Options for handlers
+[handlers]
+
+# daemon logging handler(s)
+keys = rotated_file
+
+### Defaults options for all Handlers
+[[default]]
+enabled = False
+
+[[ArchiveHandler]]
+
+# File to write archive log files
+log_file = C:\\Program Files\\diamond\\archive.log
+
+# Number of days to keep archive log files
+days = 7
+
+[[GraphiteHandler]]
+### Options for GraphiteHandler
+
+# Graphite server host
+host = graphite
+
+# Port to send metrics to
+port = 2003
+
+# Socket timeout (seconds)
+timeout = 15
+
+# Batch size for metrics
+batch = 1
+
+[[GraphitePickleHandler]]
+### Options for GraphitePickleHandler
+
+# Graphite server host
+host = graphite
+
+# Port to send metrics to
+port = 2004
+
+# Socket timeout (seconds)
+timeout = 15
+
+# Batch size for pickled metrics
+batch = 256
+
+[[MySQLHandler]]
+### Options for MySQLHandler
+
+# MySQL Connection Info
+hostname    = 127.0.0.1
+port        = 3306
+username    = root
+password    =
+database    = diamond
+table       = metrics
+# INT UNSIGNED NOT NULL
+col_time    = timestamp
+# VARCHAR(255) NOT NULL
+col_metric  = metric
+# VARCHAR(255) NOT NULL
+col_value   = value
+
+[[StatsdHandler]]
+host = 127.0.0.1
+port = 8125
+
+[[TSDBHandler]]
+host = 127.0.0.1
+port = 4242
+timeout = 15
+
+[[LibratoHandler]]
+user = user@example.com
+apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
+
+
+[[HttpPostHandler]]
+
+### Urp to post the metrics
+url = http://localhost:8888/
+### Metrics batch size
+batch = 100
+
+
+################################################################################
+### Options for collectors
+[collectors]
+
+[[default]]
+### Defaults options for all Collectors
+
+# Uncomment and set to hardcode a hostname for the collector path
+# Keep in mind, periods are seperators in graphite
+# hostname = my_custom_hostname
+
+# If you prefer to just use a different way of calculating the hostname
+# Uncomment and set this to one of these values:
+
+# smart             = Default. Tries fqdn_short. If that's localhost, uses hostname_short
+
+# fqdn_short        = Default. Similar to hostname -s
+# fqdn              = hostname output
+# fqdn_rev          = hostname in reverse (com.example.www)
+
+# uname_short       = Similar to uname -n, but only the first part
+# uname_rev         = uname -r in reverse (com.example.www)
+
+# hostname_short    = `hostname -s`
+# hostname          = `hostname`
+# hostname_rev      = `hostname` in reverse (com.example.www)
+
+# hostname_method = smart
+
+# Path Prefix and Suffix
+# you can use one or both to craft the path where you want to put metrics
+# such as: %(path_prefix)s.$(hostname)s.$(path_suffix)s.$(metric)s
+# path_prefix = servers
+# path_suffix =
+
+# Path Prefix for Virtual Machines
+# If the host supports virtual machines, collectors may report per
+# VM metrics. Following OpenStack nomenclature, the prefix for
+# reporting per VM metrics is "instances", and metric foo for VM
+# bar will be reported as: instances.bar.foo...
+# instance_prefix = instances
+
+# Default Poll Interval (seconds)
+# interval = 300
+
+################################################################################
+### Options for logging
+# for more information on file format syntax:
+# http://docs.python.org/library/logging.config.html#configuration-file-format
+
+[loggers]
+
+keys = root
+
+# handlers are higher in this config file, in:
+# [handlers]
+# keys = ...
+
+[formatters]
+
+keys = default
+
+[logger_root]
+
+# to increase verbosity, set DEBUG
+level = INFO
+handlers = rotated_file
+propagate = 1
+
+[handler_rotated_file]
+
+class = handlers.TimedRotatingFileHandler
+level = DEBUG
+formatter = default
+# rotate at midnight, each day and keep 7 days
+args = ('C:\\Program Files\\diamond\\diamond.log', 'midnight', 1, 7)
+
+[formatter_default]
+
+format = [%(asctime)s] [%(threadName)s] %(message)s
+datefmt =

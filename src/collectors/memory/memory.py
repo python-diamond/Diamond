@@ -97,7 +97,7 @@ class MemoryCollector(diamond.collector.Collector):
         elif psutil:
             phymem_usage = psutil.phymem_usage()
             virtmem_usage = psutil.virtmem_usage()
-            units = 'b'
+            units = 'B'
 
             for unit in self.config['byte_unit']:
                 value = diamond.convertor.binary.convert(
