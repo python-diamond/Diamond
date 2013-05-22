@@ -152,7 +152,7 @@ class MongoDBCollector(diamond.collector.Collector):
 
         def compute_interval(data, total_name):
             current_total = get_dotted_value(data, total_name)
-            total_key = '.'.join(base_prefix) + '.' + total_name
+            total_key = '.'.join(base_prefix + [total_name])
             last_total = self.__totals.get(total_key, current_total)
             interval = current_total - last_total
             self.__totals[total_key] = current_total
@@ -161,7 +161,7 @@ class MongoDBCollector(diamond.collector.Collector):
         def publish_percent(value_name, total_name, data):
             value = float(get_dotted_value(data, value_name) * 100)
             interval = compute_interval(data, total_name)
-            key = '.'.join(base_prefix) + '.percent.' + value_name
+            key = '.'.join(base_prefix + ['percent', value_name])
             self.publish_counter(key, value, time_delta=bool(interval),
                                  interval=interval)
 
@@ -174,7 +174,7 @@ class MongoDBCollector(diamond.collector.Collector):
             if '.' in locks:
                 locks['_global_'] = locks['.']
                 del (locks['.'])
-            key_prefix = '.'.join(base_prefix) + '.percent.'
+            key_prefix = '.'.join(base_prefix + ['percent'])
             db_name_filter = re.compile(self.config['databases'])
             interval = compute_interval(data, 'uptimeMillis')
             for db_name in locks:
@@ -188,7 +188,7 @@ class MongoDBCollector(diamond.collector.Collector):
                     '.%s.timeLockedMicros.R' % db_name)
                 value = float(r + R) / 10
                 if value:
-                    self.publish_counter(key_prefix + 'locks.%s.read' % db_name,
+                    self.publish_counter(key_prefix + '.locks.%s.read' % db_name,
                                          value, time_delta=bool(interval),
                                          interval=interval)
                 w = get_dotted_value(
@@ -200,7 +200,7 @@ class MongoDBCollector(diamond.collector.Collector):
                 value = float(w + W) / 10
                 if value:
                     self.publish_counter(
-                        key_prefix + 'locks.%s.write' % db_name,
+                        key_prefix + '.locks.%s.write' % db_name,
                         value, time_delta=bool(interval), interval=interval)
 
     def _publish_dict_with_prefix(self, dict, prefix, publishfn=None):
