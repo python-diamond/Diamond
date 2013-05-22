@@ -91,6 +91,7 @@ class MongoDBCollector(diamond.collector.Collector):
                     conn = pymongo.Connection(
                         host,
                         network_timeout=self.config['network_timeout'],
+                        slave_okay = True
                     )
                 else:
                     conn = pymongo.Connection(
