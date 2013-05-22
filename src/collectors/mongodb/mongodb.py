@@ -68,7 +68,7 @@ class MongoDBCollector(diamond.collector.Collector):
 
         if pymongo is None:
             self.log.error('Unable to import pymongo')
-            return {}
+            return
 
         # we need this for backwards compatibility
         if 'host' in self.config:
@@ -101,7 +101,8 @@ class MongoDBCollector(diamond.collector.Collector):
                     )
             except Exception, e:
                 self.log.error('Couldnt connect to mongodb: %s', e)
-                return {}
+                continue
+
             data = conn.db.command('serverStatus')
             self._publish_dict_with_prefix(data, base_prefix)
             self._publish_transformed(data, base_prefix)
