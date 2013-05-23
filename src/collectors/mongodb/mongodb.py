@@ -11,6 +11,7 @@ values are ignored.
 """
 
 import diamond.collector
+from diamond.collector import str_to_bool
 import re
 
 try:
@@ -44,8 +45,8 @@ class MongoDBCollector(diamond.collector.Collector):
                                   ' MapReduce temporary collections (tmp.mr.*)'
                                   ' are ignored by default.',
             'network_timeout': 'Timeout for mongodb connection (in seconds).'
-                               ' There is no timeout by default.'
-
+                               ' There is no timeout by default.',
+            'simple': 'Only collect the same metrics as mongostat.'
         })
         return config_help
 
@@ -60,6 +61,7 @@ class MongoDBCollector(diamond.collector.Collector):
             'databases': '.*',
             'ignore_collections': '^tmp\.mr\.',
             'network_timeout': None,
+            'simple': 'False'
         })
         return config
 
@@ -77,7 +79,7 @@ class MongoDBCollector(diamond.collector.Collector):
         # convert network_timeout to integer
         if self.config['network_timeout']:
             self.config['network_timeout'] = int(
-                    self.config['network_timeout'])
+                self.config['network_timeout'])
 
         for host in self.config['hosts']:
             if len(self.config['hosts']) == 1:
@@ -91,7 +93,7 @@ class MongoDBCollector(diamond.collector.Collector):
                     conn = pymongo.Connection(
                         host,
                         network_timeout=self.config['network_timeout'],
-                        slave_okay = True
+                        slave_okay=True
                     )
                 else:
                     conn = pymongo.Connection(
@@ -104,8 +106,11 @@ class MongoDBCollector(diamond.collector.Collector):
                 continue
 
             data = conn.db.command('serverStatus')
-            self._publish_dict_with_prefix(data, base_prefix)
             self._publish_transformed(data, base_prefix)
+            if str_to_bool(self.config['simple']):
+                data = self._extract_simple_data(data)
+
+            self._publish_dict_with_prefix(data, base_prefix)
             db_name_filter = re.compile(self.config['databases'])
             ignored_collections = re.compile(self.config['ignore_collections'])
             for db_name in conn.database_names():
@@ -189,9 +194,10 @@ class MongoDBCollector(diamond.collector.Collector):
                     '.%s.timeLockedMicros.R' % db_name)
                 value = float(r + R) / 10
                 if value:
-                    self.publish_counter(key_prefix + '.locks.%s.read' % db_name,
-                                         value, time_delta=bool(interval),
-                                         interval=interval)
+                    self.publish_counter(
+                        key_prefix + '.locks.%s.read' % db_name,
+                        value, time_delta=bool(interval),
+                        interval=interval)
                 w = get_dotted_value(
                     locks,
                     '%s.timeLockedMicros.w' % db_name)
@@ -223,3 +229,10 @@ class MongoDBCollector(diamond.collector.Collector):
             publishfn('.'.join(keys), value)
         elif isinstance(value, long):
             publishfn('.'.join(keys), float(value))
+
+    def _extract_simple_data(self, data):
+        return {
+            'connections': data.get('connections'),
+            'globalLock': data.get('globalLock'),
+            'indexCounters': data.get('indexCounters')
+        }
