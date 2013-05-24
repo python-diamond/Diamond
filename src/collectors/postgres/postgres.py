@@ -111,9 +111,10 @@ class PostgresqlCollector(diamond.collector.Collector):
 
 
 class QueryStats(object):
-    def __init__(self, conns, underscore=False):
+    def __init__(self, conns, parameters=None, underscore=False):
         self.connections = conns
         self.underscore = underscore
+        self.parameters = parameters
 
     def _translate_datname(self, db):
         if self.underscore:
@@ -125,7 +126,7 @@ class QueryStats(object):
 
         for db, conn in self.connections.iteritems():
             cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-            cursor.execute(self.query)
+            cursor.execute(self.query, self.parameters)
 
             for row in cursor.fetchall():
                 # If row is length 2, assume col1, col2 forms key: value
@@ -186,7 +187,6 @@ class DatabaseStats(QueryStats):
                pg_stat_database.tup_inserted as tup_inserted,
                pg_stat_database.tup_updated as tup_updated,
                pg_stat_database.tup_deleted as tup_deleted,
-               pg_stat_database.conflicts as conflicts,
                pg_database_size(pg_database.datname) AS size
         FROM pg_database
         JOIN pg_stat_database
@@ -331,7 +331,6 @@ class BackgroundWriterStats(QueryStats):
                buffers_clean,
                maxwritten_clean,
                buffers_backend,
-               buffers_backend_fsync,
                buffers_alloc
         FROM pg_stat_bgwriter
     """
