@@ -3,9 +3,10 @@
 from logging.handlers import TimedRotatingFileHandler as TRFH
 import sys
 
+
 class TimedRotatingFileHandler(TRFH):
-    
-    def flush():
+
+    def flush(self):
         try:
             super(TimedRotatingFileHandler, self).flush()
         except IOError:

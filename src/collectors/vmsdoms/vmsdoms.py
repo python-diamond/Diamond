@@ -20,7 +20,7 @@ instances
 import diamond.collector
 try:
     import vms
-    vms # Pyflakes
+    vms  # Pyflakes
 except ImportError:
     vms = None
 

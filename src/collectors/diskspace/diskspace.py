@@ -198,29 +198,30 @@ class DiskSpaceCollector(diamond.collector.Collector):
 
             if hasattr(os, 'statvfs'):  # POSIX
                 data = os.statvfs(info['mount_point'])
-                
+
                 block_size = data.f_bsize
-    
+
                 blocks_total = data.f_blocks
                 blocks_free = data.f_bfree
                 blocks_avail = data.f_bavail
                 inodes_total = data.f_files
                 inodes_free = data.f_ffree
                 inodes_avail = data.f_favail
-                
+
             elif os.name == 'nt':       # Windows
-                # fixme: used still not exact compared to disk_usage.py from psutil
+                # fixme: used still not exact compared to disk_usage.py
+                # from psutil
                 raw_data = psutil.disk_usage(info['mount_point'])
-                
-                block_size = 1 # fixme: ?
-                
+
+                block_size = 1  # fixme: ?
+
                 blocks_total = raw_data.total
                 blocks_free = raw_data.free
                 blocks_used = raw_data.used
-                
+
             else:
                 raise NotImplementedError("platform not supported")
-            
+
             for unit in self.config['byte_unit']:
 
                 metric_name = '%s.%s_used' % (name, unit)

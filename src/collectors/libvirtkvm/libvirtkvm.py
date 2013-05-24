@@ -14,9 +14,10 @@ from xml.etree import ElementTree
 
 try:
     import libvirt
-    libvirt # Pyflakes
+    libvirt  # Pyflakes
 except ImportError:
     libvirt = None
+
 
 class LibvirtKVMCollector(diamond.collector.Collector):
     blockStats = {
