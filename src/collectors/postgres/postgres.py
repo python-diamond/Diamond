@@ -10,6 +10,7 @@ Collect metrics from postgresql
 """
 
 import diamond.collector
+from diamond.collector import str_to_bool
 
 try:
     import psycopg2
@@ -60,7 +61,7 @@ class PostgresqlCollector(diamond.collector.Collector):
         for db in self._get_db_names():
             self.connections[db] = self._connect(database=db)
 
-        if self.config['extended']:
+        if str_to_bool(self.config['extended']):
             metrics = registry['extended']
         else:
             metrics = registry['basic']
