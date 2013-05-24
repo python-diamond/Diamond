@@ -33,6 +33,14 @@ import logging.config
 def main():
     try:
         # Initialize Options
+
+        defaults = {
+            'skip_pidfile': False,
+        }
+
+        if os.name != 'nt':
+            defaults['skip_pidfile'] = True
+
         parser = optparse.OptionParser()
 
         parser.add_option("-c", "--configfile",
@@ -70,7 +78,7 @@ def main():
 
         parser.add_option("--skip-pidfile",
                           dest="skip_pidfile",
-                          default=False,
+                          default=defaults['skip_pidfile'],
                           action="store_true",
                           help="Skip creating PID file")
 
