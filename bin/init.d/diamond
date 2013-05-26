@@ -25,10 +25,25 @@ DAEMON=/usr/bin/diamond
 DAEMON_ARGS="-p /var/run/diamond.pid"
 PIDFILE=/var/run/diamond.pid
 SCRIPTNAME=/etc/init.d/diamond
+LOCKDIR=/var/lock/subsys
+LOCKFILE=/var/lock/subsys/diamond
 
 . /etc/rc.d/init.d/functions
 
 start() {
+  if [ -d "${LOCKDIR}" -a -w "${LOCKDIR}" ]
+  then
+    if ( set -o noclobber; echo "$$" > "${LOCKFILE}") 2> /dev/null;
+    then
+      true
+    else
+      echo "Failed to acquire lockfile: ${LOCKFILE}."
+      echo "Held by $(cat ${LOCKFILE})"
+      echo_failure
+      return 1
+    fi
+  fi
+  
   echo -n $"Starting $NAME: "
   daemon --pidfile $PIDFILE $DAEMON $DAEMON_ARGS
   retval=$?
@@ -46,6 +61,10 @@ stop() {
   echo -n $"Stopping $NAME: "
   killproc -p $PIDFILE $NAME
   retval=$?
+  if [ -e "${LOCKFILE}" ]
+  then
+    rm -f "${LOCKFILE}"
+  fi
   echo
   return $retval
 }
