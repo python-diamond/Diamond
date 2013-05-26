@@ -31,7 +31,8 @@ class IPVSCollector(diamond.collector.Collector):
             # prompting the user for a password.
             self.command.insert(1, '-n')
 
-        p = subprocess.Popen(self.command, stdout=subprocess.PIPE)
+        p = subprocess.Popen(self.command, stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
         p.wait()
 
         if p.returncode == 255:
