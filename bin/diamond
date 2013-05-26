@@ -38,7 +38,7 @@ def main():
             'skip_pidfile': False,
         }
 
-        if os.name != 'nt':
+        if os.name == 'nt':
             defaults['skip_pidfile'] = True
 
         parser = optparse.OptionParser()
