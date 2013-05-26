@@ -10,7 +10,11 @@ Amazon SQS collector.
 """
 
 import diamond.collector
-from boto import sqs
+try:
+    from boto import sqs
+    sqs  # Pyflakes
+except ImportError:
+    sqs = False
 
 
 class SqsCollector(diamond.collector.Collector):
@@ -37,6 +41,9 @@ class SqsCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
+        if not sqs:
+            self.log.error("boto module not found!")
+            return
         conn = sqs.connect_to_region(
             self.config['aws_region'],
             aws_access_key_id=self.config['aws_access_key_id'],
