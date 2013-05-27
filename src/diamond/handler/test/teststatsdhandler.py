@@ -3,6 +3,7 @@
 ################################################################################
 
 from test import unittest
+from test import run_only
 from mock import patch
 from mock import ANY
 
@@ -10,11 +11,26 @@ import configobj
 
 from diamond.handler.stats_d import StatsdHandler
 from diamond.metric import Metric
-import statsd
+try:
+    import statsd
+    statsd  # Pyflakes
+except ImportError:
+    pass
+
+
+def run_only_if_statsd_is_available(func):
+    try:
+        import statsd
+        statsd  # workaround for pyflakes issue #13
+    except ImportError:
+        statsd = None
+    pred = lambda: statsd is not None
+    return run_only(func, pred)
 
 
 class TestStatsdHandler(unittest.TestCase):
 
+    @run_only_if_statsd_is_available
     @patch('statsd.Client')
     def test_single_gauge(self, mock_client):
         instance = mock_client.return_value
@@ -37,6 +53,7 @@ class TestStatsdHandler(unittest.TestCase):
         handler.process(metric)
         mock_client._send.assert_called_with(ANY, expected_data)
 
+    @run_only_if_statsd_is_available
     @patch('statsd.Client')
     def test_single_counter(self, mock_client):
         instance = mock_client.return_value
@@ -59,6 +76,7 @@ class TestStatsdHandler(unittest.TestCase):
         handler.process(metric)
         mock_client._send.assert_called_with(ANY, expected_data)
 
+    @run_only_if_statsd_is_available
     @patch('statsd.Client')
     def test_multiple_counter(self, mock_client):
         instance = mock_client.return_value
