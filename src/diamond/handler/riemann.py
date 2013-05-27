@@ -19,7 +19,11 @@ It has these options:
 """
 
 from Handler import Handler
-import bernhard
+try:
+    import bernhard
+    bernhard  # Pyflakes
+except ImportError:
+    pass
 
 
 class RiemannHandler(Handler):

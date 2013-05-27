@@ -35,8 +35,12 @@ of this handler.
 """
 
 from Handler import Handler
-import statsd
 import logging
+try:
+    import statsd
+    statsd  # Pyflakes
+except ImportError:
+    pass
 
 
 class StatsdHandler(Handler):
