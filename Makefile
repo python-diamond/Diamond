@@ -12,7 +12,7 @@ all:
 	@echo "make docs     - Build docs"
 	@echo "make sdist    - Create source package"
 	@echo "make bdist    - Create binary package"
-    @echo "make pypi     - Update PyPI package"
+	@echo "make pypi     - Update PyPI package"
 	@echo "make install  - Install on local system"
 	@echo "make develop  - Install on local system in development mode"
 	@echo "make rpm      - Generate a rpm package"
@@ -95,6 +95,6 @@ reltest:
 	echo "$(RELEASE)"
 
 pypi:
-    python setup.py sdist upload
+	python setup.py sdist upload
 
 .PHONY: run watch config test docs sdist bdist install rpm buildrpm deb builddeb ebuild buildebuild tar clean cleanws version reltest vertest pypi
