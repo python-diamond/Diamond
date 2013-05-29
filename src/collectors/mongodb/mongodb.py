@@ -39,6 +39,8 @@ class MongoDBCollector(diamond.collector.Collector):
             'hosts': 'Array of hostname(:port) elements to get metrics from',
             'host': 'A single hostname(:port) to get metrics from'
                     ' (can be used instead of hosts and overrides it)',
+            'user': 'Username for authenticated login (optional)',
+            'passwd': 'Password for authenticated login (optional)',
             'databases': 'A regex of which databases to gather metrics for.'
                          ' Defaults to all databases.',
             'ignore_collections': 'A regex of which collections to ignore.'
@@ -58,6 +60,8 @@ class MongoDBCollector(diamond.collector.Collector):
         config.update({
             'path':      'mongo',
             'hosts':     ['localhost'],
+            'user':      None,
+            'passwd':      None,
             'databases': '.*',
             'ignore_collections': '^tmp\.mr\.',
             'network_timeout': None,
@@ -80,6 +84,17 @@ class MongoDBCollector(diamond.collector.Collector):
         if self.config['network_timeout']:
             self.config['network_timeout'] = int(
                 self.config['network_timeout'])
+
+        # use auth if given
+        if 'user' in self.config:
+            user = self.config['user']
+        else:
+            user = None
+
+        if 'passwd' in self.config:
+            passwd = self.config['passwd']
+        else:
+            passwd = None
 
         for host in self.config['hosts']:
             if len(self.config['hosts']) == 1:
@@ -104,6 +119,15 @@ class MongoDBCollector(diamond.collector.Collector):
             except Exception, e:
                 self.log.error('Couldnt connect to mongodb: %s', e)
                 continue
+
+            # try auth
+            if user:
+                try:
+                    conn.admin.authenticate(user, passwd)
+                except Exception, e:
+                    self.log.error('User auth given, but could not autheticate with host: %s, err: %s' % (host, e))
+                    return{}
+
 
             data = conn.db.command('serverStatus')
             self._publish_transformed(data, base_prefix)
