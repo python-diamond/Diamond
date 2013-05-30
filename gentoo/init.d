@@ -31,7 +31,7 @@ stop() {
 	fi
 
 	ebegin "Stopping ${SVCNAME}"
-	kill ${PID}
+	kill -9 ${PID}
 
 	i=0
 	while ( test -f "${PIDFILE}" && pgrep -P ${PID} diamond >/dev/null ) \
