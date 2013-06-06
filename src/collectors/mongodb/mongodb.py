@@ -36,7 +36,8 @@ class MongoDBCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(MongoDBCollector, self).get_default_config_help()
         config_help.update({
-            'hosts': 'Array of hostname(:port) elements to get metrics from',
+            'hosts': 'Array of hostname(:port) elements to get metrics from'
+                     'Set an alias by prefixing host:port with alias@',
             'host': 'A single hostname(:port) to get metrics from'
                     ' (can be used instead of hosts and overrides it)',
             'user': 'Username for authenticated login (optional)',
@@ -100,8 +101,15 @@ class MongoDBCollector(diamond.collector.Collector):
             if len(self.config['hosts']) == 1:
                 # one host only, no need to have a prefix
                 base_prefix = []
-            else:
-                base_prefix = [re.sub('[:\.]', '_', host)]
+            else:                
+                matches = re.search('((.+)\@)?(.+)?', host)
+                alias = matches.group(2)
+                host = matches.group(3)
+
+                if alias is None:
+                    base_prefix = [re.sub('[:\.]', '_', host)]
+                else:
+                    base_prefix = [alias]
 
             try:
                 if ReadPreference is None:
