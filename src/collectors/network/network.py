@@ -91,7 +91,12 @@ class NetworkCollector(diamond.collector.Collector):
                     results[device] = match.groupdict()
             # Close File
             file.close()
-        elif psutil:
+        else:
+            if not psutil:
+                self.log.error('Unable to import psutil')
+                self.log.error('No network metrics retrieved')
+                return None
+
             network_stats = psutil.network_io_counters(True)
             for device in network_stats.keys():
                 network_stat = network_stats[device]
