@@ -96,8 +96,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                         minor = int(columns[1])
                         device = columns[2]
 
-                        if (device.startswith('ram')
-                            or device.startswith('loop')):
+                        if (device.startswith('ram') or device.startswith('loop')):
                             continue
 
                         result[(major, minor)] = {
@@ -118,7 +117,11 @@ class DiskUsageCollector(diamond.collector.Collector):
                         continue
             finally:
                 fp.close()
-        elif psutil:
+        else:
+            if not psutil:
+                self.log.error('Unable to import psutil')
+                return None
+
             disks = psutil.disk_io_counters(True)
             for disk in disks:
                     result[(0, len(result))] = {
@@ -156,7 +159,12 @@ class DiskUsageCollector(diamond.collector.Collector):
         exp = self.config['devices']
         reg = re.compile(exp)
 
-        for key, info in self.get_disk_statistics().iteritems():
+        results = self.get_disk_statistics()
+        if not results:
+            self.log.error('No diskspace metrics retrieved')
+            return None
+
+        for key, info in results.iteritems():
             metrics = {}
 
             name = info['device']
