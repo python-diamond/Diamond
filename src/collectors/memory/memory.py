@@ -3,7 +3,9 @@
 """
 This class collects data on memory utilization
 
-Note that MemFree may report no memory free. This may not actually be the case, as memory is allocated to Buffers and Cache as well. See [this link](http://www.linuxatemyram.com/) for more details.
+Note that MemFree may report no memory free. This may not actually be the case,
+as memory is allocated to Buffers and Cache as well. See
+[this link](http://www.linuxatemyram.com/) for more details.
 
 #### Dependencies
 

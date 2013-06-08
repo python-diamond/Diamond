@@ -96,7 +96,8 @@ class DiskUsageCollector(diamond.collector.Collector):
                         minor = int(columns[1])
                         device = columns[2]
 
-                        if (device.startswith('ram') or device.startswith('loop')):
+                        if (device.startswith('ram')
+                            or device.startswith('loop')):
                             continue
 
                         result[(major, minor)] = {

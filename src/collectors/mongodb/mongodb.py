@@ -101,7 +101,7 @@ class MongoDBCollector(diamond.collector.Collector):
             if len(self.config['hosts']) == 1:
                 # one host only, no need to have a prefix
                 base_prefix = []
-            else:                
+            else:
                 matches = re.search('((.+)\@)?(.+)?', host)
                 alias = matches.group(2)
                 host = matches.group(3)
@@ -133,9 +133,9 @@ class MongoDBCollector(diamond.collector.Collector):
                 try:
                     conn.admin.authenticate(user, passwd)
                 except Exception, e:
-                    self.log.error('User auth given, but could not autheticate with host: %s, err: %s' % (host, e))
+                    self.log.error('User auth given, but could not autheticate'
+                                   + ' with host: %s, err: %s' % (host, e))
                     return{}
-
 
             data = conn.db.command('serverStatus')
             self._publish_transformed(data, base_prefix)
