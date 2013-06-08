@@ -96,7 +96,12 @@ class MemoryCollector(diamond.collector.Collector):
                 except ValueError:
                     continue
             return True
-        elif psutil:
+        else:
+            if not psutil:
+                self.log.error('Unable to import psutil')
+                self.log.error('No memory metrics retrieved')
+                return None
+
             phymem_usage = psutil.phymem_usage()
             virtmem_usage = psutil.virtmem_usage()
             units = 'B'
