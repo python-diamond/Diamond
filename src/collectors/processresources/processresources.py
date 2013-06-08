@@ -171,6 +171,11 @@ calls."""),
         Collects the RSS memory usage of each process defined under the
         `process` subsection of the config file
         """
+        if not psutil:
+            self.log.error('Unable to import psutil')
+            self.log.error('No process resource metrics retrieved')
+            return None
+
         self.setup_config()
         self.filter_processes()
         unit = self.config['unit']
