@@ -173,7 +173,11 @@ class DiskSpaceCollector(diamond.collector.Collector):
 
             file.close()
 
-        elif psutil:
+        else:
+            if not psutil:
+                self.log.error('Unable to import psutil')
+                return None
+
             partitions = psutil.disk_partitions(False)
             for partition in partitions:
                 result[(0, len(result))] = {
@@ -187,7 +191,12 @@ class DiskSpaceCollector(diamond.collector.Collector):
 
     def collect(self):
         labels = self.get_disk_labels()
-        for key, info in self.get_file_systems().iteritems():
+        results = self.get_file_systems()
+        if not results:
+            self.log.error('No diskspace metrics retrieved')
+            return None
+
+        for key, info in results.iteritems():
             if info['device'] in labels:
                 name = labels[info['device']]
             else:
