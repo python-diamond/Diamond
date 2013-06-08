@@ -149,12 +149,12 @@ class CPUCollector(diamond.collector.Collector):
                     metric_name = '.'.join([cpu, s])
                     # Get actual data
                     metrics[metric_name] = self.derivative(metric_name,
-                                                         long(stats[s]),
-                                                         self.MAX_VALUES[s])
+                                                           long(stats[s]),
+                                                           self.MAX_VALUES[s])
 
             # Check for a bug in xen where the idle time is doubled for guest
             # See https://bugzilla.redhat.com/show_bug.cgi?id=624756
-            if self.config['xenfix'] is None or self.config['xenfix'] == True:
+            if self.config['xenfix'] is None or self.config['xenfix'] is True:
                 if os.path.isdir('/proc/xen'):
                     total = 0
                     for metric_name in metrics.keys():
@@ -176,7 +176,12 @@ class CPUCollector(diamond.collector.Collector):
                              metrics[metric_name])
             return True
 
-        elif psutil:
+        else:
+            if not psutil:
+                self.log.error('Unable to import psutil')
+                self.log.error('No cpu metrics retrieved')
+                return None
+
             cpu_time = psutil.cpu_times(True)
             total_time = psutil.cpu_times()
             for i in range(0, len(cpu_time)):
