@@ -97,7 +97,7 @@ class HAProxyCollector(diamond.collector.Collector):
     def _generate_headings(self, row):
         headings = {}
         for index, heading in enumerate(row):
-            headings[index] = heading
+            headings[index] = self._sanitize(heading)
         return headings
 
     def collect(self):
@@ -112,11 +112,21 @@ class HAProxyCollector(diamond.collector.Collector):
             if (self.config['ignore_servers']
                     and row[1].lower() not in ['frontend', 'backend']):
                 continue
-            metric_name = '%s.%s' % (row[0].lower(), row[1].lower())
+
+            part_one = self._sanitize(row[0].lower())
+            part_two = self._sanitize(row[1].lower())
+            metric_name = '%s.%s' % (part_one, part_two)
+
             for index, metric_string in enumerate(row):
                 try:
                     metric_value = float(metric_string)
                 except ValueError:
                     continue
+
                 stat_name = '%s.%s' % (metric_name, headings[index])
                 self.publish(stat_name, metric_value, metric_type='GAUGE')
+
+    def _sanitize(self, s):
+        """Sanitize the name of a metric to remove unwanted chars
+        """
+        return re.sub('[^\w-]', '_', s)
