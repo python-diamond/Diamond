@@ -38,3 +38,12 @@ class HostedGraphiteHandler(Handler):
         """
         metric = self.key + '.' + str(metric)
         self.graphite.process(metric)
+
+    def _process(self, metric):
+        self.graphite._process(metric)
+
+    def _flush(self):
+        self.graphite._flush()
+
+    def flush(self):
+        self.graphite.flush()
