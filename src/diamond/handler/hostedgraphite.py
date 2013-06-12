@@ -25,7 +25,7 @@ class HostedGraphiteHandler(Handler):
         """
         Create a new instance of the HostedGraphiteHandler class
         """
-        self.key = self.config.get('apikey', '').lower().strip()
+        self.key = config.get('apikey', '').lower().strip()
         
         config['host'] = 'carbon.hostedgraphite.com'
         config['port'] = '2003'
