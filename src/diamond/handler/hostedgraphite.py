@@ -27,6 +27,7 @@ class HostedGraphiteHandler(Handler):
         self.key = self.config.get('apikey', '').lower().strip()
         
         config['host'] = 'carbon.hostedgraphite.com'
+        config['port'] = '2003'
 
         self.graphite = GraphiteHandler(config)
 
