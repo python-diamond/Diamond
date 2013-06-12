@@ -16,6 +16,7 @@ Enable this handler
 
 """
 
+from Handler import Handler
 from graphite import GraphiteHandler
 
 class HostedGraphiteHandler(Handler):
