@@ -25,7 +25,7 @@ class HostedGraphiteHandler(Handler):
         """
         Create a new instance of the HostedGraphiteHandler class
         """
-        self.key = config.get('apikey', '').lower().strip()
+        self.key = config['apikey'].lower().strip()
         
         config['host'] = 'carbon.hostedgraphite.com'
         config['port'] = '2003'
@@ -40,6 +40,10 @@ class HostedGraphiteHandler(Handler):
         self.graphite.process(metric)
 
     def _process(self, metric):
+        """
+        Process a metric by sending it to graphite
+        """
+        metric = self.key + '.' + str(metric)
         self.graphite._process(metric)
 
     def _flush(self):
