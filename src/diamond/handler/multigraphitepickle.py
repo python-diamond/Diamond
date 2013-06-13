@@ -7,7 +7,7 @@ Specify them as a list of hosts divided by comma.
 """
 
 from Handler import Handler
-from graphite import GraphitePickleHandler
+from graphitepickle import GraphitePickleHandler
 from copy import deepcopy
 
 
