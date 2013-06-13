@@ -10,7 +10,12 @@ Uses libvirt to harvest per KVM instance stats
 """
 
 import diamond.collector
-from xml.etree import ElementTree
+
+try:
+    from xml.etree import ElementTree
+    ElementTree  # workaround for pyflakes issue #13
+except ImportError:
+    import cElementTree as ElementTree
 
 try:
     import libvirt
