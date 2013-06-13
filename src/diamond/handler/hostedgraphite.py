@@ -19,6 +19,7 @@ Enable this handler
 from Handler import Handler
 from graphite import GraphiteHandler
 
+
 class HostedGraphiteHandler(Handler):
 
     def __init__(self, config=None):
@@ -26,7 +27,7 @@ class HostedGraphiteHandler(Handler):
         Create a new instance of the HostedGraphiteHandler class
         """
         self.key = config['apikey'].lower().strip()
-        
+
         config['host'] = 'carbon.hostedgraphite.com'
         config['port'] = '2003'
 

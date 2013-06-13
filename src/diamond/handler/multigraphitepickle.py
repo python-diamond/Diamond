@@ -2,8 +2,8 @@
 
 """
 Send metrics to a [graphite](http://graphite.wikidot.com/) using the pickle
-interface. Unlike GraphitePickleHandler, this one supports multiple graphite servers.
-Specify them as a list of hosts divided by comma.
+interface. Unlike GraphitePickleHandler, this one supports multiple graphite
+servers. Specify them as a list of hosts divided by comma.
 """
 
 from Handler import Handler
