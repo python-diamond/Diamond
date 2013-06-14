@@ -11,23 +11,24 @@ SNMPCollector is a special collector for collecting data from using SNMP
 
 import socket
 
-
 import warnings
-try:
-    # pysnmp packages on debian 6.0 use sha and md5 which are deprecated
-    # packages. there is nothing to be done about it until pysnmp
-    # updates to use new hashlib module -- ignoring warning for now
-    old_showwarning = warnings.showwarning
-    warnings.filterwarnings("ignore", category=DeprecationWarning)
 
+# pysnmp packages on debian 6.0 use sha and md5 which are deprecated
+# packages. there is nothing to be done about it until pysnmp
+# updates to use new hashlib module -- ignoring warning for now
+old_showwarning = warnings.showwarning
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+cmdgen = None
+
+try:
     import pysnmp.entity.rfc3413.oneliner.cmdgen as cmdgen
     import pysnmp.debug
     pysnmp  # workaround for pyflakes issue #13
-
-    warnings.showwarning = old_showwarning
-
 except ImportError:
     pysnmp = None
+
+warnings.showwarning = old_showwarning
 
 import diamond.collector
 
@@ -42,8 +43,11 @@ class SNMPCollector(diamond.collector.Collector):
         diamond.collector.Collector.__init__(self, config, handlers)
 
         # Initialize SNMP Command Generator
-        if pysnmp is not None:
+        if cmdgen:
             self.snmpCmdGen = cmdgen.CommandGenerator()
+        else:
+            self.log.error(
+                'pysnmp.entity.rfc3413.oneliner.cmdgen failed to load')
 
     def get_default_config_help(self):
         config_help = super(SNMPCollector, self).get_default_config_help()

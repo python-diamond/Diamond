@@ -57,13 +57,11 @@ restart diamond.
 
 import os
 import sys
-import time
 import re
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                 'snmp'))
 from snmp import SNMPCollector as parent_SNMPCollector
-from diamond.metric import Metric
 import diamond.convertor
 
 
@@ -118,8 +116,6 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
         # Log
         self.log.info("Collecting SNMP interface statistics from: %s", device)
 
-        timestamp = time.time()
-
         # Define a list of interface indexes
         ifIndexes = []
 
@@ -160,10 +156,8 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
                                        device,
                                        self.config['path'],
                                        metricName])
-                # Create Metric
-                metric = Metric(metricPath, metricValue, None, 0)
                 # Publish Metric
-                self.publish_metric(metric)
+                self.publish_gauge(metricPath, metricValue)
 
             # Get counters (64bit)
             counterItems = self.IF_MIB_COUNTER_OID_TABLE.items()
@@ -194,14 +188,11 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
                                                device,
                                                self.config['path'],
                                                metricName])
-                        # Create Metric
-                        metric = Metric(metricPath,
-                                        self.derivative(metricPath,
-                                                        metricValue,
-                                                        18446744073709600000),
-                                        timestamp, 0)
                         # Publish Metric
-                        self.publish_metric(metric)
+                        self.publish_counter(metricPath,
+                                             metricValue,
+                                             max_value=18446744073709600000,
+                                             )
                 else:
                     metricName = '.'.join([metricIfDescr, counterName])
                     metricValue = int(ifCounterValue)
@@ -211,11 +202,8 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
                                            device,
                                            self.config['path'],
                                            metricName])
-                    # Create Metric
-                    metric = Metric(metricPath,
-                                    self.derivative(metricPath,
-                                                    metricValue,
-                                                    18446744073709600000),
-                                    timestamp, 0)
                     # Publish Metric
-                    self.publish_metric(metric)
+                    self.publish_counter(metricPath,
+                                         metricValue,
+                                         max_value=18446744073709600000,
+                                         )
