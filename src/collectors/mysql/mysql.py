@@ -425,7 +425,7 @@ class MySQLCollector(diamond.collector.Collector):
 
         for host in self.config['hosts']:
             matches = re.search(
-                '^([^:]*):([^@]*)@([^:]*):([^/]*)/([^/]*)/?(.*)', host)
+                '^([^:]*):([^@]*)@([^:]*):?([^/]*)/([^/]*)/?(.*)', host)
 
             if not matches:
                 continue
@@ -433,7 +433,10 @@ class MySQLCollector(diamond.collector.Collector):
             params = {}
 
             params['host'] = matches.group(3)
-            params['port'] = int(matches.group(4))
+            try:
+                params['port'] = int(matches.group(4))
+            except ValueError:
+                params['port'] = 3306
             params['db'] = matches.group(5)
             params['user'] = matches.group(1)
             params['passwd'] = matches.group(2)
