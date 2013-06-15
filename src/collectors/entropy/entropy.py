@@ -23,7 +23,7 @@ class EntropyStatCollector(diamond.collector.Collector):
         """
         config = super(EntropyStatCollector, self).get_default_config()
         config.update({
-            'enabled':  'True',
+            'enabled':  'False',
             'path':     'entropy'
         })
         return config
@@ -33,12 +33,13 @@ class EntropyStatCollector(diamond.collector.Collector):
             return None
 
         # open file
-        file = open(self.PROC)
-	# read value
-	entropy = file.read().strip()
+        entropy_file = open(self.PROC)
+
+        # read value
+        entropy = entropy_file.read().strip()
 
         # Close file
-        file.close()
+        entropy_file.close()
 
-	# Publish value
-	self.publish_gauge("available", entropy)
+        # Publish value
+        self.publish_gauge("available", entropy)
