@@ -408,7 +408,7 @@ class MySQLCollector(diamond.collector.Collector):
                     continue
 
                 if metric_name not in self._GAUGE_KEYS:
-                    metric_value = self.derivative(metric_name,
+                    metric_value = self.derivative(nickname + metric_name,
                                                    metric_value)
                 if key == 'status':
                     if ('publish' not in self.config
