@@ -60,8 +60,11 @@ class Server(object):
                 configfile = os.path.join(
                     config['server']['handlers_config_path'],
                     configname)
-                config['handlers'][handlername].merge(
-                    configobj.ConfigObj(configfile))
+                hconfig = configobj.ConfigObj(configfile)
+                if handername in config['handlers']:
+                    config['handlers'][handlername].merge(hconfig)
+                else:
+                    config['handlers'][handlername] = hconfig
 
         self.config = config
 
