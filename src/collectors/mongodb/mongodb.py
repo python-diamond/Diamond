@@ -49,7 +49,9 @@ class MongoDBCollector(diamond.collector.Collector):
                                   ' are ignored by default.',
             'network_timeout': 'Timeout for mongodb connection (in seconds).'
                                ' There is no timeout by default.',
-            'simple': 'Only collect the same metrics as mongostat.'
+            'simple': 'Only collect the same metrics as mongostat.',
+            'translate_collections': 'Translate dot (.) to underscores (_)'
+                                     ' in collection names.'
         })
         return config_help
 
@@ -66,7 +68,8 @@ class MongoDBCollector(diamond.collector.Collector):
             'databases': '.*',
             'ignore_collections': '^tmp\.mr\.',
             'network_timeout': None,
-            'simple': 'False'
+            'simple': 'False',
+            'translate_collections': 'False'
         })
         return config
 
@@ -156,6 +159,8 @@ class MongoDBCollector(diamond.collector.Collector):
                         continue
                     collection_stats = conn[db_name].command('collstats',
                                                              collection_name)
+                    if str_to_bool(self.config['translate_collections']):
+                        collection_name = collection_name.replace('.', '_')
                     collection_prefix = db_prefix + [collection_name]
                     self._publish_dict_with_prefix(collection_stats,
                                                    collection_prefix)
