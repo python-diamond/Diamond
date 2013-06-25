@@ -158,9 +158,12 @@ class ElasticSearchCollector(diamond.collector.Collector):
                              ['memory_size_in_bytes'])
 
         # elasticsearch >= 0.90
-        if 'field_data' in indices:
-            metrics['field_data.memory_size'] = indices['field_data'][
-                'memory_size']
+        if 'fielddata' in indices:
+            fielddata = indices['fielddata']
+            self._add_metric(metrics, 'fielddata.size', fielddata,
+                ['memory_size_in_bytes'])
+            self._add_metric(metrics, 'fielddata.evictions', fielddata,
+                ['evictions'])
 
         #
         # process mem/cpu (may not be present, depending on access restrictions)
