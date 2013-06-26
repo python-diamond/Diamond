@@ -129,6 +129,9 @@ class Server(object):
         """
         Scan for and add paths to the include path
         """
+        # Verify the path is valid
+        if not os.path.isdir(path):
+            return
         # Add path to the system path
         sys.path.append(path)
         # Load all the files in path
@@ -315,6 +318,9 @@ class Server(object):
         self.running = True
 
         # Load handlers
+        if 'handlers_path' in self.config['server']:
+            handlers_path = self.config['server']['handlers_path']
+            self.load_include_path(handlers_path)
         self.load_handlers()
 
         # Load config
@@ -343,6 +349,9 @@ class Server(object):
         self.running = True
 
         # Load handlers
+        if 'handlers_path' in self.config['server']:
+            handlers_path = self.config['server']['handlers_path']
+            self.load_include_path(handlers_path)
         self.load_handlers()
 
         # Overrides collector config dir
