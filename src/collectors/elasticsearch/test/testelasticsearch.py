@@ -74,7 +74,8 @@ class TestElasticSearchCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_0_90_data(self, publish_mock):
-        returns = [self.getFixture('stats0.90'), self.getFixture('indices_stats')]
+        returns = [
+            self.getFixture('stats0.90'), self.getFixture('indices_stats')]
         urlopen_mock = patch('urllib2.urlopen', Mock(
             side_effect=lambda *args: returns.pop(0)))
 
