@@ -118,7 +118,8 @@ calls."""),
             name: [regex],
             cmdline: [regex],
             selfmon: [boolean],
-            procs: [psutil.Process]
+            procs: [psutil.Process],
+            count_workers: [boolean]
         }
         """
         self.processes = {}
@@ -132,6 +133,7 @@ calls."""),
                     proc[key] = [proc[key]]
                 proc[key] = [re.compile(e) for e in proc[key]]
             proc['selfmon'] = cfg.get('selfmon', '').lower() == 'true'
+            proc['count_workers'] = cfg.get('count_workers', '').lower() == 'true'
             self.processes[process] = proc
 
     def filter_processes(self):
@@ -200,3 +202,7 @@ calls."""),
             metric_value = sum(p.cpu_percent for p in cfg['procs'])
             # Publish Metric
             self.publish(metric_name, metric_value)
+            if cfg['count_workers']:
+                metric_name = '%s.workers' % process
+                metric_value = len(cfg['procs'])
+                self.publish(metric_name, metric_value)
