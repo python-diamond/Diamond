@@ -61,7 +61,7 @@ class Server(object):
                     config['server']['handlers_config_path'],
                     configname)
                 hconfig = configobj.ConfigObj(configfile)
-                if handername in config['handlers']:
+                if handlername in config['handlers']:
                     config['handlers'][handlername].merge(hconfig)
                 else:
                     config['handlers'][handlername] = hconfig
