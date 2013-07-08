@@ -178,31 +178,35 @@ calls."""),
             self.log.error('No process resource metrics retrieved')
             return None
 
-        self.setup_config()
-        self.filter_processes()
-        unit = self.config['unit']
-        for process, cfg in self.processes.items():
-            # finally publish the results for each process group
-            metric_name = "%s.rss" % process
-            metric_value = diamond.convertor.binary.convert(
-                sum(p.rss for p in cfg['procs']),
-                oldUnit='byte', newUnit=unit)
-            # Publish Metric
-            self.publish(metric_name, metric_value)
-
-            metric_name = "%s.vms" % process
-            metric_value = diamond.convertor.binary.convert(
-                sum(p.vms for p in cfg['procs']),
-                oldUnit='byte', newUnit=unit)
-            # Publish Metric
-            self.publish(metric_name, metric_value)
-
-            # CPU percent
-            metric_name = "%s.cpu_percent" % process
-            metric_value = sum(p.cpu_percent for p in cfg['procs'])
-            # Publish Metric
-            self.publish(metric_name, metric_value)
-            if cfg['count_workers']:
-                metric_name = '%s.workers' % process
-                metric_value = len(cfg['procs'])
+        try:
+            self.setup_config()
+            self.filter_processes()
+            unit = self.config['unit']
+            for process, cfg in self.processes.items():
+                # finally publish the results for each process group
+                metric_name = "%s.rss" % process
+                metric_value = diamond.convertor.binary.convert(
+                    sum(p.rss for p in cfg['procs']),
+                    oldUnit='byte', newUnit=unit)
+                # Publish Metric
                 self.publish(metric_name, metric_value)
+
+                metric_name = "%s.vms" % process
+                metric_value = diamond.convertor.binary.convert(
+                    sum(p.vms for p in cfg['procs']),
+                    oldUnit='byte', newUnit=unit)
+                # Publish Metric
+                self.publish(metric_name, metric_value)
+
+                # CPU percent
+                metric_name = "%s.cpu_percent" % process
+                metric_value = sum(p.cpu_percent for p in cfg['procs'])
+                # Publish Metric
+                self.publish(metric_name, metric_value)
+
+                if cfg['count_workers']:
+                    metric_name = '%s.workers' % process
+                    metric_value = len(cfg['procs'])
+                    self.publish(metric_name, metric_value)
+        except Exception, e:
+            self.log.error(str(e))
