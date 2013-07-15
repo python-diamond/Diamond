@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBean classname="sun.management.ThreadImpl" description="Information on the management interface of the MBean" objectname="java.lang:type=Threading">
+  <Attribute aggregation="array" availability="RO" description="AllThreadIds" isnull="false" name="AllThreadIds" strinit="false" type="[J" value="[J@33412c19"/>
+  <Attribute availability="RO" description="CurrentThreadCpuTime" isnull="false" name="CurrentThreadCpuTime" strinit="true" type="long" value="0"/>
+  <Attribute availability="RO" description="CurrentThreadCpuTimeSupported" isnull="false" name="CurrentThreadCpuTimeSupported" strinit="true" type="boolean" value="true"/>
+  <Attribute availability="RO" description="CurrentThreadUserTime" isnull="false" name="CurrentThreadUserTime" strinit="true" type="long" value="0"/>
+  <Attribute availability="RO" description="DaemonThreadCount" isnull="false" name="DaemonThreadCount" strinit="true" type="int" value="58"/>
+  <Attribute availability="RO" description="ObjectMonitorUsageSupported" isnull="false" name="ObjectMonitorUsageSupported" strinit="true" type="boolean" value="true"/>
+  <Attribute availability="RO" description="PeakThreadCount" isnull="false" name="PeakThreadCount" strinit="true" type="int" value="90"/>
+  <Attribute availability="RO" description="SynchronizerUsageSupported" isnull="false" name="SynchronizerUsageSupported" strinit="true" type="boolean" value="true"/>
+  <Attribute availability="RW" description="ThreadAllocatedMemoryEnabled" isnull="false" name="ThreadAllocatedMemoryEnabled" strinit="true" type="boolean" value="true"/>
+  <Attribute availability="RO" description="ThreadAllocatedMemorySupported" isnull="false" name="ThreadAllocatedMemorySupported" strinit="true" type="boolean" value="true"/>
+  <Attribute availability="RW" description="ThreadContentionMonitoringEnabled" isnull="false" name="ThreadContentionMonitoringEnabled" strinit="true" type="boolean" value="false"/>
+  <Attribute availability="RO" description="ThreadContentionMonitoringSupported" isnull="false" name="ThreadContentionMonitoringSupported" strinit="true" type="boolean" value="true"/>
+  <Attribute availability="RO" description="ThreadCount" isnull="false" name="ThreadCount" strinit="true" type="int" value="89"/>
+  <Attribute availability="RW" description="ThreadCpuTimeEnabled" isnull="false" name="ThreadCpuTimeEnabled" strinit="true" type="boolean" value="true"/>
+  <Attribute availability="RO" description="ThreadCpuTimeSupported" isnull="false" name="ThreadCpuTimeSupported" strinit="true" type="boolean" value="true"/>
+  <Attribute availability="RO" description="TotalStartedThreadCount" isnull="false" name="TotalStartedThreadCount" strinit="true" type="long" value="228"/>
+</MBean>
