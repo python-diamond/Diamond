@@ -7,15 +7,11 @@ Collects simple task stats out of a running celerymon process
 
  * celerymon connected to celery broker
 
-#### Customizing a collector
-
-
-
 Example config file CelerymonCollector.conf
 
 ```
 enabled=True
-host=redis.example.com
+host=celerymon.example.com
 port=16379
 ```
 
@@ -31,10 +27,11 @@ class CelerymonCollector(diamond.collector.Collector):
     LastCollectTime = None
 
     def get_default_config_help(self):
-        config_help = super(MongoDBCollector, self).get_default_config_help()
+        config_help = super(CelerymonCollector, self).get_default_config_help()
         config_help.update({
-            'host': 'A single hostname to get metrics from'
-            'port': 'The celerymon port',
+            'path': 'celerymon',
+            'host': 'A single hostname to get metrics from',
+            'port': 'The celerymon port'
 
         })
         return config_help
@@ -43,7 +40,7 @@ class CelerymonCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        config = super(ExampleCollector, self).get_default_config()
+        config = super(CelerymonCollector, self).get_default_config()
         config.update({
             'host':     'localhost',
             'port':     '8989'
@@ -64,25 +61,26 @@ class CelerymonCollector(diamond.collector.Collector):
         host = self.config['host']
         port = self.config['port']
 
-        celerymon_url = "http://%s:%s/api/task/?since=%s" % (host, port, self.LastCollectTime)
+        celerymon_url = "http://%s:%s/api/task/?since=%i" % (host, port, self.LastCollectTime)
         response  = urllib2.urlopen(celerymon_url)
         body = response.read()
         celery_data = json.loads(body)
 
         results = dict()
-        results = ['total_messages'] - 0
+        total_messages = 0
         for data in celery_data:
             name = str(data[1]['name'])
             if name not in results:
                 results[name] = dict()
             state = str(data[1]['state'])
-            if state no in results[name]:
+            if state not in results[name]:
                 results[name][state] = 1
             else:
                 results[name][state] += 1
-            results['total_messages'] += 1
+            total_messages += 1
 
         # Publish Metric
+        self.publish('total_messages', total_messages)
         for result in results:
             for state in results[result]:
                 metric_value = results[result][state]
