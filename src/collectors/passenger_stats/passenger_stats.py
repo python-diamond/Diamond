@@ -5,7 +5,15 @@ The PasengerCollector collects CPU utilization of apache,nginx and passenger pro
 It also captures memory utilized of passenger, apache and nginx processes
 Four key attributes to be published - phusion_passenger_cpu, total_apache_memory, total_passenger_mem, total_nginx_mem
 
-To utilize this function, run diamond as root user
+To utilize this function, make sure of the following
+1. Make sure to have executable of passenger-memory-stats set in os PATH
+2. run diamond as root user
+3. Run with command: diamond start -c /etc/diamond/diamond.conf.
+
+PS: Don't run diamond with /etc/init.d/diamond start as it resets the os PATH to some new value
+sample os PATH= /usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/local/sbin:/usr/sbin:/sbin:/usr/lib/ruby-1.9.2-p290/bin:/usr/lib/ruby-flo/bin
+/usr/lib/ruby-flo/bin is a executable for passenger-memory-stats in this case
+
 #### Dependencies
 
  * passenger-memory-stats
@@ -21,11 +29,18 @@ from cStringIO import StringIO
 
 class PassengerCollector(diamond.collector.Collector):
 
+    def whereis(self, program):
+        for path in os.environ.get('PATH', '').split(':'):
+            if os.path.exists(os.path.join(path, program)) and\
+               not os.path.isdir(os.path.join(path, program)):
+                return os.path.join(path, program)
+        return None
+
     def get_default_config_help(self):
         config_help = super(PassengerCollector, self).get_default_config_help()
         config_help.update({
 
-            })
+        })
         return config_help
 
     def get_default_config(self):
@@ -35,13 +50,20 @@ class PassengerCollector(diamond.collector.Collector):
         config = super(PassengerCollector, self).get_default_config()
         config.update({
             'path':      'passenger_stats',
-        })
+            })
         return config
 
     def collect(self):
         """
         Collector Passenger stats
         """
+
+        location = self.whereis('passenger-memory-stats')
+
+        if location is None:
+            raise TypeError("passenger-memory-stats is not in PATH")
+
+
         def calc_cpu(processes):
             pipe1 = "top -b -n 2"
             pipe2 = "egrep " +  processes
@@ -58,9 +80,9 @@ class PassengerCollector(diamond.collector.Collector):
 
             return str(total_cpu)
 
-        k1 = "passenger-memory-stats"
+        #k1 = "passenger-memory-stats"
         k2 = 'sed -r s/\x1B\[([0-9]{1,3}((;[0-9]{1,3})*)?)?[m|K]//g'
-        q1 = subprocess.Popen(k1.split(), stdout=subprocess.PIPE)
+        q1 = subprocess.Popen(location, stdout=subprocess.PIPE)
         q2 = subprocess.Popen(k2.split(), stdin=q1.stdout, stdout=subprocess.PIPE)
         (res,err) = q2.communicate()
         f = StringIO(res)
@@ -124,4 +146,3 @@ class PassengerCollector(diamond.collector.Collector):
         self.publish('total_apache_memory', total_apache_mem)
         self.publish('total_passenger_mem', total_passenger_mem)
         self.publish('total_nginx_mem', total_nginx_mem)
-  
