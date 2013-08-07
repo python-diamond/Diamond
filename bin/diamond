@@ -307,7 +307,7 @@ def main():
                 # Stop Server
                 server.stop()
                 # Delete Pidfile
-                if os.path.exists(options.pidfile):
+                if not options.skip_pidfile and os.path.exists(options.pidfile):
                     os.remove(options.pidfile)
                     # Log
                     log.debug("Removed PID file: %s" % (options.pidfile))
