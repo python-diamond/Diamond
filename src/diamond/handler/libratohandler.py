@@ -34,9 +34,13 @@ Enable this handler
 
 from Handler import Handler
 import logging
-import librato
 import time
 import re
+
+try:
+    import librato
+except ImportError:
+    librato = None
 
 
 class LibratoHandler(Handler):
@@ -47,7 +51,12 @@ class LibratoHandler(Handler):
         """
         # Initialize Handler
         Handler.__init__(self, config)
-        logging.debug("Initialized statsd handler.")
+        logging.debug("Initialized Librato handler.")
+
+        if librato is None:
+            logging.error("Failed to load librato module")
+            return
+
         # Initialize Options
         api = librato.connect(self.config['user'],
                               self.config['apikey'])
