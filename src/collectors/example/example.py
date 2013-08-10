@@ -33,7 +33,7 @@ form, they need to implement a single method called "collect".
 To run this collector in test mode you can invoke the diamond server with the
 -r option and specify the collector path.
 
->  diamond -f -v -r path/to/ExampleCollector.py -c conf/diamond.conf.example
+>  diamond -f -l -r path/to/ExampleCollector.py -c conf/diamond.conf.example
 
 Diamond supports dynamic addition of collectors. Its configured to scan for new
 collectors on a regular interval (configured in diamond.cfg).

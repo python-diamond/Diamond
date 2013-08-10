@@ -22,6 +22,10 @@ selfmon=True
 
 exe and name are both lists of comma-separated regexps.
 
+count_workers defined under [process] will determine whether to count how many
+workers are there of processes which match this [process],
+for example: cgi workers.
+
 cpu_interval is the interval in seconds used to calculate cpu usage percentage.
 From psutil's docs:
 
