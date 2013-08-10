@@ -69,8 +69,8 @@ class SNMPRawCollector(parent_SNMPCollector):
     def __init__(self, *args, **kwargs):
         super(SNMPRawCollector, self).__init__(*args, **kwargs)
 
-        # list to save non-existing oid's per device, to avoid repetition of errors in logging
-        # restart diamond/collector to flush this
+        # list to save non-existing oid's per device, to avoid repetition of
+        # errors in logging. restart diamond/collector to flush this
         self.skip_list = []
 
     def get_default_config(self):
@@ -100,7 +100,8 @@ class SNMPRawCollector(parent_SNMPCollector):
     def _skip(self, device, oid, reason=None):
         self.skip_list.append((device, oid))
         if reason is not None:
-            self.log.warn('Muted \'{0}\' on \'{1}\', because: {2}'.format(oid, device, reason))
+            self.log.warn('Muted \'{0}\' on \'{1}\', because: {2}'.format(
+                oid, device, reason))
 
     def _get_value_walk(self, device, oid, host, port, community):
         data = self.walk(oid, host, port, community)
@@ -109,10 +110,13 @@ class SNMPRawCollector(parent_SNMPCollector):
             self._skip(device, oid, 'device down (#2)')
             return
 
-        self.log.debug('Data received from WALK \'{0}\': [{1}]'.format(device, data))
+        self.log.debug('Data received from WALK \'{0}\': [{1}]'.format(
+            device, data))
 
         if len(data) != 1:
-            self._skip(device, oid, 'unexpected response, data has {0} entries'.format(len(data)))
+            self._skip(device, oid,
+                       'unexpected response, data has {0} entries'.format(
+                        len(data)))
             return
 
         # because we only allow 1-key dicts, we can pick with absolute index
@@ -126,7 +130,8 @@ class SNMPRawCollector(parent_SNMPCollector):
             self._skip(device, oid, 'device down (#1)')
             return
 
-        self.log.debug('Data received from GET \'{0}\': [{1}]'.format(device, data))
+        self.log.debug('Data received from GET \'{0}\': [{1}]'.format(
+            device, data))
 
         if len(data) == 0:
             self._skip(device, oid, 'empty response, device down?')
@@ -152,7 +157,8 @@ class SNMPRawCollector(parent_SNMPCollector):
         """
         Collect SNMP interface data from device
         """
-        self.log.debug('Collecting raw SNMP interface statistics from device \'{0}\''.format(device))
+        self.log.debug(
+            'Collecting raw SNMP statistics from device \'{0}\''.format(device))
 
         for device in self.config['devices']:
             dev_config = self.config['devices'][device]
@@ -162,7 +168,9 @@ class SNMPRawCollector(parent_SNMPCollector):
             for oid, metricName in dev_config['oids'].items():
 
                 if (device, oid) in self.skip_list:
-                    self.log.debug('Skipping OID \'{0}\' ({1}) on device \'{2}\''.format(oid, metricName, device))
+                    self.log.debug(
+                        'Skipping OID \'{0}\' ({1}) on device \'{2}\''.format(
+                            oid, metricName, device))
                     continue
 
                 timestamp = time.time()
@@ -170,8 +178,12 @@ class SNMPRawCollector(parent_SNMPCollector):
                 if value is None:
                     continue
 
-                self.log.debug('\'{0}\' ({1}) on device \'{2}\' - value=[{3}]'.format(oid, metricName, device, value))
+                self.log.debug(
+                    '\'{0}\' ({1}) on device \'{2}\' - value=[{3}]'.format(
+                        oid, metricName, device, value))
 
-                path = '.'.join([self.config['path_prefix'], device, self.config['path_suffix'], metricName])
-                metric = Metric(path, value, timestamp, self._precision(value), None, 'GAUGE')
+                path = '.'.join([self.config['path_prefix'], device,
+                                 self.config['path_suffix'], metricName])
+                metric = Metric(path, value, timestamp, self._precision(value),
+                                None, 'GAUGE')
                 self.publish_metric(metric)

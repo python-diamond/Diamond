@@ -137,7 +137,8 @@ calls."""),
                     proc[key] = [proc[key]]
                 proc[key] = [re.compile(e) for e in proc[key]]
             proc['selfmon'] = cfg.get('selfmon', '').lower() == 'true'
-            proc['count_workers'] = cfg.get('count_workers', '').lower() == 'true'
+            proc['count_workers'] = cfg.get(
+                'count_workers', '').lower() == 'true'
             self.processes[process] = proc
 
     def filter_processes(self):

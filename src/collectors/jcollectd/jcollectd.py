@@ -47,7 +47,9 @@ class JCollectdCollector(diamond.collector.Collector):
             self.publish_metric(metric)
 
     def start_listener(self):
-        self.listener_thread = ListenerThread(self.config['listener_host'], self.config['listener_port'], self.log)
+        self.listener_thread = ListenerThread(self.config['listener_host'],
+                                              self.config['listener_port'],
+                                              self.log)
         self.listener_thread.start()
 
     def stop_listener(self):
@@ -71,7 +73,8 @@ class JCollectdCollector(diamond.collector.Collector):
                 path = ".".join((path, suffix))
 
         metric_type = "COUNTER" if dp.is_counter else "GAUGE"
-        metric = diamond.metric.Metric(path, dp.value, dp.time, metric_type=metric_type)
+        metric = diamond.metric.Metric(path, dp.value, dp.time,
+                                       metric_type=metric_type)
 
         return metric
 
@@ -93,7 +96,8 @@ class ListenerThread(threading.Thread):
         self.queue = Queue.Queue()
 
     def run(self):
-        self.log.info('ListenerThread started on {0}:{1}(udp)'.format(self.host, self.port))
+        self.log.info('ListenerThread started on {0}:{1}(udp)'.format(
+            self.host, self.port))
 
         rdr = collectd_network.Reader(self.host, self.port)
 
@@ -102,7 +106,8 @@ class ListenerThread(threading.Thread):
                 items = rdr.interpret(poll_interval=self.poll_interval)
                 self.send_to_collector(items)
         except Exception, e:
-            self.log.error('caught exception: type={0}, exc={1}'.format(type(e), e))
+            self.log.error('caught exception: type={0}, exc={1}'.format(type(e),
+                                                                        e))
 
         self.log.info('ListenerThread - stop')
 
@@ -117,7 +122,8 @@ class ListenerThread(threading.Thread):
             except Queue.Full:
                 self.log.error('Queue to collector is FULL')
             except Exception, e:
-                self.log.error('B00M! type={0}, exception={1}'.format(type(e), e))
+                self.log.error('B00M! type={0}, exception={1}'.format(type(e),
+                                                                      e))
 
     def transform(self, item):
 

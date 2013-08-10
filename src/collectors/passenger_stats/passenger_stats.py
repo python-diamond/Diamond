@@ -1,18 +1,11 @@
 # coding=utf-8
 
 """
-The PasengerCollector collects CPU utilization of apache,nginx and passenger process
-It also captures memory utilized of passenger, apache and nginx processes
-Four key attributes to be published - phusion_passenger_cpu, total_apache_memory, total_passenger_mem, total_nginx_mem
+The PasengerCollector collects CPU and memory utilization of apache, nginx
+and passenger processes.
 
-To utilize this function, make sure of the following
-1. Make sure to have executable of passenger-memory-stats set in os PATH
-2. run diamond as root user
-3. Run with command: diamond start -c /etc/diamond/diamond.conf.
-
-PS: Don't run diamond with /etc/init.d/diamond start as it resets the os PATH to some new value
-sample os PATH= /usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/local/sbin:/usr/sbin:/sbin:/usr/lib/ruby-1.9.2-p290/bin:/usr/lib/ruby-flo/bin
-/usr/lib/ruby-flo/bin is a executable for passenger-memory-stats in this case
+Four key attributes to be published:
+phusion_passenger_cpu, total_apache_memory, total_passenger_mem, total_nginx_mem
 
 #### Dependencies
 
@@ -27,11 +20,12 @@ import subprocess
 from diamond.collector import str_to_bool
 from cStringIO import StringIO
 
+
 class PassengerCollector(diamond.collector.Collector):
 
     def whereis(self, program):
         for path in os.environ.get('PATH', '').split(':'):
-            if os.path.exists(os.path.join(path, program)) and\
+            if os.path.exists(os.path.join(path, program)) and \
                not os.path.isdir(os.path.join(path, program)):
                 return os.path.join(path, program)
         return None
@@ -39,7 +33,9 @@ class PassengerCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(PassengerCollector, self).get_default_config_help()
         config_help.update({
-
+            'bin':         'The path to the binary',
+            'use_sudo':    'Use sudo?',
+            'sudo_cmd':    'Path to sudo',
         })
         return config_help
 
@@ -49,7 +45,10 @@ class PassengerCollector(diamond.collector.Collector):
         """
         config = super(PassengerCollector, self).get_default_config()
         config.update({
-            'path':      'passenger_stats',
+            'path':         'passenger_stats',
+            'bin':          '/usr/lib/ruby-flo/bin/passenger-memory-stats',
+            'use_sudo':     False,
+            'sudo_cmd':     '/usr/bin/sudo',
             })
         return config
 
@@ -58,33 +57,43 @@ class PassengerCollector(diamond.collector.Collector):
         Collector Passenger stats
         """
 
-        location = self.whereis('passenger-memory-stats')
+        # If the config path doesn't exist, scan for one
+        if not os.access(self.config['bin'], os.X_OK):
+            self.config['bin'] = self.whereis('passenger-memory-stats')
 
-        if location is None:
-            raise TypeError("passenger-memory-stats is not in PATH")
+        if not os.access(self.config['bin'], os.X_OK):
+            self.log.error("Path %s does not exist or is not executable"
+                           % self.config['bin'])
+            return
 
+        command = [self.config['bin']]
+
+        if str_to_bool(self.config['use_sudo']):
+            command.insert(0, self.config['sudo_cmd'])
 
         def calc_cpu(processes):
             pipe1 = "top -b -n 2"
-            pipe2 = "egrep " +  processes
+            pipe2 = "egrep " + processes
             pipe3 = "awk {print $9}"
             p1 = subprocess.Popen(pipe1.split(), stdout=subprocess.PIPE)
-            p2 = subprocess.Popen(pipe2.split(), stdin=p1.stdout, stdout=subprocess.PIPE)
-            p3 = subprocess.Popen(pipe3.split(" ",1), stdin=p2.stdout, stdout=subprocess.PIPE)
+            p2 = subprocess.Popen(pipe2.split(), stdin=p1.stdout,
+                                  stdout=subprocess.PIPE)
+            p3 = subprocess.Popen(pipe3.split(" ", 1), stdin=p2.stdout,
+                                  stdout=subprocess.PIPE)
             result = p3.communicate()
             cpu_usage = result[0].split('\n')[:-1]
             total_cpu = 0.0
-            for index in range(len(cpu_usage)/2, len(cpu_usage)):
+            for index in range(len(cpu_usage) / 2, len(cpu_usage)):
                 cpu = float(cpu_usage[index])
                 total_cpu += cpu
 
             return str(total_cpu)
 
-        #k1 = "passenger-memory-stats"
         k2 = 'sed -r s/\x1B\[([0-9]{1,3}((;[0-9]{1,3})*)?)?[m|K]//g'
-        q1 = subprocess.Popen(location, stdout=subprocess.PIPE)
-        q2 = subprocess.Popen(k2.split(), stdin=q1.stdout, stdout=subprocess.PIPE)
-        (res,err) = q2.communicate()
+        q1 = subprocess.Popen(command, stdout=subprocess.PIPE)
+        q2 = subprocess.Popen(k2.split(), stdin=q1.stdout,
+                              stdout=subprocess.PIPE)
+        (res, err) = q2.communicate()
         f = StringIO(res)
         passenger_flag = 0
         apache_flag = 0

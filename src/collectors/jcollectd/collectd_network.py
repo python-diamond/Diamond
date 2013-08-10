@@ -16,7 +16,8 @@
 # - fixed for larger packet sizes (possible on lo interface)
 # - fixed comment typo (decode_network_string decodes a string)
 #
-# @see: https://raw.github.com/collectd/collectd/master/contrib/collectd_network.py
+# @see:
+# https://raw.github.com/collectd/collectd/master/contrib/collectd_network.py
 
 """
 Collectd network protocol implementation.
@@ -51,30 +52,30 @@ DEFAULT_IPv6_GROUP = "ff18::efc0:4a42"
 HR_TIME_DIV = (2.0 ** 30)
 
 # Message kinds
-TYPE_HOST            = 0x0000
-TYPE_TIME            = 0x0001
-TYPE_TIME_HR         = 0x0008
-TYPE_PLUGIN          = 0x0002
+TYPE_HOST = 0x0000
+TYPE_TIME = 0x0001
+TYPE_TIME_HR = 0x0008
+TYPE_PLUGIN = 0x0002
 TYPE_PLUGIN_INSTANCE = 0x0003
-TYPE_TYPE            = 0x0004
-TYPE_TYPE_INSTANCE   = 0x0005
-TYPE_VALUES          = 0x0006
-TYPE_INTERVAL        = 0x0007
-TYPE_INTERVAL_HR     = 0x0009
+TYPE_TYPE = 0x0004
+TYPE_TYPE_INSTANCE = 0x0005
+TYPE_VALUES = 0x0006
+TYPE_INTERVAL = 0x0007
+TYPE_INTERVAL_HR = 0x0009
 
 # For notifications
-TYPE_MESSAGE         = 0x0100
-TYPE_SEVERITY        = 0x0101
+TYPE_MESSAGE = 0x0100
+TYPE_SEVERITY = 0x0101
 
 # DS kinds
-DS_TYPE_COUNTER      = 0
-DS_TYPE_GAUGE        = 1
-DS_TYPE_DERIVE       = 2
-DS_TYPE_ABSOLUTE     = 3
+DS_TYPE_COUNTER = 0
+DS_TYPE_GAUGE = 1
+DS_TYPE_DERIVE = 2
+DS_TYPE_ABSOLUTE = 3
 
 header = struct.Struct("!2H")
 number = struct.Struct("!Q")
-short  = struct.Struct("!H")
+short = struct.Struct("!H")
 double = struct.Struct("<d")
 
 
@@ -90,7 +91,7 @@ def decode_network_values(ptype, plen, buf):
     assert double.size == number.size
 
     result = []
-    for dstype in [ord(x) for x in buf[header.size+short.size:off]]:
+    for dstype in [ord(x) for x in buf[header.size + short.size:off]]:
         if dstype == DS_TYPE_COUNTER:
             result.append((dstype, number.unpack_from(buf, off)[0]))
             off += valskip
@@ -118,23 +119,23 @@ def decode_network_number(ptype, plen, buf):
 def decode_network_string(msgtype, plen, buf):
     """Decodes a string from collectd network format.
     """
-    return buf[header.size:plen-1]
+    return buf[header.size:plen - 1]
 
 
 # Mapping of message types to decoding functions.
 _decoders = {
-    TYPE_VALUES         : decode_network_values,
-    TYPE_TIME           : decode_network_number,
-    TYPE_TIME_HR        : decode_network_number,
-    TYPE_INTERVAL       : decode_network_number,
-    TYPE_INTERVAL_HR    : decode_network_number,
-    TYPE_HOST           : decode_network_string,
-    TYPE_PLUGIN         : decode_network_string,
-    TYPE_PLUGIN_INSTANCE: decode_network_string,
-    TYPE_TYPE           : decode_network_string,
-    TYPE_TYPE_INSTANCE  : decode_network_string,
-    TYPE_MESSAGE        : decode_network_string,
-    TYPE_SEVERITY       : decode_network_number,
+    TYPE_VALUES:            decode_network_values,
+    TYPE_TIME:              decode_network_number,
+    TYPE_TIME_HR:           decode_network_number,
+    TYPE_INTERVAL:          decode_network_number,
+    TYPE_INTERVAL_HR:       decode_network_number,
+    TYPE_HOST:              decode_network_string,
+    TYPE_PLUGIN:            decode_network_string,
+    TYPE_PLUGIN_INSTANCE:   decode_network_string,
+    TYPE_TYPE:              decode_network_string,
+    TYPE_TYPE_INSTANCE:     decode_network_string,
+    TYPE_MESSAGE:           decode_network_string,
+    TYPE_SEVERITY:          decode_network_number,
 }
 
 
@@ -196,18 +197,18 @@ class Data(object):
 
 
 class Notification(Data):
-    FAILURE  = 1
-    WARNING  = 2
-    OKAY     = 4
+    FAILURE = 1
+    WARNING = 2
+    OKAY = 4
 
     SEVERITY = {
         FAILURE: "FAILURE",
         WARNING: "WARNING",
-        OKAY   : "OKAY",
+        OKAY:    "OKAY",
     }
 
     __severity = 0
-    message  = ""
+    message = ""
 
     def __set_severity(self, value):
         if value in (self.FAILURE, self.WARNING, self.OKAY):
@@ -304,7 +305,8 @@ class Reader(object):
             if family == socket.AF_INET:
                 assert "." in self.host
                 val = struct.pack("4sl",
-                                  socket.inet_aton(self.host), socket.INADDR_ANY)
+                                  socket.inet_aton(self.host),
+                                  socket.INADDR_ANY)
             elif family == socket.AF_INET6:
                 raise NotImplementedError("IPv6 support not ready yet")
             else:
@@ -322,7 +324,8 @@ class Reader(object):
     def receive(self, poll_interval):
         """Receives a single raw collect network packet.
         """
-        readable, writeable, errored = select.select(self._readlist, [], [], poll_interval)
+        readable, writeable, errored = select.select(self._readlist, [], [],
+                                                     poll_interval)
         for s in readable:
             data, addr = s.recvfrom(self.BUFFER_SIZE)
             if data:

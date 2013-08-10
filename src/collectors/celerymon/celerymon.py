@@ -22,6 +22,7 @@ import json
 import urllib2
 import time
 
+
 class CelerymonCollector(diamond.collector.Collector):
 
     LastCollectTime = None
@@ -61,8 +62,9 @@ class CelerymonCollector(diamond.collector.Collector):
         host = self.config['host']
         port = self.config['port']
 
-        celerymon_url = "http://%s:%s/api/task/?since=%i" % (host, port, self.LastCollectTime)
-        response  = urllib2.urlopen(celerymon_url)
+        celerymon_url = "http://%s:%s/api/task/?since=%i" % (
+            host, port, self.LastCollectTime)
+        response = urllib2.urlopen(celerymon_url)
         body = response.read()
         celery_data = json.loads(body)
 
@@ -86,6 +88,5 @@ class CelerymonCollector(diamond.collector.Collector):
                 metric_value = results[result][state]
                 metric_name = "%s.%s" % (result, state)
                 self.publish(metric_name, metric_value)
-
 
         self.LastCollectTime = CollectTime
