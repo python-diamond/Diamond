@@ -14,6 +14,11 @@ import urllib2
 from urllib import urlencode
 from xml.etree import ElementTree
 
+try:
+    from ElementTree import ParseError as ETParseError
+except ImportError:
+    ETParseError = Exception
+
 import diamond.collector
 
 
@@ -79,7 +84,7 @@ class KafkaCollector(diamond.collector.Collector):
 
         try:
             return ElementTree.fromstring(response.read())
-        except ElementTree.ParseError:
+        except ETParseError:
             self.log.error("Unable to parse response from mx4j")
             return None
 
