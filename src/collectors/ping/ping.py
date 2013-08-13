@@ -10,11 +10,24 @@ Only valid for ipv4 hosts currently
 
 #### Configuration
 
-Configuration is done by adding in extra keys like this
+Configuration is done by:
 
- * target_1 - example.org
- * target_fw - 192.168.0.1
- * target_localhost - localhost
+Create a file named: PingCollector.conf in the collectors_config_path
+
+ * enabled = true
+ * interval = 60
+ * target_1 = example.org
+ * target_fw = 192.168.0.1
+ * target_localhost = localhost
+
+Test your configuration using the following command:
+
+diamond-setup --print -C PingCollector
+
+You should get a reponse back that indicates 'enabled': True and see entries
+for your targets in pairs like:
+
+'target_1': 'example.org'
 
 We extract out the key after target_ and use it in the graphite node we push.
 
