@@ -1,0 +1,38 @@
+---
+  version:
+    config: 1377123965
+    puppet: 2.7.14
+  time:
+    last_run: 1377125556
+    cron: 0.00089
+    exec: 9.780635
+    total: 23.5117989384918
+    config_retrieval: 8.06442093849182
+    mount: 0.002749
+    anchor: 0.009641
+    package: 1.831337
+    firewall: 0.007807
+    file: 1.729348
+    user: 0.02927
+    ssh_authorized_key: 0.017625
+    service: 0.734021
+    group: 0.013421
+    filebucket: 0.000633
+    resources: 0.000371
+    mailalias: 0.000335
+    augeas: 1.286514
+  events:
+    failure: 0
+    total: 1
+    success: 1
+  resources:
+    skipped: 6
+    scheduled: 0
+    failed: 0
+    total: 439
+    failed_to_restart: 0
+    out_of_sync: 1
+    restarted: 0
+    changed: 1
+  changes:
+    total: 1
