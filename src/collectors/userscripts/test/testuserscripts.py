@@ -57,6 +57,14 @@ class TestUserScriptsCollector(CollectorTestCase):
                            metrics=metrics)
         self.assertPublishedMany(publish_mock, metrics)
 
+    @run_only_if_kitchen_is_available
+    @patch.object(Collector, 'publish')
+    def test_should_skip_over_unrunnable_files(self, publish_mock):
+        self.collector.collect()
+        # Just make sure publish got called >0 times, if this test fails it'll
+        # be due to raising an exception. Meh.
+        assert publish_mock.call_args_list
+
 ################################################################################
 if __name__ == "__main__":
     unittest.main()
