@@ -1,0 +1,4 @@
+[
+{'now': 15, 'group': 'test_group', 'description': 'test_desc', 'pid': 0, 'stderr_logfile': 'test_stderrlog', 'stop': 20, 'statename': 'RUNNING', 'start': 10, 'state': 20, 'stdout_logfile': 'test_stdoutlog', 'logfile': 'test_log', 'exitstatus': 0, 'spawnerr': 'test_spawnerr', 'name': 'test_name_1'},
+{'now': 501, 'group': 'test_group', 'description': 'test_desc', 'pid': 0, 'stderr_logfile': 'test_stderrlog', 'stop': 20, 'statename': 'RUNNING', 'start': 1, 'state': 200, 'stdout_logfile': 'test_stdoutlog', 'logfile': 'test_log', 'exitstatus': 0, 'spawnerr': 'test_spawnerr', 'name': 'test_name_2'}
+]
