@@ -6,7 +6,12 @@ Emulate a gmetric client for usage with
 """
 
 from Handler import Handler
-import gmetric
+import logging
+try:
+    import gmetric
+    gmetric  # Pyflakes
+except ImportError:
+    gmetric = None
 
 
 class GmetricHandler(Handler):
@@ -22,6 +27,10 @@ class GmetricHandler(Handler):
         # Initialize Handler
         Handler.__init__(self, config)
 
+        if gmetric is None:
+            logging.error("Failed to load gmetric module")
+            return
+
         # Initialize Data
         self.socket = None
 
@@ -34,6 +43,34 @@ class GmetricHandler(Handler):
 
         # Initialize
         self.gmetric = gmetric.Gmetric(self.host, self.port, self.protocol)
+
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(GmetricHandler, self).get_default_config_help()
+        
+        config.update({
+            'host': 'Hostname',
+            'port': 'Port',
+            'protocol': 'udp or tcp',
+        })
+    
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(GmetricHandler, self).get_default_config()
+        
+        config.update({
+            'host': 'localhost',
+            'port': 8651,
+            'protocol': 'udp',
+        })
+    
+        return config
 
     def __del__(self):
         """

@@ -6,6 +6,7 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 from mock import patch
+from mock import Mock
 
 from diamond.collector import Collector
 from puppetagent import PuppetAgentCollector
@@ -26,12 +27,16 @@ class TestPuppetAgentCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(PuppetAgentCollector)
 
-    @patch('__builtin__.open')
     @patch.object(Collector, 'publish')
-    def test(self, publish_mock, open_mock):
-        open_mock.return_value = self.last_run_fixture
+    def test(self, publish_mock):
+        
+        open_mock = patch('__builtin__.open',
+                          Mock(return_value=self.getFixture(
+                            'last_run_summary.yaml')))
 
+        open_mock.start()
         self.collector.collect()
+        open_mock.stop()
 
         metrics = {
             'changes.total': 1,
@@ -74,6 +79,8 @@ class TestPuppetAgentCollector(CollectorTestCase):
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
+        
+        
         self.assertPublishedMany(publish_mock, metrics)
         #self.assertUnpublishedMany(publish_mock, unpublished_metrics)
 

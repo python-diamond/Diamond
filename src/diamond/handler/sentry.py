@@ -238,6 +238,30 @@ class SentryHandler(Handler):
         if not len(self.rules):
             self.log.warning("No rules, this graphite handler is unused")
 
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(SentryHandler, self).get_default_config_help()
+        
+        config.update({
+            'dsn': '',
+        })
+    
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(SentryHandler, self).get_default_config()
+        
+        config.update({
+            'dsn': '',
+        })
+    
+        return config
+
     def compile_rules(self):
         """
         Compile alert rules

@@ -3,6 +3,7 @@
 import logging
 import threading
 import traceback
+from configobj import ConfigObj
 
 
 class Handler(object):
@@ -13,12 +14,38 @@ class Handler(object):
         """
         Create a new instance of the Handler class
         """
+        
         # Initialize Log
         self.log = logging.getLogger('diamond')
-        # Initialize Data
-        self.config = config
+        
+        # Initialize Blank Configs
+        self.config = ConfigObj()
+        
+        # Load default
+        self.config.merge(self.get_default_config())
+        
+        # Load in user
+        self.config.merge(config)
+        
         # Initialize Lock
         self.lock = threading.Lock()
+        
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        return {
+            'get_default_config_help': 'get_default_config_help',
+        }
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        return {
+            'get_default_config': 'get_default_config',
+        }
+
 
     def _process(self, metric):
         """

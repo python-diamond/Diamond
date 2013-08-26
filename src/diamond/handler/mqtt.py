@@ -143,6 +143,28 @@ class MQTTHandler(Handler):
 
         self.mqttc.on_disconnect = self._disconnect
 
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(MQTTHandler, self).get_default_config_help()
+        
+        config.update({
+        })
+    
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(MQTTHandler, self).get_default_config()
+        
+        config.update({
+        })
+    
+        return config
+
     def process(self, metric):
         """
         Process a metric by converting metric name to MQTT topic name;

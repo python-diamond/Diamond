@@ -75,11 +75,41 @@ class StatsiteHandler(Handler):
         # Initialize Options
         self.host = self.config['host']
         self.tcpport = int(self.config['tcpport'])
-        self.udbport = int(self.config['udbport'])
+        self.udpport = int(self.config['udpport'])
         self.timeout = int(self.config['timeout'])
 
         # Connect
         self._connect()
+
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(StatsiteHandler, self).get_default_config_help()
+        
+        config.update({
+            'host': '',
+            'tcpport': '',
+            'udpport': '',
+            'timeout': '',
+        })
+    
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(StatsiteHandler, self).get_default_config()
+        
+        config.update({
+            'host': '',
+            'tcpport': 1234,
+            'udpport': 1234,
+            'timeout': 5,
+        })
+    
+        return config
 
     def __del__(self):
         """
@@ -133,9 +163,9 @@ class StatsiteHandler(Handler):
         Connect to the statsite server
         """
         # Create socket
-        if self.udbport > 0:
+        if self.udpport > 0:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            self.port = self.udbport
+            self.port = self.udpport
         elif self.tcpport > 0:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.port = self.tcpport

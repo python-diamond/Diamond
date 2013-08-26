@@ -36,19 +36,55 @@ class GraphiteHandler(Handler):
         self.socket = None
 
         # Initialize Options
-        self.proto = self.config.get('proto', 'tcp').lower().strip()
+        self.proto = self.config['proto'].lower().strip()
         self.host = self.config['host']
-        self.port = int(self.config.get('port', 2003))
-        self.timeout = int(self.config.get('timeout', 15))
-        self.batch_size = int(self.config.get('batch', 1))
+        self.port = int(self.config['port'])
+        self.timeout = int(self.config['timeout'])
+        self.batch_size = int(self.config['batch'])
         self.max_backlog_multiplier = int(
-            self.config.get('max_backlog_multiplier', 5))
+            self.config['max_backlog_multiplier'])
         self.trim_backlog_multiplier = int(
-            self.config.get('trim_backlog_multiplier', 4))
+            self.config['trim_backlog_multiplier'])
         self.metrics = []
 
         # Connect
         self._connect()
+
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(GraphiteHandler, self).get_default_config_help()
+        
+        config.update({
+            'host': 'Hostname',
+            'port': 'Port',
+            'proto': 'udp or tcp',
+            'timeout': '',
+            'batch': 'How many to store before sending to the graphite server',
+            'max_backlog_multiplier': 'how many batches to store before trimming',
+            'trim_backlog_multiplier': 'Trim down how many batches',
+        })
+    
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(GraphiteHandler, self).get_default_config()
+        
+        config.update({
+            'host': 'localhost',
+            'port': 2003,
+            'proto': 'tcp',
+            'timeout': 15,
+            'batch': 1,
+            'max_backlog_multiplier': 5,
+            'trim_backlog_multiplier': 4,
+        })
+    
+        return config
 
     def __del__(self):
         """

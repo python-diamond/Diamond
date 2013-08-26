@@ -26,12 +26,50 @@ class HostedGraphiteHandler(Handler):
         """
         Create a new instance of the HostedGraphiteHandler class
         """
-        self.key = config['apikey'].lower().strip()
-
-        config['host'] = 'carbon.hostedgraphite.com'
-        config['port'] = '2003'
+        # Initialize Handler
+        Handler.__init__(self, config)
+        
+        self.key = self.config['apikey'].lower().strip()
 
         self.graphite = GraphiteHandler(config)
+
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(HostedGraphiteHandler, self).get_default_config_help()
+        
+        config.update({
+            'apikey': 'Api key to use',
+            'host': 'Hostname',
+            'port': 'Port',
+            'proto': 'udp or tcp',
+            'timeout': '',
+            'batch': 'How many to store before sending to the graphite server',
+            'max_backlog_multiplier': 'how many batches to store before trimming',
+            'trim_backlog_multiplier': 'Trim down how many batches',
+        })
+    
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(HostedGraphiteHandler, self).get_default_config()
+        
+        config.update({
+            'apikey': '',
+            'host': 'carbon.hostedgraphite.com',
+            'port': 2003,
+            'proto': 'tcp',
+            'timeout': 15,
+            'batch': 1,
+            'max_backlog_multiplier': 5,
+            'trim_backlog_multiplier': 4,
+        })
+    
+        return config
 
     def process(self, metric):
         """

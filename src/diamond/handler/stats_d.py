@@ -55,12 +55,40 @@ class StatsdHandler(Handler):
         # Initialize Options
         self.host = self.config['host']
         self.port = int(self.config['port'])
-        self.batch_size = int(self.config.get('batch', 1))
+        self.batch_size = int(self.config['batch'])
         self.metrics = []
         self.old_values = {}
 
         # Connect
         self._connect()
+
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(StatsdHandler, self).get_default_config_help()
+        
+        config.update({
+            'host': '',
+            'port': '',
+            'batch': '',
+        })
+    
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(StatsdHandler, self).get_default_config()
+        
+        config.update({
+            'host': '',
+            'port': 1234,
+            'batch': 1,
+        })
+    
+        return config
 
     def process(self, metric):
         """

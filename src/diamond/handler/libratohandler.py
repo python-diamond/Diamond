@@ -61,17 +61,49 @@ class LibratoHandler(Handler):
         api = librato.connect(self.config['user'],
                               self.config['apikey'])
         self.queue = api.new_queue()
-        self.queue_max_size = int(self.config.get('queue_max_size', 300))
-        self.queue_max_interval = int(self.config.get('queue_max_interval', 60))
+        self.queue_max_size = int(self.config['queue_max_size'])
+        self.queue_max_interval = int(self.config['queue_max_interval'])
         self.queue_max_timestamp = int(time.time() + self.queue_max_interval)
         self.current_n_measurements = 0
 
         # If a user leaves off the ending comma, cast to a array for them
-        include_filters = self.config.get('include_filters', ['^.*'])
+        include_filters = self.config['include_filters']
         if isinstance(include_filters, basestring):
             include_filters = [include_filters]
 
         self.include_reg = re.compile(r'(?:%s)' % '|'.join(include_filters))
+
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(LibratoHandler, self).get_default_config_help()
+        
+        config.update({
+            'user': '',
+            'apikey': '',
+            'queue_max_size': '',
+            'queue_max_interval': '',
+            'include_filters': '',
+        })
+    
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(LibratoHandler, self).get_default_config()
+        
+        config.update({
+            'user': '',
+            'apikey': '',
+            'queue_max_size': 300,
+            'queue_max_interval': 60,
+            'include_filters': ['^.*'],
+        })
+    
+        return config
 
     def process(self, metric):
         """

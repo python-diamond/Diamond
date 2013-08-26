@@ -7,6 +7,7 @@ import sys
 import optparse
 import configobj
 import traceback
+import tempfile
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 
@@ -240,11 +241,28 @@ if __name__ == "__main__":
         # Skip configuring the basic handler object
         if handler == "Handler":
             continue
+        
+        if handler[0:4] == "Test":
+            continue
 
         print "Processing %s..." % (handler)
 
         if not hasattr(handlers[handler], handler):
             continue
+        
+        cls = getattr(handlers[handler], handler)
+
+        tmpfile = tempfile.mkstemp()
+
+        obj = cls({
+            'log_file': tmpfile[1],
+            })
+
+        options = obj.get_default_config_help()
+
+        defaultOptions = obj.get_default_config()
+        
+        os.remove(tmpfile[1])
 
         docFile = open(os.path.join(docs_path,
                                     "handler-" + handler + ".md"), 'w')
@@ -254,6 +272,45 @@ if __name__ == "__main__":
         docFile.write("%s\n" % (handler))
         docFile.write("====\n")
         docFile.write("%s" % (handlers[handler].__doc__))
+
+        docFile.write("#### Options - [Generic Options](Configuration)\n")
+        docFile.write("\n")
+
+        docFile.write("<table>")
+
+        docFile.write("<tr>")
+        docFile.write("<th>Setting</th>")
+        docFile.write("<th>Default</th>")
+        docFile.write("<th>Description</th>")
+        docFile.write("<th>Type</th>")
+        docFile.write("</tr>\n")
+
+        if options:
+            for option in sorted(options.keys()):
+                defaultOption = ''
+                defaultOptionType = ''
+                if option in defaultOptions:
+                    defaultOptionType = defaultOptions[option].__class__.__name__
+                    if isinstance(defaultOptions[option], list):
+                        defaultOption = ', '.join(map(str, defaultOptions[option]))
+                        defaultOption += ','
+                    else:
+                        defaultOption = str(defaultOptions[option])
+    
+                docFile.write("<tr>")
+                docFile.write("<td>%s</td>" % (option))
+                docFile.write("<td>%s</td>" % (defaultOption))
+                docFile.write("<td>%s</td>" % (options[option].replace(
+                    "\n", '<br>\n')))
+                docFile.write("<td>%s</td>" % (defaultOptionType))
+                docFile.write("</tr>\n")
+
+        docFile.write("</table>\n")
+
+        docFile.write("\n")
+        docFile.write("### This file was generated from the python source\n")
+        docFile.write("### Please edit the source to make changes\n")
+        docFile.write("\n")
 
         docFile.close()
 

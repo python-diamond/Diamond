@@ -22,7 +22,12 @@ xmlrpc_server_path = /var/run/supervisor.sock
 """
 
 import xmlrpclib
-import supervisor.xmlrpc
+
+try:
+    import supervisor.xmlrpc
+except ImportError:
+    supervisor = None
+
 import diamond.collector
 
 

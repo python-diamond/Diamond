@@ -19,22 +19,27 @@ It has these options:
 """
 
 from Handler import Handler
+import logging
 try:
     import bernhard
     bernhard  # Pyflakes
 except ImportError:
-    pass
+    bernhard = None
 
 
 class RiemannHandler(Handler):
     def __init__(self, config=None):
         # Initialize Handler
         Handler.__init__(self, config)
+        
+        if bernhard is None:
+            logging.error("Failed to load bernhard module")
+            return
 
         # Initialize options
         self.host = self.config['host']
         self.port = int(self.config['port'])
-        self.transport = self.config.get('transport', 'tcp')
+        self.transport = self.config['transport']
 
         # Initialize client
         if self.transport == 'tcp':
@@ -42,6 +47,34 @@ class RiemannHandler(Handler):
         else:
             transportCls = bernhard.UDPTransport
         self.client = bernhard.Client(self.host, self.port, transportCls)
+
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(RiemannHandler, self).get_default_config_help()
+        
+        config.update({
+            'host': '',
+            'port': '',
+            'transport': 'tcp or udp',
+        })
+    
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(RiemannHandler, self).get_default_config()
+        
+        config.update({
+            'host': '',
+            'port': 123,
+            'transport': 'tcp',
+        })
+    
+        return config
 
     def process(self, metric):
         """
@@ -76,7 +109,11 @@ class RiemannHandler(Handler):
         """
         Disconnect from Riemann.
         """
-        self.client.disconnect()
+        try:
+            self.client.disconnect()
+        except AttributeError:
+            pass
+            
 
     def __del__(self):
         self._close()

@@ -16,3 +16,25 @@ class NullHandler(Handler):
         Process a metric by doing nothing
         """
         self.log.debug("Process: %s", str(metric).rstrip())
+
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(NullHandler, self).get_default_config_help()
+        
+        config.update({
+        })
+    
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(NullHandler, self).get_default_config()
+        
+        config.update({
+        })
+    
+        return config
