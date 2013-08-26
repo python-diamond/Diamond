@@ -14,22 +14,22 @@ class Handler(object):
         """
         Create a new instance of the Handler class
         """
-        
+
         # Initialize Log
         self.log = logging.getLogger('diamond')
-        
+
         # Initialize Blank Configs
         self.config = ConfigObj()
-        
+
         # Load default
         self.config.merge(self.get_default_config())
-        
+
         # Load in user
         self.config.merge(config)
-        
+
         # Initialize Lock
         self.lock = threading.Lock()
-        
+
     def get_default_config_help(self):
         """
         Returns the help text for the configuration options for this handler
@@ -45,7 +45,6 @@ class Handler(object):
         return {
             'get_default_config': 'get_default_config',
         }
-
 
     def _process(self, metric):
         """

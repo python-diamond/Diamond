@@ -67,13 +67,13 @@ class StatsdHandler(Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(StatsdHandler, self).get_default_config_help()
-        
+
         config.update({
             'host': '',
             'port': '',
             'batch': '',
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -81,13 +81,13 @@ class StatsdHandler(Handler):
         Return the default config for the handler
         """
         config = super(StatsdHandler, self).get_default_config()
-        
+
         config.update({
             'host': '',
             'port': 1234,
             'batch': 1,
         })
-    
+
         return config
 
     def process(self, metric):

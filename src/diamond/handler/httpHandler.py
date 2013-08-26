@@ -36,12 +36,12 @@ class HttpPostHandler(Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(HttpPostHandler, self).get_default_config_help()
-        
+
         config.update({
             'url': 'Fully qualified url to send metrics to',
             'batch': 'How many to store before sending to the graphite server',
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -49,12 +49,12 @@ class HttpPostHandler(Handler):
         Return the default config for the handler
         """
         config = super(HttpPostHandler, self).get_default_config()
-        
+
         config.update({
             'url': 'http://localhost/blah/blah/blah',
             'batch': 100,
         })
-    
+
         return config
 
     # Join batched metrics and push to url mentioned in config

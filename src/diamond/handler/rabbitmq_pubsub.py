@@ -41,12 +41,12 @@ class rmqHandler (Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(rmqHandler, self).get_default_config_help()
-        
+
         config.update({
             'server': '',
             'rmq_exchange': '',
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -54,12 +54,12 @@ class rmqHandler (Handler):
         Return the default config for the handler
         """
         config = super(rmqHandler, self).get_default_config()
-        
+
         config.update({
             'server': '127.0.0.1',
             'rmq_exchange': 'diamond',
         })
-    
+
         return config
 
     def _bind(self):

@@ -31,7 +31,7 @@ class RiemannHandler(Handler):
     def __init__(self, config=None):
         # Initialize Handler
         Handler.__init__(self, config)
-        
+
         if bernhard is None:
             logging.error("Failed to load bernhard module")
             return
@@ -53,13 +53,13 @@ class RiemannHandler(Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(RiemannHandler, self).get_default_config_help()
-        
+
         config.update({
             'host': '',
             'port': '',
             'transport': 'tcp or udp',
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -67,13 +67,13 @@ class RiemannHandler(Handler):
         Return the default config for the handler
         """
         config = super(RiemannHandler, self).get_default_config()
-        
+
         config.update({
             'host': '',
             'port': 123,
             'transport': 'tcp',
         })
-    
+
         return config
 
     def process(self, metric):
@@ -113,7 +113,6 @@ class RiemannHandler(Handler):
             self.client.disconnect()
         except AttributeError:
             pass
-            
 
     def __del__(self):
         self._close()

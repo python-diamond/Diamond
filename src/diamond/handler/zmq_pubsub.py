@@ -40,11 +40,11 @@ class zmqHandler (Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(zmqHandler, self).get_default_config_help()
-        
+
         config.update({
             'port': '',
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -52,11 +52,11 @@ class zmqHandler (Handler):
         Return the default config for the handler
         """
         config = super(zmqHandler, self).get_default_config()
-        
+
         config.update({
             'port': 1234,
         })
-    
+
         return config
 
     def _bind(self):

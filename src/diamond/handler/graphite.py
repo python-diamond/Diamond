@@ -55,17 +55,18 @@ class GraphiteHandler(Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(GraphiteHandler, self).get_default_config_help()
-        
+
         config.update({
             'host': 'Hostname',
             'port': 'Port',
             'proto': 'udp or tcp',
             'timeout': '',
             'batch': 'How many to store before sending to the graphite server',
-            'max_backlog_multiplier': 'how many batches to store before trimming',
+            'max_backlog_multiplier': 'how many batches to store before '
+                'trimming',
             'trim_backlog_multiplier': 'Trim down how many batches',
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -73,7 +74,7 @@ class GraphiteHandler(Handler):
         Return the default config for the handler
         """
         config = super(GraphiteHandler, self).get_default_config()
-        
+
         config.update({
             'host': 'localhost',
             'port': 2003,
@@ -83,7 +84,7 @@ class GraphiteHandler(Handler):
             'max_backlog_multiplier': 5,
             'trim_backlog_multiplier': 4,
         })
-    
+
         return config
 
     def __del__(self):

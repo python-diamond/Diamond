@@ -11,7 +11,7 @@ Collect stats from puppet agent's last_run_summary.yaml
 
 try:
     import yaml
-    yaml # workaround for pyflakes issue #13
+    yaml  # workaround for pyflakes issue #13
 except ImportError:
     yaml = None
 
@@ -21,7 +21,8 @@ import diamond.collector
 class PuppetAgentCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
-        config_help = super(PuppetAgentCollector, self).get_default_config_help()
+        config_help = super(PuppetAgentCollector,
+                            self).get_default_config_help()
         config_help.update({
             'yaml_path': "Path to last_run_summary.yaml",
         })

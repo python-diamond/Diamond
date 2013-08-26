@@ -86,14 +86,14 @@ class StatsiteHandler(Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(StatsiteHandler, self).get_default_config_help()
-        
+
         config.update({
             'host': '',
             'tcpport': '',
             'udpport': '',
             'timeout': '',
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -101,14 +101,14 @@ class StatsiteHandler(Handler):
         Return the default config for the handler
         """
         config = super(StatsiteHandler, self).get_default_config()
-        
+
         config.update({
             'host': '',
             'tcpport': 1234,
             'udpport': 1234,
             'timeout': 5,
         })
-    
+
         return config
 
     def __del__(self):

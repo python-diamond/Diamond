@@ -241,7 +241,7 @@ if __name__ == "__main__":
         # Skip configuring the basic handler object
         if handler == "Handler":
             continue
-        
+
         if handler[0:4] == "Test":
             continue
 
@@ -249,7 +249,7 @@ if __name__ == "__main__":
 
         if not hasattr(handlers[handler], handler):
             continue
-        
+
         cls = getattr(handlers[handler], handler)
 
         tmpfile = tempfile.mkstemp()
@@ -261,7 +261,7 @@ if __name__ == "__main__":
         options = obj.get_default_config_help()
 
         defaultOptions = obj.get_default_config()
-        
+
         os.remove(tmpfile[1])
 
         docFile = open(os.path.join(docs_path,
@@ -290,13 +290,15 @@ if __name__ == "__main__":
                 defaultOption = ''
                 defaultOptionType = ''
                 if option in defaultOptions:
-                    defaultOptionType = defaultOptions[option].__class__.__name__
+                    defaultOptionType = defaultOptions[
+                        option].__class__.__name__
                     if isinstance(defaultOptions[option], list):
-                        defaultOption = ', '.join(map(str, defaultOptions[option]))
+                        defaultOption = ', '.join(map(str,
+                                                      defaultOptions[option]))
                         defaultOption += ','
                     else:
                         defaultOption = str(defaultOptions[option])
-    
+
                 docFile.write("<tr>")
                 docFile.write("<td>%s</td>" % (option))
                 docFile.write("<td>%s</td>" % (defaultOption))

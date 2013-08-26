@@ -49,13 +49,13 @@ class GmetricHandler(Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(GmetricHandler, self).get_default_config_help()
-        
+
         config.update({
             'host': 'Hostname',
             'port': 'Port',
             'protocol': 'udp or tcp',
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -63,13 +63,13 @@ class GmetricHandler(Handler):
         Return the default config for the handler
         """
         config = super(GmetricHandler, self).get_default_config()
-        
+
         config.update({
             'host': 'localhost',
             'port': 8651,
             'protocol': 'udp',
         })
-    
+
         return config
 
     def __del__(self):

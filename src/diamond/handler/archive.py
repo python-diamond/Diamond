@@ -43,13 +43,13 @@ class ArchiveHandler(Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(ArchiveHandler, self).get_default_config_help()
-        
+
         config.update({
             'log_file': 'Path to the logfile',
             'days': 'How many days to store',
             'encoding': '',
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -57,13 +57,13 @@ class ArchiveHandler(Handler):
         Return the default config for the handler
         """
         config = super(ArchiveHandler, self).get_default_config()
-        
+
         config.update({
             'log_file': '',
             'days': 7,
             'encoding': None,
         })
-    
+
         return config
 
     def process(self, metric):

@@ -26,7 +26,8 @@ class TestSupervisordCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_success(self, publish_mock):
 
-        self.collector.getAllProcessInfo = Mock(return_value = eval(self.getFixture('valid_fixture').getvalue()))
+        self.collector.getAllProcessInfo = Mock(
+            return_value=eval(self.getFixture('valid_fixture').getvalue()))
 
         self.collector.collect()
 

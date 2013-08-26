@@ -243,11 +243,11 @@ class SentryHandler(Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(SentryHandler, self).get_default_config_help()
-        
+
         config.update({
             'dsn': '',
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -255,11 +255,11 @@ class SentryHandler(Handler):
         Return the default config for the handler
         """
         config = super(SentryHandler, self).get_default_config()
-        
+
         config.update({
             'dsn': '',
         })
-    
+
         return config
 
     def compile_rules(self):

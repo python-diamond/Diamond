@@ -40,10 +40,10 @@ class MySQLHandler(Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(MySQLHandler, self).get_default_config_help()
-        
+
         config.update({
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -51,10 +51,10 @@ class MySQLHandler(Handler):
         Return the default config for the handler
         """
         config = super(MySQLHandler, self).get_default_config()
-        
+
         config.update({
         })
-    
+
         return config
 
     def __del__(self):

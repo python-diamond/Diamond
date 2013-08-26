@@ -29,7 +29,7 @@ class TestPuppetAgentCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test(self, publish_mock):
-        
+
         open_mock = patch('__builtin__.open',
                           Mock(return_value=self.getFixture(
                             'last_run_summary.yaml')))
@@ -79,8 +79,7 @@ class TestPuppetAgentCollector(CollectorTestCase):
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
-        
-        
+
         self.assertPublishedMany(publish_mock, metrics)
         #self.assertUnpublishedMany(publish_mock, unpublished_metrics)
 

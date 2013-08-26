@@ -78,7 +78,7 @@ class LibratoHandler(Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(LibratoHandler, self).get_default_config_help()
-        
+
         config.update({
             'user': '',
             'apikey': '',
@@ -86,7 +86,7 @@ class LibratoHandler(Handler):
             'queue_max_interval': '',
             'include_filters': '',
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -94,7 +94,7 @@ class LibratoHandler(Handler):
         Return the default config for the handler
         """
         config = super(LibratoHandler, self).get_default_config()
-        
+
         config.update({
             'user': '',
             'apikey': '',
@@ -102,7 +102,7 @@ class LibratoHandler(Handler):
             'queue_max_interval': 60,
             'include_filters': ['^.*'],
         })
-    
+
         return config
 
     def process(self, metric):

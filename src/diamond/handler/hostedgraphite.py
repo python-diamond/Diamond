@@ -28,7 +28,7 @@ class HostedGraphiteHandler(Handler):
         """
         # Initialize Handler
         Handler.__init__(self, config)
-        
+
         self.key = self.config['apikey'].lower().strip()
 
         self.graphite = GraphiteHandler(config)
@@ -38,7 +38,7 @@ class HostedGraphiteHandler(Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(HostedGraphiteHandler, self).get_default_config_help()
-        
+
         config.update({
             'apikey': 'Api key to use',
             'host': 'Hostname',
@@ -46,10 +46,11 @@ class HostedGraphiteHandler(Handler):
             'proto': 'udp or tcp',
             'timeout': '',
             'batch': 'How many to store before sending to the graphite server',
-            'max_backlog_multiplier': 'how many batches to store before trimming',
+            'max_backlog_multiplier': 'how many batches to store before '
+                'trimming',
             'trim_backlog_multiplier': 'Trim down how many batches',
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -57,7 +58,7 @@ class HostedGraphiteHandler(Handler):
         Return the default config for the handler
         """
         config = super(HostedGraphiteHandler, self).get_default_config()
-        
+
         config.update({
             'apikey': '',
             'host': 'carbon.hostedgraphite.com',
@@ -68,7 +69,7 @@ class HostedGraphiteHandler(Handler):
             'max_backlog_multiplier': 5,
             'trim_backlog_multiplier': 4,
         })
-    
+
         return config
 
     def process(self, metric):

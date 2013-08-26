@@ -69,13 +69,13 @@ class TSDBHandler(Handler):
         Returns the help text for the configuration options for this handler
         """
         config = super(TSDBHandler, self).get_default_config_help()
-        
+
         config.update({
             'host': '',
             'port': '',
             'timeout': '',
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -83,13 +83,13 @@ class TSDBHandler(Handler):
         Return the default config for the handler
         """
         config = super(TSDBHandler, self).get_default_config()
-        
+
         config.update({
             'host': '',
             'port': 1234,
             'timeout': 5,
         })
-    
+
         return config
 
     def __del__(self):

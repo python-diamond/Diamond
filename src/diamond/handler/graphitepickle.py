@@ -53,10 +53,10 @@ class GraphitePickleHandler(GraphiteHandler):
         Returns the help text for the configuration options for this handler
         """
         config = super(GraphitePickleHandler, self).get_default_config_help()
-        
+
         config.update({
         })
-    
+
         return config
 
     def get_default_config(self):
@@ -64,10 +64,10 @@ class GraphitePickleHandler(GraphiteHandler):
         Return the default config for the handler
         """
         config = super(GraphitePickleHandler, self).get_default_config()
-        
+
         config.update({
         })
-    
+
         return config
 
     def process(self, metric):
