@@ -8,3 +8,4 @@ beanstalkc
 bernhard
 simplejson
 kitchen
+PyYAML
