@@ -430,6 +430,7 @@ class MySQLCollector(diamond.collector.Collector):
                 '^([^:]*):([^@]*)@([^:]*):?([^/]*)/([^/]*)/?(.*)', host)
 
             if not matches:
+                self.log.error('Connection string not in required format, skipping: %s', host)
                 continue
 
             params = {}
