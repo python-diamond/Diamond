@@ -2,6 +2,7 @@
 # coding=utf-8
 ################################################################################
 
+import sys
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -16,11 +17,13 @@ from rabbitmq import RabbitMQCollector
 
 
 def run_only_if_pyrabbit_is_available(func):
-    try:
-        import pyrabbit
-        pyrabbit  # workaround for pyflakes issue #13
-    except ImportError:
-        pyrabbit = None
+    pyrabbit = None
+    if sys.version_info > (2, 5):
+        try:
+            import pyrabbit
+            pyrabbit  # workaround for pyflakes issue #13
+        except ImportError:
+            pyrabbit = None
     pred = lambda: pyrabbit is not None
     return run_only(func, pred)
 

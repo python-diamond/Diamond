@@ -64,7 +64,7 @@ class SupervisordCollector(diamond.collector.Collector):
         uri = '{0}://{1}'.format(protocol, path)
 
         self.log.debug(
-            'Attempting to connect to XML-RPC server "{0}"'.format(uri))
+            'Attempting to connect to XML-RPC server "%s"', uri)
 
         if protocol == 'unix':
             server = xmlrpclib.ServerProxy('http://127.0.0.1',
@@ -76,8 +76,8 @@ class SupervisordCollector(diamond.collector.Collector):
 
         else:
             self.log.debug(
-                'Invalid xmlrpc_server_protocol config setting "{0}"'.format(
-                    protocol))
+                'Invalid xmlrpc_server_protocol config setting "%s"',
+                    protocol)
             return None
 
         return server.getAllProcessInfo()
@@ -86,11 +86,10 @@ class SupervisordCollector(diamond.collector.Collector):
 
         processes = self.getAllProcessInfo()
 
-        self.log.debug('Found {0} supervisord processes'.format(len(processes)))
+        self.log.debug('Found %s supervisord processes', len(processes))
 
         for process in processes:
-            statPrefix = str.format("%s.%s" % (
-                process["group"], process["name"]))
+            statPrefix = "%s.%s" % (process["group"], process["name"])
 
             # state
 
