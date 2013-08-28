@@ -29,12 +29,12 @@ BATCH_SIZE = 1
 # NOTE: We don't really have a rigorous defition
 # for metrics, particularly how often they will be
 # reported, etc. Because of this, we have to guess
-# at the steps and RRAs used for creation of the 
+# at the steps and RRAs used for creation of the
 # RRD files. These are a fairly sensible default,
 # and basically allow for aggregated up from a single
 # datapoint (because the XFF is 0.1, and each step
 # aggregates not more than 10 of the previous step).
-# 
+#
 # Given a METRIC_STEP of 10 seconds, then these will
 # represent data for up to the last full year.
 
@@ -55,6 +55,7 @@ RRA_SPECS = [
     "RRA:MIN:0.1:2635:1200",
     "RRA:MAX:0.1:2635:1200",
 ]
+
 
 class RRDHandler(Handler):
 
@@ -82,7 +83,7 @@ class RRDHandler(Handler):
         config = super(RRDHandler, self).get_default_config_help()
         config.update({
             'basedir': 'The base directory for all RRD files.',
-            'batch': 'Wait for this many updates before saving to the RRD file.',
+            'batch': 'Wait for this many updates before saving to the RRD file',
             'step': 'The minimum interval represented in generated RRD files.',
         })
         return config
@@ -151,7 +152,7 @@ class RRDHandler(Handler):
         filename = os.path.join(dirname, metric_name + ".rrd")
 
         # Ensure that there is an RRD file for this metric.
-        # This is done inline because it's quickly cached and 
+        # This is done inline because it's quickly cached and
         # we would like to have exceptions related to creating
         # the RRD file raised in the main thread.
         self._ensure_exists(filename, metric_name, metric.metric_type)
