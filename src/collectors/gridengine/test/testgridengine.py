@@ -30,11 +30,7 @@ class TestGridEngineCollector(CollectorTestCase):
             xml_mock):
         """Test that fixtures are parsed correctly
         """
-        fixture_path = os.path.join(self.fixtures_dir, 'queue_stats.xml')
-        with open(fixture_path) as f:
-            xml = f.read()
-
-        xml_mock.return_value = xml
+        xml_mock.return_value = self.getFixture('queue_stats.xml').getvalue()
         self.collector._collect_queue_stats()
 
         published_metrics = {
