@@ -17,6 +17,7 @@ import diamond.collector
 import socket
 from struct import pack
 import re
+import time
 
 
 class ApcupsdCollector(diamond.collector.Collector):
@@ -56,7 +57,8 @@ class ApcupsdCollector(diamond.collector.Collector):
 
         # Ditch the header
         s.recv(1024)
-        data = s.recv(1024)
+        time.sleep(.25)
+        data = s.recv(4096)
 
         # We're done. Close the socket
         s.close()
