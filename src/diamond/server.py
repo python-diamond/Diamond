@@ -132,8 +132,9 @@ class Server(object):
         # Verify the path is valid
         if not os.path.isdir(path):
             return
-        # Add path to the system path
-        sys.path.append(path)
+        # Add path to the system path, to avoid name clashes
+        # with mysql-connector for example ...
+        sys.path.insert(1,path)
         # Load all the files in path
         for f in os.listdir(path):
             # Are we a directory? If so process down the tree
