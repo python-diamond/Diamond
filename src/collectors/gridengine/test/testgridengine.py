@@ -9,6 +9,7 @@ import os
 from diamond.collector import Collector
 from gridengine import GridEngineCollector
 
+
 class TestGridEngineCollector(CollectorTestCase):
     """Set up the fixtures for the test
     """

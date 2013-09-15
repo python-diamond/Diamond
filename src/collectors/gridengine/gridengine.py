@@ -23,7 +23,6 @@ class GridEngineCollector(diamond.collector.Collector):
     """Diamond collector for Grid Engine performance data
     """
 
-
     class QueueStatsEntry:
         def __init__(self, name=None, load=None, used=None, resv=None,
                      available=None, total=None, temp_disabled=None,
@@ -37,15 +36,14 @@ class GridEngineCollector(diamond.collector.Collector):
             self.temp_disabled = temp_disabled
             self.manual_intervention = manual_intervention
 
-
     class StatsParser(object):
         def __init__(self, document):
             self.dom = xml.dom.minidom.parseString(document)
-    
+
         def get_tag_text(self, node, tag_name):
             el = node.getElementsByTagName(tag_name)[0]
             return self.get_text(el)
-    
+
         def get_text(self, node):
             rc = []
             for node in node.childNodes:
@@ -53,17 +51,16 @@ class GridEngineCollector(diamond.collector.Collector):
                     rc.append(node.data)
             return ''.join(rc)
 
-
     class QueueStatsParser(StatsParser):
         def __init__(self, document):
             self.dom = xml.dom.minidom.parseString(document)
-    
+
         def parse(self):
             cluster_queue_summaries = self.dom.getElementsByTagName(
                     "cluster_queue_summary")
             return [self._parse_cluster_stats_entry(node) \
                     for node in cluster_queue_summaries]
-    
+
         def _parse_cluster_stats_entry(self, node):
             name = self.get_tag_text(node, "name")
             load = float(self.get_tag_text(node, "load"))
@@ -74,13 +71,11 @@ class GridEngineCollector(diamond.collector.Collector):
             temp_disabled = int(self.get_tag_text(node, "temp_disabled"))
             manual_intervention = int(self.get_tag_text(node,
                     "manual_intervention"))
-    
+
             return GridEngineCollector.QueueStatsEntry(name=name,
                     load=load, used=used, resv=resv, available=available,
                     total=total, temp_disabled=temp_disabled,
                     manual_intervention=manual_intervention)
-
-        
 
     def __init__(self, config, handlers):
         super(GridEngineCollector, self).__init__(config, handlers)

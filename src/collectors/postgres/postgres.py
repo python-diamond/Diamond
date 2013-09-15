@@ -70,7 +70,9 @@ class PostgresqlCollector(diamond.collector.Collector):
         for klass in metrics:
             stat = klass(self.connections, underscore=self.config['underscore'])
             stat.fetch()
-            [self.publish(metric, value) for metric, value in stat if value is not None]
+            for metric, value in stat:
+                if value is not None:
+                    self.publish(metric, value)
 
         # Cleanup
         [conn.close() for conn in self.connections.itervalues()]
