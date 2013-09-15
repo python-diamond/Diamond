@@ -118,12 +118,11 @@ class GridEngineCollector(diamond.collector.Collector):
         parser = self.QueueStatsParser(output)
         for cq in parser.parse():
             name = self._sanitize(cq.name)
-            prefix = 'queues.{name}'.format(name=name)
+            prefix = 'queues.%s' % (name)
             metrics = ['load', 'used', 'resv', 'available', 'total',
                        'temp_disabled', 'manual_intervention']
             for metric in metrics:
-                path = '{prefix}.{metric}'.format(prefix=prefix,
-                                                  metric=metric)
+                path = '%s.%s' % (prefix, metric)
                 value = getattr(cq, metric)
                 self.publish(path, value)
 
