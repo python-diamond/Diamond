@@ -3,17 +3,30 @@
 ###############################################################################
 import urllib2
 
-from xml.etree import ElementTree
+try:
+    from xml.etree import ElementTree
+except ImportError:
+    ElementTree = None
 
 from test import CollectorTestCase
 from test import get_collector_config
+from test import run_only
 from test import unittest
 from mock import patch
 
 from diamond.collector import Collector
 from kafka import KafkaCollector
 
-###############################################################################
+##########
+
+def run_only_if_ElementTree_is_available(func):
+    try:
+        from xml.etree import ElementTree
+        ElementTree  # workaround for pyflakes issue #13
+    except ImportError:
+        ElementTree = None
+    pred = lambda: ElementTree is not None
+    return run_only(func, pred)
 
 
 class TestKafkaCollector(CollectorTestCase):
@@ -32,6 +45,7 @@ class TestKafkaCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(KafkaCollector)
 
+    @run_only_if_ElementTree_is_available
     @patch('urllib2.urlopen')
     def test_get(self, urlopen_mock):
         urlopen_mock.return_value = self.getFixture('empty.xml')
@@ -41,6 +55,7 @@ class TestKafkaCollector(CollectorTestCase):
 
         self.assertEqual(result_string, '<Server />')
 
+    @run_only_if_ElementTree_is_available
     @patch('urllib2.urlopen')
     def test_get_httperror(self, urlopen_mock):
         urlopen_mock.side_effect = urllib2.URLError('BOOM')
@@ -49,6 +64,7 @@ class TestKafkaCollector(CollectorTestCase):
 
         self.assertFalse(result)
 
+    @run_only_if_ElementTree_is_available
     @patch('urllib2.urlopen')
     def test_get_bad_xml(self, urlopen_mock):
         urlopen_mock.return_value = self.getFixture('bad.xml')
@@ -57,6 +73,7 @@ class TestKafkaCollector(CollectorTestCase):
 
         self.assertFalse(result)
 
+    @run_only_if_ElementTree_is_available
     @patch.object(KafkaCollector, '_get')
     def test_get_mbeans(self, get_mock):
         get_mock.return_value = self._get_xml_fixture('serverbydomain.xml')
@@ -74,6 +91,7 @@ class TestKafkaCollector(CollectorTestCase):
 
         self.assertEqual(found_beans, expected_names)
 
+    @run_only_if_ElementTree_is_available
     @patch.object(KafkaCollector, '_get')
     def test_get_mbeans_get_fail(self, get_mock):
         get_mock.return_value = None
@@ -82,6 +100,7 @@ class TestKafkaCollector(CollectorTestCase):
 
         self.assertEqual(found_beans, None)
 
+    @run_only_if_ElementTree_is_available
     @patch.object(KafkaCollector, '_get')
     def test_query_mbean(self, get_mock):
         get_mock.return_value = self._get_xml_fixture('mbean.xml')
@@ -97,6 +116,7 @@ class TestKafkaCollector(CollectorTestCase):
 
         self.assertEqual(metrics, expected_metrics)
 
+    @run_only_if_ElementTree_is_available
     @patch.object(KafkaCollector, '_get')
     def test_query_mbean_with_prefix(self, get_mock):
         get_mock.return_value = self._get_xml_fixture('mbean.xml')
@@ -113,6 +133,7 @@ class TestKafkaCollector(CollectorTestCase):
 
         self.assertEqual(metrics, expected_metrics)
 
+    @run_only_if_ElementTree_is_available
     @patch.object(KafkaCollector, '_get')
     def test_query_mbean_fail(self, get_mock):
         get_mock.return_value = None
@@ -121,6 +142,7 @@ class TestKafkaCollector(CollectorTestCase):
 
         self.assertEqual(metrics, None)
 
+    @run_only_if_ElementTree_is_available
     @patch('urllib2.urlopen')
     @patch.object(Collector, 'publish')
     def test(self, publish_mock, urlopen_mock):
