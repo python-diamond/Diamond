@@ -321,8 +321,8 @@ class JbossApiCollector(diamond.collector.Collector):
                     + '"recursive":"true" , "address":["core-service",'
                     + '"platform-mbean"]}')
 
-        the_cmd = ("%s --connect-timeout %s %s %s %s://%s:%s/management "
-                   + "--header %s -d '%s' -u %s:%s" % (
+        the_cmd = (("%s --connect-timeout %s %s %s %s://%s:%s/management "
+                   + "--header %s -d '%s' -u %s:%s") % (
             self.config['curl_bin'], self.config['connect_timeout'],
             self.config['ssl_options'], self.config['curl_options'],
             current_proto, current_host, current_port, header, data,
