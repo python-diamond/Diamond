@@ -80,7 +80,7 @@ class MountStatsCollector(diamond.collector.Collector):
     def get_default_config(self):
         config = super(MountStatsCollector, self).get_default_config()
         config.update({
-            'enabled': 'True',
+            'enabled': 'False',
             'exclude_filters': [],
             'path': 'mountstats',
             'method': 'Threaded'
