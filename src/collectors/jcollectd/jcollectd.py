@@ -1,5 +1,28 @@
 # coding=utf-8
 
+"""
+The JCollectdCollector is capable of receiving Collectd network traffic
+as sent by the JCollectd jvm agent (and child Collectd processes).
+
+Reason for developing this collector is allowing to use JCollectd, without
+the need for Collectd.
+
+A few notes:
+
+This collector starts a UDP server to receive data. This server runs in
+a separate thread and puts it on a queue, waiting for the collect() method
+to pull. Because of this setup, the collector interval parameter is of
+less importance. What matters is the 'sendinterval' JCollectd parameter.
+
+See https://github.com/emicklei/jcollectd for an up-to-date jcollect fork.
+
+#### Dependencies
+
+ * jcollectd sending metrics
+
+"""
+
+
 import threading
 import re
 import Queue
@@ -26,7 +49,7 @@ class JCollectdCollector(diamond.collector.Collector):
         config = super(JCollectdCollector, self).get_default_config()
         config.update({
             'path':     'jvm',
-            'enabled':  'True',
+            'enabled':  'False',
             'method':   'Threaded',
             'listener_host': '127.0.0.1',
             'listener_port': 25826,
