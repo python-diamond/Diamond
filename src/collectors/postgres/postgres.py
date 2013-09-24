@@ -30,7 +30,8 @@ class PostgresqlCollector(diamond.collector.Collector):
             'password': 'Password',
             'port': 'Port number',
             'underscore': 'Convert _ to .',
-            'extended': 'Enable collection of extended database stats',
+            'extended': 'Enable collection of extended database stats.',
+            'metrics': 'List of enabled metrics to collect'
         })
         return config_help
 
@@ -47,7 +48,8 @@ class PostgresqlCollector(diamond.collector.Collector):
             'port': 5432,
             'underscore': False,
             'extended': False,
-            'method': 'Threaded'
+            'method': 'Threaded',
+            'metrics': []
         })
         return config
 
@@ -61,13 +63,18 @@ class PostgresqlCollector(diamond.collector.Collector):
         for db in self._get_db_names():
             self.connections[db] = self._connect(database=db)
 
-        if str_to_bool(self.config['extended']):
+        if self.config['metrics']:
+            metrics = self.config['metrics']
+        elif str_to_bool(self.config['extended']):
             metrics = registry['extended']
         else:
             metrics = registry['basic']
 
         # Iterate every QueryStats class
-        for klass in metrics:
+        for metric_name in set(metrics):
+            if metric_name not in metrics_registry:
+                continue
+            klass = metrics_registry[metric_name]
             stat = klass(self.connections, underscore=self.config['underscore'])
             stat.fetch()
             for metric, value in stat:
@@ -441,28 +448,48 @@ class TupleAccessStats(QueryStats):
     """
 
 
+metrics_registry = {
+    'DatabaseStats': DatabaseStats,
+    'DatabaseConnectionCount': DatabaseConnectionCount,
+    'UserTableStats': UserTableStats,
+    'UserIndexStats': UserIndexStats,
+    'UserTableIOStats': UserTableIOStats,
+    'UserIndexIOStats': UserIndexIOStats,
+    'ConnectionStateStats': ConnectionStateStats,
+    'LockStats': LockStats,
+    'RelationSizeStats': RelationSizeStats,
+    'BackgroundWriterStats': BackgroundWriterStats,
+    'WalSegmentStats': WalSegmentStats,
+    'TransactionCount': TransactionCount,
+    'IdleInTransactions': IdleInTransactions,
+    'LongestRunningQueries': LongestRunningQueries,
+    'UserConnectionCount': UserConnectionCount,
+    'TableScanStats': TableScanStats,
+    'TupleAccessStats': TupleAccessStats,
+}
+
 registry = {
     'basic': (
-        DatabaseStats,
-        DatabaseConnectionCount,
+        'DatabaseStats',
+        'DatabaseConnectionCount',
     ),
     'extended': (
-        DatabaseStats,
-        DatabaseConnectionCount,
-        UserTableStats,
-        UserIndexStats,
-        UserTableIOStats,
-        UserIndexIOStats,
-        ConnectionStateStats,
-        LockStats,
-        RelationSizeStats,
-        BackgroundWriterStats,
-        WalSegmentStats,
-        TransactionCount,
-        IdleInTransactions,
-        LongestRunningQueries,
-        UserConnectionCount,
-        TableScanStats,
-        TupleAccessStats,
+        'DatabaseStats',
+        'DatabaseConnectionCount',
+        'UserTableStats',
+        'UserIndexStats',
+        'UserTableIOStats',
+        'UserIndexIOStats',
+        'ConnectionStateStats',
+        'LockStats',
+        'RelationSizeStats',
+        'BackgroundWriterStats',
+        'WalSegmentStats',
+        'TransactionCount',
+        'IdleInTransactions',
+        'LongestRunningQueries',
+        'UserConnectionCount',
+        'TableScanStats',
+        'TupleAccessStats',
     ),
 }
