@@ -17,7 +17,6 @@ no metrics are collected.
 #### Dependencies
 
  * [subprocess](http://docs.python.org/library/subprocess.html)
- * [kitchen](http://packages.python.org/kitchen/index.html)
 
 """
 
@@ -25,15 +24,7 @@ import diamond.collector
 import diamond.convertor
 import os
 import sys
-# Get a subprocess capable of check_output
-if sys.version_info < (2, 7):
-    try:
-        from kitchen.pycompat27 import subprocess
-        subprocess  # workaround for pyflakes issue #13
-    except ImportError:
-        subprocess = None
-else:
-    import subprocess
+import subprocess
 
 
 class UserScriptsCollector(diamond.collector.Collector):
@@ -60,10 +51,6 @@ class UserScriptsCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        if subprocess is None:
-            self.log.error('Unable to import kitchen')
-            return {}
-
         scripts_path = self.config['scripts_path']
         if not os.access(scripts_path, os.R_OK):
             return None
