@@ -86,11 +86,14 @@ class SquidCollector(diamond.collector.Collector):
             squid_host = self.squid_hosts[nickname]
 
             fulldata = self._getData(squid_host['host'],
-                                     squid_host['port']).splitlines()
+                                     squid_host['port'])
 
-            for data in fulldata:
-                matches = self.stat_pattern.match(data)
-                if matches:
-                    self.publish_counter("%s.%s" % (nickname,
-                                                    matches.group(1)),
-                                         float(matches.group(2)))
+            if fulldata is not None:
+                fulldata = fulldata.splitlines()
+
+                for data in fulldata:
+                    matches = self.stat_pattern.match(data)
+                    if matches:
+                        self.publish_counter("%s.%s" % (nickname,
+                                                        matches.group(1)),
+                                             float(matches.group(2)))
