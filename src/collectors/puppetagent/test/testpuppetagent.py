@@ -14,6 +14,7 @@ from puppetagent import PuppetAgentCollector
 
 ################################################################################
 
+
 def run_only_if_yaml_is_available(func):
     try:
         import yaml
@@ -22,6 +23,7 @@ def run_only_if_yaml_is_available(func):
         yaml = None
     pred = lambda: yaml is not None
     return run_only(func, pred)
+
 
 class TestPuppetAgentCollector(CollectorTestCase):
     def setUp(self):

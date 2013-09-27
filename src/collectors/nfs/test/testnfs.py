@@ -50,7 +50,7 @@ class TestNfsCollector(CollectorTestCase):
         #self.collector.collect()
 
         metrics = {
-    	}
+        }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,

@@ -150,7 +150,7 @@ class KafkaCollector(diamond.collector.Collector):
         if ElementTree is None:
             self.log.error('Failed to import xml.etree.ElementTree')
             return
-        
+
         # Get list of gatherable stats
         mbeans = self.get_mbeans()
 

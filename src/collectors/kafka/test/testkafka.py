@@ -19,6 +19,7 @@ from kafka import KafkaCollector
 
 ##########
 
+
 def run_only_if_ElementTree_is_available(func):
     try:
         from xml.etree import ElementTree
