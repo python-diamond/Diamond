@@ -14,7 +14,6 @@ phusion_passenger_cpu, total_apache_memory, total_passenger_mem, total_nginx_mem
 """
 import diamond.collector
 import os
-import time
 import re
 import subprocess
 from diamond.collector import str_to_bool

@@ -98,7 +98,6 @@ class MountStatsCollector(diamond.collector.Collector):
             self.log.error("Cannot read path %s" % self.MOUNTSTATS)
             return None
 
-        dev = None
         path = None
         f = open(self.MOUNTSTATS)
         for line in f:
@@ -107,7 +106,6 @@ class MountStatsCollector(diamond.collector.Collector):
                 continue
 
             if tokens[0] == 'device':
-                dev = tokens[1]
                 path = tokens[4]
 
                 if self.exclude_reg and self.exclude_reg.match(path):

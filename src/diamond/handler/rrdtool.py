@@ -119,7 +119,7 @@ class RRDHandler(Handler):
 
         # Sanity check the metric type.
         if metric_type not in ("GAUGE", "COUNTER"):
-            raise Exception("Unknown metric type: %s" % metric.metric_type)
+            raise Exception("Unknown metric type: %s" % metric_type)
 
         # Try to create the directory.
         # NOTE: If we aren't successful, the check_call()
@@ -144,7 +144,6 @@ class RRDHandler(Handler):
         # Extract the filename given the metric.
         # NOTE: We have to tweak the metric name and limit
         # the length to 19 characters for the RRD file format.
-        host = metric.host or socket.getfqdn()
         collector = metric.getCollectorPath()
         metric_name = metric.getMetricPath().replace(".", "_")[:19]
 

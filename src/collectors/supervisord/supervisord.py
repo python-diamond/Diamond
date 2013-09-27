@@ -31,6 +31,7 @@ import xmlrpclib
 
 try:
     import supervisor.xmlrpc
+    supervisor  # workaround for pyflakes issue #13
 except ImportError:
     supervisor = None
 

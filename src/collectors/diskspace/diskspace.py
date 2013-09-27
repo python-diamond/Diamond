@@ -226,7 +226,6 @@ class DiskSpaceCollector(diamond.collector.Collector):
 
                 blocks_total = raw_data.total
                 blocks_free = raw_data.free
-                blocks_used = raw_data.used
 
             else:
                 raise NotImplementedError("platform not supported")

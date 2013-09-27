@@ -185,7 +185,6 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
             else:
                 metric_path_base.append(service_desc)
 
-        timestamp = int(fields['TIMET'])
         perfdata = fields[datatype]
         counters = self._parse_perfdata(perfdata)
 

@@ -7,7 +7,6 @@ from test import get_collector_config
 from test import unittest
 from test import run_only
 from mock import patch
-from mock import Mock
 
 from diamond.collector import Collector
 from puppetagent import PuppetAgentCollector

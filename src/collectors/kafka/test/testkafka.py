@@ -5,6 +5,7 @@ import urllib2
 
 try:
     from xml.etree import ElementTree
+    ElementTree  # workaround for pyflakes issue #13
 except ImportError:
     ElementTree = None
 

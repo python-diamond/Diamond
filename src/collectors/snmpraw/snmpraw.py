@@ -61,7 +61,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                 'snmp'))
 from snmp import SNMPCollector as parent_SNMPCollector
 from diamond.metric import Metric
-import diamond.convertor
 
 
 class SNMPRawCollector(parent_SNMPCollector):

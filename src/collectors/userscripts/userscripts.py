@@ -23,7 +23,6 @@ no metrics are collected.
 import diamond.collector
 import diamond.convertor
 import os
-import sys
 import subprocess
 
 
