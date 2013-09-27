@@ -106,7 +106,7 @@ class Server(object):
                 # Initialize Handler class
                 self.handlers.append(cls(handler_config))
 
-            except ImportError:
+            except (ImportError, SyntaxError):
                 # Log Error
                 self.log.debug("Failed to load handler %s. %s", h,
                                traceback.format_exc())
@@ -198,7 +198,7 @@ class Server(object):
                 try:
                     # Import the module
                     mod = __import__(modname, globals(), locals(), ['*'])
-                except ImportError:
+                except (ImportError, SyntaxError):
                     # Log error
                     self.log.error("Failed to import module: %s. %s", modname,
                                    traceback.format_exc())
