@@ -82,7 +82,7 @@ class NginxCollector(diamond.collector.Collector):
                     self.publish_gauge('act_writes', int(m.group('writing')))
                     self.publish_gauge('act_waits', int(m.group('waiting')))
         except IOError, e:
-            self.log.error("Unable to open http://%s:%i:%s",
+            self.log.error("Unable to open http://%s:%i%s",
                            self.config['req_host'],
                            int(self.config['req_port']),
                            self.config['req_path'])
