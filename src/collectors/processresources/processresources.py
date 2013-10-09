@@ -110,7 +110,7 @@ calls."""),
             'path': 'memory.process',
             'unit': 'B',
             'process': '',
-            'cpu_interval': 0.1
+            'cpu_interval': 0.0
         })
         return config
 
