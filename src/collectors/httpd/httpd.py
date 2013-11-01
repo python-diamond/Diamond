@@ -27,7 +27,7 @@ class HttpdCollector(diamond.collector.Collector):
         self.urls = {}
         for url in self.config['urls']:
             if ' ' in url:
-                parts = url.split()
+                parts = url.split(' ')
                 self.urls[parts[0]] = parts[1]
             else:
                 self.urls[''] = url
