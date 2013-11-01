@@ -182,7 +182,7 @@ class TestHttpdCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_issue_456(self, publish_mock):
         self.setUp(config={
-            'urls':'vhost http://localhost/server-status?auto',
+            'urls': 'vhost http://localhost/server-status?auto',
         })
 
         patch_read = patch.object(TestHTTPResponse,
