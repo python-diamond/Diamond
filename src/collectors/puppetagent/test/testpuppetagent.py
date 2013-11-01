@@ -85,7 +85,7 @@ class TestPuppetAgentCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
 
         self.assertPublishedMany(publish_mock, metrics)
-        #self.assertUnpublishedMany(publish_mock, unpublished_metrics)
+        self.assertUnpublishedMany(publish_mock, unpublished_metrics)
 
 ################################################################################
 if __name__ == "__main__":
