@@ -179,6 +179,48 @@ class TestHttpdCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
+    @patch.object(Collector, 'publish')
+    def test_issue_456(self, publish_mock):
+        self.setUp(config={
+            'urls':'vhost http://localhost/server-status?auto',
+        })
+
+        patch_read = patch.object(TestHTTPResponse,
+                                  'read',
+                                  Mock(return_value=self.getFixture(
+                                    'server-status-live-3').getvalue()))
+
+        patch_headers = patch.object(TestHTTPResponse,
+                                     'getheaders',
+                                     Mock(return_value={}))
+
+        patch_headers.start()
+        patch_read.start()
+        self.collector.collect()
+        patch_read.stop()
+
+        self.assertPublishedMany(publish_mock, {})
+
+        patch_read = patch.object(TestHTTPResponse,
+                                  'read',
+                                  Mock(return_value=self.getFixture(
+                                    'server-status-live-4').getvalue()))
+
+        patch_read.start()
+        self.collector.collect()
+        patch_read.stop()
+        patch_headers.stop()
+
+        metrics = {
+            'TotalAccesses': 329,
+            'ReqPerSec': 0.156966,
+            'BytesPerSec': 2417,
+            'BytesPerReq': 15403,
+            'BusyWorkers': 1,
+            'IdleWorkers': 17,
+        }
+        self.assertPublishedMany(publish_mock, metrics)
+
 ################################################################################
 if __name__ == "__main__":
     unittest.main()
