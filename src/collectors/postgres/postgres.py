@@ -112,6 +112,8 @@ class PostgresqlCollector(diamond.collector.Collector):
 
         if database:
             conn_args['database'] = database
+        else:
+            conn_args['database'] = 'postgres'
 
         conn = psycopg2.connect(**conn_args)
 
