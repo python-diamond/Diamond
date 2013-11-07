@@ -40,6 +40,7 @@ class GraphiteHandler(Handler):
         self.host = self.config['host']
         self.port = int(self.config['port'])
         self.timeout = int(self.config['timeout'])
+        self.keepalive = bool(self.config['keepalive'])
         self.batch_size = int(self.config['batch'])
         self.max_backlog_multiplier = int(
             self.config['max_backlog_multiplier'])
@@ -65,6 +66,7 @@ class GraphiteHandler(Handler):
             'max_backlog_multiplier': 'how many batches to store before '
                 'trimming',
             'trim_backlog_multiplier': 'Trim down how many batches',
+            'keepalive': 'Enable keepalives for tcp streams',
         })
 
         return config
@@ -83,6 +85,7 @@ class GraphiteHandler(Handler):
             'batch': 1,
             'max_backlog_multiplier': 5,
             'trim_backlog_multiplier': 4,
+            'keepalive': 0,
         })
 
         return config
@@ -155,12 +158,15 @@ class GraphiteHandler(Handler):
 
         # Create socket
         self.socket = socket.socket(socket.AF_INET, stream)
-        if socket is None:
+        if self.socket is None:
             # Log Error
             self.log.error("GraphiteHandler: Unable to create socket.")
             # Close Socket
             self._close()
             return
+        # Enable keepalives?
+        if self.proto != 'udp' and self.keepalive:
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         # Set socket timeout
         self.socket.settimeout(self.timeout)
         # Connect to graphite server
