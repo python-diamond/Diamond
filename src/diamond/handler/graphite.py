@@ -41,6 +41,7 @@ class GraphiteHandler(Handler):
         self.port = int(self.config['port'])
         self.timeout = int(self.config['timeout'])
         self.keepalive = bool(self.config['keepalive'])
+        self.keepaliveinterval = int(self.config['keepaliveinterval'])
         self.batch_size = int(self.config['batch'])
         self.max_backlog_multiplier = int(
             self.config['max_backlog_multiplier'])
@@ -67,6 +68,7 @@ class GraphiteHandler(Handler):
                 'trimming',
             'trim_backlog_multiplier': 'Trim down how many batches',
             'keepalive': 'Enable keepalives for tcp streams',
+            'keepaliveinterval': 'How frequently to send keepalives' 
         })
 
         return config
@@ -86,6 +88,7 @@ class GraphiteHandler(Handler):
             'max_backlog_multiplier': 5,
             'trim_backlog_multiplier': 4,
             'keepalive': 0,
+            'keepaliveinterval': 10,
         })
 
         return config
@@ -113,7 +116,13 @@ class GraphiteHandler(Handler):
         """
         Try to send all data in buffer.
         """
-        self.socket.sendall(data)
+        try:
+            self.socket.sendall(data)
+        except:
+            self._close()
+            self.log.error("GraphiteHandler: Socket error, trying reconnect.")
+            self._connect()
+            self.socket.sendall(data)
 
     def _send(self):
         """
@@ -166,7 +175,11 @@ class GraphiteHandler(Handler):
             return
         # Enable keepalives?
         if self.proto != 'udp' and self.keepalive:
+            self.log.error("GraphiteHandler: Setting socket keepalives...")
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+            self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, self.keepaliveinterval)
+            self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, self.keepaliveinterval)
+            self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 3)
         # Set socket timeout
         self.socket.settimeout(self.timeout)
         # Connect to graphite server
