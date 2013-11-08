@@ -69,7 +69,6 @@ class CephCollector(diamond.collector.Collector):
         config = super(CephCollector, self).get_default_config()
         config.update({
             'socket_path': '/var/run/ceph',
-            'socket_prefix': 'ceph-',
             'socket_ext': 'asok',
             'ceph_binary': '/usr/bin/ceph',
         })
@@ -80,18 +79,20 @@ class CephCollector(diamond.collector.Collector):
         with ceph daemons.
         """
         socket_pattern = os.path.join(self.config['socket_path'],
-                                      (self.config['socket_prefix'] +
-                                       '*.' + self.config['socket_ext']))
+                                      ('*.' + self.config['socket_ext']))
         return glob.glob(socket_pattern)
 
     def _get_counter_prefix_from_socket_name(self, name):
         """Given the name of a UDS socket, return the prefix
         for counters coming from that source.
+
+        This takes the form <cluster name>.<service type>.<service id>
+        for example, ceph.osd.2
+
         """
-        base = os.path.splitext(os.path.basename(name))[0]
-        if base.startswith(self.config['socket_prefix']):
-            base = base[len(self.config['socket_prefix']):]
-        return 'ceph.' + base
+        cluster_name, service_type, service_id = re.match("^(.*)-(.*)\.(.*).{0}$".format(self.config['socket_ext']),
+                                                          os.path.basename(name)).groups()
+        return "{0}.{1}.{2}".format(cluster_name, service_type, service_id)
 
     def _get_stats_from_socket(self, name):
         """Return the parsed JSON data returned when ceph is told to
