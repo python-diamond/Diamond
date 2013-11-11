@@ -169,6 +169,8 @@ class CephCollector(diamond.collector.Collector):
         if mon_status['state'] != 'leader':
             return
 
+        self.log.debug("mon leader found, gathering cluster stats for cluster '%s'" % cluster_name)
+
         # We are the leader, gather cluster-wide statistics
         for pool_data in self._mon_command(cluster_name, ['osd', 'pool', 'stats']):
             pool_id = pool_data['pool_id']
@@ -177,6 +179,14 @@ class CephCollector(diamond.collector.Collector):
             self._publish_stats(
                 "{0}ceph.{1}.pool.{2}".format(diamond.collector.ABSOLUTE_PATH_MARKER, cluster_name, pool_id),
                 pool_data
+            )
+
+        df = self._mon_command(cluster_name, ['df'])
+        self._publish_stats("{0}ceph.{1}.df".format(diamond.collector.ABSOLUTE_PATH_MARKER, cluster_name), df['stats'])
+        for pool_data in df['pools']:
+            self._publish_stats(
+                "{0}ceph.{1}.pool.{2}".format(diamond.collector.ABSOLUTE_PATH_MARKER, cluster_name, pool_data['id']),
+                pool_data['stats']
             )
 
     def _collect_service_stats(self, path):
@@ -190,7 +200,7 @@ class CephCollector(diamond.collector.Collector):
         Collect stats
         """
         for path in self._get_socket_paths():
-            self.log.debug('checking %s', path)
+            self.log.debug('gathering service stats for %s', path)
             # Publish statistics about this service
             self._collect_service_stats(path)
 
