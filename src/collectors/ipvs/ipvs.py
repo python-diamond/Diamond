@@ -89,7 +89,7 @@ class IPVSCollector(diamond.collector.Collector):
             row = line.split()
 
             if row[0] == "TCP" or row[0] == "UDP":
-                external = string.replace(row[1], ".", "_")
+                external = row[0] + "_" + string.replace(row[1], ".", "_")
                 backend = "total"
             elif row[0] == "->":
                 backend = string.replace(row[1], ".", "_")
