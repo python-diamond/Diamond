@@ -1,7 +1,7 @@
 """ This collector retrieves inode data from netapp filers
 
     The following metrics are measured in this diamond collector:
-        * number of inodes per volume
+        * max number of inodes per volume
         * current inode max
 
     config example:
