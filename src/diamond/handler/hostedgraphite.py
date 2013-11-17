@@ -31,7 +31,7 @@ class HostedGraphiteHandler(Handler):
 
         self.key = self.config['apikey'].lower().strip()
 
-        self.graphite = GraphiteHandler(config)
+        self.graphite = GraphiteHandler(self.config)
 
     def get_default_config_help(self):
         """
