@@ -40,10 +40,10 @@ class TestIPVSCollector(CollectorTestCase):
         patch_communicate.stop()
 
         metrics = {
-            "172_16_1_56:80.total.conns": 116,
-            "172_16_1_56:443.total.conns": 59,
-            "172_16_1_56:443.10_68_15_66:443.conns": 59,
-            "172_16_1_56:443.10_68_15_66:443.outbytes": 216873,
+            "TCP_172_16_1_56:80.total.conns": 116,
+            "TCP_172_16_1_56:443.total.conns": 59,
+            "TCP_172_16_1_56:443.10_68_15_66:443.conns": 59,
+            "TCP_172_16_1_56:443.10_68_15_66:443.outbytes": 216873,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,

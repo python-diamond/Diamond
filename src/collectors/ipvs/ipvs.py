@@ -167,4 +167,4 @@ class IPVSCollector(diamond.collector.Collector):
 
         if total:
             for metric, value in total.iteritems():
-                        self.publish(".".join([external, "total", metric]), value)
+                self.publish(".".join([external, "total", metric]), value)
