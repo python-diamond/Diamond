@@ -49,7 +49,7 @@ restart diamond.
 
 #### Dependencies
 
- * pysmnp (which depends on pyasn1 and pycrypto)
+ * pysmnp (which depends on pyasn1 0.1.7 and pycrypto)
 
 """
 
