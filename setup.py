@@ -62,13 +62,18 @@ else:
                                    ['rpm/upstart/diamond.conf']))
 
     # Support packages being called differently on different distros
-    if os.getenv('VIRTUAL_ENV', False) and distro in ['centos', 'redhat']:
-        install_requires = ['python-configobj', 'psutil', ],
-    elif os.getenv('VIRTUAL_ENV', False) and distro == 'debian':
-        install_requires = ['python-configobj', 'python-psutil', ],
-    else:
-        install_requires = ['ConfigObj', 'psutil', ],
 
+    # Are we in a virtenv?
+    if os.getenv('VIRTUAL_ENV', False):
+        install_requires = ['ConfigObj', 'psutil', ]
+    else:
+        if distro in ['centos', 'redhat']:
+            install_requires = ['python-configobj', 'psutil', ]
+        elif distro == ['debian', 'ubuntu']:
+            install_requires = ['python-configobj', 'python-psutil', ]
+        # Default back to pip style requires
+        else:
+            install_requires = ['ConfigObj', 'psutil', ]
 
 def get_version():
     """
