@@ -22,21 +22,24 @@ class IPVSCollector(diamond.collector.Collector):
         super(IPVSCollector, self).__init__(config, handlers)
 
         # Verify the --exact flag works
-        self.command = [self.config['bin'], '--list', '--stats', '--numeric',
+        self.statcommand = [self.config['bin'], '--list', '--stats', '--numeric',
                         '--exact']
+        self.concommand = [self.config['bin'], '--list', '--numeric']
 
         if str_to_bool(self.config['use_sudo']):
-            self.command.insert(0, self.config['sudo_cmd'])
+            self.statcommand.insert(0, self.config['sudo_cmd'])
+            self.concommand.insert(0, self.config['sudo_cmd'])
             # The -n (non-interactive) option prevents sudo from
             # prompting the user for a password.
-            self.command.insert(1, '-n')
+            self.statcommand.insert(1, '-n')
+            self.concommand.insert(1, '-n')
 
-        p = subprocess.Popen(self.command, stdout=subprocess.PIPE,
+        p = subprocess.Popen(self.statcommand, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
         p.wait()
 
         if p.returncode == 255:
-            self.command = filter(lambda a: a != '--exact', self.command)
+            self.statcommand = filter(lambda a: a != '--exact', self.statcommand)
 
     def get_default_config_help(self):
         config_help = super(IPVSCollector, self).get_default_config_help()
@@ -70,7 +73,7 @@ class IPVSCollector(diamond.collector.Collector):
             self.log.error("%s is not executable", self.config['sudo_cmd'])
             return False
 
-        p = subprocess.Popen(self.command,
+        p = subprocess.Popen(self.statcommand,
                              stdout=subprocess.PIPE).communicate()[0][:-1]
 
         columns = {
@@ -89,7 +92,7 @@ class IPVSCollector(diamond.collector.Collector):
             row = line.split()
 
             if row[0] == "TCP" or row[0] == "UDP":
-                external = string.replace(row[1], ".", "_")
+                external = row[0] + "_" + string.replace(row[1], ".", "_")
                 backend = "total"
             elif row[0] == "->":
                 backend = string.replace(row[1], ".", "_")
@@ -112,3 +115,56 @@ class IPVSCollector(diamond.collector.Collector):
                         metric_value = float(value)
 
                 self.publish(metric_name, metric_value)
+
+        p = subprocess.Popen(self.concommand,
+                             stdout=subprocess.PIPE).communicate()[0][:-1]
+
+        columns = {
+            'active': 4,
+            'inactive': 5,
+        }
+
+        external = ""
+        backend = ""
+        total = {}
+        for i, line in enumerate(p.split("\n")):
+            if i < 3:
+                continue
+            row = line.split()
+
+            if row[0] == "TCP" or row[0] == "UDP":
+                if total:
+                    for metric, value in total.iteritems():
+                        self.publish(".".join([external, "total", metric]), value)
+
+                for k in columns.keys():
+                    total[k] = 0.0
+
+                external = row[0] + "_" + string.replace(row[1], ".", "_")
+                continue
+            elif row[0] == "->":
+                backend = string.replace(row[1], ".", "_")
+            else:
+                continue
+
+            for metric, column in columns.iteritems():
+                metric_name = ".".join([external, backend, metric])
+                # metric_value = int(row[column])
+                value = row[column]
+                if (value.endswith('K')):
+                        metric_value = int(value[0:len(value) - 1]) * 1024
+                elif (value.endswith('M')):
+                        metric_value = (int(value[0:len(value) - 1]) * 1024
+                                        * 1024)
+                elif (value.endswith('G')):
+                        metric_value = (int(value[0:len(value) - 1]) * 1024.0
+                                        * 1024.0 * 1024.0)
+                else:
+                        metric_value = float(value)
+
+                total[metric] += metric_value
+                self.publish(metric_name, metric_value)
+
+        if total:
+            for metric, value in total.iteritems():
+                        self.publish(".".join([external, "total", metric]), value)
