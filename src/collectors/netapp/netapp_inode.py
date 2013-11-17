@@ -24,6 +24,7 @@ from diamond.metric import Metric
 
 __author__ = 'peter@phyn3t.com'
 
+
 class netapp_inode(diamond.collector.Collector):
     """ Netapp inode diamond collector
     """
@@ -63,7 +64,6 @@ class netapp_inode(diamond.collector.Collector):
             self.push('max_inodes', max_inodes, volume)
             self.push('used_inodes', used_inodes, volume)
 
-
     def push(self, metric_name=None, metric_value=None, volume=None):
         """ Ship it off to graphite broski
         """
@@ -72,10 +72,10 @@ class netapp_inode(diamond.collector.Collector):
         graphite_path += '.' + self.device + '.' + 'volume'
         graphite_path += '.' + volume + '.' + metric_name
 
-        metric = Metric(graphite_path, metric_value, precision=4, host=self.device)
+        metric = Metric(graphite_path, metric_value, precision=4,
+                        host=self.device)
 
         self.publish_metric(metric)
-
 
     def get_netapp_data(self):
         """ Retrieve netapp volume information
@@ -95,7 +95,6 @@ class netapp_inode(diamond.collector.Collector):
 
         return netapp_xml
 
-
     def _netapp_login(self):
         """ Login to our netapp filer
         """
@@ -111,7 +110,6 @@ class netapp_inode(diamond.collector.Collector):
         self.server.set_transport_type('HTTPS')
         self.server.set_style('LOGIN')
         self.server.set_admin_user(self.netapp_user, self.netapp_password)
-
 
     def get_schedule(self):
         """ Override Collector.get_schedule
@@ -148,5 +146,3 @@ class netapp_inode(diamond.collector.Collector):
                 self.log.info("Set up scheduler for %s" % device)
 
         return schedule
-
-

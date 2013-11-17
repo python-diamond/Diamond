@@ -22,8 +22,8 @@ class IPVSCollector(diamond.collector.Collector):
         super(IPVSCollector, self).__init__(config, handlers)
 
         # Verify the --exact flag works
-        self.statcommand = [self.config['bin'], '--list', '--stats', '--numeric',
-                        '--exact']
+        self.statcommand = [self.config['bin'], '--list', '--stats',
+                            '--numeric', '--exact']
         self.concommand = [self.config['bin'], '--list', '--numeric']
 
         if str_to_bool(self.config['use_sudo']):
@@ -39,7 +39,8 @@ class IPVSCollector(diamond.collector.Collector):
         p.wait()
 
         if p.returncode == 255:
-            self.statcommand = filter(lambda a: a != '--exact', self.statcommand)
+            self.statcommand = filter(
+                lambda a: a != '--exact', self.statcommand)
 
     def get_default_config_help(self):
         config_help = super(IPVSCollector, self).get_default_config_help()
@@ -135,7 +136,8 @@ class IPVSCollector(diamond.collector.Collector):
             if row[0] == "TCP" or row[0] == "UDP":
                 if total:
                     for metric, value in total.iteritems():
-                        self.publish(".".join([external, "total", metric]), value)
+                        self.publish(
+                            ".".join([external, "total", metric]), value)
 
                 for k in columns.keys():
                     total[k] = 0.0

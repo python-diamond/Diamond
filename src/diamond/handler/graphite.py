@@ -68,7 +68,7 @@ class GraphiteHandler(Handler):
                 'trimming',
             'trim_backlog_multiplier': 'Trim down how many batches',
             'keepalive': 'Enable keepalives for tcp streams',
-            'keepaliveinterval': 'How frequently to send keepalives' 
+            'keepaliveinterval': 'How frequently to send keepalives'
         })
 
         return config
@@ -177,8 +177,10 @@ class GraphiteHandler(Handler):
         if self.proto != 'udp' and self.keepalive:
             self.log.error("GraphiteHandler: Setting socket keepalives...")
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
-            self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, self.keepaliveinterval)
-            self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, self.keepaliveinterval)
+            self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE,
+                                   self.keepaliveinterval)
+            self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL,
+                                   self.keepaliveinterval)
             self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 3)
         # Set socket timeout
         self.socket.settimeout(self.timeout)
