@@ -48,24 +48,6 @@ class Server(object):
         config = configobj.ConfigObj(configfile)
         config['configfile'] = self.config['configfile']
 
-        # Merge in handler config files into the main config
-        if 'handlers_config_path' in config['server']:
-            files = os.listdir(config['server']['handlers_config_path'])
-            for filename in files:
-                configname = os.path.basename(filename)
-                handlername = configname.split('.')[0]
-                if handlername not in self.config['handlers']:
-                    config['handlers'][handlername] = configobj.ConfigObj()
-
-                configfile = os.path.join(
-                    config['server']['handlers_config_path'],
-                    configname)
-                hconfig = configobj.ConfigObj(configfile)
-                if handlername in config['handlers']:
-                    config['handlers'][handlername].merge(hconfig)
-                else:
-                    config['handlers'][handlername] = hconfig
-
         self.config = config
 
     def load_handler(self, fqcn):
