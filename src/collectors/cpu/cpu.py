@@ -44,6 +44,7 @@ class CPUCollector(diamond.collector.Collector):
         config_help.update({
             'percore':  'Collect metrics per cpu core or just total',
             'simple':   'only return aggregate CPU% metric',
+            'normalize': 'for cpu totals, divide by the number of CPUs',
         })
         return config_help
 
@@ -58,6 +59,7 @@ class CPUCollector(diamond.collector.Collector):
             'percore':  'True',
             'xenfix':   None,
             'simple':   'False',
+            'normalize': 'False',
         })
         return config
 
@@ -70,6 +72,7 @@ class CPUCollector(diamond.collector.Collector):
             """
             get cpu time list
             """
+
             statFile = open(self.PROC, "r")
             timeList = statFile.readline().split(" ")[2:6]
             for i in range(len(timeList)):
@@ -101,10 +104,12 @@ class CPUCollector(diamond.collector.Collector):
             # Open file
             file = open(self.PROC)
 
+            ncpus = -1 # dont want to cound the 'cpu'(total) cpu.
             for line in file:
                 if not line.startswith('cpu'):
                     continue
 
+                ncpus += 1 
                 elements = line.split()
 
                 cpu = elements[0]
@@ -148,9 +153,16 @@ class CPUCollector(diamond.collector.Collector):
                     # Get Metric Name
                     metric_name = '.'.join([cpu, s])
                     # Get actual data
-                    metrics[metric_name] = self.derivative(metric_name,
+                    if (self.config['normalize'] and cpu == 'total'):
+	                    metrics[metric_name] = self.derivative(metric_name,
+                                                           long(stats[s]),
+                                                           self.MAX_VALUES[s]) / ncpus
+                    else:
+	                    metrics[metric_name] = self.derivative(metric_name,
                                                            long(stats[s]),
                                                            self.MAX_VALUES[s])
+
+      
 
             # Check for a bug in xen where the idle time is doubled for guest
             # See https://bugzilla.redhat.com/show_bug.cgi?id=624756
