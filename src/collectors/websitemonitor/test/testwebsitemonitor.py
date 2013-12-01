@@ -54,12 +54,10 @@ class TestWebsiteCollector(CollectorTestCase):
 
         self.urlopen_mock.return_value = MockResponse(200)
 
-        metrics = {
-            'resp.code': 200,
-        }
+        metrics = {}
 
         self.setDocExample(collector=self.collector.__class__.__name__,
-                       metrics=metrics,
+                           metrics=metrics,
                        defaultpath=self.collector.config['path'])
 
         self.assertPublishedMany([publish_mock], metrics)
