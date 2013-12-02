@@ -47,7 +47,8 @@ class DiskUsageCollector(diamond.collector.Collector):
         config_help.update({
             'devices': "A regex of which devices to gather metrics for."
                        + " Defaults to md, sd, xvd, disk, and dm devices",
-            'sector_size': 'The size to use to calculate sector usage'
+            'sector_size': 'The size to use to calculate sector usage',
+            'send_zero': 'Send io data even when there is no io',
         })
         return config_help
 
@@ -65,7 +66,8 @@ class DiskUsageCollector(diamond.collector.Collector):
                          + '|x?vd[a-z]+[0-9]*$'
                          + '|disk[0-9]+$'
                          + '|dm\-[0-9]+$'),
-            'sector_size': 512
+            'sector_size': 512,
+            'send_zero': 'False',
         })
         return config
 
@@ -167,7 +169,6 @@ class DiskUsageCollector(diamond.collector.Collector):
 
         for key, info in results.iteritems():
             metrics = {}
-
             name = info['device']
             if not reg.match(name):
                 continue
@@ -235,47 +236,49 @@ class DiskUsageCollector(diamond.collector.Collector):
             metrics['util_percentage'] = (metrics['io_milliseconds']
                                           / time_delta
                                           / 10.0)
-
             metrics['iops'] = 0
             metrics['service_time'] = 0
             metrics['await'] = 0
-            metrics['read_await'] = 0
-            metrics['write_await'] = 0
             metrics['concurrent_io'] = 0
 
             if metrics['reads'] > 0:
-                metrics['read_await'] = (metrics['reads_milliseconds']
-                                         / metrics['reads'])
+                metrics['read_await'] = (metrics['reads_milliseconds']/ metrics['reads'])
+            else:
+                metrics['read_await'] = 0
+    
             if metrics['writes'] > 0:
-                metrics['write_await'] = (metrics['writes_milliseconds']
-                                          / metrics['writes'])
+                metrics['write_await'] = (metrics['writes_milliseconds'] / metrics['writes'])
+            else:
+                metrics['write_await'] = 0
 
-            if metrics['io'] > 0:
-                for unit in self.config['byte_unit']:
-                    rkey = 'reads_%s' % unit
-                    wkey = 'writes_%s' % unit
-                    metric_name = 'average_request_size_%s' % unit
-                    metrics[metric_name] = (metrics[rkey]
-                                            + metrics[wkey]) / metrics['io']
+            for unit in self.config['byte_unit']:
+                rkey = 'reads_%s' % unit
+                wkey = 'writes_%s' % unit
+                metric_name = 'average_request_size_%s' % unit
+                if (metrics['io'] > 0):
+                    metrics[metric_name] = (metrics[rkey] + metrics[wkey]) / metrics['io']
+                else:
+                    metrics[metric_name] = 0;
 
-                metrics['iops'] = metrics['io'] / time_delta
+            metrics['iops'] = metrics['io'] / time_delta
 
-                metrics['service_time'] = (metrics['io_milliseconds']
-                                           / metrics['io'])
+            if (metrics['io'] > 0):
+                metrics['service_time'] = (metrics['io_milliseconds'] / metrics['io'])
+                metrics['await'] = (metrics['reads_milliseconds'] + metrics['writes_milliseconds']) / metrics['io']
+            else:
+                metrics['service_time'] = 0
+                metrics['await'] = 0
+                
 
-                metrics['await'] = ((metrics['reads_milliseconds']
-                                     + metrics['writes_milliseconds'])
-                                    / metrics['io'])
+            # http://www.scribd.com/doc/15013525
+            # Page 28
+            metrics['concurrent_io'] = (metrics['reads_per_second']
+                                        + metrics['writes_per_second']
+                                        ) * (metrics['service_time']
+                                             / 1000.0)
 
-                # http://www.scribd.com/doc/15013525
-                # Page 28
-                metrics['concurrent_io'] = (metrics['reads_per_second']
-                                            + metrics['writes_per_second']
-                                            ) * (metrics['service_time']
-                                                 / 1000.0)
-
-                # Only publish when we have io figures
+            # Only publish when we have io figures
+            if (metrics['io'] > 0 or self.config['send_zero']):
                 for key in metrics:
-                    metric_name = '.'.join([info['device'],
-                                            key]).replace('/', '_')
+                    metric_name = '.'.join([info['device'],key]).replace('/', '_')
                     self.publish(metric_name, metrics[key])
