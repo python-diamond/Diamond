@@ -352,8 +352,15 @@ class Server(object):
         self.load_config()
 
         # Load collectors
-        self.load_include_path(os.path.dirname(file))
-        collectors = self.load_collectors(os.path.dirname(file), file)
+        if os.path.dirname(file) == '':
+            tmp_path = self.config['server']['collectors_path']
+        else:
+            tmp_path = os.path.dirname(file)
+        self.load_include_path(tmp_path)
+        collectors = self.load_collectors(tmp_path, file)
+        for item in collectors.keys():
+            if not item.lower() in file.lower():
+                del collectors[item]
 
         # Setup Collectors
         for cls in collectors.values():
