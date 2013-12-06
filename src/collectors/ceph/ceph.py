@@ -128,7 +128,7 @@ class CephCollector(diamond.collector.Collector):
         return re.match("^(.*)-(.*)\.(.*).{0}$".format(self.config['socket_ext']),
                         os.path.basename(path)).groups()
 
-    def _publish_stats(self, counter_prefix, stats, global_name=False):
+    def _publish_stats(self, counter_prefix, stats, global_name=False, counter=False):
         """Given a stats dictionary from _get_stats_from_socket,
         publish the individual values.
         """
@@ -136,9 +136,13 @@ class CephCollector(diamond.collector.Collector):
             stats,
             prefix=counter_prefix,
         ):
-            self.publish_gauge(GlobalName(stat_name) if global_name else stat_name, stat_value)
+            name = GlobalName(stat_name) if global_name else stat_name
+            if counter:
+                self.publish_counter(name, stat_value)
+            else:
+                self.publish_gauge(name, stat_value)
 
-    def _publish_cluster_stats(self, cluster_name, fsid, prefix, stats):
+    def _publish_cluster_stats(self, cluster_name, fsid, prefix, stats, counter=False):
         """
         Given a stats dictionary, publish under the cluster path (respecting
         short_names and cluster_prefix
@@ -150,7 +154,7 @@ class CephCollector(diamond.collector.Collector):
         else:
             cluster_id_prefix = fsid
 
-        self._publish_stats("{0}.{1}".format(cluster_id_prefix, prefix), stats, global_name=True)
+        self._publish_stats("{0}.{1}".format(cluster_id_prefix, prefix), stats, global_name=True, counter=counter)
 
     def _admin_command(self, socket_path, command):
         try:
@@ -188,14 +192,6 @@ class CephCollector(diamond.collector.Collector):
         if service_type != 'mon':
             return
 
-        # Check if we are a high enough version to have pool throughput statistics
-        version_str = self._admin_command(path, ['version'])['version']
-        try:
-            version = StrictVersion(version_str)
-        except ValueError:
-            # In case it's a git hash or something like that
-            version = None
-
         # We have a mon, see if it is the leader
         mon_status = self._admin_command(path, ['mon_status'])
         if mon_status['state'] != 'leader':
@@ -205,57 +201,20 @@ class CephCollector(diamond.collector.Collector):
         # We are the leader, gather cluster-wide statistics
         self.log.debug("mon leader found, gathering cluster stats for cluster '%s'" % cluster_name)
 
-        # Recent Ceph versions have some per-pool statistics for us
-        if version is None or version >= StrictVersion("0.67.5"):
-            # Not everything in the pool stats makes sense to sum (e.g. ratios), so
-            # we have an explicit list of which items to put into the 'all' pool.
-            aggregates = {
-                'client_io_rate': {
-                    'op_per_sec': 0,
-                    'write_bytes_sec': 0,
-                    'read_bytes_sec': 0
-                },
-                'recovery': {
-                    'degraded_objects': 0,
-                    'degraded_total': 0,
-                },
-                'recovery_rate': {
-                    'recovering_objects_per_sec': 0,
-                    'recovering_keys_per_sec': 0,
-                    'recovering_bytes_per_sec': 0,
-                }
-            }
-            for pool_data in self._mon_command(cluster_name, ['osd', 'pool', 'stats']):
-                pool_id = pool_data['pool_id']
-                del pool_data['pool_name']
-                del pool_data['pool_id']
+        def publish_pool_stats(pool_id, stats):
+            # Some of these guys we treat as counters, some as gauges
+            delta_fields = ['num_read', 'num_read_kb', 'num_write', 'num_write_kb', 'num_objects_recovered',
+                            'num_bytes_recovered', 'num_keys_recovered']
+            for k, v in stats.items():
+                self._publish_cluster_stats(cluster_name, fsid, "pool.{0}".format(pool_id), {k: v},
+                                            counter=k in delta_fields)
 
-                for k, v in aggregates.items():
-                    if k in pool_data:
-                        pool_data_k = pool_data[k]
-                        for k2, v2 in v.items():
-                            if k2 in pool_data_k:
-                                v[k2] += pool_data_k[k2]
+        # Gather "ceph pg dump pools" and file the stats by pool
+        for pool in self._mon_command(cluster_name, ['pg', 'dump', 'pools']):
+            publish_pool_stats(pool['poolid'], pool['stat_sum'])
 
-                self._publish_cluster_stats(cluster_name, fsid,
-                                            "pool.{0}".format(pool_id),
-                                            pool_data)
-            self._publish_cluster_stats(cluster_name, fsid,
-                                        "pool.all",
-                                        aggregates)
-
-        # Older Ceph versions only give us some global throughput stats
-        if version <= StrictVersion("0.67.4"):
-            summary = self._mon_command(cluster_name, ['pg', 'dump', 'summary'])
-            pg_stats_delta = summary['pg_stats_delta']['stat_sum']
-
-            # We will synthesize the 'client_io_rate.op_per_sec' statistic that
-            # would otherwise come from 'osd pool stats'
-            tick_period = 5.0  # We assume this has been left as the default
-            op_per_sec = (pg_stats_delta['num_write'] + pg_stats_delta['num_read']) / tick_period
-            self._publish_cluster_stats(cluster_name, fsid,
-                                        "pool.all",
-                                        {'client_io_rate': {"op_per_sec": op_per_sec}})
+        all_pools_stats = self._mon_command(cluster_name, ['pg', 'dump', 'summary'])['pg_stats_sum']['stat_sum']
+        publish_pool_stats('all', all_pools_stats)
 
         # Gather "ceph df" and file the stats by pool
         df = self._mon_command(cluster_name, ['df'])
@@ -268,6 +227,7 @@ class CephCollector(diamond.collector.Collector):
 
             for k, v in pool_data['stats'].items():
                 all_pools_df[k] += v
+
         self._publish_cluster_stats(cluster_name, fsid,
                                     "pool.all",
                                     all_pools_df)
