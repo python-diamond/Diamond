@@ -222,6 +222,9 @@ class Collector(object):
             # Default Poll Interval (seconds)
             'interval': 300,
 
+            # Default Event TTL (interval multiplier)
+            'ttl_multiplier': 2,
+
             # Default collector threading model
             'method': 'Sequential',
 
@@ -324,10 +327,13 @@ class Collector(object):
         # Get metric Path
         path = self.get_metric_path(name, instance=instance)
 
+        # Get metric TTL
+        ttl = float(self.config['interval']) * float(self.config['ttl_multiplier'])
+
         # Create Metric
         metric = Metric(path, value, raw_value=raw_value, timestamp=None,
                         precision=precision, host=self.get_hostname(),
-                        metric_type=metric_type)
+                        metric_type=metric_type, ttl=ttl)
 
         # Publish Metric
         self.publish_metric(metric)
