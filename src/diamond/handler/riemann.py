@@ -103,6 +103,7 @@ class RiemannHandler(Handler):
             'service': path,
             'time': metric.timestamp,
             'metric': float(metric.value),
+            'ttl': metric.ttl,
         }
 
     def _close(self):
