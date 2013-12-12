@@ -20,6 +20,7 @@ import re
 from collections import defaultdict
 from distutils.version import StrictVersion
 import diamond.collector
+from diamond.collector import str_to_bool
 
 
 def flatten_dictionary(input_dict, sep='.', prefix=None):
@@ -67,6 +68,11 @@ class GlobalName(str):
 
 
 class CephCollector(diamond.collector.Collector):
+    def __init__(self, config, handlers):
+        super(CephCollector, self).__init__(config, handlers)
+        self.config['short_names'] = str_to_bool(self.config['short_names'])
+        self.config['service_stats_global'] = str_to_bool(self.config['service_stats_global'])
+
     def get_default_config_help(self):
         config_help = super(CephCollector, self).get_default_config_help()
         config_help.update({
@@ -242,7 +248,7 @@ class CephCollector(diamond.collector.Collector):
             self._publish_cluster_stats(cluster_name, fsid, counter_prefix, stats)
         else:
             # The prefix is <cluster name>.<service type>.<service id>
-            counter_prefix = "{0}.{1}.{2}".format(*self._parse_socket_name(path))
+            counter_prefix = "{0}.{1}.{2}".format(cluster_name, service_type, service_id)
             self._publish_stats(counter_prefix, stats)
 
     def collect(self):
