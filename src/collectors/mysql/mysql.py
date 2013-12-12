@@ -320,7 +320,7 @@ class MySQLCollector(diamond.collector.Collector):
             except:
                 pass
 
-        if self.config['master'] == 'True':
+        if self.config['master'].lower() == 'true':
             metrics['master'] = {}
             try:
                 rows = self.get_db_master_status()
@@ -336,7 +336,7 @@ class MySQLCollector(diamond.collector.Collector):
                 self.log.error('MySQLCollector: Couldnt get master status')
                 pass
 
-        if self.config['slave'] == 'True':
+        if self.config['slave'].lower() == 'true':
             metrics['slave'] = {}
             try:
                 rows = self.get_db_slave_status()
@@ -352,7 +352,7 @@ class MySQLCollector(diamond.collector.Collector):
                 self.log.error('MySQLCollector: Couldnt get slave status')
                 pass
 
-        if self.config['innodb'] == 'True':
+        if self.config['innodb'].lower() == 'true':
             metrics['innodb'] = {}
             innodb_status_timer = time.time()
             try:
