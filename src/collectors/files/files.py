@@ -8,8 +8,6 @@ This class collects data from plain text files
 """
 
 import diamond.collector
-import subprocess
-from diamond.collector import str_to_bool
 import os
 import re
 

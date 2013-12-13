@@ -1,11 +1,10 @@
 #!/usr/bin/python
 # coding=utf-8
 ########################################################################
-import httplib
 
 from test import CollectorTestCase
 from test import get_collector_config
-from mock import Mock, patch
+from mock import patch
 
 from diamond.collector import Collector
 
