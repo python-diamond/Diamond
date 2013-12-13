@@ -53,7 +53,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             self.config['host'], int(self.config['port']), path)
         try:
             response = urllib2.urlopen(url)
-        except urllib2.HTTPError, err:
+        except urllib2.URLError, err:
             self.log.error("%s: %s", url, err)
             return False
 
