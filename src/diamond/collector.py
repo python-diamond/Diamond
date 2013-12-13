@@ -328,7 +328,8 @@ class Collector(object):
         path = self.get_metric_path(name, instance=instance)
 
         # Get metric TTL
-        ttl = float(self.config['interval']) * float(self.config['ttl_multiplier'])
+        ttl = float(self.config['interval']) * float(
+            self.config['ttl_multiplier'])
 
         # Create Metric
         metric = Metric(path, value, raw_value=raw_value, timestamp=None,

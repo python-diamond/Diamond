@@ -86,8 +86,9 @@ class Server(object):
                     handler_config.merge(self.config['handlers'][cls.__name__])
 
                 # Check for config file in config directory
-                configfile = os.path.join(self.config['server']['handlers_config_path'],
-                                          cls.__name__) + '.conf'
+                configfile = os.path.join(
+                    self.config['server']['handlers_config_path'],
+                    cls.__name__) + '.conf'
                 if os.path.exists(configfile):
                     # Merge Collector config file
                     handler_config.merge(configobj.ConfigObj(configfile))

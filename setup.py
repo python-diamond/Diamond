@@ -75,6 +75,7 @@ else:
         else:
             install_requires = ['ConfigObj', 'psutil', ]
 
+
 def get_version():
     """
         Read the version.txt file to get the new version string

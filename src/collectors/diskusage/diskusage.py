@@ -242,12 +242,14 @@ class DiskUsageCollector(diamond.collector.Collector):
             metrics['concurrent_io'] = 0
 
             if metrics['reads'] > 0:
-                metrics['read_await'] = (metrics['reads_milliseconds']/ metrics['reads'])
+                metrics['read_await'] = (
+                    metrics['reads_milliseconds'] / metrics['reads'])
             else:
                 metrics['read_await'] = 0
-    
+
             if metrics['writes'] > 0:
-                metrics['write_await'] = (metrics['writes_milliseconds'] / metrics['writes'])
+                metrics['write_await'] = (
+                    metrics['writes_milliseconds'] / metrics['writes'])
             else:
                 metrics['write_await'] = 0
 
@@ -256,19 +258,22 @@ class DiskUsageCollector(diamond.collector.Collector):
                 wkey = 'writes_%s' % unit
                 metric_name = 'average_request_size_%s' % unit
                 if (metrics['io'] > 0):
-                    metrics[metric_name] = (metrics[rkey] + metrics[wkey]) / metrics['io']
+                    metrics[metric_name] = (
+                        metrics[rkey] + metrics[wkey]) / metrics['io']
                 else:
-                    metrics[metric_name] = 0;
+                    metrics[metric_name] = 0
 
             metrics['iops'] = metrics['io'] / time_delta
 
             if (metrics['io'] > 0):
-                metrics['service_time'] = (metrics['io_milliseconds'] / metrics['io'])
-                metrics['await'] = (metrics['reads_milliseconds'] + metrics['writes_milliseconds']) / metrics['io']
+                metrics['service_time'] = (
+                    metrics['io_milliseconds'] / metrics['io'])
+                metrics['await'] = (
+                    metrics['reads_milliseconds']
+                    + metrics['writes_milliseconds']) / metrics['io']
             else:
                 metrics['service_time'] = 0
                 metrics['await'] = 0
-                
 
             # http://www.scribd.com/doc/15013525
             # Page 28
@@ -280,5 +285,6 @@ class DiskUsageCollector(diamond.collector.Collector):
             # Only publish when we have io figures
             if (metrics['io'] > 0 or self.config['send_zero']):
                 for key in metrics:
-                    metric_name = '.'.join([info['device'],key]).replace('/', '_')
+                    metric_name = '.'.join([info['device'], key]).replace(
+                        '/', '_')
                     self.publish(metric_name, metrics[key])

@@ -104,12 +104,12 @@ class CPUCollector(diamond.collector.Collector):
             # Open file
             file = open(self.PROC)
 
-            ncpus = -1 # dont want to cound the 'cpu'(total) cpu.
+            ncpus = -1  # dont want to cound the 'cpu'(total) cpu.
             for line in file:
                 if not line.startswith('cpu'):
                     continue
 
-                ncpus += 1 
+                ncpus += 1
                 elements = line.split()
 
                 cpu = elements[0]
@@ -154,15 +154,15 @@ class CPUCollector(diamond.collector.Collector):
                     metric_name = '.'.join([cpu, s])
                     # Get actual data
                     if (self.config['normalize'] and cpu == 'total'):
-	                    metrics[metric_name] = self.derivative(metric_name,
-                                                           long(stats[s]),
-                                                           self.MAX_VALUES[s]) / ncpus
+                        metrics[metric_name] = self.derivative(
+                            metric_name,
+                            long(stats[s]),
+                            self.MAX_VALUES[s]) / ncpus
                     else:
-	                    metrics[metric_name] = self.derivative(metric_name,
-                                                           long(stats[s]),
-                                                           self.MAX_VALUES[s])
-
-      
+                        metrics[metric_name] = self.derivative(
+                            metric_name,
+                            long(stats[s]),
+                            self.MAX_VALUES[s])
 
             # Check for a bug in xen where the idle time is doubled for guest
             # See https://bugzilla.redhat.com/show_bug.cgi?id=624756

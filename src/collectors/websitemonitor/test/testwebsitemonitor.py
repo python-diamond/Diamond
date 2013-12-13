@@ -41,14 +41,11 @@ class TestWebsiteCollector(CollectorTestCase):
         self.patcher = patch('urllib2.urlopen')
         self.urlopen_mock = self.patcher.start()
 
-
     def test_import(self):
         self.assertTrue(WebsiteMonitorCollector)
 
-
     @patch.object(Collector, 'publish')
     def test_websitemonitorcollector_with_data(self, publish_mock):
-
 
         self.collector.collect()
 
@@ -65,7 +62,6 @@ class TestWebsiteCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_websitemonitorcollector(self, publish_mock):
         self.setUp()
-
 
         self.collector.collect()
 
