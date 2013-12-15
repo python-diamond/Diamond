@@ -104,7 +104,7 @@ class CPUCollector(diamond.collector.Collector):
             # Open file
             file = open(self.PROC)
 
-            ncpus = -1  # dont want to cound the 'cpu'(total) cpu.
+            ncpus = -1  # dont want to count the 'cpu'(total) cpu.
             for line in file:
                 if not line.startswith('cpu'):
                     continue
