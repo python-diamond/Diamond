@@ -222,21 +222,9 @@ class CephCollector(diamond.collector.Collector):
         all_pools_stats = self._mon_command(cluster_name, ['pg', 'dump', 'summary'])['pg_stats_sum']['stat_sum']
         publish_pool_stats('all', all_pools_stats)
 
-        # Gather "ceph df" and file the stats by pool
+        # Gather "ceph df"
         df = self._mon_command(cluster_name, ['df'])
         self._publish_cluster_stats(cluster_name, fsid, "df", df['stats'])
-        all_pools_df = defaultdict(int)
-        for pool_data in df['pools']:
-            self._publish_cluster_stats(cluster_name, fsid,
-                                        "pool.{0}".format(pool_data['id']),
-                                        pool_data['stats'])
-
-            for k, v in pool_data['stats'].items():
-                all_pools_df[k] += v
-
-        self._publish_cluster_stats(cluster_name, fsid,
-                                    "pool.all",
-                                    all_pools_df)
 
     def _collect_service_stats(self, path):
         cluster_name, service_type, service_id = self._parse_socket_name(path)
