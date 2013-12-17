@@ -1,7 +1,27 @@
 # coding=utf-8
 
 """
-Amazon SQS collector.
+The SQS collector collects metrics for one or more Amazon AWS SQS queues
+
+#### Configuration
+
+Below is an example configuration for the SQSCollector.
+You can specify an arbitrary amount of regions
+
+```
+    enabled = True
+    interval = 60
+
+    [regions]
+    [[region-code]]
+    access_key_id = '...'
+    secret_access_key = '''
+    queues = queue_name[,queue_name2[,..]]
+
+```
+
+Note: If you modify the SQSCollector configuration, you will need to
+restart diamond.
 
 #### Dependencies
 
@@ -19,17 +39,6 @@ except ImportError:
 
 class SqsCollector(diamond.collector.Collector):
 
-    def get_default_config_help(self):
-        config_help = super(SqsCollector,
-                            self).get_default_config_help()
-        config_help.update({
-            'aws_access_key_id': 'AWS access key id',
-            'aws_secret_access_key': 'AWS secret access key',
-            'aws_region': 'AWS region',
-            'sqs_queue': 'SQS queue name'
-        })
-        return config_help
-
     def get_default_config(self):
         """
         Returns the default collector settings
@@ -41,14 +50,6 @@ class SqsCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        if not sqs:
-            self.log.error("boto module not found!")
-            return
-        conn = sqs.connect_to_region(
-            self.config['aws_region'],
-            aws_access_key_id=self.config['aws_access_key_id'],
-            aws_secret_access_key=self.config['aws_secret_access_key'])
-        queue = conn.get_queue(self.config['sqs_queue'])
         attribs = ['ApproximateNumberOfMessages',
                    'ApproximateNumberOfMessagesNotVisible',
                    'ApproximateNumberOfMessagesDelayed',
@@ -59,10 +60,25 @@ class SqsCollector(diamond.collector.Collector):
                    'MessageRetentionPeriod',
                    'ReceiveMessageWaitTimeSeconds',
                    'VisibilityTimeout']
+        if not sqs:
+            self.log.error("boto module not found!")
+            return
+        for (region, region_cfg) in self.config['regions'].items():
+            assert 'access_key_id' in region_cfg
+            assert 'secret_access_key' in region_cfg
+            assert 'queues' in region_cfg
+            queues = region_cfg['queues'].split(',')
+            for queue_name in queues:
+                conn = sqs.connect_to_region(
+                    region,
+                    aws_access_key_id=region_cfg['access_key_id'],
+                    aws_secret_access_key=region_cfg['secret_access_key'],
+                )
+                queue = conn.get_queue(queue_name)
 
-        for attrib in attribs:
-            d = queue.get_attributes(attrib)
-            self.publish('%s.%s.%s' % (self.config['aws_region'],
-                                       self.config['sqs_queue'],
-                                       attrib),
-                         d[attrib])
+                for attrib in attribs:
+                    d = queue.get_attributes(attrib)
+                    self.publish(
+                        '%s.%s.%s' % (region, queue_name, attrib),
+                        d[attrib]
+                    )
