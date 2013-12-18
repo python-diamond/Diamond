@@ -60,8 +60,8 @@ class TSDBHandler(Handler):
         self.host = self.config['host']
         self.port = int(self.config['port'])
         self.timeout = int(self.config['timeout'])
-        self.metric_format  = str(self.config['format'])
-        self.tags    = str(self.config['tags'])
+        self.metric_format = str(self.config['format'])
+        self.tags = str(self.config['tags'])
 
         # Connect
         self._connect()
@@ -92,7 +92,8 @@ class TSDBHandler(Handler):
             'host': '',
             'port': 1234,
             'timeout': 5,
-            'format': '{Collector}.{Metric} {timestamp} {value} hostname={host} {tags}',
+            'format': '{Collector}.{Metric} {timestamp} {value} hostname={host}'
+                      '{tags}',
             'tags': '',
         })
 
@@ -110,16 +111,16 @@ class TSDBHandler(Handler):
         """
 
         metric_str = self.metric_format.format(
-                Collector = metric.getCollectorPath(), 
-                Path      = metric.path,
-                Metric    = metric.getMetricPath(),
-                host      = metric.host,
-                timestamp = metric.timestamp,
-                value     = metric.value,
-                tags      = self.tags
+                Collector=metric.getCollectorPath(),
+                Path=metric.path,
+                Metric=metric.getMetricPath(),
+                host=metric.host,
+                timestamp=metric.timestamp,
+                value=metric.value,
+                tags=self.tags
         )
         # Just send the data as a string
-        self._send("put " + str(metric_str) + "\n" )
+        self._send("put " + str(metric_str) + "\n")
 
     def _send(self, data):
         """
