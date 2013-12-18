@@ -23,7 +23,8 @@ from cpu import CPUCollector
 class TestCPUCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('CPUCollector', {
-            'interval': 10
+            'interval': 10,
+            'normalize': False
         })
 
         self.collector = CPUCollector(config, None)

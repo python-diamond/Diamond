@@ -153,7 +153,8 @@ class CPUCollector(diamond.collector.Collector):
                     # Get Metric Name
                     metric_name = '.'.join([cpu, s])
                     # Get actual data
-                    if (self.config['normalize'] and cpu == 'total'):
+                    if (self.config['normalize']
+                        and cpu == 'total' and ncpus > 0):
                         metrics[metric_name] = self.derivative(
                             metric_name,
                             long(stats[s]),
