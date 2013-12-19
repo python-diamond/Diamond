@@ -103,9 +103,9 @@ def stringToType(key, val):
             config_file[key] = val
     elif isinstance(obj.config[key], bool):
         if isinstance(val, basestring):
-            if val.lower() == 'false':
+            if val.lower() == 'false' or val.lower() == 'f' or val.lower() == 'n' or val.lower() == 'no':
                 config_file[key] = False
-            elif val.lower() == 'true':
+            elif val.lower() == 'true' or val.lower() == 't' or val.lower() = 'y' or val.lower() == 'yes':
                 config_file[key] = True
             else:
                 raise NotImplementedError("Unknown type!")
@@ -122,9 +122,9 @@ def stringToType(key, val):
 
 def boolCheck(val):
     if isinstance(val, basestring):
-        if val.lower() == 'false':
+        if val.lower() == 'false' or val.lower() == 'f' or val.lower() == 'n' or val.lower() == 'no':
             return False
-        elif val.lower() == 'true':
+        elif val.lower() == 'true' or val.lower() == 't' or val.lower() = 'y' or val.lower() == 'yes':
             return True
         else:
             raise NotImplementedError("Unknown type!")
