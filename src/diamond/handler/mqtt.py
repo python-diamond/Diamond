@@ -63,7 +63,6 @@ __author__ = 'Jan-Piet Mens'
 __email__ = 'jpmens@gmail.com'
 
 from Handler import Handler
-import mosquitto
 from diamond.collector import get_hostname
 import os
 HAVE_SSL = True
@@ -72,6 +71,11 @@ try:
 except ImportError:
     HAVE_SSL = False
 
+try:
+    import mosquitto
+    mosquitto  # Pyflakes
+except ImportError:
+    mosquitto = None
 
 class MQTTHandler(Handler):
     """
@@ -104,6 +108,10 @@ class MQTTHandler(Handler):
                 self.timestamp = 0
         except:
             self.timestamp = 1
+            
+        if not mosquitto:
+            self.log.error('mosquitto import failed. Handler disabled')
+            return
 
         # Initialize
         self.mqttc = mosquitto.Mosquitto(self.client_id, clean_session=True)
@@ -170,6 +178,9 @@ class MQTTHandler(Handler):
         Process a metric by converting metric name to MQTT topic name;
         the payload is metric and timestamp.
         """
+        
+        if not mosquitto:
+            return
 
         line = str(metric)
         topic, value, timestamp = line.split()

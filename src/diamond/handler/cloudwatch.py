@@ -45,9 +45,7 @@ try:
     import boto.ec2.cloudwatch
     import boto.utils
 except ImportError:
-    err = "CloudWatch: Boto is not installed, please install boto."
-    self.log.info(err)
-    raise Exception(err)
+    boto = None
 
 
 class cloudwatchHandler (Handler):
@@ -63,6 +61,11 @@ class cloudwatchHandler (Handler):
 
         # Initialize Handler
         Handler.__init__(self, config)
+        
+        if not boto:
+            self.log.info(
+                "CloudWatch: Boto is not installed, please install boto.")
+            return
 
         # Initialize Data
         self.connection = None
@@ -155,6 +158,8 @@ class cloudwatchHandler (Handler):
         """
           Process a metric and send it to CloudWatch
         """
+        if not boto:
+            return
 
         collector = str(metric.getCollectorPath())
         metricname = str(metric.getMetricPath())

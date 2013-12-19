@@ -5,8 +5,12 @@ Output the collected values to RabitMQ pub/sub channel
 """
 
 from Handler import Handler
-import pika
 
+try:
+    import pika
+    pika  # Pyflakes
+except ImportError:
+    pika = None
 
 class rmqHandler (Handler):
     """
@@ -29,6 +33,10 @@ class rmqHandler (Handler):
         # Initialize Options
         self.server = self.config['server']
         self.rmq_exchange = self.config['rmq_exchange']
+        
+        if not pika:
+            self.log.error('pika import failed. Handler disabled')
+            return
 
         # Create rabbitMQ pub socket and bind
         try:
@@ -85,6 +93,8 @@ class rmqHandler (Handler):
           Process a metric and send it to zmq pub socket
         """
         # Send the data as ......
+        if not pika:
+            return
 
         try:
             self.channel.basic_publish(exchange=self.rmq_exchange,

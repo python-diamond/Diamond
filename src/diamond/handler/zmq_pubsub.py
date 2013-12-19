@@ -6,7 +6,11 @@ Output the collected values to a Zer0MQ pub/sub channel
 
 from Handler import Handler
 
-import zmq
+try:
+    import zmq
+    zmq  # Pyflakes
+except ImportError:
+    zmq = None
 
 
 class zmqHandler (Handler):
@@ -23,6 +27,9 @@ class zmqHandler (Handler):
 
         # Initialize Handler
         Handler.__init__(self, config)
+        
+        if not zmq:
+            self.log.error('zmq import failed. Handler disabled')
 
         # Initialize Data
         self.context = None
@@ -63,6 +70,8 @@ class zmqHandler (Handler):
         """
            Create PUB socket and bind
         """
+        if not zmq:
+            return
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PUB)
         self.socket.bind("tcp://*:%i" % self.port)
@@ -77,6 +86,7 @@ class zmqHandler (Handler):
         """
           Process a metric and send it to zmq pub socket
         """
-
+        if not zmq:
+            return
         # Send the data as ......
         self.socket.send("%s" % str(metric))

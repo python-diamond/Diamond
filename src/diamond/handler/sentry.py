@@ -34,11 +34,15 @@ __email__ = 'bruno.clermont@gmail.com'
 import logging
 import re
 
-import raven.handlers.logging
 from Handler import Handler
 from diamond.collector import get_hostname
 from configobj import Section
 
+
+try:
+    import raven.handlers.logging
+except ImportError:
+    raven = None
 
 class InvalidRule(ValueError):
     """
@@ -62,6 +66,10 @@ class BaseResult(object):
         """
         self.value = value
         self.threshold = threshold
+        
+        if not raven:
+            self.log.error('raven.handlers.logging import failed. '
+                           'Handler disabled')
 
     @property
     def verbose_message(self):
@@ -227,6 +235,8 @@ class SentryHandler(Handler):
         @type config: configobj.ConfigObj
         """
         Handler.__init__(self, config)
+        if not raven:
+            return
         # init sentry/raven
         self.sentry_log_handler = raven.handlers.logging.SentryHandler(
             self.config['dsn'])

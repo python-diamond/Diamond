@@ -40,7 +40,7 @@ try:
     import statsd
     statsd  # Pyflakes
 except ImportError:
-    pass
+    statsd = None
 
 
 class StatsdHandler(Handler):
@@ -52,6 +52,10 @@ class StatsdHandler(Handler):
         # Initialize Handler
         Handler.__init__(self, config)
         logging.debug("Initialized statsd handler.")
+        
+        if not statsd:
+            self.log.error('statsd import failed. Handler disabled')
+        
         # Initialize Options
         self.host = self.config['host']
         self.port = int(self.config['port'])
@@ -104,6 +108,8 @@ class StatsdHandler(Handler):
         """
         Send data to statsd. Fire and forget.  Cross fingers and it'll arrive.
         """
+        if not statsd:
+            return
         for metric in self.metrics:
 
             # Split the path into a prefix and a name
@@ -133,6 +139,8 @@ class StatsdHandler(Handler):
         """
         Connect to the statsd server
         """
+        if not statsd:
+            return
         # Create socket
         self.connection = statsd.Connection(
             host=self.host,
