@@ -20,10 +20,14 @@
 
 import diamond.collector
 import time
-from netappsdk.NaServer import *
-from netappsdk.NaElement import *
 import xml.etree.ElementTree as ET
 from diamond.metric import Metric
+
+try:
+    from netappsdk.NaServer import *
+    from netappsdk.NaElement import *
+except ImportError:
+    netappsdk = None
 
 __author__ = 'peter@phyn3t.com'
 
@@ -299,6 +303,11 @@ class netappDisk(diamond.collector.Collector):
     def collect(self, device, ip, user, password):
         """ Collectors our metrics for our netapp filer --START HERE--
         """
+        
+        if netappsdk is None:
+            self.log.error(
+                'Failed to import netappsdk.NaServer or netappsdk.NaElement')
+            return;
 
         if device in self.running:
             return
