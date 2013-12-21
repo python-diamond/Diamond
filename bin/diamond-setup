@@ -23,6 +23,7 @@ for path in [
         break
 
 from diamond.collector import Collector
+from diamond.collector import str_to_bool
 
 
 def getIncludePaths(path):
@@ -103,12 +104,7 @@ def stringToType(key, val):
             config_file[key] = val
     elif isinstance(obj.config[key], bool):
         if isinstance(val, basestring):
-            if val.lower() == 'false' or val.lower() == 'f' or val.lower() == 'n' or val.lower() == 'no':
-                config_file[key] = False
-            elif val.lower() == 'true' or val.lower() == 't' or val.lower() = 'y' or val.lower() == 'yes':
-                config_file[key] = True
-            else:
-                raise NotImplementedError("Unknown type!")
+            config_file[key] = str_to_bool(val)
         else:
             config_file[key] = bool(val)
     elif isinstance(obj.config[key], int):
@@ -122,12 +118,7 @@ def stringToType(key, val):
 
 def boolCheck(val):
     if isinstance(val, basestring):
-        if val.lower() == 'false' or val.lower() == 'f' or val.lower() == 'n' or val.lower() == 'no':
-            return False
-        elif val.lower() == 'true' or val.lower() == 't' or val.lower() = 'y' or val.lower() == 'yes':
-            return True
-        else:
-            raise NotImplementedError("Unknown type!")
+        return str_to_bool(val)
     elif isinstance(val, bool):
         return val
     else:
