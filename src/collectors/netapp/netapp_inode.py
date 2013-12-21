@@ -24,7 +24,7 @@ try:
     from netappsdk.NaElement import *
 except ImportError:
     netappsdk = None
-    
+
 
 __author__ = 'peter@phyn3t.com'
 
@@ -105,7 +105,7 @@ class netapp_inode(diamond.collector.Collector):
         """ Collects metrics for our netapp filer --START HERE--
 
         """
-        
+
         if netappsdk is None:
             self.log.error(
                 'Failed to import netappsdk.NaServer or netappsdk.NaElement')

@@ -303,7 +303,7 @@ class netappDisk(diamond.collector.Collector):
     def collect(self, device, ip, user, password):
         """ Collectors our metrics for our netapp filer --START HERE--
         """
-        
+
         if netappsdk is None:
             self.log.error(
                 'Failed to import netappsdk.NaServer or netappsdk.NaElement')
