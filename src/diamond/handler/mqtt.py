@@ -77,6 +77,7 @@ try:
 except ImportError:
     mosquitto = None
 
+
 class MQTTHandler(Handler):
     """
     """
@@ -108,7 +109,7 @@ class MQTTHandler(Handler):
                 self.timestamp = 0
         except:
             self.timestamp = 1
-            
+
         if not mosquitto:
             self.log.error('mosquitto import failed. Handler disabled')
             return
@@ -178,7 +179,7 @@ class MQTTHandler(Handler):
         Process a metric by converting metric name to MQTT topic name;
         the payload is metric and timestamp.
         """
-        
+
         if not mosquitto:
             return
 

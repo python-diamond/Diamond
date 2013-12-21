@@ -12,6 +12,7 @@ try:
 except ImportError:
     pika = None
 
+
 class rmqHandler (Handler):
     """
       Implements the abstract Handler class
@@ -33,7 +34,7 @@ class rmqHandler (Handler):
         # Initialize Options
         self.server = self.config['server']
         self.rmq_exchange = self.config['rmq_exchange']
-        
+
         if not pika:
             self.log.error('pika import failed. Handler disabled')
             return

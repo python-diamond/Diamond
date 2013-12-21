@@ -27,7 +27,7 @@ class zmqHandler (Handler):
 
         # Initialize Handler
         Handler.__init__(self, config)
-        
+
         if not zmq:
             self.log.error('zmq import failed. Handler disabled')
 

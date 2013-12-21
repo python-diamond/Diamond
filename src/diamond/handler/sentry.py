@@ -38,11 +38,11 @@ from Handler import Handler
 from diamond.collector import get_hostname
 from configobj import Section
 
-
 try:
     import raven.handlers.logging
 except ImportError:
     raven = None
+
 
 class InvalidRule(ValueError):
     """
@@ -66,7 +66,7 @@ class BaseResult(object):
         """
         self.value = value
         self.threshold = threshold
-        
+
         if not raven:
             self.log.error('raven.handlers.logging import failed. '
                            'Handler disabled')

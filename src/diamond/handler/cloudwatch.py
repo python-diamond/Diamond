@@ -61,7 +61,7 @@ class cloudwatchHandler (Handler):
 
         # Initialize Handler
         Handler.__init__(self, config)
-        
+
         if not boto:
             self.log.info(
                 "CloudWatch: Boto is not installed, please install boto.")

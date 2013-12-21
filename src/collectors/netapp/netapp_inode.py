@@ -23,6 +23,7 @@ from netappsdk.NaElement import *
 
 __author__ = 'peter@phyn3t.com'
 
+
 class netapp_inodeCol():
     """ Our netapp_inode Collector
     """
@@ -56,10 +57,10 @@ class netapp_inodeCol():
         graphite_path += '.' + self.device + '.' + 'volume'
         graphite_path += '.' + volume + '.' + metric_name
 
-        metric = Metric(graphite_path, metric_value, precision=4, host=self.device)
+        metric = Metric(graphite_path, metric_value, precision=4,
+                        host=self.device)
 
         self.publish_metric(metric)
-
 
     def get_netapp_data(self):
         """ Retrieve netapp volume information
@@ -78,7 +79,6 @@ class netapp_inodeCol():
         netapp_xml = ET.fromstring(netapp_data.sprintf()).find('volumes')
 
         return netapp_xml
-
 
     def _netapp_login(self):
         """ Login to our netapp filer

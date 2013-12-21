@@ -52,10 +52,10 @@ class StatsdHandler(Handler):
         # Initialize Handler
         Handler.__init__(self, config)
         logging.debug("Initialized statsd handler.")
-        
+
         if not statsd:
             self.log.error('statsd import failed. Handler disabled')
-        
+
         # Initialize Options
         self.host = self.config['host']
         self.port = int(self.config['port'])
