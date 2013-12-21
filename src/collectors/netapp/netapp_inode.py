@@ -109,7 +109,7 @@ class netapp_inode(diamond.collector.Collector):
         if netappsdk is None:
             self.log.error(
                 'Failed to import netappsdk.NaServer or netappsdk.NaElement')
-            return;
+            return
 
         if device in self.running:
             return
