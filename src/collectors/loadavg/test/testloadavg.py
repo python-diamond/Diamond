@@ -2,6 +2,7 @@
 # coding=utf-8
 ################################################################################
 
+import os
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -35,19 +36,24 @@ class TestLoadAverageCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_open_proc_loadavg(self, publish_mock, open_mock):
+        if not os.path.exists('/proc/loadavg'):
+            # on platforms that don't provide /proc/loadavg: don't bother testing this.
+            return
         open_mock.return_value = StringIO('')
         self.collector.collect()
         open_mock.assert_called_once_with('/proc/loadavg')
 
+    @patch('os.getloadavg')
     @patch.object(Collector, 'publish')
-    def test_should_work_with_real_data(self, publish_mock):
-        LoadAverageCollector.PROC = self.getFixturePath('proc_loadavg')
+    def test_should_work_with_real_data(self, publish_mock, getloadavg_mock):
+        LoadAverageCollector.PROC_LOADAVG = self.getFixturePath('proc_loadavg')
+        getloadavg_mock.return_value = (0.12, 0.23, 0.34)
         self.collector.collect()
 
         metrics = {
-            '01': (0.00, 2),
-            '05': (0.32, 2),
-            '15': (0.56, 2),
+            '01': (0.12, 2),
+            '05': (0.23, 2),
+            '15': (0.34, 2),
             'processes_running': 1,
             'processes_total': 235
         }
