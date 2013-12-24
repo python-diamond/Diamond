@@ -198,9 +198,9 @@ if __name__ == "__main__":
 
     getIncludePaths(config['server']['collectors_path'])
     getCollectors(config['server']['collectors_path'])
-
     tests = []
 
+    foundcollector = False
     for collector in collectors:
         if options.collector and collector != options.collector:
             continue
@@ -208,6 +208,8 @@ if __name__ == "__main__":
         # Skip configuring the basic collector object
         if collector == "Collector":
             continue
+
+        foundcollector = True
 
         config_keys = {}
         config_file = ConfigObj()
@@ -264,3 +266,5 @@ if __name__ == "__main__":
             sys.exit()
         except:
             continue
+    if not foundcollector:
+        print "Collector not found." 
