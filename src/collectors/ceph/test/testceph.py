@@ -23,11 +23,6 @@ def run_only_if_assertSequenceEqual_is_available(func):
     return run_only(func, pred)
 
 
-def run_only_if_subprocess_check_output_is_available(func):
-    pred = lambda: 'check_output' in dir(subprocess)
-    return run_only(func, pred)
-
-
 class TestCounterIterator(unittest.TestCase):
 
     @run_only_if_assertSequenceEqual_is_available
@@ -85,57 +80,64 @@ class TestCephCollectorSocketNameHandling(CollectorTestCase):
         })
         self.collector = ceph.CephCollector(config, None)
 
-    def test_counter_default_prefix(self):
-        expected = 'ceph.osd-325'
-        sock = '/var/run/ceph/ceph-osd.325.asok'
-        actual = self.collector._get_counter_prefix_from_socket_name(sock)
-        self.assertEquals(actual, expected)
-
-    def test_counter_alternate_prefix(self):
-        expected = 'ceph.keep-osd-325'
-        sock = '/var/run/ceph/keep-osd.325.asok'
-        actual = self.collector._get_counter_prefix_from_socket_name(sock)
+    def test_parse_socket_name(self):
+        expected = ('cephadoodle', 'osd', '325')
+        sock = '/var/run/ceph/cephadoodle-osd.325.asok'
+        actual = self.collector._parse_socket_name(sock)
         self.assertEquals(actual, expected)
 
     @patch('glob.glob')
     def test_get_socket_paths(self, glob_mock):
         config = get_collector_config('CephCollector', {
             'socket_path': '/path/',
-            'socket_prefix': 'prefix-',
             'socket_ext': 'ext',
         })
         collector = ceph.CephCollector(config, None)
 
         collector._get_socket_paths()
-        glob_mock.assert_called_with('/path/prefix-*.ext')
+        glob_mock.assert_called_with('/path/*.ext')
 
 
-#class TestCephCollectorGettingStats(CollectorTestCase):
-#
-#    def setUp(self):
-#        config = get_collector_config('CephCollector', {
-#            'interval': 10,
-#        })
-#        self.collector = ceph.CephCollector(config, None)
-#
-#    def test_import(self):
-#        self.assertTrue(ceph.CephCollector)
-#
-#    @run_only_if_subprocess_check_output_is_available
-#    @patch('subprocess.check_output')
-#    def test_load_works(self, check_output):
-#        expected = {'a': 1,
-#                    'b': 2,
-#                    }
-#        check_output.return_value = json.dumps(expected)
-#        actual = self.collector._get_stats_from_socket('a_socket_name')
-#        check_output.assert_called_with(['/usr/bin/ceph',
-#                                         '--admin-daemon',
-#                                         'a_socket_name',
-#                                         'perf',
-#                                         'dump',
-#                                         ])
-#        self.assertEqual(actual, expected)
+class TestCephCollectorGettingStats(CollectorTestCase):
+
+    def setUp(self):
+        config = get_collector_config('CephCollector', {
+            'interval': 10,
+        })
+        self.collector = ceph.CephCollector(config, None)
+
+    def test_import(self):
+        self.assertTrue(ceph.CephCollector)
+
+    @patch('ceph._popen_check_output')
+    def test_load_works(self, check_output):
+        expected = {'a': 1,
+                    'b': 2,
+        }
+        check_output.return_value = (json.dumps(expected), "")
+        actual_stats, actual_schema = self.collector._get_perf_counters('a_socket_name')
+        self.assertListEqual(check_output.mock_calls,
+                             [
+                                 call(
+                                     [
+                                         '/usr/bin/ceph',
+                                         '--admin-daemon',
+                                         'a_socket_name',
+                                         'perf',
+                                         'dump',
+                                     ]
+                                 ),
+                                 call(
+                                     [
+                                         '/usr/bin/ceph',
+                                         '--admin-daemon',
+                                         'a_socket_name',
+                                         'perf',
+                                         'schema',
+                                     ]
+                                 ),
+                             ])
+        self.assertEqual(actual_stats, expected)
 #
 #    @run_only_if_subprocess_check_output_is_available
 #    @patch('subprocess.check_output')
