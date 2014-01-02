@@ -9,6 +9,48 @@ PNP4Nagios/Graphios/Metricinga key-value format.
  * Nagios configured to periodically dump performance data files in
    PNP4Nagios format
 
+Configuring Nagios/Icinga
+-------------------------
+If you're already using Graphios, you're already set up to send metrics through Metricinga, and you can skip to the next section! If not, read on.
+
+### Modifying the daemon configuration
+
+The default performance data output format used by Nagios and Icinga can't be easily extended to contain new attributes, so we're going to replace it with one that prints key-value pairs instead. This will allow us to add in whatever kind of bookkeeping attributes we want! We need these to do things like override the display name of a service with a metric name more meaningful to Graphite.
+
+We'll need to edit one of the following files:
+
+* **For Nagios:** /etc/nagios/nagios.cfg
+* **For Icinga:** /etc/icinga/icinga.cfg
+
+Make sure that the following configuration keys are set to something like the values below:
+
+    process_performance_data=1
+    host_perfdata_file=/var/spool/nagios/host-perfdata
+    host_perfdata_file_mode=a
+    host_perfdata_file_processing_command=process-host-perfdata-file
+    host_perfdata_file_processing_interval=60
+    host_perfdata_file_template=DATATYPE::HOSTPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tHOSTPERFDATA::$HOSTPERFDATA$\tHOSTCHECKCOMMAND::$HOSTCHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tGRAPHITEPREFIX::$_HOSTGRAPHITEPREFIX$\tGRAPHITEPOSTFIX::$_HOSTGRAPHITEPOSTFIX$
+    service_perfdata_file=/var/spool/nagios/service-perfdata
+    service_perfdata_file_mode=a
+    service_perfdata_file_processing_command=process-service-perfdata-file
+    service_perfdata_file_processing_interval=60
+    service_perfdata_file_template=DATATYPE::SERVICEPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tSERVICEDESC::$SERVICEDESC$\tSERVICEPERFDATA::$SERVICEPERFDATA$\tSERVICECHECKCOMMAND::$SERVICECHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tSERVICESTATE::$SERVICESTATE$\tSERVICESTATETYPE::$SERVICESTATETYPE$\tGRAPHITEPREFIX::$_SERVICEGRAPHITEPREFIX$\tGRAPHITEPOSTFIX::$_SERVICEGRAPHITEPOSTFIX$
+
+Note that you most likely will wish to change $_SERVICEGRAPHITEPREFIX$, $_HOSTGRAPHITEPREFIX$, $_SERVICEGRAPHITEPOSTFIX$, and $_HOSTGRAPHITEPOSTFIX$
+
+### Configuring file rotation
+
+Next, the rotation commands need to be configured so the performance data files are periodically moved into the Metrnagios spool directory. Depending on your system configuration, these commands may be located in `/etc/nagios/objects/commands.d`:
+
+    define command {
+        command_name    process-host-perfdata-file
+        command_line    /bin/mv /var/spool/nagios/host-perfdata /var/spool/diamond/host-perfdata.$TIMET$
+    }
+
+    define command {
+        command_name    process-service-perfdata-file
+        command_line    /bin/mv /var/spool/nagios/service-perfdata /var/spool/diamond/service-perfdata.$TIMET$
+    }
 """
 
 import os
