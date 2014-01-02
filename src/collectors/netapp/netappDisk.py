@@ -20,8 +20,6 @@
 
 import diamond.collector
 import time
-from netappsdk.NaServer import *
-from netappsdk.NaElement import *
 import xml.etree.ElementTree as ET
 from diamond.metric import Metric
 
@@ -38,7 +36,7 @@ class netappDiskCol():
     """ Our netappDisk Collector
     """
 
-    def __init__(self, device, ip, user, password, parent):
+    def __init__(self, device, ip, user, password, prefix, pm):
         """ Collectors our metrics for our netapp filer
         """
 
@@ -46,15 +44,15 @@ class netappDiskCol():
         self.ip = ip
         self.netapp_user = user
         self.netapp_password = password
-        self.path_prefix = parent[0]
-        self.publish_metric = parent[1]
-        self.log = parent[2]
+        self.path_prefix = prefix
+        self.publish_metric = pm
         self._netapp_login()
 
         # Grab our netapp XML
-        disk_xml = self.get_netapp_elem(NaElement('disk-list-info'), 'disk-details')
-        storage_disk_xml = \
-            self.get_netapp_elem(NaElement('storage-disk-get-iter'), 'attributes-list')
+        disk_xml = self.get_netapp_elem(
+            NaElement('disk-list-info'), 'disk-details')
+        storage_disk_xml = self.get_netapp_elem(
+            NaElement('storage-disk-get-iter'), 'attributes-list')
 
         # Our metric collection and publishing goes here
         self.zero_disk(disk_xml)
@@ -62,7 +60,6 @@ class netappDiskCol():
         self.maintenance_center(storage_disk_xml)
         self.consistency_point()
         self.agr_busy()
-
 
     def agr_busy(self):
         """ Collector for average disk busyness per aggregate
@@ -73,10 +70,10 @@ class netappDiskCol():
 
         """
 
-        c1 = {} # Counters from time a
-        c2 = {} # Counters from time b
-        disk_results = {} # Disk busyness results %
-        agr_results = {} # Aggregate busyness results $
+        c1 = {}  # Counters from time a
+        c2 = {}  # Counters from time b
+        disk_results = {}  # Disk busyness results %
+        agr_results = {}  # Aggregate busyness results $
         names = ['disk_busy', 'base_for_disk_busy', 'raid_name',
                  'base_for_disk_busy', 'instance_uuid']
         netapp_api = NaElement('perf-object-get-instances')
@@ -108,26 +105,25 @@ class netappDiskCol():
             c2[temp.pop('instance_uuid')] = temp
 
         for item in c1:
-            t_c1 = int(c1[item]['disk_busy']) # time_counter_1
-            t_b1 = int(c1[item]['base_for_disk_busy']) # time_base_1
+            t_c1 = int(c1[item]['disk_busy'])  # time_counter_1
+            t_b1 = int(c1[item]['base_for_disk_busy'])  # time_base_1
             t_c2 = int(c2[item]['disk_busy'])
             t_b2 = int(c2[item]['base_for_disk_busy'])
 
-            disk_busy = 100 * (t_c2 - t_c1)/(t_b2 - t_b1)
+            disk_busy = 100 * (t_c2 - t_c1) / (t_b2 - t_b1)
 
-            if disk_results.has_key(c1[item]['raid_name']):
+            if c1[item]['raid_name'] in disk_results:
                 disk_results[c1[item]['raid_name']].append(disk_busy)
             else:
                 disk_results[c1[item]['raid_name']] = [disk_busy]
 
         for aggregate in disk_results:
             agr_results[aggregate] = \
-                sum(disk_results[aggregate])/len(disk_results[aggregate])
+                sum(disk_results[aggregate]) / len(disk_results[aggregate])
 
         for aggregate in agr_results:
             self.push('avg_busy', 'aggregate.' + aggregate,
                 agr_results[aggregate])
-
 
     def consistency_point(self):
         """ Collector for getting count of consistancy points
@@ -192,7 +188,6 @@ class netappDiskCol():
             'low_datavec_gen': cp_2[11]
         }
 
-
         for item in cp_1:
             c1 = int(cp_1[item])
             c2 = int(cp_2[item])
@@ -200,7 +195,6 @@ class netappDiskCol():
 
         for item in cp_delta:
             self.push(item + '_CP', 'system.system', cp_delta[item])
-
 
     def maintenance_center(self, storage_disk_xml=None):
         """ Collector for how many disk(s) are in NetApp maintenance center
@@ -219,7 +213,6 @@ class netappDiskCol():
 
         self.push('maintenance_disk', 'disk', disk_in_maintenance)
 
-
     def zero_disk(self, disk_xml=None):
         """ Collector and publish not zeroed disk metrics
         """
@@ -234,7 +227,6 @@ class netappDiskCol():
             if is_zeroed == 'false':
                 troubled_disks += 1
         self.push('not_zeroed', 'disk', troubled_disks)
-
 
     def spare_disk(self, disk_xml=None):
         """ Number of spare disk per type.
@@ -263,7 +255,6 @@ class netappDiskCol():
             else:
                 self.push('spare_' + disk_type, 'disk', 0)
 
-
     def get_netapp_elem(self, netapp_api=None, sub_element=None):
         """ Retrieve netapp elem
         """
@@ -279,7 +270,6 @@ class netappDiskCol():
             ET.fromstring(netapp_data.sprintf()).find(sub_element)
 
         return netapp_xml
-
 
     def _netapp_login(self):
         """ Login to our netapp filer
@@ -314,15 +304,20 @@ class netappDisk(diamond.collector.Collector):
         """ Collectors our metrics for our netapp filer --START HERE--
         """
 
+        if netappsdk is None:
+            self.log.error(
+                'Failed to import netappsdk.NaServer or netappsdk.NaElement')
+            return
+
         if device in self.running:
             return
 
         self.running.add(device)
-        parent = (self.config['path_prefix'], self.publish_metric, self.log)
+        prefix = self.config['path_prefix']
+        pm = self.publish_metric
 
-        netappDiskCol(device, ip, user, password, parent)
+        netappDiskCol(device, ip, user, password, prefix, pm)
         self.running.remove(device)
-
 
     def get_schedule(self):
         """ Override Collector.get_schedule
@@ -350,5 +345,3 @@ class netappDisk(diamond.collector.Collector):
                 self.log.info("Set up scheduler for %s" % device)
 
         return schedule
-
-
