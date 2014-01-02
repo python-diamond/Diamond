@@ -26,8 +26,9 @@ from diamond.metric import Metric
 try:
     from netappsdk.NaServer import *
     from netappsdk.NaElement import *
+    netappsdk = 0
 except ImportError:
-    netappsdk = None
+    netappsdk = 1
 
 __author__ = 'peter@phyn3t.com'
 
@@ -36,7 +37,7 @@ class netappDiskCol():
     """ Our netappDisk Collector
     """
 
-    def __init__(self, device, ip, user, password, prefix, pm):
+    def __init__(self, device, ip, user, password, parent):
         """ Collectors our metrics for our netapp filer
         """
 
@@ -44,8 +45,9 @@ class netappDiskCol():
         self.ip = ip
         self.netapp_user = user
         self.netapp_password = password
-        self.path_prefix = prefix
-        self.publish_metric = pm
+        self.path_prefix = parent[0]
+        self.publish_metric = parent[1]
+        self.log = parent[2]
         self._netapp_login()
 
         # Grab our netapp XML
@@ -112,7 +114,7 @@ class netappDiskCol():
 
             disk_busy = 100 * (t_c2 - t_c1) / (t_b2 - t_b1)
 
-            if c1[item]['raid_name'] in disk_results:
+            if disk_results.has_key(c1[item]['raid_name']):
                 disk_results[c1[item]['raid_name']].append(disk_busy)
             else:
                 disk_results[c1[item]['raid_name']] = [disk_busy]
@@ -304,7 +306,7 @@ class netappDisk(diamond.collector.Collector):
         """ Collectors our metrics for our netapp filer --START HERE--
         """
 
-        if netappsdk is None:
+        if netappsdk:
             self.log.error(
                 'Failed to import netappsdk.NaServer or netappsdk.NaElement')
             return
@@ -313,10 +315,9 @@ class netappDisk(diamond.collector.Collector):
             return
 
         self.running.add(device)
-        prefix = self.config['path_prefix']
-        pm = self.publish_metric
+        parent = (self.config['path_prefix'], self.publish_metric, self.log)
 
-        netappDiskCol(device, ip, user, password, prefix, pm)
+        netappDiskCol(device, ip, user, password, parent)
         self.running.remove(device)
 
     def get_schedule(self):
