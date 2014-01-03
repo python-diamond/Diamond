@@ -127,12 +127,12 @@ class LibratoHandler(Handler):
             self.current_n_measurements += 1
         else:
             self.log.debug("LibratoHandler: Skip %s, no include_filters match",
-                            path)
+                           path)
 
         if (self.current_n_measurements >= self.queue_max_size or
-            time.time() >= self.queue_max_timestamp):
+                time.time() >= self.queue_max_timestamp):
             self.log.debug("LibratoHandler: Sending batch size: %d",
-                            self.current_n_measurements)
+                           self.current_n_measurements)
             self._send()
 
     def _send(self):

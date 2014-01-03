@@ -77,8 +77,9 @@ class netapp_inodeCol():
         netapp_data = self.server.invoke('volume-list-info')
 
         if netapp_data.results_status() == 'failed':
-            self.log.error('While using netapp API failed to retrieve '
-                    'volume-list-info for netapp filer %s' % self.device)
+            self.log.error(
+                'While using netapp API failed to retrieve '
+                'volume-list-info for netapp filer %s' % self.device)
             return
 
         netapp_xml = ET.fromstring(netapp_data.sprintf()).find('volumes')
@@ -147,11 +148,14 @@ class netapp_inode(diamond.collector.Collector):
                 if task_name in schedule:
                     raise KeyError('Duplicate netapp filer scheduled')
 
-                schedule[task_name] = (self.collect,
-                        (device, filer_config['ip'],
-                          filer_config['user'], filer_config['password']),
-                        int(self.config['splay']),
-                        int(self.config['interval']))
+                schedule[task_name] = (
+                    self.collect,
+                    (device,
+                     filer_config['ip'],
+                     filer_config['user'],
+                     filer_config['password']),
+                    int(self.config['splay']),
+                    int(self.config['interval']))
 
                 self.log.info("Set up scheduler for %s" % device)
 

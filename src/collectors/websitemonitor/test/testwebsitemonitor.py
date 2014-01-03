@@ -30,8 +30,8 @@ class TestWebsiteCollector(CollectorTestCase):
     def setUp(self, config=None):
         if config is None:
             config = get_collector_config('WebsiteCollector', {
-            'url': ''
-        })
+                'url': ''
+                })
         else:
             config = get_collector_config('WebsiteCollector', config)
 
@@ -54,7 +54,7 @@ class TestWebsiteCollector(CollectorTestCase):
 
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
-                       defaultpath=self.collector.config['path'])
+                           defaultpath=self.collector.config['path'])
 
         self.assertPublishedMany([publish_mock], metrics)
 

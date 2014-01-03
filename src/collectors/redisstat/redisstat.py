@@ -94,7 +94,7 @@ class RedisCollector(diamond.collector.Collector):
             host = self.config['host']
             port = int(self.config['port'])
             auth = self.config['auth']
-            if auth != None:
+            if auth is not None:
                 instance_list.append('%s:%d/%s' % (host, port, auth))
             else:
                 instance_list.append('%s:%d' % (host, port))

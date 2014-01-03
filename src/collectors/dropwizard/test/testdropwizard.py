@@ -67,9 +67,10 @@ class TestDropwizardCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        patch_urlopen = patch('urllib2.urlopen',
-                              Mock(
-                                return_value=self.getFixture('stats_blank')))
+        patch_urlopen = patch(
+            'urllib2.urlopen',
+            Mock(
+                return_value=self.getFixture('stats_blank')))
 
         patch_urlopen.start()
         self.collector.collect()

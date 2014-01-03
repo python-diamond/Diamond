@@ -11,45 +11,55 @@ PNP4Nagios/Graphios/Metricinga key-value format.
 
 Configuring Nagios/Icinga
 -------------------------
-If you're already using Graphios, you're already set up to send metrics through Metricinga, and you can skip to the next section! If not, read on.
+If you're already using Graphios, you're already set up to send metrics through
+Metricinga, and you can skip to the next section! If not, read on.
 
 ### Modifying the daemon configuration
 
-The default performance data output format used by Nagios and Icinga can't be easily extended to contain new attributes, so we're going to replace it with one that prints key-value pairs instead. This will allow us to add in whatever kind of bookkeeping attributes we want! We need these to do things like override the display name of a service with a metric name more meaningful to Graphite.
+The default performance data output format used by Nagios and Icinga can't be
+easily extended to contain new attributes, so we're going to replace it with
+one that prints key-value pairs instead. This will allow us to add in whatever
+kind of bookkeeping attributes we want! We need these to do things like override
+the display name of a service with a metric name more meaningful to Graphite.
 
 We'll need to edit one of the following files:
 
 * **For Nagios:** /etc/nagios/nagios.cfg
 * **For Icinga:** /etc/icinga/icinga.cfg
 
-Make sure that the following configuration keys are set to something like the values below:
+Make sure that the following configuration keys are set to something like the
+values below:
 
     process_performance_data=1
     host_perfdata_file=/var/spool/nagios/host-perfdata
     host_perfdata_file_mode=a
     host_perfdata_file_processing_command=process-host-perfdata-file
     host_perfdata_file_processing_interval=60
-    host_perfdata_file_template=DATATYPE::HOSTPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tHOSTPERFDATA::$HOSTPERFDATA$\tHOSTCHECKCOMMAND::$HOSTCHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tGRAPHITEPREFIX::$_HOSTGRAPHITEPREFIX$\tGRAPHITEPOSTFIX::$_HOSTGRAPHITEPOSTFIX$
+    host_perfdata_file_template=DATATYPE::HOSTPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tHOSTPERFDATA::$HOSTPERFDATA$\tHOSTCHECKCOMMAND::$HOSTCHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tGRAPHITEPREFIX::$_HOSTGRAPHITEPREFIX$\tGRAPHITEPOSTFIX::$_HOSTGRAPHITEPOSTFIX$  # NOQA
     service_perfdata_file=/var/spool/nagios/service-perfdata
     service_perfdata_file_mode=a
     service_perfdata_file_processing_command=process-service-perfdata-file
     service_perfdata_file_processing_interval=60
-    service_perfdata_file_template=DATATYPE::SERVICEPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tSERVICEDESC::$SERVICEDESC$\tSERVICEPERFDATA::$SERVICEPERFDATA$\tSERVICECHECKCOMMAND::$SERVICECHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tSERVICESTATE::$SERVICESTATE$\tSERVICESTATETYPE::$SERVICESTATETYPE$\tGRAPHITEPREFIX::$_SERVICEGRAPHITEPREFIX$\tGRAPHITEPOSTFIX::$_SERVICEGRAPHITEPOSTFIX$
+    service_perfdata_file_template=DATATYPE::SERVICEPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tSERVICEDESC::$SERVICEDESC$\tSERVICEPERFDATA::$SERVICEPERFDATA$\tSERVICECHECKCOMMAND::$SERVICECHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tSERVICESTATE::$SERVICESTATE$\tSERVICESTATETYPE::$SERVICESTATETYPE$\tGRAPHITEPREFIX::$_SERVICEGRAPHITEPREFIX$\tGRAPHITEPOSTFIX::$_SERVICEGRAPHITEPOSTFIX$  # NOQA
 
-Note that you most likely will wish to change $_SERVICEGRAPHITEPREFIX$, $_HOSTGRAPHITEPREFIX$, $_SERVICEGRAPHITEPOSTFIX$, and $_HOSTGRAPHITEPOSTFIX$
+Note that you most likely will wish to change $_SERVICEGRAPHITEPREFIX$,
+$_HOSTGRAPHITEPREFIX$, $_SERVICEGRAPHITEPOSTFIX$, and $_HOSTGRAPHITEPOSTFIX$
 
 ### Configuring file rotation
 
-Next, the rotation commands need to be configured so the performance data files are periodically moved into the Metrnagios spool directory. Depending on your system configuration, these commands may be located in `/etc/nagios/objects/commands.d`:
+Next, the rotation commands need to be configured so the performance data files
+are periodically moved into the Metrnagios spool directory. Depending on your
+system configuration, these commands may be located in
+`/etc/nagios/objects/commands.d`:
 
     define command {
         command_name    process-host-perfdata-file
-        command_line    /bin/mv /var/spool/nagios/host-perfdata /var/spool/diamond/host-perfdata.$TIMET$
+        command_line    /bin/mv /var/spool/nagios/host-perfdata /var/spool/diamond/host-perfdata.$TIMET$  # NOQA
     }
 
     define command {
         command_name    process-service-perfdata-file
-        command_line    /bin/mv /var/spool/nagios/service-perfdata /var/spool/diamond/service-perfdata.$TIMET$
+        command_line    /bin/mv /var/spool/nagios/service-perfdata /var/spool/diamond/service-perfdata.$TIMET$  # NOQA
     }
 """
 
@@ -66,8 +76,9 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
     GENERIC_FIELDS = ['DATATYPE', 'HOSTNAME', 'TIMET']
     HOST_FIELDS = ['HOSTPERFDATA']
     SERVICE_FIELDS = ['SERVICEDESC', 'SERVICEPERFDATA']
-    TOKENIZER_RE = (r"([^\s]+|'[^']+')=([-.\d]+)(c|s|ms|us|B|KB|MB|GB|TB|%)?"
-    + r"(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?")
+    TOKENIZER_RE = (
+        r"([^\s]+|'[^']+')=([-.\d]+)(c|s|ms|us|B|KB|MB|GB|TB|%)?"
+        + r"(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?")
 
     def __init__(self, config, handlers):
         super(NagiosPerfdataCollector, self).__init__(config, handlers)
@@ -99,7 +110,7 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
             filenames = os.listdir(perfdata_dir)
         except OSError:
             self.log.error("Cannot read directory `{dir}'".format(
-                    dir=perfdata_dir))
+                dir=perfdata_dir))
             return
 
         for filename in filenames:
@@ -172,7 +183,7 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
         counters = re.findall(self.TOKENIZER_RE, s)
         if counters is None:
             self.log.warning("Failed to parse performance data: {s}".format(
-                    s=s))
+                s=s))
             return metrics
 
         for (key, value, uom, warn, crit, min, max) in counters:
@@ -180,8 +191,9 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
                 norm_value = self._normalize_to_unit(float(value), uom)
                 metrics.append((key, norm_value))
             except ValueError:
-                self.log.warning("Couldn't convert value '{value}' to float" \
-                        .format(value=value))
+                self.log.warning(
+                    "Couldn't convert value '{value}' to float".format(
+                        value=value))
 
         return metrics
 
@@ -196,7 +208,7 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
             os.remove(path)
         except IOError, ex:
             self.log.error("Could not open file `{path}': {error}".format(
-                    path=path, error=ex.strerror))
+                path=path, error=ex.strerror))
 
     def _process_line(self, line):
         """Parse and submit the metrics from a line of perfdata output
@@ -204,7 +216,7 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
         fields = self._extract_fields(line)
         if not self._fields_valid(fields):
             self.log.warning("Missing required fields for line: {line}".format(
-                    line=line))
+                line=line))
 
         metric_path_base = []
         graphite_prefix = fields.get('GRAPHITEPREFIX')

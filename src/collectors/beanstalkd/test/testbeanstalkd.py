@@ -104,13 +104,13 @@ class TestBeanstalkdCollector(CollectorTestCase):
                     'current-jobs-reserved': 0,
                     'current-using': 10,
                     'current-jobs-urgent': 0,
-                }
-             ]
+                    }
+                ]
         }
 
         patch_get_stats = patch.object(BeanstalkdCollector,
-                                        '_get_stats',
-                                        Mock(return_value=stats))
+                                       '_get_stats',
+                                       Mock(return_value=stats))
 
         patch_get_stats.start()
         self.collector.collect()

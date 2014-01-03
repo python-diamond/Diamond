@@ -48,7 +48,7 @@ class TestApcupsdCollector(CollectorTestCase):
             + '\x00"STATFLAG : 0x07000008 Status Flag\n\x00\x16MANDATE  : 2009'
             + '-10-08\n\x00\x1aSERIALNO : 3B0941X40219  \n\x00\x16BATTDATE :'
             + ' 2009-10-08\n\x00\x15NOMINV   : 120 Volts\n\x00\x17NOMBATTV :'
-                + '  24.0 '))
+            + '  24.0 '))
 
         patch_getdata.start()
         self.collector.collect()

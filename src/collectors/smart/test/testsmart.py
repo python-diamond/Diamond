@@ -31,10 +31,11 @@ class TestSmartCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_osx_missing(self, publish_mock):
         patch_listdir = patch('os.listdir', Mock(return_value=['disk0']))
-        patch_communicate = patch('subprocess.Popen.communicate',
-                                  Mock(return_value=(
-                                    self.getFixture('osx_missing').getvalue(),
-                                    '')))
+        patch_communicate = patch(
+            'subprocess.Popen.communicate',
+            Mock(return_value=(
+                self.getFixture('osx_missing').getvalue(),
+                '')))
         patch_listdir.start()
         patch_communicate.start()
         self.collector.collect()
@@ -47,10 +48,11 @@ class TestSmartCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_osx_ssd(self, publish_mock):
         patch_listdir = patch('os.listdir', Mock(return_value=['disk0']))
-        patch_communicate = patch('subprocess.Popen.communicate',
-                                  Mock(return_value=(
-                                    self.getFixture('osx_ssd').getvalue(),
-                                    '')))
+        patch_communicate = patch(
+            'subprocess.Popen.communicate',
+            Mock(return_value=(
+                self.getFixture('osx_ssd').getvalue(),
+                '')))
         patch_listdir.start()
         patch_communicate.start()
         self.collector.collect()
@@ -85,10 +87,11 @@ class TestSmartCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_centos55_hdd(self, publish_mock):
         patch_listdir = patch('os.listdir', Mock(return_value=['sda']))
-        patch_communicate = patch('subprocess.Popen.communicate',
-                                  Mock(return_value=(
-                                    self.getFixture('centos5.5_hdd').getvalue(),
-                                    '')))
+        patch_communicate = patch(
+            'subprocess.Popen.communicate',
+            Mock(return_value=(
+                self.getFixture('centos5.5_hdd').getvalue(),
+                '')))
 
         patch_listdir.start()
         patch_communicate.start()
@@ -123,8 +126,8 @@ class TestSmartCollector(CollectorTestCase):
 
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
-    def test_should_work_with_real_data_debian_invalid_checksum_warning(self,
-                                                                publish_mock):
+    def test_should_work_with_real_data_debian_invalid_checksum_warning(
+            self, publish_mock):
         fixture_data = self.getFixture(
             'debian_invalid_checksum_warning').getvalue()
         patch_listdir = patch('os.listdir', Mock(return_value=['sda']))

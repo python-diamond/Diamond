@@ -33,7 +33,7 @@ class TestElasticSearchCollector(CollectorTestCase):
         urlopen_mock.start()
         self.collector.collect()
         urlopen_mock.stop()
-        
+
         metrics = {
             'http.current': 1,
 
@@ -127,7 +127,7 @@ class TestElasticSearchCollector(CollectorTestCase):
             'indices.logstash-adm-syslog.get.total': 0,
             'indices.logstash-adm-syslog.indexing.delete_time_in_millis': 0,
             'indices.logstash-adm-syslog.indexing.delete_total': 0,
-            'indices.logstash-adm-syslog.indexing.index_time_in_millis': 29251475,
+            'indices.logstash-adm-syslog.indexing.index_time_in_millis': 29251475,  # NOQA
             'indices.logstash-adm-syslog.indexing.index_total': 35189321,
             'indices.logstash-adm-syslog.search.fetch_time_in_millis': 6962,
             'indices.logstash-adm-syslog.search.fetch_total': 4084,

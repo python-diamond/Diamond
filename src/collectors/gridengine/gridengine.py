@@ -57,9 +57,10 @@ class GridEngineCollector(diamond.collector.Collector):
 
         def parse(self):
             cluster_queue_summaries = self.dom.getElementsByTagName(
-                    "cluster_queue_summary")
-            return [self._parse_cluster_stats_entry(node) \
-                    for node in cluster_queue_summaries]
+                "cluster_queue_summary")
+            return [
+                self._parse_cluster_stats_entry(node)
+                for node in cluster_queue_summaries]
 
         def _parse_cluster_stats_entry(self, node):
             name = self.get_tag_text(node, "name")
@@ -69,13 +70,19 @@ class GridEngineCollector(diamond.collector.Collector):
             available = int(self.get_tag_text(node, "available"))
             total = int(self.get_tag_text(node, "total"))
             temp_disabled = int(self.get_tag_text(node, "temp_disabled"))
-            manual_intervention = int(self.get_tag_text(node,
-                    "manual_intervention"))
+            manual_intervention = int(self.get_tag_text(
+                node,
+                "manual_intervention"))
 
-            return GridEngineCollector.QueueStatsEntry(name=name,
-                    load=load, used=used, resv=resv, available=available,
-                    total=total, temp_disabled=temp_disabled,
-                    manual_intervention=manual_intervention)
+            return GridEngineCollector.QueueStatsEntry(
+                name=name,
+                load=load,
+                used=used,
+                resv=resv,
+                available=available,
+                total=total,
+                temp_disabled=temp_disabled,
+                manual_intervention=manual_intervention)
 
     def __init__(self, config, handlers):
         super(GridEngineCollector, self).__init__(config, handlers)

@@ -27,7 +27,10 @@ class TestSquidCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_fake_data(self, publish_mock):
-        _getData_mock = patch.object(SquidCollector, '_getData', Mock(
+        _getData_mock = patch.object(
+            SquidCollector,
+            '_getData',
+            Mock(
                 return_value=self.getFixture('fake_counters_1').getvalue()))
         _getData_mock.start()
         self.collector.collect()
@@ -35,7 +38,10 @@ class TestSquidCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-        _getData_mock = patch.object(SquidCollector, '_getData', Mock(
+        _getData_mock = patch.object(
+            SquidCollector,
+            '_getData',
+            Mock(
                 return_value=self.getFixture('fake_counters_2').getvalue()))
         _getData_mock.start()
         self.collector.collect()
@@ -101,7 +107,10 @@ class TestSquidCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        _getData_mock = patch.object(SquidCollector, '_getData', Mock(
+        _getData_mock = patch.object(
+            SquidCollector,
+            '_getData',
+            Mock(
                 return_value=self.getFixture('counters_1').getvalue()))
         _getData_mock.start()
         self.collector.collect()
@@ -109,7 +118,10 @@ class TestSquidCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-        _getData_mock = patch.object(SquidCollector, '_getData', Mock(
+        _getData_mock = patch.object(
+            SquidCollector,
+            '_getData',
+            Mock(
                 return_value=self.getFixture('counters_2').getvalue()))
         _getData_mock.start()
         self.collector.collect()

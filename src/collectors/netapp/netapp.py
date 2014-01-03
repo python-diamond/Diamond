@@ -227,7 +227,7 @@ class NetAppCollector(diamond.collector.Collector):
         Inputs a complete path for a metric and a value.
         Replace the metric name and publish.
         """
-        if value == None:
+        if value is None:
             return
         newpath = path
         # Change metric name before publish if needed.

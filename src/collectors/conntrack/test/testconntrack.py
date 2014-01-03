@@ -29,10 +29,11 @@ class TestConnTrackCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        patch_communicate = patch('subprocess.Popen.communicate',
-                                  Mock(return_value=(
-                                    'net.netfilter.nf_conntrack_count = 33',
-                                    '')))
+        patch_communicate = patch(
+            'subprocess.Popen.communicate',
+            Mock(return_value=(
+                'net.netfilter.nf_conntrack_count = 33',
+                '')))
 
         patch_communicate.start()
         self.collector.collect()
@@ -50,12 +51,13 @@ class TestConnTrackCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        patch_communicate = patch('subprocess.Popen.communicate',
-                                  Mock(
-                                    return_value=(
-                                        'sysctl: cannot stat /proc/sys/net/net'
-                                        + 'filter/nf_conntrack_count: '
-                                        + 'No such file or directory', '')))
+        patch_communicate = patch(
+            'subprocess.Popen.communicate',
+            Mock(
+                return_value=(
+                    'sysctl: cannot stat /proc/sys/net/net'
+                    + 'filter/nf_conntrack_count: '
+                    + 'No such file or directory', '')))
 
         patch_communicate.start()
         self.collector.collect()

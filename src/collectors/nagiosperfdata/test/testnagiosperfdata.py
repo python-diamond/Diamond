@@ -15,7 +15,7 @@ class TestNagiosPerfdataCollector(CollectorTestCase):
         """Set up the fixtures for the test
         """
         fixtures_dir = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 'fixtures'))
+            os.path.dirname(__file__), 'fixtures'))
 
         config = get_collector_config('NagiosPerfdataCollector', {
             'perfdata_dir': fixtures_dir
@@ -85,7 +85,7 @@ class TestNagiosPerfdataCollector(CollectorTestCase):
 
     def test_parse_perfdata_should_parse_valid_perfdata(self):
         perf = self.collector._parse_perfdata(
-                'rta=0.325ms;300.000;500.000;0; pl=0%;20;60;;')
+            'rta=0.325ms;300.000;500.000;0; pl=0%;20;60;;')
         expected_result = [('rta', 0.000325), ('pl', 0.0)]
         self.assertEqual(perf, expected_result)
 
@@ -97,8 +97,8 @@ class TestNagiosPerfdataCollector(CollectorTestCase):
 
     @patch('os.remove')
     @patch.object(Collector, 'publish')
-    def test_process_file_should_work_with_real_host_perfdata(self,
-            publish_mock, remove_mock):
+    def test_process_file_should_work_with_real_host_perfdata(
+            self, publish_mock, remove_mock):
         path = self.getFixturePath('host-perfdata.0')
         self.collector._process_file(path)
         expected = {
@@ -109,8 +109,8 @@ class TestNagiosPerfdataCollector(CollectorTestCase):
 
     @patch('os.remove')
     @patch.object(Collector, 'publish')
-    def test_process_file_should_work_with_real_service_perfdata(self,
-            publish_mock, remove_mock):
+    def test_process_file_should_work_with_real_service_perfdata(
+            self, publish_mock, remove_mock):
         path = self.getFixturePath('service-perfdata.0')
         self.collector._process_file(path)
         publish_mock.assert_called_once()

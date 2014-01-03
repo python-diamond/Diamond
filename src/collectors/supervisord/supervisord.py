@@ -44,8 +44,7 @@ class SupervisordCollector(diamond.collector.Collector):
         config_help = super(SupervisordCollector,
                             self).get_default_config_help()
         config_help.update({
-            'xmlrpc_server_protocol': 'XML-RPC server protocol. '
-                'Options: unix, http',
+            'xmlrpc_server_protocol': 'XML-RPC server protocol. Options: unix, http',  # NOQA
             'xmlrpc_server_path': 'XML-RPC server path.'
         })
         return config_help
@@ -68,9 +67,10 @@ class SupervisordCollector(diamond.collector.Collector):
             'Attempting to connect to XML-RPC server "%s"', uri)
 
         if protocol == 'unix':
-            server = xmlrpclib.ServerProxy('http://127.0.0.1',
-                        supervisor.xmlrpc.SupervisorTransport(None, None, uri)
-                     ).supervisor
+            server = xmlrpclib.ServerProxy(
+                'http://127.0.0.1',
+                supervisor.xmlrpc.SupervisorTransport(None, None, uri)
+                ).supervisor
 
         elif protocol == 'http':
             server = xmlrpclib.Server(uri).supervisor
@@ -78,7 +78,7 @@ class SupervisordCollector(diamond.collector.Collector):
         else:
             self.log.debug(
                 'Invalid xmlrpc_server_protocol config setting "%s"',
-                    protocol)
+                protocol)
             return None
 
         return server.getAllProcessInfo()

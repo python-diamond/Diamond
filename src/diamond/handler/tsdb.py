@@ -111,13 +111,13 @@ class TSDBHandler(Handler):
         """
 
         metric_str = self.metric_format.format(
-                Collector=metric.getCollectorPath(),
-                Path=metric.path,
-                Metric=metric.getMetricPath(),
-                host=metric.host,
-                timestamp=metric.timestamp,
-                value=metric.value,
-                tags=self.tags
+            Collector=metric.getCollectorPath(),
+            Path=metric.path,
+            Metric=metric.getMetricPath(),
+            host=metric.host,
+            timestamp=metric.timestamp,
+            value=metric.value,
+            tags=self.tags
         )
         # Just send the data as a string
         self._send("put " + str(metric_str) + "\n")

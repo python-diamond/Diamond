@@ -64,63 +64,77 @@ class TestProcessResourcesCollector(CollectorTestCase):
     def test(self, publish_mock, getpid_mock):
         process_info_list = [
             # postgres processes
-            {'exe': '/usr/lib/postgresql/9.1/bin/postgres',
-             'name': 'postgres',
-             'pid': 1427,
-             'rss': 9875456,
-             'vms': 106852352},
-            {'exe': '',
-             'name': 'postgres: writer process   ',
-             'pid': 1445,
-             'rss': 1753088,
-             'vms': 106835968},
-            {'exe': '',
-             'name': 'postgres: wal writer process   ',
-             'pid': 1446,
-             'rss': 1503232,
-             'vms': 106835968},
-            {'exe': '',
-             'name': 'postgres: autovacuum launcher process   ',
-             'pid': 1447,
-             'rss': 3989504,
-             'vms': 109023232},
-            {'exe': '',
-             'name': 'postgres: stats collector process   ',
-             'pid': 1448,
-             'rss': 2400256,
-             'vms': 75829248},
+            {
+                'exe': '/usr/lib/postgresql/9.1/bin/postgres',
+                'name': 'postgres',
+                'pid': 1427,
+                'rss': 9875456,
+                'vms': 106852352
+            },
+            {
+                'exe': '',
+                'name': 'postgres: writer process   ',
+                'pid': 1445,
+                'rss': 1753088,
+                'vms': 106835968
+            },
+            {
+                'exe': '',
+                'name': 'postgres: wal writer process   ',
+                'pid': 1446,
+                'rss': 1503232,
+                'vms': 106835968
+            },
+            {
+                'exe': '',
+                'name': 'postgres: autovacuum launcher process   ',
+                'pid': 1447,
+                'rss': 3989504,
+                'vms': 109023232
+            },
+            {
+                'exe': '',
+                'name': 'postgres: stats collector process   ',
+                'pid': 1448,
+                'rss': 2400256,
+                'vms': 75829248},
             # postgres-y process
-            {'exe': '',
-             'name': 'posgre: not really',
-             'pid': 9999,
-             'rss': 999999999999,
-             'vms': 999999999999,
+            {
+                'exe': '',
+                'name': 'posgre: not really',
+                'pid': 9999,
+                'rss': 999999999999,
+                'vms': 999999999999,
             },
             # bar process
-            {'exe': '/usr/bin/foo',
-             'name': 'bar',
-             'pid': 9998,
-             'rss': 1,
-             'vms': 1
+            {
+                'exe': '/usr/bin/foo',
+                'name': 'bar',
+                'pid': 9998,
+                'rss': 1,
+                'vms': 1
             },
-            {'exe': '',
-             'name': 'barein',
-             'pid': 9997,
-             'rss': 1,
-             'vms': 1
+            {
+                'exe': '',
+                'name': 'barein',
+                'pid': 9997,
+                'rss': 1,
+                'vms': 1
             },
-            {'exe': '/usr/bin/bar',
-             'name': '',
-             'pid': 9996,
-             'rss': 10,
-             'vms': 10,
+            {
+                'exe': '/usr/bin/bar',
+                'name': '',
+                'pid': 9996,
+                'rss': 10,
+                'vms': 10,
             },
             # diamond self mon process
-            {'exe': 'DUMMY',
-             'name': 'DUMMY',
-             'pid': self.SELFMON_PID,
-             'rss': 1234,
-             'vms': 90210,
+            {
+                'exe': 'DUMMY',
+                'name': 'DUMMY',
+                'pid': self.SELFMON_PID,
+                'rss': 1234,
+                'vms': 90210,
             },
         ]
 

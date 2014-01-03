@@ -85,7 +85,7 @@ class HttpdCollector(diamond.collector.Collector):
                     data = response.read()
                     headers = dict(response.getheaders())
                     if ('location' not in headers
-                        or headers['location'] == url):
+                            or headers['location'] == url):
                         connection.close()
                         break
                     url = headers['location']

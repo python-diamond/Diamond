@@ -24,9 +24,7 @@ class Metric(object):
         """
 
         # Validate the path, value and metric_type submitted
-        if (path is None
-            or value is None
-            or metric_type not in self._METRIC_TYPES):
+        if (None in [path, value] or metric_type not in self._METRIC_TYPES):
             raise DiamondException("Invalid parameter.")
 
         # If no timestamp was passed in, set it to the current time

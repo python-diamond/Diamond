@@ -26,22 +26,22 @@ except ImportError:
 
 class LibvirtKVMCollector(diamond.collector.Collector):
     blockStats = {
-                  'read_reqs':   0,
-                  'read_bytes':  1,
-                  'write_reqs':  2,
-                  'write_bytes': 3
-                 }
+        'read_reqs':   0,
+        'read_bytes':  1,
+        'write_reqs':  2,
+        'write_bytes': 3
+        }
 
     vifStats = {
-                  'rx_bytes':   0,
-                  'rx_packets': 1,
-                  'rx_errors':  2,
-                  'rx_drops':   3,
-                  'tx_bytes':   4,
-                  'tx_packets': 5,
-                  'tx_errors':  6,
-                  'tx_drops':   7
-               }
+        'rx_bytes':   0,
+        'rx_packets': 1,
+        'rx_errors':  2,
+        'rx_drops':   3,
+        'tx_bytes':   4,
+        'tx_packets': 5,
+        'tx_errors':  6,
+        'tx_drops':   7
+        }
 
     def get_default_config_help(self):
         config_help = super(LibvirtKVMCollector, self).get_default_config_help()
@@ -87,7 +87,7 @@ as cummulative nanoseconds since VM creation if this is True."""
 
     def report_cpu_metric(self, statname, value, instance):
         # Value in cummulative nanoseconds
-        if self.config['cpu_absolute'] == True:
+        if self.config['cpu_absolute'] is True:
             metric = value
         else:
             # Nanoseconds (10^9), however, we want to express in 100%
@@ -129,10 +129,10 @@ as cummulative nanoseconds since VM creation if this is True."""
                     val = stats[idx]
                     accum[stat] += val
                     self.publish('block.%s.%s' % (disk, stat), val,
-                                    instance=name)
+                                 instance=name)
             for stat in self.blockStats.keys():
                 self.publish('block.total.%s' % stat, accum[stat],
-                                instance=name)
+                             instance=name)
 
             # Network stats
             vifs = self.get_network_devices(dom)
@@ -147,13 +147,13 @@ as cummulative nanoseconds since VM creation if this is True."""
                     val = stats[idx]
                     accum[stat] += val
                     self.publish('net.%s.%s' % (vif, stat), val,
-                                    instance=name)
+                                 instance=name)
             for stat in self.vifStats.keys():
                 self.publish('net.total.%s' % stat, accum[stat],
-                                instance=name)
+                             instance=name)
 
             # Memory stats
             mem = dom.memoryStats()
             self.publish('memory.nominal', mem['actual'] * 1024,
-                            instance=name)
+                         instance=name)
             self.publish('memory.rss', mem['rss'] * 1024, instance=name)

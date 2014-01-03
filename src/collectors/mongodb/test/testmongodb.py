@@ -127,8 +127,7 @@ class TestMongoDBCollector(CollectorTestCase):
         self.connection['db1'].command.assert_any_call('dbStats')
         self.connection['db1'].command.assert_any_call('collstats',
                                                        'collection1')
-        assert call('collstats', 'tmp.mr.tmp1') not in \
-                self.connection['db1'].command.call_args_list
+        assert call('collstats', 'tmp.mr.tmp1') not in self.connection['db1'].command.call_args_list  # NOQA
         metrics = {
             'databases.db1.collection1.key': 2,
         }
@@ -248,8 +247,7 @@ class TestMongoMultiHostDBCollector(CollectorTestCase):
         self.connection['db1'].command.assert_any_call('dbStats')
         self.connection['db1'].command.assert_any_call('collstats',
                                                        'collection1')
-        assert call('collstats', 'tmp.mr.tmp1') not in \
-                self.connection['db1'].command.call_args_list
+        assert call('collstats', 'tmp.mr.tmp1') not in self.connection['db1'].command.call_args_list  # NOQA
         metrics = {
             'localhost_27017.databases.db1.collection1.key': 2,
             'localhost_27057.databases.db1.collection1.key': 2,

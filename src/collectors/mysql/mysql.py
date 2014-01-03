@@ -420,7 +420,7 @@ class MySQLCollector(diamond.collector.Collector):
                                                    metric_value)
                 if key == 'status':
                     if ('publish' not in self.config
-                             or metric_name in self.config['publish']):
+                            or metric_name in self.config['publish']):
                         self.publish(nickname + metric_name, metric_value)
                 else:
                     self.publish(nickname + metric_name, metric_value)

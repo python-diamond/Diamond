@@ -26,10 +26,11 @@ class TestPostqueueCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_emails_in_queue(self, publish_mock):
-        patch_collector = patch.object(PostqueueCollector,
-                                       'get_postqueue_output',
-                                       Mock(return_value=self.getFixture(
-                                        'postqueue_emails').getvalue()))
+        patch_collector = patch.object(
+            PostqueueCollector,
+            'get_postqueue_output',
+            Mock(return_value=self.getFixture(
+                'postqueue_emails').getvalue()))
         patch_collector.start()
         self.collector.collect()
         patch_collector.stop()
@@ -46,10 +47,11 @@ class TestPostqueueCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_empty_queue(self, publish_mock):
-        patch_collector = patch.object(PostqueueCollector,
-                                       'get_postqueue_output',
-                                       Mock(return_value=self.getFixture(
-                                        'postqueue_empty').getvalue()))
+        patch_collector = patch.object(
+            PostqueueCollector,
+            'get_postqueue_output',
+            Mock(return_value=self.getFixture(
+                'postqueue_empty').getvalue()))
         patch_collector.start()
         self.collector.collect()
         patch_collector.stop()

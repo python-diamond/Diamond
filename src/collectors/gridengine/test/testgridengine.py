@@ -17,7 +17,7 @@ class TestGridEngineCollector(CollectorTestCase):
         config = get_collector_config('GridEngineCollector', {})
         self.collector = GridEngineCollector(config, None)
         self.fixtures_dir = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), 'fixtures'))
+            os.path.dirname(__file__), 'fixtures'))
 
     def test_import(self):
         """Test that import succeeds
@@ -26,8 +26,8 @@ class TestGridEngineCollector(CollectorTestCase):
 
     @patch.object(GridEngineCollector, '_queue_stats_xml')
     @patch.object(Collector, 'publish')
-    def test_queue_stats_should_work_with_real_data(self, publish_mock,
-            xml_mock):
+    def test_queue_stats_should_work_with_real_data(
+            self, publish_mock, xml_mock):
         """Test that fixtures are parsed correctly
         """
         xml_mock.return_value = self.getFixture('queue_stats.xml').getvalue()

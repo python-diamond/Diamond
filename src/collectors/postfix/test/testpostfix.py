@@ -30,9 +30,10 @@ class TestPostfixCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
         first_resp = self.getFixture('postfix-stats.1.json').getvalue()
-        patch_collector = patch.object(PostfixCollector,
-                                        'get_json',
-                                        Mock(return_value=first_resp))
+        patch_collector = patch.object(
+            PostfixCollector,
+            'get_json',
+            Mock(return_value=first_resp))
 
         patch_collector.start()
         self.collector.collect()

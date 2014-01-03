@@ -46,21 +46,25 @@ class TestMySQLCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_real_data(self, publish_mock):
 
-        p_global_status = patch.object(MySQLCollector,
-                                       'get_db_global_status',
-                                       Mock(return_value=self.getPickledResults(
-                                        'mysql_get_db_global_status_1.pkl')))
-        p_master_status = patch.object(MySQLCollector,
-                                       'get_db_master_status',
-                                       Mock(return_value=self.getPickledResults(
-                                        'get_db_master_status_1.pkl')))
-        p_slave_status = patch.object(MySQLCollector,
-                                      'get_db_slave_status',
-                                      Mock(return_value=self.getPickledResults(
-                                        'get_db_slave_status_1.pkl')))
-        p_innodb_status = patch.object(MySQLCollector,
-                                       'get_db_innodb_status',
-                                       Mock(return_value=[{}]))
+        p_global_status = patch.object(
+            MySQLCollector,
+            'get_db_global_status',
+            Mock(return_value=self.getPickledResults(
+                'mysql_get_db_global_status_1.pkl')))
+        p_master_status = patch.object(
+            MySQLCollector,
+            'get_db_master_status',
+            Mock(return_value=self.getPickledResults(
+                'get_db_master_status_1.pkl')))
+        p_slave_status = patch.object(
+            MySQLCollector,
+            'get_db_slave_status',
+            Mock(return_value=self.getPickledResults(
+                'get_db_slave_status_1.pkl')))
+        p_innodb_status = patch.object(
+            MySQLCollector,
+            'get_db_innodb_status',
+            Mock(return_value=[{}]))
 
         p_global_status.start()
         p_master_status.start()
@@ -74,21 +78,25 @@ class TestMySQLCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-        p_global_status = patch.object(MySQLCollector,
-                                       'get_db_global_status',
-                                       Mock(return_value=self.getPickledResults(
-                                        'mysql_get_db_global_status_2.pkl')))
-        p_master_status = patch.object(MySQLCollector,
-                                       'get_db_master_status',
-                                       Mock(return_value=self.getPickledResults(
-                                        'get_db_master_status_2.pkl')))
-        p_slave_status = patch.object(MySQLCollector,
-                                      'get_db_slave_status',
-                                      Mock(return_value=self.getPickledResults(
-                                        'get_db_slave_status_2.pkl')))
-        p_innodb_status = patch.object(MySQLCollector,
-                                       'get_db_innodb_status',
-                                       Mock(return_value=[{}]))
+        p_global_status = patch.object(
+            MySQLCollector,
+            'get_db_global_status',
+            Mock(return_value=self.getPickledResults(
+                'mysql_get_db_global_status_2.pkl')))
+        p_master_status = patch.object(
+            MySQLCollector,
+            'get_db_master_status',
+            Mock(return_value=self.getPickledResults(
+                'get_db_master_status_2.pkl')))
+        p_slave_status = patch.object(
+            MySQLCollector,
+            'get_db_slave_status',
+            Mock(return_value=self.getPickledResults(
+                'get_db_slave_status_2.pkl')))
+        p_innodb_status = patch.object(
+            MySQLCollector,
+            'get_db_innodb_status',
+            Mock(return_value=[{}]))
 
         p_global_status.start()
         p_master_status.start()

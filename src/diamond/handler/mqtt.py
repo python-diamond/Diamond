@@ -128,9 +128,7 @@ class MQTTHandler(Handler):
             self.certfile = self.config.get('certfile', None)
             self.keyfile = self.config.get('keyfile', None)
 
-            if (self.cafile is None
-                or self.certfile is None
-                or self.keyfile is None):
+            if None in [self.cafile, self.certfile, self.keyfile]:
                 self.log.error("MQTTHandler: TLS configuration missing.")
                 return
 
@@ -147,7 +145,7 @@ class MQTTHandler(Handler):
                                + "configuration. Files missing?")
 
         self.mqttc.will_set("clients/diamond/%s" % (self.hostname),
-                payload="Adios!", qos=0, retain=False)
+                            payload="Adios!", qos=0, retain=False)
         self.mqttc.connect(self.host, self.port, 60)
 
         self.mqttc.on_disconnect = self._disconnect

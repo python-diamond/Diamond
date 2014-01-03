@@ -81,7 +81,7 @@ class NetworkCollector(diamond.collector.Collector):
                    + '(?P<tx_frame>\d+)(?:\s*)'
                    + '(?P<tx_compressed>\d+)(?:\s*)'
                    + '(?P<tx_multicast>\d+)(?:.*)$') % (
-                       ('|'.join(self.config['interfaces'])), greed)
+                ('|'.join(self.config['interfaces'])), greed)
             reg = re.compile(exp)
             # Match Interfaces
             for line in file:

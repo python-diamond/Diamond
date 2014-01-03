@@ -150,17 +150,16 @@ class JbossApiCollector(diamond.collector.Collector):
         # diamond-setup.
         config_help = super(JbossApiCollector, self).get_default_config_help()
         config_help.update({
-          'curl_bin':        'Path to system curl executable',
-          'hosts': 'List of hosts to collect from. Format is '
-          + 'yourusername:yourpassword@host:port:proto',
-          'app_stats': 'Collect application pool stats',
-          'jvm_memory_pool_stats': 'Collect JVM memory-pool stats',
-          'jvm_buffer_pool_stats': 'Collect JVM buffer-pool stats',
-          'jvm_memory_stats': 'Collect JVM basic memory stats',
-          'jvm_gc_stats': 'Collect JVM garbage-collector stats',
-          'jvm_thread_stats': 'Collect JVM thread stas',
-          'connector_stats': 'Collect HTTP and AJP Connector stats',
-          'connector_options': 'Types of connectors to collect'
+            'curl_bin': 'Path to system curl executable',
+            'hosts': 'List of hosts to collect from. Format is yourusername:yourpassword@host:port:proto',  # NOQA
+            'app_stats': 'Collect application pool stats',
+            'jvm_memory_pool_stats': 'Collect JVM memory-pool stats',
+            'jvm_buffer_pool_stats': 'Collect JVM buffer-pool stats',
+            'jvm_memory_stats': 'Collect JVM basic memory stats',
+            'jvm_gc_stats': 'Collect JVM garbage-collector stats',
+            'jvm_thread_stats': 'Collect JVM thread stas',
+            'connector_stats': 'Collect HTTP and AJP Connector stats',
+            'connector_options': 'Types of connectors to collect'
         })
         return config_help
 
@@ -169,22 +168,22 @@ class JbossApiCollector(diamond.collector.Collector):
         # Initialize default config
         config = super(JbossApiCollector, self).get_default_config()
         config.update({
-          'path': 'jboss',
-          'method': 'Sequential',
-          'curl_bin': '/usr/bin/curl',
-          'connect_timeout': '4',
-          'ssl_options': '--sslv3 -k',
-          'curl_options': '-s --digest -L ',
-          'interface_regex': '^(.+?)\.',  # matches up to first "."
-          'hosts': [],
-          'app_stats': 'True',
-          'connector_options': ['http', 'ajp'],
-          'jvm_memory_pool_stats': 'True',
-          'jvm_buffer_pool_stats': 'True',
-          'jvm_memory_stats': 'True',
-          'jvm_gc_stats': 'True',
-          'jvm_thread_stats': 'True',
-          'connector_stats': 'True'
+            'path': 'jboss',
+            'method': 'Sequential',
+            'curl_bin': '/usr/bin/curl',
+            'connect_timeout': '4',
+            'ssl_options': '--sslv3 -k',
+            'curl_options': '-s --digest -L ',
+            'interface_regex': '^(.+?)\.',  # matches up to first "."
+            'hosts': [],
+            'app_stats': 'True',
+            'connector_options': ['http', 'ajp'],
+            'jvm_memory_pool_stats': 'True',
+            'jvm_buffer_pool_stats': 'True',
+            'jvm_memory_stats': 'True',
+            'jvm_gc_stats': 'True',
+            'jvm_thread_stats': 'True',
+            'connector_stats': 'True'
         })
         # Return default config
         return config

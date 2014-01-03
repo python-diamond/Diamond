@@ -114,7 +114,7 @@ class netappDiskCol():
 
             disk_busy = 100 * (t_c2 - t_c1) / (t_b2 - t_b1)
 
-            if disk_results.has_key(c1[item]['raid_name']):
+            if c1[item]['raid_name'] in disk_results:
                 disk_results[c1[item]['raid_name']].append(disk_busy)
             else:
                 disk_results[c1[item]['raid_name']] = [disk_busy]
@@ -125,7 +125,7 @@ class netappDiskCol():
 
         for aggregate in agr_results:
             self.push('avg_busy', 'aggregate.' + aggregate,
-                agr_results[aggregate])
+                      agr_results[aggregate])
 
     def consistency_point(self):
         """ Collector for getting count of consistancy points
@@ -157,7 +157,7 @@ class netappDiskCol():
 
         if not type(cp_2) is list or not type(cp_1) is list:
             log.error("consistency point data not available for filer: %s"
-            % self.device)
+                      % self.device)
             return
 
         cp_1 = {
@@ -264,8 +264,9 @@ class netappDiskCol():
         netapp_data = self.server.invoke_elem(netapp_api)
 
         if netapp_data.results_status() == 'failed':
-            self.log.error('While using netapp API failed to retrieve '
-            'disk-list-info for netapp filer %s' % self.device)
+            self.log.error(
+                'While using netapp API failed to retrieve '
+                'disk-list-info for netapp filer %s' % self.device)
             print netapp_data.sprintf()
             return
         netapp_xml = \
@@ -290,8 +291,11 @@ class netappDiskCol():
         graphite_path += '.' + self.device + '.' + type
         graphite_path += '.' + metric_name
 
-        metric = \
-          Metric(graphite_path, metric_value, precision=4, host=self.device)
+        metric = Metric(
+            graphite_path,
+            metric_value,
+            precision=4,
+            host=self.device)
 
         self.publish_metric(metric)
 
@@ -338,11 +342,14 @@ class netappDisk(diamond.collector.Collector):
                 if task_name in schedule:
                     raise KeyError('Duplicate netapp filer scheduled')
 
-                schedule[task_name] = (self.collect,
-                        (device, filer_config['ip'],
-                          filer_config['user'], filer_config['password']),
-                        int(self.config['splay']),
-                        int(self.config['interval']))
+                schedule[task_name] = (
+                    self.collect,
+                    (device,
+                     filer_config['ip'],
+                     filer_config['user'],
+                     filer_config['password']),
+                    int(self.config['splay']),
+                    int(self.config['interval']))
                 self.log.info("Set up scheduler for %s" % device)
 
         return schedule

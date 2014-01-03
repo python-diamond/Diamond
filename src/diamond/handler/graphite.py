@@ -64,8 +64,7 @@ class GraphiteHandler(Handler):
             'proto': 'udp or tcp',
             'timeout': '',
             'batch': 'How many to store before sending to the graphite server',
-            'max_backlog_multiplier': 'how many batches to store before '
-                'trimming',
+            'max_backlog_multiplier': 'how many batches to store before trimming',  # NOQA
             'trim_backlog_multiplier': 'Trim down how many batches',
             'keepalive': 'Enable keepalives for tcp streams',
             'keepaliveinterval': 'How frequently to send keepalives'
@@ -147,7 +146,7 @@ class GraphiteHandler(Handler):
                 raise
         finally:
             if len(self.metrics) >= (
-                self.batch_size * self.max_backlog_multiplier):
+                    self.batch_size * self.max_backlog_multiplier):
                 trim_offset = (self.batch_size
                                * self.trim_backlog_multiplier * -1)
                 self.log.warn('GraphiteHandler: Trimming backlog. Removing'

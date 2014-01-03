@@ -51,7 +51,7 @@ class DRBDCollector(diamond.collector.Collector):
             'cs': 'connection_state',
             'ro': 'roles',
             'ds': 'disk_states'
-             }
+            }
 
         results = dict()
         try:

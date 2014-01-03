@@ -267,4 +267,4 @@ if __name__ == "__main__":
         except:
             continue
     if not foundcollector:
-        print "Collector not found." 
+        print "Collector not found."

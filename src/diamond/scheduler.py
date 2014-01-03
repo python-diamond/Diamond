@@ -295,8 +295,10 @@ class Scheduler:
             except SchedulerNotRunning:
                 self._clearschedqueue()
             except Exception, x:
-                self.log.error("ERROR DURING SCHEDULER EXECUTION %s \n %s", x,
-                        "".join(traceback.format_exception(*sys.exc_info())))
+                self.log.error(
+                    "ERROR DURING SCHEDULER EXECUTION %s \n %s",
+                    x,
+                    "".join(traceback.format_exception(*sys.exc_info())))
             # queue is empty; sleep a short while before checking again
             if self.running:
                 time.sleep(5)
@@ -333,7 +335,7 @@ class Task(object):
     def handle_exception(self, exc):
         """Handle any exception that occured during task execution."""
         self.log.error("ERROR DURING TASK EXECUTION %s \n %s", exc,
-                "".join(traceback.format_exception(*sys.exc_info())))
+                       "".join(traceback.format_exception(*sys.exc_info())))
 
 
 class SingleTask(Task):

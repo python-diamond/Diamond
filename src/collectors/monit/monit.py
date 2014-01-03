@@ -77,7 +77,7 @@ class MonitCollector(diamond.collector.Collector):
                             'percent')[0].firstChild.data
                         mem = int(service.getElementsByTagName(
                             'memory')[0].getElementsByTagName(
-                                'kilobyte')[0].firstChild.data)
+                            'kilobyte')[0].firstChild.data)
                         uptime = service.getElementsByTagName(
                             'uptime')[0].firstChild.data
 

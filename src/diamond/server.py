@@ -253,9 +253,9 @@ class Server(object):
                           c.__class__.__name__)
             return
 
-        if c.config['enabled'] != True:
+        if c.config['enabled'] is not True:
             self.log.debug("Skipped loading disabled Collector: %s",
-                          c.__class__.__name__)
+                           c.__class__.__name__)
             return
 
         # Get collector schedule

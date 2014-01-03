@@ -178,34 +178,34 @@ class cloudwatchHandler (Handler):
                 )
 
             if (str(rule['collector']) == collector
-                and str(rule['metric']) == metricname):
+                    and str(rule['metric']) == metricname):
+                self.log.debug(
+                    "CloudWatch: Attempting to publish metric: %s to %s "
+                    "with value (%s) @%s",
+                    rule['name'],
+                    rule['namespace'],
+                    str(metric.value),
+                    str(metric.timestamp)
+                    )
+                try:
+                    self.connection.put_metric_data(
+                        str(rule['namespace']),
+                        str(rule['name']),
+                        str(metric.value),
+                        timestamp, str(rule['unit']),
+                        {'InstanceID': self.instance_id})
                     self.log.debug(
-                        "CloudWatch: Attempting to publish metric: %s to %s "
-                        "with value (%s) @%s",
+                        "CloudWatch: Successfully published metric: %s to"
+                        " %s with value (%s)",
                         rule['name'],
                         rule['namespace'],
-                        str(metric.value),
-                        str(metric.timestamp)
+                        str(metric.value)
                         )
-                    try:
-                        self.connection.put_metric_data(
-                            str(rule['namespace']),
-                            str(rule['name']),
-                            str(metric.value),
-                            timestamp, str(rule['unit']),
-                            {'InstanceID': self.instance_id})
-                        self.log.debug(
-                            "CloudWatch: Successfully published metric: %s to"
-                            " %s with value (%s)",
-                            rule['name'],
-                            rule['namespace'],
-                            str(metric.value)
-                            )
-                    except AttributeError as e:
-                        self.log.error(
-                            "CloudWatch: Failed publishing - %s ", str(e))
-                    except Exception:  # Rough connection re-try logic.
-                        self.log.error(
-                            "CloudWatch: Failed publishing - %s ",
-                            str(sys.exc_info()[0]))
-                        self._bind()
+                except AttributeError as e:
+                    self.log.error(
+                        "CloudWatch: Failed publishing - %s ", str(e))
+                except Exception:  # Rough connection re-try logic.
+                    self.log.error(
+                        "CloudWatch: Failed publishing - %s ",
+                        str(sys.exc_info()[0]))
+                    self._bind()

@@ -264,7 +264,7 @@ class TCPCollector(diamond.collector.Collector):
 
         for metric_name in metrics.keys():
             if (len(self.config['allowed_names']) > 0
-                and metric_name not in self.config['allowed_names']):
+                    and metric_name not in self.config['allowed_names']):
                 continue
 
             value = long(metrics[metric_name])

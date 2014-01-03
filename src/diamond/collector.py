@@ -356,8 +356,8 @@ class Collector(object):
                             metric_type='GAUGE', instance=instance)
 
     def publish_counter(self, name, value, precision=0, max_value=0,
-                      time_delta=True, interval=None, allow_negative=False,
-                      instance=None):
+                        time_delta=True, interval=None, allow_negative=False,
+                        instance=None):
         raw_value = value
         value = self.derivative(name, value, max_value=max_value,
                                 time_delta=time_delta, interval=interval,

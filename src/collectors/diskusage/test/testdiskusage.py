@@ -30,8 +30,9 @@ class TestDiskUsageCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     def test_get_disk_statistics(self):
 
-        patch_open = patch('__builtin__.open',
-                           Mock(return_value=self.getFixture('diskstats')))
+        patch_open = patch(
+            '__builtin__.open',
+            Mock(return_value=self.getFixture('diskstats')))
 
         open_mock = patch_open.start()
         result = self.collector.get_disk_statistics()
@@ -50,9 +51,10 @@ class TestDiskUsageCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
 
-        patch_open = patch('__builtin__.open',
-                           Mock(
-                            return_value=self.getFixture('proc_diskstats_1')))
+        patch_open = patch(
+            '__builtin__.open',
+            Mock(
+                return_value=self.getFixture('proc_diskstats_1')))
         patch_time = patch('time.time', Mock(return_value=10))
 
         patch_open.start()
@@ -63,9 +65,10 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-        patch_open = patch('__builtin__.open',
-                           Mock(
-                            return_value=self.getFixture('proc_diskstats_2')))
+        patch_open = patch(
+            '__builtin__.open',
+            Mock(
+                return_value=self.getFixture('proc_diskstats_2')))
         patch_time = patch('time.time', Mock(return_value=20))
 
         patch_open.start()
@@ -84,10 +87,11 @@ class TestDiskUsageCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_verify_supporting_vda_and_xvdb(self, publish_mock):
-        patch_open = patch('__builtin__.open',
-                           Mock(
-                            return_value=self.getFixture(
-                                'proc_diskstats_1_vda_xvdb')))
+        patch_open = patch(
+            '__builtin__.open',
+            Mock(
+                return_value=self.getFixture(
+                    'proc_diskstats_1_vda_xvdb')))
         patch_time = patch('time.time', Mock(return_value=10))
 
         patch_open.start()
@@ -98,10 +102,11 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-        patch_open = patch('__builtin__.open',
-                           Mock(
-                            return_value=self.getFixture(
-                                'proc_diskstats_2_vda_xvdb')))
+        patch_open = patch(
+            '__builtin__.open',
+            Mock(
+                return_value=self.getFixture(
+                    'proc_diskstats_2_vda_xvdb')))
         patch_time = patch('time.time', Mock(return_value=20))
 
         patch_open.start()
@@ -118,10 +123,11 @@ class TestDiskUsageCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_verify_supporting_md_dm(self, publish_mock):
-        patch_open = patch('__builtin__.open',
-                           Mock(
-                            return_value=self.getFixture(
-                                'proc_diskstats_1_md_dm')))
+        patch_open = patch(
+            '__builtin__.open',
+            Mock(
+                return_value=self.getFixture(
+                    'proc_diskstats_1_md_dm')))
         patch_time = patch('time.time', Mock(return_value=10))
 
         patch_open.start()
@@ -132,10 +138,11 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-        patch_open = patch('__builtin__.open',
-                           Mock(
-                            return_value=self.getFixture(
-                                'proc_diskstats_2_md_dm')))
+        patch_open = patch(
+            '__builtin__.open',
+            Mock(
+                return_value=self.getFixture(
+                    'proc_diskstats_2_md_dm')))
         patch_time = patch('time.time', Mock(return_value=20))
 
         patch_open.start()
@@ -151,10 +158,11 @@ class TestDiskUsageCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_verify_supporting_disk(self, publish_mock):
-        patch_open = patch('__builtin__.open',
-                           Mock(
-                            return_value=self.getFixture(
-                                'proc_diskstats_1_disk')))
+        patch_open = patch(
+            '__builtin__.open',
+            Mock(
+                return_value=self.getFixture(
+                    'proc_diskstats_1_disk')))
         patch_time = patch('time.time', Mock(return_value=10))
 
         patch_open.start()
@@ -165,10 +173,11 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-        patch_open = patch('__builtin__.open',
-                           Mock(
-                            return_value=self.getFixture(
-                                'proc_diskstats_2_disk')))
+        patch_open = patch(
+            '__builtin__.open',
+            Mock(
+                return_value=self.getFixture(
+                    'proc_diskstats_2_disk')))
         patch_time = patch('time.time', Mock(return_value=20))
 
         patch_open.start()
@@ -183,10 +192,11 @@ class TestDiskUsageCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_service_Time(self, publish_mock):
-        patch_open = patch('__builtin__.open',
-                           Mock(
-                            return_value=self.getFixture(
-                                'proc_diskstats_1_service_time')))
+        patch_open = patch(
+            '__builtin__.open',
+            Mock(
+                return_value=self.getFixture(
+                    'proc_diskstats_1_service_time')))
         patch_time = patch('time.time', Mock(return_value=10))
 
         patch_open.start()
@@ -197,10 +207,11 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-        patch_open = patch('__builtin__.open',
-                           Mock(
-                            return_value=self.getFixture(
-                                'proc_diskstats_2_service_time')))
+        patch_open = patch(
+            '__builtin__.open',
+            Mock(
+                return_value=self.getFixture(
+                    'proc_diskstats_2_service_time')))
         patch_time = patch('time.time', Mock(return_value=70))
 
         patch_open.start()
