@@ -10,6 +10,7 @@ Collect the elasticsearch stats for the local node
 """
 
 import urllib2
+import re
 
 try:
     import json
@@ -18,6 +19,8 @@ except ImportError:
     import simplejson as json
 
 import diamond.collector
+
+RE_LOGSTASH_INDEX = re.compile('^(.*)-\d\d\d\d\.\d\d\.\d\d$')
 
 
 class ElasticSearchCollector(diamond.collector.Collector):
@@ -32,6 +35,10 @@ class ElasticSearchCollector(diamond.collector.Collector):
             + " - jvm (JVM information) \n"
             + " - thread_pool (Thread pool information) \n"
             + " - indices (Individual index stats)\n",
+            'logstash_mode': "If 'indices' stats are gathered, remove "
+            + "the YYYY.MM.DD suffix from the index name "
+            + "(e.g. logstash-adm-syslog-2014.01.03) and use that "
+            + "as a bucket for all 'day' index stats.",
         })
         return config_help
 
@@ -45,6 +52,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             'port':     9200,
             'path':     'elasticsearch',
             'stats':    ['jvm', 'thread_pool', 'indices'],
+            'logstash_mode': False,
         })
         return config
 
@@ -67,13 +75,26 @@ class ElasticSearchCollector(diamond.collector.Collector):
     def _copy_one_level(self, metrics, prefix, data, filter=lambda key: True):
         for key, value in data.iteritems():
             if filter(key):
-                metrics['%s.%s' % (prefix, key)] = value
+                metric_path = '%s.%s' % (prefix, key)
+                self._set_or_sum_metric(metrics, metric_path, value)
 
     def _copy_two_level(self, metrics, prefix, data, filter=lambda key: True):
         for key1, d1 in data.iteritems():
             self._copy_one_level(metrics, '%s.%s' % (prefix, key1), d1, filter)
 
     def _index_metrics(self, metrics, prefix, index):
+        if self.config['logstash_mode']:
+            """Remove the YYYY.MM.DD bit from logstash indices.
+            This way we keep using the same metric naming and not polute
+            our metrics system (e.g. Graphite) with new metrics every day."""
+            m = RE_LOGSTASH_INDEX.match(prefix)
+            if m:
+                prefix = m.group(1)
+
+                # keep a telly of the number of indexes
+                self._set_or_sum_metric(metrics,
+                                        '%s.indexes_in_group' % prefix, 1)
+
         self._add_metric(metrics, '%s.docs.count' % prefix, index,
                          ['docs', 'count'])
         self._add_metric(metrics, '%s.docs.deleted' % prefix, index,
@@ -93,7 +114,16 @@ class ElasticSearchCollector(diamond.collector.Collector):
             current_item = current_item.get(path_element)
             if current_item is None:
                 return
-        metrics[metric_path] = current_item
+
+        self._set_or_sum_metric(metrics, metric_path, current_item)
+
+    def _set_or_sum_metric(self, metrics, metric_path, value):
+        """If we already have a datapoint for this metric, lets add
+        the value. This is used when the logstash mode is enabled."""
+        if metric_path in metrics:
+            metrics[metric_path] += value
+        else:
+            metrics[metric_path] = value
 
     def collect(self):
         if json is None:
