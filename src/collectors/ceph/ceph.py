@@ -333,6 +333,7 @@ class CephCollector(diamond.collector.Collector):
             stats,
             path=[self._cluster_id_prefix(cluster_name, fsid), prefix]
         ):
+            stat_name = _PATH_SEP.join(stat_name)
             name = GlobalName(stat_name)
             if counter:
                 self.publish_counter(name, stat_value)
