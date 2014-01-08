@@ -10,9 +10,9 @@ Collects data form sidekiq web
 
 """
 
-
 try:
     import json
+
     json  # workaround for pyflakes issue #13
 except ImportError:
     import simplejson as json
@@ -22,7 +22,6 @@ import diamond.collector
 
 
 class SidekiqWebCollector(diamond.collector.Collector):
-
     def get_default_config_help(self):
         config_help = super(SidekiqWebCollector, self).get_default_config_help()
         config_help.update({
@@ -35,9 +34,9 @@ class SidekiqWebCollector(diamond.collector.Collector):
         """
         config = super(SidekiqWebCollector, self).get_default_config()
         config.update({
-            'host':         'localhost',
-            'port':         9999,
-            'byte_unit':    ['byte'],
+            'host': 'localhost',
+            'port': 9999,
+            'byte_unit': ['byte'],
         })
         return config
 
@@ -56,18 +55,16 @@ class SidekiqWebCollector(diamond.collector.Collector):
             return {}
 
         for k in j:
-            for item,value in j[k].items():
+            for item, value in j[k].items():
 
                 if isinstance(value, (str, unicode)) and 'M' in value:
                     value = float(value.replace('M', ''))
                     for unit in self.config['byte_unit']:
                         unit_value = diamond.convertor.binary.convert(
-                                    value=value,
-                                    oldUnit='megabyte',
-                                    newUnit=unit)
+                            value=value,
+                            oldUnit='megabyte',
+                            newUnit=unit)
 
                         self.publish("%s.%s_%s" % (k, item, unit), unit_value)
                 else:
                     self.publish("%s.%s" % (k, item), value)
-
-        
