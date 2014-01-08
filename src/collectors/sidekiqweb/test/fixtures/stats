@@ -1,0 +1,17 @@
+{
+    "redis": {
+        "connected_clients": "22",
+        "uptime_in_days": "62",
+        "used_memory_human": "1.36M",
+        "used_memory_peak_human": "8.20M"
+    },
+    "sidekiq": {
+        "busy": 0,
+        "default_latency": 0,
+        "enqueued": 0,
+        "failed": 22,
+        "processed": 4622701,
+        "retries": 0,
+        "scheduled": 30
+    }
+}
