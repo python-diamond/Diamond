@@ -64,20 +64,20 @@ class PostfixCollector(diamond.collector.Collector):
 
         address = (self.config['host'], int(self.config['port']))
 
+        s = None
         try:
-            try:
-                s = socket.create_connection(address, timeout=1)
+            s = socket.create_connection(address, timeout=1)
 
-                s.sendall('stats\n')
+            s.sendall('stats\n')
 
-                while 1:
-                    data = s.recv(4096)
-                    if not data:
-                        break
-                    json_string += data
-            except socket.error:
-                self.log.exception("Error talking to postfix-stats")
-                return ''
+            while 1:
+                data = s.recv(4096)
+                if not data:
+                    break
+                json_string += data
+        except socket.error:
+            self.log.exception("Error talking to postfix-stats")
+            return ''
         finally:
             if s:
                 s.close()
