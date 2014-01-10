@@ -1,0 +1,10 @@
+cluster ad1bff62-a261-4330-a826-c77ecc0aef88
+health HEALTH_OK
+monmap e1: 3 mons at {a=172.30.5.201:6789/0,b=172.30.5.202:6789/0,c=172.30.5.203:6789/0}, election epoch 132, quorum 0,1,2 a,b,c
+mdsmap e477: 1/1/1 up {0=3=up:active}, 2 up:standby
+osdmap e21555: 84 osds: 84 up, 84 in
+pgmap v6676604: 22356 pgs, 16 pools, 38030 GB data, 63772 kobjects
+70626 GB used, 236 TB / 305 TB avail
+22355 active+clean
+1 active+clean+scrubbing+deep
+client io 8643 kB/s rd, 4821 kB/s wr, 481 op/s
