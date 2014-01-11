@@ -14,12 +14,11 @@ import re
 import os
 from diamond.collector import str_to_bool
 
-_RE = re.compile(r'([\d.]+) ([\d.]+) ([\d.]+) (\d+)/(\d+)')
-
 
 class LoadAverageCollector(diamond.collector.Collector):
 
-    PROC = '/proc/loadavg'
+    PROC_LOADAVG = '/proc/loadavg'
+    PROC_LOADAVG_RE = re.compile(r'([\d.]+) ([\d.]+) ([\d.]+) (\d+)/(\d+)')
 
     def get_default_config_help(self):
         config_help = super(LoadAverageCollector,
@@ -43,20 +42,21 @@ class LoadAverageCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        if not os.access(self.PROC, os.R_OK):
-            self.log.error("Can not read path %s" % self.PROC)
-            return None
+        load01, load05, load15 = os.getloadavg()
 
-        file = open(self.PROC)
-        for line in file:
-            match = _RE.match(line)
-            if match:
-                if not str_to_bool(self.config['simple']):
-                    self.publish_gauge('01', float(match.group(1)), 2)
-                    self.publish_gauge('05', float(match.group(2)), 2)
-                    self.publish_gauge('15', float(match.group(3)), 2)
-                else:
-                    self.publish_gauge('load', float(match.group(1)), 2)
-                self.publish_gauge('processes_running', int(match.group(4)))
-                self.publish_gauge('processes_total', int(match.group(5)))
-        file.close()
+        if not str_to_bool(self.config['simple']):
+            self.publish_gauge('01', load01, 2)
+            self.publish_gauge('05', load05, 2)
+            self.publish_gauge('15', load15, 2)
+        else:
+            self.publish_gauge('load', load01, 2)
+
+        # Legacy: add process/thread counters provided by /proc/loadavg (if available).
+        if os.access(self.PROC_LOADAVG, os.R_OK):
+            file = open(self.PROC_LOADAVG)
+            for line in file:
+                match = self.PROC_LOADAVG_RE.match(line)
+                if match:
+                    self.publish_gauge('processes_running', int(match.group(4)))
+                    self.publish_gauge('processes_total', int(match.group(5)))
+            file.close()
