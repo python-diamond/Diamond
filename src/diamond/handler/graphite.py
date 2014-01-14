@@ -150,7 +150,8 @@ class GraphiteHandler(Handler):
             self.socket.sendall(data)
         except:
             self._close()
-            self.log.error("GraphiteHandler: Socket error, trying reconnect.")
+            self._throttle_error("GraphiteHandler: Socket error, "
+                                 "trying reconnect.")
             self._connect()
             self.socket.sendall(data)
 
@@ -173,7 +174,7 @@ class GraphiteHandler(Handler):
                     self.metrics = []
             except Exception:
                 self._close()
-                self.log.error("GraphiteHandler: Error sending metrics.")
+                self._throttle_error("GraphiteHandler: Error sending metrics.")
                 raise
         finally:
             if len(self.metrics) >= (
@@ -223,8 +224,8 @@ class GraphiteHandler(Handler):
                            self.host, self.port)
         except Exception, ex:
             # Log Error
-            self.log.error("GraphiteHandler: Failed to connect to %s:%i. %s.",
-                           self.host, self.port, ex)
+            self._throttle_error("GraphiteHandler: Failed to connect to "
+                                 "%s:%i. %s.", self.host, self.port, ex)
             # Close Socket
             self._close()
             return
