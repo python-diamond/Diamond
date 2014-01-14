@@ -139,7 +139,7 @@ class GraphiteHandler(Handler):
         :param msg: if present, only this key is reset. Otherwise, the whole
             cache is cleaned.
         """
-        if msg is not None:
+        if msg is not None and msg in self._errors:
             del self._errors[msg]
         else:
             self._errors = {}
