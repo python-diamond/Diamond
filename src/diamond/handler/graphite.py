@@ -106,6 +106,16 @@ class GraphiteHandler(Handler):
 
     def _throttle_error(self, msg, *args, **kwargs):
         """
+        Avoids sending errors repeatedly. Waits at least
+        `self.server_error_interval` seconds before sending the same error
+        string to the error logging facility. If not enough time has passed,
+        it calls `log.debug` instead
+
+        Receives the same parameters as `Logger.error` an passes them on to the
+        selected logging function, but ignores all parameters but the main
+        message string when checking the last emission time.
+
+        :returns: the return value of `Logger.debug` or `Logger.error`
         """
         now = datetime.datetime.now()
         if msg in self._errors:
@@ -123,6 +133,11 @@ class GraphiteHandler(Handler):
 
     def _reset_errors(self, msg=None):
         """
+        Resets the logging throttle cache, so the next error is emitted
+        regardless of the value in `self.server_error_interval`
+
+        :param msg: if present, only this key is reset. Otherwise, the whole
+            cache is cleaned.
         """
         if msg is not None:
             del self._errors[msg]
