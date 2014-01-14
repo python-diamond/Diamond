@@ -148,12 +148,14 @@ class GraphiteHandler(Handler):
         """
         try:
             self.socket.sendall(data)
+            self._reset_errors()
         except:
             self._close()
             self._throttle_error("GraphiteHandler: Socket error, "
                                  "trying reconnect.")
             self._connect()
             self.socket.sendall(data)
+            self._reset_errors()
 
     def _send(self):
         """
