@@ -53,16 +53,16 @@ class ElbCollector(diamond.collector.Collector):
         ('HealthyHostCount', 'Average'),
         ('UnhealthyHostCount', 'Average'),
         ('RequestCount', 'Sum'),
-        # ('Latency', 'Average'),
-        # ('HTTPCode_ELB_4XX', 'Sum'),
-        # ('HTTPCode_ELB_5XX', 'Sum'),
-        # ('HTTPCode_Backend_2XX', 'Sum'),
-        # ('HTTPCode_Backend_3XX', 'Sum'),
-        # ('HTTPCode_Backend_4XX', 'Sum'),
-        # ('HTTPCode_Backend_5XX', 'Sum'),
-        # ('BackendConnectionErrors', 'Sum'),
-        # ('SurgeQueueLength', 'Maximum'),
-        # ('SpilloverCount', 'Sum')
+        ('Latency', 'Average'),
+        ('HTTPCode_ELB_4XX', 'Sum'),
+        ('HTTPCode_ELB_5XX', 'Sum'),
+        ('HTTPCode_Backend_2XX', 'Sum'),
+        ('HTTPCode_Backend_3XX', 'Sum'),
+        ('HTTPCode_Backend_4XX', 'Sum'),
+        ('HTTPCode_Backend_5XX', 'Sum'),
+        ('BackendConnectionErrors', 'Sum'),
+        ('SurgeQueueLength', 'Maximum'),
+        ('SpilloverCount', 'Sum')
     ]
 
     def __init__(self, config, handlers):
@@ -131,18 +131,9 @@ class ElbCollector(diamond.collector.Collector):
         start_time = end_time - datetime.timedelta(seconds=self.interval)
 
         for (region, region_cfg) in self.config['regions'].items():
-
-            print region
-
             for elb_name in self.get_elb_names(region, region_cfg):
                 conn = cloudwatch.connect_to_region(region, **self.auth_kwargs)
-
-                print elb_name
-
                 for metric_name, statistic in self.metrics:
-
-                    print metric_name, statistic
-
                     for zone in self.zones_by_region[region]:
                         # NOTE: Dimensioning by elb name only gives wonky stats (1.6667 HealthyHosts for example).
                         #       Have to also include region for legit numbers and aggregate by region downstream.
@@ -154,8 +145,6 @@ class ElbCollector(diamond.collector.Collector):
                             namespace='AWS/ELB',
                             statistics=[statistic],
                             dimensions={'LoadBalancerName':elb_name, 'AvailabilityZone' : zone})
-
-                        print stats
 
                         template_tokens = {
                             'region'      : region,
@@ -174,7 +163,4 @@ class ElbCollector(diamond.collector.Collector):
                             metric_value = stats[-1][statistic]
                             if num_stats > 1:
                                 self.log.warn('More than one statistic returned for %s:%s' % (name, stats))
-                        self.log.debug("XXX %s %s" % (name, metric_value))
-                        self.log.warn("YYY %s" % stats)
-                        print type(name)
                         self.publish(name, metric_value)

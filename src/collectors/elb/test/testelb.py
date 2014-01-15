@@ -12,25 +12,12 @@ from mock import Mock
 from diamond.collector import Collector
 from elb import ElbCollector
 
-class TestElbCollector(CollectorTestCase):
 
-    def assertRaisesAndContains(self, excClass, contains_str, callableObj, *args, **kwargs):
-        try:
-            callableObj(*args, **kwargs)
-        except excClass, e:
-            msg = str(e)
-            if contains_str in msg:
-                return
-            else:
-                raise AssertionError, "Exception message does not contain '%s': '%s'" % (contains_str, msg)
-        else:
-            if hasattr(excClass,'__name__'): excName = excClass.__name__
-            else: excName = str(excClass)
-            raise AssertionError, "%s not raised" % excName
+class TestElbCollector(CollectorTestCase):
 
     def test_throws_exception_when_interval_not_multiple_of_60(self):
         config = get_collector_config('ElbCollector', { 'interval': 10 })
-        self.assertRaisesAndContains(Exception, 'multiple of', ElbCollector, *[config, None])
+        assertRaisesAndContains(Exception, 'multiple of', ElbCollector, *[config, None])
 
     @patch('elb.cloudwatch')
     @patch('boto.ec2.connect_to_region')
@@ -56,35 +43,22 @@ class TestElbCollector(CollectorTestCase):
 
         cw_conn = Mock()
         cw_conn.get_metric_statistics = Mock()
+        ts = datetime.datetime(2014, 1, 14, 15, 22)
         cw_conn.get_metric_statistics.side_effect = [
-            [{u'Timestamp': datetime.datetime(2014, 1, 14, 15, 22), u'Average': 4.0, u'Unit': u'Count'}],
-            [{u'Timestamp': datetime.datetime(2014, 1, 14, 15, 22), u'Average': 2.0, u'Unit': u'Count'}],
-            [{u'Timestamp': datetime.datetime(2014, 1, 14, 15, 22), u'Sum': 3.0, u'Unit': u'Count'}],
-            [{u'Timestamp': datetime.datetime(2014, 1, 14, 15, 22), u'Average': 4.0, u'Unit': u'Count'}],
-            [{u'Timestamp': datetime.datetime(2014, 1, 14, 15, 22), u'Sum': 4.0, u'Unit': u'Count'}],
-            [{u'Timestamp': datetime.datetime(2014, 1, 14, 15, 22), u'Sum': 4.0, u'Unit': u'Count'}],
-            [{u'Timestamp': datetime.datetime(2014, 1, 14, 15, 22), u'Sum': 4.0, u'Unit': u'Count'}],
-            [{u'Timestamp': datetime.datetime(2014, 1, 14, 15, 22), u'Sum': 4.0, u'Unit': u'Count'}],
-            [{u'Timestamp': datetime.datetime(2014, 1, 14, 15, 22), u'Sum': 4.0, u'Unit': u'Count'}],
-            [{u'Timestamp': datetime.datetime(2014, 1, 14, 15, 22), u'Sum': 4.0, u'Unit': u'Count'}],
-            [{u'Timestamp': datetime.datetime(2014, 1, 14, 15, 22), u'Sum': 4.0, u'Unit': u'Count'}],
-            [{u'Timestamp': datetime.datetime(2014, 1, 14, 15, 22), u'Maximum': 4.0, u'Unit': u'Count'}],
-            [{u'Timestamp': datetime.datetime(2014, 1, 14, 15, 22), u'Sum': 4.0, u'Unit': u'Count'}],
+            [{u'Timestamp': ts, u'Average': 1.0, u'Unit': u'Count'}],
+            [{u'Timestamp': ts, u'Average': 2.0, u'Unit': u'Count'}],
+            [{u'Timestamp': ts, u'Sum': 3.0, u'Unit': u'Count'}],
+            [{u'Timestamp': ts, u'Average': 4.0, u'Unit': u'Count'}],
+            [{u'Timestamp': ts, u'Sum': 6.0, u'Unit': u'Count'}],
+            [{u'Timestamp': ts, u'Sum': 7.0, u'Unit': u'Count'}],
+            [{u'Timestamp': ts, u'Sum': 8.0, u'Unit': u'Count'}],
+            [{u'Timestamp': ts, u'Sum': 9.0, u'Unit': u'Count'}],
+            [{u'Timestamp': ts, u'Sum': 10.0, u'Unit': u'Count'}],
+            [{u'Timestamp': ts, u'Sum': 11.0, u'Unit': u'Count'}],
+            [{u'Timestamp': ts, u'Sum': 12.0, u'Unit': u'Count'}],
+            [{u'Timestamp': ts, u'Maximum': 13.0, u'Unit': u'Count'}],
+            [{u'Timestamp': ts, u'Sum': 14.0, u'Unit': u'Count'}],
         ]
-
-        # ('HealthyHostCount', 'Average'),
-        # ('UnhealthyHostCount', 'Average'),
-        # ('RequestCount', 'Sum'),
-        # ('Latency', 'Average'),
-        # ('HTTPCode_ELB_4XX', 'Sum'),
-        # ('HTTPCode_ELB_5XX', 'Sum'),
-        # ('HTTPCode_Backend_2XX', 'Sum'),
-        # ('HTTPCode_Backend_3XX', 'Sum'),
-        # ('HTTPCode_Backend_4XX', 'Sum'),
-        # ('HTTPCode_Backend_5XX', 'Sum'),
-        # ('BackendConnectionErrors', 'Sum'),
-        # ('SurgeQueueLength', 'Maximum'),
-        # ('SpilloverCount', 'Sum')]
 
         cloudwatch.connect_to_region = Mock()
         cloudwatch.connect_to_region.return_value = cw_conn
@@ -92,15 +66,37 @@ class TestElbCollector(CollectorTestCase):
         collector = ElbCollector(config, handlers=[])
         collector.collect()
 
-        print publish.call_args_list
-
         self.assertPublishedMany(
             publish,
             {
-                'us-west-1a.elb1.HealthyHostCount'   : 4,
-                'us-west-1a.elb1.UnhealthyHostCount' : 2,
-                'us-west-1a.elb1.RequestCount' : 3,
+                'us-west-1a.elb1.HealthyHostCount': 1,
+                'us-west-1a.elb1.UnhealthyHostCount': 2,
+                'us-west-1a.elb1.RequestCount': 3,
+                'us-west-1a.elb1.Latency': 4,
+                'us-west-1a.elb1.HTTPCode_ELB_4XX': 6,
+                'us-west-1a.elb1.HTTPCode_ELB_5XX': 7,
+                'us-west-1a.elb1.HTTPCode_Backend_2XX': 8,
+                'us-west-1a.elb1.HTTPCode_Backend_3XX': 9,
+                'us-west-1a.elb1.HTTPCode_Backend_4XX': 10,
+                'us-west-1a.elb1.HTTPCode_Backend_5XX': 11,
+                'us-west-1a.elb1.BackendConnectionErrors': 12,
+                'us-west-1a.elb1.SurgeQueueLength': 13,
+                'us-west-1a.elb1.SpilloverCount': 14,
             })
+
+def assertRaisesAndContains(excClass, contains_str, callableObj, *args, **kwargs):
+    try:
+        callableObj(*args, **kwargs)
+    except excClass, e:
+        msg = str(e)
+        if contains_str in msg:
+            return
+        else:
+            raise AssertionError, "Exception message does not contain '%s': '%s'" % (contains_str, msg)
+    else:
+        if hasattr(excClass,'__name__'): excName = excClass.__name__
+        else: excName = str(excClass)
+        raise AssertionError, "%s not raised" % excName
 
 if __name__ == "__main__":
     unittest.main()
