@@ -16,8 +16,8 @@ You can specify an arbitrary amount of regions
     access_key_id = ...
     secret_access_key = ...
 
-    # Available keys: region, zone, elb_name, metric_name
-    format = @elb_name.@zone.@metric_name
+    # Optional - Available keys: region, zone, elb_name, metric_name
+    format = $elb_name.$zone.$metric_name
 
     [[regions]]
 
