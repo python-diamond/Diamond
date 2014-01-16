@@ -3,10 +3,6 @@
 """
 Output the collected values to RabitMQ Topic Exchange
 This allows for 'subscribing' to messages based on the routing key, which is the metric path
-
-Example: 
-  routing_key = servers.172-16-80-18.iostat.vda.write_byte_per_second
-  Message     = "servers.172-16-80-18.iostat.vda.write_byte_per_second 1499 1389293516\n"
 """
 
 from Handler import Handler
@@ -46,6 +42,8 @@ class rmqHandler (Handler):
         self.vhost        = self.config.get('vhost'    , "")
         self.user         = self.config.get('user'     , "guest")
         self.password     = self.config.get('password' , "guest")
+        self.routing_key  = self.config.get('routing_key' , "metric")
+        self.custom_routing_key  = self.config.get('custom_routing_key' , "diamond")
 
         if not pika:
             self.log.error('pika import failed. Handler disabled')
@@ -69,6 +67,8 @@ class rmqHandler (Handler):
             'vhost':    '',
             'user':     '',
             'password': '',
+            'routing_key': '',
+            'custom_routing_key': '',
         })
 
         return config
@@ -122,9 +122,19 @@ class rmqHandler (Handler):
         if not pika:
             return
 
+        routingKeyDic = {
+           'metric'         : lambda : metric.path,
+           'custom'	    : lambda : self.custom_routing_key,
+
+           'host'           : lambda : metric.host,    # These option and the below are really not needed because
+           'metric.path'    : metric.getMetricPath,    #  with Rabbitmq you can use regular expressions to indicate 
+           'path.prefix'    : metric.getPathPrefix,    #  what routing_keys to subscribe to. But I figure this is
+           'collector.path' : metric.getCollectorPath, #  a good example of how to allow more routing keys
+        }
+
         try:
             self.channel.basic_publish(exchange=self.topic_exchange,
-                                       routing_key=metric.path, body="%s" % metric)
+                                       routing_key=routingKeyDic[self.routing_key](), body="%s" % metric)
 
         except Exception:  # Rough connection re-try logic.
             self.log.info("Failed publishing to rabbitMQ. Attempting reconnect")
