@@ -26,21 +26,11 @@ count_workers defined under [process] will determine whether to count how many
 workers are there of processes which match this [process],
 for example: cgi workers.
 
-cpu_interval is the interval in seconds used to calculate cpu usage percentage.
-From psutil's docs:
-
-'''get_cpu_percent(interval=0.1)'''
-Return a float representing the process CPU utilization as a percentage.
-* When interval is > 0.0 compares process times to system CPU times elapsed
-    before and after the interval (blocking).
-* When interval is 0.0 compares process times to system CPU times
-    elapsed since last call, returning immediately. In this case is recommended
-    for accuracy that this function be called with at least 0.1 seconds between
-    calls.
 """
 
 import os
 import re
+import operator
 
 import diamond.collector
 import diamond.convertor
@@ -52,72 +42,49 @@ except ImportError:
     psutil = None
 
 
-def process_filter(proc, cfg):
+def match_process(pid, name, cmdline, exe, cfg):
     """
     Decides whether a process matches with a given process descriptor
 
-    :param proc: a psutil.Process instance
+    :param pid: process pid
+    :param exe: process executable
+    :param name: process name
+    :param cmdline: process cmdline
     :param cfg: the dictionary from processes that describes with the
         process group we're testing for
     :return: True if it matches
     :rtype: bool
     """
-    if cfg['selfmon'] and proc.pid == os.getpid():
+    if cfg['selfmon'] and pid == os.getpid():
         return True
-    for exe in cfg['exe']:
-        try:
-            if exe.search(proc.exe):
-                return True
-        except psutil.AccessDenied:
-            break
-    for name in cfg['name']:
-        if name.search(proc.name):
+    for exe_re in cfg['exe']:
+        if exe_re.search(exe):
             return True
-    for cmdline in cfg['cmdline']:
-        if cmdline.search(' '.join(proc.cmdline)):
+    for name_re in cfg['name']:
+        if name_re.search(name):
+            return True
+    for cmdline_re in cfg['cmdline']:
+        if cmdline_re.search(' '.join(cmdline)):
             return True
     return False
 
+def process_info(process, info_keys):
+    results = {}
+    process_info = process.as_dict()
+    metrics = ((key, process_info.get(key, None)) for key in info_keys)
+    for key, value in metrics:
+        if type(value) in [float, int]:
+            results.update({key: value})
+        elif hasattr(value, '_asdict'):
+            for subkey, subvalue in value._asdict().iteritems():
+                results.update({"%s.%s" % (key, subkey): subvalue})
+    return results
 
 class ProcessResourcesCollector(diamond.collector.Collector):
-
-    def get_default_config_help(self):
-        config_help = super(ProcessResourcesCollector,
-                            self).get_default_config_help()
-        config_help.update({
-            'unit': 'The unit in which memory data is collected.',
-            'process': ("A subcategory of settings inside of which each "
-                        "collected process has it's configuration"),
-            'cpu_interval': (
-                """The time interval used to calculate cpu percentage
-* When interval is > 0.0 compares process times to system CPU times elapsed
-before and after the interval (blocking).
-* When interval is 0.0 compares process times to system CPU times
-elapsed since last call, returning immediately. In this case is recommended
-for accuracy that this function be called with at least 0.1 seconds between
-calls."""),
-        })
-        return config_help
-
-    def get_default_config(self):
-        """
-        Default settings are:
-            path: 'memory.process'
-            unit: 'B'
-        """
-        config = super(ProcessResourcesCollector, self).get_default_config()
-        config.update({
-            'path': 'memory.process',
-            'unit': 'B',
-            'process': '',
-            'cpu_interval': 0.0
-        })
-        return config
-
-    def setup_config(self):
+    def __init__(self, *args, **kwargs):
         """
         prepare self.processes, which is a descriptor dictionary in
-        processgroup --> {
+        pg_name: {
             exe: [regex],
             name: [regex],
             cmdline: [regex],
@@ -126,52 +93,70 @@ calls."""),
             count_workers: [boolean]
         }
         """
+        super(ProcessResourcesCollector, self).__init__(*args, **kwargs)
         self.processes = {}
-        for process, cfg in self.config['process'].items():
-            # first we build a dictionary with the process aliases and the
-            #  matching regexps
-            proc = {'procs': []}
+        for pg_name, cfg in self.config['process'].items():
+            pg_cfg = {}
             for key in ('exe', 'name', 'cmdline'):
-                proc[key] = cfg.get(key, [])
-                if not isinstance(proc[key], list):
-                    proc[key] = [proc[key]]
-                proc[key] = [re.compile(e) for e in proc[key]]
-            proc['selfmon'] = cfg.get('selfmon', '').lower() == 'true'
-            proc['count_workers'] = cfg.get(
+                pg_cfg[key] = cfg.get(key, [])
+                if not isinstance(pg_cfg[key], list):
+                    pg_cfg[key] = [pg_cfg[key]]
+                pg_cfg[key] = [re.compile(e) for e in pg_cfg[key]]
+            pg_cfg['selfmon'] = cfg.get('selfmon', '').lower() == 'true'
+            pg_cfg['count_workers'] = cfg.get(
                 'count_workers', '').lower() == 'true'
-            self.processes[process] = proc
+            self.processes[pg_name] = pg_cfg
 
-    def filter_processes(self):
+    def get_default_config_help(self):
+        config_help = super(ProcessResourcesCollector,
+                            self).get_default_config_help()
+        config_help.update({
+            'unit': 'The unit in which memory data is collected.',
+            'process': ("A subcategory of settings inside of which each "
+                        "collected process has it's configuration"),
+        })
+        return config_help
+
+    def get_default_config(self):
         """
-        Populates self.processes[processname]['procs'] with the corresponding
-        list of psutil.Process instances
+        Default settings are:
+            path: 'process'
+            unit: 'B'
         """
-        class ProcessResources(object):
-            def __init__(self, **kwargs):
-                for name, val in kwargs.items():
-                    setattr(self, name, val)
-        # requires setup_config to be run before this
-        interval = float(self.config['cpu_interval'])
-        for proc in psutil.process_iter():
-            # get process data
-            loaded = None
+        config = super(ProcessResourcesCollector, self).get_default_config()
+        config.update({
+            'path': 'process',
+            'unit': 'B',
+            'process': '',
+        })
+        return config
+
+    default_info_keys = [
+        'num_ctx_switches',
+        'cpu_percent',
+        'cpu_times',
+        'io_counters',
+        'num_threads',
+        'memory_percent',
+        'ext_memory_info',
+    ]
+
+    def collect_process_info(self, process):
+        try:
+            results = []
+            pid = process.pid
+            name = process.name
+            cmdline = process.cmdline
             try:
-                proc_dummy = ProcessResources(
-                    rss=proc.get_memory_info().rss,
-                    vms=proc.get_memory_info().vms,
-                    cpu_percent=proc.get_cpu_percent(interval=interval)
-                )
-                loaded = True
-            except psutil.NoSuchProcess:
-                loaded = False
-
-            if loaded:
-                # filter and divide the system processes amongst the different
-                #  process groups defined in the config file
-                for procname, cfg in self.processes.items():
-                    if process_filter(proc, cfg):
-                        cfg['procs'].append(proc_dummy)
-                        break
+                exe = process.exe
+            except psutil.AccessDenied:
+                exe = ""
+            for pg_name, cfg in self.processes.items():
+                if match_process(pid, name, cmdline, exe, cfg):
+                    results.append((pg_name, process_info(process, self.default_info_keys)))
+        except psutil.NoSuchProcess, e:
+            self.log.warning("Process exited while trying to filter it: %s", e)
+        return results
 
     def collect(self):
         """
@@ -183,35 +168,10 @@ calls."""),
             self.log.error('No process resource metrics retrieved')
             return None
 
-        try:
-            self.setup_config()
-            self.filter_processes()
-            unit = self.config['unit']
-            for process, cfg in self.processes.items():
-                # finally publish the results for each process group
-                metric_name = "%s.rss" % process
-                metric_value = diamond.convertor.binary.convert(
-                    sum(p.rss for p in cfg['procs']),
-                    oldUnit='byte', newUnit=unit)
-                # Publish Metric
-                self.publish(metric_name, metric_value)
-
-                metric_name = "%s.vms" % process
-                metric_value = diamond.convertor.binary.convert(
-                    sum(p.vms for p in cfg['procs']),
-                    oldUnit='byte', newUnit=unit)
-                # Publish Metric
-                self.publish(metric_name, metric_value)
-
-                # CPU percent
-                metric_name = "%s.cpu_percent" % process
-                metric_value = sum(p.cpu_percent for p in cfg['procs'])
-                # Publish Metric
-                self.publish(metric_name, metric_value)
-
-                if cfg['count_workers']:
-                    metric_name = '%s.workers' % process
-                    metric_value = len(cfg['procs'])
-                    self.publish(metric_name, metric_value)
-        except Exception, e:
-            self.log.error(str(e))
+        for pg_name, counters in reduce(
+            operator.add,
+            (self.collect_process_info(process)
+                for process in psutil.process_iter())
+        ):
+            metrics = (("%s.%s" % (pg_name, key), value) for key, value in counters.iteritems())
+            [self.publish(*metric) for metric in metrics]
