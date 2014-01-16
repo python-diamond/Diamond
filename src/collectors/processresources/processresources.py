@@ -158,7 +158,10 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                 exe = ""
             for pg_name, cfg in self.processes.items():
                 if match_process(pid, name, cmdline, exe, cfg):
-                    self.save_process_info(pg_name, process_info(process, self.default_info_keys))
+                    pi = process_info(process, self.default_info_keys)
+                    if cfg['count_workers']:
+                        pi.update({'workers_count': 1})
+                    self.save_process_info(pg_name, pi)
         except psutil.NoSuchProcess, e:
             self.log.warning("Process exited while trying to get info: %s", e)
 
