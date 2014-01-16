@@ -155,7 +155,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                 if match_process(pid, name, cmdline, exe, cfg):
                     results.append((pg_name, process_info(process, self.default_info_keys)))
         except psutil.NoSuchProcess, e:
-            self.log.warning("Process exited while trying to filter it: %s", e)
+            self.log.warning("Process exited while trying to get info: %s", e)
         return results
 
     def collect(self):
