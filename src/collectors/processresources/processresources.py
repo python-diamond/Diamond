@@ -30,7 +30,7 @@ for example: cgi workers.
 
 import os
 import re
-import operator
+from collections import defaultdict
 
 import diamond.collector
 import diamond.convertor
@@ -95,6 +95,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
         """
         super(ProcessResourcesCollector, self).__init__(*args, **kwargs)
         self.processes = {}
+        self.processes_info = {}
         for pg_name, cfg in self.config['process'].items():
             pg_cfg = {}
             for key in ('exe', 'name', 'cmdline'):
@@ -106,6 +107,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
             pg_cfg['count_workers'] = cfg.get(
                 'count_workers', '').lower() == 'true'
             self.processes[pg_name] = pg_cfg
+            self.processes_info[pg_name] = defaultdict(int)
 
     def get_default_config_help(self):
         config_help = super(ProcessResourcesCollector,
@@ -141,9 +143,12 @@ class ProcessResourcesCollector(diamond.collector.Collector):
         'ext_memory_info',
     ]
 
+    def save_process_info(self, pg_name, process_info):
+        for key, value in process_info.iteritems():
+            self.processes_info[pg_name][key] += value
+
     def collect_process_info(self, process):
         try:
-            results = []
             pid = process.pid
             name = process.name
             cmdline = process.cmdline
@@ -153,14 +158,13 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                 exe = ""
             for pg_name, cfg in self.processes.items():
                 if match_process(pid, name, cmdline, exe, cfg):
-                    results.append((pg_name, process_info(process, self.default_info_keys)))
+                    self.save_process_info(pg_name, process_info(process, self.default_info_keys))
         except psutil.NoSuchProcess, e:
             self.log.warning("Process exited while trying to get info: %s", e)
-        return results
 
     def collect(self):
         """
-        Collects the RSS memory usage of each process defined under the
+        Collects resources usage of each process defined under the
         `process` subsection of the config file
         """
         if not psutil:
@@ -168,10 +172,13 @@ class ProcessResourcesCollector(diamond.collector.Collector):
             self.log.error('No process resource metrics retrieved')
             return None
 
-        for pg_name, counters in reduce(
-            operator.add,
-            (self.collect_process_info(process)
-                for process in psutil.process_iter())
-        ):
+
+        
+        for process in psutil.process_iter():
+            self.collect_process_info(process)
+
+        # publish results
+        for pg_name, counters in self.processes_info.iteritems():
             metrics = (("%s.%s" % (pg_name, key), value) for key, value in counters.iteritems())
             [self.publish(*metric) for metric in metrics]
+            self.processes_info[pg_name] = defaultdict(int)  # reinitialize process info
