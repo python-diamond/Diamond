@@ -147,15 +147,50 @@ class TestProcessResourcesCollector(CollectorTestCase):
                 if exe is not None:
                     self.exe = exe
 
-            def get_memory_info(self):
-                class MemInfo:
-                    def __init__(self, rss, vms):
-                        self.rss = rss
-                        self.vms = vms
-                return MemInfo(self.rss, self.vms)
+            def cmdline(self):
+                return ""
 
-            def get_cpu_percent(self, interval=0.1):
-                return 7
+            def as_dict(self):
+                from collections import namedtuple
+                meminfo = namedtuple('meminfo', 'rss vms')
+                ext_meminfo = namedtuple('meminfo', 'rss vms shared text lib data dirty')
+                cputimes = namedtuple('cputimes', 'user system')
+                openfile = namedtuple('openfile', 'path fd')
+                thread = namedtuple('thread', 'id user_time system_time')
+                user = namedtuple('user', 'real effective saved')
+                group = namedtuple('group', 'real effective saved')
+                io = namedtuple('io', 'read_count write_count read_bytes write_bytes')
+                ionice = namedtuple('ionice', 'ioclass value')
+                amount = namedtuple('amount', 'voluntary involuntary')
+                return {
+                    'status': 'sleeping',
+                    'num_ctx_switches': amount(voluntary=2243, involuntary=221),
+                    'pid': 1,
+                    'connections': None,
+                    'cmdline': ['/sbin/init'],
+                    'create_time': 1389294592.02,
+                    'ionice': ionice(ioclass=0, value=0),
+                    'num_fds': None,
+                    'memory_maps': None,
+                    'cpu_percent': 0.0,
+                    'terminal': None,
+                    'ppid': 0,
+                    'cwd': None,
+                    'nice': 0,
+                    'username': 'root',
+                    'cpu_times': cputimes(user=0.27, system=1.05),
+                    'io_counters': None,
+                    'ext_memory_info': ext_meminfo(rss=2035712, vms=3756032, shared=1310720, text=188416, lib=0, data=868352, dirty=0),
+                    'threads': [thread(id=1, user_time=0.27, system_time=1.04)],
+                    'open_files': None,
+                    'name': 'init',
+                    'num_threads': 1,
+                    'exe': '/sbin/init',
+                    'uids': user(real=0, effective=0, saved=0),
+                    'gids': group(real=0, effective=0, saved=0),
+                    'cpu_affinity': [0, 1, 2, 3],
+                    'memory_percent': 0.03254831000922748,
+                    'memory_info': meminfo(rss=2035712, vms=3756032)}
 
         process_iter_mock = (ProcessMock(
             pid=x['pid'],
@@ -173,18 +208,12 @@ class TestProcessResourcesCollector(CollectorTestCase):
         self.collector.collect()
         patch_psutil_process_iter.stop()
 
-        self.assertPublished(publish_mock, 'postgres.rss',
+        self.assertPublished(publish_mock, 'postgres.as_dict',
                              9875456 + 1753088 + 1503232 + 3989504 + 2400256)
-        self.assertPublished(publish_mock, 'postgres.vms',
-                             106852352 + 106835968 + 106835968 + 109023232 +
-                             75829248)
-        self.assertPublished(publish_mock, 'foo.rss', 0)
-        self.assertPublished(publish_mock, 'bar.rss', 2)
-        self.assertPublished(publish_mock, 'barexe.rss', 10)
-        self.assertPublished(publish_mock, 'diamond-selfmon.rss', 1234)
-        self.assertPublished(publish_mock, 'diamond-selfmon.vms', 90210)
-        self.assertPublished(publish_mock, 'bar.cpu_percent', 7 * 2)
-        self.assertPublished(publish_mock, 'barexe.cpu_percent', 7)
+        self.assertPublished(publish_mock, 'foo.as_dict', 0)
+        self.assertPublished(publish_mock, 'bar.as_dict', 2)
+        self.assertPublished(publish_mock, 'barexe.as_dict', 10)
+        self.assertPublished(publish_mock, 'diamond-selfmon.as_dict', 1234)
 
 ################################################################################
 if __name__ == "__main__":
