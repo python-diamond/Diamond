@@ -2,7 +2,8 @@
 
 """
 Output the collected values to RabitMQ Topic Exchange
-This allows for 'subscribing' to messages based on the routing key, which is the metric path
+This allows for 'subscribing' to messages based on the routing key, which is
+the metric path
 """
 
 from Handler import Handler
@@ -17,8 +18,8 @@ except ImportError:
 class rmqHandler (Handler):
     """
       Implements the abstract Handler class
-      Sending data to a RabbitMQ topic exchange. 
-      The routing key will be the full name of the metric being sent. 
+      Sending data to a RabbitMQ topic exchange.
+      The routing key will be the full name of the metric being sent.
 
       Based on the rmqHandler and zmpqHandler code.
     """
@@ -36,14 +37,15 @@ class rmqHandler (Handler):
         self.channel = None
 
         # Initialize Options
-        self.server       = self.config.get('server'   , "127.0.0.1")
-        self.port         = int(self.config.get('port'     , 5672 ) )
-        self.topic_exchange     = self.config.get('topic_exchange' , "diamond")
-        self.vhost        = self.config.get('vhost'    , "")
-        self.user         = self.config.get('user'     , "guest")
-        self.password     = self.config.get('password' , "guest")
-        self.routing_key  = self.config.get('routing_key' , "metric")
-        self.custom_routing_key  = self.config.get('custom_routing_key' , "diamond")
+        self.server = self.config.get('server', '127.0.0.1')
+        self.port = int(self.config.get('port', 5672))
+        self.topic_exchange = self.config.get('topic_exchange', 'diamond')
+        self.vhost = self.config.get('vhost', '')
+        self.user = self.config.get('user', 'guest')
+        self.password = self.config.get('password', 'guest')
+        self.routing_key = self.config.get('routing_key', 'metric')
+        self.custom_routing_key = self.config.get(
+            'custom_routing_key', 'diamond')
 
         if not pika:
             self.log.error('pika import failed. Handler disabled')
@@ -62,10 +64,10 @@ class rmqHandler (Handler):
         config = super(rmqHandler, self).get_default_config_help()
 
         config.update({
-            'server':   '',
+            'server': '',
             'topic_exchange': '',
-            'vhost':    '',
-            'user':     '',
+            'vhost': '',
+            'user': '',
             'password': '',
             'routing_key': '',
             'custom_routing_key': '',
@@ -80,12 +82,12 @@ class rmqHandler (Handler):
         config = super(rmqHandler, self).get_default_config()
 
         config.update({
-            'server':   '127.0.0.1',
+            'server': '127.0.0.1',
             'topic_exchange': 'diamond',
-            'vhost':    '/',
-            'user':     'guest',
+            'vhost': '/',
+            'user': 'guest',
             'password': 'guest',
-            'port'    : '5672',
+            'port': '5672',
         })
 
         return config
@@ -96,14 +98,18 @@ class rmqHandler (Handler):
         """
 
         credentials = pika.PlainCredentials(self.user, self.password)
-        params      = pika.ConnectionParameters(credentials=credentials, host=self.server, virtual_host=self.vhost,port=self.port)
-  
+        params = pika.ConnectionParameters(credentials=credentials,
+                                           host=self.server,
+                                           virtual_host=self.vhost,
+                                           port=self.port)
+
         self.connection = pika.BlockingConnection(params)
         self.channel = self.connection.channel()
 
-	# NOTE : PIKA version uses 'exchange_type' instead of 'type'
+        # NOTE : PIKA version uses 'exchange_type' instead of 'type'
 
-        self.channel.exchange_declare(exchange=self.topic_exchange, exchange_type="topic")
+        self.channel.exchange_declare(exchange=self.topic_exchange,
+                                      exchange_type="topic")
 
     def __del__(self):
         """
@@ -123,20 +129,26 @@ class rmqHandler (Handler):
             return
 
         routingKeyDic = {
-           'metric'         : lambda : metric.path,
-           'custom'	    : lambda : self.custom_routing_key,
+            'metric': lambda: metric.path,
+            'custom': lambda: self.custom_routing_key,
 
-           'host'           : lambda : metric.host,    # These option and the below are really not needed because
-           'metric.path'    : metric.getMetricPath,    #  with Rabbitmq you can use regular expressions to indicate 
-           'path.prefix'    : metric.getPathPrefix,    #  what routing_keys to subscribe to. But I figure this is
-           'collector.path' : metric.getCollectorPath, #  a good example of how to allow more routing keys
+            # These option and the below are really not needed because
+            #  with Rabbitmq you can use regular expressions to indicate
+            #  what routing_keys to subscribe to. But I figure this is
+            #  a good example of how to allow more routing keys
+
+            'host': lambda: metric.host,
+            'metric.path': metric.getMetricPath,
+            'path.prefix': metric.getPathPrefix,
+            'collector.path': metric.getCollectorPath,
         }
 
         try:
-            self.channel.basic_publish(exchange=self.topic_exchange,
-                                       routing_key=routingKeyDic[self.routing_key](), body="%s" % metric)
+            self.channel.basic_publish(
+                exchange=self.topic_exchange,
+                routing_key=routingKeyDic[self.routing_key](),
+                body="%s" % metric)
 
         except Exception:  # Rough connection re-try logic.
             self.log.info("Failed publishing to rabbitMQ. Attempting reconnect")
             self._bind()
-
