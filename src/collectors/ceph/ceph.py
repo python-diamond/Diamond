@@ -344,8 +344,7 @@ class CephCollector(diamond.collector.Collector):
         try:
             json_blob, err = _popen_check_output(
                 [self.config['ceph_binary'], '--admin-daemon', socket_path] + command)
-        except subprocess.CalledProcessError:
-            self.log.exception('Error calling to %s' % socket_path)
+        except CalledProcessError:
             raise AdminSocketError(socket_path, command)
 
         try:
@@ -358,7 +357,7 @@ class CephCollector(diamond.collector.Collector):
         try:
             json_blob, err = _popen_check_output(
                 [self.config['ceph_binary'], '--cluster', cluster, '-f', 'json-pretty'] + command)
-        except subprocess.CalledProcessError:
+        except CalledProcessError:
             raise MonError(cluster, command)
 
         try:
@@ -423,8 +422,8 @@ class CephCollector(diamond.collector.Collector):
 
         cluster_name, service_type, service_id = self._parse_socket_name(path)
         fsid = self._admin_command(path, ['config', 'get', 'fsid'])['fsid']
-
         stats, schema = self._get_perf_counters(path)
+
         if self.config['service_stats_global']:
             counter_prefix = "{0}.{1}.{2}".format(self._cluster_id_prefix(cluster_name, fsid), service_type, service_id)
             self._publish_stats(cluster_name, fsid, counter_prefix, stats, global_name=True)
@@ -440,5 +439,8 @@ class CephCollector(diamond.collector.Collector):
         for path in self._get_socket_paths():
             self.log.debug('gathering service stats for %s', path)
 
-            self._collect_service_stats(path)
-            self._collect_cluster_stats(path)
+            try:
+                self._collect_service_stats(path)
+                self._collect_cluster_stats(path)
+            except (AdminSocketError, MonError) as e:
+                self.log.warn(e.__str__())
