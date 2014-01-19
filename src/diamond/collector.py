@@ -473,4 +473,4 @@ class Collector(object):
                 if os.path.exists(filename):
                     return filename
 
-    return binary
+        return binary
