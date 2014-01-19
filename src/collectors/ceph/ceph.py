@@ -35,7 +35,7 @@ _PERFCOUNTER_LONGRUNAVG = 0x4
 _PERFCOUNTER_COUNTER = 0x8
 
 
-def flatten_dictionary(input_dict, path=list()):
+def flatten_dictionary(input_dict, path=None):
     """Produces iterator of pairs where the first value is the key path and
     the second value is the value associated with the key. For example::
 
@@ -47,6 +47,9 @@ def flatten_dictionary(input_dict, path=list()):
 
       [([a,b], 10), ([c], 20)]
     """
+    if path is None:
+        path = []
+
     for name, value in sorted(input_dict.items()):
         path.append(name)
         if isinstance(value, dict):
