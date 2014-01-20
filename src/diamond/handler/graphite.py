@@ -67,7 +67,7 @@ class GraphiteHandler(Handler):
             'max_backlog_multiplier': 'how many batches to store before trimming',  # NOQA
             'trim_backlog_multiplier': 'Trim down how many batches',
             'keepalive': 'Enable keepalives for tcp streams',
-            'keepaliveinterval': 'How frequently to send keepalives'
+            'keepaliveinterval': 'How frequently to send keepalives',
         })
 
         return config
@@ -117,11 +117,14 @@ class GraphiteHandler(Handler):
         """
         try:
             self.socket.sendall(data)
+            self._reset_errors()
         except:
             self._close()
-            self.log.error("GraphiteHandler: Socket error, trying reconnect.")
+            self._throttle_error("GraphiteHandler: Socket error, "
+                                 "trying reconnect.")
             self._connect()
             self.socket.sendall(data)
+            self._reset_errors()
 
     def _send(self):
         """
@@ -142,7 +145,7 @@ class GraphiteHandler(Handler):
                     self.metrics = []
             except Exception:
                 self._close()
-                self.log.error("GraphiteHandler: Error sending metrics.")
+                self._throttle_error("GraphiteHandler: Error sending metrics.")
                 raise
         finally:
             if len(self.metrics) >= (
@@ -192,8 +195,8 @@ class GraphiteHandler(Handler):
                            self.host, self.port)
         except Exception, ex:
             # Log Error
-            self.log.error("GraphiteHandler: Failed to connect to %s:%i. %s.",
-                           self.host, self.port, ex)
+            self._throttle_error("GraphiteHandler: Failed to connect to "
+                                 "%s:%i. %s.", self.host, self.port, ex)
             # Close Socket
             self._close()
             return
