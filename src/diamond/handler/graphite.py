@@ -18,7 +18,6 @@ use it.
 
 from Handler import Handler
 import socket
-import datetime
 
 
 class GraphiteHandler(Handler):
@@ -50,8 +49,6 @@ class GraphiteHandler(Handler):
             self.config['trim_backlog_multiplier'])
         self.metrics = []
 
-        self._errors = {}
-
         # Connect
         self._connect()
 
@@ -71,8 +68,6 @@ class GraphiteHandler(Handler):
             'trim_backlog_multiplier': 'Trim down how many batches',
             'keepalive': 'Enable keepalives for tcp streams',
             'keepaliveinterval': 'How frequently to send keepalives',
-            'server_error_interval': ('How frequently to send repeated server '
-                                      'errors'),
         })
 
         return config
@@ -93,7 +88,6 @@ class GraphiteHandler(Handler):
             'trim_backlog_multiplier': 4,
             'keepalive': 0,
             'keepaliveinterval': 10,
-            'server_error_interval': 120,
         })
 
         return config
@@ -103,46 +97,6 @@ class GraphiteHandler(Handler):
         Destroy instance of the GraphiteHandler class
         """
         self._close()
-
-    def _throttle_error(self, msg, *args, **kwargs):
-        """
-        Avoids sending errors repeatedly. Waits at least
-        `self.server_error_interval` seconds before sending the same error
-        string to the error logging facility. If not enough time has passed,
-        it calls `log.debug` instead
-
-        Receives the same parameters as `Logger.error` an passes them on to the
-        selected logging function, but ignores all parameters but the main
-        message string when checking the last emission time.
-
-        :returns: the return value of `Logger.debug` or `Logger.error`
-        """
-        now = datetime.datetime.now()
-        if msg in self._errors:
-            if ((datetime.now() - self._errors[msg]) >=
-                    datetime.timedelta(seconds=self.server_error_interval)):
-                fn = self.log.error
-                self._errors[msg] = now
-            else:
-                fn = self.log.debug
-        else:
-            self._errors[msg] = now
-            fn = self.log.error
-
-        return fn(msg, *args, **kwargs)
-
-    def _reset_errors(self, msg=None):
-        """
-        Resets the logging throttle cache, so the next error is emitted
-        regardless of the value in `self.server_error_interval`
-
-        :param msg: if present, only this key is reset. Otherwise, the whole
-            cache is cleaned.
-        """
-        if msg is not None and msg in self._errors:
-            del self._errors[msg]
-        else:
-            self._errors = {}
 
     def process(self, metric):
         """
