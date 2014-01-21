@@ -55,24 +55,25 @@ class DRBDCollector(diamond.collector.Collector):
 
         results = dict()
         try:
-            with open('/proc/drbd', 'r') as statusfile:
-                current_resource = ''
-                for line in statusfile:
-                    if re.search('version', line) is None:
-                        if re.search(r' \d: cs', line):
-                            matches = re.match(r' (\d): (cs:\w+) (ro:\w+/\w+) '
-                                               '(ds:\w+/\w+) (\w{1}) .*', line)
-                            current_resource = matches.group(1)
-                            results[current_resource] = dict()
-                        elif re.search(r'\sns:', line):
-                            metrics = line.strip().split(" ")
-                            for metric in metrics:
-                                item, value = metric.split(":")
-                                results[current_resource][
-                                    performance_indicators[item]] = value
+            statusfile = open('/proc/drbd', 'r')
+            current_resource = ''
+            for line in statusfile:
+                if re.search('version', line) is None:
+                    if re.search(r' \d: cs', line):
+                        matches = re.match(r' (\d): (cs:\w+) (ro:\w+/\w+) '
+                                           '(ds:\w+/\w+) (\w{1}) .*', line)
+                        current_resource = matches.group(1)
+                        results[current_resource] = dict()
+                    elif re.search(r'\sns:', line):
+                        metrics = line.strip().split(" ")
+                        for metric in metrics:
+                            item, value = metric.split(":")
+                            results[current_resource][
+                                performance_indicators[item]] = value
 
-                    else:
-                        continue
+                else:
+                    continue
+            statusfile.close()
         except IOError as errormsg:
             self.log.error("Can't read DRBD status file: {0}".format(errormsg))
             return
