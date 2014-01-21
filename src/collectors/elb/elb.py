@@ -11,6 +11,7 @@ You can specify an arbitrary amount of regions
 ```
     enabled = true
     interval = 60
+    max_history = 10
 
     # Optional
     access_key_id = ...
@@ -36,9 +37,12 @@ You can specify an arbitrary amount of regions
 
 """
 import datetime
+import time
 from string import Template
 
 import diamond.collector
+from diamond.metric import Metric
+
 try:
     import boto.ec2.elb
     from boto.ec2 import cloudwatch
@@ -49,20 +53,21 @@ except ImportError:
 
 class ElbCollector(diamond.collector.Collector):
 
+    # (aws metric name, aws statistic type, diamond metric type, diamond precision)
     metrics = [
-        ('HealthyHostCount', 'Average'),
-        ('UnhealthyHostCount', 'Average'),
-        ('RequestCount', 'Sum'),
-        ('Latency', 'Average'),
-        ('HTTPCode_ELB_4XX', 'Sum'),
-        ('HTTPCode_ELB_5XX', 'Sum'),
-        ('HTTPCode_Backend_2XX', 'Sum'),
-        ('HTTPCode_Backend_3XX', 'Sum'),
-        ('HTTPCode_Backend_4XX', 'Sum'),
-        ('HTTPCode_Backend_5XX', 'Sum'),
-        ('BackendConnectionErrors', 'Sum'),
-        ('SurgeQueueLength', 'Maximum'),
-        ('SpilloverCount', 'Sum')
+        # ('HealthyHostCount', 'Average', 'GAUGE', 0),
+        # ('UnhealthyHostCount', 'Average', 'GAUGE', 0),
+        ('RequestCount', 'Sum', 'COUNTER', 0),
+        ('Latency', 'Average', 'GAUGE', 4),
+        # ('HTTPCode_ELB_4XX', 'Sum', 'COUNT', 0),
+        # ('HTTPCode_ELB_5XX', 'Sum', 'COUNT', 0),
+        # ('HTTPCode_Backend_2XX', 'Sum', 'COUNT', 0),
+        # ('HTTPCode_Backend_3XX', 'Sum', 'COUNT', 0),
+        # ('HTTPCode_Backend_4XX', 'Sum', 'COUNT', 0),
+        # ('HTTPCode_Backend_5XX', 'Sum', 'COUNT', 0),
+        # ('BackendConnectionErrors', 'Sum', 'COUNT', 0),
+        # ('SurgeQueueLength', 'Maximum', 'GAUGE', 0),
+        # ('SpilloverCount', 'Sum', 'COUNT', 0)
     ]
 
     def __init__(self, config, handlers):
@@ -94,6 +99,8 @@ class ElbCollector(diamond.collector.Collector):
         validate_interval()
         setup_creds()
         cache_zones()
+        self.max_history = self.config.as_int('max_history')
+        self.history = dict()
 
     def check_boto(self):
         if not cloudwatch:
@@ -110,6 +117,7 @@ class ElbCollector(diamond.collector.Collector):
             'regions': ['us-west-1'],
             'interval': 60,
             'format' : '$zone.$elb_name.$metric_name',
+            'max_history' : 10,
         })
         return config
 
@@ -124,43 +132,89 @@ class ElbCollector(diamond.collector.Collector):
             elb_names = region_cfg['elb_names']
         return elb_names
 
+    def publish_delayed_metric(self, name, value, timestamp, raw_value=None, precision=0, metric_type='GAUGE', instance=None):
+        """
+        Metrics may not be immediately available when querying cloudwatch. Hence, allow the ability to publish a metric
+        from some point in the past given a timestamp.
+        """
+        # Get metric Path
+        path = self.get_metric_path(name, instance)
+
+        # Get metric TTL
+        ttl = float(self.config['interval']) * float(self.config['ttl_multiplier'])
+
+        # Create Metric
+        metric = Metric(path, value, raw_value=raw_value, timestamp=timestamp,
+                        precision=precision, host=self.get_hostname(),
+                        metric_type=metric_type, ttl=ttl)
+
+        # Publish Metric
+        self.publish_metric(metric)
+
     def collect(self):
         self.check_boto()
 
-        end_time = datetime.datetime.now()
+        now = datetime.datetime.now()
+        end_time = now.replace(second=0, microsecond=0)
         start_time = end_time - datetime.timedelta(seconds=self.interval)
 
         for (region, region_cfg) in self.config['regions'].items():
+            conn = cloudwatch.connect_to_region(region, **self.auth_kwargs)
             for elb_name in self.get_elb_names(region, region_cfg):
-                conn = cloudwatch.connect_to_region(region, **self.auth_kwargs)
-                for metric_name, statistic in self.metrics:
+                for metric_name, statistic, metric_type, precision in self.metrics:
                     for zone in self.zones_by_region[region]:
-                        # NOTE: Dimensioning by elb name only gives wonky stats (1.6667 HealthyHosts for example).
-                        #       Have to also include region for legit numbers and aggregate by region downstream.
+
+                        metric_key = (zone, elb_name, metric_name)
+                        if metric_key not in self.history:
+                            self.history[metric_key] = list()
+                        current_history = self.history[metric_key]
+
+                        tick = (start_time, end_time)
+                        current_history.append(tick)
+
+                        # only keep latest MAX_TICKS
+                        if len(current_history) > self.max_history:
+                            del current_history[0]
+
+                        span_start, _ = current_history[0]
+                        _, span_end   = current_history[-1]
+
+                        # get stats for the span of history for which we don't have values
                         stats = conn.get_metric_statistics(
                             self.config['interval'],
-                            start_time,
-                            end_time,
+                            span_start,
+                            span_end,
                             metric_name,
                             namespace='AWS/ELB',
                             statistics=[statistic],
-                            dimensions={'LoadBalancerName':elb_name, 'AvailabilityZone' : zone})
+                            dimensions={'LoadBalancerName':elb_name, 'AvailabilityZone':zone})
 
-                        template_tokens = {
-                            'region'      : region,
-                            'zone'        : zone,
-                            'elb_name'    : elb_name,
-                            'metric_name' : metric_name,
-                        }
-                        name_template = Template(self.config['format'])
-                        name = name_template.substitute(template_tokens)
+                        self.log.debug('history = %s' % current_history)
+                        self.log.debug('stats = %s' % stats)
 
-                        num_stats = len(stats)
-                        if num_stats == 0:
-                            # no statistic available for this metric, default to zero
-                            metric_value = 0
-                        else:
-                            metric_value = stats[-1][statistic]
-                            if num_stats > 1:
-                                self.log.warn('More than one statistic returned for %s:%s' % (name, stats))
-                        self.publish(name, metric_value)
+                        # match up each individual stat to what we have in history and publish it.
+                        # TODO: use a dict
+                        for stat in stats:
+                            ts = stat['Timestamp']
+                            for i, tick_tuple in enumerate(current_history):
+                                tick_start, tick_end = tick_tuple
+                                if ts == tick_start:
+                                    self.log.debug(tick)
+                                    self.log.debug(stat)
+                                    del current_history[i]
+
+                                    template_tokens = {
+                                        'region'      : region,
+                                        'zone'        : zone,
+                                        'elb_name'    : elb_name,
+                                        'metric_name' : metric_name,
+                                    }
+                                    name_template = Template(self.config['format'])
+                                    formatted_name = name_template.substitute(template_tokens)
+                                    self.publish_delayed_metric(
+                                        formatted_name,
+                                        stat[statistic],
+                                        metric_type=metric_type,
+                                        precision=precision,
+                                        timestamp=time.mktime(tick_end.timetuple()))
+                                    break
