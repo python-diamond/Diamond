@@ -2,12 +2,16 @@
 # coding=utf-8
 
 import datetime
+import mock
+
 from test import CollectorTestCase
 from test import get_collector_config
-from test import run_only
 from test import unittest
 from mock import patch
 from mock import Mock
+
+import sys
+for path in sys.path: print path
 
 from diamond.collector import Collector
 from elb import ElbCollector
@@ -21,8 +25,8 @@ class TestElbCollector(CollectorTestCase):
 
     @patch('elb.cloudwatch')
     @patch('boto.ec2.connect_to_region')
-    @patch.object(Collector, 'publish')
-    def test_collect(self, publish, connect_to_region, cloudwatch):
+    @patch.object(Collector, 'publish_metric')
+    def test_collect(self, publish_metric, connect_to_region, cloudwatch):
         config = get_collector_config(
             'ElbCollector',
             { 'interval': 60,
@@ -43,7 +47,8 @@ class TestElbCollector(CollectorTestCase):
 
         cw_conn = Mock()
         cw_conn.get_metric_statistics = Mock()
-        ts = datetime.datetime(2014, 1, 14, 15, 22)
+        ts = datetime.datetime.now().replace(second=0, microsecond=0)
+
         cw_conn.get_metric_statistics.side_effect = [
             [{u'Timestamp': ts, u'Average': 1.0, u'Unit': u'Count'}],
             [{u'Timestamp': ts, u'Average': 2.0, u'Unit': u'Count'}],
@@ -64,10 +69,14 @@ class TestElbCollector(CollectorTestCase):
         cloudwatch.connect_to_region.return_value = cw_conn
 
         collector = ElbCollector(config, handlers=[])
-        collector.collect()
 
-        self.assertPublishedMany(
-            publish,
+        target = ts + datetime.timedelta(minutes=1)
+        with mock.patch.object(datetime, 'datetime', mock.Mock(wraps=datetime.datetime)) as patched:
+            patched.now.return_value = target
+            collector.collect()
+
+        self.assertPublishedMetricMany(
+            publish_metric,
             {
                 'us-west-1a.elb1.HealthyHostCount': 1,
                 'us-west-1a.elb1.UnhealthyHostCount': 2,

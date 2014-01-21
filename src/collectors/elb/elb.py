@@ -55,19 +55,19 @@ class ElbCollector(diamond.collector.Collector):
 
     # (aws metric name, aws statistic type, diamond metric type, diamond precision)
     metrics = [
-        # ('HealthyHostCount', 'Average', 'GAUGE', 0),
-        # ('UnhealthyHostCount', 'Average', 'GAUGE', 0),
+        ('HealthyHostCount', 'Average', 'GAUGE', 0),
+        ('UnhealthyHostCount', 'Average', 'GAUGE', 0),
         ('RequestCount', 'Sum', 'COUNTER', 0),
         ('Latency', 'Average', 'GAUGE', 4),
-        # ('HTTPCode_ELB_4XX', 'Sum', 'COUNT', 0),
-        # ('HTTPCode_ELB_5XX', 'Sum', 'COUNT', 0),
-        # ('HTTPCode_Backend_2XX', 'Sum', 'COUNT', 0),
-        # ('HTTPCode_Backend_3XX', 'Sum', 'COUNT', 0),
-        # ('HTTPCode_Backend_4XX', 'Sum', 'COUNT', 0),
-        # ('HTTPCode_Backend_5XX', 'Sum', 'COUNT', 0),
-        # ('BackendConnectionErrors', 'Sum', 'COUNT', 0),
-        # ('SurgeQueueLength', 'Maximum', 'GAUGE', 0),
-        # ('SpilloverCount', 'Sum', 'COUNT', 0)
+        ('HTTPCode_ELB_4XX', 'Sum', 'COUNTER', 0),
+        ('HTTPCode_ELB_5XX', 'Sum', 'COUNTER', 0),
+        ('HTTPCode_Backend_2XX', 'Sum', 'COUNTER', 0),
+        ('HTTPCode_Backend_3XX', 'Sum', 'COUNTER', 0),
+        ('HTTPCode_Backend_4XX', 'Sum', 'COUNTER', 0),
+        ('HTTPCode_Backend_5XX', 'Sum', 'COUNTER', 0),
+        ('BackendConnectionErrors', 'Sum', 'COUNTER', 0),
+        ('SurgeQueueLength', 'Maximum', 'GAUGE', 0),
+        ('SpilloverCount', 'Sum', 'COUNTER', 0)
     ]
 
     def __init__(self, config, handlers):
