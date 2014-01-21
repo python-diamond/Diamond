@@ -74,7 +74,7 @@ class DRBDCollector(diamond.collector.Collector):
                 else:
                     continue
             statusfile.close()
-        except IOError as errormsg:
+        except IOError, errormsg:
             self.log.error("Can't read DRBD status file: {0}".format(errormsg))
             return
 
