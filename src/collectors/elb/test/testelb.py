@@ -10,9 +10,6 @@ from test import unittest
 from mock import patch
 from mock import Mock
 
-import sys
-for path in sys.path: print path
-
 from diamond.collector import Collector
 from elb import ElbCollector
 

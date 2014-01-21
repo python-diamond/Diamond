@@ -11,7 +11,8 @@ You can specify an arbitrary amount of regions
 ```
     enabled = true
     interval = 60
-    max_history = 10
+    # max number of delayed metrics to tolerate
+    max_delayed = 10
 
     # Optional
     access_key_id = ...
@@ -99,7 +100,7 @@ class ElbCollector(diamond.collector.Collector):
         validate_interval()
         setup_creds()
         cache_zones()
-        self.max_history = self.config.as_int('max_history')
+        self.max_delayed = self.config.as_int('max_delayed')
         self.history = dict()
 
     def check_boto(self):
@@ -117,7 +118,7 @@ class ElbCollector(diamond.collector.Collector):
             'regions': ['us-west-1'],
             'interval': 60,
             'format' : '$zone.$elb_name.$metric_name',
-            'max_history' : 10,
+            'max_delayed' : 10,
         })
         return config
 
@@ -135,7 +136,7 @@ class ElbCollector(diamond.collector.Collector):
     def publish_delayed_metric(self, name, value, timestamp, raw_value=None, precision=0, metric_type='GAUGE', instance=None):
         """
         Metrics may not be immediately available when querying cloudwatch. Hence, allow the ability to publish a metric
-        from some point in the past given a timestamp.
+        from some the past given its timestamp.
         """
         # Get metric Path
         path = self.get_metric_path(name, instance)
@@ -173,7 +174,7 @@ class ElbCollector(diamond.collector.Collector):
                         current_history.append(tick)
 
                         # only keep latest MAX_TICKS
-                        if len(current_history) > self.max_history:
+                        if len(current_history) > self.max_delayed:
                             del current_history[0]
 
                         span_start, _ = current_history[0]
@@ -189,18 +190,18 @@ class ElbCollector(diamond.collector.Collector):
                             statistics=[statistic],
                             dimensions={'LoadBalancerName':elb_name, 'AvailabilityZone':zone})
 
-                        self.log.debug('history = %s' % current_history)
-                        self.log.debug('stats = %s' % stats)
+                        #self.log.debug('history = %s' % current_history)
+                        #self.log.debug('stats = %s' % stats)
 
                         # match up each individual stat to what we have in history and publish it.
-                        # TODO: use a dict
                         for stat in stats:
                             ts = stat['Timestamp']
-                            for i, tick_tuple in enumerate(current_history):
-                                tick_start, tick_end = tick_tuple
+                            # TODO: maybe use a dict for matching
+                            for i, tick in enumerate(current_history):
+                                tick_start, tick_end = tick
                                 if ts == tick_start:
-                                    self.log.debug(tick)
-                                    self.log.debug(stat)
+                                    #self.log.debug(tick)
+                                    #self.log.debug(stat)
                                     del current_history[i]
 
                                     template_tokens = {
