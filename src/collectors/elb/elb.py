@@ -102,7 +102,8 @@ class ElbCollector(diamond.collector.Collector):
                 self.zones_by_region[region] = [
                     zone.name for zone in ec2_conn.get_all_zones()]
 
-        self.check_boto()
+        if not self.check_boto():
+            return
         validate_interval()
         setup_creds()
         cache_zones()
@@ -112,7 +113,8 @@ class ElbCollector(diamond.collector.Collector):
     def check_boto(self):
         if not cloudwatch:
             self.log.error("boto module not found!")
-            return
+            return False
+        return True
 
     def get_default_config(self):
         """
