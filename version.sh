@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 DESC=($(git describe --match 'v*' 2>/dev/null | sed "s/v\([0-9\.]*\)-*\([0-9]*\)-*\([0-9a-z]*\)/\1 \2 \3/")) 
 
