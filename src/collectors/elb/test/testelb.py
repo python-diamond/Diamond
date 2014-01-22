@@ -14,12 +14,23 @@ from diamond.collector import Collector
 from elb import ElbCollector
 
 
+def run_only_if_boto_is_available(func):
+    try:
+        import boto
+        boto  # workaround for pyflakes issue #13
+    except ImportError:
+        boto = None
+    pred = lambda: boto is not None
+    return run_only(func, pred)
+
+
 class TestElbCollector(CollectorTestCase):
 
     def test_throws_exception_when_interval_not_multiple_of_60(self):
         config = get_collector_config('ElbCollector', { 'interval': 10 })
         assertRaisesAndContains(Exception, 'multiple of', ElbCollector, *[config, None])
 
+    @run_only_if_boto_is_available
     @patch('elb.cloudwatch')
     @patch('boto.ec2.connect_to_region')
     @patch.object(Collector, 'publish_metric')
