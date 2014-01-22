@@ -135,4 +135,3 @@ class Handler(object):
             del self._errors[msg]
         else:
             self._errors = {}
-

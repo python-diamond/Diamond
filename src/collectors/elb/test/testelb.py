@@ -28,8 +28,9 @@ def run_only_if_boto_is_available(func):
 class TestElbCollector(CollectorTestCase):
 
     def test_throws_exception_when_interval_not_multiple_of_60(self):
-        config = get_collector_config('ElbCollector', { 'interval': 10 })
-        assertRaisesAndContains(Exception, 'multiple of', ElbCollector, *[config, None])
+        config = get_collector_config('ElbCollector', {'interval': 10})
+        assertRaisesAndContains(Exception, 'multiple of', ElbCollector,
+                                *[config, None])
 
     @run_only_if_boto_is_available
     @patch('elb.cloudwatch')
@@ -38,12 +39,13 @@ class TestElbCollector(CollectorTestCase):
     def test_collect(self, publish_metric, connect_to_region, cloudwatch):
         config = get_collector_config(
             'ElbCollector',
-            { 'interval': 60,
-              'regions' :{
-                  'us-west-1': {
-                      'elb_names' : ['elb1'],
-                  }
-              }
+            {
+                'interval': 60,
+                'regions': {
+                    'us-west-1': {
+                        'elb_names': ['elb1'],
+                    }
+                }
             })
 
         az = Mock()
@@ -80,7 +82,8 @@ class TestElbCollector(CollectorTestCase):
         collector = ElbCollector(config, handlers=[])
 
         target = ts + datetime.timedelta(minutes=1)
-        with mock.patch.object(datetime, 'datetime', mock.Mock(wraps=datetime.datetime)) as patched:
+        with mock.patch.object(datetime, 'datetime',
+                               mock.Mock(wraps=datetime.datetime)) as patched:
             patched.now.return_value = target
             collector.collect()
 
@@ -102,7 +105,9 @@ class TestElbCollector(CollectorTestCase):
                 'us-west-1a.elb1.SpilloverCount': 14,
             })
 
-def assertRaisesAndContains(excClass, contains_str, callableObj, *args, **kwargs):
+
+def assertRaisesAndContains(excClass, contains_str, callableObj, *args,
+                            **kwargs):
     try:
         callableObj(*args, **kwargs)
     except excClass, e:
@@ -110,11 +115,15 @@ def assertRaisesAndContains(excClass, contains_str, callableObj, *args, **kwargs
         if contains_str in msg:
             return
         else:
-            raise AssertionError, "Exception message does not contain '%s': '%s'" % (contains_str, msg)
+            raise AssertionError(
+                "Exception message does not contain '%s': '%s'" % (
+                    contains_str, msg))
     else:
-        if hasattr(excClass,'__name__'): excName = excClass.__name__
-        else: excName = str(excClass)
-        raise AssertionError, "%s not raised" % excName
+        if hasattr(excClass, '__name__'):
+            excName = excClass.__name__
+        else:
+            excName = str(excClass)
+        raise AssertionError("%s not raised" % excName)
 
 if __name__ == "__main__":
     unittest.main()
