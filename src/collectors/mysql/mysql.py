@@ -6,7 +6,7 @@
 
  * Normal usage
 ```
-GRANT SELECT, REPLICATION CLIENT on *.* TO 'user'@'hostname' IDENTIFIED BY
+GRANT REPLICATION CLIENT on *.* TO 'user'@'hostname' IDENTIFIED BY
 'password';
 ```
 
