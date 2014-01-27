@@ -28,6 +28,8 @@ class Handler(object):
         # Load in user
         self.config.merge(config)
 
+        # error logging throttling
+        self.server_error_interval = float(self.config['server_error_interval'])
         self._errors = {}
 
         # Initialize Lock
