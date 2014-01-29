@@ -82,53 +82,35 @@ class binary:
         else:
             self.value = float(value)
 
-    def kilobit(self, value=None):
+    def convertb(self, value, source, offset=1):
         if value is None:
-            return self.bit() / 1024
+            return source() / pow(1024, offset)
         else:
-            self.bit(value * 1024)
+            source(value * pow(1024, offset))
+
+    def kilobit(self, value=None):
+        return self.convertb(value, self.bit)
 
     def megabit(self, value=None):
-        if value is None:
-            return self.kilobit() / 1024
-        else:
-            self.kilobit(value * 1024)
+        return self.convertb(value, self.bit, 2)
 
     def gigabit(self, value=None):
-        if value is None:
-            return self.megabit() / 1024
-        else:
-            self.megabit(value * 1024)
+        return self.convertb(value, self.bit, 3)
 
     def terabit(self, value=None):
-        if value is None:
-            return self.gigabit() / 1024
-        else:
-            self.gigabit(value * 1024)
+        return self.convertb(value, self.bit, 4)
 
     def petabit(self, value=None):
-        if value is None:
-            return self.terabit() / 1024
-        else:
-            self.terabit(value * 1024)
+        return self.convertb(value, self.bit, 5)
 
     def exabit(self, value=None):
-        if value is None:
-            return self.petabit() / 1024
-        else:
-            self.petabit(value * 1024)
+        return self.convertb(value, self.bit, 6)
 
     def zettabit(self, value=None):
-        if value is None:
-            return self.exabit() / 1024
-        else:
-            self.exabit(value * 1024)
+        return self.convertb(value, self.bit, 7)
 
     def yottabit(self, value=None):
-        if value is None:
-            return self.zettabit() / 1024
-        else:
-            self.zettabit(value * 1024)
+        return self.convertb(value, self.bit, 8)
 
     def byte(self, value=None):
         if value is None:
@@ -137,52 +119,28 @@ class binary:
             self.value = float(value) * 8
 
     def kilobyte(self, value=None):
-        if value is None:
-            return self.byte() / 1024
-        else:
-            self.byte(value * 1024)
+        return self.convertb(value, self.byte)
 
     def megabyte(self, value=None):
-        if value is None:
-            return self.kilobyte() / 1024
-        else:
-            self.kilobyte(value * 1024)
+        return self.convertb(value, self.byte, 2)
 
     def gigabyte(self, value=None):
-        if value is None:
-            return self.megabyte() / 1024
-        else:
-            self.megabyte(value * 1024)
+        return self.convertb(value, self.byte, 3)
 
     def terabyte(self, value=None):
-        if value is None:
-            return self.gigabyte() / 1024
-        else:
-            self.gigabyte(value * 1024)
+        return self.convertb(value, self.byte, 4)
 
     def petabyte(self, value=None):
-        if value is None:
-            return self.terabyte() / 1024
-        else:
-            self.terabyte(value * 1024)
+        return self.convertb(value, self.byte, 5)
 
     def exabyte(self, value=None):
-        if value is None:
-            return self.petabyte() / 1024
-        else:
-            self.petabyte(value * 1024)
+        return self.convertb(value, self.byte, 6)
 
     def zettabyte(self, value=None):
-        if value is None:
-            return self.exabyte() / 1024
-        else:
-            self.exabyte(value * 1024)
+        return self.convertb(value, self.byte, 7)
 
     def yottabyte(self, value=None):
-        if value is None:
-            return self.zettabyte() / 1024
-        else:
-            self.zettabyte(value * 1024)
+        return self.convertb(value, self.byte, 8)
 
 
 class time:
