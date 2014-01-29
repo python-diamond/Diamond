@@ -292,10 +292,15 @@ class Reader(object):
         else:
             hostname = self.host
 
+        if self.ipv6:
+            sock_type = socket.AF_INET6
+        else:
+            sock_type = socket.AF_UNSPEC
+
         family, socktype, proto, canonname, sockaddr = socket.getaddrinfo(
             hostname,
             self.port,
-            socket.AF_INET6 if self.ipv6 else socket.AF_UNSPEC,
+            sock_type,
             socket.SOCK_DGRAM, 0, socket.AI_PASSIVE)[0]
 
         self._sock = socket.socket(family, socktype, proto)
