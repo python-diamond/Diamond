@@ -193,7 +193,7 @@ class ListenerThread(threading.Thread):
         return dp
 
 
-class Datapoint():
+class Datapoint(object):
     def __init__(self, host, time, name, value, is_counter):
         self.host = host
         self.time = time
