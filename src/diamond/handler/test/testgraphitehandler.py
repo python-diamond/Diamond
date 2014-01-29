@@ -2,6 +2,8 @@
 # coding=utf-8
 ################################################################################
 
+import time
+
 from test import unittest
 from mock import Mock
 from mock import patch
@@ -157,6 +159,49 @@ class TestGraphiteHandler(unittest.TestCase):
         self.assertEqual(send_mock.call_count, 0)
         self.assertEqual(handler.metrics, expected_data)
 
+    def test_error_throttling(self):
+        """
+        This is more of a generic test checking that the _throttle_error method
+        works as expected
+
+        TODO: test that the graphite handler calls _throttle_error in the right
+        circumstances.
+        """
+        config = configobj.ConfigObj()
+        config['server_error_interval'] = '0.1'
+
+        handler = GraphiteHandler(config)
+
+        debug_mock = Mock()
+        patch_debug = patch.object(handler.log, 'debug', debug_mock)
+        error_mock = Mock()
+        patch_error = patch.object(handler.log, 'error', error_mock)
+
+        patch_debug.start()
+        patch_error.start()
+
+        calls = 5
+        for _ in range(calls):
+            handler._throttle_error('Error Message')
+
+        # .error should have been called only once
+        self.assertEqual(error_mock.call_count, 1)
+        self.assertEqual(debug_mock.call_count, calls - 1)
+
+        handler._reset_errors()
+
+        debug_mock.reset_mock()
+        error_mock.reset_mock()
+
+        for _ in range(calls):
+            handler._throttle_error('Error Message')
+            time.sleep(0.065)
+
+        # error should have been called 0.065 * 5 / 0.1 = 3 times
+        self.assertEqual(error_mock.call_count, 3)
+        self.assertEqual(debug_mock.call_count, 2)
+        patch_debug.stop()
+        patch_error.stop()
 
 if __name__ == "__main__":
     unittest.main()

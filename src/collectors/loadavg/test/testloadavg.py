@@ -37,7 +37,8 @@ class TestLoadAverageCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_open_proc_loadavg(self, publish_mock, open_mock):
         if not os.path.exists('/proc/loadavg'):
-            # on platforms that don't provide /proc/loadavg: don't bother testing this.
+            # on platforms that don't provide /proc/loadavg: don't bother
+            # testing this.
             return
         open_mock.return_value = StringIO('')
         self.collector.collect()

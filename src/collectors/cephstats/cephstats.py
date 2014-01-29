@@ -1,6 +1,7 @@
 import subprocess
 import re
-import os, sys
+import os
+import sys
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, '../ceph')
@@ -22,7 +23,7 @@ class CephStatsCollector(ceph.CephCollector):
             output = subprocess.check_output(['ceph', '-s'])
         except subprocess.CalledProcessError, err:
             self.log.info(
-                    'Could not get stats: %s' % err)
+                'Could not get stats: %s' % err)
             self.log.exception('Could not get stats')
             return {}
 

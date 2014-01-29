@@ -18,9 +18,14 @@ port=16379
 """
 
 import diamond.collector
-import json
 import urllib2
 import time
+
+try:
+    import json
+    json  # workaround for pyflakes issue #13
+except ImportError:
+    import simplejson as json
 
 
 class CelerymonCollector(diamond.collector.Collector):

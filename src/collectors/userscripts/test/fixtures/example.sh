@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "example.1 42"
 echo "example.2 24"

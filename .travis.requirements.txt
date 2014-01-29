@@ -9,3 +9,4 @@ bernhard
 simplejson
 kitchen
 PyYAML
+boto

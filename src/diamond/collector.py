@@ -439,3 +439,38 @@ class Collector(object):
             # method on each handler.
             for handler in self.handlers:
                 handler._flush()
+
+    def find_binary(self, binary):
+        """
+        Scan and return the first path to a binary that we can find
+        """
+        if os.path.exists(binary):
+            return binary
+
+        # Extract out the filename if we were given a full path
+        binary_name = os.path.basename(binary)
+
+        # Gather $PATH
+        search_paths = os.environ['PATH'].split(':')
+
+        # Extra paths to scan...
+        default_paths = [
+            '/usr/bin',
+            '/bin'
+            '/usr/local/bin',
+            '/usr/sbin',
+            '/sbin'
+            '/usr/local/sbin',
+        ]
+
+        for path in default_paths:
+            if path not in search_paths:
+                search_paths.append(path)
+
+        for path in search_paths:
+            if os.path.isdir(path):
+                filename = os.path.join(path, binary_name)
+                if os.path.exists(filename):
+                    return filename
+
+        return binary

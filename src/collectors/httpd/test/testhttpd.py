@@ -84,6 +84,14 @@ class TestHttpdCollector(CollectorTestCase):
             'BytesPerReq': 204,
             'BusyWorkers': 6,
             'IdleWorkers': 4,
+            'WritingWorkers': 1,
+            'KeepaliveWorkers': 2,
+            'ReadingWorkers': 3,
+            'DnsWorkers': 0,
+            'ClosingWorkers': 0,
+            'LoggingWorkers': 0,
+            'FinishingWorkers': 0,
+            'CleanupWorkers': 0,
         })
 
     @patch.object(Collector, 'publish')
@@ -126,6 +134,14 @@ class TestHttpdCollector(CollectorTestCase):
             'BytesPerReq': 5418,
             'BusyWorkers': 9,
             'IdleWorkers': 0,
+            'WritingWorkers': 1,
+            'KeepaliveWorkers': 7,
+            'ReadingWorkers': 1,
+            'DnsWorkers': 0,
+            'ClosingWorkers': 0,
+            'LoggingWorkers': 0,
+            'FinishingWorkers': 0,
+            'CleanupWorkers': 0,
         }
         self.assertPublishedMany(publish_mock, metrics)
 
@@ -174,6 +190,14 @@ class TestHttpdCollector(CollectorTestCase):
             'nickname1.BytesPerReq': 5418,
             'nickname1.BusyWorkers': 9,
             'nickname1.IdleWorkers': 0,
+            'nickname1.WritingWorkers': 1,
+            'nickname1.KeepaliveWorkers': 7,
+            'nickname1.ReadingWorkers': 1,
+            'nickname1.DnsWorkers': 0,
+            'nickname1.ClosingWorkers': 0,
+            'nickname1.LoggingWorkers': 0,
+            'nickname1.FinishingWorkers': 0,
+            'nickname1.CleanupWorkers': 0,
 
             'nickname2.TotalAccesses': 8314,
             'nickname2.ReqPerSec': 0,
@@ -181,6 +205,14 @@ class TestHttpdCollector(CollectorTestCase):
             'nickname2.BytesPerReq': 5418,
             'nickname2.BusyWorkers': 9,
             'nickname2.IdleWorkers': 0,
+            'nickname2.WritingWorkers': 1,
+            'nickname2.KeepaliveWorkers': 7,
+            'nickname2.ReadingWorkers': 1,
+            'nickname2.DnsWorkers': 0,
+            'nickname2.ClosingWorkers': 0,
+            'nickname2.LoggingWorkers': 0,
+            'nickname2.FinishingWorkers': 0,
+            'nickname2.CleanupWorkers': 0,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
@@ -230,6 +262,14 @@ class TestHttpdCollector(CollectorTestCase):
             'BytesPerReq': 15403,
             'BusyWorkers': 1,
             'IdleWorkers': 17,
+            'WritingWorkers': 1,
+            'KeepaliveWorkers': 0,
+            'ReadingWorkers': 0,
+            'DnsWorkers': 0,
+            'ClosingWorkers': 0,
+            'LoggingWorkers': 0,
+            'FinishingWorkers': 0,
+            'CleanupWorkers': 0,
         }
         self.assertPublishedMany(publish_mock, metrics)
 

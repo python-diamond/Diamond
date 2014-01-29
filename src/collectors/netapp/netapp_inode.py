@@ -16,8 +16,13 @@
 """
 
 import diamond.collector
-import xml.etree.ElementTree as ET
 from diamond.metric import Metric
+
+try:
+    import xml.etree.ElementTree as ET
+    ET  # workaround for pyflakes issue #13
+except ImportError:
+    import cElementTree as ET
 
 try:
     from netappsdk.NaServer import *
@@ -29,7 +34,7 @@ except ImportError:
 __author__ = 'peter@phyn3t.com'
 
 
-class netapp_inodeCol():
+class netapp_inodeCol(object):
     """ Our netapp_inode Collector
     """
 

@@ -51,7 +51,8 @@ class LoadAverageCollector(diamond.collector.Collector):
         else:
             self.publish_gauge('load', load01, 2)
 
-        # Legacy: add process/thread counters provided by /proc/loadavg (if available).
+        # Legacy: add process/thread counters provided by
+        # /proc/loadavg (if available).
         if os.access(self.PROC_LOADAVG, os.R_OK):
             file = open(self.PROC_LOADAVG)
             for line in file:

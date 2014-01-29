@@ -6,7 +6,7 @@
 
  * Normal usage
 ```
-GRANT SELECT, REPLICATION CLIENT on *.* TO 'user'@'hostname' IDENTIFIED BY
+GRANT REPLICATION CLIENT on *.* TO 'user'@'hostname' IDENTIFIED BY
 'password';
 ```
 
@@ -255,6 +255,7 @@ class MySQLCollector(diamond.collector.Collector):
             'innodb': 'Collect SHOW ENGINE INNODB STATUS',
             'hosts': 'List of hosts to collect from. Format is '
             + 'yourusername:yourpassword@host:port/db[/nickname]'
+            + 'use db "None" to avoid connecting to a particular db'
         })
         return config_help
 
@@ -455,6 +456,9 @@ class MySQLCollector(diamond.collector.Collector):
             nickname = matches.group(6)
             if len(nickname):
                 nickname += '.'
+
+            if params['db'] == 'None':
+                del params['db']
 
             try:
                 metrics = self.get_stats(params=params)

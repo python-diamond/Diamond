@@ -287,10 +287,20 @@ class Reader(object):
         self.host, self.port = host, port
         self.ipv6 = ":" in self.host
 
+        if multicast:
+            hostname = None
+        else:
+            hostname = self.host
+
+        if self.ipv6:
+            sock_type = socket.AF_INET6
+        else:
+            sock_type = socket.AF_UNSPEC
+
         family, socktype, proto, canonname, sockaddr = socket.getaddrinfo(
-            None if multicast else self.host,
+            hostname,
             self.port,
-            socket.AF_INET6 if self.ipv6 else socket.AF_UNSPEC,
+            sock_type,
             socket.SOCK_DGRAM, 0, socket.AI_PASSIVE)[0]
 
         self._sock = socket.socket(family, socktype, proto)
@@ -314,11 +324,16 @@ class Reader(object):
             else:
                 raise ValueError("Unsupported network address family")
 
+            if self.ipv6:
+                sock_type = socket.IPPROTO_IPV6
+            else:
+                sock_type = socket.IPPROTO_IP
+
             self._sock.setsockopt(
-                socket.IPPROTO_IPV6 if self.ipv6 else socket.IPPROTO_IP,
+                sock_type,
                 socket.IP_ADD_MEMBERSHIP, val)
             self._sock.setsockopt(
-                socket.IPPROTO_IPV6 if self.ipv6 else socket.IPPROTO_IP,
+                sock_type,
                 socket.IP_MULTICAST_LOOP, 0)
 
         self._readlist = [self._sock]
