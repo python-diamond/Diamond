@@ -287,8 +287,13 @@ class Reader(object):
         self.host, self.port = host, port
         self.ipv6 = ":" in self.host
 
+        if multicast:
+            hostname = None
+        else:
+            hostname = self.host
+
         family, socktype, proto, canonname, sockaddr = socket.getaddrinfo(
-            None if multicast else self.host,
+            hostname,
             self.port,
             socket.AF_INET6 if self.ipv6 else socket.AF_UNSPEC,
             socket.SOCK_DGRAM, 0, socket.AI_PASSIVE)[0]
