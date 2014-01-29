@@ -95,7 +95,10 @@ class JCollectdCollector(diamond.collector.Collector):
             if suffix:
                 path = ".".join((path, suffix))
 
-        metric_type = "COUNTER" if dp.is_counter else "GAUGE"
+        if dp.is_counter:
+            metric_type = "COUNTER"
+        else:
+            metric_type = "GAUGE"
         metric = diamond.metric.Metric(path, dp.value, dp.time,
                                        metric_type=metric_type)
 
