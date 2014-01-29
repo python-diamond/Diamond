@@ -324,11 +324,16 @@ class Reader(object):
             else:
                 raise ValueError("Unsupported network address family")
 
+            if self.ipv6:
+                sock_type = socket.IPPROTO_IPV6
+            else:
+                sock_type = socket.IPPROTO_IP
+
             self._sock.setsockopt(
-                socket.IPPROTO_IPV6 if self.ipv6 else socket.IPPROTO_IP,
+                sock_type,
                 socket.IP_ADD_MEMBERSHIP, val)
             self._sock.setsockopt(
-                socket.IPPROTO_IPV6 if self.ipv6 else socket.IPPROTO_IP,
+                sock_type,
                 socket.IP_MULTICAST_LOOP, 0)
 
         self._readlist = [self._sock]
