@@ -11,7 +11,7 @@ from mock import patch
 from mock import call
 
 from diamond.collector import Collector
-from mongodb import MongoDBCollector
+from tokumx import TokuMXCollector
 
 ################################################################################
 
@@ -26,17 +26,17 @@ def run_only_if_pymongo_is_available(func):
     return run_only(func, pred)
 
 
-class TestMongoDBCollector(CollectorTestCase):
+class TestTokuMXCollector(CollectorTestCase):
     def setUp(self):
-        config = get_collector_config('MongoDBCollector', {
+        config = get_collector_config('TokuMXCollector', {
             'host': 'localhost:27017',
             'databases': '^db',
         })
-        self.collector = MongoDBCollector(config, None)
+        self.collector = TokuMXCollector(config, None)
         self.connection = MagicMock()
 
     def test_import(self):
-        self.assertTrue(MongoDBCollector)
+        self.assertTrue(TokuMXCollector)
 
     @run_only_if_pymongo_is_available
     @patch('pymongo.Connection')
@@ -142,15 +142,15 @@ class TestMongoDBCollector(CollectorTestCase):
 
 class TestMongoMultiHostDBCollector(CollectorTestCase):
     def setUp(self):
-        config = get_collector_config('MongoDBCollector', {
+        config = get_collector_config('TokuMXCollector', {
             'hosts': ['localhost:27017', 'localhost:27057'],
             'databases': '^db',
         })
-        self.collector = MongoDBCollector(config, None)
+        self.collector = TokuMXCollector(config, None)
         self.connection = MagicMock()
 
     def test_import(self):
-        self.assertTrue(MongoDBCollector)
+        self.assertTrue(TokuMXCollector)
 
     @run_only_if_pymongo_is_available
     @patch('pymongo.Connection')

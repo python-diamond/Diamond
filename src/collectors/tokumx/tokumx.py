@@ -27,14 +27,14 @@ except ImportError:
     ReadPreference = None
 
 
-class MongoDBCollector(diamond.collector.Collector):
+class TokuMXCollector(diamond.collector.Collector):
 
     def __init__(self, *args, **kwargs):
         self.__totals = {}
-        super(MongoDBCollector, self).__init__(*args, **kwargs)
+        super(TokuMXCollector, self).__init__(*args, **kwargs)
 
     def get_default_config_help(self):
-        config_help = super(MongoDBCollector, self).get_default_config_help()
+        config_help = super(TokuMXCollector, self).get_default_config_help()
         config_help.update({
             'hosts': 'Array of hostname(:port) elements to get metrics from'
                      'Set an alias by prefixing host:port with alias@',
@@ -59,7 +59,7 @@ class MongoDBCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        config = super(MongoDBCollector, self).get_default_config()
+        config = super(TokuMXCollector, self).get_default_config()
         config.update({
             'path':      'mongo',
             'hosts':     ['localhost'],
