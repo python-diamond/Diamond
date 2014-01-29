@@ -29,7 +29,7 @@ except ImportError:
 __author__ = 'peter@phyn3t.com'
 
 
-class netapp_inodeCol():
+class netapp_inodeCol(object):
     """ Our netapp_inode Collector
     """
 

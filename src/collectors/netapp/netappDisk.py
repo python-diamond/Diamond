@@ -33,7 +33,7 @@ except ImportError:
 __author__ = 'peter@phyn3t.com'
 
 
-class netappDiskCol():
+class netappDiskCol(object):
     """ Our netappDisk Collector
     """
 
