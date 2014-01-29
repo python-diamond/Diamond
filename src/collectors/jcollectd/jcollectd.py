@@ -183,8 +183,12 @@ class ListenerThread(threading.Thread):
         # construct full path, from safe parts
         name = '.'.join([re.sub('[\. ]', '_', part) for part in parts])
 
-        dp = Datapoint(item.host, item.time, name,
-                       item[0][1], True if item[0][0] == 0 else False)
+
+        if item[0][0] == 0:
+            is_counter = True
+        else:
+            is_counter = False
+        dp = Datapoint(item.host, item.time, name, item[0][1], is_counter)
 
         return dp
 
