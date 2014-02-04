@@ -209,7 +209,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
         #
         # filesystem (may not be present, depending on access restrictions)
-        if 'fs' in data:
+        if 'fs' in data and 'data' in data['fs'] and data['fs']['data']:
             fs_data = data['fs']['data'][0]
             self._add_metric(metrics, 'disk.reads.count', fs_data,
                              ['disk_reads'])
