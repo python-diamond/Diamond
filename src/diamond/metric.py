@@ -40,7 +40,7 @@ class Metric(object):
 
         # The value needs to be a float or an int.  If it is, great.  If not,
         # try to cast it to one of those.
-        if not isinstance(value, int) and not isinstance(value, float):
+        if not isinstance(value, (int, float)):
             try:
                 if precision == 0:
                     value = round(float(value))
@@ -134,12 +134,8 @@ class Metric(object):
             path = self.path.split('.')[3:]
             return '.'.join(path)
 
-        prefix = self.getPathPrefix()
-        prefix += '.'
-        prefix += self.host
-        prefix += '.'
-        prefix += self.getCollectorPath()
-        prefix += '.'
+        prefix = '.'.join([self.getPathPrefix(), self.host,
+                           self.getCollectorPath()])
 
-        offset = len(prefix)
+        offset = len(prefix) + 1
         return self.path[offset:]
