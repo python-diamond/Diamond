@@ -44,12 +44,21 @@ class HAProxyCollector(diamond.collector.Collector):
         })
         return config
 
-    def get_csv_data(self):
+    def _get_config_value(self, section, key):
+        if section:
+            if section not in self.config:
+                self.log.error("Error: Config section '%s' not found", section)
+                return None
+            return self.config[section].get(key, self.config[key])
+        else:
+            return self.config[key]
+
+    def get_csv_data(self, section=None):
         """
         Request stats from HAProxy Server
         """
         metrics = []
-        req = urllib2.Request(self.config['url'])
+        req = urllib2.Request(self._get_config_value(section, 'url'))
         try:
             handle = urllib2.urlopen(req)
             return handle.readlines()
@@ -81,7 +90,7 @@ class HAProxyCollector(diamond.collector.Collector):
             return metrics
 
         base64string = base64.encodestring(
-            '%s:%s' % (self.config['user'], self.config['pass']))[:-1]
+            '%s:%s' % (self._get_config_value(section, 'user'), self._get_config_value(section, 'pass')))[:-1]
         authheader = 'Basic %s' % base64string
         req.add_header("Authorization", authheader)
         try:
@@ -100,22 +109,23 @@ class HAProxyCollector(diamond.collector.Collector):
             headings[index] = self._sanitize(heading)
         return headings
 
-    def collect(self):
+    def _collect(self, section=None):
         """
         Collect HAProxy Stats
         """
-        csv_data = self.get_csv_data()
+        csv_data = self.get_csv_data(section)
         data = list(csv.reader(csv_data))
         headings = self._generate_headings(data[0])
+        section_name = section and self._sanitize(section.lower()) + '.' or ''
 
         for row in data:
-            if (self.config['ignore_servers']
+            if (self._get_config_value(section, 'ignore_servers')
                     and row[1].lower() not in ['frontend', 'backend']):
                 continue
 
             part_one = self._sanitize(row[0].lower())
             part_two = self._sanitize(row[1].lower())
-            metric_name = '%s.%s' % (part_one, part_two)
+            metric_name = '%s%s.%s' % (section_name, part_one, part_two)
 
             for index, metric_string in enumerate(row):
                 try:
@@ -125,6 +135,16 @@ class HAProxyCollector(diamond.collector.Collector):
 
                 stat_name = '%s.%s' % (metric_name, headings[index])
                 self.publish(stat_name, metric_value, metric_type='GAUGE')
+
+    def collect(self):
+        if 'servers' in self.config:
+            if isinstance(self.config['servers'],list):
+                for serv in self.config['servers']:
+                    self._collect(serv)
+            else:
+                self._collect(self.config['servers'])
+        else:
+            self._collect()
 
     def _sanitize(self, s):
         """Sanitize the name of a metric to remove unwanted chars
