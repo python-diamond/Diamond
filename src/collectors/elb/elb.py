@@ -37,6 +37,8 @@ You can specify an arbitrary amount of regions
  * boto
 
 """
+import calendar
+#from datetime import datetime, timedelta
 import datetime
 import time
 from string import Template
@@ -50,6 +52,18 @@ try:
     cloudwatch  # Pyflakes
 except ImportError:
     cloudwatch = False
+
+
+def utc_to_local(utc_dt):
+    """
+    :param utc_dt: datetime in UTC
+    :return: datetime in the local timezone
+    """
+    # get integer timestamp to avoid precision lost
+    timestamp = calendar.timegm(utc_dt.timetuple())
+    local_dt = datetime.datetime.fromtimestamp(timestamp)
+    assert utc_dt.resolution >= datetime.timedelta(microseconds=1)
+    return local_dt.replace(microsecond=utc_dt.microsecond)
 
 
 class ElbCollector(diamond.collector.Collector):
@@ -167,7 +181,7 @@ class ElbCollector(diamond.collector.Collector):
     def collect(self):
         self.check_boto()
 
-        now = datetime.datetime.now()
+        now = datetime.datetime.utcnow()
         end_time = now.replace(second=0, microsecond=0)
         start_time = end_time - datetime.timedelta(seconds=self.interval)
 
@@ -236,5 +250,5 @@ class ElbCollector(diamond.collector.Collector):
                                         metric_type=metric_type,
                                         precision=precision,
                                         timestamp=time.mktime(
-                                            tick_end.timetuple()))
+                                            utc_to_local(tick_end).timetuple()))
                                     break
