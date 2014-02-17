@@ -49,7 +49,8 @@ class TestTokuMXCollector(CollectorTestCase):
 
         self.collector.collect()
 
-        self.connection.db.command.assert_called_once_with('serverStatus')
+        self.connection.db.command.assert_has_calls(
+            [call('serverStatus'), call('engineStatus')], any_order=False)
         self.assertPublishedMany(publish_mock, {
             'more_keys.nested_key': 1,
             'key': 2
@@ -88,7 +89,8 @@ class TestTokuMXCollector(CollectorTestCase):
 
         self.collector.collect()
 
-        self.connection.db.command.assert_called_once_with('serverStatus')
+        self.connection.db.command.assert_has_calls(
+            [call('serverStatus'), call('engineStatus')], any_order=False)
         self.assertPublishedMany(publish_mock, {
             'more_keys': 1,
             'key': 2
@@ -122,7 +124,8 @@ class TestTokuMXCollector(CollectorTestCase):
 
         self.collector.collect()
 
-        self.connection.db.command.assert_called_once_with('serverStatus')
+        self.connection.db.command.assert_has_calls(
+            [call('serverStatus'), call('engineStatus')], any_order=False)
         self.connection['db1'].collection_names.assert_called_once_with()
         self.connection['db1'].command.assert_any_call('dbStats')
         self.connection['db1'].command.assert_any_call('collstats',
@@ -163,7 +166,7 @@ class TestMongoMultiHostDBCollector(CollectorTestCase):
 
         self.collector.collect()
 
-        self.connection.db.command.assert_called_with('serverStatus')
+        self.connection.db.command.assert_called_with('engineStatus')
         self.assertPublishedMany(publish_mock, {
             'localhost_27017.more_keys.nested_key': 1,
             'localhost_27057.more_keys.nested_key': 1,
@@ -206,7 +209,7 @@ class TestMongoMultiHostDBCollector(CollectorTestCase):
 
         self.collector.collect()
 
-        self.connection.db.command.assert_called_with('serverStatus')
+        self.connection.db.command.assert_called_with('engineStatus')
         self.assertPublishedMany(publish_mock, {
             'localhost_27017.more_keys': 1,
             'localhost_27057.more_keys': 1,
@@ -242,7 +245,8 @@ class TestMongoMultiHostDBCollector(CollectorTestCase):
 
         self.collector.collect()
 
-        self.connection.db.command.assert_called_with('serverStatus')
+        self.connection.db.command.assert_has_calls(
+            [call('serverStatus'), call('engineStatus')], any_order=False)
         self.connection['db1'].collection_names.assert_called_with()
         self.connection['db1'].command.assert_any_call('dbStats')
         self.connection['db1'].command.assert_any_call('collstats',
