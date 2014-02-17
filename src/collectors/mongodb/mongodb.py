@@ -130,7 +130,7 @@ class MongoDBCollector(diamond.collector.Collector):
             try:
                 # Ensure that the SSL option is a boolean.
                 if type(self.config['ssl']) is str:
-                    self.config['ssl'] = self.config['ssl'].lower() in ['yes','true']
+                    self.config['ssl'] = str_to_bool(self.config['ssl'])
 
                 if ReadPreference is None:
                     conn = pymongo.Connection(
