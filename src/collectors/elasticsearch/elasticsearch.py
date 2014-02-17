@@ -247,8 +247,16 @@ class ElasticSearchCollector(diamond.collector.Collector):
                     'collection_time_in_millis']
                 collection_time_in_millis += d['collection_time_in_millis']
             # calculate the totals, as they're absent in elasticsearch > 0.90.10
-            metrics['jvm.gc.collection.count'] = collection_count
-            metrics['jvm.gc.collection.time'] = collection_time_in_millis
+            if 'collection_count' in gc:
+                metrics['jvm.gc.collection.count'] = gc['collection_count']
+            else:
+                metrics['jvm.gc.collection.count'] = collection_count
+
+            k = 'collection_time_in_millis'
+            if k in gc:
+                metrics['jvm.gc.collection.time'] = gc[k]
+            else:
+                metrics['jvm.gc.collection.time'] = collection_time_in_millis
 
         #
         # thread_pool
