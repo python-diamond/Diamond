@@ -25,7 +25,13 @@ class HttpdCollector(diamond.collector.Collector):
             self.config['urls'].append(self.config['url'])
 
         self.urls = {}
+        if isinstance(self.config['urls'], basestring):
+            self.config['urls'] = self.config['urls'].split(',')
+
         for url in self.config['urls']:
+            # Handle the case where there is a trailing comman on the urls list
+            if len(url) == 0:
+                continue
             if ' ' in url:
                 parts = url.split(' ')
                 self.urls[parts[0]] = parts[1]

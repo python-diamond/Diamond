@@ -28,7 +28,7 @@ class TestHttpdCollector(CollectorTestCase):
         if config is None:
             config = get_collector_config('HttpdCollector', {
                 'interval': '10',
-                'url':      ''
+                'url':      'http://www.example.com:80/server-status?auto'
             })
         else:
             config = get_collector_config('HttpdCollector', config)
@@ -225,7 +225,7 @@ class TestHttpdCollector(CollectorTestCase):
         self.setUp(config={
             'urls': 'vhost http://localhost/server-status?auto',
         })
-
+        
         patch_read = patch.object(
             TestHTTPResponse,
             'read',
@@ -256,22 +256,62 @@ class TestHttpdCollector(CollectorTestCase):
         patch_headers.stop()
 
         metrics = {
-            'TotalAccesses': 329,
-            'ReqPerSec': 0.156966,
-            'BytesPerSec': 2417,
-            'BytesPerReq': 15403,
-            'BusyWorkers': 1,
-            'IdleWorkers': 17,
-            'WritingWorkers': 1,
-            'KeepaliveWorkers': 0,
-            'ReadingWorkers': 0,
-            'DnsWorkers': 0,
-            'ClosingWorkers': 0,
-            'LoggingWorkers': 0,
-            'FinishingWorkers': 0,
-            'CleanupWorkers': 0,
+            'vhost.TotalAccesses': 329,
+            'vhost.ReqPerSec': 0.156966,
+            'vhost.BytesPerSec': 2417,
+            'vhost.BytesPerReq': 15403,
+            'vhost.BusyWorkers': 1,
+            'vhost.IdleWorkers': 17,
+            'vhost.WritingWorkers': 1,
+            'vhost.KeepaliveWorkers': 0,
+            'vhost.ReadingWorkers': 0,
+            'vhost.DnsWorkers': 0,
+            'vhost.ClosingWorkers': 0,
+            'vhost.LoggingWorkers': 0,
+            'vhost.FinishingWorkers': 0,
+            'vhost.CleanupWorkers': 0,
         }
         self.assertPublishedMany(publish_mock, metrics)
+        
+    @patch.object(Collector, 'publish')
+    def test_issue_533(self, publish_mock):
+        self.setUp(config={
+            'urls': 'localhost http://localhost:80/server-status?auto,',
+        })
+        
+        expected_urls = {'localhost': 'http://localhost:80/server-status?auto'}
+        
+        self.assertEqual(self.collector.urls, expected_urls)
+        
+    @patch.object(Collector, 'publish')
+    def test_url_with_port(self, publish_mock):
+        self.setUp(config={
+            'urls': 'localhost http://localhost:80/server-status?auto',
+        })
+        
+        expected_urls = {'localhost': 'http://localhost:80/server-status?auto'}
+        
+        self.assertEqual(self.collector.urls, expected_urls)
+        
+    @patch.object(Collector, 'publish')
+    def test_url_without_port(self, publish_mock):
+        self.setUp(config={
+            'urls': 'localhost http://localhost/server-status?auto',
+        })
+        
+        expected_urls = {'localhost': 'http://localhost/server-status?auto'}
+        
+        self.assertEqual(self.collector.urls, expected_urls)
+        
+    @patch.object(Collector, 'publish')
+    def test_url_without_nickname(self, publish_mock):
+        self.setUp(config={
+            'urls': 'http://localhost/server-status?auto',
+        })
+        
+        expected_urls = {'': 'http://localhost/server-status?auto'}
+        
+        self.assertEqual(self.collector.urls, expected_urls)
 
 ################################################################################
 if __name__ == "__main__":
