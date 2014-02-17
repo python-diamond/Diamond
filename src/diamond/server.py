@@ -355,13 +355,19 @@ class Server(object):
         # Load collectors
         if os.path.dirname(file) == '':
             tmp_path = self.config['server']['collectors_path']
+            filter_out = True
         else:
             tmp_path = os.path.dirname(file)
+            filter_out = False
         self.load_include_path(tmp_path)
         collectors = self.load_collectors(tmp_path, file)
-        for item in collectors.keys():
-            if not item.lower() in file.lower():
-                del collectors[item]
+        # if file is a full path, rather than a collector name, only the
+        # collector(s) in that path are instantiated, and there's no need to
+        # filter extraneous ones from the collectors dictionary
+        if filter_out:
+            for item in collectors.keys():
+                if not item.lower() in file.lower():
+                    del collectors[item]
 
         # Setup Collectors
         for cls in collectors.values():
