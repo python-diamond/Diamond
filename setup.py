@@ -1,9 +1,21 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+import sys
 import os
 from glob import glob
 import platform
+
+
+def running_under_virtualenv():
+    if hasattr(sys, 'real_prefix'):
+        return True
+    elif sys.prefix != getattr(sys, "base_prefix", sys.prefix):
+        return True
+    if os.getenv('VIRTUAL_ENV', False):
+        return True
+    return False
+
 
 if os.environ.get('USE_SETUPTOOLS'):
     from setuptools import setup
@@ -34,7 +46,7 @@ else:
     distro = platform.dist()[0]
     distro_major_version = platform.dist()[1].split('.')[0]
 
-    if os.getenv('VIRTUAL_ENV', False):
+    if running_under_virtualenv():
         data_files.append(('etc/diamond',
                            glob('conf/*.conf.*')))
         data_files.append(('etc/diamond/collectors',
@@ -64,7 +76,7 @@ else:
     # Support packages being called differently on different distros
 
     # Are we in a virtenv?
-    if os.getenv('VIRTUAL_ENV', False):
+    if running_under_virtualenv():
         install_requires = ['ConfigObj', 'psutil', ]
     else:
         if distro in ['centos', 'redhat']:
