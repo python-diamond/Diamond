@@ -1,8 +1,8 @@
 # coding=utf-8
 
 """
-Collects all number values from the db.serverStatus() and db.engineStatus() command, 
-other values are ignored.
+Collects all number values from the db.serverStatus() and db.engineStatus()
+command, other values are ignored.
 
 #### Dependencies
 
