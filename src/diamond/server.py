@@ -67,7 +67,7 @@ class Server(object):
         """
         Load handlers
         """
-        if type(self.config['server']['handlers']) == str:
+        if isinstance(self.config['server']['handlers'], basestring):
             handlers = [self.config['server']['handlers']]
             self.config['server']['handlers'] = handlers
 
