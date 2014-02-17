@@ -183,7 +183,6 @@ class ListenerThread(threading.Thread):
         # construct full path, from safe parts
         name = '.'.join([re.sub('[\. ]', '_', part) for part in parts])
 
-
         if item[0][0] == 0:
             is_counter = True
         else:

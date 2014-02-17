@@ -68,6 +68,7 @@ def match_process(pid, name, cmdline, exe, cfg):
             return True
     return False
 
+
 def process_info(process, info_keys):
     results = {}
     process_info = process.as_dict()
@@ -79,6 +80,7 @@ def process_info(process, info_keys):
             for subkey, subvalue in value._asdict().iteritems():
                 results.update({"%s.%s" % (key, subkey): subvalue})
     return results
+
 
 class ProcessResourcesCollector(diamond.collector.Collector):
     def __init__(self, *args, **kwargs):
@@ -175,13 +177,14 @@ class ProcessResourcesCollector(diamond.collector.Collector):
             self.log.error('No process resource metrics retrieved')
             return None
 
-
-
         for process in psutil.process_iter():
             self.collect_process_info(process)
 
         # publish results
         for pg_name, counters in self.processes_info.iteritems():
-            metrics = (("%s.%s" % (pg_name, key), value) for key, value in counters.iteritems())
+            metrics = (
+                ("%s.%s" % (pg_name, key), value)
+                for key, value in counters.iteritems())
             [self.publish(*metric) for metric in metrics]
-            self.processes_info[pg_name] = defaultdict(int)  # reinitialize process info
+            # reinitialize process info
+            self.processes_info[pg_name] = defaultdict(int)

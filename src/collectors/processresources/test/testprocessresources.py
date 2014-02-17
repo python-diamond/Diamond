@@ -146,18 +146,20 @@ class TestProcessResourcesCollector(CollectorTestCase):
                 if exe is not None:
                     self.exe = exe
 
-                self.cmdline =[self.exe]
+                self.cmdline = [self.exe]
 
             def as_dict(self):
                 from collections import namedtuple
                 meminfo = namedtuple('meminfo', 'rss vms')
-                ext_meminfo = namedtuple('meminfo', 'rss vms shared text lib data dirty')
+                ext_meminfo = namedtuple('meminfo',
+                                         'rss vms shared text lib data dirty')
                 cputimes = namedtuple('cputimes', 'user system')
                 openfile = namedtuple('openfile', 'path fd')
                 thread = namedtuple('thread', 'id user_time system_time')
                 user = namedtuple('user', 'real effective saved')
                 group = namedtuple('group', 'real effective saved')
-                io = namedtuple('io', 'read_count write_count read_bytes write_bytes')
+                io = namedtuple('io',
+                                'read_count write_count read_bytes write_bytes')
                 ionice = namedtuple('ionice', 'ioclass value')
                 amount = namedtuple('amount', 'voluntary involuntary')
                 return {
@@ -178,7 +180,13 @@ class TestProcessResourcesCollector(CollectorTestCase):
                     'username': 'root',
                     'cpu_times': cputimes(user=0.27, system=1.05),
                     'io_counters': None,
-                    'ext_memory_info': ext_meminfo(rss=self.rss, vms=self.vms, shared=1310720, text=188416, lib=0, data=868352, dirty=0),
+                    'ext_memory_info': ext_meminfo(rss=self.rss,
+                                                   vms=self.vms,
+                                                   shared=1310720,
+                                                   text=188416,
+                                                   lib=0,
+                                                   data=868352,
+                                                   dirty=0),
                     'threads': [thread(id=1, user_time=0.27, system_time=1.04)],
                     'open_files': None,
                     'name': self.name,
@@ -210,7 +218,8 @@ class TestProcessResourcesCollector(CollectorTestCase):
         self.assertPublished(publish_mock, 'foo.ext_memory_info.rss', 1)
         self.assertPublished(publish_mock, 'bar.ext_memory_info.rss', 3)
         self.assertPublished(publish_mock, 'barexe.ext_memory_info.rss', 3)
-        self.assertPublished(publish_mock, 'diamond-selfmon.ext_memory_info.rss', 1234)
+        self.assertPublished(publish_mock,
+                             'diamond-selfmon.ext_memory_info.rss', 1234)
 
 ################################################################################
 if __name__ == "__main__":

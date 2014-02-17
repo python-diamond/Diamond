@@ -90,7 +90,8 @@ class HAProxyCollector(diamond.collector.Collector):
             return metrics
 
         base64string = base64.encodestring(
-            '%s:%s' % (self._get_config_value(section, 'user'), self._get_config_value(section, 'pass')))[:-1]
+            '%s:%s' % (self._get_config_value(section, 'user'),
+                       self._get_config_value(section, 'pass')))[:-1]
         authheader = 'Basic %s' % base64string
         req.add_header("Authorization", authheader)
         try:
@@ -138,7 +139,7 @@ class HAProxyCollector(diamond.collector.Collector):
 
     def collect(self):
         if 'servers' in self.config:
-            if isinstance(self.config['servers'],list):
+            if isinstance(self.config['servers'], list):
                 for serv in self.config['servers']:
                     self._collect(serv)
             else:
