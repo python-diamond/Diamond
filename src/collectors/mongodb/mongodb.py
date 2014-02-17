@@ -56,7 +56,8 @@ class MongoDBCollector(diamond.collector.Collector):
                                ' There is no timeout by default.',
             'simple': 'Only collect the same metrics as mongostat.',
             'translate_collections': 'Translate dot (.) to underscores (_)'
-                                     ' in collection names.'
+                                     ' in collection names.',
+            'ssl': 'True to enable SSL connections to the MongoDB server.  Default is False'
         })
         return config_help
 
@@ -75,7 +76,8 @@ class MongoDBCollector(diamond.collector.Collector):
             'network_timeout': None,
             'simple': 'False',
             'translate_collections': 'False',
-            'collection_sample_rate': 1
+            'collection_sample_rate': 1,
+            'ssl': False
         })
         return config
 
@@ -126,16 +128,22 @@ class MongoDBCollector(diamond.collector.Collector):
                     base_prefix = [alias]
 
             try:
+                # Ensure that the SSL option is a boolean.
+                if type(self.config['ssl']) is str:
+                    self.config['ssl'] = self.config['ssl'].lower() in ['yes','true']
+
                 if ReadPreference is None:
                     conn = pymongo.Connection(
                         host,
                         network_timeout=self.config['network_timeout'],
+                        ssl=self.config['ssl'],
                         slave_okay=True
                     )
                 else:
                     conn = pymongo.Connection(
                         host,
                         network_timeout=self.config['network_timeout'],
+                        ssl=self.config['ssl'],
                         read_preference=ReadPreference.SECONDARY,
                     )
             except Exception, e:
