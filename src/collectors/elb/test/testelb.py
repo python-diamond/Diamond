@@ -12,7 +12,7 @@ from test import run_only
 from mock import Mock
 
 from diamond.collector import Collector
-from elb import ElbCollector
+from elb import ElbCollector, utc_to_local
 
 
 def run_only_if_boto_is_available(func):
@@ -59,7 +59,7 @@ class TestElbCollector(CollectorTestCase):
 
         cw_conn = Mock()
         cw_conn.get_metric_statistics = Mock()
-        ts = datetime.datetime.now().replace(second=0, microsecond=0)
+        ts = datetime.datetime.utcnow().replace(second=0, microsecond=0)
 
         cw_conn.get_metric_statistics.side_effect = [
             [{u'Timestamp': ts, u'Average': 1.0, u'Unit': u'Count'}],
@@ -85,7 +85,7 @@ class TestElbCollector(CollectorTestCase):
         target = ts + datetime.timedelta(minutes=1)
         with mock.patch.object(datetime, 'datetime',
                                mock.Mock(wraps=datetime.datetime)) as patched:
-            patched.now.return_value = target
+            patched.utcnow.return_value = target
             collector.collect()
 
         self.assertPublishedMetricMany(
