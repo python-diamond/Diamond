@@ -23,7 +23,7 @@ class Testnetapp_inode(CollectorTestCase):
 
     def test_import(self):
         self.assertTrue(netapp_inode)
-        
+
 ###############################################################################
 if __name__ == "__main__":
     unittest.main()

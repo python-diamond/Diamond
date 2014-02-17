@@ -23,7 +23,7 @@ class TestVMSDomsCollector(CollectorTestCase):
 
     def test_import(self):
         self.assertTrue(VMSDomsCollector)
-        
+
 ###############################################################################
 if __name__ == "__main__":
     unittest.main()

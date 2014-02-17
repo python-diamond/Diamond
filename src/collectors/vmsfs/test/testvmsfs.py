@@ -23,7 +23,7 @@ class TestVMSFSCollector(CollectorTestCase):
 
     def test_import(self):
         self.assertTrue(VMSFSCollector)
-        
+
 ###############################################################################
 if __name__ == "__main__":
     unittest.main()
