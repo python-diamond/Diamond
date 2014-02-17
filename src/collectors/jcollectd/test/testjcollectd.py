@@ -23,7 +23,7 @@ class TestJCollectdCollector(CollectorTestCase):
 
     def test_import(self):
         self.assertTrue(JCollectdCollector)
-        
+
 ###############################################################################
 if __name__ == "__main__":
     unittest.main()

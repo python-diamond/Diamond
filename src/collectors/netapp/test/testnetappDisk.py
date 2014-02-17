@@ -23,7 +23,7 @@ class TestnetappDisk(CollectorTestCase):
 
     def test_import(self):
         self.assertTrue(netappDisk)
-        
+
 ###############################################################################
 if __name__ == "__main__":
     unittest.main()

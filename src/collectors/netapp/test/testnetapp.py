@@ -23,7 +23,7 @@ class TestNetAppCollector(CollectorTestCase):
 
     def test_import(self):
         self.assertTrue(NetAppCollector)
-        
+
 ###############################################################################
 if __name__ == "__main__":
     unittest.main()

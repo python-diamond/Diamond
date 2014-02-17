@@ -176,7 +176,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
             return None
 
 
-        
+
         for process in psutil.process_iter():
             self.collect_process_info(process)
 

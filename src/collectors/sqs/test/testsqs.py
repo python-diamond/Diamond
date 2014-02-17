@@ -23,7 +23,7 @@ class TestSqsCollector(CollectorTestCase):
 
     def test_import(self):
         self.assertTrue(SqsCollector)
-        
+
 ###############################################################################
 if __name__ == "__main__":
     unittest.main()

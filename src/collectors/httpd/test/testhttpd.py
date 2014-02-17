@@ -225,7 +225,7 @@ class TestHttpdCollector(CollectorTestCase):
         self.setUp(config={
             'urls': 'vhost http://localhost/server-status?auto',
         })
-        
+
         patch_read = patch.object(
             TestHTTPResponse,
             'read',
@@ -272,45 +272,45 @@ class TestHttpdCollector(CollectorTestCase):
             'vhost.CleanupWorkers': 0,
         }
         self.assertPublishedMany(publish_mock, metrics)
-        
+
     @patch.object(Collector, 'publish')
     def test_issue_533(self, publish_mock):
         self.setUp(config={
             'urls': 'localhost http://localhost:80/server-status?auto,',
         })
-        
+
         expected_urls = {'localhost': 'http://localhost:80/server-status?auto'}
-        
+
         self.assertEqual(self.collector.urls, expected_urls)
-        
+
     @patch.object(Collector, 'publish')
     def test_url_with_port(self, publish_mock):
         self.setUp(config={
             'urls': 'localhost http://localhost:80/server-status?auto',
         })
-        
+
         expected_urls = {'localhost': 'http://localhost:80/server-status?auto'}
-        
+
         self.assertEqual(self.collector.urls, expected_urls)
-        
+
     @patch.object(Collector, 'publish')
     def test_url_without_port(self, publish_mock):
         self.setUp(config={
             'urls': 'localhost http://localhost/server-status?auto',
         })
-        
+
         expected_urls = {'localhost': 'http://localhost/server-status?auto'}
-        
+
         self.assertEqual(self.collector.urls, expected_urls)
-        
+
     @patch.object(Collector, 'publish')
     def test_url_without_nickname(self, publish_mock):
         self.setUp(config={
             'urls': 'http://localhost/server-status?auto',
         })
-        
+
         expected_urls = {'': 'http://localhost/server-status?auto'}
-        
+
         self.assertEqual(self.collector.urls, expected_urls)
 
 ################################################################################

@@ -23,7 +23,7 @@ class TestJbossApiCollector(CollectorTestCase):
 
     def test_import(self):
         self.assertTrue(JbossApiCollector)
-        
+
 ###############################################################################
 if __name__ == "__main__":
     unittest.main()
