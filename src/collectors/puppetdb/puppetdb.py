@@ -24,32 +24,32 @@ except ImportError:
 class PuppetDBCollector(diamond.collector.Collector):
 
     PATHS = {
-        'memory': "metrics/mbean/java.lang:type=Memory",
-        'queue': "metrics/mbean/org.apache.activemq:BrokerName=localhost,Type=Q"
+        'memory': "v2/metrics/mbean/java.lang:type=Memory",
+        'queue': "v2/metrics/mbean/org.apache.activemq:BrokerName=localhost,Type=Q"
         + "ueue,Destination=com.puppetlabs.puppetdb.commands",
-        'processing-time': "metrics/mbean/com.puppetlabs.puppetdb.command:type="
+        'processing-time': "v2/metrics/mbean/com.puppetlabs.puppetdb.command:type="
         + "global,name=processing-time",
-        'processed': "metrics/mbean/com.puppetlabs.puppetdb.command:type=global"
+        'processed': "v2/metrics/mbean/com.puppetlabs.puppetdb.command:type=global"
         + ",name=processed",
-        'retried': "metrics/mbean/com.puppetlabs.puppetdb.command:type=global,n"
+        'retried': "v2/metrics/mbean/com.puppetlabs.puppetdb.command:type=global,n"
         + "ame=retried",
-        'discarded': "metrics/mbean/com.puppetlabs.puppetdb.command:type=global"
+        'discarded': "v2/metrics/mbean/com.puppetlabs.puppetdb.command:type=global"
         + ",name=discarded",
-        'fatal': "metrics/mbean/com.puppetlabs.puppetdb.command:type=global,nam"
+        'fatal': "v2/metrics/mbean/com.puppetlabs.puppetdb.command:type=global,nam"
         + "e=fatal",
-        'commands.service-time': "metrics/mbean/com.puppetlabs.puppetdb.http.se"
-        + "rver:type=commands,name=service-time",
-        'resources.service-time': "metrics/mbean/com.puppetlabs.puppetdb.http.s"
-        + "erver:type=resources,name=service-time",
-        'gc-time': "metrics/mbean/com.puppetlabs.puppetdb.scf.storage:type=defa"
+        'commands.service-time': "v2/metrics/mbean/com.puppetlabs.puppetdb.http.se"
+        + "rver:type=/v3/commands,name=service-time",
+        'resources.service-time': "v2/metrics/mbean/com.puppetlabs.puppetdb.http.s"
+        + "erver:type=/v3/resources,name=service-time",
+        'gc-time': "v2/metrics/mbean/com.puppetlabs.puppetdb.scf.storage:type=defa"
         + "ult,name=gc-time",
-        'duplicate-pct': "metrics/mbean/com.puppetlabs.puppetdb.scf.storage:typ"
+        'duplicate-pct': "v2/metrics/mbean/com.puppetlabs.puppetdb.scf.storage:typ"
         + "e=default,name=duplicate-pct",
-        'pct-resource-dupes': "metrics/mbean/com.puppetlabs.puppetdb.query.popu"
+        'pct-resource-dupes': "v2/metrics/mbean/com.puppetlabs.puppetdb.query.popu"
         + "lation:type=default,name=pct-resource-dupes",
-        'num-nodes': "metrics/mbean/com.puppetlabs.puppetdb.query.population:ty"
+        'num-nodes': "v2/metrics/mbean/com.puppetlabs.puppetdb.query.population:ty"
         + "pe=default,name=num-nodes",
-        'num-resources': "metrics/mbean/com.puppetlabs.puppetdb.query.populatio"
+        'num-resources': "v2/metrics/mbean/com.puppetlabs.puppetdb.query.populatio"
         + "n:type=default,name=num-resources",
     }
 
