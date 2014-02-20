@@ -30,7 +30,6 @@ for example: cgi workers.
 
 import os
 import re
-from collections import defaultdict
 
 import diamond.collector
 import diamond.convertor
@@ -109,7 +108,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
             pg_cfg['count_workers'] = cfg.get(
                 'count_workers', '').lower() == 'true'
             self.processes[pg_name] = pg_cfg
-            self.processes_info[pg_name] = defaultdict(int)
+            self.processes_info[pg_name] = {}
 
     def get_default_config_help(self):
         config_help = super(ProcessResourcesCollector,
@@ -147,7 +146,10 @@ class ProcessResourcesCollector(diamond.collector.Collector):
 
     def save_process_info(self, pg_name, process_info):
         for key, value in process_info.iteritems():
-            self.processes_info[pg_name][key] += value
+            if key in self.processes_info[pg_name]:
+                self.processes_info[pg_name][key] += value
+            else:
+                self.processes_info[pg_name][key] = value
 
     def collect_process_info(self, process):
         try:
@@ -187,4 +189,4 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                 for key, value in counters.iteritems())
             [self.publish(*metric) for metric in metrics]
             # reinitialize process info
-            self.processes_info[pg_name] = defaultdict(int)
+            self.processes_info[pg_name] = {}
