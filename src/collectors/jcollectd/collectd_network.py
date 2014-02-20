@@ -75,10 +75,11 @@ DS_TYPE_GAUGE = 1
 DS_TYPE_DERIVE = 2
 DS_TYPE_ABSOLUTE = 3
 
-header = struct.Struct("!2H")
-number = struct.Struct("!Q")
-short = struct.Struct("!H")
-double = struct.Struct("<d")
+if hasattr(struct, 'Struct'):
+    header = struct.Struct("!2H")
+    number = struct.Struct("!Q")
+    short = struct.Struct("!H")
+    double = struct.Struct("<d")
 
 
 def decode_network_values(ptype, plen, buf):
