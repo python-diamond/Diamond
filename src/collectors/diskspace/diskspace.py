@@ -142,7 +142,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     continue
 
                 # Process the filters
-                if self.exclude_reg.match(mount_point):
+                if self.exclude_reg.search(mount_point):
                     self.log.debug("Ignoring %s since it is in the "
                                    + "exclude_filter list.", mount_point)
                     continue
