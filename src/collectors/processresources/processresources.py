@@ -130,7 +130,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
         config.update({
             'path': 'process',
             'unit': 'B',
-            'process': '',
+            'process': {},
         })
         return config
 
