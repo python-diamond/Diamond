@@ -313,6 +313,21 @@ class TestHttpdCollector(CollectorTestCase):
 
         self.assertEqual(self.collector.urls, expected_urls)
 
+    @patch.object(Collector, 'publish')
+    def test_issue_538(self, publish_mock):
+        self.setUp(config={
+            'enabled': True,
+            'path_suffix': "",
+            'ttl_multiplier': 2,
+            'measure_collector_time': False,
+            'byte_unit': 'byte',
+            'urls': 'localhost http://localhost:80/server-status?auto',
+        })
+
+        expected_urls = {'localhost': 'http://localhost:80/server-status?auto'}
+
+        self.assertEqual(self.collector.urls, expected_urls)
+
 ################################################################################
 if __name__ == "__main__":
     unittest.main()
