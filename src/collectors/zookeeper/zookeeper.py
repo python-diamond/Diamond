@@ -6,7 +6,8 @@ Collect zookeeper stats. ( Modified from memcached collector )
 #### Dependencies
 
  * subprocess
-
+ * Zookeeper 'mntr' command (zookeeper version => 3.4.0)
+ 
 #### Example Configuration
 
 ZookeeperCollector.conf
