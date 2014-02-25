@@ -112,7 +112,7 @@ class RabbitMQCollector(diamond.collector.Collector):
                     for key in queue:
                         prefix = "queues"
                         if not legacy:
-                            prefix = "%s.%s" % (vhost, "queues")
+                            prefix = "vhosts.%s.%s" % (vhost, "queues")
 
                         name = '{0}.{1}'.format(prefix, queue['name'])
                         self._publish_metrics(name, [], key, queue)
