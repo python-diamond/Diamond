@@ -69,21 +69,21 @@ def utc_to_local(utc_dt):
 class ElbCollector(diamond.collector.Collector):
 
     # (aws metric name, aws statistic type, diamond metric type, diamond
-    # precision)
+    # precision, emit zero when no value available)
     metrics = [
-        ('HealthyHostCount', 'Average', 'GAUGE', 0),
-        ('UnhealthyHostCount', 'Average', 'GAUGE', 0),
-        ('RequestCount', 'Sum', 'COUNTER', 0),
-        ('Latency', 'Average', 'GAUGE', 4),
-        ('HTTPCode_ELB_4XX', 'Sum', 'COUNTER', 0),
-        ('HTTPCode_ELB_5XX', 'Sum', 'COUNTER', 0),
-        ('HTTPCode_Backend_2XX', 'Sum', 'COUNTER', 0),
-        ('HTTPCode_Backend_3XX', 'Sum', 'COUNTER', 0),
-        ('HTTPCode_Backend_4XX', 'Sum', 'COUNTER', 0),
-        ('HTTPCode_Backend_5XX', 'Sum', 'COUNTER', 0),
-        ('BackendConnectionErrors', 'Sum', 'COUNTER', 0),
-        ('SurgeQueueLength', 'Maximum', 'GAUGE', 0),
-        ('SpilloverCount', 'Sum', 'COUNTER', 0)
+        ('HealthyHostCount', 'Average', 'GAUGE', 0, False),
+        ('UnHealthyHostCount', 'Average', 'GAUGE', 0, False),
+        ('RequestCount', 'Sum', 'COUNTER', 0, True),
+        ('Latency', 'Average', 'GAUGE', 4, False),
+        ('HTTPCode_ELB_4XX', 'Sum', 'COUNTER', 0, True),
+        ('HTTPCode_ELB_5XX', 'Sum', 'COUNTER', 0, True),
+        ('HTTPCode_Backend_2XX', 'Sum', 'COUNTER', 0, True),
+        ('HTTPCode_Backend_3XX', 'Sum', 'COUNTER', 0, True),
+        ('HTTPCode_Backend_4XX', 'Sum', 'COUNTER', 0, True),
+        ('HTTPCode_Backend_5XX', 'Sum', 'COUNTER', 0, True),
+        ('BackendConnectionErrors', 'Sum', 'COUNTER', 0, True),
+        ('SurgeQueueLength', 'Maximum', 'GAUGE', 0, True),
+        ('SpilloverCount', 'Sum', 'COUNTER', 0, True)
     ]
 
     def __init__(self, config, handlers):
@@ -189,7 +189,8 @@ class ElbCollector(diamond.collector.Collector):
             conn = cloudwatch.connect_to_region(region, **self.auth_kwargs)
             for elb_name in self.get_elb_names(region, region_cfg):
                 for (metric_name, statistic,
-                        metric_type, precision) in self.metrics:
+                        metric_type, precision,
+                        default_to_zero) in self.metrics:
                     for zone in self.zones_by_region[region]:
 
                         metric_key = (zone, elb_name, metric_name)
@@ -222,6 +223,18 @@ class ElbCollector(diamond.collector.Collector):
                         #self.log.debug('history = %s' % current_history)
                         #self.log.debug('stats = %s' % stats)
 
+                        # create a fake stat if the current metric
+                        # should default to zero when a stat is
+                        # not returned. Cloudwatch just skips the
+                        # metric entirely instead of wasting space
+                        # to store/emit a zero.
+                        if len(stats) == 0 and default_to_zero:
+                            stats.append({
+                                u'Timestamp': span_start,
+                                statistic: 0.0,
+                                u'Unit': u'Count'
+                            })
+
                         # match up each individual stat to what we have in
                         # history and publish it.
                         for stat in stats:
@@ -230,8 +243,8 @@ class ElbCollector(diamond.collector.Collector):
                             for i, tick in enumerate(current_history):
                                 tick_start, tick_end = tick
                                 if ts == tick_start:
-                                    #self.log.debug(tick)
-                                    #self.log.debug(stat)
+                                    #self.log.warn(tick)
+                                    #self.log.warn(stat)
                                     del current_history[i]
 
                                     template_tokens = {
