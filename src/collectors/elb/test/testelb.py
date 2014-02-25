@@ -92,7 +92,7 @@ class TestElbCollector(CollectorTestCase):
             publish_metric,
             {
                 'us-west-1a.elb1.HealthyHostCount': 1,
-                'us-west-1a.elb1.UnhealthyHostCount': 2,
+                'us-west-1a.elb1.UnHealthyHostCount': 2,
                 'us-west-1a.elb1.RequestCount': 3,
                 'us-west-1a.elb1.Latency': 4,
                 'us-west-1a.elb1.HTTPCode_ELB_4XX': 6,
