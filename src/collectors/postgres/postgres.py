@@ -373,7 +373,7 @@ class TransactionCount(QueryStats):
 
 
 class IdleInTransactions(QueryStats):
-    path = "%(datname)s.longest_running.%(metric)s"
+    path = "%(datname)s.idle_in_tranactions.%(metric)s"
     multi_db = True
     query = """
         SELECT 'idle_in_transaction',
