@@ -1,0 +1,19 @@
+# add diamond service upon initial install
+if test "$1" = "1" ; then
+    echo "Adding and activating diamond service"
+    if chkconfig --add diamond ; then
+        true
+    else
+        logger -p user.err -s -t %name -- "ERROR: Could not enable diamond service."
+        exit 0
+    fi
+fi
+
+# always restart diamond if it was running
+if service diamond status > /dev/null 2>&1; then
+    echo "Restarting diamond service because it was running."
+    if ! service diamond restart ; then
+        logger -p user.err -s -t %name -- "ERROR: Could not restart diamond service."
+        exit 0
+    fi
+fi
