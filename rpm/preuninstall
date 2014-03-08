@@ -1,0 +1,15 @@
+# remove service only on final uninstall
+if test "$1" = "0" ; then
+    if service diamond status > /dev/null 2>&1 ; then
+        if ! service diamond stop ; then
+            logger -p user.err -s -t "%{name}" -- "ERROR: Uninstall failed. Not able to stop service."
+            exit 0
+        fi
+    fi
+    if chkconfig --del diamond ; then
+        echo "Removed diamond service."
+    else
+        logger -p user.err -s -t "%{name}" -- "ERROR: Uninstall failed. Not able to remove service from services from management system."
+        exit 0
+    fi
+fi
