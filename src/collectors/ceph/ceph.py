@@ -121,6 +121,8 @@ class CephCollector(diamond.collector.Collector):
         self.config['short_names'] = str_to_bool(self.config['short_names'])
         self.config['service_stats_global'] = str_to_bool(self.config['service_stats_global'])
         self.config['perf_counters_enabled'] = str_to_bool(self.config['perf_counters_enabled'])
+        self.config['osd_stats_enabled'] = str_to_bool(self.config['osd_stats_enabled'])
+        self.config['long_running_detail'] = str_to_bool(self.config['long_running_detail'])
 
     def get_default_config_help(self):
         config_help = super(CephCollector, self).get_default_config_help()
@@ -135,9 +137,15 @@ class CephCollector(diamond.collector.Collector):
                            "in metric paths.  Defaults to true.",
             'cluster_prefix': "Prefix for per-cluster metrics.  Defaults"
                            "to 'ceph.cluster'.",
+            'osd_stats_enabled': "Whether to enable OSD service stats.  These are the most numerous and"
+                           "may overload underpowered graphite instances when there are 100s of OSDs. "
+                           "Defaults to true",
             'service_stats_global': "If true, stats from osds and mons are"
                                     "stored under the cluster prefix (not by host).  If false, these"
-                                    "stats are stored in per-host paths."
+                                    "stats are stored in per-host paths.",
+            'long_running_detail': "Whether to break down long running averages into sum/count/average (true), or"
+                                   "only output the average from the last measurement interval (false).  Defaults"
+                                   "to false."
         })
         return config_help
 
@@ -153,6 +161,8 @@ class CephCollector(diamond.collector.Collector):
             'short_names': True,
             'cluster_prefix': 'ceph.cluster',
             'service_stats_global': False,
+            'osd_stats_enabled': True,
+            'long_running_detail': False,
             'perf_counters_enabled': True
         })
         return config
@@ -234,8 +244,9 @@ class CephCollector(diamond.collector.Collector):
             delta_avg = float(delta_sum) / float(delta_count)
 
         # publish raw data
-        self.publish_gauge(total_sum_name, total_sum)
-        self.publish_gauge(total_count_name, total_count)
+        if self.config['long_running_detail']:
+            self.publish_gauge(total_sum_name, total_sum)
+            self.publish_gauge(total_count_name, total_count)
 
         # publish averages
         self.publish_gauge(delta_avg_name, delta_avg, 6)
@@ -424,6 +435,10 @@ class CephCollector(diamond.collector.Collector):
             return
 
         cluster_name, service_type, service_id = self._parse_socket_name(path)
+
+        if service_type == 'osd' and not self.config['osd_stats_enabled']:
+            return
+
         fsid = self._admin_command(path, ['config', 'get', 'fsid'])['fsid']
         stats, schema = self._get_perf_counters(path)
 
