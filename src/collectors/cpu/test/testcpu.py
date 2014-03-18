@@ -115,6 +115,109 @@ class TestCPUCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, metrics)
 
+
+class TestCPUCollectorNormalize(CollectorTestCase):
+
+    def setUp(self):
+        config = get_collector_config('CPUCollector', {
+            'interval': 1,
+            'normalize': True,
+        })
+
+        self.collector = CPUCollector(config, None)
+
+        self.num_cpu = 2
+
+        # first measurement
+        self.input_base = {
+            'user': 100,
+            'nice': 200,
+            'system': 300,
+            'idle': 400,
+        }
+        # second measurement
+        self.input_next = {
+            'user': 110,
+            'nice': 220,
+            'system': 330,
+            'idle': 440,
+        }
+        # expected increment, divided by number of CPUs
+        # for example, user should be 10/2 = 5
+        self.expected = {
+            'total.user': 5.0,
+            'total.nice': 10.0,
+            'total.system': 15.0,
+            'total.idle': 20.0,
+        }
+
+    # convert an input dict with values to a string that might come from
+    # /proc/stat
+    def input_dict_to_proc_string(self, cpu_id, dict_):
+        return ("cpu%s %i %i %i %i 0 0 0 0 0 0" %
+                (cpu_id,
+                 dict_['user'],
+                 dict_['nice'],
+                 dict_['system'],
+                 dict_['idle'],
+                 )
+                )
+
+    @patch.object(Collector, 'publish')
+    def test_should_work_proc_stat(self, publish_mock):
+        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
+            "\n".join([self.input_dict_to_proc_string('', self.input_base),
+                       self.input_dict_to_proc_string('0', self.input_base),
+                       self.input_dict_to_proc_string('1', self.input_base),
+                       ])
+        )))
+
+        patch_open.start()
+        self.collector.collect()
+        patch_open.stop()
+
+        self.assertPublishedMany(publish_mock, {})
+
+        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
+            "\n".join([self.input_dict_to_proc_string('', self.input_next),
+                       self.input_dict_to_proc_string('0', self.input_next),
+                       self.input_dict_to_proc_string('1', self.input_next),
+                       ])
+        )))
+
+        patch_open.start()
+        self.collector.collect()
+        patch_open.stop()
+
+        self.assertPublishedMany(publish_mock, self.expected)
+
+    @patch.object(Collector, 'publish')
+    @patch('cpu.os')
+    @patch('cpu.psutil')
+    def test_should_work_psutil(self, psutil_mock, os_mock, publish_mock):
+
+        os_mock.access.return_value = False
+
+        total = Mock(**self.input_base)
+        cpu_time = [Mock(**self.input_base),
+                    Mock(**self.input_base),
+                    ]
+        psutil_mock.cpu_times.side_effect = [cpu_time, total]
+
+        self.collector.collect()
+
+        self.assertPublishedMany(publish_mock, {})
+
+        total = Mock(**self.input_next)
+        cpu_time = [Mock(**self.input_next),
+                    Mock(**self.input_next),
+                    ]
+        psutil_mock.cpu_times.side_effect = [cpu_time, total]
+
+        self.collector.collect()
+
+        self.assertPublishedMany(publish_mock, self.expected)
+
 ################################################################################
 if __name__ == "__main__":
     unittest.main()

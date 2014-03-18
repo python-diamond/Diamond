@@ -196,6 +196,7 @@ class CPUCollector(diamond.collector.Collector):
                 return None
 
             cpu_time = psutil.cpu_times(True)
+            cpu_count = len(cpu_time)
             total_time = psutil.cpu_times()
             for i in range(0, len(cpu_time)):
                 metric_name = 'cpu' + str(i)
@@ -221,20 +222,24 @@ class CPUCollector(diamond.collector.Collector):
             self.publish(metric_name + '.user',
                          self.derivative(metric_name + '.user',
                                          total_time.user,
-                                         self.MAX_VALUES['user']))
+                                         self.MAX_VALUES['user'])
+                         / cpu_count)
             if hasattr(total_time, 'nice'):
                 self.publish(metric_name + '.nice',
                              self.derivative(metric_name + '.nice',
                                              total_time.nice,
-                                             self.MAX_VALUES['nice']))
+                                             self.MAX_VALUES['nice'])
+                             / cpu_count)
             self.publish(metric_name + '.system',
                          self.derivative(metric_name + '.system',
                                          total_time.system,
-                                         self.MAX_VALUES['system']))
+                                         self.MAX_VALUES['system'])
+                         / cpu_count)
             self.publish(metric_name + '.idle',
                          self.derivative(metric_name + '.idle',
                                          total_time.idle,
-                                         self.MAX_VALUES['idle']))
+                                         self.MAX_VALUES['idle'])
+                         / cpu_count)
 
             return True
 
