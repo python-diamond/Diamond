@@ -55,9 +55,6 @@ rpm: buildrpm
 
 buildrpm: sdist
 	./setup.py bdist_rpm \
-		--post-install=rpm/postinstall \
-		--pre-uninstall=rpm/preuninstall \
-		--install-script=rpm/install \
 		--release=`ls dist/*.noarch.rpm | wc -l`
 
 deb: builddeb
