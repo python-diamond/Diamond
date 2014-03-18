@@ -131,7 +131,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             self.log.error('Unable to import json')
             return {}
 
-        result = self._get('_cluster/nodes/_local/stats?all=true')
+        result = self._get('_nodes/_local/stats?all=true')
         if not result:
             return
 
