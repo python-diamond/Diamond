@@ -376,7 +376,7 @@ class IdleInTransactions(QueryStats):
     path = "%(datname)s.idle_in_tranactions.%(metric)s"
     multi_db = True
     query = """
-        SELECT 'idle_in_transaction',
+        SELECT 'idle_in_transactions',
                max(COALESCE(ROUND(EXTRACT(epoch FROM now()-query_start)),0))
                    AS idle_in_transaction
         FROM pg_stat_activity
