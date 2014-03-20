@@ -113,17 +113,16 @@ def pkgPath(root, path, rpath="/"):
         return
     files = []
     for spath in os.listdir(path):
+        if spath == 'test':
+            # ignore test directories
+            continue
         subpath = os.path.join(path, spath)
         spath = os.path.join(rpath, spath)
         if os.path.isfile(subpath):
             files.append(subpath)
-
-    data_files.append((root + rpath, files))
-    for spath in os.listdir(path):
-        subpath = os.path.join(path, spath)
-        spath = os.path.join(rpath, spath)
         if os.path.isdir(subpath):
             pkgPath(root, subpath, spath)
+    data_files.append((root + rpath, files))
 
 if os.name == 'nt':
     pkgPath(os.path.join(base_files, 'collectors'), 'src/collectors', '\\')

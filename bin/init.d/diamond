@@ -2,7 +2,7 @@
 #
 # diamond	Start the diamond statistics collector
 #
-# chkconfig: 2345 99 01
+# chkconfig: 2345 25 75
 # description: Diamond is a daemon and toolset for gathering system statistics \
 #              and publishing them to Graphite.
 # processname: python

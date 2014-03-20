@@ -10,3 +10,4 @@ graft           conf
 exclude         conf/*.conf
 graft           src/collectors
 global-exclude  */tests/*
+recursive-exclude src/collectors/*/test *
