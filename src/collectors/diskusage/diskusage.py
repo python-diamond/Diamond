@@ -236,10 +236,6 @@ class DiskUsageCollector(diamond.collector.Collector):
             metrics['util_percentage'] = (metrics['io_milliseconds']
                                           / time_delta
                                           / 10.0)
-            metrics['iops'] = 0
-            metrics['service_time'] = 0
-            metrics['await'] = 0
-            metrics['concurrent_io'] = 0
 
             if metrics['reads'] > 0:
                 metrics['read_await'] = (
