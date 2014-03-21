@@ -24,6 +24,9 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         self.collector = DiskUsageCollector(config, None)
 
+    def test_config(self):
+        self.assertFalse(self.collector.config['send_zero'])
+
     def test_import(self):
         self.assertTrue(DiskUsageCollector)
 

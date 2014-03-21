@@ -67,7 +67,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                          + '|disk[0-9]+$'
                          + '|dm\-[0-9]+$'),
             'sector_size': 512,
-            'send_zero': 'False',
+            'send_zero': False,
         })
         return config
 
