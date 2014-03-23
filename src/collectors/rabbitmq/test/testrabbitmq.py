@@ -62,7 +62,7 @@ class TestRabbitMQCollector(CollectorTestCase):
 
         self.collector.collect()
 
-        client.get_queues.assert_called_once_with()
+        client.get_queues.assert_called_once_with(None)
         client.get_overview.assert_called_once_with()
         metrics = {
             'queues.test_queue.more_keys.nested_key': 1,
