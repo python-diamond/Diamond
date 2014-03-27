@@ -48,7 +48,7 @@ except ImportError:
     boto = None
 
 
-class cloudwatchHandler (Handler):
+class cloudwatchHandler(Handler):
     """
       Implements the abstract Handler class
       Sending data to a AWS CloudWatch
@@ -63,7 +63,7 @@ class cloudwatchHandler (Handler):
         Handler.__init__(self, config)
 
         if not boto:
-            self.log.info(
+            self.log.error(
                 "CloudWatch: Boto is not installed, please install boto.")
             return
 
@@ -72,7 +72,11 @@ class cloudwatchHandler (Handler):
 
         # Initialize Options
         self.region = self.config['region']
-        self.instance_id = boto.utils.get_instance_metadata()['instance-id']
+        instances = boto.utils.get_instance_metadata()
+        if 'instance-id' not in instances:
+            self.log.error('CloudWatch: Failed to load instance metadata')
+            return
+        self.instance_id = instances['instance-id']
         self.log.debug("Setting InstanceID: " + self.instance_id)
 
         self.valid_config = ('region', 'collector', 'metric', 'namespace',
