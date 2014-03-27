@@ -110,7 +110,7 @@ class ElbCollector(diamond.collector.Collector):
 
         def cache_zones():
             self.zones_by_region = {}
-            for region in self.config['regions'].keys():
+            for region in self.config['regions']:
                 ec2_conn = boto.ec2.connect_to_region(region,
                                                       **self.auth_kwargs)
                 self.zones_by_region[region] = [
