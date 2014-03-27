@@ -62,7 +62,8 @@ class CollectorTestCase(unittest.TestCase):
         if not len(metrics):
             return False
 
-        filePath = os.path.join('docs', 'collectors-' + collector + '.md')
+        filePath = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                'docs', 'collectors-' + collector + '.md')
 
         if not os.path.exists(filePath):
             return False
