@@ -11,7 +11,7 @@ from puppetdb import PuppetDBCollector
 ################################################################################
 
 
-class TestPuppetDashboardCollector(CollectorTestCase):
+class TestPuppetDBCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('PuppetDBCollector', {
             'interval': 10
