@@ -6,18 +6,18 @@ from test import get_collector_config
 from mock import Mock
 from mock import patch
 from diamond.collector import Collector
-from jsoncommon import JSONCommonCollector
+from httpjson import HTTPJSONCollector
 
 ################################################################################
 
 
-class TestJSONCommonCollector(CollectorTestCase):
+class TestHTTPJSONCollector(CollectorTestCase):
     def setUp(self):
-        config = get_collector_config('JSONCommonCollector', {})
-        self.collector = JSONCommonCollector(config, None)
+        config = get_collector_config('HTTPJSONCollector', {})
+        self.collector = HTTPJSONCollector(config, None)
 
     def test_import(self):
-        self.assertTrue(JSONCommonCollector)
+        self.assertTrue(HTTPJSONCollector)
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):

@@ -14,18 +14,21 @@ import json
 import diamond.collector
 
 
-class JSONCommonCollector(diamond.collector.Collector):
+class HTTPJSONCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
-        config_help = super(JSONCommonCollector, self).get_default_config_help()
+        config_help = super(HTTPJSONCollector, self).get_default_config_help()
         config_help.update({
             'url': 'Full URL'
         })
         return config_help
 
     def get_default_config(self):
-        default_config = super(JSONCommonCollector, self).get_default_config()
-        default_config['url'] = 'http://localhost/stat'
+        default_config = super(HTTPJSONCollector, self).get_default_config()
+        default_config.update({
+            'path': 'httpjson',
+            'url': 'http://localhost/stat'
+        })
         return default_config
 
     def _json_to_flat_metrics(self, prefix, data):
