@@ -1,0 +1,39 @@
+{
+  "SINK.sink1": {
+    "BatchUnderflowCount": "379",
+    "StartTime": "1395324731854",
+    "StopTime": "0",
+    "BatchCompleteCount": "251705",
+    "ConnectionFailedCount": "0",
+    "EventDrainAttemptCount": "25190171",
+    "ConnectionCreatedCount": "7",
+    "BatchEmptyCount": "76250",
+    "Type": "SINK",
+    "ConnectionClosedCount": "6",
+    "EventDrainSuccessCount": "25189571"
+  },
+  "CHANNEL.channel1": {
+    "EventTakeAttemptCount": "50409933",
+    "ChannelCapacity": "1000000",
+    "EventPutSuccessCount": "50255318",
+    "ChannelFillPercentage": "0.0",
+    "Type": "CHANNEL",
+    "StopTime": "0",
+    "EventPutAttemptCount": "50272828",
+    "ChannelSize": "0",
+    "StartTime": "1395324730827",
+    "EventTakeSuccessCount": "50255318"
+  },
+  "SOURCE.source1": {
+    "AppendAcceptedCount": "0",
+    "StartTime": "1395324730961",
+    "OpenConnectionCount": "0",
+    "AppendBatchAcceptedCount": "56227",
+    "AppendBatchReceivedCount": "56258",
+    "Type": "SOURCE",
+    "EventAcceptedCount": "50282681",
+    "AppendReceivedCount": "0",
+    "StopTime": "0",
+    "EventReceivedCount": "50311681"
+  }
+}
