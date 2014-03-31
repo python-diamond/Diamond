@@ -19,17 +19,13 @@ class JSONCommonCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(JSONCommonCollector, self).get_default_config_help()
         config_help.update({
-            'host': 'Hostname',
-            'port': 'Port',
-            'path': 'Path',
+            'url': 'Full URL'
         })
         return config_help
 
     def get_default_config(self):
         default_config = super(JSONCommonCollector, self).get_default_config()
-        default_config['host'] = 'localhost'
-        default_config['port'] = 80
-        default_config['path'] = '/stat'
+        default_config['url'] = 'http://localhost/stat'
         return default_config
 
     def _json_to_flat_metrics(self, prefix, data):
@@ -46,9 +42,7 @@ class JSONCommonCollector(diamond.collector.Collector):
                     yield ("%s.%s" % (prefix, key), value)
 
     def collect(self):
-        url = 'http://%s:%i/%s' % (self.config['host'],
-                                   int(self.config['port']),
-                                   self.config['path'])
+        url = self.config['url']
 
         req = urllib2.Request(url)
         req.add_header('Content-type', 'application/json')
