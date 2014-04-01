@@ -67,7 +67,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                          + '|disk[0-9]+$'
                          + '|dm\-[0-9]+$'),
             'sector_size': 512,
-            'send_zero': 'False',
+            'send_zero': False,
         })
         return config
 
@@ -83,6 +83,7 @@ class DiskUsageCollector(diamond.collector.Collector):
         result = {}
 
         if os.access('/proc/diskstats', os.R_OK):
+            self.proc_diskstats = True
             fp = open('/proc/diskstats')
 
             try:
@@ -121,6 +122,7 @@ class DiskUsageCollector(diamond.collector.Collector):
             finally:
                 fp.close()
         else:
+            self.proc_diskstats = False
             if not psutil:
                 self.log.error('Unable to import psutil')
                 return None
@@ -130,16 +132,13 @@ class DiskUsageCollector(diamond.collector.Collector):
                     result[(0, len(result))] = {
                         'device': disk,
                         'reads': disks[disk].read_count,
-                        'reads_merged': 0,
                         'reads_sectors': (disks[disk].read_bytes
                                           / int(self.config['sector_size'])),
                         'reads_milliseconds': disks[disk].read_time,
                         'writes': disks[disk].write_count,
-                        'writes_merged': 0,
                         'writes_sectors': (disks[disk].write_bytes
                                            / int(self.config['sector_size'])),
                         'writes_milliseconds': disks[disk].write_time,
-                        'io_in_progress': 0,
                         'io_milliseconds':
                         disks[disk].read_time + disks[disk].write_time,
                         'io_milliseconds_weighted':
@@ -205,10 +204,12 @@ class DiskUsageCollector(diamond.collector.Collector):
 
                     metrics[key] = metric_value
 
-            metrics['read_requests_merged_per_second'] = (
-                metrics['reads_merged'] / time_delta)
-            metrics['write_requests_merged_per_second'] = (
-                metrics['writes_merged'] / time_delta)
+            if self.proc_diskstats:
+                metrics['read_requests_merged_per_second'] = (
+                    metrics['reads_merged'] / time_delta)
+                metrics['write_requests_merged_per_second'] = (
+                    metrics['writes_merged'] / time_delta)
+
             metrics['reads_per_second'] = metrics['reads'] / time_delta
             metrics['writes_per_second'] = metrics['writes'] / time_delta
 
@@ -236,10 +237,6 @@ class DiskUsageCollector(diamond.collector.Collector):
             metrics['util_percentage'] = (metrics['io_milliseconds']
                                           / time_delta
                                           / 10.0)
-            metrics['iops'] = 0
-            metrics['service_time'] = 0
-            metrics['await'] = 0
-            metrics['concurrent_io'] = 0
 
             if metrics['reads'] > 0:
                 metrics['read_await'] = (
