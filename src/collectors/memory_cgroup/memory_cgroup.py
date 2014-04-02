@@ -23,8 +23,11 @@ _KEY_MAPPING = [
 ]
 
 
-class MemoryCgroupCollector(diamond.collector.Collector):
-    MEMORY_PATH = '/sys/fs/cgroup/memory/'
+class MemoryCgroupCollector(diamond.collector.Collector):    
+
+    def __init__(self, *args, **kwargs):
+        super(MemoryCgroupCollector, self).__init__(*args, **kwargs)
+        self.memory_path = self.config['memory_path']
 
     def get_default_config_help(self):
         config_help = super(
@@ -41,18 +44,19 @@ class MemoryCgroupCollector(diamond.collector.Collector):
         config.update({
             'path':     'memory_cgroup',
             'method':   'Threaded',
+            'memory_path': '/sys/fs/cgroup/memory/',
         })
         return config
 
     def collect(self):
         # find all memory.stat files
         matches = []
-        for root, dirnames, filenames in os.walk(self.MEMORY_PATH):
+        for root, dirnames, filenames in os.walk(self.memory_path):
             for filename in filenames:
                 if filename == 'memory.stat':
                     # matches will contain a tuple contain path to cpuacct.stat
                     # and the parent of the stat
-                    parent = root.replace(self.MEMORY_PATH,
+                    parent = root.replace(self.memory_path,
                                           "").replace("/", ".")
                     if parent == '':
                         parent = 'system'
