@@ -19,7 +19,10 @@ import os
 _KEY_MAPPING = [
     'cache',
     'rss',
-    'swap'
+    'swap',
+    'total_rss',
+    'total_cache',
+    'total_swap',
 ]
 
 

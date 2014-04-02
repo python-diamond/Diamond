@@ -67,6 +67,15 @@ class TestMemoryCgroupCollector(CollectorTestCase):
             'system.cache': 1,
             'system.rss': 1,
             'system.swap': 1,
+            'lxc.testcontainer.total_cache': 1,
+            'lxc.testcontainer.total_rss': 1,
+            'lxc.testcontainer.total_swap': 1,
+            'lxc.total_cache': 1,
+            'lxc.total_rss': 1,
+            'lxc.total_swap': 1,
+            'system.total_cache': 1,
+            'system.total_rss': 1,
+            'system.total_swap': 1,
         })
 
 if __name__ == "__main__":
