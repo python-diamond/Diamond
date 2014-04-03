@@ -444,7 +444,7 @@ class CephCollector(diamond.collector.Collector):
 
         if self.config['service_stats_global']:
             counter_prefix = "{0}.{1}.{2}".format(self._cluster_id_prefix(cluster_name, fsid), service_type, service_id)
-            self._publish_stats(cluster_name, fsid, counter_prefix, stats, global_name=True)
+            self._publish_stats(counter_prefix, stats, schema, global_name=True)
         else:
             # The prefix is <cluster name>.<service type>.<service id>
             counter_prefix = "{0}.{1}.{2}".format(cluster_name, service_type, service_id)
