@@ -342,7 +342,6 @@ class CephCollector(diamond.collector.Collector):
         short_names and cluster_prefix)
         """
 
-
         for stat_name, stat_value in flatten_dictionary(
             stats,
             path=[self._cluster_id_prefix(cluster_name, fsid), prefix]
