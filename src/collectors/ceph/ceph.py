@@ -114,6 +114,9 @@ class MonError(Exception):
 class GlobalName(str):
     pass
 
+class LocalName(str):
+    pass
+
 
 class CephCollector(diamond.collector.Collector):
     def __init__(self, config, handlers):
@@ -175,8 +178,11 @@ class CephCollector(diamond.collector.Collector):
         """
         if isinstance(name, GlobalName):
             return ".".join([self.config['cluster_prefix'], name])
-        else:
+        elif isinstance(name, LocalName):
             return super(CephCollector, self).get_metric_path(name, instance)
+        else:
+            # Require explicit local or global indication to catch bugs more easily
+            raise RuntimeError("Name '{0}' not LocalName or GlobalName".format(name))
 
     def _get_socket_paths(self):
         """Return a sequence of paths to sockets for communicating
@@ -194,7 +200,7 @@ class CephCollector(diamond.collector.Collector):
         return re.match("^(.*)-(.*)\.(.*).{0}$".format(self.config['socket_ext']),
                         os.path.basename(path)).groups()
 
-    def _publish_longrunavg(self, counter_prefix, stats, path, stat_type):
+    def _publish_longrunavg(self, counter_prefix, stats, path, stat_type, name_class):
         """Publish a long-running average metric.
 
         A long-running metric has two components: 'avgcount' and 'sum'. We
@@ -217,11 +223,11 @@ class CephCollector(diamond.collector.Collector):
         """
         # name of <metric>
         base_name = _PATH_SEP.join(filter(None, [counter_prefix] + path))
-        total_sum_name = "%s%s%s" % (base_name, _PATH_SEP, "sum")
-        total_count_name = "%s%s%s" % (base_name, _PATH_SEP, "count")
-        delta_sum_name = "%s%s%s" % (base_name, _PATH_SEP, "delta_sum")
-        delta_count_name = "%s%s%s" % (base_name, _PATH_SEP, "delta_count")
-        delta_avg_name = "%s%s%s" % (base_name, _PATH_SEP, "last_interval_avg")
+        total_sum_name = name_class("%s%s%s" % (base_name, _PATH_SEP, "sum"))
+        total_count_name = name_class("%s%s%s" % (base_name, _PATH_SEP, "count"))
+        delta_sum_name = name_class("%s%s%s" % (base_name, _PATH_SEP, "delta_sum"))
+        delta_count_name = name_class("%s%s%s" % (base_name, _PATH_SEP, "delta_count"))
+        delta_avg_name = name_class("%s%s%s" % (base_name, _PATH_SEP, "last_interval_avg"))
 
         # lookup raw metric component values
         total_sum = lookup_dict_path(stats, path, ['sum'])
@@ -283,11 +289,11 @@ class CephCollector(diamond.collector.Collector):
         for unit in self.config['byte_unit']:
             new_value = diamond.convertor.binary.convert(
                 value=metric_value, oldUnit='byte', newUnit=unit)
-            new_name = name.replace("bytes", unit)
+            new_name = name.__class__(name.replace("bytes", unit))
             result.append((new_name, new_value))
         return result
 
-    def _publish_stats(self, counter_prefix, stats, schema, global_name=False):
+    def _publish_stats(self, counter_prefix, stats, schema, name_class):
         """Publish a set of Ceph performance counters, including schema.
 
         :param counter_prefix: string prefixed to metric names
@@ -300,11 +306,9 @@ class CephCollector(diamond.collector.Collector):
             del path[-1]
 
             if stat_type & _PERFCOUNTER_LONGRUNAVG:
-                self._publish_longrunavg(counter_prefix, stats, path, stat_type)
+                self._publish_longrunavg(counter_prefix, stats, path, stat_type, name_class)
             else:
-                name = _PATH_SEP.join(filter(None, [counter_prefix] + path))
-                if global_name:
-                    name = GlobalName(name)
+                name = name_class(_PATH_SEP.join(filter(None, [counter_prefix] + path)))
 
                 value = lookup_dict_path(stats, path)
 
@@ -443,11 +447,11 @@ class CephCollector(diamond.collector.Collector):
 
         if self.config['service_stats_global']:
             counter_prefix = "{0}.{1}.{2}".format(self._cluster_id_prefix(cluster_name, fsid), service_type, service_id)
-            self._publish_stats(counter_prefix, stats, schema, global_name=True)
+            self._publish_stats(counter_prefix, stats, schema, GlobalName)
         else:
             # The prefix is <cluster name>.<service type>.<service id>
             counter_prefix = "{0}.{1}.{2}".format(cluster_name, service_type, service_id)
-            self._publish_stats(counter_prefix, stats, schema)
+            self._publish_stats(counter_prefix, stats, schema, LocalName)
 
     def collect(self):
         """
