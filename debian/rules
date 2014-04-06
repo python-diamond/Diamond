@@ -2,7 +2,6 @@
 # -*- makefile -*-
 
 export PYBUILD_NAME=diamond
-export USE_SETUPTOOLS=1
 
 %:
 	dh $@ --with python2 --buildsystem=pybuild
