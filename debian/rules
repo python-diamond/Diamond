@@ -1,7 +1,11 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
-export PYBUILD_NAME=diamond
+DEB_PYTHON_SYSTEM := pysupport
 
-%:
-	dh $@ --with python2 --buildsystem=pybuild
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/python-distutils.mk
+
+clean::
+	rm -rf build build-stamp configure-stamp build/ MANIFEST
+	dh_clean
