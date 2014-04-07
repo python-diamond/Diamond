@@ -51,6 +51,16 @@ class SolrCollector(diamond.collector.Collector):
         })
         return config
 
+    def _try_convert(value):
+        if isinstance(value, (int, float)):
+            return value
+        try:
+            if '.' in value:
+                return float(value)
+            return int(value)
+        except ValueError:
+            return value
+
     def _get(self, path):
         url = 'http://%s:%i/%s' % (
             self.config['host'], int(self.config['port']), path)
@@ -95,9 +105,9 @@ class SolrCollector(diamond.collector.Collector):
                 continue
 
             metrics.update({
-                "{0}.solr.QueryTime".format(path):
+                "{0}.response.QueryTime".format(path):
                     result["responseHeader"]["QTime"],
-                "{0}.solr.Status".format(path):
+                "{0}.response.Status".format(path):
                     result["responseHeader"]["status"],
             })
 
@@ -147,7 +157,7 @@ class SolrCollector(diamond.collector.Collector):
 
             metrics.update([
                 ("{0}.cache.{1}.{2}".format(path, cache_type, key),
-                 cache[cache_type]['stats'][key])
+                 self._try_convert(cache[cache_type]['stats'][key]))
                 for cache_type in (
                      u'fieldValueCache', u'filterCache',
                      u'documentCache', u'queryResultCache')
@@ -168,7 +178,8 @@ class SolrCollector(diamond.collector.Collector):
 
             mem = result['jvm']['memory']
             metrics.update([
-                ('{0}.jvm.mem.{1}'.format(path, key), mem[key].split()[0])
+                ('{0}.jvm.mem.{1}'.format(path, key),
+                 self._try_convert(mem[key].split()[0]))
                 for k in ('free', 'total', 'max', 'used')
             ])
 
