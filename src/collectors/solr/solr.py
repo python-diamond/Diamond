@@ -7,6 +7,7 @@ Collect the solr stats for the local node
 
  * posixpath
  * urllib2
+ * socket
  * json
  * lxml
 
@@ -15,6 +16,7 @@ Collect the solr stats for the local node
 import posixpath
 import urllib2
 import re
+import socket
 
 try:
     import json
@@ -49,7 +51,7 @@ class SolrCollector(diamond.collector.Collector):
             'host':     '127.0.0.1',
             'port':     8983,
             'core':     None,
-            'scheme':   "#{Socket.gethostname}.solr",
+            'scheme':   "{0}.solr".format(socket.getfqdn()),
         })
         return config
 
