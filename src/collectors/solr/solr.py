@@ -93,7 +93,7 @@ class SolrCollector(diamond.collector.Collector):
 
         metrics = {}
         for core in cores:
-            if core:
+            if not core:
                 path = self.config['scheme']
             else:
                 path = "{0}.{1}".format(self.config['scheme'], core)
