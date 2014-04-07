@@ -47,7 +47,7 @@
     "start": "2014-04-07T08:42:17.653Z",
     "now": "2014-04-07T13:27:07.59Z",
     "host": "precise32",
-    "schema": "jobs"
+    "schema": "example"
   },
   "responseHeader": {
     "QTime": 55,
