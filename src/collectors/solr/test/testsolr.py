@@ -25,7 +25,8 @@ class TestSolrCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        returns = [self.getFixture('ping'),
+        returns = [self.getFixture('cores'),
+                   self.getFixture('ping'),
                    self.getFixture('stats'),
                    self.getFixture('system')]
         urlopen_mock = patch('urllib2.urlopen', Mock(
@@ -105,7 +106,7 @@ class TestSolrCollector(CollectorTestCase):
             'solr.cache.documentCache.cumulative_inserts': 0,
             'solr.cache.documentCache.cumulative_evictions': 0,
 
-            'solr.cache.queryResultCache.lookups': 3
+            'solr.cache.queryResultCache.lookups': 3,
             'solr.cache.queryResultCache.hits': 2,
             'solr.cache.queryResultCache.hitratio': 0.66,
             'solr.cache.queryResultCache.inserts': 1,
@@ -125,8 +126,7 @@ class TestSolrCollector(CollectorTestCase):
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
+                           metrics=metrics)
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
