@@ -41,7 +41,7 @@ class TestSolrCollector(CollectorTestCase):
             'solr.response.Status': 0,
 
             "solr.core.maxDoc": 321,
-            "solr.core.numDocs": 182,
+            "solr.core.numDocs": 184,
             "solr.core.warmupTime": 0,
 
             "solr.queryhandler.standard.requests": 3,
