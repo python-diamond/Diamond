@@ -145,6 +145,7 @@ class SolrCollector(diamond.collector.Collector):
                  update[key])
                 for key in ("requests", "errors", "timeouts", "totalTime",
                             "avgTimePerRequest", "avgRequestsPerSecond")
+                if update[key] != 'NaN'
             ])
 
             metrics.update([
