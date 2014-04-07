@@ -32,9 +32,9 @@ class SolrCollector(diamond.collector.Collector):
             'host': "",
             'port': "",
             'stats': "Available stats: \n"
-            + " - jvm (JVM information) \n"
-            + " - core (Core stats)\n",
-            + " - scheme (Individual index stats)\n",
+            " - jvm (JVM information) \n"
+            " - core (Core stats)\n"
+            " - scheme (Individual index stats)\n",
         })
         return config_help
 
@@ -51,7 +51,7 @@ class SolrCollector(diamond.collector.Collector):
         })
         return config
 
-    def _try_convert(value):
+    def _try_convert(self, value):
         if isinstance(value, (int, float)):
             return value
         try:
