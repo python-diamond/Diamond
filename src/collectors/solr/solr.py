@@ -9,7 +9,6 @@ Collect the solr stats for the local node
  * urllib2
  * socket
  * json
- * lxml
 
 """
 
@@ -24,8 +23,6 @@ try:
 except ImportError:
     import simplejson as json
 
-from lxml import etree as ET
-
 import diamond.collector
 
 
@@ -37,8 +34,9 @@ class SolrCollector(diamond.collector.Collector):
             'host': "",
             'port': "",
             'stats': "Available stats: \n"
-            + " - core (Solr Core to check) \n"
-            + " - scheme (Metric naming scheme, text to prepend to metric)",
+            + " - jvm (JVM information) \n"
+            + " - core (Core stats)\n",
+            + " - scheme (Individual index stats)\n",
         })
         return config_help
 
@@ -64,9 +62,6 @@ class SolrCollector(diamond.collector.Collector):
             self.log.error("%s: %s", url, err)
             return False
 
-    def _get_json(self, path):
-        response = self._get(path)
-
         try:
             return json.load(response)
         except (TypeError, ValueError):
@@ -84,7 +79,7 @@ class SolrCollector(diamond.collector.Collector):
             cores = [self.config['core']]
         else:
             # If no core is specified, provide statistics for all cores
-            result = self._get_json('/solr/admin/cores?action=STATUS&wt=json')
+            result = self._get('/solr/admin/cores?action=STATUS&wt=json')
             cores = result['status'].keys()
 
         metrics = {}
@@ -97,7 +92,7 @@ class SolrCollector(diamond.collector.Collector):
             ping_url = posixpath.normpath(
                 "/solr/{0}/admin/ping?wt=json".format(core))
 
-            result = self._get_json(ping_url)
+            result = self._get(ping_url)
             if not result:
                 continue
 
@@ -109,152 +104,75 @@ class SolrCollector(diamond.collector.Collector):
             })
 
             stats_url = posixpath.normpath(
-                "/solr/{0}/admin/stats.jsp".format(core))
+                "/solr/{0}/admin/mbeans?stats=true&wt=json".format(core))
 
             result = self._get(stats_url)
             if not result:
                 continue
 
-            stats  = ET.parse(result)
+            s = result['solr-mbeans']
+            stats = dict((s[i], s[i+1]) for i in xrange(0, len(s), 2))
 
-            core_searcher = stats.xpath(
-                '//solr/solr-info/CORE/entry'
-                '[name[normalize-space()="searcher"]]/stats/stat/text()')
-            standard = stats.xpath(
-                '//solr/solr-info/QUERYHANDLER/entry'
-                '[name[normalize-space()="standard"]]/stats/stat/text()')
-            update = stats.xpath(
-                '//solr/solr-info/QUERYHANDLER/entry'
-                '[name[normalize-space()="/update"]]/stats/stat/text()')
-            updatehandler = stats.xpath(
-                '//solr/solr-info/UPDATEHANDLER/entry/stats/stat/text()')
-            querycache = stats.xpath(
-                '//solr/solr-info/CACHE/entry'
-                '[name[normalize-space()="queryResultCache"]]'
-                '/stats/stat/text()')
-            documentcache = stats.xpath(
-                '//solr/solr-info/CACHE/entry'
-                '[name[normalize-space()="documentCache"]]/stats/stat/text()')
-            filtercache = stats.xpath(
-                '//solr/solr-info/CACHE/entry'
-                '[name[normalize-space()="filterCache"]]/stats/stat/text()')
+            core_searcher = stats["CORE"]["searcher"]["stats"]
+            standard = stats["QUERYHANDLER"]["standard"]["stats"]
+            update = stats["QUERYHANDLER"]["/update"]["stats"]
+            updatehandler = stats["UPDATEHANDLER"]["updateHandler"]["stats"]
+            cache = stats["CACHE"]
 
-            metrics.update({
-                "{0}.core.maxdocs".format(path):
-                    core_searcher[2].strip(),
-                "{0}.core.maxdocs".format(path):
-                    core_searcher[3].strip(),
-                "{0}.core.warmuptime".format(path):
-                    core_searcher[9].strip(),
+            metrics.update([
+                ("{0}.core.{1}".format(path, key),
+                 core_searcher[key])
+                for key in ("maxDoc", "numDocs", "warmupTime")
+            ])
 
-                "{0}.queryhandler.standard.requests".format(path):
-                    standard[1].strip(),
-                "{0}.queryhandler.standard.errors".format(path):
-                    standard[2].strip(),
-                "{0}.queryhandler.standard.timeouts".format(path):
-                    standard[3].strip(),
-                "{0}.queryhandler.standard.totaltime".format(path):
-                    standard[4].strip(),
-                "{0}.queryhandler.standard.timeperrequest".format(path):
-                    standard[5].strip(),
-                "{0}.queryhandler.standard.requestspersecond".format(path):
-                    standard[6].strip(),
+            metrics.update([
+                ("{0}.queryhandler.standard.{1}".format(path, key),
+                 standard[key])
+                for key in ("requests", "errors", "timeouts", "totalTime",
+                            "avgTimePerRequest", "avgRequestsPerSecond")
+            ])
 
-                "{0}.queryhandler.update.requests".format(path):
-                    update[1].strip(),
-                "{0}.queryhandler.update.errors".format(path):
-                    update[2].strip(),
-                "{0}.queryhandler.update.timeouts".format(path):
-                    update[3].strip(),
-                "{0}.queryhandler.update.totaltime".format(path):
-                    update[4].strip(),
-                "{0}.queryhandler.update.timeperrequest".format(path):
-                    update[5].strip(),
-                "{0}.queryhandler.update.requestspersecond".format(path):
-                    standard[6].strip(),
+            metrics.update([
+                ("{0}.queryhandler.update.{1}".format(path, key),
+                 update[key])
+                for key in ("requests", "errors", "timeouts", "totalTime",
+                            "avgTimePerRequest", "avgRequestsPerSecond")
+            ])
 
-                "{0}.queryhandler.updatehandler.commits".format(path):
-                    updatehandler[0].strip(),
-                "{0}.queryhandler.updatehandler.autocommits".format(path):
-                    updatehandler[3].strip(),
-                "{0}.queryhandler.updatehandler.optimizes".format(path):
-                    updatehandler[4].strip(),
-                "{0}.queryhandler.updatehandler.rollbacks".format(path):
-                    updatehandler[5].strip(),
-                "{0}.queryhandler.updatehandler.docspending".format(path):
-                    updatehandler[7].strip(),
-                "{0}.queryhandler.updatehandler.adds".format(path):
-                    updatehandler[8].strip(),
-                "{0}.queryhandler.updatehandler.errors".format(path):
-                    updatehandler[11].strip(),
-                "{0}.queryhandler.updatehandler.cumulativeadds".format(path):
-                    updatehandler[12].strip(),
-                "{0}.queryhandler.updatehandler.cumulativeerrors".format(path):
-                    updatehandler[15].strip(),
+            metrics.update([
+                ("{0}.updatehandler.{1}".format(path, key),
+                 updatehandler[key]), for key in (
+                     "commits", "autocommits", "optimizes", "rollbacks",
+                     "docsPending", "adds", "errors", "cumulative_adds",
+                     "cumulative_errors")
+            ])
 
-                "{0}.queryhandler.querycache.lookups".format(path):
-                    querycache[0].strip(),
-                "{0}.queryhandler.querycache.hits".format(path):
-                    querycache[1].strip(),
-                "{0}.queryhandler.querycache.hitRatio".format(path):
-                    querycache[2].strip(),
-                "{0}.queryhandler.querycache.inserts".format(path):
-                    querycache[3].strip(),
-                "{0}.queryhandler.querycache.size".format(path):
-                    querycache[5].strip(),
-                "{0}.queryhandler.querycache.warmuptime".format(path):
-                    querycache[6].strip(),
-                "{0}.queryhandler.querycache.cumulativelookups".format(path):
-                    querycache[7].strip(),
-                "{0}.queryhandler.querycache.cumulativehits".format(path):
-                    querycache[8].strip(),
-                "{0}.queryhandler.querycache.cumulativehitratio".format(path):
-                    querycache[9].strip(),
-                "{0}.queryhandler.querycache.cumulativeinserts".format(path):
-                    querycache[10].strip(),
+            metrics.update([
+                ("{0}.cache.{1}.{2}".format(path, cache_type, key),
+                 cache[cache_type]['stats'][key])
+                for cache_type in (
+                     u'fieldValueCache', u'filterCache',
+                     u'documentCache', u'queryResultCache')
+                for key in (
+                    u'lookups', u'hits', u'hitratio', u'inserts',
+                    u'evictions', u'size', u'warmupTime',
+                    u'cumulative_lookups', u'cumulative_hits',
+                    u'cumulative_hitratio', u'cumulative_inserts',
+                    u'cumulative_evictions')
+            ])
 
-                "{0}.queryhandler.documentcache.lookups".format(path):
-                    documentcache[0].strip(),
-                "{0}.queryhandler.documentcache.hits".format(path):
-                    documentcache[1].strip(),
-                "{0}.queryhandler.documentcache.hitRatio".format(path):
-                    documentcache[2].strip(),
-                "{0}.queryhandler.documentcache.inserts".format(path):
-                    documentcache[3].strip(),
-                "{0}.queryhandler.documentcache.size".format(path):
-                    documentcache[5].strip(),
-                "{0}.queryhandler.documentcache.warmuptime".format(path):
-                    documentcache[6].strip(),
-                "{0}.queryhandler.documentcache.cumulativelookups".format(path):
-                    documentcache[7].strip(),
-                "{0}.queryhandler.documentcache.cumulativehits".format(path):
-                    documentcache[8].strip(),
-                "{0}.queryhandler.documentcache.cumulativehitratio".format(path):
-                    documentcache[9].strip(),
-                "{0}.queryhandler.documentcache.cumulativeinserts".format(path):
-                    documentcache[10].strip(),
+            system_url = posixpath.normpath(
+                "/solr/{0}/admin/system?stats=true&wt=json".format(core))
 
-                "{0}.queryhandler.filtercache.lookups".format(path):
-                    filtercache[0].strip(),
-                "{0}.queryhandler.filtercache.hits".format(path):
-                    filtercache[1].strip(),
-                "{0}.queryhandler.filtercache.hitRatio".format(path):
-                    filtercache[2].strip(),
-                "{0}.queryhandler.filtercache.inserts".format(path):
-                    filtercache[3].strip(),
-                "{0}.queryhandler.filtercache.size".format(path):
-                    filtercache[5].strip(),
-                "{0}.queryhandler.filtercache.warmuptime".format(path):
-                    filtercache[6].strip(),
-                "{0}.queryhandler.filtercache.cumulativelookups".format(path):
-                    filtercache[7].strip(),
-                "{0}.queryhandler.filtercache.cumulativehits".format(path):
-                    filtercache[8].strip(),
-                "{0}.queryhandler.filtercache.cumulativehitratio".format(path):
-                    filtercache[9].strip(),
-                "{0}.queryhandler.filtercache.cumulativeinserts".format(path):
-                    documentcache[10].strip(),
-            })
+            result = self._get(system_url)
+            if not result:
+                continue
+
+            mem = result['jvm']['memory']
+            metrics.update([
+                ('{0}.jvm.mem.{1}'.format(path, key), mem[key].split()[0])
+                for k in ('free', 'total', 'max', 'used')
+            ])
 
         for key in metrics:
             self.publish(key, metrics[key])
