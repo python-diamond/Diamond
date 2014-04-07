@@ -151,24 +151,22 @@ class SolrCollector(diamond.collector.Collector):
 
             metrics.update([
                 ("{0}.updatehandler.{1}".format(path, key),
-                 updatehandler[key]), for key in (
-                     "commits", "autocommits", "optimizes", "rollbacks",
-                     "docsPending", "adds", "errors", "cumulative_adds",
-                     "cumulative_errors")
+                 updatehandler[key])
+                for key in ("commits", "autocommits", "optimizes", "rollbacks",
+                            "docsPending", "adds", "errors", "cumulative_adds",
+                            "cumulative_errors")
             ])
 
             metrics.update([
                 ("{0}.cache.{1}.{2}".format(path, cache_type, key),
                  self._try_convert(cache[cache_type]['stats'][key]))
-                for cache_type in (
-                     u'fieldValueCache', u'filterCache',
-                     u'documentCache', u'queryResultCache')
-                for key in (
-                    u'lookups', u'hits', u'hitratio', u'inserts',
-                    u'evictions', u'size', u'warmupTime',
-                    u'cumulative_lookups', u'cumulative_hits',
-                    u'cumulative_hitratio', u'cumulative_inserts',
-                    u'cumulative_evictions')
+                for cache_type in ('fieldValueCache', 'filterCache',
+                                   'documentCache', 'queryResultCache')
+                for key in ('lookups', 'hits', 'hitratio', 'inserts',
+                            'evictions', 'size', 'warmupTime',
+                            'cumulative_lookups', 'cumulative_hits',
+                            'cumulative_hitratio', 'cumulative_inserts',
+                            'cumulative_evictions')
             ])
 
             system_url = posixpath.normpath(
@@ -182,7 +180,7 @@ class SolrCollector(diamond.collector.Collector):
             metrics.update([
                 ('{0}.jvm.mem.{1}'.format(path, key),
                  self._try_convert(mem[key].split()[0]))
-                for k in ('free', 'total', 'max', 'used')
+                for key in ('free', 'total', 'max', 'used')
             ])
 
         for key in metrics:
