@@ -53,7 +53,7 @@ class HTTPJSONCollector(diamond.collector.Collector):
         try:
             resp = urllib2.urlopen(req)
         except urllib2.URLError as e:
-            self.log.error("Can't open url ", e)
+            self.log.error("Can't open url %s. %s", url, e)
         else:
 
             content = resp.read()
@@ -61,7 +61,7 @@ class HTTPJSONCollector(diamond.collector.Collector):
             try:
                 data = json.loads(content)
             except ValueError as e:
-                self.log.error("Can't parse JSON object from %s" % url, e)
+                self.log.error("Can't parse JSON object from %s. %s", url, e)
             else:
                 for metric_name, metric_value in self._json_to_flat_metrics("", data):
                     self.publish(metric_name, metric_value)
