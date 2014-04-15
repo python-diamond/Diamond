@@ -154,10 +154,10 @@ class ProcessResourcesCollector(diamond.collector.Collector):
     def collect_process_info(self, process):
         try:
             pid = process.pid
-            name = process.name
-            cmdline = process.cmdline
+            name = process.name()
+            cmdline = process.cmdline()
             try:
-                exe = process.exe
+                exe = process.exe()
             except psutil.AccessDenied:
                 exe = ""
             for pg_name, cfg in self.processes.items():
