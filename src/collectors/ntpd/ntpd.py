@@ -69,10 +69,18 @@ class NtpdCollector(diamond.collector.Collector):
 
             data['stratum'] = parts[2]
             data['when'] = parts[4]
+            if data['when'] == '-':
+                # sometimes, ntpq returns value '-' for 'when', continuos
+                # and try other system peer
+                continue
             data['poll'] = parts[5]
             data['reach'] = parts[6]
             data['delay'] = parts[7]
             data['jitter'] = parts[9]
+
+        if data['when'] == '-':
+            self.log.warning('ntpq returned bad value for "when"')
+            return []
 
         return data.items()
 
