@@ -258,9 +258,10 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     self.publish_gauge(metric_name, metric_value, 2)
 
             if os.name != 'nt':
-                self.publish_gauge(
-                    '%s.inodes_percentfree' % name,
-                    float(inodes_free) / float(inodes_total) * 100)
+                if float(inodes_total) > 0:
+                    self.publish_gauge(
+                        '%s.inodes_percentfree' % name,
+                        float(inodes_free) / float(inodes_total) * 100)
                 self.publish_gauge('%s.inodes_used' % name,
                                    inodes_total - inodes_free)
                 self.publish_gauge('%s.inodes_free' % name, inodes_free)
