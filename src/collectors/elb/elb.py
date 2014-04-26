@@ -108,19 +108,8 @@ class ElbCollector(diamond.collector.Collector):
                 # the creds from the instance metatdata.
                 self.auth_kwargs = {}
 
-        def cache_zones():
-            self.zones_by_region = {}
-            for region in self.config['regions']:
-                ec2_conn = boto.ec2.connect_to_region(region,
-                                                      **self.auth_kwargs)
-                self.zones_by_region[region] = [
-                    zone.name for zone in ec2_conn.get_all_zones()]
-
-        if not self.check_boto():
-            return
         validate_interval()
         setup_creds()
-        cache_zones()
         self.max_delayed = self.config.as_int('max_delayed')
         self.history = dict()
 
@@ -179,7 +168,18 @@ class ElbCollector(diamond.collector.Collector):
         self.publish_metric(metric)
 
     def collect(self):
-        self.check_boto()
+        if not self.check_boto():
+            return
+
+        def cache_zones():
+            self.zones_by_region = {}
+            for region in self.config['regions']:
+                ec2_conn = boto.ec2.connect_to_region(region,
+                                                      **self.auth_kwargs)
+                self.zones_by_region[region] = [
+                    zone.name for zone in ec2_conn.get_all_zones()]
+
+        cache_zones()
 
         now = datetime.datetime.utcnow()
         end_time = now.replace(second=0, microsecond=0)
