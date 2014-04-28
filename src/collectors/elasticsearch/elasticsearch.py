@@ -11,6 +11,7 @@ Collect the elasticsearch stats for the local node
 
 import urllib2
 import re
+from diamond.collector import str_to_bool
 
 try:
     import json
@@ -270,7 +271,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
 
          #cluster
-        if self.config['cluster'] == 'True':
+	if str_to_bool(self.config['cluster']):
             result = self._get('_cluster/health')
             
             if not result:
