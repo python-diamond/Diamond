@@ -1,9 +1,17 @@
-import docker
-from memory_cgroup import MemoryCgroupCollector
 
+try:
+    import docker
+except:
+    docker = None
+
+from memory_cgroup import MemoryCgroupCollector
 
 class MemoryDockerCollector(MemoryCgroupCollector):
     def collect(self):
+        if docker is None:
+            self.log.error('Unable to import docker')
+            return
+
         self.containers = {c['Id']: c['Names'][0][1:]
                            for c in docker.Client().containers(all=True)
                            if c['Names'] is not None}
