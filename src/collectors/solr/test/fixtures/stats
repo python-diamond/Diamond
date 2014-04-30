@@ -1,0 +1,259 @@
+{
+  "solr-mbeans": [
+    "CORE",
+    {
+      "searcher": {
+        "stats": {
+          "warmupTime": 0,
+          "registeredAt": "2014-04-07T08:42:18.046Z",
+          "searcherName": "Searcher@6355dc main",
+          "caching": true,
+          "numDocs": 184,
+          "maxDoc": 321,
+          "reader": "SolrIndexReader{this=18c74,r=ReadOnlyDirectoryReader@18c74,refCnt=1,segments=2}",
+          "readerDir": "org.apache.lucene.store.NIOFSDirectory:org.apache.lucene.store.NIOFSDirectory@/home/vagrant/solr/data/index lockFactory=org.apache.lucene.store.NativeFSLockFactory@1f44ec7",
+          "indexVersion": 1395160445022,
+          "openedAt": "2014-04-07T08:42:17.908Z"
+        },
+        "docs": null,
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/search/SolrIndexSearcher.java $",
+        "srcId": "$Id: SolrIndexSearcher.java 1305693 2012-03-27 00:43:47Z janhoy $",
+        "description": "index searcher",
+        "version": "1.0",
+        "class": "org.apache.solr.search.SolrIndexSearcher"
+      }
+    },
+    "QUERYHANDLER",
+    {
+      "standard": {
+        "stats": {
+          "avgRequestsPerSecond": 0.00016776958,
+          "avgTimePerRequest": 90,
+          "totalTime": 270,
+          "timeouts": 0,
+          "errors": 0,
+          "requests": 3,
+          "handlerStart": 1396860137759
+        },
+        "docs": [
+          "java.net.URL:http://wiki.apache.org/solr/StandardRequestHandler"
+        ],
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/handler/StandardRequestHandler.java $",
+        "srcId": "$Id: StandardRequestHandler.java 1052938 2010-12-26 20:21:48Z rmuir $",
+        "description": "The standard Solr request handler",
+        "version": "$Revision: 1052938 $",
+        "class": "org.apache.solr.handler.StandardRequestHandler"
+      },
+      "/update": {
+        "stats": {
+          "avgRequestsPerSecond": 0,
+          "avgTimePerRequest": "NaN",
+          "totalTime": 0,
+          "timeouts": 0,
+          "errors": 0,
+          "requests": 0,
+          "handlerStart": 1396860137768
+        },
+        "docs": null,
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/handler/XmlUpdateRequestHandler.java $",
+        "srcId": "$Id: XmlUpdateRequestHandler.java 1235304 2012-01-24 15:39:17Z janhoy $",
+        "description": "Add documents with XML",
+        "version": "$Revision: 1235304 $",
+        "class": "org.apache.solr.handler.XmlUpdateRequestHandler"
+      }
+    },
+    "UPDATEHANDLER",
+    {
+      "updateHandler": {
+        "stats": {
+          "cumulative_errors": 0,
+          "cumulative_deletesByQuery": 0,
+          "cumulative_deletesById": 0,
+          "cumulative_adds": 0,
+          "errors": 0,
+          "deletesByQuery": 0,
+          "commits": 0,
+          "autocommits": 0,
+          "optimizes": 0,
+          "rollbacks": 0,
+          "expungeDeletes": 0,
+          "docsPending": 0,
+          "adds": 0,
+          "deletesById": 0
+        },
+        "docs": null,
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/update/DirectUpdateHandler2.java $",
+        "srcId": "$Id: DirectUpdateHandler2.java 1297074 2012-03-05 14:40:17Z uschindler $",
+        "description": "Update handler that efficiently directly updates the on-disk main lucene index",
+        "version": "1.0",
+        "class": "org.apache.solr.update.DirectUpdateHandler2"
+      }
+    },
+    "CACHE",
+    {
+      "filterCache": {
+        "stats": {
+          "cumulative_evictions": 0,
+          "cumulative_inserts": 0,
+          "cumulative_hitratio": "0.00",
+          "cumulative_hits": 0,
+          "lookups": 0,
+          "hits": 0,
+          "hitratio": "0.00",
+          "inserts": 0,
+          "evictions": 0,
+          "size": 0,
+          "warmupTime": 0,
+          "cumulative_lookups": 0
+        },
+        "docs": null,
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/search/LRUCache.java $",
+        "srcId": "$Id: LRUCache.java 1065312 2011-01-30 16:08:25Z rmuir $",
+        "description": "LRU Cache(maxSize=24576, initialSize=4096, autowarmCount=4096, regenerator=org.apache.solr.search.SolrIndexSearcher$2@149eb9f)",
+        "version": "1.0",
+        "class": "org.apache.solr.search.LRUCache"
+      },
+      "fieldValueCache": {
+        "stats": {
+          "cumulative_evictions": 0,
+          "cumulative_inserts": 0,
+          "cumulative_hitratio": "0.00",
+          "cumulative_hits": 0,
+          "lookups": 0,
+          "hits": 0,
+          "hitratio": "0.00",
+          "inserts": 0,
+          "evictions": 0,
+          "size": 0,
+          "warmupTime": 0,
+          "cumulative_lookups": 0
+        },
+        "docs": null,
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/search/FastLRUCache.java $",
+        "srcId": "$Id: FastLRUCache.java 1170772 2011-09-14 19:09:56Z sarowe $",
+        "description": "Concurrent LRU Cache(maxSize=10000, initialSize=10, minSize=9000, acceptableSize=9500, cleanupThread=false)",
+        "version": "1.0",
+        "class": "org.apache.solr.search.FastLRUCache"
+      },
+      "documentCache": {
+        "stats": {
+          "cumulative_evictions": 0,
+          "cumulative_inserts": 0,
+          "cumulative_hitratio": "0.00",
+          "cumulative_hits": 0,
+          "lookups": 0,
+          "hits": 0,
+          "hitratio": "0.00",
+          "inserts": 0,
+          "evictions": 0,
+          "size": 0,
+          "warmupTime": 0,
+          "cumulative_lookups": 0
+        },
+        "docs": null,
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/search/LRUCache.java $",
+        "srcId": "$Id: LRUCache.java 1065312 2011-01-30 16:08:25Z rmuir $",
+        "description": "LRU Cache(maxSize=24576, initialSize=24576)",
+        "version": "1.0",
+        "class": "org.apache.solr.search.LRUCache"
+      },
+      "fieldCache": {
+        "stats": {
+          "insanity_count": 0,
+          "entries_count": 0
+        },
+        "docs": null,
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/search/SolrFieldCacheMBean.java $",
+        "srcId": "$Id: SolrFieldCacheMBean.java 984594 2010-08-11 21:42:04Z yonik $",
+        "description": "Provides introspection of the Lucene FieldCache, this is **NOT** a cache that is managed by Solr.",
+        "version": "1.0",
+        "class": "org.apache.solr.search.SolrFieldCacheMBean"
+      },
+      "queryResultCache": {
+        "stats": {
+          "cumulative_evictions": 0,
+          "cumulative_inserts": 1,
+          "cumulative_hitratio": "0.66",
+          "cumulative_hits": 2,
+          "lookups": 3,
+          "hits": 2,
+          "hitratio": "0.66",
+          "inserts": 1,
+          "evictions": 0,
+          "size": 1,
+          "warmupTime": 0,
+          "cumulative_lookups": 3
+        },
+        "docs": null,
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/search/LRUCache.java $",
+        "srcId": "$Id: LRUCache.java 1065312 2011-01-30 16:08:25Z rmuir $",
+        "description": "LRU Cache(maxSize=6144, initialSize=4096, autowarmCount=1024, regenerator=org.apache.solr.search.SolrIndexSearcher$3@6754d6)",
+        "version": "1.0",
+        "class": "org.apache.solr.search.LRUCache"
+      }
+    },
+    "HIGHLIGHTING",
+    {},
+    "OTHER",
+    {
+      "org.apache.solr.handler.component.DebugComponent": {
+        "stats": {},
+        "docs": null,
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/handler/component/DebugComponent.java $",
+        "srcId": "$Id: DebugComponent.java 1065312 2011-01-30 16:08:25Z rmuir $",
+        "description": "Debug Information",
+        "version": "$Revision: 1065312 $",
+        "class": "org.apache.solr.handler.component.DebugComponent"
+      },
+      "org.apache.solr.handler.component.QueryComponent": {
+        "stats": {},
+        "docs": null,
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/handler/component/QueryComponent.java $",
+        "srcId": "$Id: QueryComponent.java 1338227 2012-05-14 14:38:37Z mvg $",
+        "description": "query",
+        "version": "$Revision: 1338227 $",
+        "class": "org.apache.solr.handler.component.QueryComponent"
+      },
+      "org.apache.solr.handler.component.StatsComponent": {
+        "stats": {},
+        "docs": null,
+        "src": "$URL$",
+        "srcId": "$Id$",
+        "description": "Calculate Statistics",
+        "version": "$Revision$",
+        "class": "org.apache.solr.handler.component.StatsComponent"
+      },
+      "org.apache.solr.handler.component.HighlightComponent": {
+        "stats": {},
+        "docs": null,
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/handler/component/HighlightComponent.java $",
+        "srcId": "$Id: HighlightComponent.java 1198785 2011-11-07 15:43:23Z koji $",
+        "description": "Highlighting",
+        "version": "$Revision: 1198785 $",
+        "class": "org.apache.solr.handler.component.HighlightComponent"
+      },
+      "org.apache.solr.handler.component.MoreLikeThisComponent": {
+        "stats": {},
+        "docs": null,
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/handler/component/MoreLikeThisComponent.java $",
+        "srcId": "$Id: MoreLikeThisComponent.java 1064775 2011-01-28 16:58:46Z koji $",
+        "description": "More Like This",
+        "version": "$Revision: 1064775 $",
+        "class": "org.apache.solr.handler.component.MoreLikeThisComponent"
+      },
+      "org.apache.solr.handler.component.FacetComponent": {
+        "stats": {},
+        "docs": null,
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_3_6/solr/core/src/java/org/apache/solr/handler/component/FacetComponent.java $",
+        "srcId": "$Id: FacetComponent.java 1232359 2012-01-17 09:33:46Z simonw $",
+        "description": "Handle Faceting",
+        "version": "$Revision: 1232359 $",
+        "class": "org.apache.solr.handler.component.FacetComponent"
+      }
+    }
+  ],
+  "responseHeader": {
+    "QTime": 1,
+    "status": 0
+  }
+}

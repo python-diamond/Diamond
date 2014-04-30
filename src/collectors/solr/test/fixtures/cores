@@ -1,0 +1,25 @@
+{
+  "status": {
+    "": {
+      "index": {
+        "lastModified": "2014-03-18T16:55:02Z",
+        "directory": "org.apache.lucene.store.NIOFSDirectory:org.apache.lucene.store.NIOFSDirectory@/home/vagrant/solr/data/index lockFactory=org.apache.lucene.store.NativeFSLockFactory@1f44ec7",
+        "hasDeletions": true,
+        "current": true,
+        "segmentCount": 2,
+        "version": 1395160445022,
+        "maxDoc": 321,
+        "numDocs": 184
+      },
+      "uptime": 19420904,
+      "startTime": "2014-04-07T08:42:17.653Z",
+      "dataDir": "/home/vagrant/solr/data/",
+      "instanceDir": "/home/vagrant/solr/",
+      "name": ""
+    }
+  },
+  "responseHeader": {
+    "QTime": 5,
+    "status": 0
+  }
+}
