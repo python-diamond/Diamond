@@ -1,7 +1,17 @@
+# coding=utf-8
+
+"""
+The MemoryDockerCollector collects memory statistics from docker containers
+
+#### Dependencies
+
+ * docker
+
+"""
 
 try:
     import docker
-except:
+except ImportError:
     docker = None
 
 from memory_cgroup import MemoryCgroupCollector
