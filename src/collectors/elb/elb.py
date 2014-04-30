@@ -49,6 +49,7 @@ from diamond.metric import Metric
 try:
     import boto.ec2.elb
     from boto.ec2 import cloudwatch
+    from boto.exception import NoAuthHandlerFound
     cloudwatch  # Pyflakes
 except ImportError:
     cloudwatch = False
@@ -174,8 +175,13 @@ class ElbCollector(diamond.collector.Collector):
         def cache_zones():
             self.zones_by_region = {}
             for region in self.config['regions']:
-                ec2_conn = boto.ec2.connect_to_region(region,
-                                                      **self.auth_kwargs)
+                try:
+                    ec2_conn = boto.ec2.connect_to_region(region,
+                                                          **self.auth_kwargs)
+                except NoAuthHandlerFound, e:
+                    self.log.error(e)
+                    continue
+
                 self.zones_by_region[region] = [
                     zone.name for zone in ec2_conn.get_all_zones()]
 
