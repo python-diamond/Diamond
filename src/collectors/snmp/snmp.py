@@ -44,13 +44,6 @@ class SNMPCollector(diamond.collector.Collector):
         # Initialize base Class
         diamond.collector.Collector.__init__(self, config, handlers)
 
-        # Initialize SNMP Command Generator
-        if cmdgen:
-            self.snmpCmdGen = cmdgen.CommandGenerator()
-        else:
-            self.log.error(
-                'pysnmp.entity.rfc3413.oneliner.cmdgen failed to load')
-
     def get_default_config_help(self):
         config_help = super(SNMPCollector, self).get_default_config_help()
         config_help.update({
@@ -74,6 +67,15 @@ class SNMPCollector(diamond.collector.Collector):
         Override SNMPCollector.get_schedule
         """
         schedule = {}
+
+        if not cmdgen:
+            self.log.error(
+                'pysnmp.entity.rfc3413.oneliner.cmdgen failed to load')
+            return
+
+        # Initialize SNMP Command Generator
+        self.snmpCmdGen = cmdgen.CommandGenerator()
+
         if 'devices' in self.config:
             for device in self.config['devices']:
                 # Get Device Config
