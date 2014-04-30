@@ -1,13 +1,5 @@
 # coding=utf-8
 
-import sys
-import time
-import re
-import unicodedata
-
-from diamond.metric import Metric
-import diamond.convertor
-
 """
 The NetAppCollector collects metric from a NetApp installation using the
 NetApp Manageability SDK. This allows access to many metrics not available
@@ -40,6 +32,14 @@ The primary source for documentation about the API has been
 https://communities.netapp.com/docs/DOC-1044
 
 """
+
+import sys
+import time
+import re
+import unicodedata
+
+from diamond.metric import Metric
+import diamond.convertor
 
 
 class NetAppCollector(diamond.collector.Collector):

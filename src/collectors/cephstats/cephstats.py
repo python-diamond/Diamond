@@ -1,3 +1,9 @@
+# coding=utf-8
+
+"""
+Get ceph status from one node
+"""
+
 import subprocess
 import re
 import os
@@ -5,15 +11,9 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                 'ceph'))
-import ceph
+from ceph import CephCollector
 
-
-"""
-Get ceph status from one node
-"""
-
-
-class CephStatsCollector(ceph.CephCollector):
+class CephStatsCollector(CephCollector):
     def _get_stats(self):
         """
         Get ceph stats
