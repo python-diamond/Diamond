@@ -32,6 +32,11 @@ def getCollectors(path):
         if os.path.isfile(cPath) and len(f) > 3 and f.endswith('.py'):
             modname = f[:-3]
 
+            if modname.startswith('Test'):
+                continue
+            if modname.startswith('test'):
+                continue
+
             try:
                 # Import the module
                 module = __import__(modname, globals(), locals(), ['*'])
@@ -172,7 +177,10 @@ if __name__ == "__main__":
 
         docFile.write("%s\n" % (collector))
         docFile.write("=====\n")
-        docFile.write("%s" % (collectors[collector].__doc__))
+        if collectors[collector].__doc__ is None:
+            print collectors[collector]
+            print collectors[collector].__doc__
+        docFile.write("%s\n" % (collectors[collector].__doc__))
         docFile.write("#### Options - [Generic Options](Configuration)\n")
         docFile.write("\n")
 
