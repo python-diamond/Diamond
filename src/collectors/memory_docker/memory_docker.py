@@ -16,6 +16,7 @@ except ImportError:
 
 from memory_cgroup import MemoryCgroupCollector
 
+
 class MemoryDockerCollector(MemoryCgroupCollector):
     def collect(self):
         if docker is None:

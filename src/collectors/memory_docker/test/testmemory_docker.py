@@ -5,6 +5,7 @@ import os
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
+from test import run_only
 from mock import Mock
 from mock import patch
 
@@ -14,9 +15,14 @@ try:
 except ImportError:
     from StringIO import StringIO
 
+try:
+    from docker import Client
+    Client  # workaround for pyflakes issue #13
+except ImportError:
+    Client = None
+
 from diamond.collector import Collector
 from memory_docker import MemoryDockerCollector
-import docker
 
 dirname = os.path.dirname(__file__)
 fixtures_path = os.path.join(dirname, 'fixtures/')
@@ -31,6 +37,16 @@ docker_fixture = [
      u'Names': None}]
 
 
+def run_only_if_docker_client_is_available(func):
+    try:
+        from docker import Client
+        Client  # workaround for pyflakes issue #13
+    except ImportError:
+        Client = None
+    pred = lambda: Client is not None
+    return run_only(func, pred)
+
+
 class TestMemoryDockerCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MemoryDockerCollector', {
@@ -43,9 +59,10 @@ class TestMemoryDockerCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(MemoryDockerCollector)
 
+    @run_only_if_docker_client_is_available
     @patch('__builtin__.open')
     @patch('os.walk', Mock(return_value=iter(fixtures)))
-    @patch.object(docker.Client, 'containers', Mock(return_value=[]))
+    @patch.object(Client, 'containers', Mock(return_value=[]))
     @patch.object(Collector, 'publish')
     def test_should_open_all_cpuacct_stat(self, publish_mock, open_mock):
         open_mock.side_effect = lambda x: StringIO('')
@@ -55,9 +72,10 @@ class TestMemoryDockerCollector(CollectorTestCase):
         open_mock.assert_any_call(fixtures_path + 'lxc/memory.stat')
         open_mock.assert_any_call(fixtures_path + 'memory.stat')
 
+    @run_only_if_docker_client_is_available
     @patch('__builtin__.open')
     @patch('os.walk', Mock(return_value=iter(fixtures)))
-    @patch.object(docker.Client, 'containers')
+    @patch.object(Client, 'containers')
     @patch.object(Collector, 'publish')
     def test_should_get_containers(self, publish_mock, containers_mock,
                                    open_mock):
@@ -66,8 +84,9 @@ class TestMemoryDockerCollector(CollectorTestCase):
         self.collector.collect()
         containers_mock.assert_any_call(all=True)
 
+    @run_only_if_docker_client_is_available
     @patch.object(Collector, 'publish')
-    @patch.object(docker.Client, 'containers',
+    @patch.object(Client, 'containers',
                   Mock(return_value=docker_fixture))
     def test_should_work_with_real_data(self, publish_mock):
         MemoryDockerCollector.MEMORY_PATH = fixtures_path

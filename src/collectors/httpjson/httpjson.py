@@ -34,7 +34,8 @@ class HTTPJSONCollector(diamond.collector.Collector):
     def _json_to_flat_metrics(self, prefix, data):
         for key, value in data.items():
             if isinstance(value, dict):
-                for k, v in self._json_to_flat_metrics("%s.%s" % (prefix, key), value):
+                for k, v in self._json_to_flat_metrics(
+                        "%s.%s" % (prefix, key), value):
                     yield k, v
             else:
                 try:
@@ -63,5 +64,6 @@ class HTTPJSONCollector(diamond.collector.Collector):
             except ValueError as e:
                 self.log.error("Can't parse JSON object from %s. %s", url, e)
             else:
-                for metric_name, metric_value in self._json_to_flat_metrics("", data):
+                for metric_name, metric_value in self._json_to_flat_metrics(
+                        "", data):
                     self.publish(metric_name, metric_value)

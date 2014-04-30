@@ -21,7 +21,8 @@ class TestHTTPJSONCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        urlopen_mock = patch('urllib2.urlopen', Mock(return_value=self.getFixture('stats.json')))
+        urlopen_mock = patch('urllib2.urlopen',
+                             Mock(return_value=self.getFixture('stats.json')))
 
         urlopen_mock.start()
         self.collector.collect()

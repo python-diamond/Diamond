@@ -69,8 +69,8 @@ class TestFlumeCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_blank_should_fail_gracefully(self, publish_mock):
-        patch_urlopen = patch('urllib2.urlopen',
-                              Mock(return_value=self.getFixture('metrics_blank')))
+        patch_urlopen = patch('urllib2.urlopen', Mock(
+            return_value=self.getFixture('metrics_blank')))
 
         patch_urlopen.start()
         self.collector.collect()
@@ -80,8 +80,9 @@ class TestFlumeCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_invalid_should_fail_gracefully(self, publish_mock):
-        patch_urlopen = patch('urllib2.urlopen',
-                              Mock(return_value=self.getFixture('metrics_invalid')))
+        patch_urlopen = patch(
+            'urllib2.urlopen',
+            Mock(return_value=self.getFixture('metrics_invalid')))
 
         patch_urlopen.start()
         self.collector.collect()

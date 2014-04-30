@@ -80,13 +80,14 @@ def process_info(process, info_keys):
                 results.update({"%s.%s" % (key, subkey): subvalue})
     return results
 
-	
+
 def get_value(process, name):
-	result = getattr(process, name)
-	try:
-		return result()
-	except TypeError:
-		return result
+    result = getattr(process, name)
+    try:
+        return result()
+    except TypeError:
+        return result
+
 
 class ProcessResourcesCollector(diamond.collector.Collector):
     def __init__(self, *args, **kwargs):
@@ -157,7 +158,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                 self.processes_info[pg_name][key] += value
             else:
                 self.processes_info[pg_name][key] = value
-			
+
     def collect_process_info(self, process):
         try:
             pid = get_value(process, 'pid')
