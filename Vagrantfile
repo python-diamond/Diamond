@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
     c.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-5.10_chef-provisionerless.box"
   
     c.vm.provision "shell", inline: "rpm -qa | grep -qw epel-release  || (cd /tmp && wget http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm && sudo rpm -U epel-release-5*.noarch.rpm)"
-    c.vm.provision "shell", inline: "rpm -qa | grep -qw 'git\|rpm-build' || sudo yum install -y git rpm-build"
+    c.vm.provision "shell", inline: "rpm -qa | grep -qw 'git\|rpm-build\|python-configobj' || sudo yum install -y git rpm-build python-configobj"
     c.vm.provision "shell", inline: "cp -rf /vagrant /tmp/Diamond"  
     c.vm.provision "shell", inline: "cd /tmp/Diamond && make rpm"
     c.vm.provision "shell", inline: "cd /tmp/Diamond/dist && sudo bash -c 'for f in *.src.rpm; do mv $f `basename $f .src.rpm`.el5.src.rpm; done;'"
@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
     c.vm.box = "opscode_centos-6.5"
     c.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.5_chef-provisionerless.box"
   
-    c.vm.provision "shell", inline: "sudo yum install -y git rpm-build"
+    c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj"
     c.vm.provision "shell", inline: "cp -rf /vagrant /tmp/Diamond"  
     c.vm.provision "shell", inline: "cd /tmp/Diamond && make rpm"
     c.vm.provision "shell", inline: "cd /tmp/Diamond/dist && sudo bash -c 'for f in *.src.rpm; do mv $f `basename $f .src.rpm`.el6.src.rpm; done;'"
