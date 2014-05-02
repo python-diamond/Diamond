@@ -64,7 +64,7 @@ as cummulative nanoseconds since VM creation if this is True."""
         config = super(LibvirtKVMCollector, self).get_default_config()
         config.update({
             'path':     'libvirt-kvm',
-            'sort_by_uuid': True,
+            'sort_by_uuid': False,
             'uri':      'qemu:///system',
             'cpu_absolute': False
         })
