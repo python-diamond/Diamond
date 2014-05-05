@@ -51,7 +51,7 @@ class PostgresqlCollector(diamond.collector.Collector):
             'extended': False,
             'method': 'Threaded',
             'metrics': [],
-            'pg_version': 8
+            'pg_version': 9.2
         })
         return config
 
