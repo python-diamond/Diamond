@@ -31,7 +31,8 @@ class PostgresqlCollector(diamond.collector.Collector):
             'port': 'Port number',
             'underscore': 'Convert _ to .',
             'extended': 'Enable collection of extended database stats.',
-            'metrics': 'List of enabled metrics to collect'
+            'metrics': 'List of enabled metrics to collect',
+            'pg_version': "The version of postgres that you'll be monitoring eg in format 9.2"
         })
         return config_help
 
@@ -49,7 +50,8 @@ class PostgresqlCollector(diamond.collector.Collector):
             'underscore': False,
             'extended': False,
             'method': 'Threaded',
-            'metrics': []
+            'metrics': [],
+            'pg_version': 9.2
         })
         return config
 
@@ -76,7 +78,7 @@ class PostgresqlCollector(diamond.collector.Collector):
                 continue
             klass = metrics_registry[metric_name]
             stat = klass(self.connections, underscore=self.config['underscore'])
-            stat.fetch()
+            stat.fetch(self.config['pg_version'])
             for metric, value in stat:
                 if value is not None:
                     self.publish(metric, value)
@@ -133,12 +135,19 @@ class QueryStats(object):
             db = db.replace("_", ".")
         return db
 
-    def fetch(self):
+    def fetch(self, pg_version):
         self.data = list()
 
         for db, conn in self.connections.iteritems():
             cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-            cursor.execute(self.query, self.parameters)
+            if float(pg_version) >= 9.2:
+                pid = 'pid'
+                query = 'query'
+            else:
+                pid = 'procpid'
+                query = 'current_query'
+            q = self.query.format(pid=pid, query=query)
+            cursor.execute(q, self.parameters)
 
             for row in cursor.fetchall():
                 # If row is length 2, assume col1, col2 forms key: value
@@ -284,20 +293,20 @@ class ConnectionStateStats(QueryStats):
                 ) AS tmp(state)
         LEFT JOIN
              (SELECT CASE WHEN waiting THEN 'waiting'
-                          WHEN current_query='<IDLE>' THEN 'idle'
-                          WHEN current_query='<IDLE> in transaction'
+                          WHEN {query} = '<IDLE>' THEN 'idle'
+                          WHEN {query} = '<IDLE> in transaction'
                               THEN 'idletransaction'
-                          WHEN current_query='<insufficient privilege>'
+                          WHEN {query} = '<insufficient privilege>'
                               THEN 'unknown'
                           ELSE 'active' END AS state,
                      count(*) AS count
                FROM pg_stat_activity
-               WHERE procpid != pg_backend_pid()
+               WHERE {pid} != pg_backend_pid()
                GROUP BY CASE WHEN waiting THEN 'waiting'
-                             WHEN current_query='<IDLE>' THEN 'idle'
-                             WHEN current_query='<IDLE> in transaction'
+                             WHEN {query} = '<IDLE>' THEN 'idle'
+                             WHEN {query} = '<IDLE> in transaction'
                                  THEN 'idletransaction'
-                             WHEN current_query='<insufficient privilege>'
+                             WHEN {query} = '<insufficient privilege>'
                                  THEN 'unknown' ELSE 'active' END
              ) AS tmp2
         ON tmp.state=tmp2.state ORDER BY 1
@@ -354,7 +363,7 @@ class WalSegmentStats(QueryStats):
     query = """
         SELECT count(*) AS segments
         FROM pg_ls_dir('pg_xlog') t(fn)
-        WHERE fn ~ '^[0-9A-Z]{24}\$'
+        WHERE fn ~ '^[0-9A-Z]{{24}}\$'
     """
 
 
@@ -380,7 +389,7 @@ class IdleInTransactions(QueryStats):
                max(COALESCE(ROUND(EXTRACT(epoch FROM now()-query_start)),0))
                    AS idle_in_transaction
         FROM pg_stat_activity
-        WHERE current_query = '<IDLE> in transaction'
+        WHERE {query} = '<IDLE> in transaction'
         GROUP BY 1
     """
 
@@ -392,7 +401,7 @@ class LongestRunningQueries(QueryStats):
         SELECT 'query',
             COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-query_start)),0)
         FROM pg_stat_activity
-        WHERE current_query NOT LIKE '<IDLE%'
+        WHERE {query} NOT LIKE '<IDLE%'
         UNION ALL
         SELECT 'transaction',
             COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-xact_start)),0)
@@ -408,7 +417,7 @@ class UserConnectionCount(QueryStats):
         SELECT usename,
                count(*) as count
         FROM pg_stat_activity
-        WHERE procpid != pg_backend_pid()
+        WHERE {pid} != pg_backend_pid()
         GROUP BY usename
         ORDER BY 1
     """
