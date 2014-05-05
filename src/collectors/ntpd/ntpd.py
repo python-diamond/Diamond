@@ -78,7 +78,7 @@ class NtpdCollector(diamond.collector.Collector):
             data['delay'] = parts[7]
             data['jitter'] = parts[9]
 
-        if data['when'] == '-':
+        if 'when' in data and data['when'] == '-':
             self.log.warning('ntpq returned bad value for "when"')
             return []
 
