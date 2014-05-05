@@ -13,6 +13,7 @@ import traceback
 import time
 
 from diamond.metric import Metric
+from error import DiamondException
 
 # Detect the architecture of the system and set the counters for MAX_VALUES
 # appropriately. Otherwise, rolling over counters will cause incorrect or
@@ -336,9 +337,14 @@ class Collector(object):
             self.config['ttl_multiplier'])
 
         # Create Metric
-        metric = Metric(path, value, raw_value=raw_value, timestamp=None,
-                        precision=precision, host=self.get_hostname(),
-                        metric_type=metric_type, ttl=ttl)
+        try:
+            metric = Metric(path, value, raw_value=raw_value, timestamp=None,
+                            precision=precision, host=self.get_hostname(),
+                            metric_type=metric_type, ttl=ttl)
+        except DiamondException:
+            self.log.error(('Error when creating new Metric: path=%r, '
+                            'value=%r'), path, value)
+            raise
 
         # Publish Metric
         self.publish_metric(metric)
