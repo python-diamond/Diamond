@@ -109,7 +109,8 @@ class ElbCollector(diamond.collector.Collector):
                 # the creds from the instance metatdata.
                 self.auth_kwargs = {}
 
-        validate_interval()
+        if config['enabled']:
+            validate_interval()
         setup_creds()
         self.max_delayed = self.config.as_int('max_delayed')
         self.history = dict()
