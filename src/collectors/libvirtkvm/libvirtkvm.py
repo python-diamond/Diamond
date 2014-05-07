@@ -49,6 +49,9 @@ class LibvirtKVMCollector(diamond.collector.Collector):
             'uri': """The libvirt connection URI. By default it's
 'qemu:///system'. One decent option is
 'qemu+unix:///system?socket=/var/run/libvirt/libvit-sock-ro'.""",
+            'sort_by_uuid': """Use the <uuid> of the instance instead of the
+ default <name>, useful in Openstack deploments where <name> is only
+specific to the compute node""",
             'cpu_absolute': """CPU stats reported as percentage by default, or
 as cummulative nanoseconds since VM creation if this is True."""
         })
@@ -61,6 +64,7 @@ as cummulative nanoseconds since VM creation if this is True."""
         config = super(LibvirtKVMCollector, self).get_default_config()
         config.update({
             'path':     'libvirt-kvm',
+            'sort_by_uuid': False,
             'uri':      'qemu:///system',
             'cpu_absolute': False
         })
@@ -103,7 +107,10 @@ as cummulative nanoseconds since VM creation if this is True."""
 
         conn = libvirt.openReadOnly(self.config['uri'])
         for dom in [conn.lookupByID(n) for n in conn.listDomainsID()]:
-            name = dom.name()
+            if self.config['sort_by_uuid']:
+                name = dom.UUIDString()
+            else:
+                name = dom.name()
 
             # CPU stats
             vcpus = dom.getCPUStats(True, 0)
