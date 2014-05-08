@@ -118,7 +118,7 @@ case "$1" in
     esac
     ;;
   status)
-    status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+    status_of_proc -p "$PIDFILE" "$DAEMON" "$NAME" && exit 0 || exit $?
     ;;
   reload|force-reload)
     log_daemon_msg "Reloading $DESC" "$NAME"
