@@ -3,6 +3,10 @@
 """
 The CpuAcctCGroupCollector collects CPU Acct metric for cgroups
 
+#### Dependencies
+
+A mounted cgroup fs. Defaults to /sys/fs/cgroup/cpuacct/
+
 """
 
 import diamond.collector
