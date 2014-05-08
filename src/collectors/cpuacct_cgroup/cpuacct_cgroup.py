@@ -15,6 +15,8 @@ class CpuAcctCgroupCollector(diamond.collector.Collector):
         config_help = super(
             CpuAcctCgroupCollector, self).get_default_config_help()
         config_help.update({
+            'path': """Directory path to where cpuacct is located,
+defaults to /sys/fs/cgroup/cpuacct/. Redhat/CentOS/SL use /cgroup"""
         })
         return config_help
 
