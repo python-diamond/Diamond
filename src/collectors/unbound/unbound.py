@@ -41,23 +41,22 @@ class UnboundCollector(diamond.collector.Collector):
         config = super(UnboundCollector, self).get_default_config()
         config.update({
             'path':         'unbound',
-            'bin':          '/usr/sbin/unbound-control',
+            'bin':          self.find_binary('/usr/sbin/unbound-control'),
             'use_sudo':     False,
-            'sudo_cmd':     '/usr/bin/sudo',
+            'sudo_cmd':     self.find_binary('/usr/bin/sudo'),
             'histogram':    True,
         })
         return config
 
     def get_unbound_control_output(self):
         try:
-            command = [self.config['bin'] + ' stats']
+            command = [self.config['bin'], ' stats']
 
             if str_to_bool(self.config['use_sudo']):
                 command.insert(0, self.config['sudo_cmd'])
 
             return subprocess.Popen(command,
-                                    stdout=subprocess.PIPE,
-                                    shell=True).communicate()[0]
+                                    stdout=subprocess.PIPE).communicate()[0]
         except OSError:
             self.log.exception("Unable to run %s", command)
             return ""
