@@ -5,7 +5,8 @@ The CpuAcctCGroupCollector collects CPU Acct metric for cgroups
 
 #### Dependencies
 
-/sys/fs/cgroup/cpuacct/cpuacct.stat
+A mounted cgroup fs. Defaults to /sys/fs/cgroup/cpuacct/
+
 """
 
 import diamond.collector
@@ -13,12 +14,13 @@ import os
 
 
 class CpuAcctCgroupCollector(diamond.collector.Collector):
-    CPUACCT_PATH = '/sys/fs/cgroup/cpuacct/'
 
     def get_default_config_help(self):
         config_help = super(
             CpuAcctCgroupCollector, self).get_default_config_help()
         config_help.update({
+            'path': """Directory path to where cpuacct is located,
+defaults to /sys/fs/cgroup/cpuacct/. Redhat/CentOS/SL use /cgroup"""
         })
         return config_help
 
@@ -28,20 +30,19 @@ class CpuAcctCgroupCollector(diamond.collector.Collector):
         """
         config = super(CpuAcctCgroupCollector, self).get_default_config()
         config.update({
-            'path':     'cpuacct',
-            'xenfix':   None,
+            'path':     '/sys/fs/cgroup/cpuacct/'
         })
         return config
 
     def collect(self):
         # find all cpuacct.stat files
         matches = []
-        for root, dirnames, filenames in os.walk(self.CPUACCT_PATH):
+        for root, dirnames, filenames in os.walk(self.config['path']):
             for filename in filenames:
                 if filename == 'cpuacct.stat':
                     # matches will contain a tuple contain path to cpuacct.stat
                     # and the parent of the stat
-                    parent = root.replace(self.CPUACCT_PATH,
+                    parent = root.replace(self.config['path'],
                                           "").replace("/", ".")
                     if parent == '':
                         parent = 'system'
