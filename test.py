@@ -150,7 +150,7 @@ class CollectorTestCase(unittest.TestCase):
                     break
         else:
             calls = filter(lambda x: x[0][0] == key, mock.call_args_list)
-            
+
         actual_value = len(calls)
         message = '%s: actual number of calls %d, expected %d' % (
             key, actual_value, expected_value)
