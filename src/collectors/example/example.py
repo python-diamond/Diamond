@@ -35,24 +35,24 @@ containing your new collector(s), their .conf files, and a copy of diamond.conf
 with the following options in diamond.conf:
 
     [server]
-    
+
     user = ecuser
     group = ecuser
-    
+
     handlers = diamond.handler.archive.ArchiveHandler
     handlers_config_path = /tmp/diamond/handlers/
     collectors_path = /tmp/diamond/collectors/
     collectors_config_path = /tmp/diamond/collectors/
-    
+
     collectors_reload_interval = 3600
-    
+
     [handlers]
-    
+
     [[default]]
-    
+
     [[ArchiveHandler]]
     log_file = /dev/stdout
-    
+
     [collectors]
     [[default]]
 

@@ -17,6 +17,7 @@ except ImportError:
 from diamond.collector import Collector
 from cpuacct_cgroup import CpuAcctCgroupCollector
 
+
 class TestCpuAcctCgroupCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('CpuAcctCgroupCollector', {

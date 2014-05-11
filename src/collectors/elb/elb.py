@@ -90,12 +90,6 @@ class ElbCollector(diamond.collector.Collector):
     def __init__(self, config, handlers):
         super(ElbCollector, self).__init__(config, handlers)
 
-        def validate_interval():
-            self.interval = self.config.as_int('interval')
-            if self.interval % 60 != 0:
-                raise Exception('Interval must be a multiple of 60 seconds: %s'
-                                % self.interval)
-
         def setup_creds():
             if ('access_key_id' in self.config
                     and 'secret_access_key' in self.config):
@@ -110,7 +104,10 @@ class ElbCollector(diamond.collector.Collector):
                 self.auth_kwargs = {}
 
         if self.config['enabled']:
-            validate_interval()
+            self.interval = self.config.as_int('interval')
+            if self.interval % 60 != 0:
+                raise Exception('Interval must be a multiple of 60 seconds: %s'
+                                % self.interval)
         setup_creds()
         self.max_delayed = self.config.as_int('max_delayed')
         self.history = dict()

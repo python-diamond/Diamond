@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                 'ceph'))
 from ceph import CephCollector
 
+
 class CephStatsCollector(CephCollector):
     def _get_stats(self):
         """

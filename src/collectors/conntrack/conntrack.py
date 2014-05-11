@@ -12,6 +12,7 @@ net.netfilter.nf_conntrack_count_max
 
 import diamond.collector
 
+
 class ConnTrackCollector(diamond.collector.Collector):
     """
     Collector of number of conntrack connections
@@ -51,8 +52,9 @@ class ConnTrackCollector(diamond.collector.Collector):
                 with open(fpath, "r") as fhandle:
                     collected[sfile] = float(fhandle.readline().rstrip("\n"))
             except Exception as exception:
-                self.log.error("Failed to collect from '%s': %s", fpath,
-                        exception)
+                self.log.error("Failed to collect from '%s': %s",
+                               fpath,
+                               exception)
 
         for key in collected.keys():
             self.publish(key, collected[key])

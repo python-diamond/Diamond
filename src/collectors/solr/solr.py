@@ -115,9 +115,9 @@ class SolrCollector(diamond.collector.Collector):
 
                 metrics.update({
                     "{0}response.QueryTime".format(path):
-                        result["responseHeader"]["QTime"],
+                    result["responseHeader"]["QTime"],
                     "{0}response.Status".format(path):
-                        result["responseHeader"]["status"],
+                    result["responseHeader"]["status"],
                 })
 
             stats_url = posixpath.normpath(
@@ -135,7 +135,7 @@ class SolrCollector(diamond.collector.Collector):
 
                 metrics.update([
                     ("{0}core.{1}".format(path, key),
-                    core_searcher[key])
+                     core_searcher[key])
                     for key in ("maxDoc", "numDocs", "warmupTime")
                 ])
 
@@ -145,14 +145,14 @@ class SolrCollector(diamond.collector.Collector):
 
                 metrics.update([
                     ("{0}queryhandler.standard.{1}".format(path, key),
-                    standard[key])
+                     standard[key])
                     for key in ("requests", "errors", "timeouts", "totalTime",
                                 "avgTimePerRequest", "avgRequestsPerSecond")
                 ])
 
                 metrics.update([
                     ("{0}queryhandler.update.{1}".format(path, key),
-                    update[key])
+                     update[key])
                     for key in ("requests", "errors", "timeouts", "totalTime",
                                 "avgTimePerRequest", "avgRequestsPerSecond")
                     if update[key] != 'NaN'
@@ -164,10 +164,11 @@ class SolrCollector(diamond.collector.Collector):
 
                 metrics.update([
                     ("{0}updatehandler.{1}".format(path, key),
-                    updatehandler[key])
-                    for key in ("commits", "autocommits", "optimizes",
-                                "rollbacks", "docsPending", "adds", "errors",
-                                "cumulative_adds", "cumulative_errors")
+                     updatehandler[key])
+                    for key in (
+                        "commits", "autocommits", "optimizes",
+                        "rollbacks", "docsPending", "adds", "errors",
+                        "cumulative_adds", "cumulative_errors")
                 ])
 
             if 'cache' in self.config['stats']:
@@ -175,14 +176,16 @@ class SolrCollector(diamond.collector.Collector):
 
                 metrics.update([
                     ("{0}cache.{1}.{2}".format(path, cache_type, key),
-                    self._try_convert(cache[cache_type]['stats'][key]))
-                    for cache_type in ('fieldValueCache', 'filterCache',
-                                    'documentCache', 'queryResultCache')
-                    for key in ('lookups', 'hits', 'hitratio', 'inserts',
-                                'evictions', 'size', 'warmupTime',
-                                'cumulative_lookups', 'cumulative_hits',
-                                'cumulative_hitratio', 'cumulative_inserts',
-                                'cumulative_evictions')
+                     self._try_convert(cache[cache_type]['stats'][key]))
+                    for cache_type in (
+                        'fieldValueCache', 'filterCache',
+                        'documentCache', 'queryResultCache')
+                    for key in (
+                        'lookups', 'hits', 'hitratio', 'inserts',
+                        'evictions', 'size', 'warmupTime',
+                        'cumulative_lookups', 'cumulative_hits',
+                        'cumulative_hitratio', 'cumulative_inserts',
+                        'cumulative_evictions')
                 ])
 
             if 'jvm' in self.config['stats']:
@@ -196,7 +199,7 @@ class SolrCollector(diamond.collector.Collector):
                 mem = result['jvm']['memory']
                 metrics.update([
                     ('{0}jvm.mem.{1}'.format(path, key),
-                    self._try_convert(mem[key].split()[0]))
+                     self._try_convert(mem[key].split()[0]))
                     for key in ('free', 'total', 'max', 'used')
                 ])
 
