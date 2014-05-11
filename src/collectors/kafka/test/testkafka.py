@@ -155,25 +155,24 @@ class TestKafkaCollector(CollectorTestCase):
             self.getFixture('gc_scavenge.xml'),
             self.getFixture('threading.xml'),
         ]
+        self.collector.collect()
 
         expected_metrics = {
-            'kafka.logs.mytopic-1.CurrentOffset': long('213500615'),
-            'kafka.logs.mytopic-1.NumAppendedMessages': long('224634137'),
-            'kafka.logs.mytopic-1.NumberOfSegments': int('94'),
-            'kafka.logs.mytopic-1.Size': long('50143615339'),
-            'jvm.gc.marksweep.CollectionCount': long('2'),
-            'jvm.gc.marksweep.CollectionTime': long('160'),
-            'jvm.gc.scavenge.CollectionCount': long('37577'),
-            'jvm.gc.scavenge.CollectionTime': long('112293'),
-            'jvm.threading.CurrentThreadCpuTime': long('0'),
-            'jvm.threading.CurrentThreadUserTime': long('0'),
-            'jvm.threading.DaemonThreadCount': int('58'),
-            'jvm.threading.PeakThreadCount': int('90'),
-            'jvm.threading.ThreadCount': int('89'),
-            'jvm.threading.TotalStartedThreadCount': long('228'),
+            'kafka.logs.mytopic-1.CurrentOffset': 213500615,
+            'kafka.logs.mytopic-1.NumAppendedMessages': 224634137,
+            'kafka.logs.mytopic-1.NumberOfSegments': 94,
+            'kafka.logs.mytopic-1.Size': 50143615339,
+            'jvm.gc.marksweep.CurrentThreadCpuTime': 0,
+            'jvm.gc.marksweep.CurrentThreadUserTime': 0,
+            'jvm.gc.marksweep.DaemonThreadCount': 58,
+            'jvm.gc.marksweep.PeakThreadCount': 90,
+            'jvm.gc.marksweep.ThreadCount': 89,
+            'jvm.gc.marksweep.TotalStartedThreadCount': 228,
+            'jvm.gc.scavenge.CollectionCount': 2,
+            'jvm.gc.scavenge.CollectionTime': 160,
+            'jvm.threading.CollectionCount': 37577,
+            'jvm.threading.CollectionTime': 112293,
         }
-
-        self.collector.collect()
 
         self.assertPublishedMany(publish_mock, expected_metrics)
 
