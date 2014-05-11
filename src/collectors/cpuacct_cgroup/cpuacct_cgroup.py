@@ -46,6 +46,9 @@ defaults to /sys/fs/cgroup/cpuacct/. Redhat/CentOS/SL use /cgroup"""
                                           "").replace("/", ".")
                     if parent == '':
                         parent = 'system'
+                    # If the parent starts with a dot, remove it
+                    if parent[0] == '.':
+                        parent = parent[1:]
                     matches.append((parent, os.path.join(root, filename)))
 
         # Read utime and stime from cpuacct files

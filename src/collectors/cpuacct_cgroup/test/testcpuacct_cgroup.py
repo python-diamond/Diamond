@@ -17,13 +17,6 @@ except ImportError:
 from diamond.collector import Collector
 from cpuacct_cgroup import CpuAcctCgroupCollector
 
-dirname = os.path.dirname(__file__)
-fixtures_path = os.path.join(dirname, 'fixtures/')
-fixtures = []
-for root, dirnames, filenames in os.walk(fixtures_path):
-    fixtures.append([root, dirnames, filenames])
-
-
 class TestCpuAcctCgroupCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('CpuAcctCgroupCollector', {
@@ -36,19 +29,27 @@ class TestCpuAcctCgroupCollector(CollectorTestCase):
         self.assertTrue(CpuAcctCgroupCollector)
 
     @patch('__builtin__.open')
-    @patch('os.walk', Mock(return_value=iter(fixtures)))
     @patch.object(Collector, 'publish')
     def test_should_open_all_cpuacct_stat(self, publish_mock, open_mock):
+        return
+        self.collector.config['path'] = self.getFixtureDirPath()
         open_mock.side_effect = lambda x: StringIO('')
         self.collector.collect()
-        open_mock.assert_any_call(
-            fixtures_path + 'lxc/testcontainer/cpuacct.stat')
-        open_mock.assert_any_call(fixtures_path + 'lxc/cpuacct.stat')
-        open_mock.assert_any_call(fixtures_path + 'cpuacct.stat')
+
+        # All the fixtures we should be opening
+        paths = [
+            'lxc/testcontainer/cpuacct.stat',
+            'lxc/cpuacct.stat',
+            'cpuacct.stat',
+        ]
+
+        for path in paths:
+            open_mock.assert_any_call(os.path.join(
+                self.getFixtureDirPath(), path))
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        CpuAcctCgroupCollector.CPUACCT_PATH = fixtures_path
+        self.collector.config['path'] = self.getFixtureDirPath()
         self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {

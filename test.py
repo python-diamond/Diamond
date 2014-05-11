@@ -122,6 +122,12 @@ class CollectorTestCase(unittest.TestCase):
         finally:
             f.close()
 
+    def getFixtures(self):
+        fixtures = []
+        for root, dirnames, filenames in os.walk(self.getFixtureDirPath()):
+            fixtures.append(os.path.join(root, dirnames, filenames))
+        return fixtures
+
     def getPickledResults(self, results_name):
         try:
             f = open(self.getFixturePath(results_name), 'r')
