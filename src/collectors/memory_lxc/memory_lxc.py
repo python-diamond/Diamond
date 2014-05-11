@@ -12,6 +12,7 @@ from diamond.collector import Collector
 import diamond.convertor
 import os
 
+
 class MemoryLxcCollector(Collector):
 
     def get_default_config_help(self):
@@ -40,21 +41,22 @@ class MemoryLxcCollector(Collector):
         Collect memory stats of LXCs.
         """
         lxc_metrics = ["memory.usage_in_bytes", "memory.limit_in_bytes"]
-        if os.path.isdir(self.config["sys_path"]) == False:
+        if os.path.isdir(self.config["sys_path"]) is False:
             self.log.debug("sys_path '%s' isn't directory.",
-                    self.config["sys_path"])
+                           self.config["sys_path"])
             return {}
 
         collected = {}
         for item in os.listdir(self.config["sys_path"]):
             fpath = "%s/%s" % (self.config["sys_path"], item)
-            if os.path.isdir(fpath) == False:
+            if os.path.isdir(fpath) is False:
                 continue
 
             for lxc_metric in lxc_metrics:
                 filename = "%s/%s" % (fpath, lxc_metric)
-                metric_name = "%s.%s" % (item.replace(".", "_"),
-                        lxc_metric.replace("_in_bytes", ""))
+                metric_name = "%s.%s" % (
+                    item.replace(".", "_"),
+                    lxc_metric.replace("_in_bytes", ""))
                 self.log.debug("Trying to collect from %s", filename)
                 collected[metric_name] = self._read_file(filename)
 
@@ -63,8 +65,10 @@ class MemoryLxcCollector(Collector):
                 continue
 
             for unit in self.config["byte_unit"]:
-                value = diamond.convertor.binary.convert(collected[key],
-                        oldUnit="B", newUnit=unit)
+                value = diamond.convertor.binary.convert(
+                    collected[key],
+                    oldUnit="B",
+                    newUnit=unit)
                 new_key = "%s_in_%ss" % (key, unit)
                 self.log.debug("Publishing '%s %s'", new_key, value)
                 self.publish(new_key, value, metric_type="GAUGE")

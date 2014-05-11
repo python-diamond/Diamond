@@ -22,6 +22,7 @@ import re
 import subprocess
 from diamond.collector import str_to_bool
 
+
 class PassengerCollector(diamond.collector.Collector):
     """
     Collect Memory and CPU Utilization for Passenger
@@ -52,7 +53,6 @@ class PassengerCollector(diamond.collector.Collector):
             })
         return config
 
-
     def get_passenger_memory_stats(self):
         """
         Execute passenger-memory-stats, parse its output, return dictionary with
@@ -72,13 +72,13 @@ class PassengerCollector(diamond.collector.Collector):
             return {}
 
         dict_stats = {
-                "apache_procs": [],
-                "nginx_procs": [],
-                "passenger_procs": [],
-                "apache_mem_total": 0.0,
-                "nginx_mem_total": 0.0,
-                "passenger_mem_total": 0.0,
-                }
+            "apache_procs": [],
+            "nginx_procs": [],
+            "passenger_procs": [],
+            "apache_mem_total": 0.0,
+            "nginx_mem_total": 0.0,
+            "passenger_mem_total": 0.0,
+        }
         #
         re_colour = re.compile("\x1B\[([0-9]{1,3}((;[0-9]{1,3})*)?)?[m|K]")
         re_digit = re.compile("^\d")
@@ -119,8 +119,9 @@ class PassengerCollector(diamond.collector.Collector):
         Execute % top; and return STDOUT.
         """
         try:
-            proc1 = subprocess.Popen(["top", "-b", "-n", "2"],
-                    stdout=subprocess.PIPE)
+            proc1 = subprocess.Popen(
+                ["top", "-b", "-n", "2"],
+                stdout=subprocess.PIPE)
             (std_out, std_err) = proc1.communicate()
         except OSError as exception:
             return (-1)
@@ -149,7 +150,7 @@ class PassengerCollector(diamond.collector.Collector):
         """
         if not os.access(self.config["bin"], os.X_OK):
             self.log.error("Path %s does not exist or is not executable",
-                    self.config["bin"])
+                           self.config["bin"])
             return {}
 
         dict_stats = self.get_passenger_memory_stats()
@@ -163,4 +164,4 @@ class PassengerCollector(diamond.collector.Collector):
         self.publish("total_apache_memory", dict_stats["apache_mem_total"])
         self.publish("total_nginx_memory", dict_stats["nginx_mem_total"])
         self.publish("total_passenger_memory",
-                dict_stats["passenger_mem_total"])
+                     dict_stats["passenger_mem_total"])
