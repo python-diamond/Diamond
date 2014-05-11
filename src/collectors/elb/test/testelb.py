@@ -29,7 +29,10 @@ class TestElbCollector(CollectorTestCase):
 
     @run_only_if_boto_is_available
     def test_throws_exception_when_interval_not_multiple_of_60(self):
-        config = get_collector_config('ElbCollector', {'interval': 10})
+        config = get_collector_config(
+            'ElbCollector',
+            {'enabled': True,
+             'interval': 10})
         assertRaisesAndContains(Exception, 'multiple of', ElbCollector,
                                 *[config, None])
 
@@ -41,6 +44,7 @@ class TestElbCollector(CollectorTestCase):
         config = get_collector_config(
             'ElbCollector',
             {
+                'enabled': True,
                 'interval': 60,
                 'regions': {
                     'us-west-1': {
