@@ -11,6 +11,12 @@ from mock import patch
 from diamond.collector import Collector
 from conntrack import ConnTrackCollector
 
+try:
+    from cStringIO import StringIO
+    StringIO  # workaround for pyflakes issue #13
+except ImportError:
+    from StringIO import StringIO
+
 ################################################################################
 
 
@@ -19,6 +25,7 @@ class TestConnTrackCollector(CollectorTestCase):
         config = get_collector_config('ConnTrackCollector', {
             'interval': 10,
             'bin': 'true',
+            'dir': self.getFixtureDirPath(),
         })
 
         self.collector = ConnTrackCollector(config, None)
@@ -26,21 +33,13 @@ class TestConnTrackCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(ConnTrackCollector)
 
-    @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        patch_communicate = patch(
-            'subprocess.Popen.communicate',
-            Mock(return_value=(
-                'net.netfilter.nf_conntrack_count = 33',
-                '')))
-
-        patch_communicate.start()
         self.collector.collect()
-        patch_communicate.stop()
 
         metrics = {
-            'nf_conntrack_count': 33.0
+            'ip_conntrack_count': 33.0,
+            'ip_conntrack_max': 36.0,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
