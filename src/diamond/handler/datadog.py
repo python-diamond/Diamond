@@ -12,7 +12,7 @@ by their apps, tools and services into actionable insight.
 
 Enable handler
 
-  * handlers = diamond.handler.datadoghandler.DatadogHandler,
+  * handlers = diamond.handler.datadog.DatadogHandler,
 
   * apikey = DATADOG_API_KEY
 
