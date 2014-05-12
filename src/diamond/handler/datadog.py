@@ -1,5 +1,8 @@
 """
-[Datadog](http://www.datadoghq.com/) is a monitoring service for IT, Operations and Development teams who write and run applications at scale, and want to turn the massive amounts of data produced by their apps, tools and services into actionable insight.
+[Datadog](http://www.datadoghq.com/) is a monitoring service for IT,
+Operations and Development teams who write and run applications
+at scale, and want to turn the massive amounts of data produced
+by their apps, tools and services into actionable insight.
 
 #### Dependencies
 
@@ -15,20 +18,17 @@ Enable handler
 
   * queue_size = [optional | 1]
 
-  * queue_max_size = [optional | 300]
-  * queue_max_interval = [optional | 60]
-  * include_filters = [optional | '^.*']
-
 """
 
 from Handler import Handler
 import logging
 import time
 import re
+from collections import deque
 
 try:
     import dogapi
-except ImportError
+except ImportError:
     dogapi = None
 
 
@@ -48,9 +48,8 @@ class DatadogHandler(Handler):
 
         self.api = dogapi.dog_http_api
         self.api.api_key = self.config.get('api_key', '')
-        self.queue_size = int(self.config.get('queue_size', 1)
-        self.host = self.config.get('host', 'localhost')
-        self.queue = []
+        self.queue_size = self.config.get('queue_size', 1)
+        self.queue = deque([])
 
     def get_default_config_help(self):
         """
@@ -61,7 +60,6 @@ class DatadogHandler(Handler):
         config.update({
             'api_key': '',
             'queue_size': '',
-            'host': ''
         })
 
         return config
@@ -75,7 +73,6 @@ class DatadogHandler(Handler):
         config.update({
             'api_key': '',
             'queue_size': '',
-            'host': '',
         })
 
         return config
@@ -86,12 +83,14 @@ class DatadogHandler(Handler):
         """
 
         self.queue.append(metric)
-
         if len(self.queue) >= self.queue_size:
             self._send()
 
     def flush(self):
-        """Flush metrics"""
+        """
+        Flush metrics
+        """
+
         self._send()
 
     def _send(self):
@@ -99,12 +98,22 @@ class DatadogHandler(Handler):
         Take metrics from queue and send it to Datadog API
         """
 
-        for metric in self.queue:
+        while len(self.queue) > 0:
+            metric = self.queue.popleft()
+
+            path = '%s.%s.%s' % (
+                metric.getPathPrefix(),
+                metric.getCollectorPath(),
+                metric.getMetricPath()
+            )
+
             topic, value, timestamp = str(metric).split()
             logging.debug(
-                    "Sending.. topic[%s], value[%s], timestamp[%s]", 
-                    topic,
-                    value,
-                    timestamp
+                "Sending.. topic[%s], value[%s], timestamp[%s]",
+                path,
+                value,
+                timestamp
             )
+
+            self.api.metric(path, (timestamp, value), host=metric.host)
 
