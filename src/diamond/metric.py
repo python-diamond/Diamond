@@ -25,7 +25,10 @@ class Metric(object):
 
         # Validate the path, value and metric_type submitted
         if (None in [path, value] or metric_type not in self._METRIC_TYPES):
-            raise DiamondException("Invalid parameter.")
+            raise DiamondException(("Invalid parameter when creating new "
+                                    "Metric with path: %r value: %r "
+                                    "metric_type: %r")
+                                   % (path, value, metric_type))
 
         # If no timestamp was passed in, set it to the current time
         if timestamp is None:
@@ -36,7 +39,9 @@ class Metric(object):
                 try:
                     timestamp = int(timestamp)
                 except ValueError, e:
-                    raise DiamondException("Invalid parameter: %s" % e)
+                    raise DiamondException(("Invalid timestamp when "
+                                            "creating new Metric %r: %s")
+                                           % (path, e))
 
         # The value needs to be a float or an int.  If it is, great.  If not,
         # try to cast it to one of those.
@@ -47,7 +52,8 @@ class Metric(object):
                 else:
                     value = float(value)
             except ValueError, e:
-                raise DiamondException("Invalid parameter: %s" % e)
+                raise DiamondException(("Invalid value when creating new "
+                                        "Metric %r: %s") % (path, e))
 
         self.path = path
         self.value = value
