@@ -82,6 +82,18 @@ class NtpdCollector(diamond.collector.Collector):
             self.log.warning('ntpq returned bad value for "when"')
             return []
 
+        def convert_to_second(when_ntpd_ouput):
+            value = float(when_ntpd_ouput[:-1])
+            if when_ntpd_ouput.endswith('m'):
+                return value * 60
+            elif when_ntpd_ouput.endswith('h'):
+                return value * 3600
+            elif when_ntpd_ouput.endswith('d'):
+                return value * 86400
+
+        if data['when'].endswith(('m', 'h', 'd')):
+            data['when'] = convert_to_second(data['when'])
+
         return data.items()
 
     def get_ntpdc_output(self):
