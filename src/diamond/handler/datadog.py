@@ -116,4 +116,3 @@ class DatadogHandler(Handler):
             )
 
             self.api.metric(path, (timestamp, value), host=metric.host)
-
