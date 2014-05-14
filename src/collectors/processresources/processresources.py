@@ -175,7 +175,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                         pi.update({'workers_count': 1})
                     self.save_process_info(pg_name, pi)
         except psutil.NoSuchProcess, e:
-            self.log.warning("Process exited while trying to get info: %s", e)
+            self.log.info("Process exited while trying to get info: %s", e)
 
     def collect(self):
         """
