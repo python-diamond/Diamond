@@ -37,7 +37,7 @@ class InfluxdbHandler(Handler):
         self.username = self.config['username']
         self.password = self.config['password']
         self.database = self.config['database']
-        self.batch_size = int(self.config['batch'])
+        self.batch_size = int(self.config['batch_size'])
         self.max_backlog_multiplier = int(self.config['max_backlog_multiplier'])
 
         # Initialize Data
@@ -57,7 +57,7 @@ class InfluxdbHandler(Handler):
             'host': 'Hostname',
             'port': 'Port',
             'ssl': 'set to True to use HTTPS instead of http',
-            'batch': 'How many to store before sending to the influxdb server',
+            'batch_size': 'How many to store before sending to the influxdb server',
             'username': 'Username for connection',
             'password': 'Password for connection',
             'database': 'Database name',
@@ -79,7 +79,7 @@ class InfluxdbHandler(Handler):
             'username': 'root',
             'password': 'root',
             'database': 'graphite',
-            'batch': 1,
+            'batch_size': 1,
             'max_backlog_multiplier': 1,
         })
 
