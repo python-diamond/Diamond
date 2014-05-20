@@ -14,8 +14,11 @@ import struct
 from Handler import Handler
 
 try:
-    from influxdb import InfluxDBClient
-except:
+    import influxdb
+    #from influxdb import InfluxDBClient
+    influxdb  # Pyflakes
+except ImportError:
+    influxdb = None
     print "influxdb python client is needed. Get it at https://github.com/influxdb/influxdb-python"
 
 
@@ -30,6 +33,10 @@ class InfluxdbHandler(Handler):
         # Initialize Handler
         Handler.__init__(self, config)
 
+        if not influxdb:
+            self.log.error('influxdb.InfluxDBClient import failed. '
+                           'Handler disabled')
+                           
         # Initialize Options
         self.ssl = self.config['ssl']
         self.hostname = self.config['hostname']
@@ -149,7 +156,7 @@ class InfluxdbHandler(Handler):
 
         try:
           # Open Connection
-          self.influx = InfluxDBClient(self.hostname, self.port, self.username, self.password, self.database, self.ssl)
+          self.influx = influxdb.InfluxDBClient(self.hostname, self.port, self.username, self.password, self.database, self.ssl)
 
           # Log
           self.log.debug("InfluxdbHandler: Established connection to "
