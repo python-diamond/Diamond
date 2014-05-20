@@ -15,8 +15,7 @@ from Handler import Handler
 
 try:
     import influxdb
-    #from influxdb import InfluxDBClient
-    influxdb  # Pyflakes
+    
 except ImportError:
     influxdb = None
     print "influxdb python client is needed. Get it at https://github.com/influxdb/influxdb-python"
