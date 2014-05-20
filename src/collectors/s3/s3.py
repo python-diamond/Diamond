@@ -71,5 +71,5 @@ class S3BucketCollector(diamond.collector.Collector):
                         oldUnit='byte',
                         newUnit=byte_unit
                     )
-                    self.publish("%s.size.%s" % (bucket_name, byte_unit,
-                                                 new_size))
+                    self.publish("%s.size.%s" % (bucket_name, byte_unit),
+                                 new_size))
