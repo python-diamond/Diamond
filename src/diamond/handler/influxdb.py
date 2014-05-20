@@ -54,7 +54,7 @@ class InfluxdbHandler(Handler):
         config = super(InfluxdbHandler, self).get_default_config_help()
 
         config.update({
-            'host': 'Hostname',
+            'hostname': 'Hostname',
             'port': 'Port',
             'ssl': 'set to True to use HTTPS instead of http',
             'batch_size': 'How many to store before sending to the influxdb server',
@@ -73,7 +73,7 @@ class InfluxdbHandler(Handler):
         config = super(InfluxdbHandler, self).get_default_config()
 
         config.update({
-            'host': 'localhost',
+            'hostname': 'localhost',
             'port': 8086,
             'ssl': False,
             'username': 'root',
@@ -93,7 +93,7 @@ class InfluxdbHandler(Handler):
 
     def process(self, metric):
         # Add the data to the batch
-        self.batch.setdefault((metric.path,[]).append([metric.timestamp, metric.value])
+        self.batch.setdefault(metric.path,[]).append([metric.timestamp, metric.value])
 
         # If there are sufficient metrics, then pickle and send
         if len(self.batch) >= self.batch_size:
