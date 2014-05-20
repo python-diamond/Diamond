@@ -21,12 +21,11 @@ except:
 
 class InfluxdbHandler(Handler):
     """
-    Overrides the GraphiteHandler class
     Sending data to Influxdb using batched format
     """
     def __init__(self, config=None):
         """
-        Create a new instance of the GraphitePickleHandler
+        Create a new instance of the InfluxdbeHandler
         """
         # Initialize Handler
         Handler.__init__(self, config)
@@ -58,7 +57,7 @@ class InfluxdbHandler(Handler):
             'host': 'Hostname',
             'port': 'Port',
             'ssl': 'set to True to use HTTPS instead of http',
-            'batch': 'How many to store before sending to the graphite server',
+            'batch': 'How many to store before sending to the influxdb server',
             'username': 'Username for connection',
             'password': 'Password for connection',
             'database': 'Database name',
@@ -88,7 +87,7 @@ class InfluxdbHandler(Handler):
 
     def __del__(self):
         """
-        Destroy instance of the GraphiteHandler class
+        Destroy instance of the InfluxdbHandler class
         """
         self._close()
 
@@ -106,7 +105,7 @@ class InfluxdbHandler(Handler):
 
     def _send(self):
         """
-        Send data to graphite. Data that can not be sent will be queued.
+        Send data to Influxdb. Data that can not be sent will be kept in queued.
         """
         # Check to see if we have a valid socket. If not, try to connect.
         try:
@@ -136,7 +135,7 @@ class InfluxdbHandler(Handler):
                     self.batch_size * self.max_backlog_multiplier):
                 trim_offset = (self.batch_size
                                * self.trim_backlog_multiplier * -1)
-                self.log.warn('GraphiteHandler: Trimming backlog. Removing'
+                self.log.warn('InfluxdbHandler: Trimming backlog. Removing'
                               + ' oldest %d and keeping newest %d metrics',
                               len(self.batch) - abs(trim_offset),
                               abs(trim_offset))
