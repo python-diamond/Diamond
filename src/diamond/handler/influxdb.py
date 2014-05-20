@@ -5,8 +5,7 @@ Send metrics to a [influxdb](https://github.com/influxdb/influxdb/) using the ht
 
 - enable it in `diamond.conf` :
 
-`    handlers = diamond.handler.influxdb.InfluxdbHandler
-`
+    handlers = diamond.handler.influxdbHandler.InfluxdbHandler
 
 """
 
@@ -15,11 +14,10 @@ from Handler import Handler
 
 try:
     import influxdb
-    
+    from influxdb.client import InfluxDBClient
+    InfluxDBClient
 except ImportError:
-    influxdb = None
-    print "influxdb python client is needed. Get it at https://github.com/influxdb/influxdb-python"
-
+    InfluxDBClient = None
 
 class InfluxdbHandler(Handler):
     """
@@ -32,8 +30,8 @@ class InfluxdbHandler(Handler):
         # Initialize Handler
         Handler.__init__(self, config)
 
-        if not influxdb:
-            self.log.error('influxdb.InfluxDBClient import failed. '
+        if not InfluxDBClient:
+            self.log.error('influxdb.client.InfluxDBClient import failed. '
                            'Handler disabled')
                            
         # Initialize Options
@@ -155,8 +153,11 @@ class InfluxdbHandler(Handler):
 
         try:
           # Open Connection
-          self.influx = influxdb.InfluxDBClient(self.hostname, self.port, self.username, self.password, self.database, self.ssl)
-
+          if influxdb.__version__ > "0.1.6":
+              self.influx = InfluxDBClient(self.hostname, self.port, self.username, self.password, self.database, self.ssl)
+          else:
+              self.influx = InfluxDBClient(self.hostname, self.port, self.username, self.password, self.database)
+              
           # Log
           self.log.debug("InfluxdbHandler: Established connection to "
                            "%s:%d/%s.",
