@@ -153,13 +153,13 @@ class InfluxdbHandler(Handler):
 
           # Log
           self.log.debug("InfluxdbHandler: Established connection to "
-                           "%s://%s:%d/%s.",
-                           self.schema, self.hostname, self.port, self.database)
+                           "%s:%d/%s.",
+                           self.hostname, self.port, self.database)
         except Exception, ex:
             # Log Error
             self._throttle_error("InfluxdbHandler: Failed to connect to "
-                                 "%s://%s:%d/%s. %s",
-                                 self.schema, self.hostname, self.port, self.database, ex)
+                                 "%s:%d/%s. %s",
+                                 self.hostname, self.port, self.database, ex)
             # Close Socket
             self._close()
             return
