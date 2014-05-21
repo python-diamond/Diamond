@@ -59,7 +59,7 @@ class InfluxdbHandler(Handler):
         self.password = self.config['password']
         self.database = self.config['database']
         self.batch_size = int(self.config['batch_size'])
-        self.max_backlog_multiplier = int(self.config['max_backlog_multiplier'])
+        self.batch_count = 0
         self.time_precision = self.config['time_precision']
 
         # Initialize Data
@@ -83,7 +83,6 @@ class InfluxdbHandler(Handler):
             'username': 'Username for connection',
             'password': 'Password for connection',
             'database': 'Database name',
-            'max_backlog_multiplier': 'Number of metrics to keep in the pool (multiplied by batch size)',
             'time_precision': 'time precision in second(s), milisecond(m) or microsecond (u)',
         })
 
@@ -103,7 +102,6 @@ class InfluxdbHandler(Handler):
             'password': 'root',
             'database': 'graphite',
             'batch_size': 1,
-            'max_backlog_multiplier': 1,
             'time_precision': 's',
         })
 
@@ -118,9 +116,9 @@ class InfluxdbHandler(Handler):
     def process(self, metric):
         # Add the data to the batch
         self.batch.setdefault(metric.path,[]).append([metric.timestamp, metric.value])
-
+        self.batch_count += 1
         # If there are sufficient metrics, then pickle and send
-        if len(self.batch) >= self.batch_size:
+        if self.batch_count >= self.batch_size:
             # Log
             self.log.debug("InfluxdbHandler: Sending batch size: %d",
                            self.batch_size)
@@ -149,6 +147,8 @@ class InfluxdbHandler(Handler):
 
                     # empty batch buffer
                     self.batch = {}
+                    self.batch_count=0
+                    
         except Exception:
                 self._close()
                 self._throttle_error("InfluxdbHandler: Error sending metrics.")
