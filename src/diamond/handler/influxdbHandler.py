@@ -17,7 +17,7 @@ handlers = diamond.handler.influxdbHandler.InfluxdbHandler
 - add config to `diamond.conf` :
 
 [[InfluxdbHandler]]
-host = localhost
+hostname = localhost
 port = 8086 #8084 for HTTPS
 batch_size = 100 # default to 1
 username = root
