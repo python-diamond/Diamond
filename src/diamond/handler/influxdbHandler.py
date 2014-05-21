@@ -3,9 +3,26 @@
 """
 Send metrics to a [influxdb](https://github.com/influxdb/influxdb/) using the http interface.
 
+v1.0 : creation
+       Sebastien Prune THOMAS - prune@lecentre.net
+       
+- Dependency: 
+    - influxdb client (pip install influxdb)
+      you need version > 0.1.6 for HTTPS (not yet released)
+      
 - enable it in `diamond.conf` :
 
-    handlers = diamond.handler.influxdbHandler.InfluxdbHandler
+handlers = diamond.handler.influxdbHandler.InfluxdbHandler
+
+- add config to `diamond.conf` :
+
+[[InfluxdbHandler]]
+host = localhost
+port = 8086 #8084 for HTTPS
+batch_size = 100 # default to 1
+username = root
+password = root
+database = graphite
 
 """
 
