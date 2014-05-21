@@ -133,7 +133,6 @@ class InfluxdbHandler(Handler):
         """
         # Check to see if we have a valid socket. If not, try to connect.
         try:
-            try:
                 if self.influx is None:
                     self.log.debug("InfluxdbHandler: Socket is not connected. "
                                    "Reconnecting.")
@@ -150,20 +149,11 @@ class InfluxdbHandler(Handler):
 
                     # empty batch buffer
                     self.batch = {}
-            except Exception:
+        except Exception:
                 self._close()
                 self._throttle_error("InfluxdbHandler: Error sending metrics.")
                 raise
-        finally:
-            if len(self.batch) >= (
-                    self.batch_size * self.max_backlog_multiplier):
-                trim_offset = (self.batch_size
-                               * self.max_backlog_multiplier * -1)
-                self.log.warn('InfluxdbHandler: Trimming backlog. Removing'
-                              + ' oldest %d and keeping newest %d metrics',
-                              len(self.batch) - abs(trim_offset),
-                              abs(trim_offset))
-                self.batch = self.batch[trim_offset:]
+   
 
 
     def _connect(self):
