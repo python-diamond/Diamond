@@ -158,7 +158,7 @@ class InfluxdbHandler(Handler):
             if len(self.batch) >= (
                     self.batch_size * self.max_backlog_multiplier):
                 trim_offset = (self.batch_size
-                               * self.trim_backlog_multiplier * -1)
+                               * self.max_backlog_multiplier * -1)
                 self.log.warn('InfluxdbHandler: Trimming backlog. Removing'
                               + ' oldest %d and keeping newest %d metrics',
                               len(self.batch) - abs(trim_offset),
