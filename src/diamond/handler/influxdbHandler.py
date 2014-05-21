@@ -23,7 +23,7 @@ batch_size = 100 # default to 1
 username = root
 password = root
 database = graphite
-
+time_precision = s
 """
 
 import struct
@@ -60,6 +60,7 @@ class InfluxdbHandler(Handler):
         self.database = self.config['database']
         self.batch_size = int(self.config['batch_size'])
         self.max_backlog_multiplier = int(self.config['max_backlog_multiplier'])
+        self.time_precision = self.config['time_precision']
 
         # Initialize Data
         self.batch = {}
@@ -83,6 +84,7 @@ class InfluxdbHandler(Handler):
             'password': 'Password for connection',
             'database': 'Database name',
             'max_backlog_multiplier': 'Number of metrics to keep in the pool (multiplied by batch size)',
+            'time_precision': 'time precision in second(s), milisecond(m) or microsecond (u)',
         })
 
         return config
@@ -102,6 +104,7 @@ class InfluxdbHandler(Handler):
             'database': 'graphite',
             'batch_size': 1,
             'max_backlog_multiplier': 1,
+            'time_precision': 's',
         })
 
         return config
@@ -143,7 +146,7 @@ class InfluxdbHandler(Handler):
                     for path in self.batch:
                         metrics.append({"points": self.batch[path], "name": path, "columns": ["time","value"]})
                     # Send data to socket
-                    self.influx.write_points(metrics)
+                    self.influx.write_points(metrics, time_precision=self.time_precision)
 
                     # empty batch buffer
                     self.batch = {}
