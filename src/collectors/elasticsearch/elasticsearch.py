@@ -11,6 +11,7 @@ Collect the elasticsearch stats for the local node
 
 import urllib2
 import re
+from diamond.collector import str_to_bool
 
 try:
     import json
@@ -53,6 +54,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             'path':     'elasticsearch',
             'stats':    ['jvm', 'thread_pool', 'indices'],
             'logstash_mode': False,
+            'cluster':  False,
         })
         return config
 
@@ -266,6 +268,23 @@ class ElasticSearchCollector(diamond.collector.Collector):
         #
         # network
         self._copy_two_level(metrics, 'network', data['network'])
+
+
+         #cluster
+	if str_to_bool(self.config['cluster']):
+            result = self._get('_cluster/health')
+            
+            if not result:
+                return
+
+            self._add_metric(metrics, 'cluster_health.nodes.total', result, ['number_of_nodes'])
+            self._add_metric(metrics, 'cluster_health.nodes.data', result, ['number_of_data_nodes'])
+            self._add_metric(metrics, 'cluster_health.shards.active_primary', result, ['active_primary_shards'])
+            self._add_metric(metrics, 'cluster_health.shards.active', result, ['active_shards'])
+            self._add_metric(metrics, 'cluster_health.shards.relocating', result, ['relocating_shards'])
+            self._add_metric(metrics, 'cluster_health.shards.unassigned', result, ['unassigned_shards'])
+            self._add_metric(metrics, 'cluster_health.shards.initializing', result, ['initializing_shards'])
+            
 
         if 'indices' in self.config['stats']:
             #
