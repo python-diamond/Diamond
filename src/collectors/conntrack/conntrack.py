@@ -46,7 +46,15 @@ class ConnTrackCollector(diamond.collector.Collector):
         Collect metrics
         """
         collected = {}
-        for sfile in self.config["files"].split(","):
+        files = []
+
+        if isinstance(self.config['files'], basestring):
+            for f in self.config['files'].split(','):
+                files.append(f.strip())
+        elif isinstance(self.config['files'], list):
+            files = self.config['files']
+
+        for sfile in files:
             fpath = "%s/%s" % (self.config["dir"], sfile)
             try:
                 with open(fpath, "r") as fhandle:
