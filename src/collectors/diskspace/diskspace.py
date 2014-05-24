@@ -207,7 +207,11 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     name = 'root'
 
             if hasattr(os, 'statvfs'):  # POSIX
-                data = os.statvfs(info['mount_point'])
+                try:
+                    data = os.statvfs(info['mount_point'])
+                except OSError, e:
+                    self.log.exception(e)
+                    continue
 
                 block_size = data.f_bsize
 
