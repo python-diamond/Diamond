@@ -78,10 +78,6 @@ class NtpdCollector(diamond.collector.Collector):
             data['delay'] = parts[7]
             data['jitter'] = parts[9]
 
-        if 'when' in data and data['when'] == '-':
-            self.log.warning('ntpq returned bad value for "when"')
-            return []
-
         def convert_to_second(when_ntpd_ouput):
             value = float(when_ntpd_ouput[:-1])
             if when_ntpd_ouput.endswith('m'):
@@ -91,8 +87,13 @@ class NtpdCollector(diamond.collector.Collector):
             elif when_ntpd_ouput.endswith('d'):
                 return value * 86400
 
-        if data['when'].endswith(('m', 'h', 'd')):
-            data['when'] = convert_to_second(data['when'])
+        if 'when' in data:
+            if data['when'] == '-':
+                self.log.warning('ntpq returned bad value for "when"')
+                return []
+
+            if data['when'].endswith(('m', 'h', 'd')):
+                data['when'] = convert_to_second(data['when'])
 
         return data.items()
 
