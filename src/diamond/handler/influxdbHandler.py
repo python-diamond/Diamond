@@ -1,15 +1,16 @@
 # coding=utf-8
 
 """
-Send metrics to a [influxdb](https://github.com/influxdb/influxdb/) using the http interface.
+Send metrics to a [influxdb](https://github.com/influxdb/influxdb/) using the
+http interface.
 
 v1.0 : creation
        Sebastien Prune THOMAS - prune@lecentre.net
-       
-- Dependency: 
+
+- Dependency:
     - influxdb client (pip install influxdb)
       you need version > 0.1.6 for HTTPS (not yet released)
-      
+
 - enable it in `diamond.conf` :
 
 handlers = diamond.handler.influxdbHandler.InfluxdbHandler
@@ -36,6 +37,7 @@ try:
 except ImportError:
     InfluxDBClient = None
 
+
 class InfluxdbHandler(Handler):
     """
     Sending data to Influxdb using batched format
@@ -50,7 +52,7 @@ class InfluxdbHandler(Handler):
         if not InfluxDBClient:
             self.log.error('influxdb.client.InfluxDBClient import failed. '
                            'Handler disabled')
-                           
+
         # Initialize Options
         self.ssl = self.config['ssl']
         self.hostname = self.config['hostname']
@@ -79,11 +81,13 @@ class InfluxdbHandler(Handler):
             'hostname': 'Hostname',
             'port': 'Port',
             'ssl': 'set to True to use HTTPS instead of http',
-            'batch_size': 'How many to store before sending to the influxdb server',
+            'batch_size': 'How many to store before sending to the influxdb '
+            'server',
             'username': 'Username for connection',
             'password': 'Password for connection',
             'database': 'Database name',
-            'time_precision': 'time precision in second(s), milisecond(m) or microsecond (u)',
+            'time_precision': 'time precision in second(s), milisecond(m) or '
+            'microsecond (u)',
         })
 
         return config
@@ -115,7 +119,8 @@ class InfluxdbHandler(Handler):
 
     def process(self, metric):
         # Add the data to the batch
-        self.batch.setdefault(metric.path,[]).append([metric.timestamp, metric.value])
+        self.batch.setdefault(metric.path, []).append([metric.timestamp,
+                                                       metric.value])
         self.batch_count += 1
         # If there are sufficient metrics, then pickle and send
         if self.batch_count >= self.batch_size:
@@ -139,22 +144,24 @@ class InfluxdbHandler(Handler):
                     self.log.debug("InfluxdbHandler: Reconnect failed.")
                 else:
                     # build metrics data
-                    metrics=[]
+                    metrics = []
                     for path in self.batch:
-                        metrics.append({"points": self.batch[path], "name": path, "columns": ["time","value"]})
+                        metrics.append({
+                            "points": self.batch[path],
+                            "name": path,
+                            "columns": ["time", "value"]})
                     # Send data to socket
-                    self.influx.write_points(metrics, time_precision=self.time_precision)
+                    self.influx.write_points(metrics,
+                                             time_precision=self.time_precision)
 
                     # empty batch buffer
                     self.batch = {}
-                    self.batch_count=0
-                    
+                    self.batch_count = 0
+
         except Exception:
                 self._close()
                 self._throttle_error("InfluxdbHandler: Error sending metrics.")
                 raise
-   
-
 
     def _connect(self):
         """
@@ -162,14 +169,18 @@ class InfluxdbHandler(Handler):
         """
 
         try:
-          # Open Connection
-          if influxdb.__version__ > "0.1.6":
-              self.influx = InfluxDBClient(self.hostname, self.port, self.username, self.password, self.database, self.ssl)
-          else:
-              self.influx = InfluxDBClient(self.hostname, self.port, self.username, self.password, self.database)
-              
-          # Log
-          self.log.debug("InfluxdbHandler: Established connection to "
+            # Open Connection
+            if influxdb.__version__ > "0.1.6":
+                self.influx = InfluxDBClient(self.hostname, self.port,
+                                             self.username, self.password,
+                                             self.database, self.ssl)
+            else:
+                self.influx = InfluxDBClient(self.hostname, self.port,
+                                             self.username, self.password,
+                                             self.database)
+
+            # Log
+            self.log.debug("InfluxdbHandler: Established connection to "
                            "%s:%d/%s.",
                            self.hostname, self.port, self.database)
         except Exception, ex:
