@@ -5,6 +5,7 @@ Send metrics to a [influxdb](https://github.com/influxdb/influxdb/) using the
 http interface.
 
 v1.0 : creation
+v1.1 : force influxdb driver with SSL
        Sebastien Prune THOMAS - prune@lecentre.net
 
 - Dependency:
@@ -54,7 +55,10 @@ class InfluxdbHandler(Handler):
                            'Handler disabled')
 
         # Initialize Options
-        self.ssl = self.config['ssl']
+        if self.config['ssl'] == "True":
+              self.ssl = True
+        else:
+              self.ssl = False
         self.hostname = self.config['hostname']
         self.port = int(self.config['port'])
         self.username = self.config['username']
@@ -170,15 +174,9 @@ class InfluxdbHandler(Handler):
 
         try:
             # Open Connection
-            if influxdb.__version__ > "0.1.6":
-                self.influx = InfluxDBClient(self.hostname, self.port,
-                                             self.username, self.password,
-                                             self.database, self.ssl)
-            else:
-                self.influx = InfluxDBClient(self.hostname, self.port,
-                                             self.username, self.password,
-                                             self.database)
-
+            self.influx = InfluxDBClient(self.hostname, self.port, 
+                                         self.username, self.password, 
+                                         self.database, self.ssl)
             # Log
             self.log.debug("InfluxdbHandler: Established connection to "
                            "%s:%d/%s.",
