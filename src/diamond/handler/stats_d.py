@@ -14,7 +14,7 @@ It's OK.
 
 Enable this handler
 
- * handers = diamond.handler.stats_d.StatsdHandler
+ * handlers = diamond.handler.stats_d.StatsdHandler
 
 
 #### Notes
