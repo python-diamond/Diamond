@@ -21,6 +21,9 @@ req_url = https://www.my_server.com/, https://www.my_server.com/assets/jquery.js
 Metrics are collected as :
     - servers.<hostname>.http.<url>.size (size of the page received in bytes)
     - servers.<hostname>.http.<url>.time (time to download the page in microseconds)
+
+    '.' and '/' chars are replaced by __, url looking like http://www.site.com/admin/page.html 
+       are replaced by http:__www_site_com_admin_page_html
 """
 
 import urllib2
@@ -36,7 +39,7 @@ class HttpCollector(diamond.collector.Collector):
         config_help.update({
             'req_port': 'Port',
             'req_url': 'array of full URL to get (ex : https://www.ici.net/mypage.html)',
-            'req_vhost': 'Host header variable if needed',
+            'req_vhost': 'Host header variable if needed. Will be added to every request',
         })
         return config_help
 
@@ -66,10 +69,11 @@ class HttpCollector(diamond.collector.Collector):
                         req_end = datetime.datetime.now()
                         req_time = req_end - req_start
                         
-                        # build a name compatible with influx : no '.' and no'/' in the name
+                        # build a compatible name : no '.' and no'/' in the name
+                        metric_name = url.replace('/', '_').replace('.', '_').replace('\\', '')
                         #metric_name = url.split("/")[-1].replace(".", "_")
-                        #if metric_name == '':
-                        #       metric_name="root"
+                        if metric_name == '':
+                                metric_name="root"
                         self.publish_gauge(str(url) + '.time', req_time.seconds*1000000+req_time.microseconds)
                         self.publish_gauge(str(url) + '.size', len(the_page))
 
