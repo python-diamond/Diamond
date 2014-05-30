@@ -55,7 +55,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             'path': 'diskspace',
             # filesystems to examine
             'filesystems': 'ext2, ext3, ext4, xfs, glusterfs, nfs, ntfs, hfs,'
-            + ' fat32, fat16',
+            + ' fat32, fat16, btrfs',
 
             # exclude_filters
             #   A list of regex patterns
