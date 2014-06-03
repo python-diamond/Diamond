@@ -58,5 +58,39 @@ class TestMountStatsCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, published_metrics)
         self.assertUnpublishedMany(publish_mock, unpublished_metrics)
 
+    @patch.object(Collector, 'publish')
+    def test_include_filter(self, publish_mock):
+        config = get_collector_config('MountStatsCollector', {
+            'include_filters': ['^/mnt/path2'],
+            'interval': 1
+        })
+
+        self.collector = MountStatsCollector(config, None)
+
+        # Test the first and last metric of each type
+        published_metrics = {
+            '_mnt_path2.bytes.directwritebytes': 0.0,
+            '_mnt_path2.bytes.normalreadbytes': 1424269.0,
+            '_mnt_path2.bytes.normalwritebytes': 66589.0,
+            '_mnt_path2.bytes.serverreadbytes': 757.0,
+            '_mnt_path2.bytes.serverwritebytes': 69460.0,
+            '_mnt_path2.events.attrinvalidates': 144.0,
+            '_mnt_path2.events.datainvalidates': 23.0,
+        }
+
+        unpublished_metrics = {
+            '_mnt_path1.events.inoderevalidates': 27110.0,
+        }
+
+        self.collector.MOUNTSTATS = self.getFixturePath('mountstats_1')
+        self.collector.collect()
+        self.assertPublishedMany(publish_mock, {})
+
+        self.collector.MOUNTSTATS = self.getFixturePath('mountstats_2')
+        self.collector.collect()
+        self.assertPublishedMany(publish_mock, published_metrics)
+        self.assertUnpublishedMany(publish_mock, unpublished_metrics)
+
+
 if __name__ == "__main__":
     unittest.main()
