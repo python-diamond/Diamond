@@ -134,10 +134,11 @@ class TestNfsCollector(CollectorTestCase):
             'v4.write': 0.0
         }
 
+        self.assertPublishedMany(publish_mock, metrics)
+
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
-        self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_rhel6(self, publish_mock):
@@ -147,12 +148,6 @@ class TestNfsCollector(CollectorTestCase):
 
         NfsCollector.PROC = self.getFixturePath('rhel6-2')
         self.collector.collect()
-
-#        calls = filter(lambda x: x[0][0],
-#                       publish_mock.call_args_list)
-#        for c in sorted(calls):
-#            print '            \'%s\': %s,' % (c[0][0], c[0][1])
-
 
         metrics = {
             'net.packets': 0.0,
@@ -252,9 +247,6 @@ class TestNfsCollector(CollectorTestCase):
             'v4.write': 0.0,
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################
