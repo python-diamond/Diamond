@@ -70,7 +70,7 @@ class HttpCollector(diamond.collector.Collector):
                         req_time = req_end - req_start
                         
                         # build a compatible name : no '.' and no'/' in the name
-                        metric_name = url.replace('/', '_').replace('.', '_').replace('\\', '')
+                        metric_name = url.replace('/', '_').replace('.', '_').replace('\\', '').replace(':', '')
                         #metric_name = url.split("/")[-1].replace(".", "_")
                         if metric_name == '':
                                 metric_name="root"
