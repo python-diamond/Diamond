@@ -2,6 +2,8 @@
 # coding=utf-8
 ################################################################################
 
+import time
+
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -38,7 +40,7 @@ class TestHttpCollector(CollectorTestCase):
         patch_urlopen.stop()
 
         metrics = {
-            'http:__www_my_server_com_.time': 1401004329965,
+            'http:__www_my_server_com_.time': int(time.time() * 1000),
             'http:__www_my_server_com_.size': 1024000,
         }
 
