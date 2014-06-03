@@ -129,8 +129,11 @@ class ListenerThread(threading.Thread):
 
         try:
             while ALIVE:
-                items = rdr.interpret(poll_interval=self.poll_interval)
-                self.send_to_collector(items)
+                try:
+                    items = rdr.interpret(poll_interval=self.poll_interval)
+                    self.send_to_collector(items)
+                except ValueError, e:
+                    self.log.warn('Dropping bad packet: {0}'.format(e))
         except Exception, e:
             self.log.error('caught exception: type={0}, exc={1}'.format(type(e),
                                                                         e))
@@ -181,7 +184,7 @@ class ListenerThread(threading.Thread):
         parts.append(item.typeinstance)
 
         # construct full path, from safe parts
-        name = '.'.join([re.sub('[\. ]', '_', part) for part in parts])
+        name = '.'.join([re.sub('[\. /]', '_', part) for part in parts])
 
         if item[0][0] == 0:
             is_counter = True
