@@ -14,7 +14,7 @@ Enable handler
 
   * handlers = diamond.handler.datadog.DatadogHandler,
 
-  * apikey = DATADOG_API_KEY
+  * api_key = DATADOG_API_KEY
 
   * queue_size = [optional | 1]
 
