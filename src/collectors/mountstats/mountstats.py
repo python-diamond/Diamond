@@ -3,8 +3,8 @@
 The function of MountStatsCollector is to parse the detailed per-mount NFS
 performance statistics provided by `/proc/self/mountstats` (reads, writes,
 remote procedure call count/latency, etc.) and provide counters to Diamond.
-Filesystems may be excluded using a regular expression filter, like the
-existing disk check collectors.
+Filesystems may be included/excluded using a regular expression filter,
+like the existing disk check collectors.
 
 #### Dependencies
 
@@ -14,6 +14,7 @@ existing disk check collectors.
 
 import os
 import re
+import subprocess
 
 import diamond.collector
 
@@ -67,13 +68,27 @@ class MountStatsCollector(diamond.collector.Collector):
         else:
             self.exclude_reg = None
 
+        self.include_filters = self.config['include_filters']
+        if isinstance(self.include_filters, basestring):
+            self.include_filters = [self.include_filters]
+
+        if len(self.include_filters) > 0:
+            self.include_reg = re.compile('|'.join(self.include_filters))
+        else:
+            self.include_reg = None
+
     def get_default_config_help(self):
         config_help = super(MountStatsCollector,
                             self).get_default_config_help()
         config_help.update({
             'exclude_filters': "A list of regex patterns. Any filesystem"
             + " matching any of these patterns will be excluded from"
-            + " mount stats metrics collection."
+            + " mount stats metrics collection.",
+            'include_filters': "A list of regex patterns. Any filesystem"
+            + " matching any of these patterns will be included from"
+            + " mount stats metrics collection.",
+            'use_sudo': 'Use sudo?',
+            'sudo_cmd': 'Path to sudo',
         })
         return config_help
 
@@ -82,8 +97,11 @@ class MountStatsCollector(diamond.collector.Collector):
         config.update({
             'enabled': 'False',
             'exclude_filters': [],
+            'include_filters': [],
             'path': 'mountstats',
-            'method': 'Threaded'
+            'method': 'Threaded',
+            'use_sudo': False,
+            'sudo_cmd': '/usr/bin/sudo',
         })
         return config
 
@@ -94,13 +112,27 @@ class MountStatsCollector(diamond.collector.Collector):
         the statvers value returned by mountstats.
         """
 
-        if not os.access(self.MOUNTSTATS, os.R_OK):
-            self.log.error("Cannot read path %s" % self.MOUNTSTATS)
-            return None
+        if self.config['use_sudo']:
+            if not os.access(self.config['sudo_cmd'], os.X_OK):
+                self.log.error("Cannot find or exec %s" % self.config['sudo_cmd'])
+                return None
+
+            command = [self.config['sudo_cmd'], '/bin/cat', self.MOUNTSTATS]
+            p = subprocess.Popen(command,
+                                 stdout=subprocess.PIPE).communicate()[0][:-1]
+            lines = p.split("\n")
+
+        else:
+            if not os.access(self.MOUNTSTATS, os.R_OK):
+                self.log.error("Cannot read path %s" % self.MOUNTSTATS)
+                return None
+
+            f = open(self.MOUNTSTATS)
+            lines = f.readlines()
+            f.close()
 
         path = None
-        f = open(self.MOUNTSTATS)
-        for line in f:
+        for line in lines:
             tokens = line.split()
             if len(tokens) == 0:
                 continue
@@ -108,12 +140,16 @@ class MountStatsCollector(diamond.collector.Collector):
             if tokens[0] == 'device':
                 path = tokens[4]
 
-                if self.exclude_reg and self.exclude_reg.match(path):
-                    self.log.debug("Ignoring %s since it is in the "
-                                   + "exclude_filter list.", path)
-                    skip = True
+                skip = False
+                if self.exclude_reg:
+                    skip = self.exclude_reg.match(path)
+                if self.include_reg:
+                    skip = not self.include_reg.match(path)
+
+                if skip:
+                    self.log.debug("Ignoring %s", path)
                 else:
-                    skip = False
+                    self.log.debug("Keeping %s", path)
 
                 path = path.replace('.', '_')
                 path = path.replace('/', '_')
@@ -156,5 +192,3 @@ class MountStatsCollector(diamond.collector.Collector):
                 self.publish_counter(ops_name, ops)
                 self.publish_counter(rtt_name, rtt)
                 self.publish_counter(exe_name, exe)
-
-        f.close()
