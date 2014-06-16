@@ -57,6 +57,7 @@ class NfsCollector(diamond.collector.Collector):
                     results['rpc.retrans'] = line[2]
                     results['rpc.authrefrsh'] = line[3]
                 elif line[0] == 'proc2':
+                    line.pop(1)     # remove column-cnt field
                     results['v2.null'] = line[1]
                     results['v2.getattr'] = line[2]
                     results['v2.setattr'] = line[3]
@@ -76,6 +77,7 @@ class NfsCollector(diamond.collector.Collector):
                     results['v2.readdir'] = line[17]
                     results['v2.fsstat'] = line[18]
                 elif line[0] == 'proc3':
+                    line.pop(1)     # remove column-cnt field
                     results['v3.null'] = line[1]
                     results['v3.getattr'] = line[2]
                     results['v3.setattr'] = line[3]
@@ -99,6 +101,7 @@ class NfsCollector(diamond.collector.Collector):
                     results['v3.pathconf'] = line[21]
                     results['v3.commit'] = line[22]
                 elif line[0] == 'proc4':
+                    line.pop(1)     # remove column-cnt field
                     results['v4.null'] = line[1]
                     results['v4.read'] = line[2]
                     results['v4.write'] = line[3]
@@ -214,7 +217,7 @@ class NfsCollector(diamond.collector.Collector):
             file.close()
 
             for stat in results.keys():
-                metric_name = '.' + stat
+                metric_name = stat
                 metric_value = long(float(results[stat]))
                 metric_value = self.derivative(metric_name, metric_value)
                 self.publish(metric_name, metric_value)
