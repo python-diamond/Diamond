@@ -42,6 +42,7 @@ class MemcachedCollector(diamond.collector.Collector):
         'hash_power_level',
         'hash_bytes',
         'hash_is_expanding',
+        'uptime'
     ]
 
     def get_default_config_help(self):
