@@ -3,10 +3,25 @@
 """
 The MemoryCgroupCollector collects memory metric for cgroups
 
-Stats that we are interested in tracking
+Example config:
+
+```
+method=Threaded
+memory_path=/sys/fs/cgroup/memory/
+skip=group\d+,mygroup\d\d
+enabled=True
+```
+
+memory_path -- path to CGroups memory stat
+skip -- comma-separated list of regexps, which paths should we skip
+
+Stats that we are interested in tracking:
+
 cache - # of bytes of page cache memory.
 rss   - # of bytes of anonymous and swap cache memory.
 swap  - # of bytes of swap usage
+
+Metrics with total_ prefixes - summarized data from children CGroups.
 
 #### Dependencies
 
@@ -15,16 +30,33 @@ swap  - # of bytes of swap usage
 
 import diamond.collector
 import os
+import re
 
 _KEY_MAPPING = [
     'cache',
     'rss',
-    'swap'
+    'swap',
+    'total_rss',
+    'total_cache',
+    'total_swap',
 ]
 
 
-class MemoryCgroupCollector(diamond.collector.Collector):
-    MEMORY_PATH = '/sys/fs/cgroup/memory/'
+class MemoryCgroupCollector(diamond.collector.Collector):    
+
+    def __init__(self, *args, **kwargs):
+        super(MemoryCgroupCollector, self).__init__(*args, **kwargs)
+        self.memory_path = self.config['memory_path']
+        self.skip = self.config['skip']
+        if not isinstance(self.skip, list):
+            self.skip = [self.skip]
+        self.skip = [re.compile(e) for e in self.skip]
+
+    def should_skip(self, path):
+        for skip_re in self.skip:
+            if skip_re.search(path):
+                return True
+        return False
 
     def get_default_config_help(self):
         config_help = super(
@@ -41,22 +73,25 @@ class MemoryCgroupCollector(diamond.collector.Collector):
         config.update({
             'path':     'memory_cgroup',
             'method':   'Threaded',
+            'memory_path': '/sys/fs/cgroup/memory/',
+            'skip': [],
         })
         return config
 
     def collect(self):
         # find all memory.stat files
         matches = []
-        for root, dirnames, filenames in os.walk(self.MEMORY_PATH):
-            for filename in filenames:
-                if filename == 'memory.stat':
-                    # matches will contain a tuple contain path to cpuacct.stat
-                    # and the parent of the stat
-                    parent = root.replace(self.MEMORY_PATH,
-                                          "").replace("/", ".")
-                    if parent == '':
-                        parent = 'system'
-                    matches.append((parent, os.path.join(root, filename)))
+        for root, dirnames, filenames in os.walk(self.memory_path):
+            if not self.should_skip(root):
+                for filename in filenames:
+                    if filename == 'memory.stat':
+                        # matches will contain a tuple contain path to cpuacct.stat
+                        # and the parent of the stat
+                        parent = root.replace(self.memory_path,
+                                              "").replace("/", ".")
+                        if parent == '':
+                            parent = 'system'
+                        matches.append((parent, os.path.join(root, filename)))
 
         # Read metrics from cpuacct files
         results = {}
