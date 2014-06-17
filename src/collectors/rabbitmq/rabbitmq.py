@@ -46,7 +46,9 @@ class RabbitMQCollector(diamond.collector.Collector):
             'user': 'Username',
             'password': 'Password',
             'queues': 'Queues to publish. Leave empty to publish all.',
-            'vhosts': 'A list of vhosts and queues for which we want to collect'
+            'vhosts': 'A list of vhosts and queues for which we want to collect',
+            'queues_ignored': 'A list of queues or regexes for queue names not to report on.',
+            'cluster': 'If this node is part of a cluster, will collect metrics on the cluster health'
         })
         return config_help
 
@@ -60,7 +62,7 @@ class RabbitMQCollector(diamond.collector.Collector):
             'host':     'localhost:55672',
             'user':     'guest',
             'password': 'guest',
-            'ignore':   [],
+            'queues_ignored':   [],
             'cluster':  False,
         })
         return config
@@ -100,8 +102,8 @@ class RabbitMQCollector(diamond.collector.Collector):
             return {}
         self.collect_health()
         matchers = []
-        if self.config['ignore']:
-                for reg in self.config['ignore']:
+        if self.config['queues_ignored']:
+                for reg in self.config['queues_ignored']:
                     matchers.append(re.compile(reg))
         try:
             client = pyrabbit.api.Client(self.config['host'],
