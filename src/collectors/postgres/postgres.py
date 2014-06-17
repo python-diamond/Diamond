@@ -520,11 +520,11 @@ metrics_registry = {
 }
 
 registry = {
-    'basic': (
+    'basic': [
         'DatabaseStats',
         'DatabaseConnectionCount',
-    ),
-    'extended': (
+    ],
+    'extended': [
         'DatabaseStats',
         'DatabaseConnectionCount',
         'UserTableStats',
@@ -541,5 +541,5 @@ registry = {
         'UserConnectionCount',
         'TableScanStats',
         'TupleAccessStats',
-    ),
+    ],
 }
