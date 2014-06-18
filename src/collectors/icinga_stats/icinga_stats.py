@@ -389,17 +389,27 @@ class IcingaStatsCollector(diamond.collector.Collector):
 
     def _trans_binary(self, value):
         """ Given value is expected to be a binary - 0/1 """
-        if value not in [0, 1]:
+        try:
+            conv = int(value)
+        except ValueError as exception:
             return 0
 
-        return value
+        if conv not in [0, 1]:
+            return 0
+
+        return conv
 
     def _trans_dtime(self, value):
         """ Translate scheduled downtime """
-        if value is None or value < 1:
+        try:
+            conv = int(value)
+        except ValueError as exception:
             return 0
 
-        return 1
+        if conv < 1:
+            return 0
+
+        return conv
 
     def _trans_host_state(self, state):
         """ Translate/validate Host state """
