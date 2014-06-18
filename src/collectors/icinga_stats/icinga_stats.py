@@ -218,7 +218,8 @@ class IcingaStatsCollector(diamond.collector.Collector):
             if app_key not in app_stats.keys():
                 continue
 
-            metric = "%ss.%s" % (app_key.split("_")[2], app_key.split("_")[1])
+            splitted = app_key.split("_")
+            metric = "%ss.%s_%s" % (splitted[2], splitted[0], splitted[1])
             (x01, x05, x15) = self._convert_tripplet(app_stats[app_key])
             stats["%s.01" % (metric)] = x01
             stats["%s.05" % (metric)] = x05
