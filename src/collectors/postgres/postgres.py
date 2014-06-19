@@ -32,6 +32,7 @@ class PostgresqlCollector(diamond.collector.Collector):
         config_help = super(PostgresqlCollector, self).get_default_config_help()
         config_help.update({
             'host': 'Hostname',
+            'dbname': 'DB to connect to in order to get list of DBs in PgSQL',
             'user': 'Username',
             'password': 'Password',
             'port': 'Port number',
@@ -54,6 +55,7 @@ class PostgresqlCollector(diamond.collector.Collector):
         config.update({
             'path': 'postgres',
             'host': 'localhost',
+            'dbname': 'postgres',
             'user': 'postgres',
             'password': 'postgres',
             'port': 5432,
@@ -125,7 +127,7 @@ class PostgresqlCollector(diamond.collector.Collector):
             WHERE datallowconn AND NOT datistemplate
             AND NOT datname='postgres' ORDER BY 1
         """
-        conn = self._connect()
+        conn = self._connect(self.config['dbname'])
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cursor.execute(query)
         datnames = [d['datname'] for d in cursor.fetchall()]
@@ -147,7 +149,6 @@ class PostgresqlCollector(diamond.collector.Collector):
             'user': self.config['user'],
             'password': self.config['password'],
             'port': self.config['port'],
-            'dbname': self.config['dbname'],
             'sslmode': self.config['sslmode'],
         }
 
