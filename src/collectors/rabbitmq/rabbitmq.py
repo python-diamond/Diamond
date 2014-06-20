@@ -81,16 +81,16 @@ class RabbitMQCollector(diamond.collector.Collector):
             'proc_total',
             ]
         try:
-            client = pyrabbit.http.HTTPClient(self.config['host'],
+            httpclient = pyrabbit.http.HTTPClient(self.config['host'],
                                          self.config['user'],
                                          self.config['password'])
-            node_name = client.do_call('overview','GET')['node']
-            node_data = client.do_call('nodes/{0}'.format(node_name), 'GET')
+            node_name = httpclient.do_call('overview','GET')['node']
+            node_data = httpclient.do_call('nodes/{0}'.format(node_name), 'GET')
             for metric in health_metrics:
                 self.publish('health.{0}'.format(metric), node_data[metric])
             if self.config['cluster']:
                 self.publish('cluster.partitions',len(node_data['partitions']))
-                content = client.do_call('nodes','GET')
+                content = httpclient.do_call('nodes','GET')
                 self.publish('cluster.nodes', len(content))
         except Exception, e:
             self.log.error('Couldnt connect to rabbitmq %s', e)
