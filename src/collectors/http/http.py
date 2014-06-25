@@ -74,8 +74,8 @@ class HttpCollector(diamond.collector.Collector):
                         #metric_name = url.split("/")[-1].replace(".", "_")
                         if metric_name == '':
                                 metric_name="root"
-                        self.publish_gauge(str(url) + '.time', req_time.seconds*1000000+req_time.microseconds)
-                        self.publish_gauge(str(url) + '.size', len(the_page))
+                        self.publish_gauge(metric_name + '.time', req_time.seconds*1000000+req_time.microseconds)
+                        self.publish_gauge(metric_name + '.size', len(the_page))
 
                 except IOError, e:
                         self.log.error("Unable to open %s",

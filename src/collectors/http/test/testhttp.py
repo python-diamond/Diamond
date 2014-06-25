@@ -20,9 +20,8 @@ from http import HttpCollector
 class TestHttpCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('HttpCollector', {
-        req_vhost = 'www.my_server.com',
-        req_url = ['http://www.my_server.com/']
-        
+        'req_vhost': 'www.my_server.com',
+        'req_url': ['http://www.my_server.com/']
         })
 
         self.collector = HttpCollector(config, None)
@@ -40,8 +39,7 @@ class TestHttpCollector(CollectorTestCase):
         patch_urlopen.stop()
 
         metrics = {
-            'http:__www_my_server_com_.time': int(time.time() * 1000),
-            'http:__www_my_server_com_.size': 1024000,
+            'http__www_my_server_com_.size': 150,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
