@@ -27,11 +27,12 @@ Collects data from RabbitMQ through the admin interface
 """
 
 import diamond.collector
-
+import re
 try:
     from numbers import Number
     Number  # workaround for pyflakes issue #13
     import pyrabbit.api
+    import pyrabbit.http
 except ImportError:
     Number = None
 
@@ -45,7 +46,9 @@ class RabbitMQCollector(diamond.collector.Collector):
             'user': 'Username',
             'password': 'Password',
             'queues': 'Queues to publish. Leave empty to publish all.',
-            'vhosts': 'A list of vhosts and queues for which we want to collect'
+            'vhosts': 'A list of vhosts and queues for which we want to collect',
+            'queues_ignored': 'A list of queues or regexes for queue names not to report on.',
+            'cluster': 'If this node is part of a cluster, will collect metrics on the cluster health'
         })
         return config_help
 
@@ -55,18 +58,53 @@ class RabbitMQCollector(diamond.collector.Collector):
         """
         config = super(RabbitMQCollector, self).get_default_config()
         config.update({
-            'path': 'rabbitmq',
-            'host': 'localhost:55672',
-            'user': 'guest',
-            'password': 'guest'
+            'path':     'rabbitmq',
+            'host':     'localhost:55672',
+            'user':     'guest',
+            'password': 'guest',
+            'queues_ignored':   [],
+            'cluster':  False,
         })
         return config
+
+    def collect_health(self):
+        health_metrics = [
+            'fd_used',
+            'fd_total',
+            'mem_used',
+            'mem_limit',
+            'sockets_used',
+            'sockets_total',
+            'disk_free_limit',
+            'disk_free',
+            'proc_used',
+            'proc_total',
+            ]
+        try:
+            httpclient = pyrabbit.http.HTTPClient(self.config['host'],
+                                         self.config['user'],
+                                         self.config['password'])
+            node_name = httpclient.do_call('overview','GET')['node']
+            node_data = httpclient.do_call('nodes/{0}'.format(node_name), 'GET')
+            for metric in health_metrics:
+                self.publish('health.{0}'.format(metric), node_data[metric])
+            if self.config['cluster']:
+                self.publish('cluster.partitions',len(node_data['partitions']))
+                content = httpclient.do_call('nodes','GET')
+                self.publish('cluster.nodes', len(content))
+        except Exception, e:
+            self.log.error('Couldnt connect to rabbitmq %s', e)
+            return {}
 
     def collect(self):
         if Number is None:
             self.log.error('Unable to import either Number or pyrabbit.api')
             return {}
-
+        self.collect_health()
+        matchers = []
+        if self.config['queues_ignored']:
+                for reg in self.config['queues_ignored']:
+                    matchers.append(re.compile(reg))
         try:
             client = pyrabbit.api.Client(self.config['host'],
                                          self.config['user'],
@@ -120,7 +158,8 @@ class RabbitMQCollector(diamond.collector.Collector):
                     if (queue['name'] not in allowed_queues
                             and len(allowed_queues) > 0):
                         continue
-
+                    if matchers and any([m.match(queue['name']) for m in matchers]):
+                            continue
                     for key in queue:
                         prefix = "queues"
                         if not legacy:
