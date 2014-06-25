@@ -33,6 +33,8 @@ LOCKFILE=/var/lock/subsys/diamond
 start() {
   if [ -d "${LOCKDIR}" -a -w "${LOCKDIR}" ]
   then
+    local pid
+    __pids_var_run $NAME || rm -f "${LOCKFILE}"
     if ( set -o noclobber; echo "$$" > "${LOCKFILE}") 2> /dev/null;
     then
       true
