@@ -42,7 +42,7 @@ _KEY_MAPPING = [
 ]
 
 
-class MemoryCgroupCollector(diamond.collector.Collector):    
+class MemoryCgroupCollector(diamond.collector.Collector):
 
     def __init__(self, *args, **kwargs):
         super(MemoryCgroupCollector, self).__init__(*args, **kwargs)
@@ -85,8 +85,8 @@ class MemoryCgroupCollector(diamond.collector.Collector):
             if not self.should_skip(root):
                 for filename in filenames:
                     if filename == 'memory.stat':
-                        # matches will contain a tuple contain path to cpuacct.stat
-                        # and the parent of the stat
+                        # matches will contain a tuple contain path to
+                        # cpuacct.stat and the parent of the stat
                         parent = root.replace(self.memory_path,
                                               "").replace("/", ".")
                         if parent == '':

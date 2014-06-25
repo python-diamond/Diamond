@@ -40,10 +40,10 @@ class PostgresqlCollector(diamond.collector.Collector):
             'underscore': 'Convert _ to .',
             'extended': 'Enable collection of extended database stats.',
             'metrics': 'List of enabled metrics to collect',
-            'pg_version': "The version of postgres that you'll be monitoring"\
-                    " eg. in format 9.2",
-            'has_admin': 'Admin privileges are required to execute some'\
-                    ' queries.',
+            'pg_version': "The version of postgres that you'll be monitoring"
+            " eg. in format 9.2",
+            'has_admin': 'Admin privileges are required to execute some'
+            ' queries.',
         })
         return config_help
 
@@ -103,7 +103,7 @@ class PostgresqlCollector(diamond.collector.Collector):
                 conn = self._connect(database=dbase)
                 klass = metrics_registry[metric_name]
                 stat = klass(dbase, conn,
-                        underscore=self.config['underscore'])
+                             underscore=self.config['underscore'])
                 stat.fetch(self.config['pg_version'])
                 for metric, value in stat:
                     if value is not None:
@@ -115,7 +115,7 @@ class PostgresqlCollector(diamond.collector.Collector):
                 #
                 # If multi_db is False, bail early after the first query
                 # iteration. Otherwise, continue to remaining databases.
-                if stat.multi_db == False:
+                if stat.multi_db is False:
                     break
 
     def _get_db_names(self):

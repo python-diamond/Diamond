@@ -112,8 +112,10 @@ class TestMemoryCgroupCollector(CollectorTestCase):
             'lxc.testcontainer.total_rss': 1,
             'lxc.testcontainer.total_swap': 1,
         }
-        [self.assertPublished(publish_mock, k, v) for k, v in should_be_published.iteritems()]
-        [self.assertUnpublished(publish_mock, k, v) for k, v in should_not_be_published.iteritems()]
+        [self.assertPublished(publish_mock, k, v)
+         for k, v in should_be_published.iteritems()]
+        [self.assertUnpublished(publish_mock, k, v)
+         for k, v in should_not_be_published.iteritems()]
 
 if __name__ == "__main__":
     unittest.main()

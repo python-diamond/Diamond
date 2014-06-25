@@ -34,7 +34,7 @@ class TestRabbitMQCollector(CollectorTestCase):
             'host': 'localhost:55672',
             'user': 'guest',
             'password': 'password',
-            'queues_ignored': ['^ignored',],
+            'queues_ignored': ['^ignored', ],
             'cluster': True,
         })
         self.collector = RabbitMQCollector(config, None)
@@ -59,7 +59,7 @@ class TestRabbitMQCollector(CollectorTestCase):
             'proc_total': 1,
             'partitions': [],
         }
-        nodes = [1,2,3]
+        nodes = [1, 2, 3]
         if path == 'overview':
             return overview_data
         elif path == 'nodes/rabbit@localhost':
@@ -102,7 +102,7 @@ class TestRabbitMQCollector(CollectorTestCase):
 
         client.get_queues.assert_called_once_with(None)
         client.get_overview.assert_called_once_with()
-        httpclient.do_call.assert_called_once_with('nodes','GET')
+        httpclient.do_call.assert_called_once_with('nodes', 'GET')
 
         metrics = {
             'queues.test_queue.more_keys.nested_key': 1,

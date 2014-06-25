@@ -56,9 +56,9 @@ class InfluxdbHandler(Handler):
 
         # Initialize Options
         if self.config['ssl'] == "True":
-              self.ssl = True
+            self.ssl = True
         else:
-              self.ssl = False
+            self.ssl = False
         self.hostname = self.config['hostname']
         self.port = int(self.config['port'])
         self.username = self.config['username']
@@ -174,8 +174,8 @@ class InfluxdbHandler(Handler):
 
         try:
             # Open Connection
-            self.influx = InfluxDBClient(self.hostname, self.port, 
-                                         self.username, self.password, 
+            self.influx = InfluxDBClient(self.hostname, self.port,
+                                         self.username, self.password,
                                          self.database, self.ssl)
             # Log
             self.log.debug("InfluxdbHandler: Established connection to "

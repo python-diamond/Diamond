@@ -54,16 +54,19 @@ class OssecCollector(diamond.collector.Collector):
             p = subprocess.Popen(command, stdout=subprocess.PIPE)
             res = p.communicate()[0]
         except Exception, e:
-            self.log.error('Unable to exec cmd: %s, because %s' % (' '.join(command), str(e)))
+            self.log.error('Unable to exec cmd: %s, because %s'
+                           % (' '.join(command), str(e)))
             return
 
         if res == '':
-            self.log.error('Empty result from exec cmd: %s' % (' '.join(command)))
+            self.log.error('Empty result from exec cmd: %s'
+                           % (' '.join(command)))
             return
 
         states = {}
         for line in res.split("\n"):
-            #    ID: 000, Name: local-ossec-001.localdomain (server), IP: 127.0.0.1, Active/Local
+            #    ID: 000, Name: local-ossec-001.localdomain (server), IP:\
+            # 127.0.0.1, Active/Local
             if not line.startswith('   ID: '):
                 continue
             fragments = line.split(',')

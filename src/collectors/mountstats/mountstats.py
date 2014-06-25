@@ -114,7 +114,8 @@ class MountStatsCollector(diamond.collector.Collector):
 
         if self.config['use_sudo']:
             if not os.access(self.config['sudo_cmd'], os.X_OK):
-                self.log.error("Cannot find or exec %s" % self.config['sudo_cmd'])
+                self.log.error("Cannot find or exec %s"
+                               % self.config['sudo_cmd'])
                 return None
 
             command = [self.config['sudo_cmd'], '/bin/cat', self.MOUNTSTATS]

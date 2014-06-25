@@ -140,41 +140,41 @@ class Server(object):
         """
         # Initialize return value
         collectors = {}
-        
+
         for path in paths:
             # Get a list of files in the directory, if the directory exists
             if not os.path.exists(path):
                 raise OSError("Directory does not exist: %s" % path)
-    
+
             if path.endswith('tests') or path.endswith('fixtures'):
                 return collectors
-    
+
             # Log
             self.log.debug("Loading Collectors from: %s", path)
-    
+
             # Load all the files in path
             for f in os.listdir(path):
-    
+
                 # Are we a directory? If so process down the tree
                 fpath = os.path.join(path, f)
                 if os.path.isdir(fpath):
                     subcollectors = self.load_collectors(fpath)
                     for key in subcollectors:
                         collectors[key] = subcollectors[key]
-    
+
                 # Ignore anything that isn't a .py file
                 elif (os.path.isfile(fpath)
                       and len(f) > 3
                       and f[-3:] == '.py'
                       and f[0:4] != 'test'
                       and f[0] != '.'):
-    
+
                     # Check filter
                     if filter and os.path.join(path, f) != filter:
                         continue
-    
+
                     modname = f[:-3]
-    
+
                     # Stat module file to get mtime
                     st = os.stat(os.path.join(path, f))
                     mtime = st.st_mtime
@@ -187,7 +187,7 @@ class Server(object):
                             self.log.debug("Found %s, but it hasn't changed.",
                                            modname)
                             continue
-    
+
                     try:
                         # Import the module
                         mod = __import__(modname, globals(), locals(), ['*'])
@@ -197,12 +197,12 @@ class Server(object):
                                        modname,
                                        traceback.format_exc())
                         continue
-    
+
                     # Update module mtime
                     self.modules[modname] = mtime
                     # Log
                     self.log.debug("Loaded Module: %s", modname)
-    
+
                     # Find all classes defined in the module
                     for attrname in dir(mod):
                         attr = getattr(mod, attrname)
@@ -323,7 +323,7 @@ class Server(object):
         self.load_config()
 
         # Load collectors
-        
+
         # Make an list if not one
         if isinstance(self.config['server']['collectors_path'], basestring):
             collectors_path = self.config['server']['collectors_path']

@@ -20,8 +20,8 @@ from http import HttpCollector
 class TestHttpCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('HttpCollector', {
-        'req_vhost': 'www.my_server.com',
-        'req_url': ['http://www.my_server.com/']
+            'req_vhost': 'www.my_server.com',
+            'req_url': ['http://www.my_server.com/']
         })
 
         self.collector = HttpCollector(config, None)
