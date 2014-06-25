@@ -43,7 +43,7 @@ class TestMemcachedCollector(CollectorTestCase):
             'localhost.expired_unfetched': 0.000000,
             'localhost.hash_is_expanding': 0.000000,
             'localhost.cas_hits': 0.000000,
-            'localhost.uptime': 0,
+            'localhost.uptime': 25763,
             'localhost.touch_hits': 0.000000,
             'localhost.delete_misses': 0.000000,
             'localhost.listen_disabled_num': 0.000000,
