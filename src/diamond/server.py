@@ -123,7 +123,7 @@ class Server(object):
         for path in paths:
             # Verify the path is valid
             if not os.path.isdir(path):
-                return
+                continue
             # Add path to the system path, to avoid name clashes
             # with mysql-connector for example ...
             sys.path.insert(1, path)
@@ -132,7 +132,7 @@ class Server(object):
                 # Are we a directory? If so process down the tree
                 fpath = os.path.join(path, f)
                 if os.path.isdir(fpath):
-                    self.load_include_path(fpath)
+                    self.load_include_path([fpath])
 
     def load_collectors(self, paths, filter=None):
         """
@@ -158,7 +158,7 @@ class Server(object):
                 # Are we a directory? If so process down the tree
                 fpath = os.path.join(path, f)
                 if os.path.isdir(fpath):
-                    subcollectors = self.load_collectors(fpath)
+                    subcollectors = self.load_collectors([fpath])
                     for key in subcollectors:
                         collectors[key] = subcollectors[key]
 
@@ -316,7 +316,7 @@ class Server(object):
         # Load handlers
         if 'handlers_path' in self.config['server']:
             handlers_path = self.config['server']['handlers_path']
-            self.load_include_path(handlers_path)
+            self.load_include_path([handlers_path])
         self.load_handlers()
 
         # Load config
@@ -332,6 +332,7 @@ class Server(object):
         for path in self.config['server']['collectors_path']:
             self.collector_paths.append(path.strip())
         self.load_include_path(self.collector_paths)
+
         collectors = self.load_collectors(self.collector_paths)
 
         # Setup Collectors
@@ -354,7 +355,7 @@ class Server(object):
         # Load handlers
         if 'handlers_path' in self.config['server']:
             handlers_path = self.config['server']['handlers_path']
-            self.load_include_path(handlers_path)
+            self.load_include_path([handlers_path])
         self.load_handlers()
 
         # Overrides collector config dir
