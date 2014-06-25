@@ -36,6 +36,7 @@ class Server(object):
         self.handlers = []
         self.modules = {}
         self.tasks = {}
+        self.collector_paths = []
         # Initialize Scheduler
         self.scheduler = ThreadedScheduler()
 
@@ -115,112 +116,116 @@ class Server(object):
         self.log.debug("Loaded Collector: %s", fqcn)
         return cls
 
-    def load_include_path(self, path):
+    def load_include_path(self, paths):
         """
         Scan for and add paths to the include path
         """
-        # Verify the path is valid
-        if not os.path.isdir(path):
-            return
-        # Add path to the system path, to avoid name clashes
-        # with mysql-connector for example ...
-        sys.path.insert(1, path)
-        # Load all the files in path
-        for f in os.listdir(path):
-            # Are we a directory? If so process down the tree
-            fpath = os.path.join(path, f)
-            if os.path.isdir(fpath):
-                self.load_include_path(fpath)
+        for path in paths:
+            # Verify the path is valid
+            if not os.path.isdir(path):
+                return
+            # Add path to the system path, to avoid name clashes
+            # with mysql-connector for example ...
+            sys.path.insert(1, path)
+            # Load all the files in path
+            for f in os.listdir(path):
+                # Are we a directory? If so process down the tree
+                fpath = os.path.join(path, f)
+                if os.path.isdir(fpath):
+                    self.load_include_path(fpath)
 
-    def load_collectors(self, path, filter=None):
+    def load_collectors(self, paths, filter=None):
         """
         Scan for collectors to load from path
         """
         # Initialize return value
         collectors = {}
-
-        # Get a list of files in the directory, if the directory exists
-        if not os.path.exists(path):
-            raise OSError("Directory does not exist: %s" % path)
-
-        if path.endswith('tests') or path.endswith('fixtures'):
-            return collectors
-
-        # Log
-        self.log.debug("Loading Collectors from: %s", path)
-
-        # Load all the files in path
-        for f in os.listdir(path):
-
-            # Are we a directory? If so process down the tree
-            fpath = os.path.join(path, f)
-            if os.path.isdir(fpath):
-                subcollectors = self.load_collectors(fpath)
-                for key in subcollectors:
-                    collectors[key] = subcollectors[key]
-
-            # Ignore anything that isn't a .py file
-            elif (os.path.isfile(fpath)
-                  and len(f) > 3
-                  and f[-3:] == '.py'
-                  and f[0:4] != 'test'
-                  and f[0] != '.'):
-
-                # Check filter
-                if filter and os.path.join(path, f) != filter:
-                    continue
-
-                modname = f[:-3]
-
-                # Stat module file to get mtime
-                st = os.stat(os.path.join(path, f))
-                mtime = st.st_mtime
-                # Check if module has been loaded before
-                if modname in self.modules:
-                    # Check if file mtime is newer then the last loaded verison
-                    if mtime <= self.modules[modname]:
-                        # Module hasn't changed
-                        # Log
-                        self.log.debug("Found %s, but it hasn't changed.",
-                                       modname)
+        
+        for path in paths:
+            # Get a list of files in the directory, if the directory exists
+            if not os.path.exists(path):
+                raise OSError("Directory does not exist: %s" % path)
+    
+            if path.endswith('tests') or path.endswith('fixtures'):
+                return collectors
+    
+            # Log
+            self.log.debug("Loading Collectors from: %s", path)
+    
+            # Load all the files in path
+            for f in os.listdir(path):
+    
+                # Are we a directory? If so process down the tree
+                fpath = os.path.join(path, f)
+                if os.path.isdir(fpath):
+                    subcollectors = self.load_collectors(fpath)
+                    for key in subcollectors:
+                        collectors[key] = subcollectors[key]
+    
+                # Ignore anything that isn't a .py file
+                elif (os.path.isfile(fpath)
+                      and len(f) > 3
+                      and f[-3:] == '.py'
+                      and f[0:4] != 'test'
+                      and f[0] != '.'):
+    
+                    # Check filter
+                    if filter and os.path.join(path, f) != filter:
                         continue
-
-                try:
-                    # Import the module
-                    mod = __import__(modname, globals(), locals(), ['*'])
-                except (ImportError, SyntaxError):
-                    # Log error
-                    self.log.error("Failed to import module: %s. %s", modname,
-                                   traceback.format_exc())
-                    continue
-
-                # Update module mtime
-                self.modules[modname] = mtime
-                # Log
-                self.log.debug("Loaded Module: %s", modname)
-
-                # Find all classes defined in the module
-                for attrname in dir(mod):
-                    attr = getattr(mod, attrname)
-                    # Only attempt to load classes that are infact classes
-                    # are Collectors but are not the base Collector class
-                    if (inspect.isclass(attr)
-                            and issubclass(attr, Collector)
-                            and attr != Collector):
-                        if attrname.startswith('parent_'):
+    
+                    modname = f[:-3]
+    
+                    # Stat module file to get mtime
+                    st = os.stat(os.path.join(path, f))
+                    mtime = st.st_mtime
+                    # Check if module has been loaded before
+                    if modname in self.modules:
+                        # Check if file mtime is newer then the last check
+                        if mtime <= self.modules[modname]:
+                            # Module hasn't changed
+                            # Log
+                            self.log.debug("Found %s, but it hasn't changed.",
+                                           modname)
                             continue
-                        # Get class name
-                        fqcn = '.'.join([modname, attrname])
-                        try:
-                            # Load Collector class
-                            cls = self.load_collector(fqcn)
-                            # Add Collector class
-                            collectors[cls.__name__] = cls
-                        except Exception:
-                            # Log error
-                            self.log.error("Failed to load Collector: %s. %s",
-                                           fqcn, traceback.format_exc())
-                            continue
+    
+                    try:
+                        # Import the module
+                        mod = __import__(modname, globals(), locals(), ['*'])
+                    except (ImportError, SyntaxError):
+                        # Log error
+                        self.log.error("Failed to import module: %s. %s",
+                                       modname,
+                                       traceback.format_exc())
+                        continue
+    
+                    # Update module mtime
+                    self.modules[modname] = mtime
+                    # Log
+                    self.log.debug("Loaded Module: %s", modname)
+    
+                    # Find all classes defined in the module
+                    for attrname in dir(mod):
+                        attr = getattr(mod, attrname)
+                        # Only attempt to load classes that are infact classes
+                        # are Collectors but are not the base Collector class
+                        if (inspect.isclass(attr)
+                                and issubclass(attr, Collector)
+                                and attr != Collector):
+                            if attrname.startswith('parent_'):
+                                continue
+                            # Get class name
+                            fqcn = '.'.join([modname, attrname])
+                            try:
+                                # Load Collector class
+                                cls = self.load_collector(fqcn)
+                                # Add Collector class
+                                collectors[cls.__name__] = cls
+                            except Exception:
+                                # Log error
+                                self.log.error(
+                                    "Failed to load Collector: %s. %s",
+                                    fqcn, traceback.format_exc())
+                                continue
 
         # Return Collector classes
         return collectors
@@ -318,9 +323,16 @@ class Server(object):
         self.load_config()
 
         # Load collectors
-        collectors_path = self.config['server']['collectors_path']
-        self.load_include_path(collectors_path)
-        collectors = self.load_collectors(collectors_path)
+        
+        # Make an list if not one
+        if isinstance(self.config['server']['collectors_path'], basestring):
+            collectors_path = self.config['server']['collectors_path']
+            collectors_path = collectors_path.split(',')
+            self.config['server']['collectors_path'] = collectors_path
+        for path in self.config['server']['collectors_path']:
+            self.collector_paths.append(path.strip())
+        self.load_include_path(self.collector_paths)
+        collectors = self.load_collectors(self.collector_paths)
 
         # Setup Collectors
         for cls in collectors.values():
@@ -359,8 +371,9 @@ class Server(object):
         else:
             tmp_path = os.path.dirname(file)
             filter_out = False
-        self.load_include_path(tmp_path)
-        collectors = self.load_collectors(tmp_path, file)
+        self.collector_paths.append(tmp_path)
+        self.load_include_path(self.collector_paths)
+        collectors = self.load_collectors(self.collector_paths, file)
         # if file is a full path, rather than a collector name, only the
         # collector(s) in that path are instantiated, and there's no need to
         # filter extraneous ones from the collectors dictionary
@@ -405,8 +418,7 @@ class Server(object):
                 # Log
                 self.log.debug("Reloading collectors.")
                 # Load collectors
-                collectors_path = self.config['server']['collectors_path']
-                collectors = self.load_collectors(collectors_path)
+                collectors = self.load_collectors(self.collector_paths)
                 # Setup any Collectors that were loaded
                 for cls in collectors.values():
                     # Initialize Collector
