@@ -6,7 +6,7 @@ if [ -z "${DESC}" ]
 then
     # Try to support using the tagged downloads
     DESC=`pwd | grep -oe 'Diamond-.\+' | sed 's/Diamond-//g'`
-    LOCAL_REV="github_archive"
+    LOCAL_REV="-github_archive"
 fi
 
 VERSION=`echo ${DESC} | awk '{ print $1 }' | tr "." " "`
