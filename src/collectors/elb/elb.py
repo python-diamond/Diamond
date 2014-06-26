@@ -21,6 +21,9 @@ You can specify an arbitrary amount of regions
     # Optional - Available keys: region, zone, elb_name, metric_name
     format = $elb_name.$zone.$metric_name
 
+    # Optional - list of regular expressions used to ignore ELBs
+    elbs_ignored = ^elb-a$, .*-test$, $test-.*
+
     [[regions]]
 
     [us-west-1]
@@ -41,6 +44,7 @@ import calendar
 #from datetime import datetime, timedelta
 import datetime
 import time
+import re
 from string import Template
 
 import diamond.collector
@@ -139,7 +143,20 @@ class ElbCollector(diamond.collector.Collector):
         if 'elb_names' not in region_cfg:
             elb_conn = boto.ec2.elb.connect_to_region(region,
                                                       **self.auth_kwargs)
-            elb_names = [elb.name for elb in elb_conn.get_all_load_balancers()]
+            full_elb_names = [elb.name for elb in elb_conn.get_all_load_balancers()]
+
+            # Define regular expression matches for ELBs we DO NOT want to get metrics on.
+            matchers = []
+            if self.config['elbs_ignored']:
+                for reg in self.config['elbs_ignored']:
+                    matchers.append(re.compile(reg))
+
+            # cycle through elbs get the list of elbs that don't match
+            elb_names = []
+            for elb_name in full_elb_names:
+                if matchers and any([m.match( elb_name ) for m in matchers]):
+                    continue
+                elb_names.append( elb_name )
         else:
             elb_names = region_cfg['elb_names']
         return elb_names
