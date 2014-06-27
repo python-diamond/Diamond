@@ -165,16 +165,17 @@ class time:
 
     def do(self, value=None, unit=None):
         if not unit:
-            return self.millisecond(value=value)
+            v = self.millisecond(value=value)
+        elif unit.lower() in ['millisecond', 'milliseconds', 'ms']:
+            v = self.millisecond(value=value)
+        elif unit.lower() in ['second', 'seconds', 's']:
+            v = self.second(value=value)
+        elif unit.lower() in ['minute', 'minutes', 'm']:
+            v = self.minute(value=value)
         else:
-            unit = unit.lower()
+            raise NotImplementedError("unit %s" % unit)
 
-        if unit in ['millisecond', 'milliseconds', 'ms']:
-            return self.millisecond(value=value)
-        if unit in ['second', 'seconds', 's']:
-            return self.second(value=value)
-
-        raise NotImplementedError("unit %s" % unit)
+        return v
 
     def millisecond(self, value=None):
         if value is None:
@@ -187,3 +188,9 @@ class time:
             return self.millisecond() / 1000
         else:
             self.millisecond(value * 1000)
+
+    def minute(self, value=None):
+        if value is None:
+            return self.second() / 60
+        else:
+            self.millisecond(self.second(value * 60))
