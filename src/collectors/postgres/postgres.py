@@ -234,7 +234,7 @@ class DatabaseStats(QueryStats):
     """
     path = "database.%(datname)s.%(metric)s"
     multi_db = False
-    query = """
+    post_92_query = """
         SELECT pg_stat_database.datname as datname,
                pg_stat_database.numbackends as numbackends,
                pg_stat_database.xact_commit as xact_commit,
@@ -253,6 +253,8 @@ class DatabaseStats(QueryStats):
         WHERE pg_stat_database.datname
         NOT IN ('template0','template1','postgres')
     """
+    query = post_92_query.replace('pg_stat_database.temp_files as temp_files,', '').replace(
+                                  'pg_stat_database.temp_bytes as temp_bytes,', '')
 
 
 class UserTableStats(QueryStats):
