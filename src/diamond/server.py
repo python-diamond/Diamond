@@ -42,13 +42,19 @@ class Server(object):
 
     def load_config(self):
         """
-        Load the full config
+        Load the full config / merge splitted configs if configured
         """
 
         configfile = os.path.abspath(self.config['configfile'])
         config = configobj.ConfigObj(configfile)
         config['configfile'] = self.config['configfile']
-
+        try:
+                for cfgfile in os.listdir(config['configs']['path']):
+                    if cfgfile.endswith(config['configs']['extension']):
+                        newconfig = configobj.ConfigObj(config['configs']['path'] + cfgfile)
+                        config.merge(newconfig)
+        except KeyError:
+                pass
         self.config = config
 
     def load_handler(self, fqcn):
