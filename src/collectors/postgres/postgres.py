@@ -185,14 +185,11 @@ class QueryStats(object):
 
     def fetch(self, pg_version):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        if float(pg_version) >= 9.2:
-            pid = 'pid'
-            query = 'query'
+        if float(pg_version) >= 9.2 and hasattr(self, 'post_92_query'):
+            q = self.post_92_query
         else:
-            pid = 'procpid'
-            query = 'current_query'
+            q = self.query
 
-        q = self.query.format(pid=pid, query=query)
         cursor.execute(q, self.parameters)
         rows = cursor.fetchall()
         for row in rows:
@@ -334,24 +331,25 @@ class ConnectionStateStats(QueryStats):
                 ) AS tmp(state)
         LEFT JOIN
              (SELECT CASE WHEN waiting THEN 'waiting'
-                          WHEN {query} = '<IDLE>' THEN 'idle'
-                          WHEN {query} = '<IDLE> in transaction'
+                          WHEN current_query = '<IDLE>' THEN 'idle'
+                          WHEN current_query = '<IDLE> in transaction'
                               THEN 'idletransaction'
-                          WHEN {query} = '<insufficient privilege>'
+                          WHEN current_query = '<insufficient privilege>'
                               THEN 'unknown'
                           ELSE 'active' END AS state,
                      count(*) AS count
                FROM pg_stat_activity
-               WHERE {pid} != pg_backend_pid()
+               WHERE procpid != pg_backend_pid()
                GROUP BY CASE WHEN waiting THEN 'waiting'
-                             WHEN {query} = '<IDLE>' THEN 'idle'
-                             WHEN {query} = '<IDLE> in transaction'
+                             WHEN current_query = '<IDLE>' THEN 'idle'
+                             WHEN current_query = '<IDLE> in transaction'
                                  THEN 'idletransaction'
-                             WHEN {query} = '<insufficient privilege>'
+                             WHEN current_query = '<insufficient privilege>'
                                  THEN 'unknown' ELSE 'active' END
              ) AS tmp2
         ON tmp.state=tmp2.state ORDER BY 1
     """
+    post_92_query = query.replace('procpid', 'pid').replace('current_query', 'query')
 
 
 class LockStats(QueryStats):
@@ -430,9 +428,10 @@ class IdleInTransactions(QueryStats):
                max(COALESCE(ROUND(EXTRACT(epoch FROM now()-query_start)),0))
                    AS idle_in_transaction
         FROM pg_stat_activity
-        WHERE {query} = '<IDLE> in transaction'
+        WHERE current_query = '<IDLE> in transaction'
         GROUP BY 1
     """
+    post_92_query = query.replace('current_query', 'query')
 
 
 class LongestRunningQueries(QueryStats):
@@ -442,13 +441,14 @@ class LongestRunningQueries(QueryStats):
         SELECT 'query',
             COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-query_start)),0)
         FROM pg_stat_activity
-        WHERE {query} NOT LIKE '<IDLE%'
+        WHERE current_query NOT LIKE '<IDLE%'
         UNION ALL
         SELECT 'transaction',
             COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-xact_start)),0)
         FROM pg_stat_activity
         WHERE 1=1
     """
+    post_92_query = query.replace('current_query', 'query')
 
 
 class UserConnectionCount(QueryStats):
@@ -458,10 +458,11 @@ class UserConnectionCount(QueryStats):
         SELECT usename,
                count(*) as count
         FROM pg_stat_activity
-        WHERE {pid} != pg_backend_pid()
+        WHERE procpid != pg_backend_pid()
         GROUP BY usename
         ORDER BY 1
     """
+    post_92_query = query.replace('procpid', 'pid')
 
 
 class DatabaseConnectionCount(QueryStats):
