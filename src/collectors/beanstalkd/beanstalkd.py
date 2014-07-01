@@ -22,6 +22,7 @@ except ImportError:
 
 
 class BeanstalkdCollector(diamond.collector.Collector):
+    SKIP_LIST = ['version', 'id', 'hostname']
     COUNTERS_REGEX = re.compile(
         r'^(cmd-.*|job-timeouts|total-jobs|total-connections)$')
 
@@ -72,7 +73,7 @@ class BeanstalkdCollector(diamond.collector.Collector):
         info = self._get_stats()
 
         for stat, value in info['instance'].items():
-            if stat != 'version':
+            if stat not in self.SKIP_LIST:
                 self.publish(stat, value,
                              metric_type=self.get_metric_type(stat))
 
