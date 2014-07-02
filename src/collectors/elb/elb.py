@@ -11,8 +11,6 @@ You can specify an arbitrary amount of regions
 ```
     enabled = true
     interval = 60
-    # max number of delayed metrics to tolerate
-    max_delayed = 10
 
     # Optional
     access_key_id = ...
@@ -41,11 +39,12 @@ You can specify an arbitrary amount of regions
 
 """
 import calendar
+import cPickle
 import datetime
 import functools
 import re
 import time
-from collections import defaultdict
+from collections import namedtuple
 from string import Template
 
 import diamond.collector
@@ -66,8 +65,8 @@ class memoized(object):
     the function is not re-evaluated.
 
     Based upon from http://wiki.python.org/moin/PythonDecoratorLibrary#Memoize
-    Nota bene: this decorator memoizes /all/ calls to the function.  For a memoization
-    decorator with limited cache size, consider:
+    Nota bene: this decorator memoizes /all/ calls to the function.  For
+    a memoization decorator with limited cache size, consider:
     http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/
     """
     def __init__(self, func):
@@ -106,77 +105,37 @@ def utc_to_local(utc_dt):
 
 
 @memoized
-def get_zones(region, auth_dict, log):
+def get_zones(region, auth_kwargs):
     """
     :param region: region to get the availability zones for
-    :param auth_dict: Used to authenticate with EC2.
-        Empty dict if using instance profiles.
     :return: list of availability zones
     """
-    try:
-        ec2_conn = boto.ec2.connect_to_region(region, **auth_dict)
-    except NoAuthHandlerFound, e:
-        log.error(e)
+    ec2_conn = boto.ec2.connect_to_region(region, **auth_kwargs)
     return [zone.name for zone in ec2_conn.get_all_zones()]
-
-
-@memoized
-def get_elb_names(region, config, auth_dict):
-    """
-    :param region: name of a region
-    :param config: Collector config dict
-    :param auth_dict: Used to authenticate with EC2.
-        Empty dict if using instance profiles.
-    :return: list of elb names to query in the given region
-    """
-    if 'elb_names' not in config['region']:
-        elb_conn = boto.ec2.elb.connect_to_region(region, **auth_dict)
-        full_elb_names = [elb.name for elb in elb_conn.get_all_load_balancers()]
-
-        # Regular expressions for ELBs we DO NOT want to get metrics on.
-        matchers = [re.compile(regex) for regex in config.get('elbs_ignored', [])]
-
-        # cycle through elbs get the list of elbs that don't match
-        elb_names = []
-        for elb_name in full_elb_names:
-            if matchers and any([m.match(elb_name) for m in matchers]):
-                continue
-            elb_names.append(elb_name)
-    else:
-        elb_names = config.get('region',{}).get('elb_names',[])
-    return elb_names
-
-
-def handle_defaults(stats, default_to_zero, span_start, metric_stat_type):
-    # create a fake stat if the current metric should default to zero when
-    # a stat is not returned. Cloudwatch just skips the metric entirely
-    # instead of wasting space to store/emit a zero.
-    if len(stats) == 0 and default_to_zero:
-        stats.append({
-            u'Timestamp': span_start,
-            metric_stat_type: 0.0,
-            u'Unit': u'Count'
-        })
 
 
 class ElbCollector(diamond.collector.Collector):
 
-    # (aws metric name, aws statistic type, diamond metric type, diamond
-    # precision, emit zero when no value available)
+    # default_to_zero means if cloudwatch does not return a stat for the
+    # given metric, then just default it to zero.
+    MetricInfo = namedtuple('MetricInfo',
+        'name aws_type diamond_type precision default_to_zero')
+
+    # AWS metrics for ELBs
     metrics = [
-        ('HealthyHostCount', 'Average', 'GAUGE', 0, False),
-        ('UnHealthyHostCount', 'Average', 'GAUGE', 0, False),
-        ('RequestCount', 'Sum', 'COUNTER', 0, True),
-        ('Latency', 'Average', 'GAUGE', 4, False),
-        ('HTTPCode_ELB_4XX', 'Sum', 'COUNTER', 0, True),
-        ('HTTPCode_ELB_5XX', 'Sum', 'COUNTER', 0, True),
-        ('HTTPCode_Backend_2XX', 'Sum', 'COUNTER', 0, True),
-        ('HTTPCode_Backend_3XX', 'Sum', 'COUNTER', 0, True),
-        ('HTTPCode_Backend_4XX', 'Sum', 'COUNTER', 0, True),
-        ('HTTPCode_Backend_5XX', 'Sum', 'COUNTER', 0, True),
-        ('BackendConnectionErrors', 'Sum', 'COUNTER', 0, True),
-        ('SurgeQueueLength', 'Maximum', 'GAUGE', 0, True),
-        ('SpilloverCount', 'Sum', 'COUNTER', 0, True)
+        MetricInfo('HealthyHostCount', 'Average', 'GAUGE', 0, False),
+        MetricInfo('UnHealthyHostCount', 'Average', 'GAUGE', 0, False),
+        MetricInfo('RequestCount', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('Latency', 'Average', 'GAUGE', 4, False),
+        MetricInfo('HTTPCode_ELB_4XX', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('HTTPCode_ELB_5XX', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('HTTPCode_Backend_2XX', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('HTTPCode_Backend_3XX', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('HTTPCode_Backend_4XX', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('HTTPCode_Backend_5XX', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('BackendConnectionErrors', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('SurgeQueueLength', 'Maximum', 'GAUGE', 0, True),
+        MetricInfo('SpilloverCount', 'Sum', 'COUNTER', 0, True)
     ]
 
     def __init__(self, config, handlers):
@@ -201,11 +160,6 @@ class ElbCollector(diamond.collector.Collector):
                 raise Exception('Interval must be a multiple of 60 seconds: %s'
                                 % self.interval)
         setup_creds()
-        self.max_delayed = self.config.as_int('max_delayed')
-
-        # key = tuple(zone, elb_name, metric_name)
-        # value = list of tuple(start_time, end_time)
-        self.history = defaultdict(list)
 
     def check_boto(self):
         if not cloudwatch:
@@ -223,7 +177,6 @@ class ElbCollector(diamond.collector.Collector):
             'regions': ['us-west-1'],
             'interval': 60,
             'format': '$zone.$elb_name.$metric_name',
-            'max_delayed': 10,
         })
         return config
 
@@ -249,90 +202,91 @@ class ElbCollector(diamond.collector.Collector):
         # Publish Metric
         self.publish_metric(metric)
 
-    def append_to_history(self, zone, elb_name, metric_name, tick):
-        metric_history = self.history[(zone, elb_name, metric_name)]
-        metric_history.append(tick)
-        # only keep latest max_delayed metrics in history
-        if len(metric_history) > self.max_delayed:
-            del metric_history[0]
-        return metric_history
+    def get_elb_names(self, region, config):
+        """
+        :param region: name of a region
+        :param config: Collector config dict
+        :return: list of elb names to query in the given region
+        """
+        # This function is ripe to be memoized but when ELBs are added/removed
+        # dynamically over time, diamond will have to be restarted to pick
+        # up the changes.
+        region_dict = config.get('regions', {}).get(region, {})
+        if 'elb_names' not in region_dict:
+            elb_conn = boto.ec2.elb.connect_to_region(region, **self.auth_kwargs)
+            full_elb_names = \
+                [elb.name for elb in elb_conn.get_all_load_balancers()]
 
-    def process_tick(self, region, zone, elb_name, metric, stat, tick):
-        metric_name, metric_stat_type, metric_type, metric_precision, default_to_zero = metric
-        tick_start, tick_end = tick
+            # Regular expressions for ELBs we DO NOT want to get metrics on.
+            matchers = \
+                [re.compile(regex) for regex in config.get('elbs_ignored', [])]
 
-        if stat['Timestamp'] != tick_start:
-            return False
+            # cycle through elbs get the list of elbs that don't match
+            elb_names = []
+            for elb_name in full_elb_names:
+                if matchers and any([m.match(elb_name) for m in matchers]):
+                    continue
+                elb_names.append(elb_name)
+        else:
+            elb_names = region_dict['elb_names']
+        return elb_names
 
+    def process_stat(self, region, zone, elb_name, metric, stat, end_time):
         template_tokens = {
             'region': region,
             'zone': zone,
             'elb_name': elb_name,
-            'metric_name': metric_name,
+            'metric_name': metric.name,
         }
         name_template = Template(self.config['format'])
         formatted_name = name_template.substitute(template_tokens)
         self.publish_delayed_metric(
             formatted_name,
-            stat[metric_stat_type],
-            metric_type=metric_type,
-            precision=metric_precision,
-            timestamp=time.mktime(utc_to_local(tick_end).timetuple()))
-        return True
+            stat[metric.aws_type],
+            metric_type=metric.diamond_type,
+            precision=metric.precision,
+            timestamp=time.mktime(utc_to_local(end_time).timetuple()))
 
-    def process_stat(self, region, zone, elb_name, metric, stat, metric_history):
-        metrics_to_delete = []
-        for index, tick in enumerate(metric_history):
-            metric_received = self.process_tick(region, zone, elb_name, metric, stat, tick)
-            if metric_received:
-                metrics_to_delete.append(index)
-
-        # TODO: metric_history has to be contiguous! if not, we have problems!
-        for index in reversed(metrics_to_delete):
-            del metric_history[index]
+        self.log.error('published %s %s %s' % (elb_name, stat, formatted_name))
 
     def process_metric(self, region, zone, start_time, end_time, elb_name, metric):
-        metric_name, metric_stat_type, metric_type, metric_precision, default_to_zero = metric
-
-        tick = (start_time, end_time)
-        metric_history = self.append_to_history(zone, elb_name, metric_name, tick)
-        span_start, _ = metric_history[0]
-        _, span_end = metric_history[-1]
         cw_conn = cloudwatch.connect_to_region(region, **self.auth_kwargs)
 
-        # get stats for the span of history for which we don't have values
         stats = cw_conn.get_metric_statistics(
             self.config['interval'],
-            span_start,
-            span_end,
-            metric_name,
+            start_time,
+            end_time,
+            metric.name,
             namespace='AWS/ELB',
-            statistics=[metric_stat_type],
+            statistics=[metric.aws_type],
             dimensions={
                 'LoadBalancerName': elb_name,
                 'AvailabilityZone': zone
             })
 
-        #self.log.debug('history = %s' % metric_history)
-        #self.log.debug('stats = %s' % stats)
+        # create a fake stat if the current metric should default to zero when
+        # a stat is not returned. Cloudwatch just skips the metric entirely
+        # instead of wasting space to store/emit a zero.
+        if len(stats) == 0 and metric.default_to_zero:
+            stats.append({
+                u'Timestamp': start_time,
+                metric.aws_type: 0.0,
+                u'Unit': u'Count'
+            })
 
-        handle_defaults(stats, default_to_zero, span_start, metric_stat_type)
-
-        # match up each individual stat to what we have in
-        # history and publish it.
         for stat in stats:
-            self.process_stat(region, zone, elb_name, metric, stat, metric_history)
+            self.process_stat(region, zone, elb_name, metric, stat, end_time)
 
     def process_elb(self, region, zone, start_time, end_time, elb_name):
         for metric in self.metrics:
             self.process_metric(region, zone, start_time, end_time, elb_name, metric)
 
     def process_zone(self, region, zone, start_time, end_time):
-        for elb_name in get_elb_names(region, self.config):
+        for elb_name in self.get_elb_names(region, self.config):
             self.process_elb(region, zone, start_time, end_time, elb_name)
 
     def process_region(self, region, start_time, end_time):
-        for zone in self.get_zones(region):
+        for zone in get_zones(region, self.auth_kwargs):
             self.process_zone(region, zone, start_time, end_time)
 
     def collect(self):
@@ -345,3 +299,4 @@ class ElbCollector(diamond.collector.Collector):
 
         for region in self.config['regions'].keys():
             self.process_region(region, start_time, end_time)
+
