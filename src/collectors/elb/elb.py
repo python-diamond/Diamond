@@ -249,10 +249,8 @@ class ElbCollector(diamond.collector.Collector):
 
         #self.log.debug('published %s %s %s' % (elb_name, stat, formatted_name))
 
-    def process_metric(self, region, zone, start_time, end_time, elb_name, metric):
-        cw_conn = cloudwatch.connect_to_region(region, **self.auth_kwargs)
-
-        stats = cw_conn.get_metric_statistics(
+    def process_metric(self, region_cw_conn, zone, start_time, end_time, elb_name, metric):
+        stats = region_cw_conn.get_metric_statistics(
             self.config['interval'],
             start_time,
             end_time,
@@ -275,19 +273,19 @@ class ElbCollector(diamond.collector.Collector):
             })
 
         for stat in stats:
-            self.process_stat(region, zone, elb_name, metric, stat, end_time)
+            self.process_stat(region_cw_conn.region.name, zone, elb_name, metric, stat, end_time)
 
-    def process_elb(self, region, zone, start_time, end_time, elb_name):
+    def process_elb(self, region_cw_conn, zone, start_time, end_time, elb_name):
         for metric in self.metrics:
-            self.process_metric(region, zone, start_time, end_time, elb_name, metric)
+            self.process_metric(region_cw_conn, zone, start_time, end_time, elb_name, metric)
 
-    def process_zone(self, region, zone, start_time, end_time):
-        for elb_name in self.get_elb_names(region, self.config):
-            self.process_elb(region, zone, start_time, end_time, elb_name)
+    def process_zone(self, region_cw_conn, zone, start_time, end_time):
+        for elb_name in self.get_elb_names(region_cw_conn.region.name, self.config):
+            self.process_elb(region_cw_conn, zone, start_time, end_time, elb_name)
 
-    def process_region(self, region, start_time, end_time):
-        for zone in get_zones(region, self.auth_kwargs):
-            self.process_zone(region, zone, start_time, end_time)
+    def process_region(self, region_cw_conn, start_time, end_time):
+        for zone in get_zones(region_cw_conn.region.name, self.auth_kwargs):
+            self.process_zone(region_cw_conn, zone, start_time, end_time)
 
     def collect(self):
         if not self.check_boto():
@@ -298,5 +296,6 @@ class ElbCollector(diamond.collector.Collector):
         start_time = end_time - datetime.timedelta(seconds=self.interval)
 
         for region in self.config['regions'].keys():
-            self.process_region(region, start_time, end_time)
+            region_cw_conn = cloudwatch.connect_to_region(region, **self.auth_kwargs)
+            self.process_region(region_cw_conn, start_time, end_time)
 
