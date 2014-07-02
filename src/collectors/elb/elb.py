@@ -247,7 +247,7 @@ class ElbCollector(diamond.collector.Collector):
             precision=metric.precision,
             timestamp=time.mktime(utc_to_local(end_time).timetuple()))
 
-        self.log.error('published %s %s %s' % (elb_name, stat, formatted_name))
+        #self.log.debug('published %s %s %s' % (elb_name, stat, formatted_name))
 
     def process_metric(self, region, zone, start_time, end_time, elb_name, metric):
         cw_conn = cloudwatch.connect_to_region(region, **self.auth_kwargs)
