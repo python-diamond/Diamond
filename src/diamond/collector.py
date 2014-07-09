@@ -193,7 +193,7 @@ class Collector(object):
         Return the default config for the collector
         """
         return {
-            ### Defaults options for all Collectors
+            # Defaults options for all Collectors
 
             # Uncomment and set to hardcode a hostname for the collector path
             # Keep in mind, periods are seperators in graphite
