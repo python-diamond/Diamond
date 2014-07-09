@@ -41,7 +41,6 @@ You can specify an arbitrary amount of regions
 
 """
 import calendar
-#from datetime import datetime, timedelta
 import datetime
 import time
 import re
@@ -143,9 +142,10 @@ class ElbCollector(diamond.collector.Collector):
         if 'elb_names' not in region_cfg:
             elb_conn = boto.ec2.elb.connect_to_region(region,
                                                       **self.auth_kwargs)
-            full_elb_names = [elb.name for elb in elb_conn.get_all_load_balancers()]
+            full_elb_names = [elb.name
+                              for elb in elb_conn.get_all_load_balancers()]
 
-            # Define regular expression matches for ELBs we DO NOT want to get metrics on.
+            # Define regexp matches for ELBs we DO NOT want to get metrics on.
             matchers = []
             if self.config['elbs_ignored']:
                 for reg in self.config['elbs_ignored']:
@@ -154,15 +154,16 @@ class ElbCollector(diamond.collector.Collector):
             # cycle through elbs get the list of elbs that don't match
             elb_names = []
             for elb_name in full_elb_names:
-                if matchers and any([m.match( elb_name ) for m in matchers]):
+                if matchers and any([m.match(elb_name) for m in matchers]):
                     continue
-                elb_names.append( elb_name )
+                elb_names.append(elb_name)
         else:
             elb_names = region_cfg['elb_names']
         return elb_names
 
-    def publish_delayed_metric(self, name, value, timestamp, raw_value=None,
-                               precision=0, metric_type='GAUGE', instance=None):
+    def publish_delayed_metric(self, name, value, timestamp,
+                               raw_value=None, precision=0,
+                               metric_type='GAUGE', instance=None):
         """
         Metrics may not be immediately available when querying cloudwatch.
         Hence, allow the ability to publish a metric from some the past given
@@ -241,9 +242,6 @@ class ElbCollector(diamond.collector.Collector):
                             dimensions={'LoadBalancerName': elb_name,
                                         'AvailabilityZone': zone})
 
-                        #self.log.debug('history = %s' % current_history)
-                        #self.log.debug('stats = %s' % stats)
-
                         # create a fake stat if the current metric
                         # should default to zero when a stat is
                         # not returned. Cloudwatch just skips the
@@ -264,8 +262,6 @@ class ElbCollector(diamond.collector.Collector):
                             for i, tick in enumerate(current_history):
                                 tick_start, tick_end = tick
                                 if ts == tick_start:
-                                    #self.log.warn(tick)
-                                    #self.log.warn(stat)
                                     del current_history[i]
 
                                     template_tokens = {
@@ -284,5 +280,6 @@ class ElbCollector(diamond.collector.Collector):
                                         metric_type=metric_type,
                                         precision=precision,
                                         timestamp=time.mktime(
-                                            utc_to_local(tick_end).timetuple()))
+                                            utc_to_local(tick_end).timetuple())
+                                        )
                                     break
