@@ -11,6 +11,7 @@ import logging
 import configobj
 import traceback
 import time
+import re
 
 from diamond.metric import Metric
 from error import DiamondException
@@ -183,6 +184,13 @@ class Collector(object):
                     'Both metrics_whitelist and metrics_blacklist specified ' +
                     'in file %s' % configfile)
 
+        if self.config['metrics_whitelist']:
+            self.config['metrics_whitelist'] = re.compile(
+                self.config['metrics_whitelist'])
+        elif self.config['metrics_blacklist']:
+            self.config['metrics_blacklist'] = re.compile(
+                self.config['metrics_blacklist'])
+
         self.collect_running = False
 
     def get_default_config_help(self):
@@ -193,9 +201,9 @@ class Collector(object):
             'enabled': 'Enable collecting these metrics',
             'byte_unit': 'Default numeric output(s)',
             'measure_collector_time': 'Collect the collector run time in ms',
-            'metrics_whitelist': 'Whitelist of metrics to transmit. ' +
+            'metrics_whitelist': 'Regex to match metrics to transmit. ' +
                                  'Mutually exclusive with metrics_blacklist',
-            'metrics_blacklist': 'Blacklist of metrics to not transmit. ' +
+            'metrics_blacklist': 'Regex to match metrics to block. ' +
                                  'Mutually exclusive with metrics_whitelist',
         }
 
@@ -348,10 +356,10 @@ class Collector(object):
         """
         # Check whitelist/blacklist
         if self.config['metrics_whitelist']:
-            if name not in self.config['metrics_whitelist']:
+            if not self.config['metrics_whitelist'].match(name):
                 return
         elif self.config['metrics_blacklist']:
-            if name in self.config['metrics_blacklist']:
+            if self.config['metrics_blacklist'].match(name):
                 return
 
         # Get metric Path
