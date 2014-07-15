@@ -125,19 +125,32 @@ class HttpdCollector(diamond.collector.Collector):
                    'DnsWorkers', 'ClosingWorkers', 'LoggingWorkers',
                    'FinishingWorkers', 'CleanupWorkers']
 
+        metrics_precision = ['ReqPerSec', 'BytesPerSec', 'BytesPerReq']
+
         if key in metrics:
             # Get Metric Name
+            presicion_metric = False
             metric_name = "%s" % re.sub('\s+', '', key)
+            if metric_name in metrics_precision:
+                presicion_metric = 1
 
             # Prefix with the nickname?
             if len(nickname) > 0:
                 metric_name = nickname + '.' + metric_name
 
-            # Get Metric Value
-            metric_value = "%d" % float(value)
+            # Use precision for ReqPerSec BytesPerSec BytesPerReq
+            if presicion_metric:
+                # Get Metric Value
+                metric_value = "%f" % float(value)
 
-            # Publish Metric
-            self.publish(metric_name, metric_value)
+                # Publish Metric
+                self.publish(metric_name, metric_value, precision=5)
+            else:
+                # Get Metric Value
+                metric_value = "%d" % float(value)
+
+                # Publish Metric
+                self.publish(metric_name, metric_value)
 
     def _parseScoreboard(self, sb):
 
