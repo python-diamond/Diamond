@@ -20,3 +20,16 @@ class BaseCollectorTest(unittest.TestCase):
         }
         c = Collector(config, [])
         self.assertEquals('custom.localhost', c.get_hostname())
+
+    def test_SetHostnameViaShellCmd(self):
+        config = configobj.ConfigObj()
+        config['server'] = {}
+        config['server']['collectors_config_path'] = ''
+        config['collectors'] = {}
+        config['collectors']['default'] = {
+            'hostname': 'echo custom.localhost',
+            'hostname_method': 'shell',
+        }
+        c = Collector(config, [])
+        self.assertEquals('custom.localhost', c.get_hostname())
+

@@ -154,6 +154,9 @@ batch = 100
 # hostname          = `hostname`
 # hostname_rev      = `hostname` in reverse (com.example.www)
 
+# shell             = Run the string set in hostname as a shell command and use its
+#                     output(with spaces trimmed off from both ends) as the hostname.
+
 # hostname_method = smart
 
 # Path Prefix and Suffix
