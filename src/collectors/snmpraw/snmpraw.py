@@ -161,11 +161,8 @@ class SNMPRawCollector(parent_SNMPCollector):
         self.log.debug(
             'Collecting raw SNMP statistics from device \'{0}\''.format(device))
 
-        for device in self.config['devices']:
-            dev_config = self.config['devices'][device]
-            if not 'oids' in dev_config:
-                continue
-
+        dev_config = self.config['devices'][device]
+        if 'oids' in dev_config:
             for oid, metricName in dev_config['oids'].items():
 
                 if (device, oid) in self.skip_list:
