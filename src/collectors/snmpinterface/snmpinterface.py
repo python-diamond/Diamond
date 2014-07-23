@@ -53,6 +53,12 @@ restart diamond.
 
  * pysmnp
 
+#### Notes
+
+This implimentation is well suited for collecting a small number of metrics
+locally. If you want to collect a large number of remote metrics, consider
+https://github.com/GreggBzz/snmp-interface-poll as an alternative collector
+
 """
 
 import os
