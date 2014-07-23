@@ -23,6 +23,7 @@ class EximCollector(diamond.collector.Collector):
             'bin':         'The path to the exim binary',
             'use_sudo':    'Use sudo?',
             'sudo_cmd':    'Path to sudo',
+            'sudo_user':   'User to sudo as',
         })
         return config_help
 
@@ -37,6 +38,7 @@ class EximCollector(diamond.collector.Collector):
             'bin':              '/usr/sbin/exim',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
+            'sudo_user':        'root',
         })
         return config
 
@@ -47,7 +49,11 @@ class EximCollector(diamond.collector.Collector):
         command = [self.config['bin'], '-bpc']
 
         if str_to_bool(self.config['use_sudo']):
-            command.insert(0, self.config['sudo_cmd'])
+            command = [
+                self.config['sudo_cmd'],
+                '-u',
+                self.config['sudo_user']
+            ].extend(command)
 
         queuesize = subprocess.Popen(
             command, stdout=subprocess.PIPE).communicate()[0].split()
