@@ -11,6 +11,7 @@ import logging
 import configobj
 import traceback
 import time
+import re
 
 from diamond.metric import Metric
 from error import DiamondException
@@ -176,6 +177,20 @@ class Collector(object):
         self.config['measure_collector_time'] = str_to_bool(
             self.config['measure_collector_time'])
 
+        # Raise an error if both whitelist and blacklist are specified
+        if self.config['metrics_whitelist'] and \
+                self.config['metrics_blacklist']:
+                raise DiamondException(
+                    'Both metrics_whitelist and metrics_blacklist specified ' +
+                    'in file %s' % configfile)
+
+        if self.config['metrics_whitelist']:
+            self.config['metrics_whitelist'] = re.compile(
+                self.config['metrics_whitelist'])
+        elif self.config['metrics_blacklist']:
+            self.config['metrics_blacklist'] = re.compile(
+                self.config['metrics_blacklist'])
+
         self.collect_running = False
 
     def get_default_config_help(self):
@@ -186,6 +201,10 @@ class Collector(object):
             'enabled': 'Enable collecting these metrics',
             'byte_unit': 'Default numeric output(s)',
             'measure_collector_time': 'Collect the collector run time in ms',
+            'metrics_whitelist': 'Regex to match metrics to transmit. ' +
+                                 'Mutually exclusive with metrics_blacklist',
+            'metrics_blacklist': 'Regex to match metrics to block. ' +
+                                 'Mutually exclusive with metrics_whitelist',
         }
 
     def get_default_config(self):
@@ -238,6 +257,12 @@ class Collector(object):
 
             # Collect the collector run time in ms
             'measure_collector_time': False,
+
+            # Whitelist of metrics to let th rough
+            'metrics_whitelist': None,
+
+            # Blacklist of metrics to let through
+            'metrics_blacklist': None,
         }
 
     def get_stats_for_upload(self, config=None):
@@ -329,6 +354,14 @@ class Collector(object):
         """
         Publish a metric with the given name
         """
+        # Check whitelist/blacklist
+        if self.config['metrics_whitelist']:
+            if not self.config['metrics_whitelist'].match(name):
+                return
+        elif self.config['metrics_blacklist']:
+            if self.config['metrics_blacklist'].match(name):
+                return
+
         # Get metric Path
         path = self.get_metric_path(name, instance=instance)
 
