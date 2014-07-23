@@ -6,6 +6,8 @@ http interface.
 
 v1.0 : creation
 v1.1 : force influxdb driver with SSL
+v1.2 : added a timer to delay influxdb writing in case of failure
+       this whill avoid the 100% cpu loop when influx in not responding
        Sebastien Prune THOMAS - prune@lecentre.net
 
 - Dependency:
@@ -22,6 +24,7 @@ handlers = diamond.handler.influxdbHandler.InfluxdbHandler
 hostname = localhost
 port = 8086 #8084 for HTTPS
 batch_size = 100 # default to 1
+cache_size = 1000 # default to 20000
 username = root
 password = root
 database = graphite
@@ -29,6 +32,7 @@ time_precision = s
 """
 
 import struct
+import time
 from Handler import Handler
 
 try:
@@ -65,13 +69,16 @@ class InfluxdbHandler(Handler):
         self.password = self.config['password']
         self.database = self.config['database']
         self.batch_size = int(self.config['batch_size'])
+        self.metric_max_cache = int(self.config['cache_size'])
         self.batch_count = 0
         self.time_precision = self.config['time_precision']
 
         # Initialize Data
         self.batch = {}
         self.influx = None
-
+        self.batch_timestamp = time.time()
+        self.time_multiplier = 1
+        
         # Connect
         self._connect()
 
@@ -85,8 +92,10 @@ class InfluxdbHandler(Handler):
             'hostname': 'Hostname',
             'port': 'Port',
             'ssl': 'set to True to use HTTPS instead of http',
-            'batch_size': 'How many to store before sending to the influxdb '
-            'server',
+            'batch_size': 'How many metrics to store before sending to the'
+            ' influxdb server',
+            'cache_size': 'How many values to store in cache in case of'
+            ' influxdb failure',
             'username': 'Username for connection',
             'password': 'Password for connection',
             'database': 'Database name',
@@ -110,6 +119,7 @@ class InfluxdbHandler(Handler):
             'password': 'root',
             'database': 'graphite',
             'batch_size': 1,
+            'cache_size': 20000,
             'time_precision': 's',
         })
 
@@ -122,17 +132,22 @@ class InfluxdbHandler(Handler):
         self._close()
 
     def process(self, metric):
-        # Add the data to the batch
-        self.batch.setdefault(metric.path, []).append([metric.timestamp,
-                                                       metric.value])
-        self.batch_count += 1
+        if self.batch_count <= self.metric_max_cache :
+              # Add the data to the batch
+              self.batch.setdefault(metric.path, []).append([metric.timestamp,
+                                                             metric.value])
+              self.batch_count += 1
         # If there are sufficient metrics, then pickle and send
-        if self.batch_count >= self.batch_size:
+        if self.batch_count >= self.batch_size and (time.time() - self.batch_timestamp) > 2**self.time_multiplier :
             # Log
-            self.log.debug("InfluxdbHandler: Sending batch size: %d",
-                           self.batch_size)
+            self.log.debug("InfluxdbHandler: Sending batch sizeof : %d/%d after %fs",
+                           self.batch_count,self.batch_size,(time.time() - self.batch_timestamp))
+            # reset the batch timer
+            self.batch_timestamp=time.time()
             # Send pickled batch
             self._send()
+        else:
+            self.log.debug("InfluxdbHandler: not sending batch of %d as timestamp is %f",self.batch_count, (time.time() - self.batch_timestamp))
 
     def _send(self):
         """
@@ -154,17 +169,22 @@ class InfluxdbHandler(Handler):
                             "points": self.batch[path],
                             "name": path,
                             "columns": ["time", "value"]})
-                    # Send data to socket
+                    # Send data to influxdb
+                    self.log.debug("InfluxdbHandler: writing %d series of data", 
+                                   len(metrics))
                     self.influx.write_points(metrics,
                                              time_precision=self.time_precision)
 
                     # empty batch buffer
                     self.batch = {}
                     self.batch_count = 0
+                    self.time_multiplier = 1
 
         except Exception:
                 self._close()
-                self._throttle_error("InfluxdbHandler: Error sending metrics.")
+                if self.time_multiplier < 5:
+                       self.time_multiplier += 1
+                self._throttle_error("InfluxdbHandler: Error sending metrics, waiting for %ds.", 2**self.time_multiplier)
                 raise
 
     def _connect(self):
