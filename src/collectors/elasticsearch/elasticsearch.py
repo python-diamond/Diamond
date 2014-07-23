@@ -231,6 +231,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
                       'non_heap_committed'):
                 metrics['jvm.mem.%s' % k] = mem['%s_in_bytes' % k]
 
+            metrics['jvm.mem.heap_used_percent'] = mem['heap_used_percent']
+
             for pool, d in mem['pools'].iteritems():
                 pool = pool.replace(' ', '_')
                 metrics['jvm.mem.pools.%s.used' % pool] = d['used_in_bytes']
