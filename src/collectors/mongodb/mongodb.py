@@ -8,6 +8,14 @@ values are ignored.
 
  * pymongo
 
+#### Example Configuration
+
+MongoDBCollector.conf
+
+```
+    enabled = True
+    hosts = localhost:27017, alias1@localhost:27018, etc
+```
 """
 
 import diamond.collector
@@ -90,9 +98,15 @@ class MongoDBCollector(diamond.collector.Collector):
             self.log.error('Unable to import pymongo')
             return
 
+        hosts = self.config.get('hosts')
+
+        # Convert a string config value to be an array
+        if isinstance(hosts, basestring):
+            hosts = [hosts]
+
         # we need this for backwards compatibility
         if 'host' in self.config:
-            self.config['hosts'] = [self.config['host']]
+            hosts = [self.config['host']]
 
         # convert network_timeout to integer
         if self.config['network_timeout']:
@@ -115,19 +129,19 @@ class MongoDBCollector(diamond.collector.Collector):
         else:
             passwd = None
 
-        for host in self.config['hosts']:
-            if len(self.config['hosts']) == 1:
-                # one host only, no need to have a prefix
-                base_prefix = []
-            else:
-                matches = re.search('((.+)\@)?(.+)?', host)
-                alias = matches.group(2)
-                host = matches.group(3)
+        for host in hosts:
+            matches = re.search('((.+)\@)?(.+)?', host)
+            alias = matches.group(2)
+            host = matches.group(3)
 
-                if alias is None:
-                    base_prefix = [re.sub('[:\.]', '_', host)]
+            if alias is None:
+                if len(hosts) == 1:
+                    # one host only, no need to have a prefix
+                    base_prefix = []
                 else:
-                    base_prefix = [alias]
+                    base_prefix = [re.sub('[:\.]', '_', host)]
+            else:
+                base_prefix = [alias]
 
             try:
                 # Ensure that the SSL option is a boolean.
