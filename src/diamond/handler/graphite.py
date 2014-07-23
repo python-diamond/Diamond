@@ -123,7 +123,10 @@ class GraphiteHandler(Handler):
             self._throttle_error("GraphiteHandler: Socket error, "
                                  "trying reconnect.")
             self._connect()
-            self.socket.sendall(data)
+            try:
+                self.socket.sendall(data)
+            except:
+                return
             self._reset_errors()
 
     def _send(self):
