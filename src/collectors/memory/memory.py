@@ -37,7 +37,8 @@ _KEY_MAPPING = [
     'SwapCached',
     'VmallocTotal',
     'VmallocUsed',
-    'VmallocChunk'
+    'VmallocChunk',
+    'Committed_AS',
 ]
 
 
