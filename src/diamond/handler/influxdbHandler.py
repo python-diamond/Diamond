@@ -99,7 +99,7 @@ class InfluxdbHandler(Handler):
             'username': 'Username for connection',
             'password': 'Password for connection',
             'database': 'Database name',
-            'time_precision': 'time precision in second(s), milisecond(m) or '
+            'time_precision': 'time precision in second(s), milisecond(ms) or '
             'microsecond (u)',
         })
 
