@@ -12,6 +12,7 @@ import configobj
 import traceback
 import time
 import re
+import subprocess
 
 from diamond.metric import Metric
 from error import DiamondException
@@ -30,20 +31,26 @@ def get_hostname(config, method=None):
     """
     Returns a hostname as configured by the user
     """
-    if 'hostname' in config:
-        return config['hostname']
-
-    if method is None:
-        if 'hostname_method' in config:
-            method = config['hostname_method']
-        else:
-            method = 'smart'
+    method = method or config.get('hostname_method', 'smart')
 
     # case insensitive method
     method = method.lower()
 
+    if 'hostname' in config and method != 'shell':
+        return config['hostname']
+
+
     if method in get_hostname.cached_results:
         return get_hostname.cached_results[method]
+
+    if method == 'shell':
+        if 'hostname' not in config:
+            raise DiamondException(
+                    "hostname must be set to a shell command for hostname_method=shell")
+        else:
+            hostname = subprocess.check_output(config['hostname'], shell=True).strip()
+            get_hostname.cached_results[method] = hostname
+            return hostname
 
     if method == 'smart':
         hostname = get_hostname(config, 'fqdn_short')

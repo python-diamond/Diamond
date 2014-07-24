@@ -63,6 +63,10 @@ stop() {
   echo -n $"Stopping $NAME: "
   killproc -p $PIDFILE $NAME
   retval=$?
+  if [ $retval -ne 0 ];
+  then
+    killall -q diamond
+  fi
   if [ -e "${LOCKFILE}" ]
   then
     rm -f "${LOCKFILE}"
