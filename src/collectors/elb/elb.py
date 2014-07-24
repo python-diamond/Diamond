@@ -132,6 +132,7 @@ class ElbCollector(diamond.collector.Collector):
             'interval': 60,
             'format': '$zone.$elb_name.$metric_name',
             'max_delayed': 10,
+            'elbs_ignored': False,
         })
         return config
 
