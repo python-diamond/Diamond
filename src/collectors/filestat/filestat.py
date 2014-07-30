@@ -235,7 +235,7 @@ class FilestatCollector(diamond.collector.Collector):
             data = self.process_lsof(self.get_userlist(), self.get_typelist())
             for ukey in data.iterkeys():
                 for tkey in data[ukey].iterkeys():
-                    self.log.info('files.user.%s.%s %s' % (
+                    self.log.debug('files.user.%s.%s %s' % (
                         ukey, tkey, int(data[ukey][tkey])))
                     self.publish('user.%s.%s' % (ukey, tkey),
                                  int(data[ukey][tkey]))
