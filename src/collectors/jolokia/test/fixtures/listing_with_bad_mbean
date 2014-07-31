@@ -5,6 +5,12 @@
         "type": "list"
     },
     "value": {
+        "xxx.bad.package": {
+            "name=BadMbean": {
+                "desc": "MBean that will throw errors",
+                "attr": {}
+            }
+        },
         "java.lang": {
             "name=ParNew,type=GarbageCollector": {
                 "desc": "Information on the management interface of the MBean",
