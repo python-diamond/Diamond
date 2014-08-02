@@ -36,7 +36,46 @@ class TestJolokiaCollector(CollectorTestCase):
         self.collector.collect()
         patch_urlopen.stop()
 
-        metrics = {
+        metrics = self.get_metrics()
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics, 
+                           defaultpath=self.collector.config['path'])
+        self.assertPublishedMany(publish_mock, metrics)
+
+    @patch.object(Collector, 'publish')
+    def test_should_fail_gracefully(self, publish_mock):
+        patch_urlopen = patch('urllib2.urlopen', Mock(
+                              return_value=self.getFixture('stats_blank')))
+
+        patch_urlopen.start()
+        self.collector.collect()
+        patch_urlopen.stop()
+
+        self.assertPublishedMany(publish_mock, {})
+
+    @patch.object(Collector, 'publish')
+    def test_should_skip_when_mbean_request_fails(self, publish_mock):
+        def se(url):
+            if url == 'http://localhost:8778/jolokia/list':
+                return self.getFixture('listing_with_bad_mbean')
+            elif url == 'http://localhost:8778/jolokia/?ignoreErrors=true&p=read/xxx.bad.package:*':
+                return self.getFixture('stats_error')
+            else:
+                return self.getFixture('stats')
+        patch_urlopen = patch('urllib2.urlopen', Mock(side_effect=se))
+
+        patch_urlopen.start()
+        self.collector.collect()
+        patch_urlopen.stop()
+
+        metrics = self.get_metrics()
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics, 
+                           defaultpath=self.collector.config['path'])
+        self.assertPublishedMany(publish_mock, metrics)
+
+    def get_metrics(self):
+        return {
             'java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.startTime': 14259063,
             'java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.id': 219,
             'java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.duration': 2,
@@ -61,22 +100,6 @@ class TestJolokiaCollector(CollectorTestCase):
             'java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Par_Survivor_Space.init': 3145728,
             'java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Par_Survivor_Space.used': 414088
         }
-
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics, 
-                           defaultpath=self.collector.config['path'])
-        self.assertPublishedMany(publish_mock, metrics)
-
-    @patch.object(Collector, 'publish')
-    def test_should_fail_gracefully(self, publish_mock):
-        patch_urlopen = patch('urllib2.urlopen', Mock(
-                              return_value=self.getFixture('stats_blank')))
-
-        patch_urlopen.start()
-        self.collector.collect()
-        patch_urlopen.stop()
-
-        self.assertPublishedMany(publish_mock, {})
 
 ################################################################################
 if __name__ == "__main__":

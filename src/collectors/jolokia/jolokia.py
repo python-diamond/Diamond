@@ -81,14 +81,16 @@ class JolokiaCollector(diamond.collector.Collector):
     def collect(self):
         listing = self.list_request()
         try:
-            for domain in listing['value'].keys():
+            domains = listing['value'] if listing['status'] == 200 else {}
+            for domain in domains.keys():
                 if domain not in self.IGNORE_DOMAINS:
                     obj = self.read_request(domain)
-                    mbeans = obj['value']
+                    mbeans = obj['value'] if obj['status'] == 200 else {}
                     for k, v in mbeans.iteritems():
                         if self.check_mbean(k):
                             self.collect_bean(k, v)
         except KeyError:
+            # The reponse was totally empty, or not an expected format
             self.log.error('Unable to retrieve MBean listing.')
 
     def read_json(self, request):
