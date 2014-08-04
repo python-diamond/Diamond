@@ -12,26 +12,14 @@ Collect metrics from chrony - http://chrony.tuxfamily.org/
 import re
 import subprocess
 import diamond.collector
+import diamond.convertor
 
 LINE_PATTERN = re.compile('^(?P<source>\S+).*\s+(?P<offset>[+-]\d+)(?P<unit>\w+)\s+')
 IP_PATTERN = re.compile('^\d+\.\d+\.\d+\.\d+$')
 
-MULTIPLIERS = {
-    'ns': 1/1e6,
-    'us': 1/1e3,
-    'ms': 1,
-    's': 1e3,
-    'm': 1e3 * 60,
-    'h': 1e3 * 3600,
-    'd': 1e3 * 86400,
-    'y': 1e3 * 31536000,
-}
-
 
 def convert_to_ms(offset, unit):
-    if unit in MULTIPLIERS:
-        return offset * MULTIPLIERS[unit]
-    return None
+    return diamond.convertor.time.convert(offset, unit, 'ms')
 
 
 def cleanup_source(source):
@@ -91,9 +79,10 @@ class ChronydCollector(diamond.collector.Collector):
             offset = float(m.group('offset'))
             unit = m.group('unit')
 
-            value = convert_to_ms(offset, unit)
-            if value is None:
-                self.log.error('Received unknown unit: %s', unit)
+            try:
+                value = diamond.convertor.time.convert(offset, unit, 'ms')
+            except NotImplementedError, e:
+                self.log.error('Unable to convert %s%s: %s', offset, unit, e)
                 continue
 
             self.publish('%s.offset_ms' % source, value)

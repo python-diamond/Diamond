@@ -64,6 +64,39 @@ class TestChronydCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, metrics)
 
+    @patch.object(Collector, 'publish')
+    def test_check_invalid_unit(self, publish_mock):
+        patch_collector = patch.object(ChronydCollector,
+                                       'get_output',
+                                       Mock(return_value=self.getFixture(
+                                        'bad_unit').getvalue()))
+        patch_collector.start()
+        self.collector.collect()
+        patch_collector.stop()
+
+        metrics = {
+            'adm-dns-resolver-002.offset_ms': 0.456,
+        }
+
+        self.assertPublishedMany(publish_mock, metrics)
+
+    @patch.object(Collector, 'publish')
+    def test_huge_values(self, publish_mock):
+        patch_collector = patch.object(ChronydCollector,
+                                       'get_output',
+                                       Mock(return_value=self.getFixture(
+                                        'huge_vals').getvalue()))
+        patch_collector.start()
+        self.collector.collect()
+        patch_collector.stop()
+
+        metrics = {
+            'server1.offset_ms': 8735472000000,
+            'server2.offset_ms': -1009152000000,
+        }
+
+        self.assertPublishedMany(publish_mock, metrics)
+
 ################################################################################
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,5 @@
+210 Number of sources = 2
+Name/IP Address            NP  NR  Span  Frequency  Freq Skew  Offset  Std Dev
+==============================================================================
+server1                     8   5   710      0.002      0.228   +277y     25us
+server2                     8   5   710      0.002      0.228    -32y     25us

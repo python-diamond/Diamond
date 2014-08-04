@@ -1,0 +1,5 @@
+210 Number of sources = 2
+Name/IP Address            NP  NR  Span  Frequency  Freq Skew  Offset  Std Dev
+==============================================================================
+adm-dns-resolver-001.bolc   8   5   710      0.002      0.228   +277xs    25us
+adm-dns-resolver-002.bolc   5   4   258      0.370      1.714   +456us    28us
