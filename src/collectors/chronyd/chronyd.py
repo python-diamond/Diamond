@@ -18,10 +18,6 @@ LINE_PATTERN = re.compile('^(?P<source>\S+).*\s+(?P<offset>[+-]\d+)(?P<unit>\w+)
 IP_PATTERN = re.compile('^\d+\.\d+\.\d+\.\d+$')
 
 
-def convert_to_ms(offset, unit):
-    return diamond.convertor.time.convert(offset, unit, 'ms')
-
-
 def cleanup_source(source):
     if IP_PATTERN.search(source):
         return source.replace('.', '_')
