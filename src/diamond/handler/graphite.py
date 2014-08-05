@@ -47,6 +47,8 @@ class GraphiteHandler(Handler):
             self.config['max_backlog_multiplier'])
         self.trim_backlog_multiplier = int(
             self.config['trim_backlog_multiplier'])
+        self.flow_info = self.config['flow_info']
+        self.scope_id = self.config['scope_id']
         self.metrics = []
 
         # Connect
@@ -61,13 +63,15 @@ class GraphiteHandler(Handler):
         config.update({
             'host': 'Hostname',
             'port': 'Port',
-            'proto': 'udp or tcp',
+            'proto': 'udp, udp6, tcp, or tcp6',
             'timeout': '',
             'batch': 'How many to store before sending to the graphite server',
             'max_backlog_multiplier': 'how many batches to store before trimming',  # NOQA
             'trim_backlog_multiplier': 'Trim down how many batches',
             'keepalive': 'Enable keepalives for tcp streams',
             'keepaliveinterval': 'How frequently to send keepalives',
+            'flow_info': 'IPv6 Flow Info',
+            'scope_id': 'IPv6 Scope ID',
         })
 
         return config
@@ -88,6 +92,8 @@ class GraphiteHandler(Handler):
             'trim_backlog_multiplier': 4,
             'keepalive': 0,
             'keepaliveinterval': 10,
+            'flow_info': '0',
+            'scope_id': '0',
         })
 
         return config
@@ -170,8 +176,16 @@ class GraphiteHandler(Handler):
         else:
             stream = socket.SOCK_STREAM
 
+        if (self.proto[-1] == '6'):
+            family = socket.AF_INET6
+            connection_struct = (self.host, self.port,
+                                 self.flow_info, self.scope_id)
+        else:
+            family = socket.AF_INET
+            connection_struct = (self.host, self.port)
+
         # Create socket
-        self.socket = socket.socket(socket.AF_INET, stream)
+        self.socket = socket.socket(family, stream)
         if self.socket is None:
             # Log Error
             self.log.error("GraphiteHandler: Unable to create socket.")
@@ -191,7 +205,7 @@ class GraphiteHandler(Handler):
         self.socket.settimeout(self.timeout)
         # Connect to graphite server
         try:
-            self.socket.connect((self.host, self.port))
+            self.socket.connect(connection_struct)
             # Log
             self.log.debug("GraphiteHandler: Established connection to "
                            "graphite server %s:%d.",
