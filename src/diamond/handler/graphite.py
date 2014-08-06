@@ -92,8 +92,8 @@ class GraphiteHandler(Handler):
             'trim_backlog_multiplier': 4,
             'keepalive': 0,
             'keepaliveinterval': 10,
-            'flow_info': '0',
-            'scope_id': '0',
+            'flow_info': 0,
+            'scope_id': 0,
         })
 
         return config
