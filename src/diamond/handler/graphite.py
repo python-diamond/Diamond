@@ -63,7 +63,7 @@ class GraphiteHandler(Handler):
         config.update({
             'host': 'Hostname',
             'port': 'Port',
-            'proto': 'udp, udp6, tcp, or tcp6',
+            'proto': 'udp, udp4, udp6, tcp, tcp4, or tcp6',
             'timeout': '',
             'batch': 'How many to store before sending to the graphite server',
             'max_backlog_multiplier': 'how many batches to store before trimming',  # NOQA
@@ -92,8 +92,8 @@ class GraphiteHandler(Handler):
             'trim_backlog_multiplier': 4,
             'keepalive': 0,
             'keepaliveinterval': 10,
-            'flow_info': '0',
-            'scope_id': '0',
+            'flow_info': 0,
+            'scope_id': 0,
         })
 
         return config
@@ -176,13 +176,23 @@ class GraphiteHandler(Handler):
         else:
             stream = socket.SOCK_STREAM
 
-        if (self.proto[-1] == '6'):
+        if (self.proto[-1] == '4'):
+            family = socket.AF_INET
+            connection_struct = (self.host, self.port)
+        elif (self.proto[-1] == '6'):
             family = socket.AF_INET6
             connection_struct = (self.host, self.port,
                                  self.flow_info, self.scope_id)
         else:
-            family = socket.AF_INET
             connection_struct = (self.host, self.port)
+            addrinfo = socket.getaddrinfo(self.host, self.port, 0, stream)
+            if (len(addrinfo) > 0):
+                family = addrinfo[0][0]
+                if (family == socket.AF_INET6):
+                    connection_struct = (self.host, self.port,
+                                         self.flow_info, self.scope_id)
+            else:
+                family = socket.AF_INET
 
         # Create socket
         self.socket = socket.socket(family, stream)
