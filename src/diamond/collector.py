@@ -39,16 +39,17 @@ def get_hostname(config, method=None):
     if 'hostname' in config and method != 'shell':
         return config['hostname']
 
-
     if method in get_hostname.cached_results:
         return get_hostname.cached_results[method]
 
     if method == 'shell':
         if 'hostname' not in config:
             raise DiamondException(
-                    "hostname must be set to a shell command for hostname_method=shell")
+                "hostname must be set to a shell command for"
+                " hostname_method=shell")
         else:
-            hostname = subprocess.check_output(config['hostname'], shell=True).strip()
+            hostname = subprocess.check_output(config['hostname'],
+                                               shell=True).strip()
             get_hostname.cached_results[method] = hostname
             return hostname
 

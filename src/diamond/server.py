@@ -51,7 +51,8 @@ class Server(object):
         try:
                 for cfgfile in os.listdir(config['configs']['path']):
                     if cfgfile.endswith(config['configs']['extension']):
-                        newconfig = configobj.ConfigObj(config['configs']['path'] + cfgfile)
+                        newconfig = configobj.ConfigObj(
+                            config['configs']['path'] + cfgfile)
                         config.merge(newconfig)
         except KeyError:
                 pass

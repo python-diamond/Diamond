@@ -21,6 +21,7 @@ def fake_connect(self):
     # used for 'we can connect' tests
     self.socket = Mock()
 
+
 def fake_bad_connect(self):
     # used for 'we can not connect' tests
     self.socket = None
@@ -35,7 +36,6 @@ class TestGraphiteHandler(unittest.TestCase):
     def tearDown(self):
         # restore the override
         mod.GraphiteHandler._connect = self.__connect_method
-
 
     def test_single_metric(self):
         config = configobj.ConfigObj()

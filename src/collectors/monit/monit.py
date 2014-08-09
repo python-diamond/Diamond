@@ -83,10 +83,10 @@ class MonitCollector(diamond.collector.Collector):
                             'percent')[0].firstChild.data
                         metrics["%s.cpu.percent" % name] = cpu
                         if self.config['send_totals']:
-                          cpu_total = service.getElementsByTagName(
-                              'cpu')[0].getElementsByTagName(
-                              'percenttotal')[0].firstChild.data
-                          metrics["%s.cpu.percent_total" % name] = cpu_total
+                            cpu_total = service.getElementsByTagName(
+                                'cpu')[0].getElementsByTagName(
+                                'percenttotal')[0].firstChild.data
+                            metrics["%s.cpu.percent_total" % name] = cpu_total
 
                         mem = int(service.getElementsByTagName(
                             'memory')[0].getElementsByTagName(
@@ -99,15 +99,16 @@ class MonitCollector(diamond.collector.Collector):
                                     newUnit=unit))
                         metrics["%s.uptime" % name] = uptime
                         if self.config['send_totals']:
-                          mem_total = int(service.getElementsByTagName(
-                              'memory')[0].getElementsByTagName(
-                              'kilobytetotal')[0].firstChild.data)
-                          for unit in self.config['byte_unit']:
-                              metrics["%s.memory_total.%s_usage" % (name, unit)] = (
-                                  diamond.convertor.binary.convert(
-                                      value=mem,
-                                      oldUnit='kilobyte',
-                                      newUnit=unit))
+                            mem_total = int(service.getElementsByTagName(
+                                'memory')[0].getElementsByTagName(
+                                'kilobytetotal')[0].firstChild.data)
+                            for unit in self.config['byte_unit']:
+                                metrics["%s.memory_total.%s_usage" % (
+                                    name, unit)] = (
+                                    diamond.convertor.binary.convert(
+                                        value=mem,
+                                        oldUnit='kilobyte',
+                                        newUnit=unit))
 
                     except:
                         pass

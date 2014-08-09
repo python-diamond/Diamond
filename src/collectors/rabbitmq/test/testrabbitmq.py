@@ -71,7 +71,8 @@ class TestRabbitMQCollector(CollectorTestCase):
     @patch('pyrabbit.api.Client')
     @patch('pyrabbit.http.HTTPClient')
     @patch.object(Collector, 'publish')
-    def test_should_publish_nested_keys(self, publish_mock, httpclient, client_mock):
+    def test_should_publish_nested_keys(self, publish_mock, httpclient,
+                                        client_mock):
         client = Mock()
         queue_data = [{
             'more_keys': {'nested_key': 1},

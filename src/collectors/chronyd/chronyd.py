@@ -14,7 +14,8 @@ import subprocess
 import diamond.collector
 import diamond.convertor
 
-LINE_PATTERN = re.compile('^(?P<source>\S+).*\s+(?P<offset>[+-]\d+)(?P<unit>\w+)\s+')
+LINE_PATTERN = re.compile(
+    '^(?P<source>\S+).*\s+(?P<offset>[+-]\d+)(?P<unit>\w+)\s+')
 IP_PATTERN = re.compile('^\d+\.\d+\.\d+\.\d+$')
 
 

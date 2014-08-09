@@ -32,4 +32,3 @@ class BaseCollectorTest(unittest.TestCase):
         }
         c = Collector(config, [])
         self.assertEquals('custom.localhost', c.get_hostname())
-

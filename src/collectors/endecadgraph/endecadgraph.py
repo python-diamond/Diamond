@@ -2,7 +2,7 @@
 
 """
 Collects stats from Endeca Dgraph/MDEX server.
-Tested with: Endeca Information Access Platform version 6.3.0.655584 
+Tested with: Endeca Information Access Platform version 6.3.0.655584
 
 === Authors
 
@@ -54,7 +54,8 @@ class EndecaDgraphCollector(diamond.collector.Collector):
     XML_NS = '{http://xmlns.endeca.com/ene/dgraph}'
 
     def get_default_config_help(self):
-        config_help = super(EndecaDgraphCollector, self).get_default_config_help()
+        config_help = super(EndecaDgraphCollector,
+                            self).get_default_config_help()
         config_help.update({
             'host': "Hostname of Endeca Dgraph instance",
             'port': "Port of the Dgraph API listener",
@@ -112,7 +113,8 @@ class EndecaDgraphCollector(diamond.collector.Collector):
             except Exception, e:
                 self.log.error('Something went wrong: %s', e)
 
-        url = 'http://%s:%d/admin?op=stats' % (self.config['host'], self.config['port'])
+        url = 'http://%s:%d/admin?op=stats' % (self.config['host'],
+                                               self.config['port'])
         try:
             xml = urllib2.urlopen(url, timeout=self.config['timeout']).read()
         except Exception, e:

@@ -26,10 +26,11 @@ class TestChronydCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_ip_addresses(self, publish_mock):
-        patch_collector = patch.object(ChronydCollector,
-                                       'get_output',
-                                       Mock(return_value=self.getFixture(
-                                        'fedora').getvalue()))
+        patch_collector = patch.object(
+            ChronydCollector,
+            'get_output',
+            Mock(return_value=self.getFixture(
+                'fedora').getvalue()))
         patch_collector.start()
         self.collector.collect()
         patch_collector.stop()
@@ -41,18 +42,20 @@ class TestChronydCollector(CollectorTestCase):
             '85_255_214_66.offset_ms': 0.386,
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
+        self.setDocExample(
+            collector=self.collector.__class__.__name__,
+            metrics=metrics,
+            defaultpath=self.collector.config['path'])
 
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_fqdns(self, publish_mock):
-        patch_collector = patch.object(ChronydCollector,
-                                       'get_output',
-                                       Mock(return_value=self.getFixture(
-                                        'fqdn').getvalue()))
+        patch_collector = patch.object(
+            ChronydCollector,
+            'get_output',
+            Mock(return_value=self.getFixture(
+                'fqdn').getvalue()))
         patch_collector.start()
         self.collector.collect()
         patch_collector.stop()
@@ -66,10 +69,11 @@ class TestChronydCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_check_invalid_unit(self, publish_mock):
-        patch_collector = patch.object(ChronydCollector,
-                                       'get_output',
-                                       Mock(return_value=self.getFixture(
-                                        'bad_unit').getvalue()))
+        patch_collector = patch.object(
+            ChronydCollector,
+            'get_output',
+            Mock(return_value=self.getFixture(
+                'bad_unit').getvalue()))
         patch_collector.start()
         self.collector.collect()
         patch_collector.stop()
@@ -82,10 +86,11 @@ class TestChronydCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_huge_values(self, publish_mock):
-        patch_collector = patch.object(ChronydCollector,
-                                       'get_output',
-                                       Mock(return_value=self.getFixture(
-                                        'huge_vals').getvalue()))
+        patch_collector = patch.object(
+            ChronydCollector,
+            'get_output',
+            Mock(return_value=self.getFixture(
+                'huge_vals').getvalue()))
         patch_collector.start()
         self.collector.collect()
         patch_collector.stop()

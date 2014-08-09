@@ -219,7 +219,8 @@ class time:
 
     def year(self, value=None):
         """
-        We do *NOT* know for what year we are converting so lets assume the year has 365 days.
+        We do *NOT* know for what year we are converting so lets assume the
+        year has 365 days.
         """
         if value is None:
             return self.day() / 365

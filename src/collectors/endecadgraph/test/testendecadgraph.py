@@ -31,13 +31,20 @@ class TestEndecaDgraphCollector(CollectorTestCase):
 
         # assert with a random selection (instead of 1000+)
         metrics = {
-            'statistics.cache_section.main_cache.aggregatedrecordcount.entry_count': 3957,
-            'statistics.cache_section.main_cache.dval_bincount.entry_count': 4922448,
-            'statistics.hot_spot_analysis.content_spotlighting_performance.min': 0.0209961,
-            'statistics.hot_spot_analysis.insertion_sort_time.avg': 0.00523964,
-            'statistics.hot_spot_analysis.ordinal_insertion_sort_time.n': 1484793,
-            'statistics.search_performance_analysis.qconj_lookupphr.min': 0.000976562,
-            'statistics.updates.update_latency.commit.audit_stat_calculation_time_resume_.n': 0,
+            'statistics.cache_section.main_cache.'
+            'aggregatedrecordcount.entry_count': 3957,
+            'statistics.cache_section.main_cache.'
+            'dval_bincount.entry_count': 4922448,
+            'statistics.hot_spot_analysis.'
+            'content_spotlighting_performance.min': 0.0209961,
+            'statistics.hot_spot_analysis.'
+            'insertion_sort_time.avg': 0.00523964,
+            'statistics.hot_spot_analysis.'
+            'ordinal_insertion_sort_time.n': 1484793,
+            'statistics.search_performance_analysis.'
+            'qconj_lookupphr.min': 0.000976562,
+            'statistics.updates.update_latency.'
+            'commit.audit_stat_calculation_time_resume_.n': 0,
         }
         self.assertPublishedMany(publish_mock, metrics)
 

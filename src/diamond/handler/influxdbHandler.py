@@ -78,7 +78,7 @@ class InfluxdbHandler(Handler):
         self.influx = None
         self.batch_timestamp = time.time()
         self.time_multiplier = 1
-        
+
         # Connect
         self._connect()
 
@@ -132,22 +132,29 @@ class InfluxdbHandler(Handler):
         self._close()
 
     def process(self, metric):
-        if self.batch_count <= self.metric_max_cache :
-              # Add the data to the batch
-              self.batch.setdefault(metric.path, []).append([metric.timestamp,
-                                                             metric.value])
-              self.batch_count += 1
+        if self.batch_count <= self.metric_max_cache:
+            # Add the data to the batch
+            self.batch.setdefault(metric.path, []).append([metric.timestamp,
+                                                           metric.value])
+            self.batch_count += 1
         # If there are sufficient metrics, then pickle and send
-        if self.batch_count >= self.batch_size and (time.time() - self.batch_timestamp) > 2**self.time_multiplier :
+        if self.batch_count >= self.batch_size and (
+                time.time() - self.batch_timestamp) > 2**self.time_multiplier:
             # Log
-            self.log.debug("InfluxdbHandler: Sending batch sizeof : %d/%d after %fs",
-                           self.batch_count,self.batch_size,(time.time() - self.batch_timestamp))
+            self.log.debug(
+                "InfluxdbHandler: Sending batch sizeof : %d/%d after %fs",
+                self.batch_count,
+                self.batch_size,
+                (time.time() - self.batch_timestamp))
             # reset the batch timer
-            self.batch_timestamp=time.time()
+            self.batch_timestamp = time.time()
             # Send pickled batch
             self._send()
         else:
-            self.log.debug("InfluxdbHandler: not sending batch of %d as timestamp is %f",self.batch_count, (time.time() - self.batch_timestamp))
+            self.log.debug(
+                "InfluxdbHandler: not sending batch of %d as timestamp is %f",
+                self.batch_count,
+                (time.time() - self.batch_timestamp))
 
     def _send(self):
         """
@@ -170,7 +177,7 @@ class InfluxdbHandler(Handler):
                             "name": path,
                             "columns": ["time", "value"]})
                     # Send data to influxdb
-                    self.log.debug("InfluxdbHandler: writing %d series of data", 
+                    self.log.debug("InfluxdbHandler: writing %d series of data",
                                    len(metrics))
                     self.influx.write_points(metrics,
                                              time_precision=self.time_precision)
@@ -183,8 +190,10 @@ class InfluxdbHandler(Handler):
         except Exception:
                 self._close()
                 if self.time_multiplier < 5:
-                       self.time_multiplier += 1
-                self._throttle_error("InfluxdbHandler: Error sending metrics, waiting for %ds.", 2**self.time_multiplier)
+                    self.time_multiplier += 1
+                self._throttle_error(
+                    "InfluxdbHandler: Error sending metrics, waiting for %ds.",
+                    2**self.time_multiplier)
                 raise
 
     def _connect(self):

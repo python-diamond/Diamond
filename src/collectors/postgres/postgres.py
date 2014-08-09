@@ -253,8 +253,11 @@ class DatabaseStats(QueryStats):
         WHERE pg_stat_database.datname
         NOT IN ('template0','template1','postgres')
     """
-    query = post_92_query.replace('pg_stat_database.temp_files as temp_files,', '').replace(
-                                  'pg_stat_database.temp_bytes as temp_bytes,', '')
+    query = post_92_query.replace(
+        'pg_stat_database.temp_files as temp_files,',
+        '').replace(
+        'pg_stat_database.temp_bytes as temp_bytes,',
+        '')
 
 
 class UserTableStats(QueryStats):
@@ -351,7 +354,8 @@ class ConnectionStateStats(QueryStats):
              ) AS tmp2
         ON tmp.state=tmp2.state ORDER BY 1
     """
-    post_92_query = query.replace('procpid', 'pid').replace('current_query', 'query')
+    post_92_query = query.replace('procpid', 'pid').replace('current_query',
+                                                            'query')
 
 
 class LockStats(QueryStats):
