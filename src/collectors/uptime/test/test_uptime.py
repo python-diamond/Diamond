@@ -31,7 +31,7 @@ class TestUptimeCollector(CollectorTestCase):
         self.assertTrue(UptimeCollector)
 
     @patch('__builtin__.open')
-    @patch('os.access', Mock(return_value=True))
+    @patch('os.path.exists', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_open_proc_uptime(self, publish_mock, open_mock):
         open_mock.return_value = StringIO('1288459.83 10036802.26')
@@ -40,12 +40,8 @@ class TestUptimeCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_sanity_check(self, publish_mock):
-        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
-            '3600 10036802.26')))
-
-        patch_open.start()
+        self.collector.PROC = self.getFixturePath('sanity_check')
         self.collector.collect()
-        patch_open.stop()
 
         self.assertPublishedMany(publish_mock, {
             'minutes': 60
@@ -53,19 +49,10 @@ class TestUptimeCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_malformed_input(self, publish_mock):
-        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
-            'wrtwtwt 10036802.26')))
-
-        patch_open.start()
+        self.collector.PROC = self.getFixturePath('malformed_input')
         self.collector.collect()
-        patch_open.stop()
-
-        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
-            '3600.00 10036802.26')))
-
-        patch_open.start()
+        self.collector.PROC = self.getFixturePath('sanity_check')
         self.collector.collect()
-        patch_open.stop()
 
         self.assertPublishedMany(publish_mock, {
             'minutes': 60.0
