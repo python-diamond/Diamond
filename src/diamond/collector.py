@@ -48,8 +48,12 @@ def get_hostname(config, method=None):
                 "hostname must be set to a shell command for"
                 " hostname_method=shell")
         else:
-            hostname = subprocess.check_output(config['hostname'],
-                                               shell=True).strip()
+            proc = subprocess.Popen(config['hostname'],
+                                    shell=True,
+                                    stdout=subprocess.PIPE)
+            hostname = proc.communicate()[0].strip()
+            if proc.returncode != 0:
+                raise subprocess.CalledProcessError(retcode, cmd)
             get_hostname.cached_results[method] = hostname
             return hostname
 
