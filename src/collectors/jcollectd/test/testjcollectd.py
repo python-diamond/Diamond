@@ -10,7 +10,7 @@ from mock import Mock
 from mock import patch
 
 from diamond.collector import Collector
-from jcollectd import JCollectdCollector
+from jcollectd import JCollectdCollector, sanitize_word
 
 
 ###############################################################################
@@ -23,6 +23,14 @@ class TestJCollectdCollector(CollectorTestCase):
 
     def test_import(self):
         self.assertTrue(JCollectdCollector)
+
+    def test_sanitize(self):
+        self.assertEqual(sanitize_word('bla'), 'bla')
+        self.assertEqual(sanitize_word('bla:'), 'bla')
+        self.assertEqual(sanitize_word('foo:bar'), 'foo_bar')
+        self.assertEqual(sanitize_word('foo:!bar'), 'foo_bar')
+        self.assertEqual(sanitize_word('"ou812"'), 'ou812')
+        self.assertEqual(sanitize_word('Aap! N@@t mi_es'), 'Aap_N_t_mi_es')
 
 ###############################################################################
 if __name__ == "__main__":

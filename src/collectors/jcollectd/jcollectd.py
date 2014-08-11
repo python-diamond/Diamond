@@ -184,7 +184,7 @@ class ListenerThread(threading.Thread):
         parts.append(item.typeinstance)
 
         # construct full path, from safe parts
-        name = '.'.join([re.sub('[\. /]', '_', part) for part in parts])
+        name = '.'.join([sanitize_word(part) for part in parts])
 
         if item[0][0] == 0:
             is_counter = True
@@ -193,6 +193,15 @@ class ListenerThread(threading.Thread):
         dp = Datapoint(item.host, item.time, name, item[0][1], is_counter)
 
         return dp
+
+
+def sanitize_word(s):
+    """Remove non-alphanumerical characters from metric word.
+    And trim excessive underscores.
+    """
+    s = re.sub('[^\w-]+', '_', s)
+    s = re.sub('__+', '_', s)
+    return s.strip('_')
 
 
 class Datapoint(object):
