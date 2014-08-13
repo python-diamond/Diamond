@@ -56,6 +56,10 @@ class Server(object):
                         config.merge(newconfig)
         except KeyError:
                 pass
+            
+        if 'server' not in config:
+            raise Exception('Failed to reload config file %s!' % configfile)
+            
         self.config = config
 
     def load_handler(self, fqcn):
