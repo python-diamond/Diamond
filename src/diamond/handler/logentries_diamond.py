@@ -11,7 +11,8 @@ based on data in real time.
 
 Enable this handler
 
- * handers = diamond.handler.logentries.logentriesHandler
+ * handers = diamond.handler.logentries.LogentriesDiamondHandler
+ * log_token = [Your Log Token](https://logentries.com/doc/input-token/)
 
 
 """
@@ -26,7 +27,6 @@ import json
 class LogentriesDiamondHandler(Handler):
     """
       Implements the abstract Handler class
-      Sending data to a Logentries
     """
     def __init__(self, config=None):
         """
@@ -73,7 +73,7 @@ class LogentriesDiamondHandler(Handler):
 
     def _send(self, metric):
         """
-        Take metrics from queue and send it to Datadog API
+        Convert message to a json object and send to Lognetries
         """
         logging.debug("Sending logs.")
         topic, value, timestamp = str(metric).split()
@@ -82,4 +82,3 @@ class LogentriesDiamondHandler(Handler):
                               + self.log_token, msg)
         urllib2.urlopen(req)
         time.sleep(1)
-
