@@ -38,7 +38,7 @@ class GridEngineCollector(diamond.collector.Collector):
 
     class StatsParser(object):
         def __init__(self, document):
-            self.dom = xml.dom.minidom.parseString(document)
+            self.dom = xml.dom.minidom.parseString(document.strip())
 
         def get_tag_text(self, node, tag_name):
             el = node.getElementsByTagName(tag_name)[0]
@@ -53,7 +53,7 @@ class GridEngineCollector(diamond.collector.Collector):
 
     class QueueStatsParser(StatsParser):
         def __init__(self, document):
-            self.dom = xml.dom.minidom.parseString(document)
+            self.dom = xml.dom.minidom.parseString(document.strip())
 
         def parse(self):
             cluster_queue_summaries = self.dom.getElementsByTagName(
