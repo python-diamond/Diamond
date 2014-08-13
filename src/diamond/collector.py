@@ -69,11 +69,15 @@ def get_hostname(config, method=None):
     if method == 'fqdn_short':
         hostname = socket.getfqdn().split('.')[0]
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'fqdn':
         hostname = socket.getfqdn().replace('.', '_')
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'fqdn_rev':
@@ -81,11 +85,15 @@ def get_hostname(config, method=None):
         hostname.reverse()
         hostname = '.'.join(hostname)
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'uname_short':
         hostname = os.uname()[1].split('.')[0]
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'uname_rev':
@@ -93,16 +101,22 @@ def get_hostname(config, method=None):
         hostname.reverse()
         hostname = '.'.join(hostname)
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'hostname':
         hostname = socket.gethostname()
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'hostname_short':
         hostname = socket.gethostname().split('.')[0]
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'hostname_rev':
@@ -110,6 +124,8 @@ def get_hostname(config, method=None):
         hostname.reverse()
         hostname = '.'.join(hostname)
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'none':
