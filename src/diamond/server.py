@@ -320,14 +320,14 @@ class Server(object):
         # Set Running Flag
         self.running = True
 
+        # Load config
+        self.load_config()
+
         # Load handlers
         if 'handlers_path' in self.config['server']:
             handlers_path = self.config['server']['handlers_path']
             self.load_include_path([handlers_path])
         self.load_handlers()
-
-        # Load config
-        self.load_config()
 
         # Load collectors
 
