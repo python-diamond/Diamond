@@ -99,4 +99,4 @@ class UserScriptsCollector(diamond.collector.Collector):
                 floatprecision = 0
                 if "." in value:
                     floatprecision = self.config['floatprecision']
-                self.publish(name, value, floatprecision)
+                self.publish(name, value, precision=floatprecision)
