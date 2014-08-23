@@ -1,7 +1,11 @@
 # coding=utf-8
 
 """
-Collect the elasticsearch stats for the local node
+Collect the elasticsearch stats for the local node.
+
+Supports multiple instances. When using the 'instances'
+parameter the instance alias will be appended to the
+'path' parameter.
 
 #### Dependencies
 
@@ -26,12 +30,45 @@ RE_LOGSTASH_INDEX = re.compile('^(.*)-\d\d\d\d\.\d\d\.\d\d$')
 
 class ElasticSearchCollector(diamond.collector.Collector):
 
+    def __init__(self, *args, **kwargs):
+        super(ElasticSearchCollector, self).__init__(*args, **kwargs)
+
+        instance_list = self.config['instances']
+        if isinstance(instance_list, basestring):
+            instance_list = [instance_list]
+
+        if len(instance_list) == 0:
+            host = self.config['host']
+            port = self.config['port']
+            # use empty alias to identify single-instance config
+            # omitting the use of the alias in the metrics path
+            instance_list.append('@%s:%s' % (host, port))
+
+        self.instances = {}
+        for instance in instance_list:
+            if '@' in instance:
+                (alias, hostport) = instance.split('@', 1)
+            else:
+                alias = 'default'
+                hostport = instance
+
+            if ':' in hostport:
+                host, port = hostport.split(':', 1)
+            else:
+                host = hostport
+                port = 9200
+
+            self.instances[alias] = (host, int(port))
+
     def get_default_config_help(self):
         config_help = super(ElasticSearchCollector,
                             self).get_default_config_help()
         config_help.update({
             'host': "",
             'port': "",
+            'instances': "List of instances. When set this overrides "
+            "the 'host' and 'port' settings. Instance format: "
+            "instance [<alias>@]<hostname>[:<port>]",
             'stats': "Available stats: \n"
             + " - jvm (JVM information) \n"
             + " - thread_pool (Thread pool information) \n"
@@ -49,18 +86,22 @@ class ElasticSearchCollector(diamond.collector.Collector):
         """
         config = super(ElasticSearchCollector, self).get_default_config()
         config.update({
-            'host':     '127.0.0.1',
-            'port':     9200,
-            'path':     'elasticsearch',
-            'stats':    ['jvm', 'thread_pool', 'indices'],
+            'host':           '127.0.0.1',
+            'port':           9200,
+            'instances':      [],
+            'path':           'elasticsearch',
+            'stats':          ['jvm', 'thread_pool', 'indices'],
             'logstash_mode': False,
-            'cluster':  False,
+            'cluster':       False,
         })
         return config
 
-    def _get(self, path):
-        url = 'http://%s:%i/%s' % (
-            self.config['host'], int(self.config['port']), path)
+    def _get(self, host, port, path, assert_key=None):
+        """
+        Execute a ES API call. Convert response into JSON and
+        optionally assert its structure.
+        """
+        url = 'http://%s:%i/%s' % (host, port, path)
         try:
             response = urllib2.urlopen(url)
         except Exception, err:
@@ -68,11 +109,17 @@ class ElasticSearchCollector(diamond.collector.Collector):
             return False
 
         try:
-            return json.load(response)
+            doc = json.load(response)
         except (TypeError, ValueError):
             self.log.error("Unable to parse response from elasticsearch as a"
                            + " json object")
             return False
+
+        if assert_key and not assert_key in doc:
+            self.log.error("Bad response from elasticsearch, expected key "
+                           "'%s' was missing for %s" % (assert_key, url))
+            return False
+        return doc
 
     def _copy_one_level(self, metrics, prefix, data, filter=lambda key: True):
         for key, value in data.iteritems():
@@ -128,12 +175,48 @@ class ElasticSearchCollector(diamond.collector.Collector):
         else:
             metrics[metric_path] = value
 
-    def collect(self):
-        if json is None:
-            self.log.error('Unable to import json')
-            return {}
+    def collect_instance_cluster_stats(self, host, port, metrics):
+        result = self._get(host, port, '_cluster/health')
+        if not result:
+            return
 
-        result = self._get('_nodes/_local/stats?all=true')
+        self._add_metric(metrics, 'cluster_health.nodes.total',
+                         result, ['number_of_nodes'])
+        self._add_metric(metrics, 'cluster_health.nodes.data',
+                         result, ['number_of_data_nodes'])
+        self._add_metric(metrics, 'cluster_health.shards.active_primary',
+                         result, ['active_primary_shards'])
+        self._add_metric(metrics, 'cluster_health.shards.active',
+                         result, ['active_shards'])
+        self._add_metric(metrics, 'cluster_health.shards.relocating',
+                         result, ['relocating_shards'])
+        self._add_metric(metrics, 'cluster_health.shards.unassigned',
+                         result, ['unassigned_shards'])
+        self._add_metric(metrics, 'cluster_health.shards.initializing',
+                         result, ['initializing_shards'])
+
+    def collect_instance_index_stats(self, host, port, metrics):
+        result = self._get(host, port, '_stats?clear=true&docs=true&store=true&'
+                                   + 'indexing=true&get=true&search=true', '_all')
+        if not result:
+            return
+
+        _all = result['_all']
+        self._index_metrics(metrics, 'indices._all', _all['primaries'])
+
+        if 'indices' in _all:
+            indices = _all['indices']
+        elif 'indices' in result:          # elasticsearch >= 0.90RC2
+            indices = result['indices']
+        else:
+            return
+
+        for name, index in indices.iteritems():
+            self._index_metrics(metrics, 'indices.%s' % name,
+                                index['primaries'])
+
+    def collect_instance(self, alias, host, port):
+        result = self._get(host, port, '_nodes/_local/stats?all=true', 'nodes')
         if not result:
             return
 
@@ -272,49 +355,29 @@ class ElasticSearchCollector(diamond.collector.Collector):
         # network
         self._copy_two_level(metrics, 'network', data['network'])
 
-         #cluster
+        #
+        # cluster (optional)
         if str_to_bool(self.config['cluster']):
-            result = self._get('_cluster/health')
+            self.collect_instance_cluster_stats(host, port, metrics)
 
-            if not result:
-                return
-
-            self._add_metric(metrics, 'cluster_health.nodes.total',
-                             result, ['number_of_nodes'])
-            self._add_metric(metrics, 'cluster_health.nodes.data',
-                             result, ['number_of_data_nodes'])
-            self._add_metric(metrics, 'cluster_health.shards.active_primary',
-                             result, ['active_primary_shards'])
-            self._add_metric(metrics, 'cluster_health.shards.active',
-                             result, ['active_shards'])
-            self._add_metric(metrics, 'cluster_health.shards.relocating',
-                             result, ['relocating_shards'])
-            self._add_metric(metrics, 'cluster_health.shards.unassigned',
-                             result, ['unassigned_shards'])
-            self._add_metric(metrics, 'cluster_health.shards.initializing',
-                             result, ['initializing_shards'])
-
+        #
+        # indices (optional)
         if 'indices' in self.config['stats']:
-            #
-            # individual index stats
-            result = self._get('_stats?clear=true&docs=true&store=true&'
-                               + 'indexing=true&get=true&search=true')
-            if not result:
-                return
+            self.collect_instance_index_stats(host, port, metrics)
 
-            _all = result['_all']
-            self._index_metrics(metrics, 'indices._all', _all['primaries'])
-
-            if 'indices' in _all:
-                indices = _all['indices']
-            elif 'indices' in result:          # elasticsearch >= 0.90RC2
-                indices = result['indices']
-            else:
-                return
-
-            for name, index in indices.iteritems():
-                self._index_metrics(metrics, 'indices.%s' % name,
-                                    index['primaries'])
-
+        #
+        # all done, now publishing all metrics
         for key in metrics:
-            self.publish(key, metrics[key])
+            full_key = key
+            if alias != '':
+                full_key = '%s.%s' % (alias, full_key)
+            self.publish(full_key, metrics[key])
+
+    def collect(self):
+        if json is None:
+            self.log.error('Unable to import json')
+            return {}
+
+        for alias in sorted(self.instances):
+            (host, port) = self.instances[alias]
+            self.collect_instance(alias, host, port)
