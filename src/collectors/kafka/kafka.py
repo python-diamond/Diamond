@@ -8,7 +8,6 @@ Collect stats via MX4J from Kafka
  * urllib2
  * xml.etree
 """
-
 import urllib2
 
 from urllib import urlencode
@@ -29,19 +28,6 @@ import diamond.collector
 
 
 class KafkaCollector(diamond.collector.Collector):
-    MBEAN_WHITELIST = frozenset([
-        'kafka.log.LogStats',
-        'kafka.network.SocketServerStats',
-        'kafka.message.LogFlushStats',
-        'kafka.server.BrokerTopicStat',
-    ])
-
-    JVM_MBEANS = {
-        'java.lang:type=GarbageCollector,name=PS MarkSweep': 'jvm.gc.marksweep',
-        'java.lang:type=GarbageCollector,name=PS Scavenge': 'jvm.gc.scavenge',
-        'java.lang:type=Threading': 'jvm.threading',
-    }
-
     ATTRIBUTE_TYPES = {
         'double': float,
         'float': float,
@@ -95,8 +81,8 @@ class KafkaCollector(diamond.collector.Collector):
             self.log.error("Unable to parse response from mx4j")
             return None
 
-    def get_mbeans(self):
-        query_args = {'querynames': 'kafka:*'}
+    def get_mbeans(self, pattern):
+        query_args = {'querynames': pattern}
 
         mbeans = self._get('/serverbydomain', query_args)
         if mbeans is None:
@@ -106,14 +92,11 @@ class KafkaCollector(diamond.collector.Collector):
 
         for mbean in mbeans.getiterator(tag='MBean'):
             classname = mbean.get('classname')
-
-            if classname not in self.MBEAN_WHITELIST:
-                continue
-
             objectname = mbean.get('objectname')
+
             if objectname:
                 found_beans.add(objectname)
-
+        
         return found_beans
 
     def query_mbean(self, objectname, key_prefix=None):
@@ -129,7 +112,23 @@ class KafkaCollector(diamond.collector.Collector):
             return
 
         if key_prefix is None:
-            key_prefix = objectname.split('=')[1]
+            # Could be 1 or 2 = in the string
+            # java.lang:type=Threading
+            # "kafka.controller":type="ControllerStats",name="LeaderElectionRateAndTimeMs"
+            split_num = objectname.count('=')
+            for i in range(split_num):
+              if i == 0:
+                key_prefix = objectname.split('=')[1]
+                if '"' in key_prefix:
+                  key_prefix = key_prefix.split('"')[1]
+                if "," in key_prefix:
+                  key_prefix = key_prefix.split(',')[0]
+              elif i > 0:
+                key = objectname.split('=')[2]
+                if key:
+                  if '"' in key:
+                    key = key.split('"')[1]
+                  key_prefix = key_prefix + '.' + key
 
         metrics = {}
 
@@ -154,17 +153,17 @@ class KafkaCollector(diamond.collector.Collector):
             return
 
         # Get list of gatherable stats
-        mbeans = self.get_mbeans()
+        query_list = [ '*kafka*:*', 'java.lang:type=GarbageCollector,name=*', 'java.lang:type=Threading' ]
+        mbeans = set()
+        for pattern in query_list:
+          match = self.get_mbeans(pattern)
+          mbeans.update(match)
 
         metrics = {}
 
         # Query each one for stats
         for mbean in mbeans:
             stats = self.query_mbean(mbean)
-            metrics.update(stats)
-
-        for mbean, key_prefix in self.JVM_MBEANS.iteritems():
-            stats = self.query_mbean(mbean, key_prefix)
             metrics.update(stats)
 
         # Publish stats
