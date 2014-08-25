@@ -1,0 +1,10 @@
+[Unit]
+Description=diamond - A system statistics collector for graphite
+
+[Service]
+PIDFile=/var/run/diamond.pid
+ExecStart=/usr/bin/python /usr/bin/diamond --pidfile=/var/run/diamond.pid --foreground
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
