@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+###############################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,7 +11,7 @@ from mock import patch
 from diamond.collector import Collector
 from darner import DarnerCollector
 
-################################################################################
+###############################################################################
 
 
 class TestDarnerCollector(CollectorTestCase):
@@ -61,6 +61,6 @@ class TestDarnerCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+###############################################################################
 if __name__ == "__main__":
     unittest.main()

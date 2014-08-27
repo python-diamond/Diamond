@@ -42,7 +42,7 @@ class DarnerCollector(diamond.collector.Collector):
             + " of possibilities. Leave unset to publish all.",
             'hosts': "List of hosts, and ports to collect. Set an alias by "
             + " prefixing the host:port with alias@",
-            'publish_queues': "Publish individual queue stats (defaults to True)",
+            'publish_queues': "Publish queue stats (defaults to True)",
         })
         return config_help
 
@@ -55,8 +55,8 @@ class DarnerCollector(diamond.collector.Collector):
             'path':     'darner',
 
             # Which rows of 'status' you would like to publish.
-            # 'telnet host port' and type stats and hit enter to see the list of
-            # possibilities.
+            # 'telnet host port' and type stats and hit enter to see the list
+            # of possibilities.
             # Leave unset to publish all
             #'publish': ''
             'publish_queues': True,
@@ -98,8 +98,10 @@ class DarnerCollector(diamond.collector.Collector):
             pieces = line.split(' ')
             if pieces[0] != 'STAT' or pieces[1] in ignored:
                 continue
-            if re.match( r'^queue', pieces[1]):
-                queue_match = re.match( r'^queue_(.*)_(items|waiters|open_transactions)$', pieces[1])
+            if re.match(r'^queue', pieces[1]):
+                queue_match = re.match(
+                    r'^queue_(.*)_(items|waiters|open_transactions)$',
+                    pieces[1])
                 queue_name = queue_match.group(1).replace('.', '_')
                 if not queue_name in queues:
                     queues[queue_name] = {}
@@ -129,8 +131,10 @@ class DarnerCollector(diamond.collector.Collector):
             #Publish queue stats if configured
             if str_to_bool(self.config['publish_queues']):
                 for queue in queues:
-                   for queue_stat in queues[queue]:
-                       self.publish_gauge(alias + ".queues." + queue + "." + queue_stat,  queues[queue][queue_stat])
+                    for queue_stat in queues[queue]:
+                        self.publish_gauge(
+                            alias + ".queues." + queue + "." + queue_stat,
+                            queues[queue][queue_stat])
 
             # figure out what we're configured to get, defaulting to everything
             desired = self.config.get('publish', stats.keys())
