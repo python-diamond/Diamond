@@ -28,23 +28,35 @@ class TestDarnerCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        patch_raw_stats = patch.object(
+        patch_raw_stats1 = patch.object(
             DarnerCollector,
             'get_raw_stats',
             Mock(return_value=self.getFixture(
-                'stats').getvalue()))
+                'stats1').getvalue()))
 
-        patch_raw_stats.start()
+        patch_raw_stats2 = patch.object(
+            DarnerCollector,
+            'get_raw_stats',
+            Mock(return_value=self.getFixture(
+                'stats2').getvalue()))
+
+        patch_raw_stats1.start()
         self.collector.collect()
-        patch_raw_stats.stop()
+        patch_raw_stats1.stop()
+
+        self.assertPublishedMany(publish_mock, {})
+
+        patch_raw_stats2.start()
+        self.collector.collect()
+        patch_raw_stats2.stop()
 
         metrics = {
             'localhost.uptime': 2422175,
-            'localhost.total_items': 0,
+            'localhost.total_items': 20,
             'localhost.curr_connections': 2,
-            'localhost.total_connections': 0,
-            'localhost.cmd_get': 0,
-            'localhost.cmd_set': 0,
+            'localhost.total_connections': 15,
+            'localhost.cmd_get': 100,
+            'localhost.cmd_set': 150,
             'localhost.queues.test1.items': 2,
             'localhost.queues.test1.waiters': 4,
             'localhost.queues.test1.open_transactions': 8,
