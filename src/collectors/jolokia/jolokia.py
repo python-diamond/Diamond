@@ -132,6 +132,7 @@ class JolokiaCollector(diamond.collector.Collector):
     def clean_up(self, text):
         text = re.sub('[:,]', '.', text)
         text = re.sub('[=\s]', '_', text)
+        text = re.sub('["\']', '', text)
         return text
 
     def collect_bean(self, prefix, obj):
