@@ -1,0 +1,5 @@
+message Metric {
+    required string path = 1;
+    required int64 timestamp = 2;
+    required float value = 3;
+}
