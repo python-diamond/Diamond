@@ -172,6 +172,16 @@ class time:
             v = self.second(value=value)
         elif unit.lower() in ['minute', 'minutes', 'm']:
             v = self.minute(value=value)
+        elif unit.lower() in ['hour', 'hours', 'h']:
+            v = self.hour(value=value)
+        elif unit.lower() in ['day', 'days', 'd']:
+            v = self.day(value=value)
+        elif unit.lower() in ['year', 'years', 'y']:
+            v = self.year(value=value)
+        elif unit.lower() in ['microsecond', 'microseconds', 'us']:
+            v = self.microsecond(value=value)
+        elif unit.lower() in ['nanosecond', 'nanoseconds', 'ns']:
+            v = self.nanosecond(value=value)
         else:
             raise NotImplementedError("unit %s" % unit)
 
@@ -194,3 +204,37 @@ class time:
             return self.second() / 60
         else:
             self.millisecond(self.second(value * 60))
+
+    def hour(self, value=None):
+        if value is None:
+            return self.minute() / 60
+        else:
+            self.millisecond(self.minute(value * 60))
+
+    def day(self, value=None):
+        if value is None:
+            return self.hour() / 24
+        else:
+            self.millisecond(self.hour(value * 24))
+
+    def year(self, value=None):
+        """
+        We do *NOT* know for what year we are converting so lets assume the
+        year has 365 days.
+        """
+        if value is None:
+            return self.day() / 365
+        else:
+            self.millisecond(self.day(value * 365))
+
+    def microsecond(self, value=None):
+        if value is None:
+            return self.millisecond() * 1000
+        else:
+            self.millisecond(value / 1000)
+
+    def nanosecond(self, value=None):
+        if value is None:
+            return self.microsecond() * 1000
+        else:
+            self.millisecond(self.microsecond(value / 1000))

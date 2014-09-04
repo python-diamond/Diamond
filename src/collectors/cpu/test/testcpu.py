@@ -36,6 +36,7 @@ class TestCPUCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_open_proc_stat(self, publish_mock, open_mock):
+        CPUCollector.PROC = '/proc/stat'
         open_mock.return_value = StringIO('')
         self.collector.collect()
         open_mock.assert_called_once_with('/proc/stat')
@@ -114,6 +115,41 @@ class TestCPUCollector(CollectorTestCase):
         }
 
         self.assertPublishedMany(publish_mock, metrics)
+
+    @patch.object(Collector, 'publish')
+    def test_473(self, publish_mock):
+        """
+        No cpu value should ever be over 100
+        """
+        self.collector.config['interval'] = 60
+        patch_open = patch('os.path.isdir', Mock(return_value=True))
+        patch_open.start()
+
+        CPUCollector.PROC = self.getFixturePath('473_1')
+        self.collector.collect()
+
+        self.assertPublishedMany(publish_mock, {})
+
+        CPUCollector.PROC = self.getFixturePath('473_2')
+        self.collector.collect()
+
+        patch_open.stop()
+
+        totals = {}
+
+        for call in publish_mock.mock_calls:
+            call = call[1]
+            if call[0][:6] == 'total.':
+                continue
+            if call[1] > 100:
+                raise ValueError("metric %s: %s should not be over 100!" % (call[0], call[1]))
+            k = call[0][:4]
+            totals[k] = totals.get(k, 0) + call[1]
+
+        for t in totals:
+            # Allow rounding errors
+            if totals[t] >= 101:
+                raise ValueError("metric total for %s: %s should not be over 100!" % (t, totals[t]))
 
 
 class TestCPUCollectorNormalize(CollectorTestCase):

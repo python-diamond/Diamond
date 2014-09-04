@@ -12,7 +12,7 @@ from test import run_only
 from mock import Mock
 
 from diamond.collector import Collector
-from elb import ElbCollector, utc_to_local
+from elb import ElbCollector
 
 
 def run_only_if_boto_is_available(func):
@@ -29,15 +29,19 @@ class TestElbCollector(CollectorTestCase):
 
     @run_only_if_boto_is_available
     def test_throws_exception_when_interval_not_multiple_of_60(self):
-        config = get_collector_config('ElbCollector', {'enabled': True,'interval': 10})
-        assertRaisesAndContains(Exception, 'multiple of', ElbCollector, *[config, None])
+        config = get_collector_config('ElbCollector',
+                                      {'enabled': True,
+                                       'interval': 10})
+        assertRaisesAndContains(Exception, 'multiple of',
+                                ElbCollector, *[config, None])
 
     @run_only_if_boto_is_available
     @patch('elb.cloudwatch')
     @patch('boto.ec2.connect_to_region')
     @patch('boto.ec2.elb.connect_to_region')
     @patch.object(Collector, 'publish_metric')
-    def test_ignore(self, publish_metric, elb_connect_to_region, ec2_connect_to_region, cloudwatch):
+    def test_ignore(self, publish_metric, elb_connect_to_region,
+                    ec2_connect_to_region, cloudwatch):
         config = get_collector_config(
             'ElbCollector',
             {
@@ -46,7 +50,7 @@ class TestElbCollector(CollectorTestCase):
                 'regions': {
                     'us-west-1': {}
                 },
-                'elbs_ignored': ['^to_ignore',],
+                'elbs_ignored': ['^to_ignore', ],
             })
 
         az = Mock()
@@ -67,7 +71,6 @@ class TestElbCollector(CollectorTestCase):
         elb_conn.get_all_load_balancers = Mock()
         elb_conn.get_all_load_balancers.return_value = [elb1, elb2]
         elb_connect_to_region.return_value = elb_conn
-        
 
         cw_conn = Mock()
         cw_conn.get_metric_statistics = Mock()
@@ -142,7 +145,7 @@ class TestElbCollector(CollectorTestCase):
         ec2_conn.get_all_zones = Mock()
         ec2_conn.get_all_zones.return_value = [az]
         connect_to_region.return_value = ec2_conn
-        
+
         cw_conn = Mock()
         cw_conn.get_metric_statistics = Mock()
         ts = datetime.datetime.utcnow().replace(second=0, microsecond=0)

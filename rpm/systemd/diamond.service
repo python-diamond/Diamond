@@ -1,0 +1,9 @@
+[Unit]
+Description=diamond - A system statistics collector for graphite
+
+[Service]
+ExecStart=/usr/bin/python /usr/bin/diamond --log-stdout --foreground
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

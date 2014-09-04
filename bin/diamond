@@ -176,7 +176,7 @@ def main():
                 pf = file(options.pidfile, 'r')
                 pid = int(pf.read().strip())
                 pf.close()
-            except IOError:
+            except (IOError, ValueError):
                 pid = None
 
             # Check existing pid file

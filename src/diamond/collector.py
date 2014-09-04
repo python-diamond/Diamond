@@ -11,6 +11,8 @@ import logging
 import configobj
 import traceback
 import time
+import re
+import subprocess
 
 from diamond.metric import Metric
 from error import DiamondException
@@ -29,20 +31,31 @@ def get_hostname(config, method=None):
     """
     Returns a hostname as configured by the user
     """
-    if 'hostname' in config:
-        return config['hostname']
-
-    if method is None:
-        if 'hostname_method' in config:
-            method = config['hostname_method']
-        else:
-            method = 'smart'
+    method = method or config.get('hostname_method', 'smart')
 
     # case insensitive method
     method = method.lower()
 
+    if 'hostname' in config and method != 'shell':
+        return config['hostname']
+
     if method in get_hostname.cached_results:
         return get_hostname.cached_results[method]
+
+    if method == 'shell':
+        if 'hostname' not in config:
+            raise DiamondException(
+                "hostname must be set to a shell command for"
+                " hostname_method=shell")
+        else:
+            proc = subprocess.Popen(config['hostname'],
+                                    shell=True,
+                                    stdout=subprocess.PIPE)
+            hostname = proc.communicate()[0].strip()
+            if proc.returncode != 0:
+                raise subprocess.CalledProcessError(retcode, cmd)
+            get_hostname.cached_results[method] = hostname
+            return hostname
 
     if method == 'smart':
         hostname = get_hostname(config, 'fqdn_short')
@@ -56,11 +69,15 @@ def get_hostname(config, method=None):
     if method == 'fqdn_short':
         hostname = socket.getfqdn().split('.')[0]
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'fqdn':
         hostname = socket.getfqdn().replace('.', '_')
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'fqdn_rev':
@@ -68,11 +85,15 @@ def get_hostname(config, method=None):
         hostname.reverse()
         hostname = '.'.join(hostname)
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'uname_short':
         hostname = os.uname()[1].split('.')[0]
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'uname_rev':
@@ -80,16 +101,22 @@ def get_hostname(config, method=None):
         hostname.reverse()
         hostname = '.'.join(hostname)
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'hostname':
         hostname = socket.gethostname()
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'hostname_short':
         hostname = socket.gethostname().split('.')[0]
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'hostname_rev':
@@ -97,6 +124,8 @@ def get_hostname(config, method=None):
         hostname.reverse()
         hostname = '.'.join(hostname)
         get_hostname.cached_results[method] = hostname
+        if hostname == '':
+            raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'none':
@@ -176,6 +205,20 @@ class Collector(object):
         self.config['measure_collector_time'] = str_to_bool(
             self.config['measure_collector_time'])
 
+        # Raise an error if both whitelist and blacklist are specified
+        if self.config['metrics_whitelist'] and \
+                self.config['metrics_blacklist']:
+                raise DiamondException(
+                    'Both metrics_whitelist and metrics_blacklist specified ' +
+                    'in file %s' % configfile)
+
+        if self.config['metrics_whitelist']:
+            self.config['metrics_whitelist'] = re.compile(
+                self.config['metrics_whitelist'])
+        elif self.config['metrics_blacklist']:
+            self.config['metrics_blacklist'] = re.compile(
+                self.config['metrics_blacklist'])
+
         self.collect_running = False
 
     def get_default_config_help(self):
@@ -186,6 +229,10 @@ class Collector(object):
             'enabled': 'Enable collecting these metrics',
             'byte_unit': 'Default numeric output(s)',
             'measure_collector_time': 'Collect the collector run time in ms',
+            'metrics_whitelist': 'Regex to match metrics to transmit. ' +
+                                 'Mutually exclusive with metrics_blacklist',
+            'metrics_blacklist': 'Regex to match metrics to block. ' +
+                                 'Mutually exclusive with metrics_whitelist',
         }
 
     def get_default_config(self):
@@ -193,7 +240,7 @@ class Collector(object):
         Return the default config for the collector
         """
         return {
-            ### Defaults options for all Collectors
+            # Defaults options for all Collectors
 
             # Uncomment and set to hardcode a hostname for the collector path
             # Keep in mind, periods are seperators in graphite
@@ -238,6 +285,12 @@ class Collector(object):
 
             # Collect the collector run time in ms
             'measure_collector_time': False,
+
+            # Whitelist of metrics to let th rough
+            'metrics_whitelist': None,
+
+            # Blacklist of metrics to let through
+            'metrics_blacklist': None,
         }
 
     def get_stats_for_upload(self, config=None):
@@ -329,6 +382,14 @@ class Collector(object):
         """
         Publish a metric with the given name
         """
+        # Check whitelist/blacklist
+        if self.config['metrics_whitelist']:
+            if not self.config['metrics_whitelist'].match(name):
+                return
+        elif self.config['metrics_blacklist']:
+            if self.config['metrics_blacklist'].match(name):
+                return
+
         # Get metric Path
         path = self.get_metric_path(name, instance=instance)
 

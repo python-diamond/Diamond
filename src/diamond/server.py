@@ -42,13 +42,24 @@ class Server(object):
 
     def load_config(self):
         """
-        Load the full config
+        Load the full config / merge splitted configs if configured
         """
 
         configfile = os.path.abspath(self.config['configfile'])
         config = configobj.ConfigObj(configfile)
         config['configfile'] = self.config['configfile']
-
+        try:
+                for cfgfile in os.listdir(config['configs']['path']):
+                    if cfgfile.endswith(config['configs']['extension']):
+                        newconfig = configobj.ConfigObj(
+                            config['configs']['path'] + cfgfile)
+                        config.merge(newconfig)
+        except KeyError:
+                pass
+            
+        if 'server' not in config:
+            raise Exception('Failed to reload config file %s!' % configfile)
+            
         self.config = config
 
     def load_handler(self, fqcn):
@@ -313,14 +324,14 @@ class Server(object):
         # Set Running Flag
         self.running = True
 
+        # Load config
+        self.load_config()
+
         # Load handlers
         if 'handlers_path' in self.config['server']:
             handlers_path = self.config['server']['handlers_path']
             self.load_include_path([handlers_path])
         self.load_handlers()
-
-        # Load config
-        self.load_config()
 
         # Load collectors
 

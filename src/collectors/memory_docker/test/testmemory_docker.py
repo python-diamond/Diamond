@@ -51,7 +51,8 @@ class TestMemoryDockerCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MemoryDockerCollector', {
             'interval': 10,
-            'byte_unit': 'megabyte'
+            'byte_unit': 'megabyte',
+            'memory_path': fixtures_path,
         })
 
         self.collector = MemoryDockerCollector(config, None)
@@ -61,7 +62,6 @@ class TestMemoryDockerCollector(CollectorTestCase):
 
     @run_only_if_docker_client_is_available
     @patch('__builtin__.open')
-    @patch('os.walk', Mock(return_value=iter(fixtures)))
     @patch.object(Client, 'containers', Mock(return_value=[]))
     @patch.object(Collector, 'publish')
     def test_should_open_all_cpuacct_stat(self, publish_mock, open_mock):
@@ -74,7 +74,6 @@ class TestMemoryDockerCollector(CollectorTestCase):
 
     @run_only_if_docker_client_is_available
     @patch('__builtin__.open')
-    @patch('os.walk', Mock(return_value=iter(fixtures)))
     @patch.object(Client, 'containers')
     @patch.object(Collector, 'publish')
     def test_should_get_containers(self, publish_mock, containers_mock,
@@ -89,7 +88,6 @@ class TestMemoryDockerCollector(CollectorTestCase):
     @patch.object(Client, 'containers',
                   Mock(return_value=docker_fixture))
     def test_should_work_with_real_data(self, publish_mock):
-        MemoryDockerCollector.MEMORY_PATH = fixtures_path
         self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
