@@ -274,6 +274,7 @@ class TestRedisCollector(CollectorTestCase):
                 'nick1@host1:1111',
                 'nick2@:2222',
                 'nick3@host3',
+                'nick4@host4:3333/@password',
                 'bla'
             ]
         }
@@ -293,6 +294,10 @@ class TestRedisCollector(CollectorTestCase):
             call('nick3.process.connections_received', 200, precision=0,
                  metric_type='GAUGE'),
             call('nick3.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
+            call('nick4.process.connections_received', 200, precision=0,
+                 metric_type='GAUGE'),
+            call('nick4.process.commands_processed', 100, precision=0,
                  metric_type='GAUGE'),
             call('6379.process.connections_received', 200, precision=0,
                  metric_type='GAUGE'),
