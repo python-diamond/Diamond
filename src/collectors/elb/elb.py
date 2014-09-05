@@ -22,13 +22,13 @@ You can specify an arbitrary amount of regions
     # Optional - list of regular expressions used to ignore ELBs
     elbs_ignored = ^elb-a$, .*-test$, $test-.*
 
-    [[regions]]
+    [regions]
 
-    [us-west-1]
+    [[us-west-1]]
     # Optional - queries all elbs if omitted
     elb_names = elb1, elb2, ...
 
-    [us-west-2]
+    [[us-west-2]]
     ...
 
 ```
