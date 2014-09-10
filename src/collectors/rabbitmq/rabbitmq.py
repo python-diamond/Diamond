@@ -193,5 +193,7 @@ class RabbitMQCollector(diamond.collector.Collector):
                 publish_key = '{0}.{1}'.format(name, joined_keys)
             else:
                 publish_key = joined_keys
+            if isinstance(value, bool):
+                value = int(value)
 
             self.publish(publish_key, value)
