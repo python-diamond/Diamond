@@ -30,7 +30,6 @@ class NumaCollector(diamond.collector.Collector):
 
     def collect(self):
         p = Popen(['numactl', '--hardware'], stdout=PIPE, stderr=PIPE)
-        sleep(1)
 
         output, errors = p.communicate()
 
