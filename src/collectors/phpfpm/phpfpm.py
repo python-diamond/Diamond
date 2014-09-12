@@ -53,7 +53,7 @@ class PhpFpmCollector(diamond.collector.Collector):
             self.config['uri'] = self.config['uri'][1:]
 
         try:
-            response = urllib2.urlopen("http://%s:%s/%s" % (
+            response = urllib2.urlopen("http://%s:%s/%s?json" % (
                 self.config['host'], int(self.config['port']), 
                 self.config['uri']))
         except Exception, e:
