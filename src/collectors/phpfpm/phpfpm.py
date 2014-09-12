@@ -66,9 +66,22 @@ class PhpFpmCollector(diamond.collector.Collector):
             self.log.error('Couldnt parse json: %s', e)
             return {}
 
+        valid_metrics = [
+            'accepted_conn',
+            'listen_queue',
+            'max_listen_queue',
+            'listen_queue_len',
+            'idle_processes',
+            'active_processes',
+            'total_processes',
+            'max_active_processes',
+            'max_children_reached',
+            'slow_requests'
+        ]
         for k,v in j.items():
             #
             # php-fpm has spaces in the keys so lets replace all spaces with _
             k = k.replace(" ", "_")
 
-            self.publish(k, v)
+            if k in valid_metrics:
+                self.publish(k, v)
