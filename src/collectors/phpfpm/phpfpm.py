@@ -3,6 +3,11 @@
 """
 Collects data from php-fpm if the pm.status_path is enabled
 
+A sample php-fpm config for this collector to work is
+
+pm.status_path = /fpm-status
+
+
 #### Dependencies
 
  * urllib2
