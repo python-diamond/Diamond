@@ -43,6 +43,7 @@ class PhpFpmCollector(diamond.collector.Collector):
             'port': 80,
             'uri': 'fpm-status',
             'byte_unit': ['byte'],
+            'path': 'phpfpm',
         })
         return config
 
