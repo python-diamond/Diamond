@@ -78,12 +78,12 @@ class PostfixCollector(diamond.collector.Collector):
                     json_string += data
             except socket.error:
                 self.log.exception("Error talking to postfix-stats")
-                return ''
+                return '{}'
         finally:
             if s:
                 s.close()
 
-        return json_string
+        return json_string or '{}'
 
     def get_data(self):
         json_string = self.get_json()
