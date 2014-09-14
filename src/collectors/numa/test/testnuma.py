@@ -29,7 +29,7 @@ class TestExampleCollector(CollectorTestCase):
         self.collector.collect()
 
         metrics = {
-            'node_0_free_MB':  42
+            'node_0_free_MB':  42,
             'node_0_size_MB':  402
         }
 
