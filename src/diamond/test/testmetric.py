@@ -83,3 +83,22 @@ class TestMetric(unittest.TestCase):
 
         message = 'Actual %s, expected %s' % (actual_value, expected_value)
         self.assertEqual(actual_value, expected_value, message)
+
+    def test_issue_723(self):
+        metrics = [
+            9.97143369909e-05,
+            '9.97143369909e-05',
+            0.0000997143369909,
+            '0.0000997143369909',
+        ]
+
+        for precision in xrange(0, 100):
+            for m in metrics:
+                metric = Metric('test.723', m, timestamp=0)
+
+                actual_value = str(metric).strip()
+                expected_value = 'test.723 0 0'
+
+                message = 'Actual %s, expected %s' % (actual_value,
+                                                      expected_value)
+                self.assertEqual(actual_value, expected_value, message)
