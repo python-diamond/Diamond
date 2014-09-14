@@ -202,7 +202,14 @@ class Server(object):
                     try:
                         # Import the module
                         mod = __import__(modname, globals(), locals(), ['*'])
-                    except (ImportError, SyntaxError):
+                    except (KeyboardInterrupt, SystemExit) as err:
+                        self.log.error(
+                            "System or keyboard interrupt while loading module %s"
+                            % modname)
+                        if isinstance(err, SystemExit):
+                            sys.exit(err.code)
+                        raise KeyboardInterrupt
+                    except:
                         # Log error
                         self.log.error("Failed to import module: %s. %s",
                                        modname,
