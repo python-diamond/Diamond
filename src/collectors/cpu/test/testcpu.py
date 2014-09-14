@@ -142,14 +142,17 @@ class TestCPUCollector(CollectorTestCase):
             if call[0][:6] == 'total.':
                 continue
             if call[1] > 100:
-                raise ValueError("metric %s: %s should not be over 100!" % (call[0], call[1]))
+                raise ValueError("metric %s: %s should not be over 100!" % (
+                    call[0], call[1]))
             k = call[0][:4]
             totals[k] = totals.get(k, 0) + call[1]
 
         for t in totals:
             # Allow rounding errors
             if totals[t] >= 101:
-                raise ValueError("metric total for %s: %s should not be over 100!" % (t, totals[t]))
+                raise ValueError(
+                    "metric total for %s: %s should not be over 100!" % (
+                        t, totals[t]))
 
 
 class TestCPUCollectorNormalize(CollectorTestCase):

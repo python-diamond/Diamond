@@ -59,7 +59,7 @@ class PhpFpmCollector(diamond.collector.Collector):
 
         try:
             response = urllib2.urlopen("http://%s:%s/%s?json" % (
-                self.config['host'], int(self.config['port']), 
+                self.config['host'], int(self.config['port']),
                 self.config['uri']))
         except Exception, e:
             self.log.error('Couldnt connect to php-fpm status page: %s', e)
@@ -83,7 +83,7 @@ class PhpFpmCollector(diamond.collector.Collector):
             'max_children_reached',
             'slow_requests'
         ]
-        for k,v in j.items():
+        for k, v in j.items():
             #
             # php-fpm has spaces in the keys so lets replace all spaces with _
             k = k.replace(" ", "_")

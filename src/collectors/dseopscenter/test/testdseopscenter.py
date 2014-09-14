@@ -14,9 +14,11 @@ from dseopscenter import DseOpsCenterCollector
 
 ################################################################################
 
+
 class TestDseOpsCenterCollector(CollectorTestCase):
     def setUp(self):
-        config = get_collector_config('DseOpsCenterCollector', {'cluster_id': 'MyTestCluster'})
+        config = get_collector_config('DseOpsCenterCollector',
+                                      {'cluster_id': 'MyTestCluster'})
 
         self.collector = DseOpsCenterCollector(config, None)
 
@@ -25,16 +27,16 @@ class TestDseOpsCenterCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-	urlopen_mock1 = patch('urllib2.urlopen', Mock(
-	    side_effect=lambda *args: self.getFixture('keyspaces.json')))
-	urlopen_mock1.start()
+        urlopen_mock1 = patch('urllib2.urlopen', Mock(
+            side_effect=lambda *args: self.getFixture('keyspaces.json')))
+        urlopen_mock1.start()
         self.collector._get_schema()
-	urlopen_mock1.stop()
-	urlopen_mock2 = patch('urllib2.urlopen', Mock(
-	    side_effect=lambda *args: self.getFixture('new-metrics.json')))
-	urlopen_mock2.start()
-	self.collector.collect()
-	urlopen_mock2.stop()
+        urlopen_mock1.stop()
+        urlopen_mock2 = patch('urllib2.urlopen', Mock(
+            side_effect=lambda *args: self.getFixture('new-metrics.json')))
+        urlopen_mock2.start()
+        self.collector.collect()
+        urlopen_mock2.stop()
 
         metrics = {
             'cf-bf-false-positives.dse_system.leases': 0,
@@ -46,6 +48,6 @@ class TestDseOpsCenterCollector(CollectorTestCase):
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
-            	       metrics=metrics,
-            	       defaultpath=self.collector.config['path'])
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)

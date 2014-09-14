@@ -20,30 +20,31 @@ except ImportError:
 
 import diamond.collector
 
+
 class DseOpsCenterCollector(diamond.collector.Collector):
     last_run_time = 0
     column_families = None
     last_schema_sync_time = 0
 
     def get_default_config_help(self):
-	config_help = super(DseOpsCenterCollector,
-			    self).get_default_config_help()
-	config_help.update({
-	    'host': "",
-	    'port': "",
+        config_help = super(DseOpsCenterCollector,
+                            self).get_default_config_help()
+        config_help.update({
+            'host': "",
+            'port': "",
             'cluster_id': "Set cluster ID/name.\n",
-	    'metrics': "You can list explicit metrics if you like,\n"
-            + " by default all know metrics are included.\n",
-	    'node_group': "Set node group name, any by default\n",
-	    'default_tail_opts': "Chaning these is not recommended.",
-	})
-	return config_help
+            'metrics': "You can list explicit metrics if you like,\n"
+            " by default all know metrics are included.\n",
+            'node_group': "Set node group name, any by default\n",
+            'default_tail_opts': "Chaning these is not recommended.",
+        })
+        return config_help
 
     def get_default_config(self):
-	"""
-	Returns the default collector settings
-	"""
-	config = super(DseOpsCenterCollector, self).get_default_config()
+        """
+        Returns the default collector settings
+        """
+        config = super(DseOpsCenterCollector, self).get_default_config()
         metrics = [
             'cf-bf-false-positives',
             'cf-bf-false-ratio',
@@ -103,91 +104,110 @@ class DseOpsCenterCollector(diamond.collector.Collector):
             'total-compactions-completed',
             'write-latency-op',
             'write-ops',
-	]
-	config.update({
-	    'host':              '127.0.0.1',
-	    'port':              8888,
+        ]
+        config.update({
+            'host':              '127.0.0.1',
+            'port':              8888,
             'path':              'cassandra',
             'node_group':        '*',
             'metrics':           ','.join(metrics),
             'default_tail_opts': '&forecast=0&node_aggregation=1',
 
-	})
-	return config
+        })
+        return config
 
     def _get_schema(self):
-	time_now = int(datetime.datetime.utcnow().strftime('%s'))
-        if self.column_families != None or (time_now - self.last_schema_sync_time < 3600): return False
-	url = 'http://%s:%i/%s/keyspaces' % (self.config['host'], int(self.config['port']), self.config['cluster_id'])
-	try:
-	   response = urllib2.urlopen(url)
-	except Exception, err:
-	   self.log.error('%s: %s', url, err)
-	   return False
+        time_now = int(datetime.datetime.utcnow().strftime('%s'))
+        if (self.column_families is None
+                or (time_now - self.last_schema_sync_time < 3600)):
+            return False
+        url = 'http://%s:%i/%s/keyspaces' % (self.config['host'],
+                                             int(self.config['port']),
+                                             self.config['cluster_id'])
+        try:
+            response = urllib2.urlopen(url)
+        except Exception, err:
+            self.log.error('%s: %s', url, err)
+            return False
 
-	try:
-	    result = json.load(response)
-            column_families = [["%s.%s" % (ks, cf) for cf in result[ks]['column_families']] for ks in result]
+        try:
+            result = json.load(response)
+            column_families = []
+            for ks in result:
+                i = []
+                for cf in result[ks]['column_families']:
+                    i.append("%s.%s" % (ks, cf))
+                column_families.append(i)
             self.column_families = ','.join(sum(column_families, []))
-            self.log.debug('DseOpsCenterCollector columnfamilies = %s', self.column_families)
+            self.log.debug('DseOpsCenterCollector columnfamilies = %s',
+                           self.column_families)
             self.last_schema_sync_time = time_now
             return True
-              
-	except (TypeError, ValueError):
-	    self.log.error("Unable to parse response from opscenter as a"
-			   + " json object")
-	    return False
+
+        except (TypeError, ValueError):
+            self.log.error(
+                "Unable to parse response from opscenter as a json object")
+            return False
 
     def _get(self, start, end, step=60):
         self._get_schema()
-        url = 'http://%s:%i/%s/new-metrics?node_group=%s&columnfamilies=%s&metrics=%s&start=%i&end=%i&step=%i%s' % (
-           self.config['host'], int(self.config['port']), self.config['cluster_id'],
-           self.config['node_group'], self.column_families, self.config['metrics'],
-           start, end, step,
-           self.config['default_tail_opts'])
+        url = ('http://%s:%i/%s/new-metrics?node_group=%s&columnfamilies=%s'
+               '&metrics=%s&start=%i&end=%i&step=%i%s') % (
+            self.config['host'],
+            int(self.config['port']),
+            self.config['cluster_id'],
+            self.config['node_group'],
+            self.column_families,
+            self.config['metrics'],
+            start, end, step,
+            self.config['default_tail_opts'])
 
         try:
-           response = urllib2.urlopen(url)
+            response = urllib2.urlopen(url)
         except Exception, err:
-           self.log.error('%s: %s', url, err)
-           return False
+            self.log.error('%s: %s', url, err)
+            return False
 
         self.log.debug('DseOpsCenterCollector metrics url = %s', url)
 
-	try:
-	    return json.load(response)
-	except (TypeError, ValueError):
-	    self.log.error("Unable to parse response from opscenter as a"
-			   + " json object")
-	    return False
+        try:
+            return json.load(response)
+        except (TypeError, ValueError):
+            self.log.error(
+                "Unable to parse response from opscenter as a json object")
+            return False
 
-    def collect(self):
-        metrics = {}
-        if json is None:
-            self.log.error('Unable to import json')
-            return None
-
-        time_now = int(datetime.datetime.utcnow().strftime('%s'))
-
-        self.log.debug('DseOpsCenterCollector last_run_time = %i', self.last_run_time)
-
-        if self.last_run_time == 0: self.last_run_time = time_now - 60
-        if time_now - self.last_run_time >= 60:
-            result = self._get(self.last_run_time, time_now)
-	    self.last_run_time = time_now
-            if not result:
+        def collect(self):
+            metrics = {}
+            if json is None:
+                self.log.error('Unable to import json')
                 return None
-            self.log.debug('DseOpsCenterCollector result = %s', result)
-            for data in result['data'][self.config['node_group']]:
-                if data['data-points'][0][0] != None:
-                    if 'columnfamily' in data:
-			metrics['.'.join([data['metric'], data['columnfamily']])] = data['data-points'][0][0]
-	            else:
-		        metrics[data['metric']] = data['data-points'][0][0]
-            self.log.debug('DseOpsCenterCollector metrics = %s', metrics)
-            for key in metrics:
-                self.publish(key, metrics[key])
-        else:
-            self.log.debug("DseOpsCenterCollector can only run once every minute")
-            return None
 
+            time_now = int(datetime.datetime.utcnow().strftime('%s'))
+
+            self.log.debug('DseOpsCenterCollector last_run_time = %i',
+                           self.last_run_time)
+
+            if self.last_run_time == 0:
+                self.last_run_time = time_now - 60
+            if time_now - self.last_run_time >= 60:
+                result = self._get(self.last_run_time, time_now)
+                self.last_run_time = time_now
+                if not result:
+                    return None
+                self.log.debug('DseOpsCenterCollector result = %s', result)
+                for data in result['data'][self.config['node_group']]:
+                    if data['data-points'][0][0] is None:
+                        if 'columnfamily' in data:
+                            k = '.'.join([data['metric'],
+                                          data['columnfamily']])
+                            metrics[k] = data['data-points'][0][0]
+                    else:
+                        metrics[data['metric']] = data['data-points'][0][0]
+                self.log.debug('DseOpsCenterCollector metrics = %s', metrics)
+                for key in metrics:
+                    self.publish(key, metrics[key])
+            else:
+                self.log.debug(
+                    "DseOpsCenterCollector can only run once every minute")
+                return None

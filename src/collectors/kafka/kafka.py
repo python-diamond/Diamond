@@ -96,7 +96,7 @@ class KafkaCollector(diamond.collector.Collector):
 
             if objectname:
                 found_beans.add(objectname)
-        
+
         return found_beans
 
     def query_mbean(self, objectname, key_prefix=None):
@@ -114,21 +114,22 @@ class KafkaCollector(diamond.collector.Collector):
         if key_prefix is None:
             # Could be 1 or 2 = in the string
             # java.lang:type=Threading
-            # "kafka.controller":type="ControllerStats",name="LeaderElectionRateAndTimeMs"
+            # "kafka.controller":type="ControllerStats",
+            # name="LeaderElectionRateAndTimeMs"
             split_num = objectname.count('=')
             for i in range(split_num):
-              if i == 0:
-                key_prefix = objectname.split('=')[1]
-                if '"' in key_prefix:
-                  key_prefix = key_prefix.split('"')[1]
-                if "," in key_prefix:
-                  key_prefix = key_prefix.split(',')[0]
-              elif i > 0:
-                key = objectname.split('=')[2]
-                if key:
-                  if '"' in key:
-                    key = key.split('"')[1]
-                  key_prefix = key_prefix + '.' + key
+                if i == 0:
+                    key_prefix = objectname.split('=')[1]
+                    if '"' in key_prefix:
+                        key_prefix = key_prefix.split('"')[1]
+                    if "," in key_prefix:
+                        key_prefix = key_prefix.split(',')[0]
+                elif i > 0:
+                    key = objectname.split('=')[2]
+                    if key:
+                        if '"' in key:
+                            key = key.split('"')[1]
+                        key_prefix = key_prefix + '.' + key
 
         metrics = {}
 
@@ -153,11 +154,15 @@ class KafkaCollector(diamond.collector.Collector):
             return
 
         # Get list of gatherable stats
-        query_list = [ '*kafka*:*', 'java.lang:type=GarbageCollector,name=*', 'java.lang:type=Threading' ]
+        query_list = [
+            '*kafka*:*',
+            'java.lang:type=GarbageCollector,name=*',
+            'java.lang:type=Threading'
+        ]
         mbeans = set()
         for pattern in query_list:
-          match = self.get_mbeans(pattern)
-          mbeans.update(match)
+            match = self.get_mbeans(pattern)
+            mbeans.update(match)
 
         metrics = {}
 

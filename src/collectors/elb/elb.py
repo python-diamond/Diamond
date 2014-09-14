@@ -67,7 +67,7 @@ class memoized(object):
     Based upon from http://wiki.python.org/moin/PythonDecoratorLibrary#Memoize
     Nota bene: this decorator memoizes /all/ calls to the function.  For
     a memoization decorator with limited cache size, consider:
-    http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/
+    bit.ly/1wtHmlM
     """
     def __init__(self, func):
         self.func = func
@@ -118,7 +118,8 @@ class ElbCollector(diamond.collector.Collector):
 
     # default_to_zero means if cloudwatch does not return a stat for the
     # given metric, then just default it to zero.
-    MetricInfo = namedtuple('MetricInfo',
+    MetricInfo = namedtuple(
+        'MetricInfo',
         'name aws_type diamond_type precision default_to_zero')
 
     # AWS metrics for ELBs
@@ -213,7 +214,8 @@ class ElbCollector(diamond.collector.Collector):
         # up the changes.
         region_dict = config.get('regions', {}).get(region, {})
         if 'elb_names' not in region_dict:
-            elb_conn = boto.ec2.elb.connect_to_region(region, **self.auth_kwargs)
+            elb_conn = boto.ec2.elb.connect_to_region(region,
+                                                      **self.auth_kwargs)
             full_elb_names = \
                 [elb.name for elb in elb_conn.get_all_load_balancers()]
 
@@ -247,9 +249,8 @@ class ElbCollector(diamond.collector.Collector):
             precision=metric.precision,
             timestamp=time.mktime(utc_to_local(end_time).timetuple()))
 
-        #self.log.debug('published %s %s %s' % (elb_name, stat, formatted_name))
-
-    def process_metric(self, region_cw_conn, zone, start_time, end_time, elb_name, metric):
+    def process_metric(self, region_cw_conn, zone, start_time, end_time,
+                       elb_name, metric):
         stats = region_cw_conn.get_metric_statistics(
             self.config['interval'],
             start_time,
@@ -273,15 +274,19 @@ class ElbCollector(diamond.collector.Collector):
             })
 
         for stat in stats:
-            self.process_stat(region_cw_conn.region.name, zone, elb_name, metric, stat, end_time)
+            self.process_stat(region_cw_conn.region.name, zone, elb_name,
+                              metric, stat, end_time)
 
     def process_elb(self, region_cw_conn, zone, start_time, end_time, elb_name):
         for metric in self.metrics:
-            self.process_metric(region_cw_conn, zone, start_time, end_time, elb_name, metric)
+            self.process_metric(region_cw_conn, zone, start_time, end_time,
+                                elb_name, metric)
 
     def process_zone(self, region_cw_conn, zone, start_time, end_time):
-        for elb_name in self.get_elb_names(region_cw_conn.region.name, self.config):
-            self.process_elb(region_cw_conn, zone, start_time, end_time, elb_name)
+        for elb_name in self.get_elb_names(region_cw_conn.region.name,
+                                           self.config):
+            self.process_elb(region_cw_conn, zone, start_time, end_time,
+                             elb_name)
 
     def process_region(self, region_cw_conn, start_time, end_time):
         for zone in get_zones(region_cw_conn.region.name, self.auth_kwargs):
@@ -296,6 +301,6 @@ class ElbCollector(diamond.collector.Collector):
         start_time = end_time - datetime.timedelta(seconds=self.interval)
 
         for region in self.config['regions'].keys():
-            region_cw_conn = cloudwatch.connect_to_region(region, **self.auth_kwargs)
+            region_cw_conn = cloudwatch.connect_to_region(region,
+                                                          **self.auth_kwargs)
             self.process_region(region_cw_conn, start_time, end_time)
-

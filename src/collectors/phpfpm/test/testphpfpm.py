@@ -47,7 +47,6 @@ class TestPhpFpmCollector(CollectorTestCase):
             'slow_requests': 0,
         }
 
-
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
