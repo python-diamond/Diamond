@@ -1,0 +1,1775 @@
+{
+  "system": {
+    "name": "system",
+    "column_families": {
+      "peers": {
+        "comment": "known peers in the cluster",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 0,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "inet",
+            "index_name": null,
+            "name": "peer"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "data_center"
+          },
+          {
+            "validator": "uuid",
+            "index_name": null,
+            "name": "host_id"
+          },
+          {
+            "validator": "inet",
+            "index_name": null,
+            "name": "preferred_ip"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "rack"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "release_version"
+          },
+          {
+            "validator": "inet",
+            "index_name": null,
+            "name": "rpc_address"
+          },
+          {
+            "validator": "uuid",
+            "index_name": null,
+            "name": "schema_version"
+          },
+          {
+            "validator": "set<text>",
+            "index_name": null,
+            "name": "tokens"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "workload"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "InetAddressType",
+        "read_repair_chance": 0,
+        "name": "peers",
+        "comparator": "CompositeType(UTF8Type, ColumnToCollectionType(SetType(UTF8Type)))",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "peer"
+        ],
+        "caching": "KEYS_ONLY"
+      },
+      "range_xfers": {
+        "comment": "ranges requested for transfer here",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 0,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "blob",
+            "index_name": null,
+            "name": "token_bytes"
+          },
+          {
+            "validator": "timestamp",
+            "index_name": null,
+            "name": "requested_at"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "BytesType",
+        "read_repair_chance": 0,
+        "name": "range_xfers",
+        "comparator": "CompositeType(UTF8Type)",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "token_bytes"
+        ],
+        "caching": "KEYS_ONLY"
+      },
+      "schema_keyspaces": {
+        "comment": "keyspace definitions",
+        "key_validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "key_cache_save_period_in_seconds": null,
+        "gc_grace_seconds": 8640,
+        "default_validation_class": "org.apache.cassandra.db.marshal.BytesType",
+        "is_cql3_table": false,
+        "max_compaction_threshold": 32,
+        "read_repair_chance": 0,
+        "compression_options": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "key_cache_size": null,
+        "id": null,
+        "compaction_strategy_options": {},
+        "bloom_filter_fp_chance": 0.01,
+        "replicate_on_write": true,
+        "subcomparator_type": null,
+        "merge_shards_chance": null,
+        "row_cache_provider": null,
+        "row_cache_save_period_in_seconds": null,
+        "column_type": "Standard",
+        "is_stub": false,
+        "memtable_throughput_in_mb": null,
+        "memtable_flush_after_mins": null,
+        "column_metadata": [
+          {
+            "index_type": null,
+            "index_name": null,
+            "validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+            "name": "strategy_options",
+            "index_options": null
+          },
+          {
+            "index_type": null,
+            "index_name": null,
+            "validation_class": "org.apache.cassandra.db.marshal.BooleanType",
+            "name": "durable_writes",
+            "index_options": null
+          },
+          {
+            "index_type": null,
+            "index_name": null,
+            "validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+            "name": "strategy_class",
+            "index_options": null
+          }
+        ],
+        "key_alias": "keyspace_name",
+        "dclocal_read_repair_chance": 0,
+        "name": "schema_keyspaces",
+        "keyspace": "system",
+        "row_cache_keys_to_save": null,
+        "compaction_strategy": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "memtable_operations_in_millions": null,
+        "caching": "KEYS_ONLY",
+        "comparator_type": "org.apache.cassandra.db.marshal.UTF8Type",
+        "row_cache_size": null
+      },
+      "schema_columns": {
+        "comment": "ColumnFamily column attributes",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 8640,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "keyspace_name"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "columnfamily_name"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "column_name"
+          },
+          {
+            "validator": "int",
+            "index_name": null,
+            "name": "component_index"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "index_name"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "index_options"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "index_type"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "type"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "validator"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [
+          "columnfamily_name",
+          "column_name"
+        ],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "UTF8Type",
+        "read_repair_chance": 0,
+        "name": "schema_columns",
+        "comparator": "CompositeType(UTF8Type, UTF8Type, UTF8Type)",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "keyspace_name"
+        ],
+        "caching": "KEYS_ONLY"
+      },
+      "IndexInfo": {
+        "comment": "indexes that have been completed",
+        "key_validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "key_cache_save_period_in_seconds": null,
+        "gc_grace_seconds": 0,
+        "default_validation_class": "org.apache.cassandra.db.marshal.BytesType",
+        "is_cql3_table": false,
+        "max_compaction_threshold": 32,
+        "read_repair_chance": 0,
+        "compression_options": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "key_cache_size": null,
+        "id": null,
+        "compaction_strategy_options": {},
+        "bloom_filter_fp_chance": 0.01,
+        "replicate_on_write": true,
+        "subcomparator_type": null,
+        "merge_shards_chance": null,
+        "row_cache_provider": null,
+        "row_cache_save_period_in_seconds": null,
+        "column_type": "Standard",
+        "is_stub": false,
+        "memtable_throughput_in_mb": null,
+        "memtable_flush_after_mins": null,
+        "column_metadata": [],
+        "key_alias": "table_name",
+        "dclocal_read_repair_chance": 0,
+        "name": "IndexInfo",
+        "keyspace": "system",
+        "row_cache_keys_to_save": null,
+        "compaction_strategy": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "memtable_operations_in_millions": null,
+        "caching": "KEYS_ONLY",
+        "comparator_type": "org.apache.cassandra.db.marshal.UTF8Type",
+        "row_cache_size": null
+      },
+      "schema_triggers": {
+        "comment": "triggers metadata table",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 0,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "keyspace_name"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "columnfamily_name"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "trigger_name"
+          },
+          {
+            "validator": "map<text, text>",
+            "index_name": null,
+            "name": "trigger_options"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [
+          "columnfamily_name",
+          "trigger_name"
+        ],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "UTF8Type",
+        "read_repair_chance": 0,
+        "name": "schema_triggers",
+        "comparator": "CompositeType(UTF8Type, UTF8Type, UTF8Type, ColumnToCollectionType(MapType(UTF8Type, UTF8Type)))",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "keyspace_name"
+        ],
+        "caching": "KEYS_ONLY"
+      },
+      "sstable_activity": {
+        "comment": "historic sstable read rates",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 0,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "keyspace_name"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "columnfamily_name"
+          },
+          {
+            "validator": "int",
+            "index_name": null,
+            "name": "generation"
+          },
+          {
+            "validator": "double",
+            "index_name": null,
+            "name": "rate_120m"
+          },
+          {
+            "validator": "double",
+            "index_name": null,
+            "name": "rate_15m"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "CompositeType(UTF8Type, UTF8Type, Int32Type)",
+        "read_repair_chance": 0,
+        "name": "sstable_activity",
+        "comparator": "CompositeType(UTF8Type)",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "keyspace_name",
+          "columnfamily_name",
+          "generation"
+        ],
+        "caching": "KEYS_ONLY"
+      },
+      "peer_events": {
+        "comment": "cf contains events related to peers",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 0,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "inet",
+            "index_name": null,
+            "name": "peer"
+          },
+          {
+            "validator": "map<uuid, int>",
+            "index_name": null,
+            "name": "hints_dropped"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "InetAddressType",
+        "read_repair_chance": 0,
+        "name": "peer_events",
+        "comparator": "CompositeType(UTF8Type, ColumnToCollectionType(MapType(UUIDType, Int32Type)))",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "peer"
+        ],
+        "caching": "KEYS_ONLY"
+      },
+      "paxos": {
+        "comment": "in-progress paxos proposals",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 0,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "blob",
+            "index_name": null,
+            "name": "row_key"
+          },
+          {
+            "validator": "uuid",
+            "index_name": null,
+            "name": "cf_id"
+          },
+          {
+            "validator": "timeuuid",
+            "index_name": null,
+            "name": "in_progress_ballot"
+          },
+          {
+            "validator": "blob",
+            "index_name": null,
+            "name": "most_recent_commit"
+          },
+          {
+            "validator": "timeuuid",
+            "index_name": null,
+            "name": "most_recent_commit_at"
+          },
+          {
+            "validator": "blob",
+            "index_name": null,
+            "name": "proposal"
+          },
+          {
+            "validator": "timeuuid",
+            "index_name": null,
+            "name": "proposal_ballot"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [
+          "cf_id"
+        ],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "BytesType",
+        "read_repair_chance": 0,
+        "name": "paxos",
+        "comparator": "CompositeType(UUIDType, UTF8Type)",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "row_key"
+        ],
+        "caching": "KEYS_ONLY"
+      },
+      "batchlog": {
+        "comment": "uncommited batches",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 2,
+        "gc_grace_seconds": 0,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "uuid",
+            "index_name": null,
+            "name": "id"
+          },
+          {
+            "validator": "blob",
+            "index_name": null,
+            "name": "data"
+          },
+          {
+            "validator": "int",
+            "index_name": null,
+            "name": "version"
+          },
+          {
+            "validator": "timestamp",
+            "index_name": null,
+            "name": "written_at"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "UUIDType",
+        "read_repair_chance": 0,
+        "name": "batchlog",
+        "comparator": "CompositeType(UTF8Type)",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {
+          "min_threshold": "2"
+        },
+        "key_aliases": [
+          "id"
+        ],
+        "caching": "KEYS_ONLY"
+      },
+      "NodeIdInfo": {
+        "comment": "counter node IDs",
+        "key_validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "key_cache_save_period_in_seconds": null,
+        "gc_grace_seconds": 0,
+        "default_validation_class": "org.apache.cassandra.db.marshal.BytesType",
+        "is_cql3_table": false,
+        "max_compaction_threshold": 32,
+        "read_repair_chance": 0,
+        "compression_options": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "key_cache_size": null,
+        "id": null,
+        "compaction_strategy_options": {},
+        "bloom_filter_fp_chance": 0.01,
+        "replicate_on_write": true,
+        "subcomparator_type": null,
+        "merge_shards_chance": null,
+        "row_cache_provider": null,
+        "row_cache_save_period_in_seconds": null,
+        "column_type": "Standard",
+        "is_stub": false,
+        "memtable_throughput_in_mb": null,
+        "memtable_flush_after_mins": null,
+        "column_metadata": [],
+        "key_alias": "key",
+        "dclocal_read_repair_chance": 0,
+        "name": "NodeIdInfo",
+        "keyspace": "system",
+        "row_cache_keys_to_save": null,
+        "compaction_strategy": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "memtable_operations_in_millions": null,
+        "caching": "KEYS_ONLY",
+        "comparator_type": "org.apache.cassandra.db.marshal.TimeUUIDType",
+        "row_cache_size": null
+      },
+      "compaction_history": {
+        "comment": "show all compaction history",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 0,
+        "default_time_to_live": 604800,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "uuid",
+            "index_name": null,
+            "name": "id"
+          },
+          {
+            "validator": "bigint",
+            "index_name": null,
+            "name": "bytes_in"
+          },
+          {
+            "validator": "bigint",
+            "index_name": null,
+            "name": "bytes_out"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "columnfamily_name"
+          },
+          {
+            "validator": "timestamp",
+            "index_name": null,
+            "name": "compacted_at"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "keyspace_name"
+          },
+          {
+            "validator": "map<int, bigint>",
+            "index_name": null,
+            "name": "rows_merged"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "UUIDType",
+        "read_repair_chance": 0,
+        "name": "compaction_history",
+        "comparator": "CompositeType(UTF8Type, ColumnToCollectionType(MapType(Int32Type, LongType)))",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "id"
+        ],
+        "caching": "KEYS_ONLY"
+      },
+      "compactions_in_progress": {
+        "comment": "unfinished compactions",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 0,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "uuid",
+            "index_name": null,
+            "name": "id"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "columnfamily_name"
+          },
+          {
+            "validator": "set<int>",
+            "index_name": null,
+            "name": "inputs"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "keyspace_name"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "UUIDType",
+        "read_repair_chance": 0,
+        "name": "compactions_in_progress",
+        "comparator": "CompositeType(UTF8Type, ColumnToCollectionType(SetType(Int32Type)))",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "id"
+        ],
+        "caching": "KEYS_ONLY"
+      },
+      "schema_columnfamilies": {
+        "comment": "ColumnFamily definitions",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 8640,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "keyspace_name"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "columnfamily_name"
+          },
+          {
+            "validator": "double",
+            "index_name": null,
+            "name": "bloom_filter_fp_chance"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "caching"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "column_aliases"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "comment"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "compaction_strategy_class"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "compaction_strategy_options"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "comparator"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "compression_parameters"
+          },
+          {
+            "validator": "int",
+            "index_name": null,
+            "name": "default_time_to_live"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "default_validator"
+          },
+          {
+            "validator": "map<text, bigint>",
+            "index_name": null,
+            "name": "dropped_columns"
+          },
+          {
+            "validator": "int",
+            "index_name": null,
+            "name": "gc_grace_seconds"
+          },
+          {
+            "validator": "int",
+            "index_name": null,
+            "name": "index_interval"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "key_aliases"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "key_validator"
+          },
+          {
+            "validator": "double",
+            "index_name": null,
+            "name": "local_read_repair_chance"
+          },
+          {
+            "validator": "int",
+            "index_name": null,
+            "name": "max_compaction_threshold"
+          },
+          {
+            "validator": "int",
+            "index_name": null,
+            "name": "memtable_flush_period_in_ms"
+          },
+          {
+            "validator": "int",
+            "index_name": null,
+            "name": "min_compaction_threshold"
+          },
+          {
+            "validator": "boolean",
+            "index_name": null,
+            "name": "populate_io_cache_on_flush"
+          },
+          {
+            "validator": "double",
+            "index_name": null,
+            "name": "read_repair_chance"
+          },
+          {
+            "validator": "boolean",
+            "index_name": null,
+            "name": "replicate_on_write"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "speculative_retry"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "subcomparator"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "type"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "value_alias"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [
+          "columnfamily_name"
+        ],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "UTF8Type",
+        "read_repair_chance": 0,
+        "name": "schema_columnfamilies",
+        "comparator": "CompositeType(UTF8Type, UTF8Type, ColumnToCollectionType(MapType(UTF8Type, LongType)))",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "keyspace_name"
+        ],
+        "caching": "KEYS_ONLY"
+      },
+      "local": {
+        "comment": "information about the local node",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 0,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "key"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "bootstrapped"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "cluster_name"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "cql_version"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "data_center"
+          },
+          {
+            "validator": "int",
+            "index_name": null,
+            "name": "gossip_generation"
+          },
+          {
+            "validator": "uuid",
+            "index_name": null,
+            "name": "host_id"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "native_protocol_version"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "partitioner"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "rack"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "release_version"
+          },
+          {
+            "validator": "uuid",
+            "index_name": null,
+            "name": "schema_version"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "thrift_version"
+          },
+          {
+            "validator": "set<text>",
+            "index_name": null,
+            "name": "tokens"
+          },
+          {
+            "validator": "map<uuid, blob>",
+            "index_name": null,
+            "name": "truncated_at"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "UTF8Type",
+        "read_repair_chance": 0,
+        "name": "local",
+        "comparator": "CompositeType(UTF8Type, ColumnToCollectionType(MapType(UUIDType, BytesType), SetType(UTF8Type)))",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "key"
+        ],
+        "caching": "KEYS_ONLY"
+      },
+      "hints": {
+        "comment": "hints awaiting delivery",
+        "key_validation_class": "org.apache.cassandra.db.marshal.UUIDType",
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "key_cache_save_period_in_seconds": null,
+        "gc_grace_seconds": 0,
+        "default_validation_class": "org.apache.cassandra.db.marshal.BytesType",
+        "is_cql3_table": false,
+        "max_compaction_threshold": 32,
+        "read_repair_chance": 0,
+        "compression_options": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "key_cache_size": null,
+        "id": null,
+        "compaction_strategy_options": {
+          "enabled": "false"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "replicate_on_write": true,
+        "subcomparator_type": null,
+        "merge_shards_chance": null,
+        "row_cache_provider": null,
+        "row_cache_save_period_in_seconds": null,
+        "column_type": "Standard",
+        "is_stub": false,
+        "memtable_throughput_in_mb": null,
+        "memtable_flush_after_mins": null,
+        "column_metadata": [],
+        "key_alias": "target_id",
+        "dclocal_read_repair_chance": 0,
+        "name": "hints",
+        "keyspace": "system",
+        "row_cache_keys_to_save": null,
+        "compaction_strategy": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "memtable_operations_in_millions": null,
+        "caching": "KEYS_ONLY",
+        "comparator_type": "org.apache.cassandra.db.marshal.CompositeType(org.apache.cassandra.db.marshal.TimeUUIDType,org.apache.cassandra.db.marshal.Int32Type)",
+        "row_cache_size": null
+      }
+    },
+    "is_system": true,
+    "strategy_options": {},
+    "replica_placement_strategy": "org.apache.cassandra.locator.LocalStrategy",
+    "durable_writes": true
+  },
+  "OpsCenter": {
+    "name": "OpsCenter",
+    "column_families": {
+      "events_timeline": {
+        "comment": "{\"info\": \"OpsCenter management data.\", \"version\": [5, 0, 0]}",
+        "key_validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "key_cache_save_period_in_seconds": null,
+        "gc_grace_seconds": 864000,
+        "default_validation_class": "org.apache.cassandra.db.marshal.BytesType",
+        "is_cql3_table": false,
+        "max_compaction_threshold": 8,
+        "read_repair_chance": 0.25,
+        "compression_options": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "key_cache_size": null,
+        "id": null,
+        "compaction_strategy_options": {},
+        "bloom_filter_fp_chance": null,
+        "replicate_on_write": true,
+        "subcomparator_type": null,
+        "merge_shards_chance": null,
+        "row_cache_provider": null,
+        "row_cache_save_period_in_seconds": null,
+        "column_type": "Standard",
+        "is_stub": false,
+        "memtable_throughput_in_mb": null,
+        "memtable_flush_after_mins": null,
+        "column_metadata": [],
+        "key_alias": "key",
+        "dclocal_read_repair_chance": 0,
+        "name": "events_timeline",
+        "keyspace": "OpsCenter",
+        "row_cache_keys_to_save": null,
+        "compaction_strategy": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "memtable_operations_in_millions": null,
+        "caching": "KEYS_ONLY",
+        "comparator_type": "org.apache.cassandra.db.marshal.LongType",
+        "row_cache_size": null
+      },
+      "settings": {
+        "comment": "{\"info\": \"OpsCenter management data.\", \"version\": [5, 0, 0]}",
+        "key_validation_class": "org.apache.cassandra.db.marshal.BytesType",
+        "solr_core": false,
+        "min_compaction_threshold": 8,
+        "key_cache_save_period_in_seconds": null,
+        "gc_grace_seconds": 864000,
+        "default_validation_class": "org.apache.cassandra.db.marshal.BytesType",
+        "is_cql3_table": false,
+        "max_compaction_threshold": 12,
+        "read_repair_chance": 1,
+        "compression_options": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "key_cache_size": null,
+        "id": null,
+        "compaction_strategy_options": {},
+        "bloom_filter_fp_chance": null,
+        "replicate_on_write": true,
+        "subcomparator_type": null,
+        "merge_shards_chance": null,
+        "row_cache_provider": null,
+        "row_cache_save_period_in_seconds": null,
+        "column_type": "Standard",
+        "is_stub": false,
+        "memtable_throughput_in_mb": null,
+        "memtable_flush_after_mins": null,
+        "column_metadata": [],
+        "key_alias": "key",
+        "dclocal_read_repair_chance": 0,
+        "name": "settings",
+        "keyspace": "OpsCenter",
+        "row_cache_keys_to_save": null,
+        "compaction_strategy": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "memtable_operations_in_millions": null,
+        "caching": "KEYS_ONLY",
+        "comparator_type": "org.apache.cassandra.db.marshal.BytesType",
+        "row_cache_size": null
+      },
+      "rollups60": {
+        "comment": "{\"info\": \"OpsCenter management data.\", \"version\": [5, 0, 0]}",
+        "key_validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "key_cache_save_period_in_seconds": null,
+        "gc_grace_seconds": 0,
+        "default_validation_class": "org.apache.cassandra.db.marshal.BytesType",
+        "is_cql3_table": false,
+        "max_compaction_threshold": 32,
+        "read_repair_chance": 0.25,
+        "compression_options": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "key_cache_size": null,
+        "id": null,
+        "compaction_strategy_options": {},
+        "bloom_filter_fp_chance": null,
+        "replicate_on_write": true,
+        "subcomparator_type": null,
+        "merge_shards_chance": null,
+        "row_cache_provider": null,
+        "row_cache_save_period_in_seconds": null,
+        "column_type": "Standard",
+        "is_stub": false,
+        "memtable_throughput_in_mb": null,
+        "memtable_flush_after_mins": null,
+        "column_metadata": [],
+        "key_alias": "key",
+        "dclocal_read_repair_chance": 0,
+        "name": "rollups60",
+        "keyspace": "OpsCenter",
+        "row_cache_keys_to_save": null,
+        "compaction_strategy": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "memtable_operations_in_millions": null,
+        "caching": "KEYS_ONLY",
+        "comparator_type": "org.apache.cassandra.db.marshal.IntegerType",
+        "row_cache_size": null
+      },
+      "rollups86400": {
+        "comment": "{\"info\": \"OpsCenter management data.\", \"version\": [5, 0, 0]}",
+        "key_validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+        "solr_core": false,
+        "min_compaction_threshold": 2,
+        "key_cache_save_period_in_seconds": null,
+        "gc_grace_seconds": 0,
+        "default_validation_class": "org.apache.cassandra.db.marshal.BytesType",
+        "is_cql3_table": false,
+        "max_compaction_threshold": 8,
+        "read_repair_chance": 0.25,
+        "compression_options": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "key_cache_size": null,
+        "id": null,
+        "compaction_strategy_options": {},
+        "bloom_filter_fp_chance": null,
+        "replicate_on_write": true,
+        "subcomparator_type": null,
+        "merge_shards_chance": null,
+        "row_cache_provider": null,
+        "row_cache_save_period_in_seconds": null,
+        "column_type": "Standard",
+        "is_stub": false,
+        "memtable_throughput_in_mb": null,
+        "memtable_flush_after_mins": null,
+        "column_metadata": [],
+        "key_alias": "key",
+        "dclocal_read_repair_chance": 0,
+        "name": "rollups86400",
+        "keyspace": "OpsCenter",
+        "row_cache_keys_to_save": null,
+        "compaction_strategy": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "memtable_operations_in_millions": null,
+        "caching": "KEYS_ONLY",
+        "comparator_type": "org.apache.cassandra.db.marshal.IntegerType",
+        "row_cache_size": null
+      },
+      "bestpractice_results": {
+        "comment": "{\"info\": \"OpsCenter management data.\", \"version\": [5, 0, 0]}",
+        "key_validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+        "solr_core": false,
+        "min_compaction_threshold": 2,
+        "key_cache_save_period_in_seconds": null,
+        "gc_grace_seconds": 0,
+        "default_validation_class": "org.apache.cassandra.db.marshal.BytesType",
+        "is_cql3_table": false,
+        "max_compaction_threshold": 8,
+        "read_repair_chance": 0.25,
+        "compression_options": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "key_cache_size": null,
+        "id": null,
+        "compaction_strategy_options": {},
+        "bloom_filter_fp_chance": null,
+        "replicate_on_write": true,
+        "subcomparator_type": null,
+        "merge_shards_chance": null,
+        "row_cache_provider": null,
+        "row_cache_save_period_in_seconds": null,
+        "column_type": "Standard",
+        "is_stub": false,
+        "memtable_throughput_in_mb": null,
+        "memtable_flush_after_mins": null,
+        "column_metadata": [],
+        "key_alias": "key",
+        "dclocal_read_repair_chance": 0,
+        "name": "bestpractice_results",
+        "keyspace": "OpsCenter",
+        "row_cache_keys_to_save": null,
+        "compaction_strategy": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "memtable_operations_in_millions": null,
+        "caching": "KEYS_ONLY",
+        "comparator_type": "org.apache.cassandra.db.marshal.ReversedType(org.apache.cassandra.db.marshal.IntegerType)",
+        "row_cache_size": null
+      },
+      "pdps": {
+        "comment": "{\"info\": \"OpsCenter management data.\", \"version\": [5, 0, 0]}",
+        "key_validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "key_cache_save_period_in_seconds": null,
+        "gc_grace_seconds": 0,
+        "default_validation_class": "org.apache.cassandra.db.marshal.BytesType",
+        "is_cql3_table": false,
+        "max_compaction_threshold": 32,
+        "read_repair_chance": 0.25,
+        "compression_options": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "key_cache_size": null,
+        "id": null,
+        "compaction_strategy_options": {},
+        "bloom_filter_fp_chance": null,
+        "replicate_on_write": true,
+        "subcomparator_type": null,
+        "merge_shards_chance": null,
+        "row_cache_provider": null,
+        "row_cache_save_period_in_seconds": null,
+        "column_type": "Standard",
+        "is_stub": false,
+        "memtable_throughput_in_mb": null,
+        "memtable_flush_after_mins": null,
+        "column_metadata": [],
+        "key_alias": "key",
+        "dclocal_read_repair_chance": 0,
+        "name": "pdps",
+        "keyspace": "OpsCenter",
+        "row_cache_keys_to_save": null,
+        "compaction_strategy": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "memtable_operations_in_millions": null,
+        "caching": "KEYS_ONLY",
+        "comparator_type": "org.apache.cassandra.db.marshal.UTF8Type",
+        "row_cache_size": null
+      },
+      "rollups7200": {
+        "comment": "{\"info\": \"OpsCenter management data.\", \"version\": [5, 0, 0]}",
+        "key_validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+        "solr_core": false,
+        "min_compaction_threshold": 2,
+        "key_cache_save_period_in_seconds": null,
+        "gc_grace_seconds": 0,
+        "default_validation_class": "org.apache.cassandra.db.marshal.BytesType",
+        "is_cql3_table": false,
+        "max_compaction_threshold": 8,
+        "read_repair_chance": 0.25,
+        "compression_options": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "key_cache_size": null,
+        "id": null,
+        "compaction_strategy_options": {},
+        "bloom_filter_fp_chance": null,
+        "replicate_on_write": true,
+        "subcomparator_type": null,
+        "merge_shards_chance": null,
+        "row_cache_provider": null,
+        "row_cache_save_period_in_seconds": null,
+        "column_type": "Standard",
+        "is_stub": false,
+        "memtable_throughput_in_mb": null,
+        "memtable_flush_after_mins": null,
+        "column_metadata": [],
+        "key_alias": "key",
+        "dclocal_read_repair_chance": 0,
+        "name": "rollups7200",
+        "keyspace": "OpsCenter",
+        "row_cache_keys_to_save": null,
+        "compaction_strategy": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "memtable_operations_in_millions": null,
+        "caching": "KEYS_ONLY",
+        "comparator_type": "org.apache.cassandra.db.marshal.IntegerType",
+        "row_cache_size": null
+      },
+      "events": {
+        "comment": "{\"info\": \"OpsCenter management data.\", \"version\": [5, 0, 0]}",
+        "key_validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+        "solr_core": false,
+        "min_compaction_threshold": 8,
+        "key_cache_save_period_in_seconds": null,
+        "gc_grace_seconds": 864000,
+        "default_validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+        "is_cql3_table": false,
+        "max_compaction_threshold": 12,
+        "read_repair_chance": 0.25,
+        "compression_options": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "key_cache_size": null,
+        "id": null,
+        "compaction_strategy_options": {},
+        "bloom_filter_fp_chance": null,
+        "replicate_on_write": true,
+        "subcomparator_type": null,
+        "merge_shards_chance": null,
+        "row_cache_provider": null,
+        "row_cache_save_period_in_seconds": null,
+        "column_type": "Standard",
+        "is_stub": false,
+        "memtable_throughput_in_mb": null,
+        "memtable_flush_after_mins": null,
+        "column_metadata": [
+          {
+            "index_type": null,
+            "index_name": null,
+            "validation_class": "org.apache.cassandra.db.marshal.BooleanType",
+            "name": "success",
+            "index_options": null
+          },
+          {
+            "index_type": null,
+            "index_name": null,
+            "validation_class": "org.apache.cassandra.db.marshal.LongType",
+            "name": "action",
+            "index_options": null
+          },
+          {
+            "index_type": null,
+            "index_name": null,
+            "validation_class": "org.apache.cassandra.db.marshal.LongType",
+            "name": "level",
+            "index_options": null
+          },
+          {
+            "index_type": null,
+            "index_name": null,
+            "validation_class": "org.apache.cassandra.db.marshal.LongType",
+            "name": "time",
+            "index_options": null
+          }
+        ],
+        "key_alias": "key",
+        "dclocal_read_repair_chance": 0,
+        "name": "events",
+        "keyspace": "OpsCenter",
+        "row_cache_keys_to_save": null,
+        "compaction_strategy": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "memtable_operations_in_millions": null,
+        "caching": "KEYS_ONLY",
+        "comparator_type": "org.apache.cassandra.db.marshal.UTF8Type",
+        "row_cache_size": null
+      },
+      "rollups300": {
+        "comment": "{\"info\": \"OpsCenter management data.\", \"version\": [5, 0, 0]}",
+        "key_validation_class": "org.apache.cassandra.db.marshal.UTF8Type",
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "key_cache_save_period_in_seconds": null,
+        "gc_grace_seconds": 0,
+        "default_validation_class": "org.apache.cassandra.db.marshal.BytesType",
+        "is_cql3_table": false,
+        "max_compaction_threshold": 16,
+        "read_repair_chance": 0.25,
+        "compression_options": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "key_cache_size": null,
+        "id": null,
+        "compaction_strategy_options": {},
+        "bloom_filter_fp_chance": null,
+        "replicate_on_write": true,
+        "subcomparator_type": null,
+        "merge_shards_chance": null,
+        "row_cache_provider": null,
+        "row_cache_save_period_in_seconds": null,
+        "column_type": "Standard",
+        "is_stub": false,
+        "memtable_throughput_in_mb": null,
+        "memtable_flush_after_mins": null,
+        "column_metadata": [],
+        "key_alias": "key",
+        "dclocal_read_repair_chance": 0,
+        "name": "rollups300",
+        "keyspace": "OpsCenter",
+        "row_cache_keys_to_save": null,
+        "compaction_strategy": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "memtable_operations_in_millions": null,
+        "caching": "KEYS_ONLY",
+        "comparator_type": "org.apache.cassandra.db.marshal.IntegerType",
+        "row_cache_size": null
+      }
+    },
+    "is_system": false,
+    "strategy_options": {
+      "ash": "3",
+      "la": "3"
+    },
+    "replica_placement_strategy": "org.apache.cassandra.locator.NetworkTopologyStrategy",
+    "durable_writes": true
+  },
+  "system_traces": {
+    "name": "system_traces",
+    "column_families": {
+      "events": {
+        "comment": "",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 0,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system_traces",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "uuid",
+            "index_name": null,
+            "name": "session_id"
+          },
+          {
+            "validator": "timeuuid",
+            "index_name": null,
+            "name": "event_id"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "activity"
+          },
+          {
+            "validator": "inet",
+            "index_name": null,
+            "name": "source"
+          },
+          {
+            "validator": "int",
+            "index_name": null,
+            "name": "source_elapsed"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "thread"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [
+          "event_id"
+        ],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "UUIDType",
+        "read_repair_chance": 0,
+        "name": "events",
+        "comparator": "CompositeType(TimeUUIDType, UTF8Type)",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "session_id"
+        ],
+        "caching": "KEYS_ONLY"
+      },
+      "sessions": {
+        "comment": "traced sessions",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 0,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 3600000,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "system_traces",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "uuid",
+            "index_name": null,
+            "name": "session_id"
+          },
+          {
+            "validator": "inet",
+            "index_name": null,
+            "name": "coordinator"
+          },
+          {
+            "validator": "int",
+            "index_name": null,
+            "name": "duration"
+          },
+          {
+            "validator": "map<text, text>",
+            "index_name": null,
+            "name": "parameters"
+          },
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "request"
+          },
+          {
+            "validator": "timestamp",
+            "index_name": null,
+            "name": "started_at"
+          }
+        ],
+        "local_read_repair_chance": 0,
+        "column_aliases": [],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "UUIDType",
+        "read_repair_chance": 0,
+        "name": "sessions",
+        "comparator": "CompositeType(UTF8Type, ColumnToCollectionType(MapType(UTF8Type, UTF8Type)))",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "session_id"
+        ],
+        "caching": "KEYS_ONLY"
+      }
+    },
+    "is_system": true,
+    "strategy_options": {
+      "ash": "3",
+      "la": "3"
+    },
+    "replica_placement_strategy": "org.apache.cassandra.locator.NetworkTopologyStrategy",
+    "durable_writes": true
+  },
+  "dse_system": {
+    "name": "dse_system",
+    "column_families": {
+      "leases": {
+        "comment": "",
+        "index_interval": 128,
+        "solr_core": false,
+        "min_compaction_threshold": 4,
+        "gc_grace_seconds": 864000,
+        "default_time_to_live": 0,
+        "memtable_flush_period_in_ms": 0,
+        "is_cql3_table": true,
+        "max_compaction_threshold": 32,
+        "compression_parameters": {
+          "sstable_compression": "org.apache.cassandra.io.compress.LZ4Compressor"
+        },
+        "bloom_filter_fp_chance": 0.01,
+        "subcomparator": null,
+        "keyspace": "dse_system",
+        "value_alias": null,
+        "compaction_strategy_class": "org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy",
+        "populate_io_cache_on_flush": false,
+        "replicate_on_write": true,
+        "type": "Standard",
+        "dropped_columns": null,
+        "columns": [
+          {
+            "validator": "text",
+            "index_name": null,
+            "name": "lease_id"
+          },
+          {
+            "validator": "int",
+            "index_name": null,
+            "name": "duration"
+          },
+          {
+            "validator": "bigint",
+            "index_name": null,
+            "name": "generation"
+          },
+          {
+            "validator": "uuid",
+            "index_name": null,
+            "name": "owner"
+          },
+          {
+            "validator": "timestamp",
+            "index_name": null,
+            "name": "ts"
+          }
+        ],
+        "local_read_repair_chance": 0.1,
+        "column_aliases": [],
+        "is_stub": false,
+        "default_validator": "BytesType",
+        "key_validator": "UTF8Type",
+        "read_repair_chance": 0,
+        "name": "leases",
+        "comparator": "CompositeType(UTF8Type)",
+        "speculative_retry": "99.0PERCENTILE",
+        "compaction_strategy_options": {},
+        "key_aliases": [
+          "lease_id"
+        ],
+        "caching": "KEYS_ONLY"
+      }
+    },
+    "is_system": false,
+    "strategy_options": {},
+    "replica_placement_strategy": "org.apache.cassandra.locator.EverywhereStrategy",
+    "durable_writes": true
+  }
+}
