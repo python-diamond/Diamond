@@ -286,7 +286,7 @@ class Collector(object):
             # Collect the collector run time in ms
             'measure_collector_time': False,
 
-            # Whitelist of metrics to let th rough
+            # Whitelist of metrics to let through
             'metrics_whitelist': None,
 
             # Blacklist of metrics to let through
