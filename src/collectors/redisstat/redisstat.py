@@ -103,7 +103,7 @@ class RedisCollector(diamond.collector.Collector):
         for instance in instance_list:
 
             if '@' in instance:
-                (nickname, hostport) = instance.split('@', 2)
+                (nickname, hostport) = instance.split('@', 1)
             else:
                 nickname = None
                 hostport = instance
