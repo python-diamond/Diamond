@@ -10,6 +10,7 @@ import time
 RE_LSPACES = re.compile("^[\s\t]*")
 RE_TSPACES = re.compile("[\s\t]*$")
 
+
 class IcingaStatsCollector(diamond.collector.Collector):
     """
     Collect Icinga Stats
@@ -29,12 +30,14 @@ class IcingaStatsCollector(diamond.collector.Collector):
 
         metrics = self.get_icinga_stats(stats["programstatus"])
         if "hoststatus" in stats.keys():
-            metrics = dict(metrics.items() \
-                    + self.get_host_stats(stats["hoststatus"]).items())
+            metrics = dict(
+                metrics.items() + self.get_host_stats(
+                    stats["hoststatus"]).items())
 
         if "servicestatus" in stats.keys():
-            metrics = dict(metrics.items() \
-                    + self.get_svc_stats(stats["servicestatus"]).items())
+            metrics = dict(
+                metrics.items() + self.get_svc_stats(
+                    stats["servicestatus"]).items())
 
         for metric in metrics.keys():
             self.log.debug("Publishing '%s %s'.", metric, metrics[metric])
@@ -44,7 +47,8 @@ class IcingaStatsCollector(diamond.collector.Collector):
         """
         Return help text
         """
-        config_help = super(IcingaStatsCollector, self).get_default_config_help()
+        config_help = super(IcingaStatsCollector,
+                            self).get_default_config_help()
         config_help.update({
             "status_path": "Path to Icinga status.dat file"
             })
@@ -66,10 +70,10 @@ class IcingaStatsCollector(diamond.collector.Collector):
         stats = {}
         stats = dict(stats.items() + self._get_active_stats(app_stats).items())
         stats = dict(stats.items() + self._get_cached_stats(app_stats).items())
-        stats = dict(stats.items() \
-                + self._get_command_execution(app_stats).items())
-        stats = dict(stats.items() \
-                + self._get_externalcmd_stats(app_stats).items())
+        stats = dict(
+            stats.items() + self._get_command_execution(app_stats).items())
+        stats = dict(
+            stats.items() + self._get_externalcmd_stats(app_stats).items())
         stats["uptime"] = self._get_uptime(app_stats)
         return stats
 
@@ -108,7 +112,7 @@ class IcingaStatsCollector(diamond.collector.Collector):
                             stats[entity_type].append(tmp_dict)
 
                         continue
-                    elif save_buffer == True:
+                    elif save_buffer is True:
                         fbuffer.append(line)
 
         except Exception as exception:
@@ -119,17 +123,17 @@ class IcingaStatsCollector(diamond.collector.Collector):
     def get_host_stats(self, hosts):
         """ Get statistics for Hosts, resp. Host entities """
         stats = {
-                "hosts.total": 0,
-                "hosts.ok": 0,
-                "hosts.down": 0,
-                "hosts.unreachable": 0,
-                "hosts.flapping": 0,
-                "hosts.in_downtime": 0,
-                "hosts.checked": 0,
-                "hosts.scheduled": 0,
-                "hosts.active_checks": 0,
-                "hosts.passive_checks": 0,
-                }
+            "hosts.total": 0,
+            "hosts.ok": 0,
+            "hosts.down": 0,
+            "hosts.unreachable": 0,
+            "hosts.flapping": 0,
+            "hosts.in_downtime": 0,
+            "hosts.checked": 0,
+            "hosts.scheduled": 0,
+            "hosts.active_checks": 0,
+            "hosts.passive_checks": 0,
+            }
         for host in list(hosts):
             if type(host) is not dict:
                 continue
@@ -150,18 +154,18 @@ class IcingaStatsCollector(diamond.collector.Collector):
     def get_svc_stats(self, svcs):
         """ Get statistics for Services, resp. Service entities """
         stats = {
-                "services.total": 0,
-                "services.ok": 0,
-                "services.warning": 0,
-                "services.critical": 0,
-                "services.unknown": 0,
-                "services.flapping": 0,
-                "services.in_downtime": 0,
-                "services.checked": 0,
-                "services.scheduled": 0,
-                "services.active_checks": 0,
-                "services.passive_checks": 0,
-                }
+            "services.total": 0,
+            "services.ok": 0,
+            "services.warning": 0,
+            "services.critical": 0,
+            "services.unknown": 0,
+            "services.flapping": 0,
+            "services.in_downtime": 0,
+            "services.checked": 0,
+            "services.scheduled": 0,
+            "services.active_checks": 0,
+            "services.passive_checks": 0,
+            }
         for svc in svcs:
             if type(svc) is not dict:
                 continue
@@ -169,8 +173,8 @@ class IcingaStatsCollector(diamond.collector.Collector):
             sane = self._sanitize_entity(svc)
             stats["services.total"] += 1
             stats["services.flapping"] += self._trans_binary(sane["flapping"])
-            stats["services.in_downtime"] += \
-                    self._trans_dtime(sane["in_downtime"])
+            stats["services.in_downtime"] += self._trans_dtime(
+                sane["in_downtime"])
             stats["services.checked"] += self._trans_binary(sane["checked"])
             stats["services.scheduled"] += self._trans_binary(sane["scheduled"])
             stats["services.active_checks"] += sane["active_checks"]
@@ -209,11 +213,11 @@ class IcingaStatsCollector(diamond.collector.Collector):
         """
         stats = {}
         app_keys = [
-                "active_scheduled_host_check_stats",
-                "active_scheduled_service_check_stats",
-                "active_ondemand_host_check_stats",
-                "active_ondemand_service_check_stats",
-                ]
+            "active_scheduled_host_check_stats",
+            "active_scheduled_service_check_stats",
+            "active_ondemand_host_check_stats",
+            "active_ondemand_service_check_stats",
+            ]
         for app_key in app_keys:
             if app_key not in app_stats.keys():
                 continue
@@ -235,9 +239,9 @@ class IcingaStatsCollector(diamond.collector.Collector):
         """
         stats = {}
         app_keys = [
-                "cached_host_check_stats",
-                "cached_service_check_stats",
-                ]
+            "cached_host_check_stats",
+            "cached_service_check_stats",
+            ]
         for app_key in app_keys:
             if app_key not in app_stats.keys():
                 continue
@@ -258,9 +262,9 @@ class IcingaStatsCollector(diamond.collector.Collector):
         """
         stats = {}
         app_keys = {
-                "serial_host_check_stats",
-                "parallel_host_check_stats",
-                }
+            "serial_host_check_stats",
+            "parallel_host_check_stats",
+            }
         for app_key in app_keys:
             if app_key not in app_stats.keys():
                 continue
@@ -286,13 +290,13 @@ class IcingaStatsCollector(diamond.collector.Collector):
         kused = "used_external_command_buffer_slots"
         kstats = "external_command_stats"
         aliases = {
-                khigh: "external_command.buffer_high",
-                ktotal: "external_command.buffer_total",
-                kused: "external_command.buffer_used",
-                "x01": "external_command.01",
-                "x05": "external_command.05",
-                "x15": "external_command.15",
-                }
+            khigh: "external_command.buffer_high",
+            ktotal: "external_command.buffer_total",
+            kused: "external_command.buffer_used",
+            "x01": "external_command.01",
+            "x05": "external_command.05",
+            "x15": "external_command.15",
+            }
         stats = {}
         if khigh in app_stats.keys() and str(app_stats[khigh]).isdigit():
             key = aliases[khigh]
@@ -355,14 +359,14 @@ class IcingaStatsCollector(diamond.collector.Collector):
         Make given entity 'sane' for further use.
         """
         aliases = {
-                "current_state": "state",
-                "is_flapping": "flapping",
-                "scheduled_downtime_depth": "in_downtime",
-                "has_been_checked": "checked",
-                "should_be_scheduled": "scheduled",
-                "active_checks_enabled": "active_checks",
-                "passive_checks_enabled": "passive_checks",
-                }
+            "current_state": "state",
+            "is_flapping": "flapping",
+            "scheduled_downtime_depth": "in_downtime",
+            "has_been_checked": "checked",
+            "should_be_scheduled": "scheduled",
+            "active_checks_enabled": "active_checks",
+            "passive_checks_enabled": "passive_checks",
+            }
         sane = {}
         for akey in aliases.keys():
             sane[aliases[akey]] = None
