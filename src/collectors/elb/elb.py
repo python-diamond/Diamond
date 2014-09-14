@@ -11,8 +11,6 @@ You can specify an arbitrary amount of regions
 ```
     enabled = true
     interval = 60
-    # max number of delayed metrics to tolerate
-    max_delayed = 10
 
     # Optional
     access_key_id = ...
@@ -41,9 +39,12 @@ You can specify an arbitrary amount of regions
 
 """
 import calendar
+import cPickle
 import datetime
-import time
+import functools
 import re
+import time
+from collections import namedtuple
 from string import Template
 
 import diamond.collector
@@ -58,6 +59,39 @@ except ImportError:
     cloudwatch = False
 
 
+class memoized(object):
+    """Decorator that caches a function's return value each time it is called.
+    If called later with the same arguments, the cached value is returned, and
+    the function is not re-evaluated.
+
+    Based upon from http://wiki.python.org/moin/PythonDecoratorLibrary#Memoize
+    Nota bene: this decorator memoizes /all/ calls to the function.  For
+    a memoization decorator with limited cache size, consider:
+    http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/
+    """
+    def __init__(self, func):
+        self.func = func
+        self.cache = {}
+
+    def __call__(self, *args, **kwargs):
+        # If the function args cannot be used as a cache hash key, fail fast
+        key = cPickle.dumps((args, kwargs))
+        try:
+            return self.cache[key]
+        except KeyError:
+            value = self.func(*args, **kwargs)
+            self.cache[key] = value
+            return value
+
+    def __repr__(self):
+        """Return the function's docstring."""
+        return self.func.__doc__
+
+    def __get__(self, obj, objtype):
+        """Support instance methods."""
+        return functools.partial(self.__call__, obj)
+
+
 def utc_to_local(utc_dt):
     """
     :param utc_dt: datetime in UTC
@@ -70,24 +104,38 @@ def utc_to_local(utc_dt):
     return local_dt.replace(microsecond=utc_dt.microsecond)
 
 
+@memoized
+def get_zones(region, auth_kwargs):
+    """
+    :param region: region to get the availability zones for
+    :return: list of availability zones
+    """
+    ec2_conn = boto.ec2.connect_to_region(region, **auth_kwargs)
+    return [zone.name for zone in ec2_conn.get_all_zones()]
+
+
 class ElbCollector(diamond.collector.Collector):
 
-    # (aws metric name, aws statistic type, diamond metric type, diamond
-    # precision, emit zero when no value available)
+    # default_to_zero means if cloudwatch does not return a stat for the
+    # given metric, then just default it to zero.
+    MetricInfo = namedtuple('MetricInfo',
+        'name aws_type diamond_type precision default_to_zero')
+
+    # AWS metrics for ELBs
     metrics = [
-        ('HealthyHostCount', 'Average', 'GAUGE', 0, False),
-        ('UnHealthyHostCount', 'Average', 'GAUGE', 0, False),
-        ('RequestCount', 'Sum', 'COUNTER', 0, True),
-        ('Latency', 'Average', 'GAUGE', 4, False),
-        ('HTTPCode_ELB_4XX', 'Sum', 'COUNTER', 0, True),
-        ('HTTPCode_ELB_5XX', 'Sum', 'COUNTER', 0, True),
-        ('HTTPCode_Backend_2XX', 'Sum', 'COUNTER', 0, True),
-        ('HTTPCode_Backend_3XX', 'Sum', 'COUNTER', 0, True),
-        ('HTTPCode_Backend_4XX', 'Sum', 'COUNTER', 0, True),
-        ('HTTPCode_Backend_5XX', 'Sum', 'COUNTER', 0, True),
-        ('BackendConnectionErrors', 'Sum', 'COUNTER', 0, True),
-        ('SurgeQueueLength', 'Maximum', 'GAUGE', 0, True),
-        ('SpilloverCount', 'Sum', 'COUNTER', 0, True)
+        MetricInfo('HealthyHostCount', 'Average', 'GAUGE', 0, False),
+        MetricInfo('UnHealthyHostCount', 'Average', 'GAUGE', 0, False),
+        MetricInfo('RequestCount', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('Latency', 'Average', 'GAUGE', 4, False),
+        MetricInfo('HTTPCode_ELB_4XX', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('HTTPCode_ELB_5XX', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('HTTPCode_Backend_2XX', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('HTTPCode_Backend_3XX', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('HTTPCode_Backend_4XX', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('HTTPCode_Backend_5XX', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('BackendConnectionErrors', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('SurgeQueueLength', 'Maximum', 'GAUGE', 0, True),
+        MetricInfo('SpilloverCount', 'Sum', 'COUNTER', 0, True)
     ]
 
     def __init__(self, config, handlers):
@@ -112,8 +160,6 @@ class ElbCollector(diamond.collector.Collector):
                 raise Exception('Interval must be a multiple of 60 seconds: %s'
                                 % self.interval)
         setup_creds()
-        self.max_delayed = self.config.as_int('max_delayed')
-        self.history = dict()
 
     def check_boto(self):
         if not cloudwatch:
@@ -131,40 +177,11 @@ class ElbCollector(diamond.collector.Collector):
             'regions': ['us-west-1'],
             'interval': 60,
             'format': '$zone.$elb_name.$metric_name',
-            'max_delayed': 10,
-            'elbs_ignored': False,
         })
         return config
 
-    def get_elb_names(self, region, region_cfg):
-        """
-        :return: List of elb names to query in the given region
-        """
-        if 'elb_names' not in region_cfg:
-            elb_conn = boto.ec2.elb.connect_to_region(region,
-                                                      **self.auth_kwargs)
-            full_elb_names = [elb.name
-                              for elb in elb_conn.get_all_load_balancers()]
-
-            # Define regexp matches for ELBs we DO NOT want to get metrics on.
-            matchers = []
-            if self.config['elbs_ignored']:
-                for reg in self.config['elbs_ignored']:
-                    matchers.append(re.compile(reg))
-
-            # cycle through elbs get the list of elbs that don't match
-            elb_names = []
-            for elb_name in full_elb_names:
-                if matchers and any([m.match(elb_name) for m in matchers]):
-                    continue
-                elb_names.append(elb_name)
-        else:
-            elb_names = region_cfg['elb_names']
-        return elb_names
-
-    def publish_delayed_metric(self, name, value, timestamp,
-                               raw_value=None, precision=0,
-                               metric_type='GAUGE', instance=None):
+    def publish_delayed_metric(self, name, value, timestamp, raw_value=None,
+                               precision=0, metric_type='GAUGE', instance=None):
         """
         Metrics may not be immediately available when querying cloudwatch.
         Hence, allow the ability to publish a metric from some the past given
@@ -185,102 +202,100 @@ class ElbCollector(diamond.collector.Collector):
         # Publish Metric
         self.publish_metric(metric)
 
+    def get_elb_names(self, region, config):
+        """
+        :param region: name of a region
+        :param config: Collector config dict
+        :return: list of elb names to query in the given region
+        """
+        # This function is ripe to be memoized but when ELBs are added/removed
+        # dynamically over time, diamond will have to be restarted to pick
+        # up the changes.
+        region_dict = config.get('regions', {}).get(region, {})
+        if 'elb_names' not in region_dict:
+            elb_conn = boto.ec2.elb.connect_to_region(region, **self.auth_kwargs)
+            full_elb_names = \
+                [elb.name for elb in elb_conn.get_all_load_balancers()]
+
+            # Regular expressions for ELBs we DO NOT want to get metrics on.
+            matchers = \
+                [re.compile(regex) for regex in config.get('elbs_ignored', [])]
+
+            # cycle through elbs get the list of elbs that don't match
+            elb_names = []
+            for elb_name in full_elb_names:
+                if matchers and any([m.match(elb_name) for m in matchers]):
+                    continue
+                elb_names.append(elb_name)
+        else:
+            elb_names = region_dict['elb_names']
+        return elb_names
+
+    def process_stat(self, region, zone, elb_name, metric, stat, end_time):
+        template_tokens = {
+            'region': region,
+            'zone': zone,
+            'elb_name': elb_name,
+            'metric_name': metric.name,
+        }
+        name_template = Template(self.config['format'])
+        formatted_name = name_template.substitute(template_tokens)
+        self.publish_delayed_metric(
+            formatted_name,
+            stat[metric.aws_type],
+            metric_type=metric.diamond_type,
+            precision=metric.precision,
+            timestamp=time.mktime(utc_to_local(end_time).timetuple()))
+
+        #self.log.debug('published %s %s %s' % (elb_name, stat, formatted_name))
+
+    def process_metric(self, region_cw_conn, zone, start_time, end_time, elb_name, metric):
+        stats = region_cw_conn.get_metric_statistics(
+            self.config['interval'],
+            start_time,
+            end_time,
+            metric.name,
+            namespace='AWS/ELB',
+            statistics=[metric.aws_type],
+            dimensions={
+                'LoadBalancerName': elb_name,
+                'AvailabilityZone': zone
+            })
+
+        # create a fake stat if the current metric should default to zero when
+        # a stat is not returned. Cloudwatch just skips the metric entirely
+        # instead of wasting space to store/emit a zero.
+        if len(stats) == 0 and metric.default_to_zero:
+            stats.append({
+                u'Timestamp': start_time,
+                metric.aws_type: 0.0,
+                u'Unit': u'Count'
+            })
+
+        for stat in stats:
+            self.process_stat(region_cw_conn.region.name, zone, elb_name, metric, stat, end_time)
+
+    def process_elb(self, region_cw_conn, zone, start_time, end_time, elb_name):
+        for metric in self.metrics:
+            self.process_metric(region_cw_conn, zone, start_time, end_time, elb_name, metric)
+
+    def process_zone(self, region_cw_conn, zone, start_time, end_time):
+        for elb_name in self.get_elb_names(region_cw_conn.region.name, self.config):
+            self.process_elb(region_cw_conn, zone, start_time, end_time, elb_name)
+
+    def process_region(self, region_cw_conn, start_time, end_time):
+        for zone in get_zones(region_cw_conn.region.name, self.auth_kwargs):
+            self.process_zone(region_cw_conn, zone, start_time, end_time)
+
     def collect(self):
         if not self.check_boto():
             return
-
-        def cache_zones():
-            self.zones_by_region = {}
-            for region in self.config['regions']:
-                try:
-                    ec2_conn = boto.ec2.connect_to_region(region,
-                                                          **self.auth_kwargs)
-                except NoAuthHandlerFound, e:
-                    self.log.error(e)
-                    continue
-
-                self.zones_by_region[region] = [
-                    zone.name for zone in ec2_conn.get_all_zones()]
-
-        cache_zones()
 
         now = datetime.datetime.utcnow()
         end_time = now.replace(second=0, microsecond=0)
         start_time = end_time - datetime.timedelta(seconds=self.interval)
 
-        for (region, region_cfg) in self.config['regions'].items():
-            conn = cloudwatch.connect_to_region(region, **self.auth_kwargs)
-            for elb_name in self.get_elb_names(region, region_cfg):
-                for (metric_name, statistic,
-                        metric_type, precision,
-                        default_to_zero) in self.metrics:
-                    for zone in self.zones_by_region[region]:
+        for region in self.config['regions'].keys():
+            region_cw_conn = cloudwatch.connect_to_region(region, **self.auth_kwargs)
+            self.process_region(region_cw_conn, start_time, end_time)
 
-                        metric_key = (zone, elb_name, metric_name)
-                        if metric_key not in self.history:
-                            self.history[metric_key] = list()
-                        current_history = self.history[metric_key]
-
-                        tick = (start_time, end_time)
-                        current_history.append(tick)
-
-                        # only keep latest MAX_TICKS
-                        if len(current_history) > self.max_delayed:
-                            del current_history[0]
-
-                        span_start, _ = current_history[0]
-                        _, span_end = current_history[-1]
-
-                        # get stats for the span of history for which we don't
-                        # have values
-                        stats = conn.get_metric_statistics(
-                            self.config['interval'],
-                            span_start,
-                            span_end,
-                            metric_name,
-                            namespace='AWS/ELB',
-                            statistics=[statistic],
-                            dimensions={'LoadBalancerName': elb_name,
-                                        'AvailabilityZone': zone})
-
-                        # create a fake stat if the current metric
-                        # should default to zero when a stat is
-                        # not returned. Cloudwatch just skips the
-                        # metric entirely instead of wasting space
-                        # to store/emit a zero.
-                        if len(stats) == 0 and default_to_zero:
-                            stats.append({
-                                u'Timestamp': span_start,
-                                statistic: 0.0,
-                                u'Unit': u'Count'
-                            })
-
-                        # match up each individual stat to what we have in
-                        # history and publish it.
-                        for stat in stats:
-                            ts = stat['Timestamp']
-                            # TODO: maybe use a dict for matching
-                            for i, tick in enumerate(current_history):
-                                tick_start, tick_end = tick
-                                if ts == tick_start:
-                                    del current_history[i]
-
-                                    template_tokens = {
-                                        'region': region,
-                                        'zone': zone,
-                                        'elb_name': elb_name,
-                                        'metric_name': metric_name,
-                                    }
-                                    name_template = Template(
-                                        self.config['format'])
-                                    formatted_name = name_template.substitute(
-                                        template_tokens)
-                                    self.publish_delayed_metric(
-                                        formatted_name,
-                                        stat[statistic],
-                                        metric_type=metric_type,
-                                        precision=precision,
-                                        timestamp=time.mktime(
-                                            utc_to_local(tick_end).timetuple())
-                                        )
-                                    break
