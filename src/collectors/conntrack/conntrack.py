@@ -1,12 +1,9 @@
 # coding=utf-8
 
 """
-Shells out to get the value of sysctl net.netfilter.nf_conntrack_count and
-net.netfilter.nf_conntrack_count_max
-
 #### Dependencies
 
- * nf_conntrack module
+ * nf_conntrack/ip_conntrack module
 
 """
 
