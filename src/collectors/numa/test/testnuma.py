@@ -6,6 +6,7 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 from mock import patch
+from mock import Mock
 
 from diamond.collector import Collector
 from numa import NumaCollector
@@ -13,10 +14,11 @@ from numa import NumaCollector
 ################################################################################
 
 
-class TestExampleCollector(CollectorTestCase):
+class TestNumaCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('NumaCollector', {
-            'interval': 10
+            'interval': 10,
+            'bin': '/usr/bin/true'
         })
 
         self.collector = NumaCollector(config, None)
@@ -29,13 +31,23 @@ class TestExampleCollector(CollectorTestCase):
         self.collector.collect()
 
         metrics = {
-            'node_0_free_MB':  42,
-            'node_0_size_MB':  402
+            'node_0_free_MB':  342,
+            'node_0_size_MB':  15976
         }
 
-        self.setDocNuma(collector=self.collector.__class__.__name__,
-                        metrics=metrics,
-                        defaultpath=self.collector.config['path'])
+        patch_communicate = patch(
+            'subprocess.Popen.communicate',
+            Mock(return_value=(
+                self.getFixture('single_node.txt').getvalue(),
+                '')))
+        patch_communicate.start()
+        self.collector.collect()
+        patch_communicate.stop()
+
+        self.setDocExample(
+            collector=self.collector.__class__.__name__,
+            metrics=metrics,
+            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################

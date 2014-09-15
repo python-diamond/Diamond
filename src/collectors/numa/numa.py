@@ -25,12 +25,13 @@ class NumaCollector(diamond.collector.Collector):
         """
         config = super(NumaCollector, self).get_default_config()
         config.update({
-            'path':     'numa'
+            'path':     'numa',
+            'bin':      self.find_binary('numactl'),
         })
         return config
 
     def collect(self):
-        p = Popen(['numactl', '--hardware'], stdout=PIPE, stderr=PIPE)
+        p = Popen([self.config['bin'], '--hardware'], stdout=PIPE, stderr=PIPE)
 
         output, errors = p.communicate()
 
