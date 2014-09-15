@@ -177,37 +177,37 @@ class DseOpsCenterCollector(diamond.collector.Collector):
                 "Unable to parse response from opscenter as a json object")
             return False
 
-        def collect(self):
-            metrics = {}
-            if json is None:
-                self.log.error('Unable to import json')
+    def collect(self):
+        metrics = {}
+        if json is None:
+            self.log.error('Unable to import json')
+            return None
+
+        time_now = int(datetime.datetime.utcnow().strftime('%s'))
+
+        self.log.debug('DseOpsCenterCollector last_run_time = %i',
+                       self.last_run_time)
+
+        if self.last_run_time == 0:
+            self.last_run_time = time_now - 60
+        if time_now - self.last_run_time >= 60:
+            result = self._get(self.last_run_time, time_now)
+            self.last_run_time = time_now
+            if not result:
                 return None
-
-            time_now = int(datetime.datetime.utcnow().strftime('%s'))
-
-            self.log.debug('DseOpsCenterCollector last_run_time = %i',
-                           self.last_run_time)
-
-            if self.last_run_time == 0:
-                self.last_run_time = time_now - 60
-            if time_now - self.last_run_time >= 60:
-                result = self._get(self.last_run_time, time_now)
-                self.last_run_time = time_now
-                if not result:
-                    return None
-                self.log.debug('DseOpsCenterCollector result = %s', result)
-                for data in result['data'][self.config['node_group']]:
-                    if data['data-points'][0][0] is None:
-                        if 'columnfamily' in data:
-                            k = '.'.join([data['metric'],
-                                          data['columnfamily']])
-                            metrics[k] = data['data-points'][0][0]
-                    else:
-                        metrics[data['metric']] = data['data-points'][0][0]
-                self.log.debug('DseOpsCenterCollector metrics = %s', metrics)
-                for key in metrics:
-                    self.publish(key, metrics[key])
-            else:
-                self.log.debug(
-                    "DseOpsCenterCollector can only run once every minute")
-                return None
+            self.log.debug('DseOpsCenterCollector result = %s', result)
+            for data in result['data'][self.config['node_group']]:
+                if data['data-points'][0][0] is None:
+                    if 'columnfamily' in data:
+                        k = '.'.join([data['metric'],
+                                      data['columnfamily']])
+                        metrics[k] = data['data-points'][0][0]
+                else:
+                    metrics[data['metric']] = data['data-points'][0][0]
+            self.log.debug('DseOpsCenterCollector metrics = %s', metrics)
+            for key in metrics:
+                self.publish(key, metrics[key])
+        else:
+            self.log.debug(
+                "DseOpsCenterCollector can only run once every minute")
+            return None
