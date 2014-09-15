@@ -1,9 +1,12 @@
 # coding=utf-8
 
 """
+Collecting connections tracking statistics from nf_conntrack/ip_conntrack
+kernel module.
+
 #### Dependencies
 
- * nf_conntrack/ip_conntrack module
+ * nf_conntrack/ip_conntrack kernel module
 
 """
 
