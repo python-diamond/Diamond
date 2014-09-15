@@ -80,6 +80,9 @@ class ConnTrackCollector(diamond.collector.Collector):
                     self.log.error("Failed to collect from '%s': %s",
                                    fpath,
                                    exception)
-
-        for key in collected.keys():
-            self.publish(key, collected[key])
+        if not collected:
+            self.log.error('No metric was collected, looks like '
+                           'nf_conntrack/ip_conntrack module was not loaded')
+        else:
+            for key in collected.keys():
+                self.publish(key, collected[key])
