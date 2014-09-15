@@ -16,6 +16,9 @@ class Handler(object):
         Create a new instance of the Handler class
         """
 
+        # Enabled? Default to yes, but allow handlers to disable themselves
+        self.enabled = True
+
         # Initialize Log
         self.log = logging.getLogger('diamond')
 
@@ -58,6 +61,8 @@ class Handler(object):
         """
         Decorator for processing handlers with a lock, catching exceptions
         """
+        if not self.enabled:
+            return
         try:
             try:
                 self.lock.acquire()
@@ -80,6 +85,8 @@ class Handler(object):
         """
         Decorator for flushing handlers with an lock, catching exceptions
         """
+        if not self.enabled:
+            return
         try:
             try:
                 self.lock.acquire()

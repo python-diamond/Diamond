@@ -30,6 +30,7 @@ class rmqHandler (Handler):
 
         if pika is None:
             self.log.error('pika import failed. Handler disabled')
+            self.enabled = False
             return
 
         # Initialize Data
