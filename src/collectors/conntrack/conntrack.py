@@ -36,7 +36,7 @@ class ConnTrackCollector(diamond.collector.Collector):
             "path":  "conntrack",
             "dir":   "/proc/sys/net/ipv4/netfilter,/proc/sys/net/netfilter",
             "files": "ip_conntrack_count,ip_conntrack_max,"
-            "nf_conntrack_count,nf_conntrack_max",
+                     "nf_conntrack_count,nf_conntrack_max",
         })
         return config
 
@@ -59,14 +59,14 @@ class ConnTrackCollector(diamond.collector.Collector):
 
         for sdir in dirs:
             for sfile in files:
-                fpath = "%s/%s" % (sdir, sfile)
-                if sfile[-15:] == 'conntrack_count':
+                if sfile.endswith('conntrack_count'):
                     metric_name = 'ip_conntrack_count'
-                elif sfile[-13:] == 'conntrack_max':
+                elif sfile.endswith('conntrack_max'):
                     metric_name = 'ip_conntrack_max'
                 else:
                     self.log.error('Unknown file for collection: %s', sfile)
                     continue
+                fpath = os.path.join(sdir, sfile)
                 if not os.path.exists(fpath):
                     continue
                 try:
@@ -79,7 +79,8 @@ class ConnTrackCollector(diamond.collector.Collector):
                                    exception)
         if not collected:
             self.log.error('No metric was collected, looks like '
-                           'nf_conntrack/ip_conntrack module was not loaded')
+                           'nf_conntrack/ip_conntrack kernel module was '
+                           'not loaded')
         else:
             for key in collected.keys():
                 self.publish(key, collected[key])
