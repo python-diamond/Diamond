@@ -87,9 +87,10 @@ class TestKafkaCollector(CollectorTestCase):
             'kafka:type=kafka.SocketServerStats',
             'kafka:type=kafka.logs.mytopic-0',
             'kafka:type=kafka.logs.mytopic-1',
+            'kafka:type=kafka.Log4jController',
         ])
 
-        found_beans = self.collector.get_mbeans()
+        found_beans = self.collector.get_mbeans('*')
 
         self.assertEqual(found_beans, expected_names)
 
@@ -98,7 +99,7 @@ class TestKafkaCollector(CollectorTestCase):
     def test_get_mbeans_get_fail(self, get_mock):
         get_mock.return_value = None
 
-        found_beans = self.collector.get_mbeans()
+        found_beans = self.collector.get_mbeans('*')
 
         self.assertEqual(found_beans, None)
 
