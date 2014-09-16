@@ -48,6 +48,8 @@ class StatsdHandler(Handler):
 
         if not statsd:
             self.log.error('statsd import failed. Handler disabled')
+            self.enabled = False
+            return
 
         # Initialize Options
         self.host = self.config['host']

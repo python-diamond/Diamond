@@ -70,6 +70,8 @@ class BaseResult(object):
         if not raven:
             self.log.error('raven.handlers.logging import failed. '
                            'Handler disabled')
+            self.enabled = False
+            return
 
     @property
     def verbose_message(self):

@@ -65,7 +65,7 @@ class LogentriesDiamondHandler(Handler):
 
         config.update({
             'log_token': '',
-            'queue_size': ''
+            'queue_size': 100
         })
 
         return config

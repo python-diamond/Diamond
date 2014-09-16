@@ -184,8 +184,9 @@ class rmqHandler (Handler):
         """
           Destroy instance of the rmqHandler class
         """
-        for rmq_server in self.connections.keys():
-            self._unbind(rmq_server)
+        if hasattr(self, 'connections'):
+            for rmq_server in self.connections.keys():
+                self._unbind(rmq_server)
 
     def process(self, metric):
         """

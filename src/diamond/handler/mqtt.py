@@ -112,6 +112,7 @@ class MQTTHandler(Handler):
 
         if not mosquitto:
             self.log.error('mosquitto import failed. Handler disabled')
+            self.enabled = False
             return
 
         # Initialize
