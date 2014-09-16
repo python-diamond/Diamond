@@ -1,3 +1,14 @@
+# coding=utf-8
+
+"""
+Collect Uptime metrics
+
+#### Dependencies
+
+    * /proc/uptime
+
+"""
+
 from diamond.collector import Collector
 from diamond import convertor
 
