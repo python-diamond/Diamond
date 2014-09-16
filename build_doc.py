@@ -178,8 +178,7 @@ if __name__ == "__main__":
         docFile.write("%s\n" % (collector))
         docFile.write("=====\n")
         if collectors[collector].__doc__ is None:
-            print collectors[collector]
-            print collectors[collector].__doc__
+            print "No __doc__ string!"
         docFile.write("%s\n" % (collectors[collector].__doc__))
         docFile.write("#### Options - [Generic Options](Configuration)\n")
         docFile.write("\n")
@@ -254,13 +253,18 @@ if __name__ == "__main__":
 
         tmpfile = tempfile.mkstemp()
 
-        obj = cls({
-            'log_file': tmpfile[1],
-            })
+        options = None
+        defaultOptions = None
 
-        options = obj.get_default_config_help()
+        try:
+            obj = cls({
+                'log_file': tmpfile[1],
+                })
 
-        defaultOptions = obj.get_default_config()
+            options = obj.get_default_config_help()
+            defaultOptions = obj.get_default_config()
+        except Exception, e:
+            print "Caught Exception %s" % e
 
         os.remove(tmpfile[1])
 
