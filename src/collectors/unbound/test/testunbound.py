@@ -28,8 +28,8 @@ class TestUnboundCollector(CollectorTestCase):
     def test_should_work_wtih_real_data(self, publish_mock):
         fixture_data = self.getFixture('unbound_stats').getvalue()
         collector_mock = patch.object(UnboundCollector,
-                                      'get_unbound_control_output',
-                                      Mock(return_value=fixture_data))
+                                      'run_command',
+                                      Mock(return_value=[fixture_data, '']))
         collector_mock.start()
         self.collector.collect()
         collector_mock.stop()
@@ -124,8 +124,8 @@ class TestUnboundCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
         collector_mock = patch.object(UnboundCollector,
-                                      'get_unbound_control_output',
-                                      Mock(return_value=''))
+                                      'run_command',
+                                      Mock(return_value=None))
         collector_mock.start()
         self.collector.collect()
         collector_mock.stop()
@@ -138,8 +138,8 @@ class TestUnboundCollector(CollectorTestCase):
 
         fixture_data = self.getFixture('unbound_stats').getvalue()
         collector_mock = patch.object(UnboundCollector,
-                                      'get_unbound_control_output',
-                                      Mock(return_value=fixture_data))
+                                      'run_command',
+                                      Mock(return_value=[fixture_data, '']))
         collector_mock.start()
         self.collector.collect()
         collector_mock.stop()

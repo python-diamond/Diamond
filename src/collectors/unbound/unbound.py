@@ -22,14 +22,12 @@ import diamond.collector
 from diamond.collector import str_to_bool
 
 
-class UnboundCollector(diamond.collector.Collector):
+class UnboundCollector(diamond.collector.ProcessCollector):
 
     def get_default_config_help(self):
         config_help = super(UnboundCollector, self).get_default_config_help()
         config_help.update({
             'bin':          'Path to unbound-control binary',
-            'use_sudo':     'Use sudo?',
-            'sudo_cmd':     'Path to sudo',
             'histogram':    'Include histogram in collection',
         })
         return config_help
@@ -42,24 +40,9 @@ class UnboundCollector(diamond.collector.Collector):
         config.update({
             'path':         'unbound',
             'bin':          self.find_binary('/usr/sbin/unbound-control'),
-            'use_sudo':     False,
-            'sudo_cmd':     self.find_binary('/usr/bin/sudo'),
             'histogram':    True,
         })
         return config
-
-    def get_unbound_control_output(self):
-        try:
-            command = [self.config['bin'], ' stats']
-
-            if str_to_bool(self.config['use_sudo']):
-                command.insert(0, self.config['sudo_cmd'])
-
-            return subprocess.Popen(command,
-                                    stdout=subprocess.PIPE).communicate()[0]
-        except OSError:
-            self.log.exception("Unable to run %s", command)
-            return ""
 
     def get_massaged_histogram(self, raw_histogram):
         histogram = defaultdict(int)
@@ -86,7 +69,11 @@ class UnboundCollector(diamond.collector.Collector):
         return histogram
 
     def collect(self):
-        stats_output = self.get_unbound_control_output()
+        stats_output = self.run_command([' stats'])
+        if stats_output is None:
+            return
+
+        stats_output = stats_output[0]
 
         raw_histogram = {}
 

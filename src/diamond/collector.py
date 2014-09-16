@@ -541,3 +541,44 @@ class Collector(object):
                     return filename
 
         return binary
+
+
+class ProcessCollector(Collector):
+    """
+    Collector with helpers for handling running commands with/without sudo
+    """
+
+    def get_default_config_help(self):
+        config_help = super(ProcessCollector, self).get_default_config_help()
+        config_help.update({
+            'use_sudo':     'Use sudo?',
+            'sudo_cmd':     'Path to sudo',
+        })
+        return config_help
+
+    def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
+        config = super(ProcessCollector, self).get_default_config()
+        config.update({
+            'use_sudo':     False,
+            'sudo_cmd':     self.find_binary('/usr/bin/sudo'),
+        })
+        return config
+
+    def run_command(self, args):
+        if 'bin' not in self.config:
+            raise Exception('config does not have any binary configured')
+        try:
+            command = args
+            command.insert(0, self.config['bin'])
+
+            if str_to_bool(self.config['use_sudo']):
+                command.insert(0, self.config['sudo_cmd'])
+
+            return subprocess.Popen(command,
+                                    stdout=subprocess.PIPE).communicate()
+        except OSError:
+            self.log.exception("Unable to run %s", command)
+            return None
