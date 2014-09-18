@@ -9,16 +9,16 @@ The IPCollector class collects metrics on IP stats
 
 #### Allowed Metric Names
 <table>
-<tr><th>Name</th><th>Description</th></tr>
-<tr><th>InAddrErrors</th><th>></th></tr>
-<tr><th>InDelivers</th><th>></th></tr>
-<tr><th>InDiscards</th><th>></th></tr>
-<tr><th>InHdrErrors</th><th>></th></tr>
-<tr><th>InReceives</th><th>></th></tr>
-<tr><th>InUnknownProtos</th><th>></th></tr>
-<tr><th>OutDiscards</th><th>></th></tr>
-<tr><th>OutNoRoutes</th><th>></th></tr>
-<tr><th>OutRequests</th><th>></th></tr>
+<tr><th>Name</th></tr>
+<tr><th>InAddrErrors</th></tr>
+<tr><th>InDelivers</th></tr>
+<tr><th>InDiscards</th></tr>
+<tr><th>InHdrErrors</th></tr>
+<tr><th>InReceives</th></tr>
+<tr><th>InUnknownProtos</th></tr>
+<tr><th>OutDiscards</th></tr>
+<tr><th>OutNoRoutes</th></tr>
+<tr><th>OutRequests</th></tr>
 </table>
 
 """
