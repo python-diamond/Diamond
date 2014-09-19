@@ -261,10 +261,10 @@ class IcingaStatsCollector(diamond.collector.Collector):
          * parallel_host_check_stats
         """
         stats = {}
-        app_keys = {
+        app_keys = [
             "serial_host_check_stats",
             "parallel_host_check_stats",
-            }
+            ]
         for app_key in app_keys:
             if app_key not in app_stats.keys():
                 continue
