@@ -53,7 +53,7 @@ def get_hostname(config, method=None):
                                     stdout=subprocess.PIPE)
             hostname = proc.communicate()[0].strip()
             if proc.returncode != 0:
-                raise subprocess.CalledProcessError(retcode, cmd)
+                raise subprocess.CalledProcessError(proc.returncode, config['hostname'])
             get_hostname.cached_results[method] = hostname
             return hostname
 
