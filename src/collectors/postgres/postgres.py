@@ -507,6 +507,15 @@ class TupleAccessStats(QueryStats):
     """
 
 
+class DatabaseReplicationStats(QueryStats):
+    path = "database.replication.%(metric)s"
+    multi_db = False
+    query = """
+        SELECT EXTRACT(epoch FROM
+            current_timestamp - pg_last_xact_replay_timestamp()) as replay_lag
+    """
+
+
 metrics_registry = {
     'DatabaseStats': DatabaseStats,
     'DatabaseConnectionCount': DatabaseConnectionCount,
@@ -525,16 +534,19 @@ metrics_registry = {
     'UserConnectionCount': UserConnectionCount,
     'TableScanStats': TableScanStats,
     'TupleAccessStats': TupleAccessStats,
+    'DatabaseReplicationStats': DatabaseReplicationStats,
 }
 
 registry = {
     'basic': [
         'DatabaseStats',
         'DatabaseConnectionCount',
+        'DatabaseReplicationStats',
     ],
     'extended': [
         'DatabaseStats',
         'DatabaseConnectionCount',
+        'DatabaseReplicationStats',
         'UserTableStats',
         'UserIndexStats',
         'UserTableIOStats',
