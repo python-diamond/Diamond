@@ -49,8 +49,17 @@ class TestIPCollector(CollectorTestCase):
         self.setUp(['A', 'C'])
         open_mock.return_value = StringIO('''
 Ip: A B C
+Ip: 0 0 0
+'''.strip())
+
+        self.collector.collect()
+
+        open_mock.return_value = StringIO('''
+Ip: A B C
 Ip: 0 1 2
 '''.strip())
+
+        publish_mock.call_args_list = []
 
         self.collector.collect()
 
@@ -76,16 +85,38 @@ Ip: 0 1 2
 
         metrics = {
             'InDiscards': 0,
-            'InReceives': 148106737526,
-            'OutDiscards': 13,
-            'OutRequests': 20661914932,
+            'InReceives': 2,
+            'OutDiscards': 0,
+            'OutRequests': 1,
         }
 
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch('diamond.collector.Collector.publish')
     def test_should_work_with_all_data(self, publish_mock):
-        self.setUp([])
+        metrics = {
+            'Forwarding':       2,
+            'DefaultTTL':       64,
+            'InReceives':       2,
+            'InHdrErrors':      0,
+            'InAddrErrors':     0,
+            'ForwDatagrams':    0,
+            'InUnknownProtos':  0,
+            'InDiscards':       0,
+            'InDelivers':       2,
+            'OutRequests':      1,
+            'OutDiscards':      0,
+            'OutNoRoutes':      0,
+            'ReasmTimeout':     0,
+            'ReasmReqds':       0,
+            'ReasmOKs':         0,
+            'ReasmFails':       0,
+            'FragOKs':          0,
+            'FragFails':        0,
+            'FragCreates':      0,
+        }
+
+        self.setUp(allowed_names=metrics.keys())
 
         IPCollector.PROC = [
             self.getFixturePath('proc_net_snmp_1'),
@@ -97,28 +128,6 @@ Ip: 0 1 2
             self.getFixturePath('proc_net_snmp_2'),
         ]
         self.collector.collect()
-
-        metrics = {
-            'Forwarding':       2,
-            'DefaultTTL':       64,
-            'InReceives':       148106737524,
-            'InHdrErrors':      0,
-            'InAddrErrors':     1,
-            'ForwDatagrams':    0,
-            'InUnknownProtos':  0,
-            'InDiscards':       0,
-            'InDelivers':       148106735494,
-            'OutRequests':      20661914931,
-            'OutDiscards':      13,
-            'OutNoRoutes':      0,
-            'ReasmTimeout':     0,
-            'ReasmReqds':       0,
-            'ReasmOKs':         0,
-            'ReasmFails':       0,
-            'FragOKs':          0,
-            'FragFails':        0,
-            'FragCreates':      0,
-        }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,

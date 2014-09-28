@@ -33,7 +33,10 @@ class IPCollector(diamond.collector.Collector):
         '/proc/net/snmp',
     ]
 
-    GAUGES = []  # all IP metrics are measured as counts per second
+    GAUGES = [
+        'Forwarding',
+        'DefaultTTL',
+    ]
 
     def __init__(self, config, handlers):
         super(IPCollector, self).__init__(config, handlers)
