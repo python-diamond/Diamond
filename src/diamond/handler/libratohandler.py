@@ -135,6 +135,10 @@ class LibratoHandler(Handler):
                            self.current_n_measurements)
             self._send()
 
+    def flush(self):
+        """Flush metrics in queue"""
+        self._send()
+
     def _send(self):
         """
         Send data to Librato.
