@@ -9,7 +9,9 @@ kitchen
 mock
 psutil
 pymongo
-pyrabbit
+# Disable due to bad test cases
+# https://github.com/BrightcoveOS/Diamond/issues/650
+#pyrabbit
 python-statsd
 pyutmp
 redis
