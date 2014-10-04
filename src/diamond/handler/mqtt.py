@@ -73,7 +73,6 @@ except ImportError:
 
 try:
     import mosquitto
-    mosquitto  # Pyflakes
 except ImportError:
     mosquitto = None
 

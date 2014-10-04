@@ -10,7 +10,6 @@ from mock import patch
 
 try:
     from cStringIO import StringIO
-    StringIO  # workaround for pyflakes issue #13
 except ImportError:
     from StringIO import StringIO
 

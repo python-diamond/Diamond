@@ -21,7 +21,6 @@ import diamond.collector
 
 try:
     import sensors
-    sensors  # workaround for pyflakes issue #13
 except ImportError:
     sensors = None
 

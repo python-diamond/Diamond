@@ -16,7 +16,6 @@ import urllib2
 
 if sys.version_info >= (2, 5):
     import xml.etree.cElementTree as ElementTree
-    ElementTree  # workaround for pyflakes issue #13
 else:
     import cElementTree as ElementTree
 

@@ -10,11 +10,9 @@ Collects data from a OpenLDAP server.
 """
 
 import diamond.collector
-import time
 
 try:
     import ldap
-    ldap  # workaround for pyflakes issue #13
 except ImportError:
     ldap = None
 

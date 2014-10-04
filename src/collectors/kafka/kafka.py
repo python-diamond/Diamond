@@ -14,13 +14,11 @@ from urllib import urlencode
 
 try:
     from xml.etree import ElementTree
-    ElementTree  # workaround for pyflakes issue #13
 except ImportError:
     ElementTree = None
 
 try:
     from ElementTree import ParseError as ETParseError
-    ETParseError  # workaround for pyflakes issue #13
 except ImportError:
     ETParseError = Exception
 

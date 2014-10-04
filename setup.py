@@ -19,7 +19,6 @@ def running_under_virtualenv():
 
 if os.environ.get('USE_SETUPTOOLS'):
     from setuptools import setup
-    setup  # workaround for pyflakes issue #13
     setup_kwargs = dict(zip_safe=0)
 else:
     from distutils.core import setup

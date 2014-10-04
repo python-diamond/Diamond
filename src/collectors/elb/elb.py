@@ -53,8 +53,6 @@ from diamond.metric import Metric
 try:
     import boto.ec2.elb
     from boto.ec2 import cloudwatch
-    from boto.exception import NoAuthHandlerFound
-    cloudwatch  # Pyflakes
 except ImportError:
     cloudwatch = False
 

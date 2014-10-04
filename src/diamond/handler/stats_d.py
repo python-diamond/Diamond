@@ -31,7 +31,6 @@ from Handler import Handler
 import logging
 try:
     import statsd
-    statsd  # Pyflakes
 except ImportError:
     statsd = None
 

@@ -19,7 +19,6 @@ from diamond.collector import str_to_bool
 
 try:
     import json
-    json  # workaround for pyflakes issue #13
 except ImportError:
     import simplejson as json
 

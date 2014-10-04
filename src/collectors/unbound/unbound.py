@@ -5,21 +5,16 @@ Collect stats from the unbound resolver
 
 #### Dependencies
 
-    * subprocess
     * collections.defaultdict or kitchen
 
 """
 
-import subprocess
-
 try:
     from collections import defaultdict
-    defaultdict  # Pyflakes
 except ImportError:
     from kitchen.pycompat25.collections import defaultdict
 
 import diamond.collector
-from diamond.collector import str_to_bool
 
 
 class UnboundCollector(diamond.collector.ProcessCollector):

@@ -24,8 +24,6 @@ cmdgen = None
 try:
     import pysnmp.entity.rfc3413.oneliner.cmdgen as cmdgen
     import pysnmp.debug
-    cmdgen  # workaround for pyflakes issue #13
-    pysnmp  # workaround for pyflakes issue #13
 except ImportError:
     pysnmp = None
     cmdgen = None

@@ -42,7 +42,6 @@ import time
 
 try:
     import redis
-    redis  # workaround for pyflakes issue #13
 except ImportError:
     redis = None
 

@@ -5,7 +5,6 @@ import urllib2
 
 try:
     from xml.etree import ElementTree
-    ElementTree  # workaround for pyflakes issue #13
 except ImportError:
     ElementTree = None
 
@@ -24,7 +23,6 @@ from kafka import KafkaCollector
 def run_only_if_ElementTree_is_available(func):
     try:
         from xml.etree import ElementTree
-        ElementTree  # workaround for pyflakes issue #13
     except ImportError:
         ElementTree = None
     pred = lambda: ElementTree is not None
