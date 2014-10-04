@@ -22,7 +22,6 @@ from Handler import Handler
 import logging
 try:
     import bernhard
-    bernhard  # Pyflakes
 except ImportError:
     bernhard = None
 

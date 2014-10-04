@@ -11,7 +11,7 @@ class Handler(object):
     """
     Handlers process metrics that are collected by Collectors.
     """
-    def __init__(self, config=None):
+    def __init__(self, config=None, log=None):
         """
         Create a new instance of the Handler class
         """
@@ -20,7 +20,10 @@ class Handler(object):
         self.enabled = True
 
         # Initialize Log
-        self.log = logging.getLogger('diamond')
+        if log is None:
+            self.log = logging.getLogger('diamond')
+        else:
+            self.log = log
 
         # Initialize Blank Configs
         self.config = ConfigObj()

@@ -13,11 +13,9 @@ Collect the solr stats for the local node
 
 import posixpath
 import urllib2
-import re
 
 try:
     import json
-    json  # workaround for pyflakes issue #13
 except ImportError:
     import simplejson as json
 

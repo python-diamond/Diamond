@@ -15,7 +15,7 @@ class NullHandler(Handler):
         """
         Process a metric by doing nothing
         """
-        self.log.debug("Process: %s", str(metric).rstrip())
+        self.log.debug("Metric: %s", str(metric).rstrip().replace(' ', '\t'))
 
     def get_default_config_help(self):
         """

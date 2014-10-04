@@ -21,7 +21,6 @@ def run_only_if_pyrabbit_is_available(func):
     if sys.version_info > (2, 5):
         try:
             import pyrabbit
-            pyrabbit  # workaround for pyflakes issue #13
         except ImportError:
             pyrabbit = None
     pred = lambda: pyrabbit is not None

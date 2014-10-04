@@ -18,7 +18,6 @@ from mysql import MySQLCollector
 def run_only_if_MySQLdb_is_available(func):
     try:
         import MySQLdb
-        MySQLdb  # workaround for pyflakes issue #13
     except ImportError:
         MySQLdb = None
     pred = lambda: MySQLdb is not None

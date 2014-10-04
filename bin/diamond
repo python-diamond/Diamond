@@ -10,7 +10,6 @@ if os.name != 'nt':
 
 try:
     from setproctitle import setproctitle
-    setproctitle  # workaround for pyflakes issue #13
 except ImportError:
     setproctitle = None
 
@@ -24,10 +23,10 @@ for path in [
 
 from diamond.server import Server
 from diamond.util import get_diamond_version
+from diamond.utils.log import setup_logging
 
 import optparse
 import signal
-import logging.config
 
 
 def main():
@@ -124,34 +123,7 @@ def main():
             sys.exit(1)
 
         # Initialize Logging
-        log = logging.getLogger('diamond')
-
-        if options.log_stdout:
-            log.setLevel(logging.DEBUG)
-            # Configure Logging Format
-            formatter = logging.Formatter(
-                '[%(asctime)s] [%(threadName)s] %(message)s')
-            # handler
-            streamHandler = logging.StreamHandler(sys.stdout)
-            streamHandler.setFormatter(formatter)
-            streamHandler.setLevel(logging.DEBUG)
-            log.addHandler(streamHandler)
-        else:
-            try:
-                if sys.version_info >= (2, 6):
-                    logging.config.fileConfig(options.configfile,
-                                              disable_existing_loggers=False)
-                else:
-                    # python <= 2.5 does not have disable_existing_loggers
-                    # default was to always disable them, in our case we want to
-                    # keep any logger created by handlers
-                    logging.config.fileConfig(options.configfile)
-                    for logger in logging.root.manager.loggerDict.values():
-                        logger.disabled = 0
-            except Exception, e:
-                sys.stderr.write("Error occurs when initialize logging: ")
-                sys.stderr.write(str(e))
-                sys.stderr.write(os.linesep)
+        log = setup_logging(options.configfile, options.log_stdout)
 
     # Pass the exit up stream rather then handle it as an general exception
     except SystemExit, e:
@@ -302,26 +274,19 @@ def main():
         server = Server(config)
 
         def sigint_handler(signum, frame):
+            log.info("Signal Received: %d" % (signum))
+            # Delete Pidfile
+            if not options.skip_pidfile and os.path.exists(options.pidfile):
+                os.remove(options.pidfile)
                 # Log
-                log.debug("Signal Received: %d" % (signum))
-                # Stop Server
-                server.stop()
-                # Delete Pidfile
-                if not options.skip_pidfile and os.path.exists(options.pidfile):
-                    os.remove(options.pidfile)
-                    # Log
-                    log.debug("Removed PID file: %s" % (options.pidfile))
+                log.debug("Removed PID file: %s" % (options.pidfile))
+            sys.exit(0)
 
         # Set the signal handlers
         signal.signal(signal.SIGINT, sigint_handler)
         signal.signal(signal.SIGTERM, sigint_handler)
 
-        if options.collector:
-            # Run Server with one collector
-            server.run_one(options.collector)
-        else:
-            # Run Server
-            server.run()
+        server.run()
 
     # Pass the exit up stream rather then handle it as an general exception
     except SystemExit, e:
@@ -335,5 +300,5 @@ def main():
 
 if __name__ == "__main__":
     if setproctitle:
-        setproctitle('diamond')
+        setproctitle(os.path.basename(__file__))
     main()

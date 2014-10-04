@@ -17,7 +17,6 @@ from puppetagent import PuppetAgentCollector
 def run_only_if_yaml_is_available(func):
     try:
         import yaml
-        yaml  # workaround for pyflakes issue #13
     except ImportError:
         yaml = None
     pred = lambda: yaml is not None

@@ -11,13 +11,11 @@ from mock import patch
 
 try:
     from cStringIO import StringIO
-    StringIO  # workaround for pyflakes issue #13
 except ImportError:
     from StringIO import StringIO
 
 try:
     from docker import Client
-    Client  # workaround for pyflakes issue #13
 except ImportError:
     Client = None
 
@@ -40,7 +38,6 @@ docker_fixture = [
 def run_only_if_docker_client_is_available(func):
     try:
         from docker import Client
-        Client  # workaround for pyflakes issue #13
     except ImportError:
         Client = None
     pred = lambda: Client is not None

@@ -25,13 +25,11 @@ import zlib
 
 try:
     import pymongo
-    pymongo  # workaround for pyflakes issue #13
 except ImportError:
     pymongo = None
 
 try:
     from pymongo import ReadPreference
-    ReadPreference  # workaround for pyflakes issue #13
 except ImportError:
     ReadPreference = None
 

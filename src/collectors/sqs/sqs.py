@@ -32,7 +32,6 @@ restart diamond.
 import diamond.collector
 try:
     from boto import sqs
-    sqs  # Pyflakes
 except ImportError:
     sqs = False
 

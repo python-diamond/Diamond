@@ -15,7 +15,6 @@ from diamond.collector import str_to_bool
 try:
     import psycopg2
     import psycopg2.extras
-    psycopg2  # workaround for pyflakes issue #13
 except ImportError:
     psycopg2 = None
 

@@ -19,7 +19,6 @@ from xen_collector import XENCollector
 def run_only_if_libvirt_is_available(func):
     try:
         import libvirt
-        libvirt  # workaround for pyflakes issue #13
     except ImportError:
         libvirt = None
     pred = lambda: libvirt is not None

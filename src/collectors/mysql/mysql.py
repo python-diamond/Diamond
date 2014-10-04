@@ -36,8 +36,6 @@ import time
 try:
     import MySQLdb
     from MySQLdb import MySQLError
-    MySQLdb  # workaround for pyflakes issue #13
-    MySQLError  # workaround for pyflakes issue #13
 except ImportError:
     MySQLdb = None
     MySQLError = ValueError

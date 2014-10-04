@@ -478,31 +478,28 @@ class Collector(object):
         """
         Run the collector unless it's already running
         """
-        if self.collect_running:
-            return
-        # Log
-        self.log.debug("Collecting data from: %s" % self.__class__.__name__)
         try:
             try:
                 start_time = time.time()
-                self.collect_running = True
 
                 # Collect Data
                 self.collect()
 
                 end_time = time.time()
+                collector_time = int((end_time - start_time) * 1000)
+
+                self.log.debug('Collection took %s ms', collector_time)
 
                 if 'measure_collector_time' in self.config:
                     if self.config['measure_collector_time']:
                         metric_name = 'collector_time_ms'
-                        metric_value = int((end_time - start_time) * 1000)
+                        metric_value = collector_time
                         self.publish(metric_name, metric_value)
 
             except Exception:
                 # Log Error
                 self.log.error(traceback.format_exc())
         finally:
-            self.collect_running = False
             # After collector run, invoke a flush
             # method on each handler.
             for handler in self.handlers:

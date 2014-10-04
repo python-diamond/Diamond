@@ -13,13 +13,11 @@ import diamond.collector
 
 try:
     from xml.etree import ElementTree
-    ElementTree  # workaround for pyflakes issue #13
 except ImportError:
     import cElementTree as ElementTree
 
 try:
     import libvirt
-    libvirt  # Pyflakes
 except ImportError:
     libvirt = None
 

@@ -10,7 +10,6 @@ from configobj import ConfigObj
 
 try:
     from setproctitle import setproctitle
-    setproctitle  # workaround for pyflakes issue #13
 except ImportError:
     setproctitle = None
 

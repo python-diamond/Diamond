@@ -11,7 +11,6 @@ Collect stats from puppet agent's last_run_summary.yaml
 
 try:
     import yaml
-    yaml  # workaround for pyflakes issue #13
 except ImportError:
     yaml = None
 

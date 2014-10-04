@@ -13,7 +13,6 @@ from diamond.metric import Metric
 def run_only_if_bernhard_is_available(func):
     try:
         import bernhard
-        bernhard  # workaround for pyflakes issue #13
     except ImportError:
         bernhard = None
     pred = lambda: bernhard is not None

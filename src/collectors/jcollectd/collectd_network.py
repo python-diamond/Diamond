@@ -30,11 +30,9 @@ import platform
 if platform.python_version() < '2.8.0':
     # Python 2.7 and below io.StringIO does not like unicode
     from StringIO import StringIO
-    StringIO  # workaround for pyflakes issue #13
 else:
     try:
         from io import StringIO
-        StringIO  # workaround for pyflakes issue #13
     except ImportError:
         from cStringIO import StringIO
 
