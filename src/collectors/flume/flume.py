@@ -72,29 +72,38 @@ class FlumeCollector(diamond.collector.Collector):
         return default_config
 
     def collect(self):
-        url = 'http://{0}:{1}{2}'.format(
-            self.config['req_host'],
-            self.config['req_port'],
-            self.config['req_path']
-        )
-
         try:
-            resp = urllib2.urlopen(url)
-            try:
-                j = json.loads(resp.read())
-                resp.close()
-            except Exception, e:
-                resp.close()
-                self.log.error('Cannot load json data: %s', e)
-                return None
-        except urllib2.URLError, e:
-            self.log.error('Failed to open url: %s', e)
-            return None
-        except Exception, e:
-            self.log.error('Unknown error opening url: %s', e)
-            return None
+            ports = self.config['req_port'].split(",")
+        except:
+            ports = [self.config['req_port']]
 
-        for comp in j.iteritems():
+        for port in ports:
+            url = 'http://{0}:{1}{2}'.format(
+                self.config['req_host'],
+                self.config['req_port'],
+                self.config['req_path']
+            )
+
+            try:
+                resp = urllib2.urlopen(url)
+                try:
+                    metrics = json.loads(resp.read())
+                    resp.close()
+                except Exception, e:
+                    resp.close()
+                    self.log.error('Cannot load json data: %s', e)
+                    return None
+            except urllib2.URLError, e:
+                self.log.error('Failed to open url: %s', e)
+                return None
+            except Exception, e:
+                self.log.error('Unknown error opening url: %s', e)
+                return None
+
+            self.send_metrics(metrics)
+
+    def send_metrics(self, metrics):
+        for comp in metrics.iteritems():
             comp_name = comp[0]
             comp_items = comp[1]
             comp_type = comp_items['Type']
