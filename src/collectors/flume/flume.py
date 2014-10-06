@@ -80,7 +80,7 @@ class FlumeCollector(diamond.collector.Collector):
         for port in ports:
             url = 'http://{0}:{1}{2}'.format(
                 self.config['req_host'],
-                self.config['req_port'],
+                port,
                 self.config['req_path']
             )
 
@@ -100,24 +100,28 @@ class FlumeCollector(diamond.collector.Collector):
                 self.log.error('Unknown error opening url: %s', e)
                 return None
 
-            self.send_metrics(metrics)
+            self.send_metrics(metrics, port)
 
-    def send_metrics(self, metrics):
+    def send_metrics(self, metrics, port):
         for comp in metrics.iteritems():
             comp_name = comp[0]
             comp_items = comp[1]
             comp_type = comp_items['Type']
 
+            start_path = ""
+            if "," in self.config['req_port']:
+                start_path = port + "."
+
             for item in self._metrics_collect[comp_type]:
                 if item.endswith('Count'):
-                    metric_name = '{0}.{1}'.format(comp_name, item[:-5])
+                    metric_name = '{0}{1}.{2}'.format(start_path, comp_name, item[:-5])
                     metric_value = int(comp_items[item])
                     self.publish_counter(metric_name, metric_value)
                 elif item.endswith('Percentage'):
-                    metric_name = '{0}.{1}'.format(comp_name, item)
+                    metric_name = '{0}{1}.{2}'.format(start_path, comp_name, item)
                     metric_value = float(comp_items[item])
                     self.publish_gauge(metric_name, metric_value)
                 else:
-                    metric_name = item
+                    metric_name = '{0}{1}'.format(start_path,item)
                     metric_value = int(comp_items[item])
                     self.publish_gauge(metric_name, metric_value)
