@@ -479,26 +479,21 @@ class Collector(object):
         Run the collector unless it's already running
         """
         try:
-            try:
-                start_time = time.time()
+            start_time = time.time()
 
-                # Collect Data
-                self.collect()
+            # Collect Data
+            self.collect()
 
-                end_time = time.time()
-                collector_time = int((end_time - start_time) * 1000)
+            end_time = time.time()
+            collector_time = int((end_time - start_time) * 1000)
 
-                self.log.debug('Collection took %s ms', collector_time)
+            self.log.debug('Collection took %s ms', collector_time)
 
-                if 'measure_collector_time' in self.config:
-                    if self.config['measure_collector_time']:
-                        metric_name = 'collector_time_ms'
-                        metric_value = collector_time
-                        self.publish(metric_name, metric_value)
-
-            except Exception:
-                # Log Error
-                self.log.error(traceback.format_exc())
+            if 'measure_collector_time' in self.config:
+                if self.config['measure_collector_time']:
+                    metric_name = 'collector_time_ms'
+                    metric_value = collector_time
+                    self.publish(metric_name, metric_value)
         finally:
             # After collector run, invoke a flush
             # method on each handler.
