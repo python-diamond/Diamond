@@ -2,14 +2,13 @@
 
 import signal
 
+
 def signal_to_exception(signum, frame):
     """
     Called by the timeout alarm during the collector run time
     """
     if signum == signal.SIGALRM:
         raise SIGALRMException()
-    if signum == signal.SIGTERM:
-        raise SIGTERMException()
     if signum == signal.SIGUSR1:
         raise SIGUSR1Exception()
     if signum == signal.SIGUSR2:
@@ -31,4 +30,3 @@ class SIGUSR1Exception(SignalException):
 
 class SIGUSR2Exception(SignalException):
     pass
-
