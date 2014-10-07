@@ -9,7 +9,6 @@ import socket
 import platform
 import logging
 import configobj
-import traceback
 import time
 import re
 import subprocess
