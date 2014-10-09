@@ -185,7 +185,13 @@ class GraphiteHandler(Handler):
                                  self.flow_info, self.scope_id)
         else:
             connection_struct = (self.host, self.port)
-            addrinfo = socket.getaddrinfo(self.host, self.port, 0, stream)
+            try:
+                addrinfo = socket.getaddrinfo(self.host, self.port, 0, stream)
+            except socket.gaierror, ex:
+                self.log.error("GraphiteHandler: Error looking up graphite host"
+                               " '%s' - %s",
+                               self.host, ex)
+                return
             if (len(addrinfo) > 0):
                 family = addrinfo[0][0]
                 if (family == socket.AF_INET6):
