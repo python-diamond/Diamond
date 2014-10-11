@@ -144,7 +144,7 @@ class Server(object):
 
             # Splay the runs
             if 'splay' in collector.config:
-                splay = int(collector.config['splay'])
+                splay = float(collector.config['splay'])
             else:
                 splay = 1
 
