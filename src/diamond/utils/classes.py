@@ -189,11 +189,7 @@ def initialize_collector(cls, name=None, configfile=None, handlers=[]):
 
     try:
         # Initialize Collector
-        collector = cls(handlers=handlers)
-        if name is not None:
-            collector.name = name
-        if configfile is not None:
-            collector.load_config(configfile)
+        collector = cls(name=name, configfile=configfile, handlers=handlers)
     except Exception:
         # Log error
         log.error("Failed to initialize Collector: %s. %s",
