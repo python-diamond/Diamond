@@ -100,7 +100,6 @@ class GridEngineCollector(diamond.collector.Collector):
         config = super(GridEngineCollector, self).get_default_config()
         config.update({
             'bin_path': '/opt/gridengine/bin/lx-amd64/qstat',
-            'method': 'Threaded',
             'path': 'gridengine',
             'sge_root': self._sge_root(),
         })

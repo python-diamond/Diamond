@@ -44,7 +44,6 @@ class OpenstackSwiftReconCollector(diamond.collector.Collector):
             'recon_account_cache': '/var/cache/swift/account.recon',
             'recon_container_cache': '/var/cache/swift/container.recon',
             'recon_object_cache': '/var/cache/swift/object.recon',
-            'method': 'Threaded',
             'interval': 300,
         })
         return config

@@ -42,7 +42,6 @@ class UsersCollector(diamond.collector.Collector):
         config = super(UsersCollector, self).get_default_config()
         config.update({
             'path':     'users',
-            'method':   'Threaded',
             'utmp':     None,
         })
         return config

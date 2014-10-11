@@ -70,10 +70,6 @@ class DiskSpaceCollector(diamond.collector.Collector):
             # exclude everything that includes the letter "m"
             'exclude_filters': ['^/export/home'],
 
-            # We don't use any derivative data to calculate this value
-            # Thus we can use a threaded model
-            'method': 'Threaded',
-
             # Default numeric output
             'byte_unit': ['byte']
         })
