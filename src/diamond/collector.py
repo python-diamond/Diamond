@@ -182,21 +182,21 @@ class Collector(object):
 
         if self.configfile is None:
             return False
-        
+
         self.config = configobj.ConfigObj()
-        
+
         # Load in the collector's defaults
         if self.get_default_config() is not None:
             self.config.merge(self.get_default_config())
-        
+
         config = load_config(self.configfile)
-        
+
         if 'collectors' not in config:
             return False
-        
+
         if 'default' in config['collectors']:
             self.config.merge(config['collectors']['default'])
-            
+
         if self.name in config['collectors']:
             self.config.merge(config['collectors'][self.name])
 
@@ -225,7 +225,7 @@ class Collector(object):
         elif self.config.get('metrics_blacklist', None):
             self.config['metrics_blacklist'] = re.compile(
                 self.config['metrics_blacklist'])
-            
+
         self.process_config()
 
     def process_config(self):
