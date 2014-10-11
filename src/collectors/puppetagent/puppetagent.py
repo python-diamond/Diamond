@@ -35,7 +35,6 @@ class PuppetAgentCollector(diamond.collector.Collector):
         config.update({
             'yaml_path': '/var/lib/puppet/state/last_run_summary.yaml',
             'path':     'puppetagent',
-            'method':   'Threaded',
         })
         return config
 

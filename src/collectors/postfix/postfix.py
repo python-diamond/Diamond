@@ -54,7 +54,6 @@ class PostfixCollector(diamond.collector.Collector):
             'host':             'localhost',
             'port':             7777,
             'include_clients':  True,
-            'method':           'Threaded',
         })
         return config
 

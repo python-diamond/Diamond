@@ -97,7 +97,6 @@ class MountStatsCollector(diamond.collector.Collector):
             'exclude_filters': [],
             'include_filters': [],
             'path': 'mountstats',
-            'method': 'Threaded',
             'use_sudo': False,
             'sudo_cmd': '/usr/bin/sudo',
         })

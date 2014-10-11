@@ -60,7 +60,6 @@ class MemoryCollector(diamond.collector.Collector):
         config.update({
             'enabled':  'True',
             'path':     'memory',
-            'method':   'Threaded',
             # Collect all the nodes or just a few standard ones?
             # Uncomment to enable
             #'detailed': 'True'

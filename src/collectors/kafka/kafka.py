@@ -50,7 +50,6 @@ class KafkaCollector(diamond.collector.Collector):
             'host': '127.0.0.1',
             'port': 7200,
             'path': 'kafka',
-            'method': 'Threaded',
         })
         return config
 

@@ -164,7 +164,6 @@ class JbossApiCollector(diamond.collector.Collector):
         config = super(JbossApiCollector, self).get_default_config()
         config.update({
             'path': 'jboss',
-            'method': 'Sequential',
             'curl_bin': '/usr/bin/curl',
             'connect_timeout': '4',
             'ssl_options': '--sslv3 -k',

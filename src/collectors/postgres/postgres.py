@@ -61,7 +61,6 @@ class PostgresqlCollector(diamond.collector.Collector):
             'sslmode': 'disable',
             'underscore': False,
             'extended': False,
-            'method': 'Threaded',
             'metrics': [],
             'pg_version': 9.2,
             'has_admin': True,

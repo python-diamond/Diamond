@@ -94,7 +94,6 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
             'enabled': 'False',
             'path': 'nagiosperfdata',
             'perfdata_dir': '/var/spool/diamond/nagiosperfdata',
-            'method': 'Threaded'
         })
         return config
 

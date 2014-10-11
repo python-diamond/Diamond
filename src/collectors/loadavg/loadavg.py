@@ -36,7 +36,6 @@ class LoadAverageCollector(diamond.collector.Collector):
         config.update({
             'enabled':  'True',
             'path':     'loadavg',
-            'method':   'Threaded',
             'simple':   'False'
         })
         return config

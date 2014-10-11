@@ -305,9 +305,6 @@ class Collector(object):
             # Default Event TTL (interval multiplier)
             'ttl_multiplier': 2,
 
-            # Default collector threading model
-            'method': 'Sequential',
-
             # Default numeric output
             'byte_unit': 'byte',
 
