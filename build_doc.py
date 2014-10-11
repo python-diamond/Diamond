@@ -116,7 +116,6 @@ if __name__ == "__main__":
     # Initialize Config
     if os.path.exists(options.configfile):
         config = configobj.ConfigObj(os.path.abspath(options.configfile))
-        config['configfile'] = options.configfile
     else:
         print >> sys.stderr, "ERROR: Config file: %s does not exist." % (
             options.configfile)
