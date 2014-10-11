@@ -169,32 +169,52 @@ class Collector(object):
         self.name = self.__class__.__name__
         self.handlers = handlers
         self.last_values = {}
+        self.configfile = None
 
-        # Get Collector class
-        cls = self.__class__
+    def load_config(self, configfile=None):
+        """
+        Process a configfile, or reload if previously given one.
+        """
 
-        # Initialize config
+        if configfile is not None:
+            self.configfile = os.path.abspath(configfile)
+
+        if self.configfile is None:
+            return False
+
         self.config = configobj.ConfigObj()
 
         # Check if default config is defined
         if self.get_default_config() is not None:
-            # Merge default config
+            # Merge default config from the collector
             self.config.merge(self.get_default_config())
 
-        # Merge default Collector config
-        self.config.merge(config['collectors']['default'])
+        # Initialize diamond.conf file
+        if os.path.exists(self.configfile):
+            diamond_conf = configobj.ConfigObj(self.configfile)
 
-        # Check if Collector config section exists
-        if cls.__name__ in config['collectors']:
-            # Merge Collector config section
-            self.config.merge(config['collectors'][cls.__name__])
+            if 'collectors' in diamond_conf:
+                if 'default' in diamond_conf['collectors']:
+                    # Merge default Collector config
+                    self.config.merge(diamond_conf['collectors']['default'])
 
-        # Check for config file in config directory
-        configfile = os.path.join(config['server']['collectors_config_path'],
-                                  cls.__name__) + '.conf'
-        if os.path.exists(configfile):
-            # Merge Collector config file
-            self.config.merge(configobj.ConfigObj(configfile))
+                # Check if Collector config section exists
+                if self.name in diamond_conf['collectors']:
+                    # Merge Collector config section
+                    self.config.merge(diamond_conf['collectors'][self.name])
+
+            if 'server' in diamond_conf:
+                # Check for config file in config directory
+                if 'collectors_config_path' in diamond_conf['server']:
+                    specific_config = [
+                        diamond_conf['server']['collectors_config_path'],
+                        '%s.conf' % self.name
+                    ]
+                    # Convert specific_config to a path
+                    specific_config = os.path.join(*specific_config)
+
+                    if os.path.exists(specific_config):
+                        self.config.merge(configobj.ConfigObj(specific_config))
 
         # Handle some config file changes transparently
         if isinstance(self.config['byte_unit'], basestring):
@@ -218,8 +238,6 @@ class Collector(object):
         elif self.config['metrics_blacklist']:
             self.config['metrics_blacklist'] = re.compile(
                 self.config['metrics_blacklist'])
-
-        self.collect_running = False
 
     def get_default_config_help(self):
         """

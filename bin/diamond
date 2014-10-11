@@ -113,9 +113,9 @@ def main():
             sys.exit(0)
 
         # Initialize Config
+        options.configfile = os.path.abspath(options.configfile)
         if os.path.exists(options.configfile):
-            config = configobj.ConfigObj(os.path.abspath(options.configfile))
-            config['configfile'] = options.configfile
+            config = configobj.ConfigObj(options.configfile)
         else:
             print >> sys.stderr, "ERROR: Config file: %s does not exist." % (
                 options.configfile)
@@ -271,7 +271,7 @@ def main():
                 log.debug("Wrote child PID file: %s" % (options.pidfile))
 
         # Initialize Server
-        server = Server(config)
+        server = Server(configfile=options.configfile)
 
         def sigint_handler(signum, frame):
             log.info("Signal Received: %d" % (signum))
