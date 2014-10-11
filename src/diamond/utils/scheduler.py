@@ -44,7 +44,9 @@ def collector_process(collector, metric_queue, log):
 
     while(True):
         try:
-            time.sleep(next_collection - time.time())
+            time_to_sleep = next_collection - time.time()
+            if time_to_sleep > 0:
+                time.sleep(time_to_sleep)
 
             next_collection += interval
 
@@ -68,13 +70,6 @@ def collector_process(collector, metric_queue, log):
         except SIGUSR2Exception:
             log.debug('Received USR2')
             pass
-
-        # Any other exception? Kill the thread
-        except Exception, e:
-            traceback.print_stack()
-            log.error('%s(%s)', e, e.args)
-            raise e
-            break
 
 
 def handler_process(handlers, metric_queue, log):
