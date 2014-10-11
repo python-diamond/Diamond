@@ -587,6 +587,8 @@ class ProcessCollector(Collector):
     def run_command(self, args):
         if 'bin' not in self.config:
             raise Exception('config does not have any binary configured')
+        if not os.access(self.config['bin'], os.X_OK):
+            raise Exception('%s is not executable' % self.config['bin'])
         try:
             command = args
             command.insert(0, self.config['bin'])
