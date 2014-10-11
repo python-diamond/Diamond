@@ -14,6 +14,7 @@ import re
 import subprocess
 
 from diamond.metric import Metric
+from diamond.utils.config import load_config
 from error import DiamondException
 
 # Detect the architecture of the system and set the counters for MAX_VALUES
@@ -181,64 +182,50 @@ class Collector(object):
 
         if self.configfile is None:
             return False
-
+        
         self.config = configobj.ConfigObj()
-
-        # Check if default config is defined
+        
+        # Load in the collector's defaults
         if self.get_default_config() is not None:
-            # Merge default config from the collector
             self.config.merge(self.get_default_config())
-
-        # Initialize diamond.conf file
-        if os.path.exists(self.configfile):
-            diamond_conf = configobj.ConfigObj(self.configfile)
-
-            if 'collectors' in diamond_conf:
-                if 'default' in diamond_conf['collectors']:
-                    # Merge default Collector config
-                    self.config.merge(diamond_conf['collectors']['default'])
-
-                # Check if Collector config section exists
-                if self.name in diamond_conf['collectors']:
-                    # Merge Collector config section
-                    self.config.merge(diamond_conf['collectors'][self.name])
-
-            if 'server' in diamond_conf:
-                # Check for config file in config directory
-                if 'collectors_config_path' in diamond_conf['server']:
-                    specific_config = [
-                        diamond_conf['server']['collectors_config_path'],
-                        '%s.conf' % self.name
-                    ]
-                    # Convert specific_config to a path
-                    specific_config = os.path.join(*specific_config)
-
-                    if os.path.exists(specific_config):
-                        self.config.merge(configobj.ConfigObj(specific_config))
+        
+        config = load_config(self.configfile)
+        
+        if 'collectors' not in config:
+            return False
+        
+        if 'default' in config['collectors']:
+            self.config.merge(config['collectors']['default'])
+            
+        if self.name in config['collectors']:
+            self.config.merge(config['collectors'][self.name])
 
         # Handle some config file changes transparently
-        if isinstance(self.config['byte_unit'], basestring):
-            self.config['byte_unit'] = self.config['byte_unit'].split()
+        if 'byte_unit' in self.config:
+            if isinstance(self.config['byte_unit'], basestring):
+                self.config['byte_unit'] = self.config['byte_unit'].split()
 
-        self.config['enabled'] = str_to_bool(self.config['enabled'])
+        if 'enabled' in self.config:
+            self.config['enabled'] = str_to_bool(self.config['enabled'])
 
-        self.config['measure_collector_time'] = str_to_bool(
-            self.config['measure_collector_time'])
+        if 'measure_collector_time' in self.config:
+            self.config['measure_collector_time'] = str_to_bool(
+                self.config['measure_collector_time'])
 
         # Raise an error if both whitelist and blacklist are specified
-        if self.config['metrics_whitelist'] and \
-                self.config['metrics_blacklist']:
-                raise DiamondException(
-                    'Both metrics_whitelist and metrics_blacklist specified ' +
-                    'in file %s' % configfile)
+        if (self.config.get('metrics_whitelist', None)
+                and self.config.get('metrics_blacklist', None)):
+            raise DiamondException(
+                'Both metrics_whitelist and metrics_blacklist specified ' +
+                'in file %s' % configfile)
 
-        if self.config['metrics_whitelist']:
+        if self.config.get('metrics_whitelist', None):
             self.config['metrics_whitelist'] = re.compile(
                 self.config['metrics_whitelist'])
-        elif self.config['metrics_blacklist']:
+        elif self.config.get('metrics_blacklist', None):
             self.config['metrics_blacklist'] = re.compile(
                 self.config['metrics_blacklist'])
-
+            
         self.process_config()
 
     def process_config(self):
