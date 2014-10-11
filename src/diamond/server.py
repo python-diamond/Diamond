@@ -142,13 +142,11 @@ class Server(object):
             if collector.config['enabled'] is not True:
                 continue
 
-            # Splay the runs
+            # Splay the runs, if asked
             if 'splay' in collector.config:
                 splay = float(collector.config['splay'])
-            else:
-                splay = 1
-
-            time.sleep(splay)
+                if splay > 0:
+                    time.sleep(splay)
 
             process = multiprocessing.Process(
                 name=collector.__class__.__name__,

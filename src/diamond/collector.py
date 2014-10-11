@@ -254,6 +254,7 @@ class Collector(object):
         """
         return {
             'enabled': 'Enable collecting these metrics',
+            'splay': 'How long to wait between starting the next collector',
             'byte_unit': 'Default numeric output(s)',
             'measure_collector_time': 'Collect the collector run time in ms',
             'metrics_whitelist': 'Regex to match metrics to transmit. ' +
@@ -296,7 +297,7 @@ class Collector(object):
             'path_suffix': '',
 
             # Default splay time (seconds)
-            'splay': 1,
+            'splay': 1.0,
 
             # Default Poll Interval (seconds)
             'interval': 300,
