@@ -4,7 +4,6 @@ import time
 import multiprocessing
 import sys
 import signal
-import traceback
 
 try:
     from setproctitle import getproctitle, setproctitle
@@ -69,7 +68,7 @@ def collector_process(collector, metric_queue, log):
                 log.info('Config reloaded')
                 reload_config = False
 
-        except SIGALRMException, e:
+        except SIGALRMException:
             log.error('Took too long to run! Killed!')
             continue
 
