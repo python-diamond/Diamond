@@ -132,7 +132,7 @@ class Server(object):
         for cls in collectors.values():
             collector = initialize_collector(
                 cls,
-                name=cls.__class__.__name__,
+                name=cls.__name__,
                 configfile=self.configfile,
                 handlers=[self.handler_queue])
 

@@ -24,6 +24,8 @@ def load_config(configfile):
         # Load other configs
         if 'path' in config['configs']:
             for cfgfile in os.listdir(config['configs']['path']):
+                cfgfile = os.path.join(config['configs']['path'],
+                                   cfgfile)
                 cfgfile = os.path.abspath(cfgfile)
                 if not cfgfile.endswith(config_extension):
                     continue
@@ -44,6 +46,8 @@ def load_config(configfile):
 
     if 'handlers_config_path' in config['server']:
         for cfgfile in os.listdir(config['server']['handlers_config_path']):
+            cfgfile = os.path.join(config['server']['handlers_config_path'],
+                                   cfgfile)
             cfgfile = os.path.abspath(cfgfile)
             if not cfgfile.endswith(config_extension):
                 continue
@@ -51,10 +55,10 @@ def load_config(configfile):
             handler = os.path.splitext(filename)[0]
 
             if handler not in config['handlers']:
-                config['handlers'][handler] = configobj.ConfigObj()
-
-            newconfig = configobj.ConfigObj(cfgfile)
-            config['handlers'][handler].merge(newconfig)
+                config['handlers'][handler] = configobj.ConfigObj(cfgfile)
+            else:
+                newconfig = configobj.ConfigObj(cfgfile)
+                config['handlers'][handler].merge(newconfig)
 
     #########################################################################
     # Load up Collector specific configs
@@ -65,6 +69,8 @@ def load_config(configfile):
 
     if 'collectors_config_path' in config['server']:
         for cfgfile in os.listdir(config['server']['collectors_config_path']):
+            cfgfile = os.path.join(config['server']['collectors_config_path'],
+                                   cfgfile)
             cfgfile = os.path.abspath(cfgfile)
             if not cfgfile.endswith(config_extension):
                 continue
@@ -72,10 +78,10 @@ def load_config(configfile):
             collector = os.path.splitext(filename)[0]
 
             if collector not in config['collectors']:
-                config['collectors'][collector] = configobj.ConfigObj()
-
-            newconfig = configobj.ConfigObj(cfgfile)
-            config['collectors'][collector].merge(newconfig)
+                config['collectors'][collector] = configobj.ConfigObj(cfgfile)
+            else:
+                newconfig = configobj.ConfigObj(cfgfile)
+                config['collectors'][collector].merge(newconfig)
 
     #########################################################################
 
