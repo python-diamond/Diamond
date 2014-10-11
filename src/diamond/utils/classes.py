@@ -189,7 +189,7 @@ def initialize_collector(cls, name=None, configfile=None, handlers=[]):
 
     try:
         # Initialize Collector
-        collector = cls(None, handlers)
+        collector = cls(handlers=handlers)
         if name is not None:
             collector.name = name
         if configfile is not None:
