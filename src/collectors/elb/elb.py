@@ -144,7 +144,7 @@ class ElbCollector(diamond.collector.Collector):
             if self.interval % 60 != 0:
                 raise Exception('Interval must be a multiple of 60 seconds: %s'
                                 % self.interval)
-        
+
         if ('access_key_id' in self.config
                 and 'secret_access_key' in self.config):
             self.auth_kwargs = {

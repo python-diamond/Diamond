@@ -25,7 +25,7 @@ def load_config(configfile):
         if 'path' in config['configs']:
             for cfgfile in os.listdir(config['configs']['path']):
                 cfgfile = os.path.join(config['configs']['path'],
-                                   cfgfile)
+                                       cfgfile)
                 cfgfile = os.path.abspath(cfgfile)
                 if not cfgfile.endswith(config_extension):
                     continue
