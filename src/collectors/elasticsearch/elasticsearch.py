@@ -29,9 +29,7 @@ RE_LOGSTASH_INDEX = re.compile('^(.*)-\d\d\d\d\.\d\d\.\d\d$')
 
 class ElasticSearchCollector(diamond.collector.Collector):
 
-    def __init__(self, *args, **kwargs):
-        super(ElasticSearchCollector, self).__init__(*args, **kwargs)
-
+    def process_config(self):
         instance_list = self.config['instances']
         if isinstance(instance_list, basestring):
             instance_list = [instance_list]

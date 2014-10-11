@@ -16,13 +16,15 @@ class SquidCollector(diamond.collector.Collector):
 
     def __init__(self, *args, **kwargs):
         super(SquidCollector, self).__init__(*args, **kwargs)
-        self.squid_hosts = {}
 
-        host_pattern = re.compile("(([^@]+)@)?([^:]+)(:([0-9]+))?")
+        self.host_pattern = re.compile("(([^@]+)@)?([^:]+)(:([0-9]+))?")
         self.stat_pattern = re.compile("^([^ ]+) = ([0-9\.]+)$")
 
+    def process_config(self):
+        self.squid_hosts = {}
+
         for host in self.config['hosts']:
-            matches = host_pattern.match(host)
+            matches = self.host_pattern.match(host)
 
             if matches.group(5):
                 port = matches.group(5)

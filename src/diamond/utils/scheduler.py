@@ -4,6 +4,7 @@ import time
 import multiprocessing
 import sys
 import signal
+import traceback
 
 try:
     from setproctitle import getproctitle, setproctitle
@@ -70,6 +71,7 @@ def collector_process(collector, metric_queue, log):
 
         # Any other exception? Kill the thread
         except Exception, e:
+            traceback.print_stack()
             log.error('%s(%s)', e, e.args)
             raise e
             break

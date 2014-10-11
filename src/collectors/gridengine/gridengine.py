@@ -84,8 +84,7 @@ class GridEngineCollector(diamond.collector.Collector):
                 temp_disabled=temp_disabled,
                 manual_intervention=manual_intervention)
 
-    def __init__(self, config, handlers):
-        super(GridEngineCollector, self).__init__(config, handlers)
+    def process_config(self):
         os.environ['SGE_ROOT'] = self.config['sge_root']
 
     def get_default_config_help(self):

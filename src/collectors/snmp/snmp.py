@@ -35,13 +35,6 @@ import diamond.collector
 
 class SNMPCollector(diamond.collector.Collector):
 
-    def __init__(self, config, handlers):
-        """
-        Create a new instance of the SNMPCollector class
-        """
-        # Initialize base Class
-        diamond.collector.Collector.__init__(self, config, handlers)
-
     def get_default_config_help(self):
         config_help = super(SNMPCollector, self).get_default_config_help()
         config_help.update({

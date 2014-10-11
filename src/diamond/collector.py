@@ -239,6 +239,15 @@ class Collector(object):
             self.config['metrics_blacklist'] = re.compile(
                 self.config['metrics_blacklist'])
 
+        self.process_config()
+
+    def process_config(self):
+        """
+        Intended to put any code that should be run after any config reload
+        event
+        """
+        pass
+
     def get_default_config_help(self):
         """
         Returns the help text for the configuration options for this collector

@@ -90,7 +90,7 @@ def get_value(process, name):
 
 
 class ProcessResourcesCollector(diamond.collector.Collector):
-    def __init__(self, *args, **kwargs):
+    def process_config(self):
         """
         prepare self.processes, which is a descriptor dictionary in
         pg_name: {
@@ -102,7 +102,6 @@ class ProcessResourcesCollector(diamond.collector.Collector):
             count_workers: [boolean]
         }
         """
-        super(ProcessResourcesCollector, self).__init__(*args, **kwargs)
         self.processes = {}
         self.processes_info = {}
         for pg_name, cfg in self.config['process'].items():
