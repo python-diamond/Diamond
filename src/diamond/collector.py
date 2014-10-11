@@ -160,7 +160,7 @@ class Collector(object):
     The Collector class is a base class for all metric collectors.
     """
 
-    def __init__(self, config, handlers):
+    def __init__(self, handlers):
         """
         Create a new instance of the Collector class
         """
