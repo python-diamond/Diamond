@@ -36,11 +36,12 @@ class Server(object):
     Server class loads and starts Handlers and Collectors
     """
 
-    def __init__(self, config):
+    def __init__(self, configfile):
         # Initialize Logging
         self.log = logging.getLogger('diamond')
         # Initialize Members
-        self.config = config
+        self.configfile = configfile
+        self.config = None
         self.handlers = []
         self.handler_queue = []
         self.modules = {}
@@ -63,7 +64,7 @@ class Server(object):
         ########################################################################
         # Config
         ########################################################################
-        self.config = load_config(self.config['configfile'])
+        self.config = load_config(self.configfile)
 
         ########################################################################
         # Handlers
@@ -130,7 +131,10 @@ class Server(object):
         # Spin up Collectors
         for cls in collectors.values():
             collector = initialize_collector(
-                cls, self.config, [self.handler_queue])
+                cls,
+                name=cls.__class__.__name__,
+                configfile=self.configfile,
+                handlers=[self.handler_queue])
 
             if collector is None:
                 continue

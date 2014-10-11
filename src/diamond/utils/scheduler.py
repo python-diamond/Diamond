@@ -71,6 +71,7 @@ def collector_process(collector, metric_queue, log):
         # Any other exception? Kill the thread
         except Exception, e:
             log.error('%s(%s)', e, e.args)
+            raise e
             break
 
 

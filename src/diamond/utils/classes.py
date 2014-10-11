@@ -180,15 +180,20 @@ def load_collectors(paths, filter=None):
     return collectors
 
 
-def initialize_collector(cls, config, handlers):
+def initialize_collector(cls, name=None, configfile=None, handlers=[]):
     """
     Initialize collector
     """
     log = logging.getLogger('diamond')
     collector = None
+
     try:
         # Initialize Collector
-        collector = cls(config, handlers)
+        collector = cls(None, handlers)
+        if name is not None:
+            collector.name = name
+        if configfile is not None:
+            collector.load_config(configfile)
     except Exception:
         # Log error
         log.error("Failed to initialize Collector: %s. %s",
