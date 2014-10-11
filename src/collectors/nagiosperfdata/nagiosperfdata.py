@@ -80,9 +80,6 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
         r"([^\s]+|'[^']+')=([-.\d]+)(c|s|ms|us|B|KB|MB|GB|TB|%)?"
         + r"(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?")
 
-    def __init__(self, config, handlers):
-        super(NagiosPerfdataCollector, self).__init__(config, handlers)
-
     def get_default_config_help(self):
         config_help = super(NagiosPerfdataCollector,
                             self).get_default_config_help()

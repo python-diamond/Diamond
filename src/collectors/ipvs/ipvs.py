@@ -18,9 +18,7 @@ from diamond.collector import str_to_bool
 
 class IPVSCollector(diamond.collector.Collector):
 
-    def __init__(self, config, handlers):
-        super(IPVSCollector, self).__init__(config, handlers)
-
+    def process_config(self):
         # Verify the --exact flag works
         self.statcommand = [self.config['bin'], '--list', '--stats',
                             '--numeric', '--exact']

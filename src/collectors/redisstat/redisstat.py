@@ -80,9 +80,7 @@ class RedisCollector(diamond.collector.Collector):
     _RENAMED_KEYS = {'last_save.changes_since': 'rdb_changes_since_last_save',
                      'last_save.time': 'rdb_last_save_time'}
 
-    def __init__(self, *args, **kwargs):
-        super(RedisCollector, self).__init__(*args, **kwargs)
-
+    def process_config(self):
         instance_list = self.config['instances']
         # configobj make str of single-element list, let's convert
         if isinstance(instance_list, basestring):

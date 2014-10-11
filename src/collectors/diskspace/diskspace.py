@@ -79,9 +79,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
         })
         return config
 
-    def __init__(self, config, handlers):
-        super(DiskSpaceCollector, self).__init__(config, handlers)
-
+    def process_config(self):
         # Precompile things
         self.exclude_filters = self.config['exclude_filters']
         if isinstance(self.exclude_filters, basestring):

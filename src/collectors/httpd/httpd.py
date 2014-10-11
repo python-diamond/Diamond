@@ -19,8 +19,7 @@ import diamond.collector
 
 class HttpdCollector(diamond.collector.Collector):
 
-    def __init__(self, *args, **kwargs):
-        super(HttpdCollector, self).__init__(*args, **kwargs)
+    def process_config(self):
         if 'url' in self.config:
             self.config['urls'].append(self.config['url'])
 

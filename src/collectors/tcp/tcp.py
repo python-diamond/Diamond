@@ -192,8 +192,7 @@ class TCPCollector(diamond.collector.Collector):
         'MaxConn',
     ]
 
-    def __init__(self, config, handlers):
-        super(TCPCollector, self).__init__(config, handlers)
+    def process_config(self):
         if self.config['allowed_names'] is None:
             self.config['allowed_names'] = []
 

@@ -137,28 +137,25 @@ class ElbCollector(diamond.collector.Collector):
         MetricInfo('SpilloverCount', 'Sum', 'COUNTER', 0, True)
     ]
 
-    def __init__(self, config, handlers):
-        super(ElbCollector, self).__init__(config, handlers)
-
-        def setup_creds():
-            if ('access_key_id' in self.config
-                    and 'secret_access_key' in self.config):
-                self.auth_kwargs = {
-                    'aws_access_key_id': self.config['access_key_id'],
-                    'aws_secret_access_key': self.config['secret_access_key']
-                }
-            else:
-                # If creds not present, assume we're using IAM roles with
-                # instance profiles. Boto will automatically take care of using
-                # the creds from the instance metatdata.
-                self.auth_kwargs = {}
-
+    def process_config(self):
         if self.config['enabled']:
             self.interval = self.config.as_int('interval')
+            # Why is this?
             if self.interval % 60 != 0:
                 raise Exception('Interval must be a multiple of 60 seconds: %s'
                                 % self.interval)
-        setup_creds()
+        
+        if ('access_key_id' in self.config
+                and 'secret_access_key' in self.config):
+            self.auth_kwargs = {
+                'aws_access_key_id': self.config['access_key_id'],
+                'aws_secret_access_key': self.config['secret_access_key']
+            }
+        else:
+            # If creds not present, assume we're using IAM roles with
+            # instance profiles. Boto will automatically take care of using
+            # the creds from the instance metatdata.
+            self.auth_kwargs = {}
 
     def check_boto(self):
         if not cloudwatch:

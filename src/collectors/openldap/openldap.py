@@ -100,9 +100,6 @@ class OpenLDAPCollector(diamond.collector.Collector):
             'attr': 'monitoredInfo'},
         }
 
-    def __init__(self, *args, **kwargs):
-        super(OpenLDAPCollector, self).__init__(*args, **kwargs)
-
     def get_default_config_help(self):
         config_help = super(OpenLDAPCollector, self).get_default_config_help()
         config_help.update({
