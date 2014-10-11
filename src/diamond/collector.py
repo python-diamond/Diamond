@@ -160,17 +160,21 @@ class Collector(object):
     The Collector class is a base class for all metric collectors.
     """
 
-    def __init__(self, handlers):
+    def __init__(self, name=None, configfile=None, handlers=[]):
         """
         Create a new instance of the Collector class
         """
         # Initialize Logger
         self.log = logging.getLogger('diamond')
         # Initialize Members
-        self.name = self.__class__.__name__
+        if name is None:
+            self.name = self.__class__.__name__
+        else:
+            self.name = name
         self.handlers = handlers
         self.last_values = {}
-        self.configfile = None
+        self.configfile = configfile
+        self.load_config()
 
     def load_config(self, configfile=None):
         """
