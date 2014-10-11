@@ -41,6 +41,7 @@ def collector_process(collector, metric_queue, log):
         sys.exit(1)
 
     next_collection = time.time()
+    reload_config = False
 
     while(True):
         try:
@@ -59,12 +60,22 @@ def collector_process(collector, metric_queue, log):
             # Success! Disable the alarm
             signal.alarm(0)
 
+            # Reload the config if requested
+            # This is outside of the alarm code as we don't want to interrupt
+            # it and end up with half a loaded config
+            if reload_config:
+                log.debug('Reloading config')
+                collector.load_config()
+                log.info('Config reloaded')
+                reload_config = False
+
         except SIGALRMException, e:
             log.error('Took too long to run! Killed!')
             continue
 
         except SIGUSR1Exception:
-            log.debug('Received USR1')
+            log.info('Scheduling config reload due to USR1')
+            reload_config = True
             pass
 
         except SIGUSR2Exception:
