@@ -541,7 +541,6 @@ registry = {
     'basic': [
         'DatabaseStats',
         'DatabaseConnectionCount',
-        'DatabaseReplicationStats',
     ],
     'extended': [
         'DatabaseStats',
