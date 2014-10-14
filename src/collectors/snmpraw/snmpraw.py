@@ -182,6 +182,7 @@ class SNMPRawCollector(parent_SNMPCollector):
 
                 path = '.'.join([self.config['path_prefix'], device,
                                  self.config['path_suffix'], metricName])
-                metric = Metric(path, value, timestamp, self._precision(value),
-                                None, 'GAUGE')
+                metric = Metric(path=path, value=value, timestamp=timestamp,
+                                precision=self._precision(value),
+                                metric_type='GAUGE')
                 self.publish_metric(metric)
