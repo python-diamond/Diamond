@@ -90,6 +90,7 @@ tar: sdist
 clean:
 	./setup.py clean
 	rm -rf dist build MANIFEST .tox *.log
+	rm -f version.txt src/diamond/version.py
 	find . -name '*.pyc' -delete
 
 cleanws:
