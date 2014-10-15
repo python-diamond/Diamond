@@ -27,6 +27,3 @@ Contact
 =====
  * IRC [#python-diamond](irc://chat.freenode.net:6667/%23python-diamond) on [freenode](http://www.freenode.net). [Webchat](http://webchat.freenode.net/?channels=python-diamond)
  * Mailing List [diamond@librelist.com](mailto:diamond@librelist.com) - Email the list and you will automatically subscribe. [Archive](http://librelist.com/browser/diamond/)
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/BrightcoveOS/diamond/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-

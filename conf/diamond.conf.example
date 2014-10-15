@@ -31,9 +31,6 @@ handlers_config_path = /etc/diamond/handlers/
 
 handlers_path = /usr/share/diamond/handlers/
 
-# Interval to reload collectors
-collectors_reload_interval = 3600
-
 ################################################################################
 ### Options for handlers
 [handlers]
