@@ -53,7 +53,6 @@ class CPUCollector(diamond.collector.Collector):
         """
         config = super(CPUCollector, self).get_default_config()
         config.update({
-            'enabled':  'True',
             'path':     'cpu',
             'percore':  'True',
             'xenfix':   None,

@@ -49,7 +49,6 @@ class JCollectdCollector(diamond.collector.Collector):
         config = super(JCollectdCollector, self).get_default_config()
         config.update({
             'path':     'jvm',
-            'enabled':  'False',
             'listener_host': '127.0.0.1',
             'listener_port': 25826,
         })
