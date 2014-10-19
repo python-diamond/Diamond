@@ -93,7 +93,6 @@ class MountStatsCollector(diamond.collector.Collector):
     def get_default_config(self):
         config = super(MountStatsCollector, self).get_default_config()
         config.update({
-            'enabled': 'False',
             'exclude_filters': [],
             'include_filters': [],
             'path': 'mountstats',

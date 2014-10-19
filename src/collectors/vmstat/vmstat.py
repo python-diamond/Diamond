@@ -36,7 +36,6 @@ class VMStatCollector(diamond.collector.Collector):
         """
         config = super(VMStatCollector, self).get_default_config()
         config.update({
-            'enabled':  'True',
             'path':     'vmstat'
         })
         return config

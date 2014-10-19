@@ -34,7 +34,6 @@ class LoadAverageCollector(diamond.collector.Collector):
         """
         config = super(LoadAverageCollector, self).get_default_config()
         config.update({
-            'enabled':  'True',
             'path':     'loadavg',
             'simple':   'False'
         })

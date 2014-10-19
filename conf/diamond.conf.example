@@ -173,6 +173,28 @@ batch = 100
 # interval = 300
 
 ################################################################################
+# Default enabled collectors
+################################################################################
+
+[[CPUCollector]]
+enabled = True
+
+[[DiskSpaceCollector]]
+enabled = True
+
+[[DiskUsageCollector]]
+enabled = True
+
+[[LoadAverageCollector]]
+enabled = True
+
+[[MemoryCollector]]
+enabled = True
+
+[[VMStatCollector]]
+enabled = True
+
+################################################################################
 ### Options for logging
 # for more information on file format syntax:
 # http://docs.python.org/library/logging.config.html#configuration-file-format

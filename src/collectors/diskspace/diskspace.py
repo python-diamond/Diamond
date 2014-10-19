@@ -49,8 +49,6 @@ class DiskSpaceCollector(diamond.collector.Collector):
         """
         config = super(DiskSpaceCollector, self).get_default_config()
         config.update({
-            # Enabled by default
-            'enabled': 'True',
             'path': 'diskspace',
             # filesystems to examine
             'filesystems': 'ext2, ext3, ext4, xfs, glusterfs, nfs, ntfs, hfs,'

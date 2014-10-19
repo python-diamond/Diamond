@@ -58,7 +58,6 @@ class MemoryCollector(diamond.collector.Collector):
         """
         config = super(MemoryCollector, self).get_default_config()
         config.update({
-            'enabled':  'True',
             'path':     'memory',
             # Collect all the nodes or just a few standard ones?
             # Uncomment to enable
