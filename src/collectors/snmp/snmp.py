@@ -53,37 +53,6 @@ class SNMPCollector(diamond.collector.Collector):
         # Return default config
         return default_config
 
-    def get_schedule(self):
-        """
-        Override SNMPCollector.get_schedule
-        """
-        schedule = {}
-
-        if not cmdgen:
-            self.log.error(
-                'pysnmp.entity.rfc3413.oneliner.cmdgen failed to load')
-            return
-
-        # Initialize SNMP Command Generator
-        self.snmpCmdGen = cmdgen.CommandGenerator()
-
-        if 'devices' in self.config:
-            for device in self.config['devices']:
-                # Get Device Config
-                c = self.config['devices'][device]
-                # Get Task Name
-                task = "_".join([self.__class__.__name__, device])
-                # Check if task is already in schedule
-                if task in schedule:
-                    raise KeyError("Duplicate device scheduled")
-                schedule[task] = (self.collect_snmp, (device,
-                                                      c['host'],
-                                                      int(c['port']),
-                                                      c['community']),
-                                  int(self.config['splay']),
-                                  int(self.config['interval']))
-        return schedule
-
     def _convert_to_oid(self, s):
         d = s.split(".")
         return tuple([int(x) for x in d])

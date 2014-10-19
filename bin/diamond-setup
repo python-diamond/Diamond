@@ -237,12 +237,9 @@ if __name__ == "__main__":
             # Manage Keys
             config_keys['enabled'] = True
             config_keys['path'] = False
-            config_keys['method'] = False
             config_keys['path_prefix'] = False
             config_keys['instance_prefix'] = False
-            config_keys['splay'] = False
             config_keys['interval'] = False
-            config_keys['method'] = False
 
             print "\n\t\tNow configuring " + collector
             print collectors[collector].__doc__
