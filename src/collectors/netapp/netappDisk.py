@@ -327,33 +327,3 @@ class netappDisk(diamond.collector.Collector):
 
         netappDiskCol(device, ip, user, password, parent)
         self.running.remove(device)
-
-    def get_schedule(self):
-        """ Override Collector.get_schedule
-
-            We override collector.get_schedule so we can increase speed
-            by having a task per netapp filer
-
-        """
-
-        schedule = {}
-
-        if 'devices' in self.config:
-
-            for device in self.config['devices']:
-                filer_config = self.config['devices'][device]
-                task_name = '_'.join([self.__class__.__name__, device])
-                if task_name in schedule:
-                    raise KeyError('Duplicate netapp filer scheduled')
-
-                schedule[task_name] = (
-                    self.collect,
-                    (device,
-                     filer_config['ip'],
-                     filer_config['user'],
-                     filer_config['password']),
-                    int(self.config['splay']),
-                    int(self.config['interval']))
-                self.log.info("Set up scheduler for %s" % device)
-
-        return schedule

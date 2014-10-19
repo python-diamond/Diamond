@@ -4,6 +4,23 @@ import configobj
 import os
 
 
+def str_to_bool(value):
+    """
+    Converts string truthy/falsey strings to a bool
+    Empty strings are false
+    """
+    if isinstance(value, basestring):
+        value = value.strip().lower()
+        if value in ['true', 't', 'yes', 'y']:
+            return True
+        elif value in ['false', 'f', 'no', 'n', '']:
+            return False
+        else:
+            raise NotImplementedError("Unknown bool %s" % value)
+
+    return value
+
+
 def load_config(configfile):
     """
     Load the full config / merge splitted configs if configured
@@ -82,6 +99,14 @@ def load_config(configfile):
             else:
                 newconfig = configobj.ConfigObj(cfgfile)
                 config['collectors'][collector].merge(newconfig)
+
+
+    # Convert enabled to a bool
+    for collector in config['collectors']:
+        if 'enabled' in config['collectors'][collector]:
+            config['collectors'][collector]['enabled'] = str_to_bool(
+                config['collectors'][collector]['enabled']
+            )
 
     #########################################################################
 

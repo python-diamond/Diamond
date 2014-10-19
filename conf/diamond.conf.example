@@ -29,6 +29,7 @@ collectors_config_path = /etc/diamond/collectors/
 # Directory to load handler configs from
 handlers_config_path = /etc/diamond/handlers/
 
+# Directory to load handler modules from
 handlers_path = /usr/share/diamond/handlers/
 
 ################################################################################

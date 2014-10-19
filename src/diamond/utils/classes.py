@@ -11,7 +11,6 @@ from diamond.util import load_class_from_name
 from diamond.collector import Collector
 from diamond.handler.Handler import Handler
 
-
 def load_include_path(paths):
     """
     Scan for and add paths to the include path
@@ -22,7 +21,8 @@ def load_include_path(paths):
             continue
         # Add path to the system path, to avoid name clashes
         # with mysql-connector for example ...
-        sys.path.insert(1, path)
+        if path not in sys.path:
+            sys.path.insert(1, path)
         # Load all the files in path
         for f in os.listdir(path):
             # Are we a directory? If so process down the tree
@@ -95,13 +95,22 @@ def load_handlers(config, handler_names):
     return handlers
 
 
-def load_collectors(paths, filter=None):
+def load_collectors(paths=None, filter=None):
     """
     Scan for collectors to load from path
     """
     # Initialize return value
     collectors = {}
     log = logging.getLogger('diamond')
+
+    if paths is None:
+        return
+
+    if isinstance(paths, basestring):
+        paths = paths.split(',')
+        paths = map(str.strip, paths)
+
+    load_include_path(paths)
 
     for path in paths:
         # Get a list of files in the directory, if the directory exists

@@ -245,7 +245,6 @@ class Collector(object):
         """
         return {
             'enabled': 'Enable collecting these metrics',
-            'splay': 'How long to wait between starting the next collector',
             'byte_unit': 'Default numeric output(s)',
             'measure_collector_time': 'Collect the collector run time in ms',
             'metrics_whitelist': 'Regex to match metrics to transmit. ' +
@@ -287,9 +286,6 @@ class Collector(object):
             # Path Suffix
             'path_suffix': '',
 
-            # Default splay time (seconds)
-            'splay': 1.0,
-
             # Default Poll Interval (seconds)
             'interval': 300,
 
@@ -308,33 +304,6 @@ class Collector(object):
             # Blacklist of metrics to let through
             'metrics_blacklist': None,
         }
-
-    def get_stats_for_upload(self, config=None):
-        if config is None:
-            config = self.config
-
-        stats = {}
-
-        if 'enabled' in config:
-            stats['enabled'] = config['enabled']
-        else:
-            stats['enabled'] = False
-
-        if 'interval' in config:
-            stats['interval'] = config['interval']
-
-        return stats
-
-    def get_schedule(self):
-        """
-        Return schedule for the collector
-        """
-        # Return a dict of tuples containing (collector function,
-        # collector function args, splay, interval)
-        return {self.__class__.__name__: (self._run,
-                                          None,
-                                          int(self.config['splay']),
-                                          int(self.config['interval']))}
 
     def get_metric_path(self, name, instance=None):
         """

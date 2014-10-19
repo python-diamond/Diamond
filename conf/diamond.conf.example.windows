@@ -27,10 +27,10 @@ collectors_path = C:\\Program Files\\diamond\\collectors
 collectors_config_path = C:\\Program Files\\diamond\\conf\\collectors
 
 # Directory to load handler configs from
-handlers_config_path = C:\\Program Files\\diamond\\handlers
+handlers_config_path = C:\\Program Files\\diamond\\conf\\handlers
 
-# Interval to reload collectors
-collectors_reload_interval = 3600
+# Directory to load handler modules from
+handlers_path = C:\\Program Files\\diamond\\handlers
 
 ################################################################################
 ### Options for handlers
