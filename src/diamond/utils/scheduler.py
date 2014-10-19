@@ -2,6 +2,7 @@
 
 import time
 import multiprocessing
+import os
 import sys
 import signal
 
@@ -41,6 +42,12 @@ def collector_process(collector, metric_queue, log):
 
     next_collection = time.time()
     reload_config = False
+    
+    # Setup stderr/stdout as /dev/null so random print statements in thrid
+    # party libs do not fail and prevent collectors from running.
+    # https://github.com/BrightcoveOS/Diamond/issues/722
+    sys.stdout = open(os.devnull, 'w')
+    sys.stderr = open(os.devnull, 'w')
 
     while(True):
         try:
