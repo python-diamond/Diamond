@@ -55,14 +55,9 @@ class FileAgeCollector(diamond.collector.Collector):
             paths = [paths]
 
 	for path in paths:
-	    try:
-		test = open(path)
-            except IOError:
-		self.log.error('Unable to access file: %s', path)
-	        continue	
 	    matches = re.search('((.+)\@)?(.+)?', path)
             alias = matches.group(2)
-            file = matches.group(3)
+            myfile = matches.group(3)
 	    if alias is None:
 	    	try:
 			filename = os.path.basename(path)
@@ -70,7 +65,14 @@ class FileAgeCollector(diamond.collector.Collector):
 	    	except Exception, e:
 			self.log.error('Could not derive bucket name: %s', e)	
 			continue
-	    stats = os.stat(path)
+	    try:
+		test = open(myfile)
+            except IOError:
+		self.log.error('Unable to access file: %s', myfile)
+	        continue	
+	    stats = os.stat(myfile)
 	    fileage = (time.time()-stats.st_mtime)
 	    self.publish(alias, fileage)
+	    alias = None
+
 
