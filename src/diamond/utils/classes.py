@@ -11,6 +11,7 @@ from diamond.util import load_class_from_name
 from diamond.collector import Collector
 from diamond.handler.Handler import Handler
 
+
 def load_include_path(paths):
     """
     Scan for and add paths to the include path

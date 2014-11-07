@@ -100,7 +100,6 @@ def load_config(configfile):
                 newconfig = configobj.ConfigObj(cfgfile)
                 config['collectors'][collector].merge(newconfig)
 
-
     # Convert enabled to a bool
     for collector in config['collectors']:
         if 'enabled' in config['collectors'][collector]:
