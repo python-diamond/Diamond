@@ -140,7 +140,7 @@ setup(
     license='MIT License',
     description='Smart data producer for graphite graphing package',
     package_dir={'': 'src'},
-    packages=['diamond', 'diamond.handler'],
+    packages=['diamond', 'diamond.handler', 'diamond.utils'],
     scripts=['bin/diamond', 'bin/diamond-setup'],
     data_files=data_files,
     install_requires=install_requires,
