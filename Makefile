@@ -55,7 +55,9 @@ rpm: buildrpm
 
 buildrpm: sdist
 	./setup.py bdist_rpm \
-		--release=`ls dist/*.noarch.rpm | wc -l`
+		--release=`ls dist/*.noarch.rpm | wc -l` \
+		--build-requires='python' \
+		--requires='python'
 
 deb: builddeb
 
