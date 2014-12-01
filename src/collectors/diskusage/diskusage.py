@@ -22,7 +22,6 @@ import re
 
 try:
     import psutil
-    psutil  # workaround for pyflakes issue #13
 except ImportError:
     psutil = None
 
@@ -58,7 +57,6 @@ class DiskUsageCollector(diamond.collector.Collector):
         """
         config = super(DiskUsageCollector, self).get_default_config()
         config.update({
-            'enabled':  'True',
             'path':     'iostat',
             'devices':  ('PhysicalDrive[0-9]+$'
                          + '|md[0-9]+$'

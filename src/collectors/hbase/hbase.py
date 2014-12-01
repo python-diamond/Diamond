@@ -29,7 +29,6 @@ class HBaseCollector(diamond.collector.Collector):
         config = super(HBaseCollector, self).get_default_config()
         config.update({
             'path':     'hbase',
-            'method':   'Threaded',
             'metrics':  ['/var/log/hbase/*.metrics'],
         })
         return config

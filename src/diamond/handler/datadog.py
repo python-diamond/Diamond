@@ -22,8 +22,6 @@ Enable handler
 
 from Handler import Handler
 import logging
-import time
-import re
 from collections import deque
 
 try:

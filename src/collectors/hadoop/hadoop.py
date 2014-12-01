@@ -37,7 +37,6 @@ class HadoopCollector(diamond.collector.Collector):
         config = super(HadoopCollector, self).get_default_config()
         config.update({
             'path':      'hadoop',
-            'method':    'Threaded',
             'metrics':   ['/var/log/hadoop/*-metrics.out'],
             'truncate':  False,
         })

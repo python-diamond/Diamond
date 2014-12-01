@@ -18,7 +18,6 @@ from processresources import ProcessResourcesCollector
 def run_only_if_psutil_is_available(func):
     try:
         import psutil
-        psutil  # workaround for pyflakes issue #13
     except ImportError:
         psutil = None
     pred = lambda: psutil is not None

@@ -41,7 +41,6 @@ class SockstatCollector(diamond.collector.Collector):
         config = super(SockstatCollector, self).get_default_config()
         config.update({
             'path':     'sockets',
-            'method':   'Threaded',
         })
         return config
 

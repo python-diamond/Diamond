@@ -10,7 +10,6 @@ from Handler import Handler
 
 try:
     import pika
-    pika  # Pyflakes
 except ImportError:
     pika = None
 

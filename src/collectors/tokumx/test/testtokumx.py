@@ -19,7 +19,6 @@ from tokumx import TokuMXCollector
 def run_only_if_pymongo_is_available(func):
     try:
         import pymongo
-        pymongo  # workaround for pyflakes issue #13
     except ImportError:
         pymongo = None
     pred = lambda: pymongo is not None

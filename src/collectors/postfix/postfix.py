@@ -18,7 +18,6 @@ import sys
 
 try:
     import json
-    json  # workaround for pyflakes issue #13
 except ImportError:
     import simplejson as json
 
@@ -55,7 +54,6 @@ class PostfixCollector(diamond.collector.Collector):
             'host':             'localhost',
             'port':             7777,
             'include_clients':  True,
-            'method':           'Threaded',
         })
         return config
 

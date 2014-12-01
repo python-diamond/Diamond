@@ -44,7 +44,6 @@ class UserScriptsCollector(diamond.collector.Collector):
         config.update({
             'path':         '.',
             'scripts_path': '/etc/diamond/user_scripts/',
-            'method':       'Threaded',
             'floatprecision': 4,
         })
         return config

@@ -16,7 +16,6 @@ import diamond.collector
 
 try:
     import beanstalkc
-    beanstalkc  # workaround for pyflakes issue #13
 except ImportError:
     beanstalkc = None
 

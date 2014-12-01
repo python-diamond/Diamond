@@ -73,9 +73,7 @@ class JolokiaCollector(diamond.collector.Collector):
         })
         return config
 
-    def __init__(self, config, handlers):
-        super(JolokiaCollector, self).__init__(config, handlers)
-
+    def process_config(self):
         self.mbeans = []
         if isinstance(self.config['mbeans'], basestring):
             for mbean in self.config['mbeans'].split('|'):

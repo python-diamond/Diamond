@@ -13,7 +13,6 @@ from diamond.collector import Collector
 import os
 try:
     import libvirt
-    libvirt  # workaround for pyflakes issue #13
 except ImportError:
     libvirt = None
 

@@ -34,7 +34,6 @@ class EximCollector(diamond.collector.Collector):
         config = super(EximCollector, self).get_default_config()
         config.update({
             'path':            'exim',
-            'method':          'threaded',
             'bin':              '/usr/sbin/exim',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',

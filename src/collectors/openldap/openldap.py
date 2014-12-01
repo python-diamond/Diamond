@@ -10,11 +10,9 @@ Collects data from a OpenLDAP server.
 """
 
 import diamond.collector
-import time
 
 try:
     import ldap
-    ldap  # workaround for pyflakes issue #13
 except ImportError:
     ldap = None
 
@@ -101,9 +99,6 @@ class OpenLDAPCollector(diamond.collector.Collector):
             'base': 'cn=Backload,cn=Threads,cn=Monitor',
             'attr': 'monitoredInfo'},
         }
-
-    def __init__(self, *args, **kwargs):
-        super(OpenLDAPCollector, self).__init__(*args, **kwargs)
 
     def get_default_config_help(self):
         config_help = super(OpenLDAPCollector, self).get_default_config_help()

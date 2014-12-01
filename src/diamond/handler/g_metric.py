@@ -9,7 +9,6 @@ from Handler import Handler
 import logging
 try:
     import gmetric
-    gmetric  # Pyflakes
 except ImportError:
     gmetric = None
 

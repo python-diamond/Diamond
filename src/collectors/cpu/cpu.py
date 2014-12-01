@@ -16,7 +16,6 @@ from diamond.collector import str_to_bool
 
 try:
     import psutil
-    psutil  # workaround for pyflakes issue #13
 except ImportError:
     psutil = None
 
@@ -54,7 +53,6 @@ class CPUCollector(diamond.collector.Collector):
         """
         config = super(CPUCollector, self).get_default_config()
         config.update({
-            'enabled':  'True',
             'path':     'cpu',
             'percore':  'True',
             'xenfix':   None,

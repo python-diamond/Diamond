@@ -2,8 +2,6 @@
 # coding=utf-8
 ################################################################################
 
-import time
-
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest

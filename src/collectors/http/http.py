@@ -28,10 +28,8 @@ Metrics are collected as :
 """
 
 import urllib2
-import re
 import diamond.collector
 import datetime
-import urlparse
 
 
 class HttpCollector(diamond.collector.Collector):

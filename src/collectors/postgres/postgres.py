@@ -15,7 +15,6 @@ from diamond.collector import str_to_bool
 try:
     import psycopg2
     import psycopg2.extras
-    psycopg2  # workaround for pyflakes issue #13
 except ImportError:
     psycopg2 = None
 
@@ -62,7 +61,6 @@ class PostgresqlCollector(diamond.collector.Collector):
             'sslmode': 'disable',
             'underscore': False,
             'extended': False,
-            'method': 'Threaded',
             'metrics': [],
             'pg_version': 9.2,
             'has_admin': True,

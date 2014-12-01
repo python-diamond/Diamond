@@ -5,10 +5,7 @@ import time
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import Mock
-from mock import patch
 
-from diamond.collector import Collector
 from snmpraw import SNMPRawCollector
 
 

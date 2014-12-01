@@ -9,12 +9,12 @@ import socket
 import platform
 import logging
 import configobj
-import traceback
 import time
 import re
 import subprocess
 
 from diamond.metric import Metric
+from diamond.utils.config import load_config
 from error import DiamondException
 
 # Detect the architecture of the system and set the counters for MAX_VALUES
@@ -160,67 +160,84 @@ class Collector(object):
     The Collector class is a base class for all metric collectors.
     """
 
-    def __init__(self, config, handlers):
+    def __init__(self, name=None, configfile=None, handlers=[]):
         """
         Create a new instance of the Collector class
         """
         # Initialize Logger
         self.log = logging.getLogger('diamond')
         # Initialize Members
-        self.name = self.__class__.__name__
+        if name is None:
+            self.name = self.__class__.__name__
+        else:
+            self.name = name
         self.handlers = handlers
         self.last_values = {}
+        self.configfile = configfile
+        self.load_config()
 
-        # Get Collector class
-        cls = self.__class__
+    def load_config(self, configfile=None):
+        """
+        Process a configfile, or reload if previously given one.
+        """
 
-        # Initialize config
+        if configfile is not None:
+            self.configfile = os.path.abspath(configfile)
+
+        if self.configfile is None:
+            return False
+
         self.config = configobj.ConfigObj()
 
-        # Check if default config is defined
+        # Load in the collector's defaults
         if self.get_default_config() is not None:
-            # Merge default config
             self.config.merge(self.get_default_config())
 
-        # Merge default Collector config
-        self.config.merge(config['collectors']['default'])
+        config = load_config(self.configfile)
 
-        # Check if Collector config section exists
-        if cls.__name__ in config['collectors']:
-            # Merge Collector config section
-            self.config.merge(config['collectors'][cls.__name__])
+        if 'collectors' not in config:
+            return False
 
-        # Check for config file in config directory
-        configfile = os.path.join(config['server']['collectors_config_path'],
-                                  cls.__name__) + '.conf'
-        if os.path.exists(configfile):
-            # Merge Collector config file
-            self.config.merge(configobj.ConfigObj(configfile))
+        if 'default' in config['collectors']:
+            self.config.merge(config['collectors']['default'])
+
+        if self.name in config['collectors']:
+            self.config.merge(config['collectors'][self.name])
 
         # Handle some config file changes transparently
-        if isinstance(self.config['byte_unit'], basestring):
-            self.config['byte_unit'] = self.config['byte_unit'].split()
+        if 'byte_unit' in self.config:
+            if isinstance(self.config['byte_unit'], basestring):
+                self.config['byte_unit'] = self.config['byte_unit'].split()
 
-        self.config['enabled'] = str_to_bool(self.config['enabled'])
+        if 'enabled' in self.config:
+            self.config['enabled'] = str_to_bool(self.config['enabled'])
 
-        self.config['measure_collector_time'] = str_to_bool(
-            self.config['measure_collector_time'])
+        if 'measure_collector_time' in self.config:
+            self.config['measure_collector_time'] = str_to_bool(
+                self.config['measure_collector_time'])
 
         # Raise an error if both whitelist and blacklist are specified
-        if self.config['metrics_whitelist'] and \
-                self.config['metrics_blacklist']:
-                raise DiamondException(
-                    'Both metrics_whitelist and metrics_blacklist specified ' +
-                    'in file %s' % configfile)
+        if (self.config.get('metrics_whitelist', None)
+                and self.config.get('metrics_blacklist', None)):
+            raise DiamondException(
+                'Both metrics_whitelist and metrics_blacklist specified ' +
+                'in file %s' % configfile)
 
-        if self.config['metrics_whitelist']:
+        if self.config.get('metrics_whitelist', None):
             self.config['metrics_whitelist'] = re.compile(
                 self.config['metrics_whitelist'])
-        elif self.config['metrics_blacklist']:
+        elif self.config.get('metrics_blacklist', None):
             self.config['metrics_blacklist'] = re.compile(
                 self.config['metrics_blacklist'])
 
-        self.collect_running = False
+        self.process_config()
+
+    def process_config(self):
+        """
+        Intended to put any code that should be run after any config reload
+        event
+        """
+        pass
 
     def get_default_config_help(self):
         """
@@ -269,17 +286,11 @@ class Collector(object):
             # Path Suffix
             'path_suffix': '',
 
-            # Default splay time (seconds)
-            'splay': 1,
-
             # Default Poll Interval (seconds)
             'interval': 300,
 
             # Default Event TTL (interval multiplier)
             'ttl_multiplier': 2,
-
-            # Default collector threading model
-            'method': 'Sequential',
 
             # Default numeric output
             'byte_unit': 'byte',
@@ -293,33 +304,6 @@ class Collector(object):
             # Blacklist of metrics to let through
             'metrics_blacklist': None,
         }
-
-    def get_stats_for_upload(self, config=None):
-        if config is None:
-            config = self.config
-
-        stats = {}
-
-        if 'enabled' in config:
-            stats['enabled'] = config['enabled']
-        else:
-            stats['enabled'] = False
-
-        if 'interval' in config:
-            stats['interval'] = config['interval']
-
-        return stats
-
-    def get_schedule(self):
-        """
-        Return schedule for the collector
-        """
-        # Return a dict of tuples containing (collector function,
-        # collector function args, splay, interval)
-        return {self.__class__.__name__: (self._run,
-                                          None,
-                                          int(self.config['splay']),
-                                          int(self.config['interval']))}
 
     def get_metric_path(self, name, instance=None):
         """
@@ -478,31 +462,23 @@ class Collector(object):
         """
         Run the collector unless it's already running
         """
-        if self.collect_running:
-            return
-        # Log
-        self.log.debug("Collecting data from: %s" % self.__class__.__name__)
         try:
-            try:
-                start_time = time.time()
-                self.collect_running = True
+            start_time = time.time()
 
-                # Collect Data
-                self.collect()
+            # Collect Data
+            self.collect()
 
-                end_time = time.time()
+            end_time = time.time()
+            collector_time = int((end_time - start_time) * 1000)
 
-                if 'measure_collector_time' in self.config:
-                    if self.config['measure_collector_time']:
-                        metric_name = 'collector_time_ms'
-                        metric_value = int((end_time - start_time) * 1000)
-                        self.publish(metric_name, metric_value)
+            self.log.debug('Collection took %s ms', collector_time)
 
-            except Exception:
-                # Log Error
-                self.log.error(traceback.format_exc())
+            if 'measure_collector_time' in self.config:
+                if self.config['measure_collector_time']:
+                    metric_name = 'collector_time_ms'
+                    metric_value = collector_time
+                    self.publish(metric_name, metric_value)
         finally:
-            self.collect_running = False
             # After collector run, invoke a flush
             # method on each handler.
             for handler in self.handlers:
@@ -571,6 +547,8 @@ class ProcessCollector(Collector):
     def run_command(self, args):
         if 'bin' not in self.config:
             raise Exception('config does not have any binary configured')
+        if not os.access(self.config['bin'], os.X_OK):
+            raise Exception('%s is not executable' % self.config['bin'])
         try:
             command = args
             command.insert(0, self.config['bin'])

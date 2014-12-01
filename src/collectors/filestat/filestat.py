@@ -71,7 +71,6 @@ class FilestatCollector(diamond.collector.Collector):
         config = super(FilestatCollector, self).get_default_config()
         config.update({
             'path':     'files',
-            'method':   'Threaded',
             'user_include': None,
             'user_exclude': None,
             'group_include': None,

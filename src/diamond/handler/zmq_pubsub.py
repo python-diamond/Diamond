@@ -8,7 +8,6 @@ from Handler import Handler
 
 try:
     import zmq
-    zmq  # Pyflakes
 except ImportError:
     zmq = None
 

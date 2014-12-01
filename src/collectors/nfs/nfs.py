@@ -29,7 +29,6 @@ class NfsCollector(diamond.collector.Collector):
         """
         config = super(NfsCollector, self).get_default_config()
         config.update({
-            'enabled':  False,
             'path':     'nfs'
         })
         return config

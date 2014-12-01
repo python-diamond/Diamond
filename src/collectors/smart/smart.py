@@ -39,7 +39,6 @@ class SmartCollector(diamond.collector.Collector):
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
             'devices': '^disk[0-9]$|^sd[a-z]$|^hd[a-z]$',
-            'method': 'Threaded'
         })
         return config
 
