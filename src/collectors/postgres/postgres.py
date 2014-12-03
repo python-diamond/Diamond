@@ -354,8 +354,39 @@ class ConnectionStateStats(QueryStats):
              ) AS tmp2
         ON tmp.state=tmp2.state ORDER BY 1
     """
-    post_92_query = query.replace('procpid', 'pid').replace('current_query',
-                                                            'query')
+    post_92_query = """
+        SELECT tmp.mstate AS state,COALESCE(count,0) FROM
+               (VALUES ('active'),
+                       ('waiting'),
+                       ('idle'),
+                       ('idletransaction'),
+                       ('unknown')
+               ) AS tmp(mstate)
+        LEFT JOIN
+             (SELECT CASE WHEN waiting THEN 'waiting'
+                          WHEN state = 'idle' THEN 'idle'
+                          WHEN state LIKE 'idle in transaction%' THEN 'idletransaction'
+                          WHEN state = 'disabled'
+                              THEN 'unknown'
+                          WHEN query = '<insufficient privilege>'
+                              THEN 'unknown'
+                          ELSE 'active' END AS mstate,
+                     count(*) AS count
+               FROM pg_stat_activity
+               WHERE pid != pg_backend_pid()
+               GROUP BY CASE WHEN waiting THEN 'waiting'
+                             WHEN state = 'idle' THEN 'idle'
+                             WHEN state LIKE 'idle in transaction%'
+                                 THEN 'idletransaction'
+                             WHEN state = 'disabled'
+                                 THEN 'unknown'
+                             WHEN query = '<insufficient privilege>'
+                                 THEN 'unknown'
+                             ELSE 'active'
+                        END
+             ) AS tmp2
+        ON tmp.mstate=tmp2.mstate ORDER BY 1
+    """
 
 
 class LockStats(QueryStats):
@@ -429,32 +460,34 @@ class TransactionCount(QueryStats):
 class IdleInTransactions(QueryStats):
     path = "%(datname)s.idle_in_tranactions.%(metric)s"
     multi_db = True
-    query = """
+    base_query = """
         SELECT 'idle_in_transactions',
                max(COALESCE(ROUND(EXTRACT(epoch FROM now()-query_start)),0))
                    AS idle_in_transaction
         FROM pg_stat_activity
-        WHERE current_query = '<IDLE> in transaction'
+        WHERE %s
         GROUP BY 1
     """
-    post_92_query = query.replace('current_query', 'query')
+    query = base_query % ("current_query = '<IDLE> in transaction'", )
+    post_92_query = base_query % ("state LIKE 'idle in transaction%'", )
 
 
 class LongestRunningQueries(QueryStats):
     path = "%(datname)s.longest_running.%(metric)s"
     multi_db = True
-    query = """
+    base_query = """
         SELECT 'query',
             COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-query_start)),0)
         FROM pg_stat_activity
-        WHERE current_query NOT LIKE '<IDLE%'
+        WHERE %s
         UNION ALL
         SELECT 'transaction',
             COALESCE(max(extract(epoch FROM CURRENT_TIMESTAMP-xact_start)),0)
         FROM pg_stat_activity
         WHERE 1=1
     """
-    post_92_query = query.replace('current_query', 'query')
+    query = base_query % ("current_query NOT LIKE '<IDLE%'", )
+    post_92_query = base_query % ("state NOT LIKE 'idle%'", )
 
 
 class UserConnectionCount(QueryStats):
