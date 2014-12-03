@@ -28,10 +28,13 @@ class AmavisCollector(diamond.collector.Collector):
     matchers = [
         re.compile(r'^\s*(?P<name>sysUpTime)\s+TimeTicks\s+(?P<time>\d+)\s+'
                    r'\([\w:\., ]+\)\s*$'),
-        re.compile(r'^\s*(?P<name>[\w]+)\s+(?P<count>[\d]+) s\s+'
+        re.compile(r'^\s*(?P<name>[\w]+)\s+(?P<time>[\d]+) s\s+'
                    r'(?P<frequency>[\d.]+) s/msg\s+\([\w]+\)\s*$'),
-        re.compile(r'^\s*(?P<name>[\w.-]+)\s+(?P<count>[\d]+)(MB)?\s+'
-                   r'(?P<frequency>[\d.]+)(MB)?/h\s+(?P<percentage>[\d.]+) %'
+        re.compile(r'^\s*(?P<name>[\w.-]+)\s+(?P<count>[\d]+)\s+'
+                   r'(?P<frequency>[\d.]+)/h\s+(?P<percentage>[\d.]+) %'
+                   r'\s\([\w]+\)\s*$'),
+        re.compile(r'^\s*(?P<name>[\w.-]+)\s+(?P<size>[\d]+)MB\s+'
+                   r'(?P<frequency>[\d.]+)MB/h\s+(?P<percentage>[\d.]+) %'
                    r'\s\([\w]+\)\s*$'),
     ]
 
