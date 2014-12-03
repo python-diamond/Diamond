@@ -48,6 +48,7 @@ class AmavisCollector(diamond.collector.Collector):
     def get_default_config(self):
         config = super(AmavisCollector, self).get_default_config()
         config.update({
+            'path': 'amavis',
             'amavisd_exe': '/usr/sbin/amavisd-agent',
         })
         return config
