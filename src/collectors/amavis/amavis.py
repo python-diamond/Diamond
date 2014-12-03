@@ -60,7 +60,7 @@ class AmavisCollector(diamond.collector.Collector):
         try:
             cmdline = [self.config['amavisd_exe'], '-c', '1']
             agent_out = subprocess.check_output(cmdline)
-            lines = set(agent_out.strip().split(os.linesep))
+            lines = agent_out.strip().split(os.linesep)
             for line in lines:
                 for rex in self.matchers:
                     res = rex.match(line)

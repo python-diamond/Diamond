@@ -30,17 +30,17 @@ class TestAmavisCollector(CollectorTestCase):
 
         # a couple of the metrics contained in mock-amavisd-agent
         metrics = {
-            'sysUpTime.time': 68934553,
-            'OutMsgsSizeProtoSMTP.size': 45,
+            'sysUpTime.time': 198103058,
+            'OutMsgsSizeProtoSMTP.size': 116,
             'OutMsgsSizeProtoSMTP.frequency': 0,
-            'OutMsgsSizeProtoSMTP.percentage': 95.6,
-            'OutMsgsProtoSMTPRelay.count': 9508,
-            'OutMsgsProtoSMTPRelay.frequency': 50,
-            'OutMsgsProtoSMTPRelay.percentage': 68.5,
-            'TimeElapsedDecoding.time': 269,
-            'TimeElapsedDecoding.frequency': 0.023,
-            'virus.byname.Eicar-Test-Signature.count': 2145,
-            'virus.byname.Eicar-Test-Signature.frequency': 11,
+            'OutMsgsSizeProtoSMTP.percentage': 96.4,
+            'OutMsgsProtoSMTPRelay.count': 22778,
+            'OutMsgsProtoSMTPRelay.frequency': 41,
+            'OutMsgsProtoSMTPRelay.percentage': 71.5,
+            'TimeElapsedDecoding.time': 652,
+            'TimeElapsedDecoding.frequency': 0.024,
+            'virus.byname.Eicar-Test-Signature.count': 4436,
+            'virus.byname.Eicar-Test-Signature.frequency': 8,
             'virus.byname.Eicar-Test-Signature.percentage': 100.0,
         }
 
