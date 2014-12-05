@@ -211,7 +211,7 @@ class QueryStats(object):
                 else:
                     for key, value in row.iteritems():
                         if key in ('datname', 'schemaname', 'relname',
-                                   'indexrelname',):
+                                   'indexrelname', 'funcname',):
                             continue
 
                         self.data.append({
@@ -220,6 +220,7 @@ class QueryStats(object):
                             'schemaname': row.get('schemaname', None),
                             'relname': row.get('relname', None),
                             'indexrelname': row.get('indexrelname', None),
+                            'funcname': row.get('funcname', None),
                             'metric': key,
                             'value': value,
                         })
@@ -263,6 +264,19 @@ class DatabaseStats(QueryStats):
         '').replace(
         'pg_stat_database.temp_bytes as temp_bytes,',
         '')
+
+
+class UserFunctionStats(QueryStats):
+    # http://www.pateldenish.com/2010/11/postgresql-track-functions-to-tune.html
+    path = "%(datname)s.functions.%(funcname)s.%(metric)s"
+    multi_db = True
+    query = """
+        SELECT funcname,
+               calls,
+               total_time/calls as time_per_call
+        FROM pg_stat_user_functions
+        WHERE calls <> 0
+    """
 
 
 class UserTableStats(QueryStats):
@@ -566,6 +580,7 @@ class DatabaseXidAge(QueryStats):
 metrics_registry = {
     'DatabaseStats': DatabaseStats,
     'DatabaseConnectionCount': DatabaseConnectionCount,
+    'UserFunctionStats': UserFunctionStats,
     'UserTableStats': UserTableStats,
     'UserIndexStats': UserIndexStats,
     'UserTableIOStats': UserTableIOStats,
@@ -595,6 +610,7 @@ registry = {
         'DatabaseConnectionCount',
         'DatabaseReplicationStats',
         'DatabaseXidAge',
+        'UserFunctionStats',
         'UserTableStats',
         'UserIndexStats',
         'UserTableIOStats',
