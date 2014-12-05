@@ -101,22 +101,25 @@ class PostgresqlCollector(diamond.collector.Collector):
 
             for dbase in dbs:
                 conn = self._connect(database=dbase)
-                klass = metrics_registry[metric_name]
-                stat = klass(dbase, conn,
-                             underscore=self.config['underscore'])
-                stat.fetch(self.config['pg_version'])
-                for metric, value in stat:
-                    if value is not None:
-                        self.publish(metric, value)
+                try:
+                    klass = metrics_registry[metric_name]
+                    stat = klass(dbase, conn,
+                                 underscore=self.config['underscore'])
+                    stat.fetch(self.config['pg_version'])
+                    for metric, value in stat:
+                        if value is not None:
+                            self.publish(metric, value)
 
-                # Setting multi_db to True will run this query on all known
-                # databases. This is bad for queries that hit views like
-                # pg_database, which are shared across databases.
-                #
-                # If multi_db is False, bail early after the first query
-                # iteration. Otherwise, continue to remaining databases.
-                if stat.multi_db is False:
-                    break
+                    # Setting multi_db to True will run this query on all known
+                    # databases. This is bad for queries that hit views like
+                    # pg_database, which are shared across databases.
+                    #
+                    # If multi_db is False, bail early after the first query
+                    # iteration. Otherwise, continue to remaining databases.
+                    if stat.multi_db is False:
+                        break
+                finally:
+                    conn.close()
 
     def _get_db_names(self):
         """
@@ -184,44 +187,45 @@ class QueryStats(object):
         return datname
 
     def fetch(self, pg_version):
-        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         if float(pg_version) >= 9.2 and hasattr(self, 'post_92_query'):
             q = self.post_92_query
         else:
             q = self.query
 
-        cursor.execute(q, self.parameters)
-        rows = cursor.fetchall()
-        for row in rows:
-            # If row is length 2, assume col1, col2 forms key: value
-            if len(row) == 2:
-                self.data.append({
-                    'datname': self._translate_datname(self.dbname),
-                    'metric': row[0],
-                    'value': row[1],
-                })
-
-            # If row > length 2, assume each column name maps to
-            # key => value
-            else:
-                for key, value in row.iteritems():
-                    if key in ('datname', 'schemaname', 'relname',
-                               'indexrelname',):
-                        continue
-
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        try:
+            cursor.execute(q, self.parameters)
+            rows = cursor.fetchall()
+            for row in rows:
+                # If row is length 2, assume col1, col2 forms key: value
+                if len(row) == 2:
                     self.data.append({
-                        'datname': self._translate_datname(row.get(
-                            'datname', self.dbname)),
-                        'schemaname': row.get('schemaname', None),
-                        'relname': row.get('relname', None),
-                        'indexrelname': row.get('indexrelname', None),
-                        'metric': key,
-                        'value': value,
+                        'datname': self._translate_datname(self.dbname),
+                        'metric': row[0],
+                        'value': row[1],
                     })
 
+                # If row > length 2, assume each column name maps to
+                # key => value
+                else:
+                    for key, value in row.iteritems():
+                        if key in ('datname', 'schemaname', 'relname',
+                                   'indexrelname',):
+                            continue
+
+                        self.data.append({
+                            'datname': self._translate_datname(row.get(
+                                'datname', self.dbname)),
+                            'schemaname': row.get('schemaname', None),
+                            'relname': row.get('relname', None),
+                            'indexrelname': row.get('indexrelname', None),
+                            'metric': key,
+                            'value': value,
+                        })
+
         # Clean up
-        cursor.close()
-        self.conn.close()
+        finally:
+            cursor.close()
 
     def __iter__(self):
         for data_point in self.data:
