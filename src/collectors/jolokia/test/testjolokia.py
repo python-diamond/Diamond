@@ -76,6 +76,19 @@ class TestJolokiaCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
+
+    @patch.object(Collector, 'publish')
+    @patch.object(JolokiaCollector, 'interpret_bean_with_list')
+    def test_should_allow_interpretation_of_list_values(self, interpret_bean_with_list_mock, publish_mock):
+        self.collector.collect_bean('prefix', {
+            'RecentWriteLatencyMicros': 100,
+            'RecentReadLatencyHistogramMicros': [1,2,3]
+        })
+        self.assertPublishedMany(publish_mock, {
+            'prefix.RecentWriteLatencyMicros': 100
+        })
+        interpret_bean_with_list_mock.assert_called_with('prefix.RecentReadLatencyHistogramMicros', [1, 2, 3])
+
     def get_metrics(self):
         prefix = 'java.lang.name_ParNew.type_GarbageCollector.LastGcInfo'
         return {
