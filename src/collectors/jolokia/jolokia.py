@@ -21,11 +21,15 @@ name. e.g) ```java.lang:name=ParNew,type=GarbageCollector``` would become
 
 If desired, JolokiaCollector can be configured to query specific MBeans by
 providing a list of ```mbeans```. If ```mbeans``` is not provided, all MBeans
-will be queried for metrics.
+will be queried for metrics.  Note that the mbean prefix is checked both 
+with and without rewrites (including fixup re-writes) applied.  This allows
+you to specify "java.lang:name=ParNew,type=GarbageCollector" or 
+"java.lang.name.ParNew.type.GarbageCollector"
 
-```mbeansre``` works like ```mbeans``` but matches on regular expressions.  
-In the configuration, for multiple entries for ```mbeansre``` needs to be 
-separated by space-pipe-space not just pipe characters as in mbeans.
+
+If the ```regex``` flag is set to True, mbeans will match based on regular
+expressions. Note that if ```regex``` is true, the default pipe separator
+must be space-pipe-space and not just a pipe.
 
 ```rewrite``` provides a way of renaming the data keys before it sent out to
 the handler.  Pairs of from-to regular expressions are separated by ->, and 
@@ -35,7 +39,6 @@ multiple sets of pairs are separated by space-pipe-space
     host 'localhost'
     port '8778'
     mbeans '"java.lang:name=ParNew,type=GarbageCollector | org.apache.cassandra.metrics:name=WriteTimeouts,type=ClientRequestMetrics"'
-    mbeansre '"java.* | org\.apache\.cassandra.\*"'
     rewrite 'java -> coffee | india -> tea'
 ```
 """
@@ -66,7 +69,7 @@ class JolokiaCollector(diamond.collector.Collector):
         config_help.update({
             'mbeans': "Pipe delimited list of MBeans for which to collect stats."
                       " If not provided, all stats will be collected.",
-            'mbeansre': "Like mbeans but regex matched instead of simple string.",
+            'regex':  "Contols if mbeans option matches with regex, False by default.",
             'rewrite': "Pipe delimitede pairs of regex re-write strings that are applied to the "
                        "the name of the collected keys before being sent to "
                        "the handler.  Each pair is separated by '->' and multiple pairs can be "
@@ -80,7 +83,7 @@ class JolokiaCollector(diamond.collector.Collector):
         config = super(JolokiaCollector, self).get_default_config()
         config.update({
             'mbeans': [],
-            'mbeansre': [],
+            'regex': False,
             'rewrite': [],
             'path': 'jmx',
             'host': 'localhost',
@@ -91,18 +94,16 @@ class JolokiaCollector(diamond.collector.Collector):
     def __init__(self, config, handlers):
         super(JolokiaCollector, self).__init__(config, handlers)
         self.mbeans = []
-        self.mbeansre = []
         self.rewrite = {}
+        if isinstance(self.config['regex'], basestring) and self.config['regex'] == True:
+            separator = ' | '
+        else:
+            separator = '|'
         if isinstance(self.config['mbeans'], basestring):
-            for mbean in self.config['mbeans'].split('|'):
+            for mbean in self.config['mbeans'].split(separator):
                 self.mbeans.append(mbean.strip())
         elif isinstance(self.config['mbeans'], list):
             self.mbeans = self.config['mbeans']
-        if isinstance(self.config['mbeansre'], basestring):
-            for mbeanre in self.config['mbeansre'].split(' | '):
-                self.mbeansre.append(mbeanre.strip())
-        elif isinstance(self.config['mbeansre'], list):
-            self.mbeansre = self.config['mbeansre']
         if isinstance(self.config['rewrite'], basestring):
             for rewrite in self.config['rewrite'].split(' | '):
                 leftright = rewrite.split('->')
@@ -113,14 +114,16 @@ class JolokiaCollector(diamond.collector.Collector):
                 self.rewrite[leftright[0].strip()] = leftright[1].strip()
         
     def check_mbean(self, mbean):
-        if not self.mbeans and not self.mbeansre:
+        if not self.mbeans:
             return True
-        if mbean in self.mbeans:
-            return True
-        for chkbean in self.mbeansre:
-            if re.match(chkbean, mbean) != None:
+        mbeanfix = self.clean_up(mbean)
+        if self.config['regex']:
+            for chkbean in self.mbeans:
+                if re.match(chkbean, mbean) != None or re.match(chkbean, mbeanfix) != None:
+                    return True
+        else:
+            if mbean in self.mbeans or mbeanfix in self.mbeans:
                 return True
-        return False
 
     def collect(self):
         listing = self.list_request()
@@ -163,9 +166,14 @@ class JolokiaCollector(diamond.collector.Collector):
             return {}
 
     def clean_up(self, text):
-        text = re.sub('[:,]', '.', text)
-        text = re.sub('[=\s]', '_', text)
-        text = re.sub('["\']', '', text)
+# old search/replace
+#        text = re.sub('[:,]', '.', text)
+#        text = re.sub('[=\s]', '_', text)
+#        text = re.sub('["\']', '', text)
+# SB: new search/replace for better naming, and avoids double dots in metrics names
+        text = re.sub('["\'(){}<>\[\]]', '', text)
+        text = re.sub('[:,.=]+', '.', text)
+        text = re.sub('[^a-zA-Z0-9_.+-]+', '_', text)
         for (oldstr, newstr) in self.rewrite.items():
             text = re.sub(oldstr, newstr, text)
         return text
