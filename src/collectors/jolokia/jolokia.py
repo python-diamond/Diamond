@@ -1,7 +1,8 @@
 # coding=utf-8
 
 """
-Collects JMX metrics from the Jolokia Agent. Jolokia is an HTTP bridge that
+#### Authors
+ Collects JMX metrics from the Jolokia Agent. Jolokia is an HTTP bridge that
 provides access to JMX MBeans without the need to write Java code. See the
 [Reference Guide](http://www.jolokia.org/reference/html/index.html) for more
 information.
@@ -24,22 +25,25 @@ providing a list of ```mbeans```. If ```mbeans``` is not provided, all MBeans
 will be queried for metrics.  Note that the mbean prefix is checked both 
 with and without rewrites (including fixup re-writes) applied.  This allows
 you to specify "java.lang:name=ParNew,type=GarbageCollector" or 
-"java.lang.name.ParNew.type.GarbageCollector"
+"java.lang.name_ParNew.type_GarbageCollector"
 
 
 If the ```regex``` flag is set to True, mbeans will match based on regular
 expressions. Note that if ```regex``` is true, the default pipe separator
 must be space-pipe-space and not just a pipe.
 
-```rewrite``` provides a way of renaming the data keys before it sent out to
-the handler.  Pairs of from-to regular expressions are separated by ->, and 
-multiple sets of pairs are separated by space-pipe-space
+The ```rewrite``` section provides a way of renaming the data keys before 
+it sent out to the handler.  The section consists of pairs of from-to 
+regular expressions.
 
 ```
-    host 'localhost'
-    port '8778'
-    mbeans '"java.lang:name=ParNew,type=GarbageCollector | org.apache.cassandra.metrics:name=WriteTimeouts,type=ClientRequestMetrics"'
-    rewrite 'java -> coffee | india -> tea'
+    host = localhost
+    port = 8778
+    mbeans = '"java.lang:name=ParNew,type=GarbageCollector | org.apache.cassandra.metrics:name=WriteTimeouts,type=ClientRequestMetrics"'
+    [rewrite]
+    java = coffee
+    india = tea
+    "-v\d+\.\d+\.\d+" = "-AllVersions"
 ```
 """
 
@@ -104,14 +108,8 @@ class JolokiaCollector(diamond.collector.Collector):
                 self.mbeans.append(mbean.strip())
         elif isinstance(self.config['mbeans'], list):
             self.mbeans = self.config['mbeans']
-        if isinstance(self.config['rewrite'], basestring):
-            for rewrite in self.config['rewrite'].split(' | '):
-                leftright = rewrite.split('->')
-                self.rewrite[leftright[0].strip()] = leftright[1].strip()
-        elif isinstance(self.config['rewrite'], list):
-            for rewrite in self.config['rewrite']:
-                leftright = rewrite.split('->')
-                self.rewrite[leftright[0].strip()] = leftright[1].strip()
+        if isinstance(self.config['rewrite'], dict):
+            self.rewrite = self.config['rewrite']
         
     def check_mbean(self, mbean):
         if not self.mbeans:
@@ -166,14 +164,9 @@ class JolokiaCollector(diamond.collector.Collector):
             return {}
 
     def clean_up(self, text):
-# old search/replace
-#        text = re.sub('[:,]', '.', text)
-#        text = re.sub('[=\s]', '_', text)
-#        text = re.sub('["\']', '', text)
-# SB: new search/replace for better naming, and avoids double dots in metrics names
-        text = re.sub('["\'(){}<>\[\]]', '', text)
-        text = re.sub('[:,.=]+', '.', text)
-        text = re.sub('[^a-zA-Z0-9_.+-]+', '_', text)
+        text = re.sub('["\'(){}<>\[\]]', '', text)     # orig re.sub('["\']', '', text)
+        text = re.sub('[:,.]+', '.', text)             # orig re.sub('[:,]', '.', text)
+        text = re.sub('[^a-zA-Z0-9_.+-]+', '_', text)  # orig re.sub('[=\s]', '_', text)
         for (oldstr, newstr) in self.rewrite.items():
             text = re.sub(oldstr, newstr, text)
         return text
