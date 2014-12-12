@@ -20,10 +20,13 @@ from uptime import UptimeCollector
 
 
 class TestUptimeCollector(CollectorTestCase):
-    def setUp(self):
-        config = get_collector_config('UptimeCollector', {
-            'interval': 10,
-        })
+    def setUp(self, config=None):
+        if config is None:
+            config = get_collector_config('UptimeCollector', {
+                'interval': '10',
+            })
+        else:
+            config = get_collector_config('UptimeCollector', config)
 
         self.collector = UptimeCollector(config, None)
 
@@ -56,4 +59,17 @@ class TestUptimeCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {
             'minutes': 60.0
+        })
+
+    @patch.object(Collector, 'publish')
+    def test_seconds(self, publish_mock):
+        self.setUp(config={
+            'interval': '10',
+            'metric_name': 'seconds',
+        })
+        self.collector.PROC = self.getFixturePath('sanity_check')
+        self.collector.collect()
+
+        self.assertPublishedMany(publish_mock, {
+            'seconds': 3600
         })
