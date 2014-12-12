@@ -1,7 +1,6 @@
 # coding=utf-8
 
 """
-#### Authors
  Collects JMX metrics from the Jolokia Agent. Jolokia is an HTTP bridge that
 provides access to JMX MBeans without the need to write Java code. See the
 [Reference Guide](http://www.jolokia.org/reference/html/index.html) for more
@@ -29,8 +28,7 @@ you to specify "java.lang:name=ParNew,type=GarbageCollector" or
 
 
 If the ```regex``` flag is set to True, mbeans will match based on regular
-expressions. Note that if ```regex``` is true, the default pipe separator
-must be space-pipe-space and not just a pipe.
+expressions instead of a regular textual match.
 
 The ```rewrite``` section provides a way of renaming the data keys before 
 it sent out to the handler.  The section consists of pairs of from-to 
@@ -71,15 +69,13 @@ class JolokiaCollector(diamond.collector.Collector):
         config_help = super(JolokiaCollector,
                             self).get_default_config_help()
         config_help.update({
-            'mbeans': "Pipe delimited list of MBeans for which to collect stats."
-                      " If not provided, all stats will be collected.",
-            'regex':  "Contols if mbeans option matches with regex, False by default.",
-            'rewrite': "Pipe delimitede pairs of regex re-write strings that are applied to the "
-                       "the name of the collected keys before being sent to "
-                       "the handler.  Each pair is separated by '->' and multiple pairs can be "
-                       "separated by space-pipe-space.",
+            'mbeans':  "Pipe delimited list of MBeans for which to collect stats."
+                       " If not provided, all stats will be collected.",
+            'regex': "Contols if mbeans option matches with regex, False by default.",
             'host': 'Hostname',
             'port': 'Port',
+            'rewrite': "This sub-section of the config contains pairs of from-to regex"
+                       " rewrites."
         })
         return config_help
 
@@ -89,7 +85,6 @@ class JolokiaCollector(diamond.collector.Collector):
             'mbeans': [],
             'regex': False,
             'rewrite': [],
-            'path': 'jmx',
             'host': 'localhost',
             'port': 8778,
         })
@@ -99,12 +94,8 @@ class JolokiaCollector(diamond.collector.Collector):
         super(JolokiaCollector, self).__init__(config, handlers)
         self.mbeans = []
         self.rewrite = {}
-        if isinstance(self.config['regex'], basestring) and self.config['regex'] == True:
-            separator = ' | '
-        else:
-            separator = '|'
         if isinstance(self.config['mbeans'], basestring):
-            for mbean in self.config['mbeans'].split(separator):
+            for mbean in self.config['mbeans'].split('|'):
                 self.mbeans.append(mbean.strip())
         elif isinstance(self.config['mbeans'], list):
             self.mbeans = self.config['mbeans']
@@ -164,9 +155,9 @@ class JolokiaCollector(diamond.collector.Collector):
             return {}
 
     def clean_up(self, text):
-        text = re.sub('["\'(){}<>\[\]]', '', text)     # orig re.sub('["\']', '', text)
-        text = re.sub('[:,.]+', '.', text)             # orig re.sub('[:,]', '.', text)
-        text = re.sub('[^a-zA-Z0-9_.+-]+', '_', text)  # orig re.sub('[=\s]', '_', text)
+        text = re.sub('["\'(){}<>\[\]]', '', text)
+        text = re.sub('[:,.]+', '.', text)
+        text = re.sub('[^a-zA-Z0-9_.+-]+', '_', text)
         for (oldstr, newstr) in self.rewrite.items():
             text = re.sub(oldstr, newstr, text)
         return text
