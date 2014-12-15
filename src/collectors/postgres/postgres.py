@@ -214,6 +214,7 @@ class QueryStats(object):
                             'datname', self.dbname)),
                         'schemaname': row.get('schemaname', None),
                         'relname': row.get('relname', None),
+                        'locktype': row.get('locktype', None),
                         'indexrelname': row.get('indexrelname', None),
                         'metric': key,
                         'value': value,
@@ -390,10 +391,11 @@ class ConnectionStateStats(QueryStats):
 
 
 class LockStats(QueryStats):
-    path = "%(datname)s.locks.%(metric)s"
+    path = "%(datname)s.locks.%(locktype).%(metric)s"
     multi_db = False
     query = """
-        SELECT lower(mode) AS key,
+        SELECT lower(locktype),
+               lower(mode) AS key,
                count(*) AS value
         FROM pg_locks
         WHERE database IS NOT NULL
