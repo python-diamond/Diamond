@@ -32,7 +32,7 @@ class UptimeCollector(Collector):
             return {}
 
         v = self.read()
-        if not v is None:
+        if v is not None:
             self.publish(self.config['metric_name'], v)
 
     def read(self):
@@ -41,7 +41,7 @@ class UptimeCollector(Collector):
             uptime = fd.readline()
             fd.close()
             v = float(uptime.split()[0].strip())
-            return convertor.time.convert(v, 's', 'm')
+            return convertor.time.convert(v, 's', self.config['metric_name'])
         except Exception, e:
             self.log.error('Unable to read uptime from %s: %s' % (self.PROC,
                                                                   e))
