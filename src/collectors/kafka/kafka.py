@@ -91,7 +91,6 @@ class KafkaCollector(diamond.collector.Collector):
         found_beans = set()
 
         for mbean in mbeans.getiterator(tag='MBean'):
-            classname = mbean.get('classname')
             objectname = mbean.get('objectname')
 
             if objectname:
