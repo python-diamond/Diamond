@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Server>
+  <Domain name="java.lang">
+    <MBean classname="sun.management.ThreadImpl" description="Information on the management interface of the MBean" objectname="java.lang:type=Threading"/>
+  </Domain>
+</Server>

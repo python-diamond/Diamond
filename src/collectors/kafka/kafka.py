@@ -50,7 +50,7 @@ class KafkaCollector(diamond.collector.Collector):
         config = super(KafkaCollector, self).get_default_config()
         config.update({
             'host': '127.0.0.1',
-            'port': 7200,
+            'port': 8082,
             'path': 'kafka',
             'method': 'Threaded',
         })
@@ -91,7 +91,6 @@ class KafkaCollector(diamond.collector.Collector):
         found_beans = set()
 
         for mbean in mbeans.getiterator(tag='MBean'):
-            classname = mbean.get('classname')
             objectname = mbean.get('objectname')
 
             if objectname:
@@ -143,6 +142,9 @@ class KafkaCollector(diamond.collector.Collector):
             value = ptype(attrib.get('value'))
 
             name = '.'.join([key_prefix, attrib.get('name')])
+            # Some prefixes and attributes could have spaces, thus we must
+            # sanitize them
+            name = name.replace(' ', '')
 
             metrics[name] = value
 

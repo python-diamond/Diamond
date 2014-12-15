@@ -18,7 +18,7 @@ class TestNumaCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('NumaCollector', {
             'interval': 10,
-            'bin': '/usr/bin/true'
+            'bin': 'true'
         })
 
         self.collector = NumaCollector(config, None)
