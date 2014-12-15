@@ -74,7 +74,7 @@ class AmavisCollector(diamond.collector.Collector):
                             mtype = 'GAUGE'
                             if metric in ('count', 'time'):
                                 mtype = 'COUNTER'
-                            self.publish("{}.{}".format(name, metric),
+                            self.publish("{0}.{1}".format(name, metric),
                                          value, metric_type=mtype)
 
         except OSError as err:
