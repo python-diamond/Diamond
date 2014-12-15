@@ -143,6 +143,9 @@ class KafkaCollector(diamond.collector.Collector):
             value = ptype(attrib.get('value'))
 
             name = '.'.join([key_prefix, attrib.get('name')])
+            # Some prefixes and attributes could have spaces, thus we must
+            # sanitize them
+            name = name.replace(' ', '')
 
             metrics[name] = value
 

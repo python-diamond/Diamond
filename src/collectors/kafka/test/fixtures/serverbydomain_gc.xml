@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Server>
+  <Domain name="java.lang">
+    <MBean classname="sun.management.GarbageCollectorImpl" description="Information on the management interface of the MBean" objectname="java.lang:type=GarbageCollector,name=PS MarkSweep"/>
+    <MBean classname="sun.management.GarbageCollectorImpl" description="Information on the management interface of the MBean" objectname="java.lang:type=GarbageCollector,name=PS Scavenge"/>
+  </Domain>
+</Server>
