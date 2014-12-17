@@ -79,7 +79,7 @@ class TestCassandraJolokiaCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_respect_percentiles_config(self, publish_mock):
         self.collector.update_config({
-            'percentiles': '25,75'
+            'percentiles': ['25', '75']
         })
         self.collector.interpret_bean_with_list(
             'RecentReadLatencyHistogramMicros', self.fixture_values_a())
