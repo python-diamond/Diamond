@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/python-diamond/Diamond.svg?branch=master)](https://travis-ci.org/python-diamond/Diamond)
 About
 =====
 
