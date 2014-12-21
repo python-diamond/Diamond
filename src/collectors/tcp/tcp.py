@@ -193,6 +193,7 @@ class TCPCollector(diamond.collector.Collector):
     ]
 
     def process_config(self):
+        super(TCPCollector, self).process_config()
         if self.config['allowed_names'] is None:
             self.config['allowed_names'] = []
 

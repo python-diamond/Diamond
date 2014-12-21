@@ -81,6 +81,7 @@ class RedisCollector(diamond.collector.Collector):
                      'last_save.time': 'rdb_last_save_time'}
 
     def process_config(self):
+        super(RedisCollector, self).process_config()
         instance_list = self.config['instances']
         # configobj make str of single-element list, let's convert
         if isinstance(instance_list, basestring):

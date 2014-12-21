@@ -160,7 +160,7 @@ class Collector(object):
     The Collector class is a base class for all metric collectors.
     """
 
-    def __init__(self, name=None, configfile=None, handlers=[]):
+    def __init__(self, config=None, handlers=[], name=None, configfile=None):
         """
         Create a new instance of the Collector class
         """
@@ -173,19 +173,14 @@ class Collector(object):
             self.name = name
         self.handlers = handlers
         self.last_values = {}
-        self.configfile = configfile
-        self.load_config()
+        
+        self.configfile = None
+        self.load_config(configfile, config)
 
-    def load_config(self, configfile=None):
+    def load_config(self, configfile=None, override_config=None):
         """
         Process a configfile, or reload if previously given one.
         """
-
-        if configfile is not None:
-            self.configfile = os.path.abspath(configfile)
-
-        if self.configfile is None:
-            return False
 
         self.config = configobj.ConfigObj()
 
@@ -193,18 +188,34 @@ class Collector(object):
         if self.get_default_config() is not None:
             self.config.merge(self.get_default_config())
 
-        config = load_config(self.configfile)
+        if configfile is not None:
+            self.configfile = os.path.abspath(configfile)
+            
+        if self.configfile is not None:
+            config = load_config(self.configfile)
+    
+            if 'collectors' in config:
+                if 'default' in config['collectors']:
+                    self.config.merge(config['collectors']['default'])
+        
+                if self.name in config['collectors']:
+                    self.config.merge(config['collectors'][self.name])
+        
+        if override_config is not None:
+            if 'collectors' in override_config:
+                if 'default' in override_config['collectors']:
+                    self.config.merge(override_config['collectors']['default'])
+        
+                if self.name in override_config['collectors']:
+                    self.config.merge(override_config['collectors'][self.name])
 
-        if 'collectors' not in config:
-            return False
+        self.process_config()
 
-        if 'default' in config['collectors']:
-            self.config.merge(config['collectors']['default'])
-
-        if self.name in config['collectors']:
-            self.config.merge(config['collectors'][self.name])
-
-        # Handle some config file changes transparently
+    def process_config(self):
+        """
+        Intended to put any code that should be run after any config reload
+        event
+        """
         if 'byte_unit' in self.config:
             if isinstance(self.config['byte_unit'], basestring):
                 self.config['byte_unit'] = self.config['byte_unit'].split()
@@ -229,15 +240,6 @@ class Collector(object):
         elif self.config.get('metrics_blacklist', None):
             self.config['metrics_blacklist'] = re.compile(
                 self.config['metrics_blacklist'])
-
-        self.process_config()
-
-    def process_config(self):
-        """
-        Intended to put any code that should be run after any config reload
-        event
-        """
-        pass
 
     def get_default_config_help(self):
         """

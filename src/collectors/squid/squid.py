@@ -21,6 +21,7 @@ class SquidCollector(diamond.collector.Collector):
         super(SquidCollector, self).__init__(*args, **kwargs)
 
     def process_config(self):
+        super(SquidCollector, self).process_config()
         self.squid_hosts = {}
 
         for host in self.config['hosts']:

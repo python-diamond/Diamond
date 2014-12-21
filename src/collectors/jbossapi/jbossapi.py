@@ -122,6 +122,7 @@ gc_types = [
 class JbossApiCollector(diamond.collector.Collector):
 
     def process_config(self):
+        super(JbossApiCollector, self).process_config()
         if self.config['hosts'].__class__.__name__ != 'list':
             self.config['hosts'] = [self.config['hosts']]
 

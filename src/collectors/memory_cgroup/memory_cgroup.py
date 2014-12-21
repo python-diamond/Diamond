@@ -44,6 +44,7 @@ _KEY_MAPPING = [
 class MemoryCgroupCollector(diamond.collector.Collector):
 
     def process_config(self):
+        super(MemoryCgroupCollector, self).process_config()
         self.memory_path = self.config['memory_path']
         self.skip = self.config['skip']
         if not isinstance(self.skip, list):

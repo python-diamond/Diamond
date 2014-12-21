@@ -31,6 +31,7 @@ import re
 class MySQLPerfCollector(diamond.collector.Collector):
 
     def process_config(self):
+        super(MySQLPerfCollector, self).process_config()
         self.db = None
         self.last_wait_count = {}
         self.last_wait_sum = {}

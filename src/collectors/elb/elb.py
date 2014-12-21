@@ -138,6 +138,7 @@ class ElbCollector(diamond.collector.Collector):
     ]
 
     def process_config(self):
+        super(ElbCollector, self).process_config()
         if self.config['enabled']:
             self.interval = self.config.as_int('interval')
             # Why is this?

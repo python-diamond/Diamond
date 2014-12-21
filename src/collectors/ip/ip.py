@@ -39,6 +39,7 @@ class IPCollector(diamond.collector.Collector):
     ]
 
     def process_config(self):
+        super(IPCollector, self).process_config()
         if self.config['allowed_names'] is None:
             self.config['allowed_names'] = []
 

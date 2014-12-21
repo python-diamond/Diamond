@@ -57,6 +57,7 @@ class MountStatsCollector(diamond.collector.Collector):
     MOUNTSTATS = '/proc/self/mountstats'
 
     def process_config(self):
+        super(MountStatsCollector, self).process_config()
         self.exclude_filters = self.config['exclude_filters']
         if isinstance(self.exclude_filters, basestring):
             self.exclude_filters = [self.exclude_filters]

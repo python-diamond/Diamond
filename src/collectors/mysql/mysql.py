@@ -222,6 +222,7 @@ class MySQLCollector(diamond.collector.Collector):
                 self.innodb_status_keys[key])
 
     def process_config(self):
+        super(MySQLCollector, self).process_config()
         if self.config['hosts'].__class__.__name__ != 'list':
             self.config['hosts'] = [self.config['hosts']]
 
