@@ -253,6 +253,8 @@ def main():
                 os.close(0)
                 os.close(1)
                 os.close(2)
+                sys.stdout = open(os.devnull, 'w')
+                sys.stderr = open(os.devnull, 'w')
 
         # PID MANAGEMENT
         if not options.skip_pidfile:
