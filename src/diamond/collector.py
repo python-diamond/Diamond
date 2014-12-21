@@ -171,9 +171,10 @@ class Collector(object):
             self.name = self.__class__.__name__
         else:
             self.name = name
+
         self.handlers = handlers
         self.last_values = {}
-        
+
         self.configfile = None
         self.load_config(configfile, config)
 
@@ -190,22 +191,22 @@ class Collector(object):
 
         if configfile is not None:
             self.configfile = os.path.abspath(configfile)
-            
+
         if self.configfile is not None:
             config = load_config(self.configfile)
-    
+
             if 'collectors' in config:
                 if 'default' in config['collectors']:
                     self.config.merge(config['collectors']['default'])
-        
+
                 if self.name in config['collectors']:
                     self.config.merge(config['collectors'][self.name])
-        
+
         if override_config is not None:
             if 'collectors' in override_config:
                 if 'default' in override_config['collectors']:
                     self.config.merge(override_config['collectors']['default'])
-        
+
                 if self.name in override_config['collectors']:
                     self.config.merge(override_config['collectors'][self.name])
 

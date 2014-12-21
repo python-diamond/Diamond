@@ -157,21 +157,27 @@ class Server(object):
                             process.terminate()
 
                 for process_name in running_collectors - running_processes:
-                    if 'Collector' not in process_name:
+                    # To handle running multiple collectors concurrently, we
+                    # split on white space and use the first word as the
+                    # collector name to spin
+                    collector_name = process_name.split()[0]
+
+                    if 'Collector' not in collector_name:
                         continue
+
                     # Find the class
                     for cls in collectors.values():
                         cls_name = cls.__name__.split('.')[-1]
-                        if cls_name == process_name:
+                        if cls_name == collector_name:
                             break
-                    if cls_name != process_name:
+                    if cls_name != collector_name:
                         self.log.error('Can not find collector %s',
-                                       process_name)
+                                       collector_name)
                         continue
 
                     collector = initialize_collector(
                         cls,
-                        name=cls.__name__,
+                        name=process_name,
                         configfile=self.configfile,
                         handlers=[self.handler_queue])
 
@@ -184,7 +190,7 @@ class Server(object):
                     time.sleep(1)
 
                     process = multiprocessing.Process(
-                        name=collector.__class__.__name__,
+                        name=process_name,
                         target=collector_process,
                         args=(collector, self.metric_queue, self.log)
                         )
