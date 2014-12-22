@@ -58,9 +58,6 @@ class TestJolokiaCollector(CollectorTestCase):
         patch_urlopen.stop()
 
         rewritemetrics = self.get_metrics_rewrite_test()
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=rewritemetrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, rewritemetrics)
 
     @patch.object(Collector, 'publish')
