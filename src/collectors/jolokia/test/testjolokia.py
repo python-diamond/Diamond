@@ -53,7 +53,7 @@ class TestJolokiaCollector(CollectorTestCase):
         patch_urlopen = patch('urllib2.urlopen', Mock(side_effect=se))
 
         patch_urlopen.start()
-	self.collector.config['rewrite'] = {'memoryUsage':'memUsed', '.*\.init$':''}
+        self.collector.rewrite = {'memoryUsage':'memUsed', '.*\.init':''}
         self.collector.collect()
         patch_urlopen.stop()
 
