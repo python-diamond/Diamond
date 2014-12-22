@@ -26,13 +26,14 @@ with and without rewrites (including fixup re-writes) applied.  This allows
 you to specify "java.lang:name=ParNew,type=GarbageCollector" or 
 "java.lang.name_ParNew.type_GarbageCollector"
 
-
 If the ```regex``` flag is set to True, mbeans will match based on regular
-expressions instead of a regular textual match.
+expressions rather than a plain textual match.
 
 The ```rewrite``` section provides a way of renaming the data keys before 
 it sent out to the handler.  The section consists of pairs of from-to 
-regular expressions.
+regular expressions.  If the resultant name is completely blank, the 
+metric is not published, providing a way to exclude specific metrics within 
+an mbean.
 
 ```
     host = localhost
@@ -40,8 +41,8 @@ regular expressions.
     mbeans = '"java.lang:name=ParNew,type=GarbageCollector | org.apache.cassandra.metrics:name=WriteTimeouts,type=ClientRequestMetrics"'
     [rewrite]
     java = coffee
-    india = tea
     "-v\d+\.\d+\.\d+" = "-AllVersions"
+    ".*GetS2Activities.*" = ""
 ```
 """
 
@@ -75,7 +76,8 @@ class JolokiaCollector(diamond.collector.Collector):
             'host': 'Hostname',
             'port': 'Port',
             'rewrite': "This sub-section of the config contains pairs of from-to regex"
-                       " rewrites."
+                       " rewrites.",
+            'path': 'Path to jolokia.  typically "jmx" or "jolokia"'
         })
         return config_help
 
@@ -85,6 +87,7 @@ class JolokiaCollector(diamond.collector.Collector):
             'mbeans': [],
             'regex': False,
             'rewrite': [],
+            'path': 'jmx',
             'host': 'localhost',
             'port': 8778,
         })
@@ -94,8 +97,12 @@ class JolokiaCollector(diamond.collector.Collector):
         super(JolokiaCollector, self).__init__(config, handlers)
         self.mbeans = []
         self.rewrite = {}
+        if isinstance(self.config['regex'], basestring) and self.config['regex'] == True:
+            separator = ' | '
+        else:
+            separator = '|'
         if isinstance(self.config['mbeans'], basestring):
-            for mbean in self.config['mbeans'].split('|'):
+            for mbean in self.config['mbeans'].split(separator):
                 self.mbeans.append(mbean.strip())
         elif isinstance(self.config['mbeans'], list):
             self.mbeans = self.config['mbeans']
@@ -167,6 +174,7 @@ class JolokiaCollector(diamond.collector.Collector):
             if type(v) in [int, float, long]:
                 key = "%s.%s" % (prefix, k)
                 key = self.clean_up(key)
-                self.publish(key, v)
+                if key != "":
+                    self.publish(key, v)
             elif type(v) in [dict]:
                 self.collect_bean("%s.%s" % (prefix, k), v)
