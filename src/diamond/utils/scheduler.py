@@ -13,8 +13,7 @@ except ImportError:
 
 from diamond.utils.signals import signal_to_exception
 from diamond.utils.signals import SIGALRMException
-from diamond.utils.signals import SIGUSR1Exception
-from diamond.utils.signals import SIGUSR2Exception
+from diamond.utils.signals import SIGHUPException
 
 
 def collector_process(collector, metric_queue, log):
@@ -25,7 +24,7 @@ def collector_process(collector, metric_queue, log):
         setproctitle('%s - %s' % (getproctitle(), proc.name))
 
     signal.signal(signal.SIGALRM, signal_to_exception)
-    signal.signal(signal.SIGUSR1, signal_to_exception)
+    signal.signal(signal.SIGHUP, signal_to_exception)
     signal.signal(signal.SIGUSR2, signal_to_exception)
 
     interval = float(collector.config['interval'])
@@ -79,13 +78,9 @@ def collector_process(collector, metric_queue, log):
             log.error('Took too long to run! Killed!')
             continue
 
-        except SIGUSR1Exception:
-            log.info('Scheduling config reload due to USR1')
+        except SIGHUPException:
+            log.info('Scheduling config reload due to HUP')
             reload_config = True
-            pass
-
-        except SIGUSR2Exception:
-            log.debug('Received USR2')
             pass
 
 

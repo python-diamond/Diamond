@@ -32,8 +32,7 @@ from diamond.utils.scheduler import handler_process
 from diamond.handler.Handler import Handler
 
 from diamond.utils.signals import signal_to_exception
-from diamond.utils.signals import SIGUSR1Exception
-from diamond.utils.signals import SIGUSR2Exception
+from diamond.utils.signals import SIGHUPException
 
 
 class Server(object):
@@ -124,8 +123,7 @@ class Server(object):
         # Signals
         ########################################################################
 
-        signal.signal(signal.SIGUSR1, signal_to_exception)
-        signal.signal(signal.SIGUSR2, signal_to_exception)
+        signal.signal(signal.SIGHUP, signal_to_exception)
 
         ########################################################################
 
@@ -201,11 +199,8 @@ class Server(object):
 
                 time.sleep(1)
 
-            except SIGUSR1Exception:
-                self.log.info('Reloading state due to USR1')
+            except SIGHUPException:
+                self.log.info('Reloading state due to HUP')
                 self.config = load_config(self.configfile)
                 collectors = load_collectors(
                     self.config['server']['collectors_path'])
-
-            except SIGUSR2Exception:
-                pass

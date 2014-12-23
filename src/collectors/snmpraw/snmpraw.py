@@ -68,7 +68,7 @@ class SNMPRawCollector(parent_SNMPCollector):
     def process_config(self):
         super(SNMPRawCollector, self).process_config()
         # list to save non-existing oid's per device, to avoid repetition of
-        # errors in logging. Signal USR1 to diamond/collector to flush this
+        # errors in logging. Signal HUP to diamond/collector to flush this
         self.skip_list = []
 
     def get_default_config(self):

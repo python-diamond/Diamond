@@ -9,6 +9,8 @@ def signal_to_exception(signum, frame):
     """
     if signum == signal.SIGALRM:
         raise SIGALRMException()
+    if signum == signal.SIGHUP:
+        raise SIGHUPException()
     if signum == signal.SIGUSR1:
         raise SIGUSR1Exception()
     if signum == signal.SIGUSR2:
@@ -21,6 +23,10 @@ class SignalException(Exception):
 
 
 class SIGALRMException(SignalException):
+    pass
+
+
+class SIGHUPException(SignalException):
     pass
 
 
