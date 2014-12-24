@@ -40,6 +40,7 @@ import unicodedata
 
 from diamond.metric import Metric
 import diamond.convertor
+from diamond.collector import str_to_bool
 
 
 class NetAppCollector(diamond.collector.Collector):
@@ -190,15 +191,37 @@ class NetAppCollector(diamond.collector.Collector):
     # We'll use a dict for this, keeping time_delta for each object.
     LastCollectTime = {}
 
+    # In cluster node, one node reports for all nodes, we need to substitute
+    # the correct node name if the following metrics are being polled.
+    SUBPATH = ('ifnet', 'processor', 'system')
+
+    def __init__(self, *args, **kwargs):
+        super(NetAppCollector, self).__init__(*args, **kwargs)
+
+        # Remove vfiler metrics because cluster does not have them.
+        if str_to_bool(self.config['cluster']):
+            self._remove_vfiler_metrics()
+
     def get_default_config_help(self):
         config_help = super(NetAppCollector, self).get_default_config_help()
+        config_help.update({
+            'netappsdkpath': 'Location of the Netapp Manageability SDK',
+            'cluster': 'Turn on Netapp cluster mode'
+            })
         return config_help
 
     def get_default_config(self):
-        default_config = super(NetAppCollector, self).get_default_config()
-        default_config['path_prefix'] = "netapp"
-        default_config['netappsdkpath'] = "/opt/netapp/lib/python/NetApp"
-        return default_config
+        """
+        Returns the default collector settings
+        """
+        config = super(NetAppCollector, self).get_default_config()
+        config.update({
+            'path_prefix': 'netapp',
+            'netappsdkpath': '/opt/netapp/lib/python/NetApp',
+            'cluster': 'false',
+            'ignore': ''
+            })
+        return config
 
     def _replace_and_publish(self, path, prettyname, value, device):
         """
@@ -238,22 +261,17 @@ class NetAppCollector(diamond.collector.Collector):
             value = (float(primary_delta) / secondary_delta) * multiplier
             self._replace_and_publish(path, prettyname, value, device)
 
-    def _gen_delta_per_sec(self, path, value_delta, time_delta, multiplier,
-                           prettyname, device):
+    def _remove_vfiler_metrics(self):
         """
-        Calulates the difference between to point, and scales is to per second.
+        Removes vfiler metrics from the following dict and list.
         """
-        if time_delta < 0:
-            return
-        value = (value_delta / time_delta) * multiplier
-        # Only publish if there is any data.
-        # This helps keep unused metrics out of Graphite
-        if value > 0.0:
-            self._replace_and_publish(path, prettyname, value, device)
+        del self.METRICS['vfiler']
+        del self.DIVIDERS['vfiler_cpu_busy']
+        del self.DROPMETRICS[3]
 
     def collect(self, device, ip, user, password):
         """
-        This function collects the metrics for one filer.
+        This function will call either cluster or vfiler collect.
         """
         sys.path.append(self.config['netappsdkpath'])
         try:
@@ -269,118 +287,252 @@ class NetAppCollector(diamond.collector.Collector):
         server.set_style('LOGIN')
         server.set_admin_user(user, password)
 
+        if str_to_bool(self.config['cluster']):
+            self.collect_cluster(server, device, NaServer)
+        else:
+            self.collect_vfiler(server, device, NaServer)
+
+    def collect_cluster(self, server, device, NaServer):
+        """
+        This function collects the metrics for the cluster.
+        """
+
+        for na_object in self.METRICS.keys():
+            if na_object not in self.config['ignore']:
+                LOCALMETRICS = {}
+                for metric in self.METRICS[na_object]:
+                    metricname, prettyname, multiplier = metric
+                    LOCALMETRICS[metricname] = {}
+                    LOCALMETRICS[metricname]["prettyname"] = prettyname
+                    LOCALMETRICS[metricname]["multiplier"] = multiplier
+
+                CollectTime = time.time()
+                time_delta = None
+                if na_object in self.LastCollectTime.keys():
+                    time_delta = CollectTime - self.LastCollectTime[na_object]
+                self.LastCollectTime[na_object] = CollectTime
+
+                self.log.debug("Collecting metric of object %s" % na_object)
+                query = NaServer.NaElement(
+                    "perf-object-instance-list-info-iter")
+                query.child_add_string("objectname", na_object)
+                query.child_add_string("max-records", 1000)
+
+                res = server.invoke_elem(query)
+                if(res.results_status() == "failed"):
+                    self.log.error("Connection to filer %s failed; %s" % (
+                        device, res.results_reason()))
+                    return
+
+                instances_list = res.child_get("attributes-list")
+                instances = instances_list.children_get()
+
+                raw = {}
+
+                for instance in instances:
+                    query = NaServer.NaElement("perf-object-get-instances")
+                    query.child_add_string("objectname", na_object)
+                    counters = NaServer.NaElement("counters")
+                    for metric in LOCALMETRICS.keys():
+                        counters.child_add_string("counter", metric)
+                    query.child_add(counters)
+                    uuid = instance.child_get_string("uuid")
+
+                    raw_name = unicodedata.normalize(
+                        'NFKD',
+                        instance.child_get_string("name")).encode(
+                        'ascii', 'ignore')
+                    # Shorten the name for disks as they are very long and
+                    # padded with zeroes, eg:
+                    # 5000C500:3A236B0B:00000000:00000000:00000000:...
+                    if na_object is "disk":
+                        non_zero_blocks = [
+                            block for block in raw_name.split(":")
+                            if block != "00000000"
+                        ]
+                        raw_name = "".join(non_zero_blocks)
+                    instance_name = re.sub(r'\W', '_', raw_name)
+
+                    instance_uuids = NaServer.NaElement("instance-uuids")
+                    instance_uuids.child_add_string("instance-uuid", uuid)
+                    query.child_add(instance_uuids)
+
+                    res = server.invoke_elem(query)
+                    if(res.results_status() == "failed"):
+                        self.log.error("Connection to filer %s failed; %s" % (
+                            device, res.results_reason()))
+                        return
+
+                    inst = res.child_get("instances")
+                    inst_data = inst.child_get("instance-data")
+                    counter = inst_data.child_get("counters")
+                    counter_data = counter.children_get()
+
+                    for counter in counter_data:
+                        metricname = unicodedata.normalize(
+                            'NFKD',
+                            counter.child_get_string("name")
+                            ).encode('ascii', 'ignore')
+                        metricvalue = counter.child_get_string("value")
+                        if na_object not in self.SUBPATH:
+                            pathname = ".".join([self.config["path_prefix"],
+                                                device, na_object,
+                                                instance_name, metricname])
+                        else:
+                            node = uuid.split(':')[0]
+                            pathname = ".".join([self.config["path_prefix"],
+                                                device, na_object, node,
+                                                instance_name, metricname])
+                        raw[pathname] = int(metricvalue)
+
+                self.log.debug("Processing %i metrics for object %s" % (
+                    len(raw),
+                    na_object))
+
+                derivative = {}
+                for key in raw.keys():
+                    derivative[key] = self.derivative(key, raw[key])
+
+                for key in raw.keys():
+                    metricname = key.split(".")[-1]
+                    prettyname = LOCALMETRICS[metricname]["prettyname"]
+                    multiplier = LOCALMETRICS[metricname]["multiplier"]
+
+                    if metricname in self.DROPMETRICS:
+                        continue
+                    elif metricname in self.DIVIDERS.keys():
+                        self._gen_delta_depend(key, derivative, multiplier,
+                                               prettyname, device)
+                    else:
+                        if derivative[key] > 0.0:
+                            self._replace_and_publish(
+                                key, prettyname,
+                                derivative[key]*multiplier,
+                                device)
+
+    def collect_vfiler(self, server, device, NaServer):
+        """
+        This function collects the metrics for one filer.
+        """
+
         # We're only able to query a single object at a time,
         # so we'll loop over the objects.
         for na_object in self.METRICS.keys():
+            if na_object not in self.config['ignore']:
 
-            # For easy reference later, generate a new dict for this object
-            LOCALMETRICS = {}
-            for metric in self.METRICS[na_object]:
-                metricname, prettyname, multiplier = metric
-                LOCALMETRICS[metricname] = {}
-                LOCALMETRICS[metricname]["prettyname"] = prettyname
-                LOCALMETRICS[metricname]["multiplier"] = multiplier
+                # For easy reference later, generate a new dict for this object
+                LOCALMETRICS = {}
+                for metric in self.METRICS[na_object]:
+                    metricname, prettyname, multiplier = metric
+                    LOCALMETRICS[metricname] = {}
+                    LOCALMETRICS[metricname]["prettyname"] = prettyname
+                    LOCALMETRICS[metricname]["multiplier"] = multiplier
 
-            # Keep track of how long has passed since we checked last
-            CollectTime = time.time()
-            time_delta = None
-            if na_object in self.LastCollectTime.keys():
-                time_delta = CollectTime - self.LastCollectTime[na_object]
-            self.LastCollectTime[na_object] = CollectTime
+                # Keep track of how long has passed since we checked last
+                CollectTime = time.time()
+                time_delta = None
+                if na_object in self.LastCollectTime.keys():
+                    time_delta = CollectTime - self.LastCollectTime[na_object]
+                self.LastCollectTime[na_object] = CollectTime
 
-            self.log.debug("Collecting metric of object %s" % na_object)
-            query = NaServer.NaElement("perf-object-get-instances-iter-start")
-            query.child_add_string("objectname", na_object)
-            counters = NaServer.NaElement("counters")
-            for metric in LOCALMETRICS.keys():
-                counters.child_add_string("counter", metric)
-            query.child_add(counters)
-
-            res = server.invoke_elem(query)
-            if(res.results_status() == "failed"):
-                self.log.error("Connection to filer %s failed; %s" % (
-                    device, res.results_reason()))
-                return
-
-            iter_tag = res.child_get_string("tag")
-            num_records = 1
-            max_records = 100
-
-            # For some metrics there are dependencies between metrics for
-            # a single object, so we'll need to collect all, so we can do
-            # calculations later.
-            raw = {}
-
-            while(num_records != 0):
+                self.log.debug("Collecting metric of object %s" % na_object)
                 query = NaServer.NaElement(
-                    "perf-object-get-instances-iter-next")
-                query.child_add_string("tag", iter_tag)
-                query.child_add_string("maximum", max_records)
-                res = server.invoke_elem(query)
+                    "perf-object-get-instances-iter-start")
+                query.child_add_string("objectname", na_object)
+                counters = NaServer.NaElement("counters")
+                for metric in LOCALMETRICS.keys():
+                    counters.child_add_string("counter", metric)
+                query.child_add(counters)
 
+                res = server.invoke_elem(query)
                 if(res.results_status() == "failed"):
-                    print "Connection to filer %s failed; %s" % (
-                        device, res.results_reason())
+                    self.log.error("Connection to filer %s failed; %s" % (
+                        device, res.results_reason()))
                     return
 
-                num_records = res.child_get_int("records")
+                iter_tag = res.child_get_string("tag")
+                num_records = 1
+                max_records = 100
 
-                if(num_records > 0):
-                    instances_list = res.child_get("instances")
-                    instances = instances_list.children_get()
+                # For some metrics there are dependencies between metrics for
+                # a single object, so we'll need to collect all, so we can do
+                # calculations later.
+                raw = {}
 
-                    for instance in instances:
-                        raw_name = unicodedata.normalize(
-                            'NFKD',
-                            instance.child_get_string("name")).encode(
-                            'ascii', 'ignore')
-                        # Shorten the name for disks as they are very long and
-                        # padded with zeroes, eg:
-                        # 5000C500:3A236B0B:00000000:00000000:00000000:...
-                        if na_object is "disk":
-                            non_zero_blocks = [
-                                block for block in raw_name.split(":")
-                                if block != "00000000"
-                                ]
-                            raw_name = "".join(non_zero_blocks)
-                        instance_name = re.sub(r'\W', '_', raw_name)
-                        counters_list = instance.child_get("counters")
-                        counters = counters_list.children_get()
+                while(num_records != 0):
+                    query = NaServer.NaElement(
+                        "perf-object-get-instances-iter-next")
+                    query.child_add_string("tag", iter_tag)
+                    query.child_add_string("maximum", max_records)
+                    res = server.invoke_elem(query)
 
-                        for counter in counters:
-                            metricname = unicodedata.normalize(
+                    if(res.results_status() == "failed"):
+                        print "Connection to filer %s failed; %s" % (
+                            device, res.results_reason())
+                        return
+
+                    num_records = res.child_get_int("records")
+
+                    if(num_records > 0):
+                        instances_list = res.child_get("instances")
+                        instances = instances_list.children_get()
+
+                        for instance in instances:
+                            raw_name = unicodedata.normalize(
                                 'NFKD',
-                                counter.child_get_string("name")).encode(
+                                instance.child_get_string("name")).encode(
                                 'ascii', 'ignore')
-                            metricvalue = counter.child_get_string("value")
-                            # We'll need a long complete pathname to not
-                            # confuse self.derivative
-                            pathname = ".".join([self.config["path_prefix"],
-                                                 device, na_object,
-                                                 instance_name, metricname])
-                            raw[pathname] = int(metricvalue)
+                            # Shorten the name for disks as they are very
+                            # long and padded with zeroes, eg:
+                            # 5000C500:3A236B0B:00000000:00000000:00000000:...
+                            if na_object is "disk":
+                                non_zero_blocks = [
+                                    block for block in raw_name.split(":")
+                                    if block != "00000000"
+                                    ]
+                                raw_name = "".join(non_zero_blocks)
+                            instance_name = re.sub(r'\W', '_', raw_name)
+                            counters_list = instance.child_get("counters")
+                            counters = counters_list.children_get()
 
-            # Do the math
-            self.log.debug("Processing %i metrics for object %s" % (len(raw),
-                                                                    na_object))
+                            for counter in counters:
+                                metricname = unicodedata.normalize(
+                                    'NFKD',
+                                    counter.child_get_string("name")).encode(
+                                    'ascii', 'ignore')
+                                metricvalue = counter.child_get_string("value")
+                                # We'll need a long complete pathname to not
+                                # confuse self.derivative
+                                pathname = ".".join([self.config["path_prefix"],
+                                                     device, na_object,
+                                                     instance_name, metricname])
+                                raw[pathname] = int(metricvalue)
 
-            # Since the derivative function both returns the derivative
-            # and saves a new point, we'll need to store all derivatives
-            # for local reference.
-            derivative = {}
-            for key in raw.keys():
-                derivative[key] = self.derivative(key, raw[key])
+                # Do the math
+                self.log.debug("Processing %i metrics for object %s" % (
+                    len(raw),
+                    na_object))
 
-            for key in raw.keys():
-                metricname = key.split(".")[-1]
-                prettyname = LOCALMETRICS[metricname]["prettyname"]
-                multiplier = LOCALMETRICS[metricname]["multiplier"]
+                # Since the derivative function both returns the derivative
+                # and saves a new point, we'll need to store all derivatives
+                # for local reference.
+                derivative = {}
+                for key in raw.keys():
+                    derivative[key] = self.derivative(key, raw[key])
 
-                if metricname in self.DROPMETRICS:
-                    continue
-                elif metricname in self.DIVIDERS.keys():
-                    self._gen_delta_depend(key, derivative, multiplier,
-                                           prettyname, device)
-                else:
-                    self._gen_delta_per_sec(key, derivative[key], time_delta,
-                                            multiplier, prettyname, device)
+                for key in raw.keys():
+                    metricname = key.split(".")[-1]
+                    prettyname = LOCALMETRICS[metricname]["prettyname"]
+                    multiplier = LOCALMETRICS[metricname]["multiplier"]
+
+                    if metricname in self.DROPMETRICS:
+                        continue
+                    elif metricname in self.DIVIDERS.keys():
+                        self._gen_delta_depend(key, derivative, multiplier,
+                                               prettyname, device)
+                    else:
+                        if derivative[key] > 0.0:
+                            self._replace_and_publish(
+                                key, prettyname,
+                                derivative[key] * multiplier,
+                                device)
