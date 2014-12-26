@@ -2,6 +2,17 @@
 
 """
 Collects the number of emails for each user, and an aggregate.
+
+#### Example configuration
+
+```
+    spool_path = /var/mail/vhosts/example.com
+    mailbox_prefix = example_com
+```
+
+This will publish metrics with the following pattern:
+
+<hostname>.mail.example_com.<user>.count
 """
 import os
 import mailbox
@@ -20,6 +31,7 @@ class MailCollector(diamond.collector.Collector):
                            'analyzed.'),
             'mailbox_prefix': ('Prefix to add to the metric name. Use in case '
                                'you are monitoring more than one domain.'),
+            'path': 'mail',
         })
         return config_help
 
