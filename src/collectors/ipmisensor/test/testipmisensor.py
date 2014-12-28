@@ -41,6 +41,8 @@ class TestIPMISensorCollector(CollectorTestCase):
         patch_communicate.stop()
 
         metrics = {
+            'CPU1.Temp': 0.0,
+            'CPU2.Temp': 0.0,
             'System.Temp': 32.000000,
             'CPU1.Vcore': 1.080000,
             'CPU2.Vcore': 1.000000,

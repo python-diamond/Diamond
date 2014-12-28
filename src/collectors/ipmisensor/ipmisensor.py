@@ -43,6 +43,31 @@ class IPMISensorCollector(diamond.collector.Collector):
         })
         return config
 
+    def parse_value(self, value):
+        """
+        Convert value string to float for reporting
+        """
+        value = value.strip()
+
+        # Skip missing sensors
+        if value == 'na':
+            return None
+
+        # Try just getting the float value
+        try:
+            return float(value)
+        except:
+            pass
+
+        # Next best guess is a hex value
+        try:
+            return float.fromhex(value)
+        except:
+            pass
+
+        # No luck, bail
+        return None
+
     def collect(self):
         if (not os.access(self.config['bin'], os.X_OK)
             or (self.config['use_sudo']
@@ -63,17 +88,7 @@ class IPMISensorCollector(diamond.collector.Collector):
                 # Complex keys are fun!
                 metric_name = data[0].strip().replace(".",
                                                       "_").replace(" ", ".")
-                value = data[1].strip()
-
-                # Skip missing sensors
-                if value == '0x0' or value == 'na':
-                    continue
-
-                # Extract out a float value
-                vmatch = re.search("([0-9.]+)", value)
-                if not vmatch:
-                    continue
-                metric_value = float(vmatch.group(1))
+                metric_value = self.parse_value(data[1])
 
                 # Publish
                 self.publish(metric_name, metric_value)
