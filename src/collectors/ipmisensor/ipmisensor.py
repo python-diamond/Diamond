@@ -13,9 +13,8 @@ with server hardware but usually not available in consumer hardware.
 """
 
 import diamond.collector
-import subprocess
+from subprocess import Popen, PIPE
 import os
-import re
 import getpass
 
 
@@ -79,8 +78,7 @@ class IPMISensorCollector(diamond.collector.Collector):
         if self.config['use_sudo'] and getpass.getuser() != 'root':
             command.insert(0, self.config['sudo_cmd'])
 
-        p = subprocess.Popen(command,
-                             stdout=subprocess.PIPE).communicate()[0][:-1]
+        p = Popen(command, stdout=PIPE).communicate()[0][:-1]
 
         for i, v in enumerate(p.split("\n")):
             data = v.split("|")
