@@ -26,6 +26,7 @@ class IPMISensorCollector(diamond.collector.Collector):
             'bin': 'Path to the ipmitool binary',
             'use_sudo': 'Use sudo?',
             'sudo_cmd': 'Path to sudo',
+            'thresholds': 'Collect thresholds as well as reading'
         })
         return config_help
 
@@ -38,7 +39,8 @@ class IPMISensorCollector(diamond.collector.Collector):
             'bin':              '/usr/bin/ipmitool',
             'use_sudo':         False,
             'sudo_cmd':         '/usr/bin/sudo',
-            'path':             'ipmi.sensors'
+            'path':             'ipmi.sensors',
+            'thresholds':       False,
         })
         return config
 
@@ -86,10 +88,41 @@ class IPMISensorCollector(diamond.collector.Collector):
                 # Complex keys are fun!
                 metric_name = data[0].strip().replace(".",
                                                       "_").replace(" ", ".")
-                metric_value = self.parse_value(data[1])
+                metrics = []
 
-                # Publish
-                self.publish(metric_name, metric_value)
+                # Each sensor line is a column seperated by a | with the
+                # following descriptions:
+                # 1. Sensor ID
+                # 2. Sensor Reading
+                # 3. Units
+                # 4. Status
+                # 5. Lower Non-Recoverable
+                # 6. Lower Critical
+                # 7. Lower Non-Critical
+                # 8. Upper Non-Critical
+                # 9. Upper Critical
+                # 10. Upper Non-Recoverable
+
+                if not self.config['thresholds']:
+                    metrics.append((metric_name, self.parse_value(data[1])))
+                else:
+                    metrics.append((metric_name + ".Reading",
+                                    self.parse_value(data[1])))
+                    metrics.append((metric_name + ".Lower.NonRecoverable",
+                                    self.parse_value(data[4])))
+                    metrics.append((metric_name + ".Lower.Critical",
+                                    self.parse_value(data[5])))
+                    metrics.append((metric_name + ".Lower.NonCritical",
+                                    self.parse_value(data[6])))
+                    metrics.append((metric_name + ".Upper.NonCritical",
+                                    self.parse_value(data[7])))
+                    metrics.append((metric_name + ".Upper.Critical",
+                                    self.parse_value(data[8])))
+                    metrics.append((metric_name + ".Upper.NonRecoverable",
+                                    self.parse_value(data[9])))
+
+                [self.publish(name, value) for (name, value) in metrics]
+
             except ValueError:
                 continue
             except IndexError:
