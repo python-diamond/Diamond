@@ -167,7 +167,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                         continue
 
                     result[(major, minor)] = {
-                        'device': device,
+                        'device': os.path.realpath(device),
                         'mount_point': mount_point,
                         'fs_type': fs_type
                     }
@@ -182,7 +182,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             partitions = psutil.disk_partitions(False)
             for partition in partitions:
                 result[(0, len(result))] = {
-                    'device': partition.device,
+                    'device': os.path.realpath(partition.device),
                     'mount_point': partition.mountpoint,
                     'fs_type': partition.fstype
                 }
