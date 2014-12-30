@@ -23,8 +23,9 @@ If desired, JolokiaCollector can be configured to query specific MBeans by
 providing a list of ```mbeans```. If ```mbeans``` is not provided, all MBeans
 will be queried for metrics.  Note that the mbean prefix is checked both 
 with and without rewrites (including fixup re-writes) applied.  This allows
-you to specify "java.lang:name=ParNew,type=GarbageCollector" or 
-"java.lang.name_ParNew.type_GarbageCollector"
+you to specify "java.lang:name=ParNew,type=GarbageCollector" (the raw name from
+jolokia) or "java.lang.name_ParNew.type_GarbageCollector" (the fixed name
+as used for output)
 
 If the ```regex``` flag is set to True, mbeans will match based on regular
 expressions rather than a plain textual match.
@@ -38,7 +39,7 @@ an mbean.
 ```
     host = localhost
     port = 8778
-    mbeans = '"java.lang:name=ParNew,type=GarbageCollector | org.apache.cassandra.metrics:name=WriteTimeouts,type=ClientRequestMetrics"'
+    mbeans = "java.lang:name=ParNew,type=GarbageCollector", "org.apache.cassandra.metrics:name=WriteTimeouts,type=ClientRequestMetrics"
     [rewrite]
     java = coffee
     "-v\d+\.\d+\.\d+" = "-AllVersions"
@@ -97,12 +98,8 @@ class JolokiaCollector(diamond.collector.Collector):
         super(JolokiaCollector, self).__init__(config, handlers)
         self.mbeans = []
         self.rewrite = {}
-        if isinstance(self.config['regex'], basestring) and self.config['regex'] == True:
-            separator = ' | '
-        else:
-            separator = '|'
         if isinstance(self.config['mbeans'], basestring):
-            for mbean in self.config['mbeans'].split(separator):
+            for mbean in self.config['mbeans'].split('|'):
                 self.mbeans.append(mbean.strip())
         elif isinstance(self.config['mbeans'], list):
             self.mbeans = self.config['mbeans']
