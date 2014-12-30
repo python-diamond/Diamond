@@ -50,6 +50,7 @@ class TestDiskSpaceCollector(CollectorTestCase):
         os_stat_mock = patch('os.stat')
         os_major_mock = patch('os.major')
         os_minor_mock = patch('os.minor')
+        os_realpath_mock = patch('os.path.realpath')
         open_mock = patch('__builtin__.open',
                           Mock(return_value=self.getFixture('proc_mounts')))
 
@@ -62,22 +63,28 @@ class TestDiskSpaceCollector(CollectorTestCase):
         minor_mock = os_minor_mock.start()
         minor_mock.return_value = 0
 
+        realpath_mock = os_realpath_mock.start()
+        realpath_mock.return_value = '/dev/sda1'
+
         omock = open_mock.start()
 
         result = self.collector.get_file_systems()
         os_stat_mock.stop()
         os_major_mock.stop()
         os_minor_mock.stop()
+        os_realpath_mock.stop()
         open_mock.stop()
 
         stat_mock.assert_called_once_with('/')
         major_mock.assert_called_once_with(42)
         minor_mock.assert_called_once_with(42)
+        realpath_mock.assert_called_once_with(
+            '/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba')
 
         self.assertEqual(result, {
             (9, 0): {
                 'device':
-                '/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba',
+                '/dev/sda1',
                 'fs_type': 'ext3',
                 'mount_point': '/'}
         })
