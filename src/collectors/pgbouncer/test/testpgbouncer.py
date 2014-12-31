@@ -4,12 +4,22 @@
 
 from test import CollectorTestCase
 from test import get_collector_config
+from test import run_only
 from test import unittest
 from mock import patch
 
 from pgbouncer import PgbouncerCollector
 
 ################################################################################
+
+
+def run_only_if_psycopg2_is_available(func):
+    try:
+        import psycopg2
+    except ImportError:
+        psycopg2 = None
+    pred = lambda: psycopg2 is not None
+    return run_only(func, pred)
 
 
 class TestPgbouncerCollector(CollectorTestCase):
@@ -21,6 +31,7 @@ class TestPgbouncerCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(PgbouncerCollector)
 
+    @run_only_if_psycopg2_is_available
     @patch.object(PgbouncerCollector, '_get_stats_by_database')
     @patch.object(PgbouncerCollector, 'publish')
     def test_default(self, publish, _get_stats_by_database):
@@ -32,6 +43,7 @@ class TestPgbouncerCollector(CollectorTestCase):
 
         self.assertPublished(publish, 'default.foo.bar', 42)
 
+    @run_only_if_psycopg2_is_available
     @patch.object(PgbouncerCollector, '_get_stats_by_database')
     @patch.object(PgbouncerCollector, 'publish')
     def test_instance_names(self, publish, _get_stats_by_database):
@@ -61,6 +73,7 @@ class TestPgbouncerCollector(CollectorTestCase):
         self.assertPublished(publish, 'alpha.foo.bar', 42)
         self.assertPublished(publish, 'beta.foo.baz', 24)
 
+    @run_only_if_psycopg2_is_available
     @patch.object(PgbouncerCollector, '_get_stats_by_database')
     def test_override_user_password(self, _get_stats_by_database):
         _get_stats_by_database.return_value = {}
