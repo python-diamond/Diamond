@@ -16,6 +16,7 @@ from amavis import AmavisCollector
 
 MOCK_PATH = os.path.join(os.path.dirname(__file__), 'mock-amavisd-agent')
 
+
 class TestAmavisCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('AmavisCollector', {

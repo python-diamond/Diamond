@@ -39,7 +39,8 @@ class TestPgbouncerCollector(CollectorTestCase):
 
         self.collector.collect()
 
-        _get_stats_by_database.assert_called_with('localhost', '6432', 'postgres', '')
+        _get_stats_by_database.assert_called_with(
+            'localhost', '6432', 'postgres', '')
 
         self.assertPublished(publish, 'default.foo.bar', 42)
 
@@ -95,8 +96,10 @@ class TestPgbouncerCollector(CollectorTestCase):
         collector = PgbouncerCollector(config, None)
         collector.collect()
 
-        _get_stats_by_database.assert_any_call('127.0.0.1', '6433', 'postgres', 'foobar')
-        _get_stats_by_database.assert_any_call('127.0.0.2', '6432', 'pgbouncer', '')
+        _get_stats_by_database.assert_any_call(
+            '127.0.0.1', '6433', 'postgres', 'foobar')
+        _get_stats_by_database.assert_any_call(
+            '127.0.0.2', '6432', 'pgbouncer', '')
 
 
 ################################################################################

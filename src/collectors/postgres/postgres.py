@@ -363,7 +363,8 @@ class ConnectionStateStats(QueryStats):
         LEFT JOIN
              (SELECT CASE WHEN waiting THEN 'waiting'
                           WHEN state = 'idle' THEN 'idle'
-                          WHEN state LIKE 'idle in transaction%' THEN 'idletransaction'
+                          WHEN state LIKE 'idle in transaction%'
+                              THEN 'idletransaction'
                           WHEN state = 'disabled'
                               THEN 'unknown'
                           WHEN query = '<insufficient privilege>'
