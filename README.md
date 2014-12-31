@@ -20,6 +20,15 @@ Success Stories
  * Diamond has successfully been deployed to a cluster of 1000 machines pushing [3 million points per minute](https://answers.launchpad.net/graphite/+question/178969).
  * Have a story? Please share!
 
+Repos
+=====
+
+Historically Diamond was a brightcove project and hosted at [BrightcoveOS](https://github.com/brightcoveos/Diamond).
+However none of the active developers are brightcove employees and so the development
+has moved to [python-diamond](https://github.com/python-diamond/Diamond). We request
+that any new pull requests and issues be cut against python-diamond. We will keep
+BrightcoveOS updated and still honor issues/tickets cut on that repo.
+
 Diamond Related Projects
 =====
  * [Related Projects](https://github.com/BrightcoveOS/Diamond/wiki/Related-Projects)
