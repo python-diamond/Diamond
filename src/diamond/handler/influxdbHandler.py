@@ -31,14 +31,11 @@ database = graphite
 time_precision = s
 """
 
-import struct
 import time
 from Handler import Handler
 
 try:
-    import influxdb
     from influxdb.client import InfluxDBClient
-    InfluxDBClient
 except ImportError:
     InfluxDBClient = None
 

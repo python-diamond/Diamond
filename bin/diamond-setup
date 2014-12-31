@@ -10,7 +10,6 @@ from configobj import ConfigObj
 
 try:
     from setproctitle import setproctitle
-    setproctitle  # workaround for pyflakes issue #13
 except ImportError:
     setproctitle = None
 
@@ -177,7 +176,6 @@ if __name__ == "__main__":
     # Initialize Config
     if os.path.exists(options.configfile):
         config = ConfigObj(os.path.abspath(options.configfile))
-        config['configfile'] = options.configfile
     else:
         print >> sys.stderr, "ERROR: Config file: %s does not exist." % (
             options.configfile)
@@ -239,12 +237,9 @@ if __name__ == "__main__":
             # Manage Keys
             config_keys['enabled'] = True
             config_keys['path'] = False
-            config_keys['method'] = False
             config_keys['path_prefix'] = False
             config_keys['instance_prefix'] = False
-            config_keys['splay'] = False
             config_keys['interval'] = False
-            config_keys['method'] = False
 
             print "\n\t\tNow configuring " + collector
             print collectors[collector].__doc__

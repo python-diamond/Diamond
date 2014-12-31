@@ -19,7 +19,6 @@ def running_under_virtualenv():
 
 if os.environ.get('USE_SETUPTOOLS'):
     from setuptools import setup
-    setup  # workaround for pyflakes issue #13
     setup_kwargs = dict(zip_safe=0)
 else:
     from distutils.core import setup
@@ -141,7 +140,7 @@ setup(
     license='MIT License',
     description='Smart data producer for graphite graphing package',
     package_dir={'': 'src'},
-    packages=['diamond', 'diamond.handler'],
+    packages=['diamond', 'diamond.handler', 'diamond.utils'],
     scripts=['bin/diamond', 'bin/diamond-setup'],
     data_files=data_files,
     install_requires=install_requires,

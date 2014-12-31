@@ -11,7 +11,6 @@ Collect stats from puppet agent's last_run_summary.yaml
 
 try:
     import yaml
-    yaml  # workaround for pyflakes issue #13
 except ImportError:
     yaml = None
 
@@ -36,7 +35,6 @@ class PuppetAgentCollector(diamond.collector.Collector):
         config.update({
             'yaml_path': '/var/lib/puppet/state/last_run_summary.yaml',
             'path':     'puppetagent',
-            'method':   'Threaded',
         })
         return config
 

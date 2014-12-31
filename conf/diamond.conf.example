@@ -29,10 +29,8 @@ collectors_config_path = /etc/diamond/collectors/
 # Directory to load handler configs from
 handlers_config_path = /etc/diamond/handlers/
 
+# Directory to load handler modules from
 handlers_path = /usr/share/diamond/handlers/
-
-# Interval to reload collectors
-collectors_reload_interval = 3600
 
 ################################################################################
 ### Options for handlers
@@ -174,6 +172,28 @@ batch = 100
 
 # Default Poll Interval (seconds)
 # interval = 300
+
+################################################################################
+# Default enabled collectors
+################################################################################
+
+[[CPUCollector]]
+enabled = True
+
+[[DiskSpaceCollector]]
+enabled = True
+
+[[DiskUsageCollector]]
+enabled = True
+
+[[LoadAverageCollector]]
+enabled = True
+
+[[MemoryCollector]]
+enabled = True
+
+[[VMStatCollector]]
+enabled = True
 
 ################################################################################
 ### Options for logging

@@ -6,7 +6,6 @@ The MemoryCgroupCollector collects memory metric for cgroups
 Example config:
 
 ```
-method=Threaded
 memory_path=/sys/fs/cgroup/memory/
 skip=group\d+,mygroup\d\d
 enabled=True
@@ -44,8 +43,8 @@ _KEY_MAPPING = [
 
 class MemoryCgroupCollector(diamond.collector.Collector):
 
-    def __init__(self, *args, **kwargs):
-        super(MemoryCgroupCollector, self).__init__(*args, **kwargs)
+    def process_config(self):
+        super(MemoryCgroupCollector, self).process_config()
         self.memory_path = self.config['memory_path']
         self.skip = self.config['skip']
         if not isinstance(self.skip, list):
@@ -72,7 +71,6 @@ class MemoryCgroupCollector(diamond.collector.Collector):
         config = super(MemoryCgroupCollector, self).get_default_config()
         config.update({
             'path':     'memory_cgroup',
-            'method':   'Threaded',
             'memory_path': '/sys/fs/cgroup/memory/',
             'skip': [],
         })

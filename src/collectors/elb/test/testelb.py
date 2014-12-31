@@ -18,7 +18,6 @@ from elb import ElbCollector
 def run_only_if_boto_is_available(func):
     try:
         import boto
-        boto  # workaround for pyflakes issue #13
     except ImportError:
         boto = None
     pred = lambda: boto is not None

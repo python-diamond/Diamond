@@ -11,17 +11,11 @@ import configobj
 
 from diamond.handler.stats_d import StatsdHandler
 from diamond.metric import Metric
-try:
-    import statsd
-    statsd  # Pyflakes
-except ImportError:
-    pass
 
 
 def run_only_if_statsd_is_available(func):
     try:
         import statsd
-        statsd  # workaround for pyflakes issue #13
     except ImportError:
         statsd = None
     pred = lambda: statsd is not None

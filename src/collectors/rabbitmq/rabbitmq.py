@@ -30,7 +30,6 @@ import diamond.collector
 import re
 try:
     from numbers import Number
-    Number  # workaround for pyflakes issue #13
     import pyrabbit.api
     import pyrabbit.http
 except ImportError:

@@ -38,8 +38,8 @@ class IPCollector(diamond.collector.Collector):
         'DefaultTTL',
     ]
 
-    def __init__(self, config, handlers):
-        super(IPCollector, self).__init__(config, handlers)
+    def process_config(self):
+        super(IPCollector, self).process_config()
         if self.config['allowed_names'] is None:
             self.config['allowed_names'] = []
 

@@ -23,7 +23,6 @@ class EntropyStatCollector(diamond.collector.Collector):
         """
         config = super(EntropyStatCollector, self).get_default_config()
         config.update({
-            'enabled':  'False',
             'path':     'entropy'
         })
         return config

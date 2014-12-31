@@ -84,8 +84,8 @@ class GridEngineCollector(diamond.collector.Collector):
                 temp_disabled=temp_disabled,
                 manual_intervention=manual_intervention)
 
-    def __init__(self, config, handlers):
-        super(GridEngineCollector, self).__init__(config, handlers)
+    def process_config(self):
+        super(GridEngineCollector, self).process_config()
         os.environ['SGE_ROOT'] = self.config['sge_root']
 
     def get_default_config_help(self):
@@ -101,7 +101,6 @@ class GridEngineCollector(diamond.collector.Collector):
         config = super(GridEngineCollector, self).get_default_config()
         config.update({
             'bin_path': '/opt/gridengine/bin/lx-amd64/qstat',
-            'method': 'Threaded',
             'path': 'gridengine',
             'sge_root': self._sge_root(),
         })

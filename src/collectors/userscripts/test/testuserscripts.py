@@ -21,7 +21,6 @@ def run_only_if_kitchen_is_available(func):
     if sys.version_info < (2, 7):
         try:
             from kitchen.pycompat27 import subprocess
-            subprocess  # workaround for pyflakes issue #13
         except ImportError:
             subprocess = None
     else:

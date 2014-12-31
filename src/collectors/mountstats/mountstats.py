@@ -56,9 +56,8 @@ class MountStatsCollector(diamond.collector.Collector):
 
     MOUNTSTATS = '/proc/self/mountstats'
 
-    def __init__(self, config, handlers):
-        super(MountStatsCollector, self).__init__(config, handlers)
-
+    def process_config(self):
+        super(MountStatsCollector, self).process_config()
         self.exclude_filters = self.config['exclude_filters']
         if isinstance(self.exclude_filters, basestring):
             self.exclude_filters = [self.exclude_filters]
@@ -95,11 +94,9 @@ class MountStatsCollector(diamond.collector.Collector):
     def get_default_config(self):
         config = super(MountStatsCollector, self).get_default_config()
         config.update({
-            'enabled': 'False',
             'exclude_filters': [],
             'include_filters': [],
             'path': 'mountstats',
-            'method': 'Threaded',
             'use_sudo': False,
             'sudo_cmd': '/usr/bin/sudo',
         })

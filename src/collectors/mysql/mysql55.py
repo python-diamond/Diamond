@@ -21,7 +21,6 @@ from __future__ import division
 try:
     import MySQLdb
     from MySQLdb import MySQLError
-    MySQLdb  # workaround for pyflakes issue #13
 except ImportError:
     MySQLdb = None
 import diamond
@@ -31,8 +30,8 @@ import re
 
 class MySQLPerfCollector(diamond.collector.Collector):
 
-    def __init__(self, *args, **kwargs):
-        super(MySQLPerfCollector, self).__init__(*args, **kwargs)
+    def process_config(self):
+        super(MySQLPerfCollector, self).process_config()
         self.db = None
         self.last_wait_count = {}
         self.last_wait_sum = {}

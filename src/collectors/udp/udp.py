@@ -19,8 +19,8 @@ class UDPCollector(diamond.collector.Collector):
         '/proc/net/snmp'
     ]
 
-    def __init__(self, config, handlers):
-        super(UDPCollector, self).__init__(config, handlers)
+    def process_config(self):
+        super(UDPCollector, self).process_config()
         if self.config['allowed_names'] is None:
             self.config['allowed_names'] = []
 

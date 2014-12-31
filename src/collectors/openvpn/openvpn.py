@@ -58,7 +58,6 @@ class OpenVPNCollector(diamond.collector.Collector):
         config = super(OpenVPNCollector, self).get_default_config()
         config.update({
             'path':      'openvpn',
-            'method':    'Threaded',
             'instances': 'file:///var/log/openvpn/status.log',
             'timeout':   '10',
         })

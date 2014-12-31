@@ -36,8 +36,6 @@ import time
 try:
     import MySQLdb
     from MySQLdb import MySQLError
-    MySQLdb  # workaround for pyflakes issue #13
-    MySQLError  # workaround for pyflakes issue #13
 except ImportError:
     MySQLdb = None
     MySQLError = ValueError
@@ -223,6 +221,8 @@ class MySQLCollector(diamond.collector.Collector):
             self.innodb_status_keys[key] = re.compile(
                 self.innodb_status_keys[key])
 
+    def process_config(self):
+        super(MySQLCollector, self).process_config()
         if self.config['hosts'].__class__.__name__ != 'list':
             self.config['hosts'] = [self.config['hosts']]
 

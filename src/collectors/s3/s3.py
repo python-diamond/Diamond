@@ -31,7 +31,6 @@ class S3BucketCollector(diamond.collector.Collector):
         """
         config = super(S3BucketCollector, self).get_default_config()
         config.update({
-            'enabled':   'False',
             'path':      'aws.s3',
             'byte_unit': 'byte'
         })

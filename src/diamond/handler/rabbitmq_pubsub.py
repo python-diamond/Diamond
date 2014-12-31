@@ -9,7 +9,6 @@ import time
 
 try:
     import pika
-    pika  # Pyflakes
 except ImportError:
     pika = None
 

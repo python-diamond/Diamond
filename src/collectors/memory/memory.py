@@ -19,7 +19,6 @@ import os
 
 try:
     import psutil
-    psutil  # workaround for pyflakes issue #13
 except ImportError:
     psutil = None
 
@@ -59,9 +58,7 @@ class MemoryCollector(diamond.collector.Collector):
         """
         config = super(MemoryCollector, self).get_default_config()
         config.update({
-            'enabled':  'True',
             'path':     'memory',
-            'method':   'Threaded',
             # Collect all the nodes or just a few standard ones?
             # Uncomment to enable
             #'detailed': 'True'

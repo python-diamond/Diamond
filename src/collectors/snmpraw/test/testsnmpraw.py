@@ -8,11 +8,11 @@ from test import unittest
 from mock import Mock
 from mock import patch
 
-from diamond.collector import Collector
 from snmpraw import SNMPRawCollector
-
+from diamond.collector import Collector
 
 ###############################################################################
+
 
 class TestSNMPRawCollector(CollectorTestCase):
     def setUp(self):

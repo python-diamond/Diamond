@@ -39,7 +39,6 @@ import re
 
 try:
     import librato
-    librato  # workaround for pyflakes issue #13
 except ImportError:
     librato = None
 

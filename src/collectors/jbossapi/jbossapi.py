@@ -68,7 +68,6 @@ import subprocess
 
 try:
     import json
-    json  # workaround for pyflakes issue #13
 except ImportError:
     import simplejson as json
 
@@ -122,9 +121,8 @@ gc_types = [
 
 class JbossApiCollector(diamond.collector.Collector):
 
-    def __init__(self, config, handlers):
-        diamond.collector.Collector.__init__(self, config, handlers)
-
+    def process_config(self):
+        super(JbossApiCollector, self).process_config()
         if self.config['hosts'].__class__.__name__ != 'list':
             self.config['hosts'] = [self.config['hosts']]
 
@@ -138,8 +136,6 @@ class JbossApiCollector(diamond.collector.Collector):
                 self.config['proto'],
             )
             self.config['hosts'].append(hoststr)
-
-        self.db = None
 
         if type(self.config['connector_options']) is not list:
             self.config['connector_options'] = [
@@ -169,7 +165,6 @@ class JbossApiCollector(diamond.collector.Collector):
         config = super(JbossApiCollector, self).get_default_config()
         config.update({
             'path': 'jboss',
-            'method': 'Sequential',
             'curl_bin': '/usr/bin/curl',
             'connect_timeout': '4',
             'ssl_options': '--sslv3 -k',

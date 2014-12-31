@@ -15,13 +15,11 @@ import diamond.collector
 
 try:
     from pyutmp import UtmpFile
-    UtmpFile  # workaround for pyflakes issue #13
 except ImportError:
     UtmpFile = None
 try:
     from utmp import UtmpRecord
     import UTMPCONST
-    UtmpRecord  # workaround for pyflakes issue #13
 except ImportError:
     UtmpRecord = None
 
@@ -44,7 +42,6 @@ class UsersCollector(diamond.collector.Collector):
         config = super(UsersCollector, self).get_default_config()
         config.update({
             'path':     'users',
-            'method':   'Threaded',
             'utmp':     None,
         })
         return config

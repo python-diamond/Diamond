@@ -11,12 +11,6 @@ from mock import patch
 from diamond.collector import Collector
 from conntrack import ConnTrackCollector
 
-try:
-    from cStringIO import StringIO
-    StringIO  # workaround for pyflakes issue #13
-except ImportError:
-    from StringIO import StringIO
-
 ################################################################################
 
 

@@ -21,7 +21,6 @@ def run_only_if_redis_is_available(func):
     """
     try:
         import redis
-        redis  # workaround for pyflakes issue #13
     except ImportError:
         redis = None
     pred = lambda: redis is not None

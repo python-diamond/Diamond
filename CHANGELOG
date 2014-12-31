@@ -1,5 +1,9 @@
 This file is a log of any potentially user affecting changes to Diamond.
 
+2014-10-19 new_threading_model
+Collectors are no longer enabled via code. We only enable collectors via config
+files.
+
 2013-03-06 master 390f999274ed3bc9a31264377b48da432824333f
 Changes the layout of the postgresql collector metrics to be layed out correctly
 
