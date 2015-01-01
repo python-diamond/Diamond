@@ -24,6 +24,7 @@ class ArchiveHandler(Handler):
         # Create Archive Logger
         self.archive = logging.getLogger('archive')
         self.archive.setLevel(logging.DEBUG)
+        self.archive.propagate = self.config['propagate']
         # Create Archive Log Formatter
         formatter = logging.Formatter('%(message)s')
         # Create Archive Log Handler
@@ -48,6 +49,7 @@ class ArchiveHandler(Handler):
             'log_file': 'Path to the logfile',
             'days': 'How many days to store',
             'encoding': '',
+            'propagate': 'Pass handled metrics to configured root logger',
         })
 
         return config
@@ -62,6 +64,7 @@ class ArchiveHandler(Handler):
             'log_file': '',
             'days': 7,
             'encoding': None,
+            'propagate': False,
         })
 
         return config
