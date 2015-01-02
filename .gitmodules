@@ -1,3 +1,3 @@
 [submodule "docs"]
 	path = docs
-	url = git://github.com/BrightcoveOS/Diamond.wiki.git
+	url = git://github.com/python-diamond/Diamond.wiki.git
