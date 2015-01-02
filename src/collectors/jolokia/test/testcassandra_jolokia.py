@@ -26,6 +26,7 @@ class TestCassandraJolokiaCollector(CollectorTestCase):
         values = [0]*92
         values[30:56] = [3, 3, 1, 1, 8, 5, 6, 1, 6, 5, 3, 8, 9, 10, 7, 8, 7, 5,
                          5, 5, 3, 3, 2, 2, 2]
+        return values
 
     def empty_fixture_values(self):
         return [0]*91
