@@ -28,7 +28,7 @@ JolokiaCollector.conf
 ```
     host 'localhost'
     port '8778'
-    mbeans '"java.lang:name=ParNew,type=GarbageCollector | org.apache.cassandra.metrics:name=WriteTimeouts,type=ClientRequestMetrics"'
+    mbeans '"java.lang:name=ParNew,type=GarbageCollector | org.apache.cassandra.metrics:name=WriteTimeouts,type=ClientRequestMetrics"' # noqa
 ```
 """
 

@@ -74,7 +74,7 @@ class CassandraJolokiaCollector(JolokiaCollector):
             self.publish("%s.p%s" % (prefix, percentile), percentile_value)
 
     # Adapted from Cassandra docs:
-    # http://www.datastax.com/documentation/cassandra/2.0/cassandra/tools/toolsCFhisto.html
+    # https://bit.ly/13M5JPE
     # The index corresponds to the x-axis in a histogram.  It represents buckets
     # of values, which are a series of ranges. Each offset includes the range of
     # values greater than the previous offset and less than or equal to the
