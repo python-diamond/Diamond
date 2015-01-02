@@ -22,7 +22,6 @@ all:
 	@echo "make ebuild   - Generate a ebuild package"
 	@echo "make tar      - Generate a tar ball"
 	@echo "make clean    - Get rid of scratch and byte files"
-	@echo "make cleanws  - Strip trailing whitespaces from files"
 
 run:
 	./bin/diamond --configfile=conf/diamond.conf --foreground --log-stdout
@@ -93,9 +92,6 @@ clean:
 	./setup.py clean
 	rm -rf dist build MANIFEST .tox *.log
 	find . -name '*.pyc' -delete
-
-cleanws:
-	find . -name '*.py' -exec sed -i'' -e 's/[ \t]*$$//' {} \;
 
 version:
 	./version.sh > version.txt
