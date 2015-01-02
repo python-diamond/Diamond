@@ -138,9 +138,6 @@ if __name__ == "__main__":
     collectorIndexFile = open(os.path.join(docs_path, "Collectors.md"), 'w')
     collectorIndexFile.write("## Collectors\n")
     collectorIndexFile.write("\n")
-    collectorIndexFile.write("Note that the default collectors are noted via "
-                             + "the super-script symbol <sup>♦</sup>.\n")
-    collectorIndexFile.write("\n")
 
     for collector in sorted(collectors.iterkeys()):
 
@@ -167,8 +164,6 @@ if __name__ == "__main__":
                                     "collectors-" + collector + ".md"), 'w')
 
         enabled = ''
-        if defaultOptions['enabled']:
-            enabled = ' <sup>♦</sup>'
 
         collectorIndexFile.write(" - [%s](collectors-%s)%s\n" % (collector,
                                                                  collector,
