@@ -134,9 +134,9 @@ version = get_version()
 setup(
     name='diamond',
     version=version,
-    url='https://github.com/BrightcoveOS/Diamond',
+    url='https://github.com/python-diamond/Diamond',
     author='The Diamond Team',
-    author_email='https://github.com/BrightcoveOS/Diamond',
+    author_email='https://github.com/python-diamond/Diamond',
     license='MIT License',
     description='Smart data producer for graphite graphing package',
     package_dir={'': 'src'},
