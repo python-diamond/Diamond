@@ -109,7 +109,7 @@ reltest:
 distrotest:
 	echo ${DISTRO}
 
-pypi:
+pypi: version
 	python setup.py sdist upload
 
 .PHONY: run watch config test docs sdist bdist install rpm buildrpm deb sdeb builddeb buildsourcedeb ebuild buildebuild tar clean cleanws version reltest vertest distrotest pypi
