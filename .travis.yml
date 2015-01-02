@@ -6,10 +6,16 @@ python:
 #  - "2.5"
   - "2.6"
   - "2.7"
+
 # command to install dependencies, e.g. pip install -r requirements.txt
-install: pip install -r .travis.requirements.txt
+install:
+    - pip install -r .travis.requirements.txt
+    - pip install pep8==1.4.6
+
 # command to run tests, e.g. python setup.py test
-script:  python test.py
+script:
+    - python test.py
+    - pep8 --config=.pep8 src bin/diamond bin/diamond-setup build_doc.py setup.py test.py
 
 notifications:
   email:

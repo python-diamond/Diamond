@@ -165,7 +165,6 @@ class CollectorTestCase(unittest.TestCase):
             message = '%s: actual %r, expected %r' % (key,
                                                       actual_value,
                                                       expected_value)
-            #print message
 
             if precision is not None:
                 self.assertAlmostEqual(float(actual_value),
@@ -211,7 +210,6 @@ class CollectorTestCase(unittest.TestCase):
         message = '%s: actual %r, expected %r' % (key,
                                                   actual_value,
                                                   expected_value)
-        #print message
 
         if precision is not None:
             self.assertAlmostEqual(float(actual_value),
@@ -250,7 +248,6 @@ def getCollectorTests(path):
                                                      globals(),
                                                      locals(),
                                                      ['*'])
-                #print "Imported module: %s" % (modname)
             except Exception:
                 print "Failed to import module: %s. %s" % (
                     modname, traceback.format_exc())

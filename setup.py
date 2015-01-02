@@ -113,8 +113,8 @@ def pkgPath(root, path, rpath="/"):
         return
     files = []
     for spath in os.listdir(path):
+        # Ignore test directories
         if spath == 'test':
-            # ignore test directories
             continue
         subpath = os.path.join(path, spath)
         spath = os.path.join(rpath, spath)
@@ -144,6 +144,5 @@ setup(
     scripts=['bin/diamond', 'bin/diamond-setup'],
     data_files=data_files,
     install_requires=install_requires,
-    #test_suite='test.main',
     ** setup_kwargs
 )
