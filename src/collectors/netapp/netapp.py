@@ -196,7 +196,6 @@ class NetAppCollector(diamond.collector.Collector):
 
     def get_default_config(self):
         default_config = super(NetAppCollector, self).get_default_config()
-        default_config['enabled'] = "false"
         default_config['path_prefix'] = "netapp"
         default_config['netappsdkpath'] = "/opt/netapp/lib/python/NetApp"
         return default_config
