@@ -1,4 +1,4 @@
-#!/usr/local/rnt/bin/python
+#!/usr/bin/env python
 # coding=utf-8
 """
 This class collects data on NUMA utilization
