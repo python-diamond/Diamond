@@ -93,8 +93,8 @@ class Server(object):
             sys.exit(1)
 
         handlers = self.config['server'].get('handlers')
-        handlers = handlers.split(',')
-        handlers = map(str.strip, handlers)
+        if isinstance(handlers, basestring):
+            handlers = [handlers]
 
         # Prevent the Queue Handler from being a normal handler
         if 'diamond.handler.queue.QueueHandler' in handlers:
