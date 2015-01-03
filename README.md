@@ -3,12 +3,12 @@ About
 =====
 
 Diamond is a python daemon that collects system metrics and publishes them to
-[Graphite](https://github.com/BrightcoveOS/Diamond/wiki/handler-GraphiteHandler)
-(and [others](https://github.com/BrightcoveOS/Diamond/wiki/Handlers)). It is
+[Graphite](https://github.com/python-diamond/Diamond/wiki/handler-GraphiteHandler)
+(and [others](https://github.com/python-diamond/Diamond/wiki/Handlers)). It is
 capable of collecting cpu, memory, network, i/o, load and disk metrics.  Additionally,
 it features an API for implementing custom collectors for gathering metrics from almost any source.
 
-The documentation can be found on our [wiki](https://github.com/BrightcoveOS/Diamond/wiki). For your
+The documentation can be found on our [wiki](https://github.com/python-diamond/Diamond/wiki). For your
 convenience the wiki is setup as a submodule of this checkout. You can get it via running
 
     git submodule init
@@ -31,7 +31,7 @@ BrightcoveOS updated and still honor issues/tickets cut on that repo.
 
 Diamond Related Projects
 =====
- * [Related Projects](https://github.com/BrightcoveOS/Diamond/wiki/Related-Projects)
+ * [Related Projects](https://github.com/python-diamond/Diamond/wiki/Related-Projects)
  
 Contact
 =====
