@@ -75,12 +75,13 @@ def load_handlers(config, handler_names):
                 handler_config.merge(config['handlers'][cls_name])
 
             # Check for config file in config directory
-            configfile = os.path.join(
-                config['server']['handlers_config_path'],
-                cls_name) + '.conf'
-            if os.path.exists(configfile):
-                # Merge Collector config file
-                handler_config.merge(configobj.ConfigObj(configfile))
+            if 'handlers_config_path' in config['server']:
+                configfile = os.path.join(
+                    config['server']['handlers_config_path'],
+                    cls_name) + '.conf'
+                if os.path.exists(configfile):
+                    # Merge Collector config file
+                    handler_config.merge(configobj.ConfigObj(configfile))
 
             # Initialize Handler class
             h = cls(handler_config)
