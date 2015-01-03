@@ -54,7 +54,7 @@ days = 7
 ### Options for GraphiteHandler
 
 # Graphite server host
-host = graphite
+host = 127.0.0.1
 
 # Port to send metrics to
 port = 2003
@@ -69,7 +69,7 @@ batch = 1
 ### Options for GraphitePickleHandler
 
 # Graphite server host
-host = graphite
+host = 127.0.0.1
 
 # Port to send metrics to
 port = 2004
