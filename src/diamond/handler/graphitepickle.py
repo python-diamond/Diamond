@@ -65,6 +65,7 @@ class GraphitePickleHandler(GraphiteHandler):
         config = super(GraphitePickleHandler, self).get_default_config()
 
         config.update({
+            'port': 2004,
         })
 
         return config
