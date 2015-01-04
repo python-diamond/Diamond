@@ -1,9 +1,14 @@
 # coding=utf-8
 
 """
-A Diamond collector that collects memory usage of each process defined in it's
-config file by matching them with their executable filepath or the process name.
-This collector can also be used to collect memory usage for the Diamond process.
+A Diamond collector that collects memory usage, cpu usage, ...
+of each process defined in this collector configuration file.
+Matching process using regular expressions which match
+executable filepath (exe) or process name (name) or cmdline which may contain
+command-line arguments (cmdline).
+
+This collector can also be used to collect memory usage for the Diamond
+process.
 
 Example config file ProcessResourcesCollector.conf
 
@@ -20,7 +25,7 @@ name=^postgres,^pg
 selfmon=True
 ```
 
-exe and name are both lists of comma-separated regexps.
+exe, name, cmdline are lists of comma-separated regexps.
 
 count_workers defined under [process] will determine whether to count how many
 workers are there of processes which match this [process],
