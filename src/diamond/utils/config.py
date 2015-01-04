@@ -86,7 +86,7 @@ def load_config(configfile):
         config['collectors'] = configobj.ConfigObj()
 
     if 'collectors_config_path' in config['server']:
-        collectors_config_path = config['server']['handlers_config_path']
+        collectors_config_path = config['server']['collectors_config_path']
         if os.path.exists(collectors_config_path):
             for cfgfile in os.listdir(collectors_config_path):
                 cfgfile = os.path.join(collectors_config_path, cfgfile)
