@@ -21,8 +21,7 @@ def run_only_if_psutil_is_available(func):
         import psutil
     except ImportError:
         psutil = None
-    pred = lambda: psutil is not None
-    return run_only(func, pred)
+    return run_only(func, lambda: psutil is not None)
 
 
 class TestProcessResourcesCollector(CollectorTestCase):
@@ -156,12 +155,9 @@ class TestProcessResourcesCollector(CollectorTestCase):
                 ext_meminfo = namedtuple('meminfo',
                                          'rss vms shared text lib data dirty')
                 cputimes = namedtuple('cputimes', 'user system')
-                openfile = namedtuple('openfile', 'path fd')
                 thread = namedtuple('thread', 'id user_time system_time')
                 user = namedtuple('user', 'real effective saved')
                 group = namedtuple('group', 'real effective saved')
-                io = namedtuple('io',
-                                'read_count write_count read_bytes write_bytes')
                 ionice = namedtuple('ionice', 'ioclass value')
                 amount = namedtuple('amount', 'voluntary involuntary')
                 return {
