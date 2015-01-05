@@ -15,11 +15,12 @@ from ipmisensor import IPMISensorCollector
 
 
 class TestIPMISensorCollector(CollectorTestCase):
-    def setUp(self):
+    def setUp(self, thresholds=False):
         config = get_collector_config('IPMISensorCollector', {
             'interval': 10,
             'bin': 'true',
-            'use_sudo': False
+            'use_sudo': False,
+            'thresholds': thresholds,
         })
 
         self.collector = IPMISensorCollector(config, None)
@@ -32,15 +33,15 @@ class TestIPMISensorCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
         patch_communicate = patch(
             'subprocess.Popen.communicate',
-            Mock(return_value=(
-                self.getFixture('ipmitool.out').getvalue(),
-                '')))
+            Mock(return_value=(self.getFixture('ipmitool.out').getvalue(), '')))
 
         patch_communicate.start()
         self.collector.collect()
         patch_communicate.stop()
 
         metrics = {
+            'CPU1.Temp': 0.0,
+            'CPU2.Temp': 0.0,
             'System.Temp': 32.000000,
             'CPU1.Vcore': 1.080000,
             'CPU2.Vcore': 1.000000,
@@ -75,6 +76,34 @@ class TestIPMISensorCollector(CollectorTestCase):
             'P2-DIMM2B.Temp': 39.000000,
             'P2-DIMM3A.Temp': 39.000000,
             'P2-DIMM3B.Temp': 40.000000,
+        }
+
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
+        self.assertPublishedMany(publish_mock, metrics)
+
+    @patch('os.access', Mock(return_value=True))
+    @patch.object(Collector, 'publish')
+    def test_thresholds(self, publish_mock):
+        self.setUp(thresholds=True)
+
+        patch_communicate = patch(
+            'subprocess.Popen.communicate',
+            Mock(return_value=(self.getFixture('ipmitool.out').getvalue(), '')))
+
+        patch_communicate.start()
+        self.collector.collect()
+        patch_communicate.stop()
+
+        metrics = {
+            'System.Temp.Reading': 32.0,
+            'System.Temp.Lower.NonRecoverable': 0.0,
+            'System.Temp.Lower.Critical': 0.0,
+            'System.Temp.Lower.NonCritical': 0.0,
+            'System.Temp.Upper.NonCritical': 81.0,
+            'System.Temp.Upper.Critical': 82.0,
+            'System.Temp.Upper.NonRecoverable': 83.0,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
