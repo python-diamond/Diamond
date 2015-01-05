@@ -21,7 +21,7 @@ name. e.g) ```java.lang:name=ParNew,type=GarbageCollector``` would become
 
 If desired, JolokiaCollector can be configured to query specific MBeans by
 providing a list of ```mbeans```. If ```mbeans``` is not provided, all MBeans
-will be queried for metrics.  Note that the mbean prefix is checked both 
+will be queried for metrics.  Note that the mbean prefix is checked both
 with and without rewrites (including fixup re-writes) applied.  This allows
 you to specify "java.lang:name=ParNew,type=GarbageCollector" (the raw name from
 jolokia) or "java.lang.name_ParNew.type_GarbageCollector" (the fixed name
@@ -30,16 +30,17 @@ as used for output)
 If the ```regex``` flag is set to True, mbeans will match based on regular
 expressions rather than a plain textual match.
 
-The ```rewrite``` section provides a way of renaming the data keys before 
-it sent out to the handler.  The section consists of pairs of from-to 
-regular expressions.  If the resultant name is completely blank, the 
-metric is not published, providing a way to exclude specific metrics within 
+The ```rewrite``` section provides a way of renaming the data keys before
+it sent out to the handler.  The section consists of pairs of from-to
+regular expressions.  If the resultant name is completely blank, the
+metric is not published, providing a way to exclude specific metrics within
 an mbean.
 
 ```
     host = localhost
     port = 8778
-    mbeans = "java.lang:name=ParNew,type=GarbageCollector", "org.apache.cassandra.metrics:name=WriteTimeouts,type=ClientRequestMetrics"
+    mbeans = "java.lang:name=ParNew,type=GarbageCollector", 
+     "org.apache.cassandra.metrics:name=WriteTimeouts,type=ClientRequestMetrics"
     [rewrite]
     java = coffee
     "-v\d+\.\d+\.\d+" = "-AllVersions"
@@ -71,13 +72,15 @@ class JolokiaCollector(diamond.collector.Collector):
         config_help = super(JolokiaCollector,
                             self).get_default_config_help()
         config_help.update({
-            'mbeans':  "Pipe delimited list of MBeans for which to collect stats."
-                       " If not provided, all stats will be collected.",
-            'regex': "Contols if mbeans option matches with regex, False by default.",
+            'mbeans':  "Pipe delimited list of MBeans for which to collect"
+                       " stats. If not provided, all stats will"
+                       " be collected.",
+            'regex': "Contols if mbeans option matches with regex,"
+                      " False by default.",
             'host': 'Hostname',
             'port': 'Port',
-            'rewrite': "This sub-section of the config contains pairs of from-to regex"
-                       " rewrites.",
+            'rewrite': "This sub-section of the config contains pairs of"
+                       " from-to regex rewrites.",
             'path': 'Path to jolokia.  typically "jmx" or "jolokia"'
         })
         return config_help
@@ -105,14 +108,15 @@ class JolokiaCollector(diamond.collector.Collector):
             self.mbeans = self.config['mbeans']
         if isinstance(self.config['rewrite'], dict):
             self.rewrite = self.config['rewrite']
-        
+
     def check_mbean(self, mbean):
         if not self.mbeans:
             return True
         mbeanfix = self.clean_up(mbean)
-        if self.config['regex']:
+        if self.config['regex'] is not None:
             for chkbean in self.mbeans:
-                if re.match(chkbean, mbean) != None or re.match(chkbean, mbeanfix) != None:
+                if re.match(chkbean, mbean) != None or \
+                   re.match(chkbean, mbeanfix) != None:
                     return True
         else:
             if mbean in self.mbeans or mbeanfix in self.mbeans:
