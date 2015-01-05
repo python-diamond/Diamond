@@ -65,7 +65,7 @@ class PassengerCollector(diamond.collector.Collector):
         try:
             proc1 = subprocess.Popen(command, stdout=subprocess.PIPE)
             (std_out, std_err) = proc1.communicate()
-        except OSError as exception:
+        except OSError:
             return {}
 
         if std_out is None:
@@ -123,7 +123,7 @@ class PassengerCollector(diamond.collector.Collector):
                 ["top", "-b", "-n", "2"],
                 stdout=subprocess.PIPE)
             (std_out, std_err) = proc1.communicate()
-        except OSError as exception:
+        except OSError:
             return (-1)
 
         re_lspaces = re.compile("^\s*")
