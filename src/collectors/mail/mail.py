@@ -25,6 +25,7 @@ import mailbox
 
 import diamond.collector
 
+
 class MailCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
