@@ -95,7 +95,8 @@ class PostgresqlCollector(diamond.collector.Collector):
         # Iterate every QueryStats class
         for metric_name in set(metrics):
             if metric_name not in metrics_registry:
-                self.log.error('metric_name %s not found in metric registry' % metric_name)
+                self.log.error(
+                    'metric_name %s not found in metric registry' % metric_name)
                 continue
 
             for dbase in dbs:
