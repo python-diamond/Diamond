@@ -28,9 +28,11 @@ from collections import deque
 
 
 class LogentriesDiamondHandler(Handler):
+
     """
       Implements the abstract Handler class
     """
+
     def __init__(self, config=None):
         """
         New instance of LogentriesDiamondHandler class
@@ -87,7 +89,11 @@ class LogentriesDiamondHandler(Handler):
         while len(self.queue) > 0:
             metric = self.queue.popleft()
             topic, value, timestamp = str(metric).split()
-            msg = json.dumps({"event": {topic: value}})
+            # Remove Host Name from topic path
+            topic = topic.replace("." + metric.host, "")
+            msg = json.dumps(
+                {"event": {"Timestamp": timestamp, "Host": metric.host,
+                           topic: value, }})
             req = urllib2.Request("https://js.logentries.com/v1/logs/"
                                   + self.log_token, msg)
             try:
