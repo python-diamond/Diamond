@@ -91,7 +91,7 @@ class CPUCollector(diamond.collector.Collector):
 
         if os.access(self.PROC, os.R_OK):
 
-            #If simple only return aggregate CPU% metric
+            # If simple only return aggregate CPU% metric
             if str_to_bool(self.config['simple']):
                 dt = cpu_delta_time(self.INTERVAL)
                 cpuPct = 100 - (dt[len(dt) - 1] * 100.00 / sum(dt))

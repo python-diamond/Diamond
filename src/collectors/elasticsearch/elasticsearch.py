@@ -113,7 +113,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
                            + " json object")
             return False
 
-        if assert_key and not assert_key in doc:
+        if assert_key and assert_key not in doc:
             self.log.error("Bad response from elasticsearch, expected key "
                            "'%s' was missing for %s" % (assert_key, url))
             return False

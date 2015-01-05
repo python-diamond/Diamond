@@ -52,10 +52,10 @@ class SlabInfoCollector(diamond.collector.Collector):
         if not os.access(self.PROC, os.R_OK):
             return False
 
-        #Open PROC file
+        # Open PROC file
         file = open(self.PROC, 'r')
 
-        #Get data
+        # Get data
         for line in file:
             if line.startswith('slabinfo'):
                 continue
@@ -88,5 +88,5 @@ class SlabInfoCollector(diamond.collector.Collector):
                 metric_value = int(data[i])
                 self.publish(metric_name, metric_value)
 
-        #Close file
+        # Close file
         file.close()
