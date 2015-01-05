@@ -165,6 +165,7 @@ class Collector(object):
         Create a new instance of the Collector class
         """
         # Initialize Logger
+        logging.captureWarnings(True)
         self.log = logging.getLogger('diamond')
         # Initialize Members
         if name is None:
