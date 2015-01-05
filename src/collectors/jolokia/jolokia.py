@@ -39,7 +39,7 @@ an mbean.
 ```
     host = localhost
     port = 8778
-    mbeans = "java.lang:name=ParNew,type=GarbageCollector", 
+    mbeans = "java.lang:name=ParNew,type=GarbageCollector",
      "org.apache.cassandra.metrics:name=WriteTimeouts,type=ClientRequestMetrics"
     [rewrite]
     java = coffee
@@ -76,7 +76,7 @@ class JolokiaCollector(diamond.collector.Collector):
                        " stats. If not provided, all stats will"
                        " be collected.",
             'regex': "Contols if mbeans option matches with regex,"
-                      " False by default.",
+                       " False by default.",
             'host': 'Hostname',
             'port': 'Port',
             'rewrite': "This sub-section of the config contains pairs of"
@@ -115,8 +115,8 @@ class JolokiaCollector(diamond.collector.Collector):
         mbeanfix = self.clean_up(mbean)
         if self.config['regex'] is not None:
             for chkbean in self.mbeans:
-                if re.match(chkbean, mbean) != None or \
-                   re.match(chkbean, mbeanfix) != None:
+                if re.match(chkbean, mbean) is not None or \
+                   re.match(chkbean, mbeanfix) is not None:
                     return True
         else:
             if mbean in self.mbeans or mbeanfix in self.mbeans:
