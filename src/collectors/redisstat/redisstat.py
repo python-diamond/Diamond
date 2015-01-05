@@ -74,6 +74,7 @@ class RedisCollector(diamond.collector.Collector):
              'process.commands_processed': 'total_commands_processed',
              'process.connections_received': 'total_connections_received',
              'process.uptime': 'uptime_in_seconds',
+             'process.instantaneous_ops_per_sec': 'instantaneous_ops_per_sec',
              'pubsub.channels': 'pubsub_channels',
              'pubsub.patterns': 'pubsub_patterns',
              'slaves.connected': 'connected_slaves'}
