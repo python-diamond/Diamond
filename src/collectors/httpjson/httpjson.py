@@ -19,7 +19,7 @@ class HTTPJSONCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(HTTPJSONCollector, self).get_default_config_help()
         config_help.update({
-            'url': 'Full URL'
+            'url': 'Full URL',
             'headers': 'Header variable if needed. Will be added to every request',
         })
         return config_help
