@@ -31,7 +31,6 @@ class TestAmavisCollector(CollectorTestCase):
 
         # a couple of the metrics contained in mock-amavisd-agent
         metrics = {
-            'sysUpTime.time': 198103058,
             'OutMsgsSizeProtoSMTP.size': 116,
             'OutMsgsSizeProtoSMTP.frequency': 0,
             'OutMsgsSizeProtoSMTP.percentage': 96.4,
