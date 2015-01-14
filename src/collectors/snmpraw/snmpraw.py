@@ -1,8 +1,8 @@
 # coding=utf-8
 
 """
-The SNMPRawCollector is a deprecated collector. It's functionality has been moved to the
-top level SNMPCollector
+The SNMPRawCollector is a deprecated collector. It's functionality
+has been moved to the top level SNMPCollector
 
 #### Dependencies
 
@@ -14,8 +14,10 @@ import os
 import sys
 import warnings
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), 'snmp'))
+file_path = os.path.dirname(__file__)
+sys.path.insert(0, os.path.join(file_path, 'snmp'))
 
 from snmp import SNMPCollector as SNMPRawCollector  # NOQA
 
-warnings.warn('The SNMPRawCollector is deprecated. Use SNMPCollector instead', DeprecationWarning)
+warnings.warn('SNMPRawCollector is deprecated. Use SNMPCollector',
+              DeprecationWarning)
