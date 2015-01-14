@@ -1,22 +1,289 @@
 #!/usr/bin/python
 # coding=utf-8
 ################################################################################
-
-from test import CollectorTestCase
-from test import get_collector_config
+from mock import Mock, patch
 
 from snmp import SNMPCollector
+from test import CollectorTestCase, get_collector_config
 
 
 class TestSNMPCollector(CollectorTestCase):
+
     def setUp(self, allowed_names=None):
         if not allowed_names:
             allowed_names = []
+
         config = get_collector_config('SNMPCollector', {
             'allowed_names': allowed_names,
             'interval': 1
         })
+
         self.collector = SNMPCollector(config, None)
 
     def test_import(self):
         self.assertTrue(SNMPCollector)
+
+    def test_default_config(self):
+        config = self.collector.get_default_config()
+        self.assertEqual(config['path_prefix'], 'devices')
+        self.assertEqual(config['path_suffix'], '')
+        self.assertEqual(config['timeout'], 5)
+        self.assertEqual(config['retries'], 3)
+        self.assertEqual(config['devices'], {})
+
+    def test_to_oid_tuple(self):
+        self.assertEqual((1, 2, 3), self.collector._to_oid_tuple('1.2.3'))
+
+    def test_to_oid_tuple_handles_tuple(self):
+        tup = (1, 2, 3)
+        self.assertEqual(tup, self.collector._to_oid_tuple(tup))
+
+    def test_from_oid_tuple(self):
+        self.assertEqual('1.2.3', self.collector._from_oid_tuple((1, 2, 3)))
+
+    def test_from_oid_tuple_handles_string(self):
+        string = '1.2.3'
+        self.assertEqual(string, self.collector._from_oid_tuple(string))
+
+    def test_create_metric_empty_value(self):
+        self.assertIsNone(self.collector.create_metric('x', 'y', 'name', None))
+
+    @patch('snmp.IntegerType', Mock)
+    def test_create_metric_path_replacement(self):
+        name = Mock(prettyPrint=lambda: '1.2.3.1.2.3')
+        value = Mock(prettyPrint=lambda: '42')
+
+        metric = self.collector.create_metric('1.2', 'foo', name, value)
+
+        self.assertEqual(metric.path, 'foo.3.1.2.3')
+
+    @patch('snmp.IntegerType', int)
+    def test_create_metric_non_integer_type(self):
+        self.assertIsNone(self.collector.create_metric('x', 'y', 'name', 'value'))
+
+    @patch('snmp.IntegerType', Mock)
+    @patch('snmp.time')
+    def test_create_metric(self, time):
+        time.time.return_value = 100
+        name = Mock(prettyPrint=lambda: '1.2.3')
+        value = Mock(prettyPrint=lambda: '42')
+
+        metric = self.collector.create_metric('1.2', 'foo', name, value)
+
+        self.assertEqual(metric.path, 'foo.3')
+        self.assertEqual(metric.value, 42.0)
+        self.assertEqual(metric.precision, 0)
+        self.assertEqual(metric.timestamp, 100)
+        self.assertEqual(metric.metric_type, 'GAUGE')
+
+    def test_snmp_get_no_metrics(self):
+        retvals = [
+            [],  # IndexError
+            (None, None, None, []),  # IndexError
+            (None, None, None, ['foo']),  # ValueError
+        ]
+
+        for retval in retvals:
+            self.collector.cmdgen = Mock()
+            self.collector.cmdgen.getCmd.return_value = []
+
+            auth = Mock()
+            transport = Mock(transportAddr=('localhost', 161))
+            metrics = self.collector.snmp_get('1.2', auth, transport)
+
+            self.assertEqual([], metrics)
+
+    def test_snmp_get(self):
+        name = Mock()
+        value = Mock()
+
+        self.collector.cmdgen = Mock()
+        self.collector.cmdgen.getCmd.return_value = (None, None, None, [(name, value)])
+
+        auth = Mock()
+        transport = Mock()
+
+        with patch.object(self.collector, 'create_metric'):
+            self.collector.create_metric.return_value = 'bar'
+            metrics = self.collector.snmp_get('1.2', auth, transport)
+            self.assertEqual(metrics, [(name, value)])
+
+    def test_snmp_walk_no_metrics(self):
+        for retval in ([], (None, None, None, [])):
+            self.collector.cmdgen = Mock()
+            self.collector.cmdgen.nextCmd.return_value = retval
+
+            auth = Mock()
+            transport = Mock(transportAddr=('localhost', 161))
+            metrics = self.collector.snmp_walk('1.2', auth, transport)
+
+            self.assertEqual([], list(metrics))
+
+    def test_snmp_walk(self):
+        metrics = (None, None, None, [
+            (Mock(prettyPrint=lambda: '1.2.1'), Mock(prettyPrint=lambda: '41')),
+            (Mock(prettyPrint=lambda: '1.2.2'), Mock(prettyPrint=lambda: '42')),
+            (Mock(prettyPrint=lambda: '1.2.3'), Mock(prettyPrint=lambda: '43')),
+        ])
+
+        self.collector.cmdgen = Mock()
+        self.collector.cmdgen.nextCmd.return_value = metrics
+
+        auth = Mock()
+        transport = Mock(transportAddr=('localhost', 161))
+
+        with patch.object(self.collector, 'create_metric'):
+            self.collector.create_metric.side_effect = metrics[3]
+            ret_metrics = list(self.collector.snmp_walk('1.2', auth, transport))
+            self.assertEqual(metrics[3], ret_metrics)
+
+    @patch('snmp.IntegerType', Mock)
+    def test_collect_calls_snmp_get(self):
+        device = 'mydevice'
+        auth = Mock()
+        transport = Mock()
+        oids = {
+            '1.2.3': 'foo.bar',
+        }
+
+        metrics = [
+            (Mock(prettyPrint=lambda: '1.2.3'), Mock(prettyPrint=lambda: '42')),
+            (Mock(prettyPrint=lambda: '1.2.3.4'), Mock(prettyPrint=lambda: '43')),
+        ]
+
+        with patch.multiple(self.collector, snmp_get=Mock(), snmp_walk=Mock(), publish_metric=Mock()):
+            self.collector.snmp_get.return_value = metrics
+
+            self.collector.collect_snmp(device, auth, transport, oids)
+
+            # Are we calling the correct method
+            self.assertFalse(self.collector.snmp_walk.called)
+            self.assertTrue(self.collector.snmp_get.called)
+
+            calls = self.collector.publish_metric.call_args_list
+
+            # Do we publish metrics?
+            self.assertEqual(len(calls), 2)
+
+            # Were metrics properly namespaced
+            self.assertEqual(calls[0][0][0].path, 'devices.mydevice.foo.bar')
+            self.assertEqual(calls[1][0][0].path, 'devices.mydevice.foo.bar.4')
+
+    @patch('snmp.IntegerType', Mock)
+    def test_collect_calls_snmp_walk(self):
+        device = 'mydevice'
+        auth = Mock()
+        transport = Mock()
+        oids = {
+            '1.2.3.*': 'foo.bar',
+        }
+
+        metrics = [
+            (Mock(prettyPrint=lambda: '1.2.3'), Mock(prettyPrint=lambda: '42')),
+            (Mock(prettyPrint=lambda: '1.2.3.4'), Mock(prettyPrint=lambda: '43')),
+        ]
+
+        with patch.multiple(self.collector, snmp_get=Mock(), snmp_walk=Mock(), publish_metric=Mock()):
+            self.collector.snmp_walk.return_value = metrics
+
+            self.collector.collect_snmp(device, auth, transport, oids)
+
+            # Are we calling the correct method
+            self.assertTrue(self.collector.snmp_walk.called)
+            self.assertFalse(self.collector.snmp_get.called)
+
+            calls = self.collector.publish_metric.call_args_list
+
+            # Do we publish metrics?
+            self.assertEqual(len(calls), 2)
+
+            # Were metrics properly namespaced
+            self.assertEqual(calls[0][0][0].path, 'devices.mydevice.foo.bar')
+            self.assertEqual(calls[1][0][0].path, 'devices.mydevice.foo.bar.4')
+
+    @patch('snmp.cmdgen', None)
+    def test_collect_nothing_with_pysnmp_error(self):
+        with patch.object(self.collector, 'log'):
+            self.collector.collect()
+            self.collector.log.error.assert_called_with(
+                'pysnmp.entity.rfc3413.oneliner.cmdgen failed to load'
+            )
+
+    @patch('snmp.cmdgen')
+    def test_collect_no_devices(self, cmdgen):
+        with patch.multiple(self.collector, log=Mock(), config={}):
+            self.collector.collect()
+            self.collector.log.error.assert_called_with(
+                'No devices configured for this collector'
+            )
+
+    @patch('snmp.cmdgen')
+    def test_collect(self, cmdgen):
+        oids = {
+            '1.2.3': 'foo.bar',
+        }
+
+        config = {
+            'devices': {
+                'mydevice': {
+                    'host': 'localhost',
+                    'port': 161,
+                    'community': 'public',
+                    'oids': oids,
+                }
+            }
+        }
+
+        # Setup mocks
+        auth = Mock()
+        auth.return_value = auth
+
+        transport = Mock()
+        transport.return_value = transport
+
+        collect_snmp = Mock()
+
+        with patch.multiple(self.collector,
+                            config=config,
+                            create_auth=auth,
+                            create_transport=transport,
+                            collect_snmp=collect_snmp):
+            self.collector.collect()
+            auth.assert_called_with('public')
+            transport.assert_called_with('localhost', 161)
+            collect_snmp.assert_called_with('mydevice', auth, transport, oids)
+
+    @patch('snmp.cmdgen')
+    def test_collect_uses_defaults(self, cmdgen):
+        oids = {
+            '1.2.3': 'foo.bar',
+        }
+
+        # We should allow assuming default values for community and port
+        config = {
+            'devices': {
+                'mydevice': {
+                    'host': 'localhost',
+                    'oids': oids,
+                }
+            }
+        }
+
+        # Setup mocks
+        auth = Mock()
+        auth.return_value = auth
+
+        transport = Mock()
+        transport.return_value = transport
+
+        collect_snmp = Mock()
+
+        with patch.multiple(self.collector,
+                            config=config,
+                            create_auth=auth,
+                            create_transport=transport,
+                            collect_snmp=collect_snmp):
+            self.collector.collect()
+            auth.assert_called_with('public')
+            transport.assert_called_with('localhost', 161)
+            collect_snmp.assert_called_with('mydevice', auth, transport, oids)
