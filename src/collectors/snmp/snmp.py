@@ -55,8 +55,6 @@ restart diamond.
 
 import re
 import socket
-import time
-
 import warnings
 
 # pysnmp packages on debian 6.0 use sha and md5 which are deprecated
@@ -78,7 +76,6 @@ except ImportError:
 warnings.showwarning = old_showwarning
 
 import diamond.collector
-from diamond.metric import Metric
 
 
 class SNMPCollector(diamond.collector.Collector):
@@ -95,8 +92,7 @@ class SNMPCollector(diamond.collector.Collector):
         # Initialize default config
         default_config = super(SNMPCollector, self).get_default_config()
         default_config.update({
-            'path_suffix': '',
-            'path_prefix': 'devices',
+            'path': 'snmp',
             'timeout': 5,
             'retries': 3,
             'devices': {},
@@ -135,40 +131,47 @@ class SNMPCollector(diamond.collector.Collector):
             return 0
         return len(value) - decimal - 1
 
-    def create_metric(self, oid, basename, name, value):
+    def _publish(self, device, oid, basename, name, value):
         """
-        Creates a :class:`Metric` from a name and value. Care is taken to ensure
-        that this data can be represented in graphite as a GAUGE type, so non-numeric datatypes
-        are excluded. This will also replace a root OID with a basename. For example,
-        if given a root oid '1.2.3.4.5', basename 'foo.bar', and name '1.2.3.4.5.6.7.8.9',
-        the result would be 'foo.bar.6.7.8.9'
+        Publishes a metric as a GAUGE with a given value. Non-integer datatyps are attempted
+        to be converted to a float value, and ignored if they cannot be. This will also replace
+        a root OID with a basename. For example, if given a root oid '1.2', basename 'foo.bar',
+        and name '1.2.3.4.5', the result would be 'foo.bar.3.4.5'.
 
+        :param device: the device name string
         :param oid: Root OID string
         :param basename: The replacement string of the OID root string
         :param name: An instance of pysnmp.proto.rfc1902.ObjectName
         :param value: Some form of subclass instance of pyasn1.type.base.AbstractSimpleAsn1Item
-        :returns: None or Metric
         """
         # If metric value is 'empty'
         if not value:
             self.log.debug("Metric '{0}' has no value".format(name))
             return None
 
-        # If metric value is a non-integer type
-        if not isinstance(value, IntegerType):
-            self.log.debug("Metric '{0}' is not an Integer type".format(name))
-            return None
+        # Simple integer types need no special work
+        if isinstance(value, IntegerType):
+            value = value.prettyPrint()
+        else:
+            # Otherwise attempt to convert to a float
+            try:
+                value = float(value.prettyPrint())
+            except ValueError:
+                self.log.debug("Metric '{0}' is not an Integer type".format(name))
+                return
 
         # Convert to a simple readable format
         name = name.prettyPrint()
         name = re.sub(r'^{0}'.format(oid), basename, name)
-        value = value.prettyPrint()
 
-        return Metric(path=name,
-                      value=value,
-                      timestamp=time.time(),
-                      precision=self._precision(value),
-                      metric_type='GAUGE')
+        self.log.debug("'{0}' on device '{1}' - value=[{2}]".format(name, device, value))
+        path = '.'.join([
+            'devices',
+            device,
+            name,
+        ])
+
+        self.publish_gauge(path, value)
 
     def get(self, oid, host, port, community):
         """
@@ -177,7 +180,7 @@ class SNMPCollector(diamond.collector.Collector):
         auth = self.create_auth(community)
         transport = self.create_transport(host, port)
         rows = self.snmp_get(oid, auth, transport)
-        return dict((k.prettyPrint(), v.prettyPrint) for k, v in rows)
+        return dict((k.prettyPrint(), v.prettyPrint()) for k, v in rows)
 
     def walk(self, oid, host, port, community):
         """
@@ -185,8 +188,8 @@ class SNMPCollector(diamond.collector.Collector):
         """
         auth = self.create_auth(community)
         transport = self.create_transport(host, port)
-        rows = self.snmp_walk(oid, auth, transport)
-        return dict((k.prettyPrint(), v.prettyPrint) for k, v in rows)
+        table = self.snmp_walk(oid, auth, transport)
+        return dict((k.prettyPrint(), v.prettyPrint()) for row in table for k, v in row)
 
     def snmp_get(self, oid, auth, transport):
         """
@@ -282,11 +285,6 @@ class SNMPCollector(diamond.collector.Collector):
             my.metric.name.2.3
         """
         self.log.debug("Collecting SNMP data from device '{0}'".format(device))
-        path_prefix = '.'.join([
-            self.config['path_prefix'],
-            device,
-            self.config['path_suffix']
-        ]).rstrip('.')
 
         auth = self.create_auth(community)
         transport = self.create_transport(host, port)
@@ -300,16 +298,7 @@ class SNMPCollector(diamond.collector.Collector):
                 fn = self.snmp_get
 
             for metric_name, metric_value in fn(oid, auth, transport):
-                metric = self.create_metric(oid, basename, metric_name, metric_value)
-
-                self.log.debug(
-                    "'{0}' on device '{1}' - value=[{2}]".format(
-                        metric.path, device, metric.value
-                    )
-                )
-
-                metric.path = '.'.join([path_prefix, metric.path])
-                self.publish_metric(metric)
+                self._publish(device, oid, basename, metric_name, metric_value)
 
     def collect(self):
         """

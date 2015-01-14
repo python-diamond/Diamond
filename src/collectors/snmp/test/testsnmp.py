@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # coding=utf-8
 ################################################################################
+import socket
+
 from mock import Mock, patch
 
 from snmp import SNMPCollector
@@ -25,8 +27,7 @@ class TestSNMPCollector(CollectorTestCase):
 
     def test_default_config(self):
         config = self.collector.get_default_config()
-        self.assertEqual(config['path_prefix'], 'devices')
-        self.assertEqual(config['path_suffix'], '')
+        self.assertEqual(config['path'], 'snmp')
         self.assertEqual(config['timeout'], 5)
         self.assertEqual(config['retries'], 3)
         self.assertEqual(config['devices'], {})
@@ -45,36 +46,47 @@ class TestSNMPCollector(CollectorTestCase):
         string = '1.2.3'
         self.assertEqual(string, self.collector._from_oid_tuple(string))
 
-    def test_create_metric_empty_value(self):
-        self.assertIsNone(self.collector.create_metric('x', 'y', 'name', None))
+    def test_publish_empty_value(self):
+        with patch.object(self.collector, 'publish_gauge'):
+            self.collector._publish('device', 'x', 'y', 'name', None)
+            self.assertFalse(self.collector.publish_gauge.called)
 
     @patch('snmp.IntegerType', Mock)
-    def test_create_metric_path_replacement(self):
+    def test_publish_path_replacement(self):
         name = Mock(prettyPrint=lambda: '1.2.3.1.2.3')
         value = Mock(prettyPrint=lambda: '42')
 
-        metric = self.collector.create_metric('1.2', 'foo', name, value)
-
-        self.assertEqual(metric.path, 'foo.3.1.2.3')
+        with patch.object(self.collector, 'publish_gauge'):
+            self.collector._publish('device', '1.2', 'foo', name, value)
+            self.collector.publish_gauge.assert_called_with(
+                'devices.device.foo.3.1.2.3', '42'
+            )
 
     @patch('snmp.IntegerType', int)
-    def test_create_metric_non_integer_type(self):
-        self.assertIsNone(self.collector.create_metric('x', 'y', 'name', 'value'))
+    def test_publish_non_integer_type(self):
+        value = Mock(prettyPrint=lambda: 'value')
+        with patch.object(self.collector, 'publish_gauge'):
+            self.collector._publish('device', 'x', 'y', 'name', value)
+            self.assertFalse(self.collector.publish_gauge.called)
+
+    @patch('snmp.IntegerType', int)
+    def test_publish_non_integer_type_conversion(self):
+        name = Mock(prettyPrint=lambda: 'name')
+        value = Mock(prettyPrint=lambda: '42')
+        with patch.object(self.collector, 'publish_gauge'):
+            self.collector._publish('device', 'x', 'y', name, value)
+            self.collector.publish_gauge.assert_called_with(
+                'devices.device.name', 42.0
+            )
 
     @patch('snmp.IntegerType', Mock)
-    @patch('snmp.time')
-    def test_create_metric(self, time):
-        time.time.return_value = 100
+    def test_publish(self):
         name = Mock(prettyPrint=lambda: '1.2.3')
         value = Mock(prettyPrint=lambda: '42')
 
-        metric = self.collector.create_metric('1.2', 'foo', name, value)
-
-        self.assertEqual(metric.path, 'foo.3')
-        self.assertEqual(metric.value, 42.0)
-        self.assertEqual(metric.precision, 0)
-        self.assertEqual(metric.timestamp, 100)
-        self.assertEqual(metric.metric_type, 'GAUGE')
+        with patch.object(self.collector, 'publish_gauge'):
+            self.collector._publish('device', '1.2', 'foo', name, value)
+            self.collector.publish_gauge.assert_called_with('devices.device.foo.3', '42')
 
     def test_snmp_get_no_metrics(self):
         retvals = [
@@ -103,10 +115,8 @@ class TestSNMPCollector(CollectorTestCase):
         auth = Mock()
         transport = Mock()
 
-        with patch.object(self.collector, 'create_metric'):
-            self.collector.create_metric.return_value = 'bar'
-            metrics = self.collector.snmp_get('1.2', auth, transport)
-            self.assertEqual(metrics, [(name, value)])
+        metrics = self.collector.snmp_get('1.2', auth, transport)
+        self.assertEqual(metrics, [(name, value)])
 
     def test_snmp_walk_no_metrics(self):
         for retval in ([], (None, None, None, [])):
@@ -132,10 +142,8 @@ class TestSNMPCollector(CollectorTestCase):
         auth = Mock()
         transport = Mock(transportAddr=('localhost', 161))
 
-        with patch.object(self.collector, 'create_metric'):
-            self.collector.create_metric.side_effect = metrics[3]
-            ret_metrics = list(self.collector.snmp_walk('1.2', auth, transport))
-            self.assertEqual(metrics[3], ret_metrics)
+        ret_metrics = list(self.collector.snmp_walk('1.2', auth, transport))
+        self.assertEqual(metrics[3], ret_metrics)
 
     @patch('snmp.IntegerType', Mock)
     @patch('snmp.cmdgen', Mock())
@@ -171,10 +179,13 @@ class TestSNMPCollector(CollectorTestCase):
 
             # Do we publish metrics?
             self.assertEqual(len(calls), 2)
+            prefix = 'servers.{0}.snmp'.format(socket.gethostname())
 
             # Were metrics properly namespaced
-            self.assertEqual(calls[0][0][0].path, 'devices.mydevice.foo.bar')
-            self.assertEqual(calls[1][0][0].path, 'devices.mydevice.foo.bar.4')
+            self.assertEqual(calls[0][0][0].path,
+                             '{0}.devices.mydevice.foo.bar'.format(prefix))
+            self.assertEqual(calls[1][0][0].path,
+                             '{0}.devices.mydevice.foo.bar.4'.format(prefix))
 
     @patch('snmp.IntegerType', Mock)
     @patch('snmp.cmdgen', Mock())
@@ -210,10 +221,13 @@ class TestSNMPCollector(CollectorTestCase):
 
             # Do we publish metrics?
             self.assertEqual(len(calls), 2)
+            prefix = 'servers.{0}.snmp'.format(socket.gethostname())
 
             # Were metrics properly namespaced
-            self.assertEqual(calls[0][0][0].path, 'devices.mydevice.foo.bar')
-            self.assertEqual(calls[1][0][0].path, 'devices.mydevice.foo.bar.4')
+            self.assertEqual(calls[0][0][0].path,
+                             '{0}.devices.mydevice.foo.bar'.format(prefix))
+            self.assertEqual(calls[1][0][0].path,
+                             '{0}.devices.mydevice.foo.bar.4'.format(prefix))
 
     @patch('snmp.cmdgen', None)
     def test_collect_nothing_with_pysnmp_error(self):
