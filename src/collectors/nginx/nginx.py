@@ -52,15 +52,16 @@ class NginxCollector(diamond.collector.Collector):
         return default_config
 
     def collect(self):
+        url = 'http://%s:%i%s' % (self.config['req_host'],
+                                  int(self.config['req_port']),
+                                  self.config['req_path'])
         activeConnectionsRE = re.compile(r'Active connections: (?P<conn>\d+)')
         totalConnectionsRE = re.compile('^\s+(?P<conn>\d+)\s+'
                                         + '(?P<acc>\d+)\s+(?P<req>\d+)')
         connectionStatusRE = re.compile('Reading: (?P<reading>\d+) '
                                         + 'Writing: (?P<writing>\d+) '
                                         + 'Waiting: (?P<waiting>\d+)')
-        req = urllib2.Request('http://%s:%i%s' % (self.config['req_host'],
-                                                  int(self.config['req_port']),
-                                                  self.config['req_path']))
+        req = urllib2.Request(url)
         try:
             handle = urllib2.urlopen(req)
             for l in handle.readlines():
@@ -82,9 +83,6 @@ class NginxCollector(diamond.collector.Collector):
                     self.publish_gauge('act_writes', int(m.group('writing')))
                     self.publish_gauge('act_waits', int(m.group('waiting')))
         except IOError, e:
-            self.log.error("Unable to open http://%s:%i%s",
-                           self.config['req_host'],
-                           int(self.config['req_port']),
-                           self.config['req_path'])
+            self.log.error("Unable to open %s" % url)
         except Exception, e:
             self.log.error("Unknown error opening url: %s", e)
