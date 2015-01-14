@@ -86,7 +86,9 @@ class TestSNMPCollector(CollectorTestCase):
 
         with patch.object(self.collector, 'publish_gauge'):
             self.collector._publish('device', '1.2', 'foo', name, value)
-            self.collector.publish_gauge.assert_called_with('devices.device.foo.3', '42')
+            self.collector.publish_gauge.assert_called_with(
+                'devices.device.foo.3', '42'
+            )
 
     def test_snmp_get_no_metrics(self):
         retvals = [
@@ -110,7 +112,9 @@ class TestSNMPCollector(CollectorTestCase):
         value = Mock()
 
         self.collector.cmdgen = Mock()
-        self.collector.cmdgen.getCmd.return_value = (None, None, None, [(name, value)])
+        self.collector.cmdgen.getCmd.return_value = (
+            None, None, None, [(name, value)]
+        )
 
         auth = Mock()
         transport = Mock()
@@ -131,9 +135,12 @@ class TestSNMPCollector(CollectorTestCase):
 
     def test_snmp_walk(self):
         metrics = (None, None, None, [
-            (Mock(prettyPrint=lambda: '1.2.1'), Mock(prettyPrint=lambda: '41')),
-            (Mock(prettyPrint=lambda: '1.2.2'), Mock(prettyPrint=lambda: '42')),
-            (Mock(prettyPrint=lambda: '1.2.3'), Mock(prettyPrint=lambda: '43')),
+            (Mock(prettyPrint=lambda: '1.2.1'),
+             Mock(prettyPrint=lambda: '41')),
+            (Mock(prettyPrint=lambda: '1.2.2'),
+             Mock(prettyPrint=lambda: '42')),
+            (Mock(prettyPrint=lambda: '1.2.3'),
+             Mock(prettyPrint=lambda: '43')),
         ])
 
         self.collector.cmdgen = Mock()
@@ -162,11 +169,16 @@ class TestSNMPCollector(CollectorTestCase):
         })
 
         metrics = [
-            (Mock(prettyPrint=lambda: '1.2.3'), Mock(prettyPrint=lambda: '42')),
-            (Mock(prettyPrint=lambda: '1.2.3.4'), Mock(prettyPrint=lambda: '43')),
+            (Mock(prettyPrint=lambda: '1.2.3'),
+             Mock(prettyPrint=lambda: '42')),
+            (Mock(prettyPrint=lambda: '1.2.3.4'),
+             Mock(prettyPrint=lambda: '43')),
         ]
 
-        with patch.multiple(self.collector, snmp_get=Mock(), snmp_walk=Mock(), publish_metric=Mock()):
+        with patch.multiple(self.collector,
+                            snmp_get=Mock(),
+                            snmp_walk=Mock(),
+                            publish_metric=Mock()):
             self.collector.snmp_get.return_value = metrics
 
             self.collector.collect_snmp(device, 'localhost', 161, 'public')
@@ -204,11 +216,16 @@ class TestSNMPCollector(CollectorTestCase):
         })
 
         metrics = [
-            (Mock(prettyPrint=lambda: '1.2.3'), Mock(prettyPrint=lambda: '42')),
-            (Mock(prettyPrint=lambda: '1.2.3.4'), Mock(prettyPrint=lambda: '43')),
+            (Mock(prettyPrint=lambda: '1.2.3'),
+             Mock(prettyPrint=lambda: '42')),
+            (Mock(prettyPrint=lambda: '1.2.3.4'),
+             Mock(prettyPrint=lambda: '43')),
         ]
 
-        with patch.multiple(self.collector, snmp_get=Mock(), snmp_walk=Mock(), publish_metric=Mock()):
+        with patch.multiple(self.collector,
+                            snmp_get=Mock(),
+                            snmp_walk=Mock(),
+                            publish_metric=Mock()):
             self.collector.snmp_walk.return_value = metrics
 
             self.collector.collect_snmp(device, 'localhost', 161, 'public')
@@ -271,9 +288,13 @@ class TestSNMPCollector(CollectorTestCase):
 
         collect_snmp = Mock()
 
-        with patch.multiple(self.collector, config=config, collect_snmp=collect_snmp):
+        with patch.multiple(self.collector,
+                            config=config,
+                            collect_snmp=collect_snmp):
             self.collector.collect()
-            collect_snmp.assert_called_with('mydevice', 'localhost', 161, 'public')
+            collect_snmp.assert_called_with(
+                'mydevice', 'localhost', 161, 'public'
+            )
 
     @patch('snmp.cmdgen')
     def test_collect_uses_defaults(self, cmdgen):
@@ -300,6 +321,10 @@ class TestSNMPCollector(CollectorTestCase):
 
         collect_snmp = Mock()
 
-        with patch.multiple(self.collector, config=config, collect_snmp=collect_snmp):
+        with patch.multiple(self.collector,
+                            config=config,
+                            collect_snmp=collect_snmp):
             self.collector.collect()
-            collect_snmp.assert_called_with('mydevice', 'localhost', 161, 'public')
+            collect_snmp.assert_called_with(
+                'mydevice', 'localhost', 161, 'public'
+            )

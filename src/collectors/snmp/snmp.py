@@ -133,16 +133,19 @@ class SNMPCollector(diamond.collector.Collector):
 
     def _publish(self, device, oid, basename, name, value):
         """
-        Publishes a metric as a GAUGE with a given value. Non-integer datatyps are attempted
-        to be converted to a float value, and ignored if they cannot be. This will also replace
-        a root OID with a basename. For example, if given a root oid '1.2', basename 'foo.bar',
-        and name '1.2.3.4.5', the result would be 'foo.bar.3.4.5'.
+        Publishes a metric as a GAUGE with a given value. Non-integer
+        datatyps are attempted to be converted to a float value, and
+        ignored if they cannot be. This will also replace a root OID
+        with a basename. For example, if given a root oid '1.2',
+        basename 'foo.bar', and name '1.2.3.4.5', the result would be
+        'foo.bar.3.4.5'.
 
         :param device: the device name string
         :param oid: Root OID string
         :param basename: The replacement string of the OID root string
         :param name: An instance of pysnmp.proto.rfc1902.ObjectName
-        :param value: Some form of subclass instance of pyasn1.type.base.AbstractSimpleAsn1Item
+        :param value: Some form of subclass instance of
+                      pyasn1.type.base.AbstractSimpleAsn1Item
         """
         # If metric value is 'empty'
         if not value:
@@ -157,14 +160,21 @@ class SNMPCollector(diamond.collector.Collector):
             try:
                 value = float(value.prettyPrint())
             except ValueError:
-                self.log.debug("Metric '{0}' is not an Integer type".format(name))
+                self.log.debug(
+                    "Metric '{0}' is not an Integer type".format(name)
+                )
                 return
 
         # Convert to a simple readable format
         name = name.prettyPrint()
         name = re.sub(r'^{0}'.format(oid), basename, name)
 
-        self.log.debug("'{0}' on device '{1}' - value=[{2}]".format(name, device, value))
+        self.log.debug(
+            "'{0}' on device '{1}' - value=[{2}]".format(
+                name, device, value
+            )
+        )
+
         path = '.'.join([
             'devices',
             device,
@@ -189,7 +199,8 @@ class SNMPCollector(diamond.collector.Collector):
         auth = self.create_auth(community)
         transport = self.create_transport(host, port)
         table = self.snmp_walk(oid, auth, transport)
-        return dict((k.prettyPrint(), v.prettyPrint()) for row in table for k, v in row)
+        return dict((k.prettyPrint(), v.prettyPrint())
+                    for row in table for k, v in row)
 
     def snmp_get(self, oid, auth, transport):
         """
@@ -262,22 +273,24 @@ class SNMPCollector(diamond.collector.Collector):
 
     def collect_snmp(self, device, host, port, community):
         """
-        Collect SNMP interface data from a device. Devices should be configured with
-        an [oids] section that includes name-value pairs for data to gather. For example:
+        Collect SNMP interface data from a device. Devices should
+        be configured with an [oids] section that includes name-value
+        pairs for data to gather. For example:
 
             [oids]
             1.3.6.1.4.1.1111 = my.metric.name
 
-        There are special circumstances where one could obtain large swaths of data using
-        an SNMP walk. In this situation, metrics aren't named, but namespaced by OID value
-        in graphite:
+        There are special circumstances where one could obtain large
+        swaths of data using an SNMP walk. In this situation, metrics
+        aren't named, but namespaced by OID value in graphite:
 
             [oids]
             1.2.6.1.4.1.1111.* = my.metric.name
 
-        Note, this will replace anything preceding .* with the name on the right hand side.
-        Anything obtained from this walk will be namespaced according to the remaining portion
-        of the OID. For example:
+        Note, this will replace anything preceding .* with the name on
+        the right hand side. Anything obtained from this walk will be
+        namespaced according to the remaining portion of the OID.
+        For example:
 
             my.metric.name.1
             my.metric.name.2.1
@@ -305,7 +318,9 @@ class SNMPCollector(diamond.collector.Collector):
         Collect stats via SNMP
         """
         if not cmdgen:
-            self.log.error('pysnmp.entity.rfc3413.oneliner.cmdgen failed to load')
+            self.log.error(
+                'pysnmp.entity.rfc3413.oneliner.cmdgen failed to load'
+            )
             return
 
         # If there are no devices, nothing can be collected
