@@ -170,6 +170,24 @@ class SNMPCollector(diamond.collector.Collector):
                       precision=self._precision(value),
                       metric_type='GAUGE')
 
+    def get(self, oid, host, port, community):
+        """
+        Backwards compatible snmp_get
+        """
+        auth = self.create_auth(community)
+        transport = self.create_transport(host, port)
+        rows = self.snmp_get(oid, auth, transport)
+        return dict((k.prettyPrint(), v.prettyPrint) for k, v in rows)
+
+    def walk(self, oid, host, port, community):
+        """
+        Backwards compatible snmp_walk
+        """
+        auth = self.create_auth(community)
+        transport = self.create_transport(host, port)
+        rows = self.snmp_walk(oid, auth, transport)
+        return dict((k.prettyPrint(), v.prettyPrint) for k, v in rows)
+
     def snmp_get(self, oid, auth, transport):
         """
         Perform SNMP get for a given OID
@@ -239,7 +257,7 @@ class SNMPCollector(diamond.collector.Collector):
         """
         return cmdgen.CommunityData('agent', community)
 
-    def collect_snmp(self, device, auth, transport, oids):
+    def collect_snmp(self, device, host, port, community):
         """
         Collect SNMP interface data from a device. Devices should be configured with
         an [oids] section that includes name-value pairs for data to gather. For example:
@@ -269,6 +287,10 @@ class SNMPCollector(diamond.collector.Collector):
             device,
             self.config['path_suffix']
         ]).rstrip('.')
+
+        auth = self.create_auth(community)
+        transport = self.create_transport(host, port)
+        oids = self.config['devices'][device]['oids']
 
         for oid, basename in oids.items():
             if oid.endswith('.*'):  # Walk
@@ -307,7 +329,7 @@ class SNMPCollector(diamond.collector.Collector):
 
         # Collect SNMP data from each device
         for device, config in self.config['devices'].items():
-            # Create auth and transport for this device
-            auth = self.create_auth(config.get('community', 'public'))
-            transport = self.create_transport(config['host'], int(config.get('port', 161)))
-            self.collect_snmp(device, auth, transport, config.get('oids', {}))
+            host = config['host']
+            port = int(config.get('port', 161))
+            community = config.get('community', 'public')
+            self.collect_snmp(device, host, port, community)

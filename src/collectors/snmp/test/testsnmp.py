@@ -138,13 +138,20 @@ class TestSNMPCollector(CollectorTestCase):
             self.assertEqual(metrics[3], ret_metrics)
 
     @patch('snmp.IntegerType', Mock)
+    @patch('snmp.cmdgen', Mock())
     def test_collect_calls_snmp_get(self):
         device = 'mydevice'
-        auth = Mock()
-        transport = Mock()
         oids = {
             '1.2.3': 'foo.bar',
         }
+
+        self.collector.config.update({
+            'devices': {
+                'mydevice': {
+                    'oids': oids,
+                },
+            },
+        })
 
         metrics = [
             (Mock(prettyPrint=lambda: '1.2.3'), Mock(prettyPrint=lambda: '42')),
@@ -154,7 +161,7 @@ class TestSNMPCollector(CollectorTestCase):
         with patch.multiple(self.collector, snmp_get=Mock(), snmp_walk=Mock(), publish_metric=Mock()):
             self.collector.snmp_get.return_value = metrics
 
-            self.collector.collect_snmp(device, auth, transport, oids)
+            self.collector.collect_snmp(device, 'localhost', 161, 'public')
 
             # Are we calling the correct method
             self.assertFalse(self.collector.snmp_walk.called)
@@ -170,13 +177,20 @@ class TestSNMPCollector(CollectorTestCase):
             self.assertEqual(calls[1][0][0].path, 'devices.mydevice.foo.bar.4')
 
     @patch('snmp.IntegerType', Mock)
+    @patch('snmp.cmdgen', Mock())
     def test_collect_calls_snmp_walk(self):
         device = 'mydevice'
-        auth = Mock()
-        transport = Mock()
         oids = {
             '1.2.3.*': 'foo.bar',
         }
+
+        self.collector.config.update({
+            'devices': {
+                'mydevice': {
+                    'oids': oids,
+                },
+            },
+        })
 
         metrics = [
             (Mock(prettyPrint=lambda: '1.2.3'), Mock(prettyPrint=lambda: '42')),
@@ -186,7 +200,7 @@ class TestSNMPCollector(CollectorTestCase):
         with patch.multiple(self.collector, snmp_get=Mock(), snmp_walk=Mock(), publish_metric=Mock()):
             self.collector.snmp_walk.return_value = metrics
 
-            self.collector.collect_snmp(device, auth, transport, oids)
+            self.collector.collect_snmp(device, 'localhost', 161, 'public')
 
             # Are we calling the correct method
             self.assertTrue(self.collector.snmp_walk.called)
@@ -243,15 +257,9 @@ class TestSNMPCollector(CollectorTestCase):
 
         collect_snmp = Mock()
 
-        with patch.multiple(self.collector,
-                            config=config,
-                            create_auth=auth,
-                            create_transport=transport,
-                            collect_snmp=collect_snmp):
+        with patch.multiple(self.collector, config=config, collect_snmp=collect_snmp):
             self.collector.collect()
-            auth.assert_called_with('public')
-            transport.assert_called_with('localhost', 161)
-            collect_snmp.assert_called_with('mydevice', auth, transport, oids)
+            collect_snmp.assert_called_with('mydevice', 'localhost', 161, 'public')
 
     @patch('snmp.cmdgen')
     def test_collect_uses_defaults(self, cmdgen):
@@ -278,12 +286,6 @@ class TestSNMPCollector(CollectorTestCase):
 
         collect_snmp = Mock()
 
-        with patch.multiple(self.collector,
-                            config=config,
-                            create_auth=auth,
-                            create_transport=transport,
-                            collect_snmp=collect_snmp):
+        with patch.multiple(self.collector, config=config, collect_snmp=collect_snmp):
             self.collector.collect()
-            auth.assert_called_with('public')
-            transport.assert_called_with('localhost', 161)
-            collect_snmp.assert_called_with('mydevice', auth, transport, oids)
+            collect_snmp.assert_called_with('mydevice', 'localhost', 161, 'public')
