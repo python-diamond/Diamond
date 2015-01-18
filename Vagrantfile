@@ -4,7 +4,11 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  
+
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  end
+
   config.vm.define "centos5-build" do |c|
     c.vm.hostname = "centos-build"
     c.vm.box = "opscode_centos-5.10"
