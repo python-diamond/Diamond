@@ -29,6 +29,7 @@ class SolrCollector(diamond.collector.Collector):
         config_help.update({
             'host': "",
             'port': "",
+            'context': "",
             'core': "Which core info should collect (default: all cores)",
             'stats': "Available stats: \n"
             " - core (Core stats)\n"
@@ -49,6 +50,7 @@ class SolrCollector(diamond.collector.Collector):
         config.update({
             'host':     'localhost',
             'port':     8983,
+            'context':  'solr',
             'path':     'solr',
             'core':     None,
             'stats':    ['jvm', 'core', 'response',
@@ -67,8 +69,8 @@ class SolrCollector(diamond.collector.Collector):
             return value
 
     def _get(self, path):
-        url = 'http://%s:%i/%s' % (
-            self.config['host'], int(self.config['port']), path)
+        url = 'http://%s:%i/%s%s' % (
+            self.config['host'], int(self.config['port']), self.config['context'], path)
         try:
             response = urllib2.urlopen(url)
         except Exception, err:
@@ -92,11 +94,19 @@ class SolrCollector(diamond.collector.Collector):
             cores = [self.config['core']]
         else:
             # If no core is specified, provide statistics for all cores
-            result = self._get('/solr/admin/cores?action=STATUS&wt=json')
+            result = self._get('/admin/cores?action=STATUS&wt=json')
             if result:
-                cores = result['status'].keys()
+                # Add protection for transient cores, only check and ping loaded cores.
+                # As of solr 4.10.2 core that is transient=true and not loaded will have isLoaded set to false.
+                # In case this will change, we make sure to test a case that isLoaded is set to true as well.
+                all_cores = result['status']
+                cores = []
+                for core in all_cores:
+                    if 'isLoaded' not in all_cores[core] or 'isLoaded' == 'true':
+                        cores.append(core)
 
         metrics = {}
+
         for core in cores:
             if core:
                 path = "{0}.".format(core)
@@ -104,7 +114,7 @@ class SolrCollector(diamond.collector.Collector):
                 path = ""
 
             ping_url = posixpath.normpath(
-                "/solr/{0}/admin/ping?wt=json".format(core))
+                "/{0}/admin/ping?wt=json".format(core))
 
             if 'response' in self.config['stats']:
                 result = self._get(ping_url)
@@ -119,7 +129,7 @@ class SolrCollector(diamond.collector.Collector):
                 })
 
             stats_url = posixpath.normpath(
-                "/solr/{0}/admin/mbeans?stats=true&wt=json".format(core))
+                "/{0}/admin/mbeans?stats=true&wt=json".format(core))
 
             result = self._get(stats_url)
             if not result:
@@ -138,7 +148,10 @@ class SolrCollector(diamond.collector.Collector):
                 ])
 
             if 'query' in self.config['stats']:
-                standard = stats["QUERYHANDLER"]["standard"]["stats"]
+                if "standard" in stats["QUERYHANDLER"]:
+                    standard = stats["QUERYHANDLER"]["standard"]["stats"]
+                else:
+                    standard = stats["QUERYHANDLER"]["/select"]["stats"]  # solr 4.x deprecated the standard handler name in favor of /select
                 update = stats["QUERYHANDLER"]["/update"]["stats"]
 
                 metrics.update([
@@ -184,11 +197,12 @@ class SolrCollector(diamond.collector.Collector):
                         'cumulative_lookups', 'cumulative_hits',
                         'cumulative_hitratio', 'cumulative_inserts',
                         'cumulative_evictions')
+                    if cache_type in cache
                 ])
 
             if 'jvm' in self.config['stats']:
                 system_url = posixpath.normpath(
-                    "/solr/{0}/admin/system?stats=true&wt=json".format(core))
+                    "/{0}/admin/system?stats=true&wt=json".format(core))
 
                 result = self._get(system_url)
                 if not result:
