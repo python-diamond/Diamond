@@ -83,7 +83,7 @@ def collector_process(collector, metric_queue, log):
             reload_config = True
             pass
 
-        except:
+        except Exception:
             log.exception('Collector failed!')
             break
 
