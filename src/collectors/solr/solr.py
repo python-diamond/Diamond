@@ -70,7 +70,8 @@ class SolrCollector(diamond.collector.Collector):
 
     def _get(self, path):
         url = 'http://%s:%i/%s%s' % (
-            self.config['host'], int(self.config['port']), self.config['context'], path)
+            self.config['host'], int(self.config['port']),
+            self.config['context'], path)
         try:
             response = urllib2.urlopen(url)
         except Exception, err:
@@ -96,13 +97,17 @@ class SolrCollector(diamond.collector.Collector):
             # If no core is specified, provide statistics for all cores
             result = self._get('/admin/cores?action=STATUS&wt=json')
             if result:
-                # Add protection for transient cores, only check and ping loaded cores.
-                # As of solr 4.10.2 core that is transient=true and not loaded will have isLoaded set to false.
-                # In case this will change, we make sure to test a case that isLoaded is set to true as well.
+                # Add protection for transient cores, only check
+                # and ping loaded cores.
+                # As of solr 4.10.2 core that is transient=true and not loaded
+                # will have isLoaded set to false.
+                # In case this will change, we make sure to test a case that
+                # isLoaded is set to true as well.
                 all_cores = result['status']
                 cores = []
                 for core in all_cores:
-                    if 'isLoaded' not in all_cores[core] or 'isLoaded' == 'true':
+                    if 'isLoaded' not in all_cores[core] \
+                            or all_cores[core]['isLoaded'] == 'true':
                         cores.append(core)
 
         metrics = {}
@@ -151,7 +156,9 @@ class SolrCollector(diamond.collector.Collector):
                 if "standard" in stats["QUERYHANDLER"]:
                     standard = stats["QUERYHANDLER"]["standard"]["stats"]
                 else:
-                    standard = stats["QUERYHANDLER"]["/select"]["stats"]  # solr 4.x deprecated the standard handler name in favor of /select
+                    # solr 4.x deprecated the standard handler name
+                    # in favor of /select
+                    standard = stats["QUERYHANDLER"]["/select"]["stats"]
                 update = stats["QUERYHANDLER"]["/update"]["stats"]
 
                 metrics.update([
