@@ -196,25 +196,26 @@ class CPUCollector(diamond.collector.Collector):
             cpu_time = psutil.cpu_times(True)
             cpu_count = len(cpu_time)
             total_time = psutil.cpu_times()
-            for i in range(0, len(cpu_time)):
-                metric_name = 'cpu' + str(i)
-                self.publish(metric_name + '.user',
-                             self.derivative(metric_name + '.user',
-                                             cpu_time[i].user,
-                                             self.MAX_VALUES['user']))
-                if hasattr(cpu_time[i], 'nice'):
-                    self.publish(metric_name + '.nice',
-                                 self.derivative(metric_name + '.nice',
-                                                 cpu_time[i].nice,
-                                                 self.MAX_VALUES['nice']))
-                self.publish(metric_name + '.system',
-                             self.derivative(metric_name + '.system',
-                                             cpu_time[i].system,
-                                             self.MAX_VALUES['system']))
-                self.publish(metric_name + '.idle',
-                             self.derivative(metric_name + '.idle',
-                                             cpu_time[i].idle,
-                                             self.MAX_VALUES['idle']))
+            if str_to_bool(self.config['percore']):
+                for i in range(0, len(cpu_time)):
+                    metric_name = 'cpu' + str(i)
+                    self.publish(metric_name + '.user',
+                                 self.derivative(metric_name + '.user',
+                                                 cpu_time[i].user,
+                                                 self.MAX_VALUES['user']))
+                    if hasattr(cpu_time[i], 'nice'):
+                        self.publish(metric_name + '.nice',
+                                     self.derivative(metric_name + '.nice',
+                                                     cpu_time[i].nice,
+                                                     self.MAX_VALUES['nice']))
+                    self.publish(metric_name + '.system',
+                                 self.derivative(metric_name + '.system',
+                                                 cpu_time[i].system,
+                                                 self.MAX_VALUES['system']))
+                    self.publish(metric_name + '.idle',
+                                 self.derivative(metric_name + '.idle',
+                                                 cpu_time[i].idle,
+                                                 self.MAX_VALUES['idle']))
 
             metric_name = 'total'
             self.publish(metric_name + '.user',
