@@ -60,6 +60,20 @@
         "description": "Add documents with XML",
         "version": "$Revision: 1235304 $",
         "class": "org.apache.solr.handler.XmlUpdateRequestHandler"
+      },
+      "/replication": {
+        "stats": {
+          "avgRequestsPerSecond": 0.16194770586582,
+          "avgTimePerRequest": "8.542961406175772",
+          "totalTime": 17982.93376,
+          "timeouts": 0,
+          "errors": 0,
+          "requests": 2105,
+          "handlerStart": 1396860137768
+        },
+        "class": "org.apache.solr.handler.ReplicationHandler",
+        "description": "ReplicationHandler provides replication of index and configuration files from Master to Slaves",
+        "src": "$URL: https:/​/​svn.apache.org/​repos/​asf/​lucene/​dev/​branches/​lucene_solr_4_7/​solr/​core/​src/​java/​org/​apache/​solr/​"
       }
     },
     "UPDATEHANDLER",

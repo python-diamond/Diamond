@@ -51,6 +51,13 @@ class TestSolrCollector(CollectorTestCase):
             "queryhandler.standard.avgTimePerRequest": 90,
             "queryhandler.standard.avgRequestsPerSecond": 0.00016776958,
 
+            "queryhandler.replication.requests": 2105,
+            "queryhandler.replication.errors": 0,
+            "queryhandler.replication.timeouts": 0,
+            "queryhandler.replication.totalTime": 17982.93376,
+            "queryhandler.replication.avgTimePerRequest": 8.542961406175772,
+            "queryhandler.replication.avgRequestsPerSecond": 0.16194770586582,
+
             "queryhandler.update.requests": 0,
             "queryhandler.update.errors": 0,
             "queryhandler.update.timeouts": 0,
