@@ -68,7 +68,7 @@ class SolrCollector(diamond.collector.Collector):
             return value
 
     def _get(self, path):
-        url = 'http://%s:%i/%s' % (
+        url = 'http://%s:%i%s' % (
             self.config['host'], int(self.config['port']), path)
         try:
             response = urllib2.urlopen(url)
