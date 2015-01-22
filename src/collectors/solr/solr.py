@@ -110,9 +110,8 @@ class SolrCollector(diamond.collector.Collector):
                             or all_cores[core]['isLoaded'] == 'true':
                         cores.append(core)
 
-        metrics = {}
-
         for core in cores:
+            metrics = {}
             if core:
                 path = "{0}.".format(core)
             else:
@@ -222,5 +221,5 @@ class SolrCollector(diamond.collector.Collector):
                     for key in ('free', 'total', 'max', 'used')
                 ])
 
-        for key in metrics:
-            self.publish(key, metrics[key])
+            for key in metrics:
+                self.publish(key, metrics[key])
