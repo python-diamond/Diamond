@@ -73,7 +73,7 @@
         },
         "class": "org.apache.solr.handler.ReplicationHandler",
         "description": "ReplicationHandler provides replication of index and configuration files from Master to Slaves",
-        "src": "$URL: https:/​/​svn.apache.org/​repos/​asf/​lucene/​dev/​branches/​lucene_solr_4_7/​solr/​core/​src/​java/​org/​apache/​solr/​"
+        "src": "$URL: https://svn.apache.org/repos/asf/lucene/dev/branches/lucene_solr_4_7/solr/core/src/java/org/apache/solr/"
       }
     },
     "UPDATEHANDLER",
