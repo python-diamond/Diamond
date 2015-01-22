@@ -31,7 +31,6 @@ class LMSensorsCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(LMSensorsCollector, self).get_default_config_help()
         config_help.update({
-            'fahrenheit': "True/False",
             'send_zero': 'Send sensor data even when there is no value'
         })
         return config_help
@@ -43,7 +42,6 @@ class LMSensorsCollector(diamond.collector.Collector):
         config = super(LMSensorsCollector, self).get_default_config()
         config.update({
             'path': 'sensors',
-            'fahrenheit': 'True',
             'send_zero': 'False'
         })
         return config
