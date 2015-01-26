@@ -1,73 +1,87 @@
 # coding=utf-8
 
 """
+Collect the Mesos stats for the local node.
 
-Collects metrics from a mesos instance. By default,
-the collector is set up to query the mesos-master via
-port 5050. Set the port to 5051 for mesos-slaves.
-
-#### Example Configuration
-
-```
-    host = localhost
-    port = 5050
-```
+#### Dependencies
+ * urlib2
 """
 
-import diamond.collector
-import json
 import urllib2
-from urlparse import urlparse
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
+import diamond.collector
 
 
 class MesosCollector(diamond.collector.Collector):
-
-    METRICS_PATH = "metrics/snapshot"
-
     def get_default_config_help(self):
         config_help = super(MesosCollector,
                             self).get_default_config_help()
         config_help.update({
-            'host': 'Hostname, using http scheme by default. For https pass '
-                    'e.g. "https://localhost"',
-            'port': 'Port (default is 5050; please set to 5051 for mesos-slave)'
+            'host': "",
+            'port': "",
         })
         return config_help
 
     def get_default_config(self):
+        """
+        Returns the default collector settings
+        """
         config = super(MesosCollector, self).get_default_config()
         config.update({
-            'host': 'localhost',
+            'host': '127.0.0.1',
             'port': 5050,
-            'path': 'mesos'
+            'path': 'metrics/snapshot',
         })
         return config
 
-    def __init__(self, *args, **kwargs):
-        super(MesosCollector, self).__init__(*args, **kwargs)
-
-    def collect(self):
-        metrics = self.get_metrics()
-
-        for k, v in metrics.iteritems():
-            key = self.clean_up(k)
-            self.publish(key, v)
-
-    def _get_url(self):
-        parsed = urlparse(self.config['host'])
-        scheme = parsed.scheme or 'http'
-        host = parsed.hostname or self.config['host']
-        return "%s://%s:%s/%s" % (
-            scheme, host, self.config['port'], self.METRICS_PATH)
-
-    def get_metrics(self):
-        url = self._get_url()
+    def _get(self, host, port, path):
+        """
+        Execute a Marathon API call.
+        """
+        url = 'http://%s:%i/%s' % (host, port, path)
+        try:
+            response = urllib2.urlopen(url)
+        except Exception, err:
+            self.log.error("%s: %s", url, err)
+            return False
 
         try:
-            return json.load(urllib2.urlopen(url))
-        except (urllib2.HTTPError, ValueError), err:
-            self.log.error('Unable to read JSON response: %s' % err)
+            doc = json.load(response)
+        except (TypeError, ValueError):
+            self.log.error("Unable to parse response from Mesos as a"
+                           + " json object")
+            return False
+
+        return doc
+
+    def collect(self):
+        if json is None:
+            self.log.error('Unable to import json')
             return {}
 
-    def clean_up(self, text):
-        return text.replace('/', '.')
+        result = self._get(
+            self.config['host'],
+            self.config['port'],
+            self.config['path']
+        )
+        if not result:
+            return
+
+        for key in result:
+            value = result[key]
+            self.publish(key, value, precision=self._precision(value))
+
+    def _precision(self, value):
+        """
+        Return the precision of the number
+        """
+        value = str(value)
+        decimal = value.rfind('.')
+        if decimal == -1:
+            return 0
+        return len(value) - decimal - 1

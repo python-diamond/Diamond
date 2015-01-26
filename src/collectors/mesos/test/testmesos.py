@@ -1,22 +1,17 @@
 #!/usr/bin/python
 # coding=utf-8
-##########################################################################
+
+from mock import Mock
+from mock import patch
 
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import Mock
-from mock import patch
-
 from diamond.collector import Collector
-
 from mesos import MesosCollector
-
-##########################################################################
 
 
 class TestMesosCollector(CollectorTestCase):
-
     def setUp(self):
         config = get_collector_config('MesosCollector', {})
 
@@ -25,55 +20,37 @@ class TestMesosCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(MesosCollector)
 
+    def test_get_default_config(self):
+        self.collector.get_default_config_help() == {
+            'host': '127.0.0.1',
+            'port': 5050,
+            'path': 'metrics/snapshot',
+        }
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        def se(url):
-            if url == 'http://localhost:5050/metrics/snapshot':
-                return self.getFixture('metrics')
+        returns = self.getFixture('master_metrics_snapshot.json')
+        urlopen_mock = patch('urllib2.urlopen', Mock(
+            side_effect=lambda *args: returns))
 
-        patch_urlopen = patch('urllib2.urlopen', Mock(side_effect=se))
-
-        patch_urlopen.start()
+        urlopen_mock.start()
         self.collector.collect()
-        patch_urlopen.stop()
+        urlopen_mock.stop()
 
-        metrics = self.get_metrics()
+        # check how many fixtures were consumed
+        self.assertEqual(urlopen_mock.new.call_count, 1)
+
+        metrics = {
+            'master/elected': (1, 0),
+            "system/mem_free_bytes": (5663678464.1, 0),
+            "registrar/state_store_ms/p9999": (17.8412544, 6)
+        }
+
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-    @patch.object(Collector, 'publish')
-    def test_should_fail_gracefully(self, publish_mock):
-        patch_urlopen = patch('urllib2.urlopen', Mock(
-                              return_value=self.getFixture('metrics_blank')))
 
-        patch_urlopen.start()
-        self.collector.collect()
-        patch_urlopen.stop()
-
-        self.assertPublishedMany(publish_mock, {})
-
-    def test_http(self):
-        self.collector.config['host'] = 'localhost'
-        self.assertEqual('http://localhost:5050/metrics/snapshot',
-                         self.collector._get_url())
-
-    def test_https(self):
-        self.collector.config['host'] = 'https://localhost'
-        self.assertEqual('https://localhost:5050/metrics/snapshot',
-                         self.collector._get_url())
-
-    def get_metrics(self):
-        return {
-            'master.cpus_percent': 0.762166666666667,
-            'master.cpus_total': 120,
-            'master.cpus_used': 91.46,
-            'master.disk_percent': 0.0317975447795468,
-            'master.disk_total': 12541440,
-            'master.disk_used': 398787
-        }
-
-##########################################################################
 if __name__ == "__main__":
     unittest.main()
