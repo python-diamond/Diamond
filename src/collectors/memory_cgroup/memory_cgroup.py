@@ -58,7 +58,8 @@ class MemoryCgroupCollector(diamond.collector.Collector):
         return False
 
     def get_default_config_help(self):
-        config_help = super(MemoryCgroupCollector, self).get_default_config_help()
+        config_help = super(
+            MemoryCgroupCollector,self).get_default_config_help()
         config_help.update(
             memory_path="Root path to collect memory information from.",
             skip="List of regular expressions for paths to skip during the"
