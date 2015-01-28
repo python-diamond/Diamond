@@ -2,11 +2,9 @@
 # coding=utf-8
 ################################################################################
 
-import sys
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from test import run_only
 from mock import Mock
 from mock import patch
 
@@ -14,17 +12,6 @@ from diamond.collector import Collector
 from rabbitmq import RabbitMQCollector
 
 ################################################################################
-
-
-def run_only_if_pyrabbit_is_available(func):
-    pyrabbit = None
-    if sys.version_info > (2, 5):
-        try:
-            import pyrabbit
-        except ImportError:
-            pyrabbit = None
-    pred = lambda: pyrabbit is not None
-    return run_only(func, pred)
 
 
 class TestRabbitMQCollector(CollectorTestCase):
@@ -41,9 +28,26 @@ class TestRabbitMQCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(RabbitMQCollector)
 
-    def http_mock(self, path, method):
+    @patch('rabbitmq.RabbitMQClient')
+    @patch.object(Collector, 'publish')
+    def test_should_publish_nested_keys(self, publish_mock, client_mock):
+        client = Mock()
+        queue_data = [{
+            'more_keys': {'nested_key': 1},
+            'key': 2,
+            'string': 'str',
+            'name': 'test_queue'
+        }, {
+            'name': 'ignored',
+            'more_keys': {'nested_key': 1},
+            'key': 2,
+            'string': 'str',
+        }]
         overview_data = {
             'node': 'rabbit@localhost',
+            'more_keys': {'nested_key': 3},
+            'key': 4,
+            'string': 'string',
         }
         node_health = {
             'fd_used': 1,
@@ -58,51 +62,17 @@ class TestRabbitMQCollector(CollectorTestCase):
             'proc_total': 1,
             'partitions': [],
         }
-        nodes = [1, 2, 3]
-        if path == 'overview':
-            return overview_data
-        elif path == 'nodes/rabbit@localhost':
-            return node_health
-        elif path == 'nodes':
-            return nodes
-
-    @run_only_if_pyrabbit_is_available
-    @patch('pyrabbit.api.Client')
-    @patch('pyrabbit.http.HTTPClient')
-    @patch.object(Collector, 'publish')
-    def test_should_publish_nested_keys(self, publish_mock, httpclient,
-                                        client_mock):
-        client = Mock()
-        queue_data = [{
-            'more_keys': {'nested_key': 1},
-            'key': 2,
-            'string': 'str',
-            'name': 'test_queue'
-            },
-            {
-                'name': 'ignored',
-                'more_keys': {'nested_key': 1},
-                'key': 2,
-                'string': 'str',
-            },
-        ]
-        overview_data = {
-            'more_keys': {'nested_key': 3},
-            'key': 4,
-            'string': 'string',
-        }
         client_mock.return_value = client
-        client.get_queues.return_value = [queue_data]
+        client.get_queues.return_value = queue_data
         client.get_overview.return_value = overview_data
-
-        httpclient = Mock()
-        httpclient.do_call.return_value = self.http_mock
+        client.get_nodes.return_value = [1, 2, 3]
+        client.get_node.return_value = node_health
 
         self.collector.collect()
 
         client.get_queues.assert_called_once_with(None)
-        client.get_overview.assert_called_once_with()
-        httpclient.do_call.assert_called_once_with('nodes', 'GET')
+        client.get_nodes.assert_called_once_with()
+        client.get_node.assert_called_once_with('rabbit@localhost')
 
         metrics = {
             'queues.test_queue.more_keys.nested_key': 1,
