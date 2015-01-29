@@ -74,7 +74,8 @@ class MesosCollector(diamond.collector.Collector):
 
         for key in result:
             value = result[key]
-            self.publish(key, value, precision=self._precision(value))
+            metric = key.replace('/', '.')
+            self.publish(metric, value, precision=self._precision(value))
 
     def _precision(self, value):
         """
