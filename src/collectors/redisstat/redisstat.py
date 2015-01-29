@@ -39,11 +39,16 @@ If not specified the port will be used.
 
 import diamond.collector
 import time
+import os
 
 try:
     import redis
 except ImportError:
     redis = None
+
+
+SOCKET_PREFIX = 'unix:'
+SOCKET_PREFIX_LEN = len(SOCKET_PREFIX)
 
 
 class RedisCollector(diamond.collector.Collector):
@@ -106,29 +111,40 @@ class RedisCollector(diamond.collector.Collector):
                 nickname = None
                 hostport = instance
 
-            if '/' in hostport:
-                parts = hostport.split('/')
-                hostport = parts[0]
-                auth = parts[1]
-            else:
-                auth = None
+            if hostport.startswith(SOCKET_PREFIX):
+                unix_socket, __, port_auth = hostport[
+                    SOCKET_PREFIX_LEN:].partition(':')
+                auth = port_auth.partition('/')[2] or None
 
-            if ':' in hostport:
-                if hostport[0] == ':':
-                    host = self._DEFAULT_HOST
-                    port = int(hostport[1:])
+                if nickname is None:
+                    nickname = os.path.basename(unix_socket)
+                self.instances[nickname] = (self._DEFAULT_HOST, self._DEFAULT_PORT, unix_socket, auth)
+            else:
+                if '/' in hostport:
+                    parts = hostport.split('/')
+                    hostport = parts[0]
+                    auth = parts[1]
                 else:
-                    parts = hostport.split(':')
-                    host = parts[0]
-                    port = int(parts[1])
-            else:
-                host = hostport
-                port = self._DEFAULT_PORT
+                    auth = None
 
-            if nickname is None:
-                nickname = str(port)
+                if ':' in hostport:
+                    if hostport[0] == ':':
+                        host = self._DEFAULT_HOST
+                        port = int(hostport[1:])
+                    else:
+                        parts = hostport.split(':')
+                        host = parts[0]
+                        port = int(parts[1])
+                else:
+                    host = hostport
+                    port = self._DEFAULT_PORT
 
-            self.instances[nickname] = (host, port, auth)
+                if nickname is None:
+                    nickname = str(port)
+
+                self.instances[nickname] = (host, port, None, auth)
+
+        self.log.debug("Configured instances: %s" % self.instances.items())
 
     def get_default_config_help(self):
         config_help = super(RedisCollector, self).get_default_config_help()
@@ -164,7 +180,7 @@ class RedisCollector(diamond.collector.Collector):
         })
         return config
 
-    def _client(self, host, port, auth):
+    def _client(self, host, port, unix_socket, auth):
         """Return a redis client for the configuration.
 
 :param str host: redis host
@@ -176,12 +192,13 @@ class RedisCollector(diamond.collector.Collector):
         timeout = int(self.config['timeout'])
         try:
             cli = redis.Redis(host=host, port=port,
-                              db=db, socket_timeout=timeout, password=auth)
+                              db=db, socket_timeout=timeout, password=auth,
+                              unix_socket_path=unix_socket)
             cli.ping()
             return cli
         except Exception, ex:
             self.log.error("RedisCollector: failed to connect to %s:%i. %s.",
-                           host, port, ex)
+                           unix_socket or host, port, ex)
 
     def _precision(self, value):
         """Return the precision of the number
@@ -206,7 +223,7 @@ class RedisCollector(diamond.collector.Collector):
         """
         return '%s.%s' % (nick, key)
 
-    def _get_info(self, host, port, auth):
+    def _get_info(self, host, port, unix_socket, auth):
         """Return info dict from specified Redis instance
 
 :param str host: redis host
@@ -215,7 +232,7 @@ class RedisCollector(diamond.collector.Collector):
 
         """
 
-        client = self._client(host, port, auth)
+        client = self._client(host, port, unix_socket, auth)
         if client is None:
             return None
 
@@ -223,17 +240,19 @@ class RedisCollector(diamond.collector.Collector):
         del client
         return info
 
-    def collect_instance(self, nick, host, port, auth):
+    def collect_instance(self, nick, host, port, unix_socket, auth):
         """Collect metrics from a single Redis instance
 
 :param str nick: nickname of redis instance
 :param str host: redis host
 :param int port: redis port
+:param str unix_socket: unix socket, if applicable
+:param str auth: authentication password
 
         """
 
         # Connect to redis and get the info
-        info = self._get_info(host, port, auth)
+        info = self._get_info(host, port, unix_socket, auth)
         if info is None:
             return
 
@@ -280,5 +299,5 @@ class RedisCollector(diamond.collector.Collector):
             return {}
 
         for nick in self.instances.keys():
-            (host, port, auth) = self.instances[nick]
-            self.collect_instance(nick, host, int(port), auth)
+            (host, port, unix_socket, auth) = self.instances[nick]
+            self.collect_instance(nick, host, int(port), unix_socket, auth)
