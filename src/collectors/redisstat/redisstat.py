@@ -30,9 +30,29 @@ enabled=True
 instances = nick1@host1:port1, nick2@host2:port2/PASSWORD, ...
 ```
 
+For connecting via unix sockets, provide the path prefixed with ``unix:``
+instead of the host, e.g.
+
+```
+enabled=True
+host=unix:/var/run/redis/redis.sock
+```
+
+or
+
+```
+enabled = True
+instances = nick3@unix:/var/run/redis.sock:/PASSWORD
+```
+
+In that case, for disambiguation there must be a colon ``:`` before the slash
+``/`` followed by the password.
+
 Note: when using the host/port config mode, the port number is used in
 the metric key. When using the multi-instance mode, the nick will be used.
-If not specified the port will be used.
+If not specified the port will be used. In case of unix sockets, the base name
+without file extension (i.e. in the aforementioned examples ``redis``)
+is the default metric key.
 
 
 """
@@ -117,7 +137,7 @@ class RedisCollector(diamond.collector.Collector):
                 auth = port_auth.partition('/')[2] or None
 
                 if nickname is None:
-                    nickname = os.path.basename(unix_socket)
+                    nickname = os.path.splitext(os.path.basename(unix_socket))[0]
                 self.instances[nickname] = (self._DEFAULT_HOST, self._DEFAULT_PORT, unix_socket, auth)
             else:
                 if '/' in hostport:

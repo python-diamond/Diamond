@@ -190,37 +190,54 @@ class TestRedisCollector(CollectorTestCase):
         testcases = {
             'default': {
                 'config': {},  # test default settings
-                'calls': [call('6379', 'localhost', 6379, None)],
+                'calls': [call('6379', 'localhost', 6379, None, None)],
             },
             'host_set': {
                 'config': {'host': 'myhost'},
-                'calls': [call('6379', 'myhost', 6379, None)],
+                'calls': [call('6379', 'myhost', 6379, None, None)],
             },
             'port_set': {
                 'config': {'port': 5005},
-                'calls': [call('5005', 'localhost', 5005, None)],
+                'calls': [call('5005', 'localhost', 5005, None, None)],
             },
             'hostport_set': {
                 'config': {'host': 'megahost', 'port': 5005},
-                'calls': [call('5005', 'megahost', 5005, None)],
+                'calls': [call('5005', 'megahost', 5005, None, None)],
+            },
+            'portauth_set': {
+                'config': {'port': 5005, 'auth': 'pass'},
+                'calls': [call('5005', 'localhost', 5005, None, 'pass')],
+            },
+            'unix_socket_host_set': {
+                'config': {'host': 'unix:/var/run/redis/myhost.sock'},
+                'calls': [call('myhost', 'localhost', 6379, '/var/run/redis/myhost.sock', None)],
             },
             'instance_1_host': {
                 'config': {'instances': ['nick@myhost']},
-                'calls': [call('nick', 'myhost', 6379, None)],
+                'calls': [call('nick', 'myhost', 6379, None, None)],
+            },
+            'unix_socket_instance_1_host': {
+                'config': {'instances': ['nick@unix:/var/run/redis/myhost.sock']},
+                'calls': [call('nick', 'localhost', 6379, '/var/run/redis/myhost.sock', None)],
+            },
+            'unix_socket_instance_1_hostauth': {
+                'config': {'instances': ['nick@unix:/var/run/redis/myhost.sock:/pass']},
+                'calls': [call('nick', 'localhost', 6379, '/var/run/redis/myhost.sock', 'pass')],
             },
             'instance_1_port': {
                 'config': {'instances': ['nick@:9191']},
-                'calls': [call('nick', 'localhost', 9191, None)],
+                'calls': [call('nick', 'localhost', 9191, None, None)],
             },
             'instance_1_hostport': {
                 'config': {'instances': ['nick@host1:8765']},
-                'calls': [call('nick', 'host1', 8765, None)],
+                'calls': [call('nick', 'host1', 8765, None, None)],
             },
             'instance_2': {
-                'config': {'instances': ['foo@hostX', 'bar@:1000']},
+                'config': {'instances': ['foo@hostX', 'bar@:1000/pass', 'unix:/var/run/redis/myhost.sock:1/pass']},
                 'calls': [
-                    call('foo', 'hostX', 6379, None),
-                    call('bar', 'localhost', 1000, None)
+                    call('foo', 'hostX', 6379, None, None),
+                    call('bar', 'localhost', 1000, None, 'pass'),
+                    call('myhost', 'localhost', 6379, '/var/run/redis/myhost.sock', 'pass'),
                 ],
             },
             'old_and_new': {
@@ -235,10 +252,10 @@ class TestRedisCollector(CollectorTestCase):
                     ]
                 },
                 'calls': [
-                    call('foo', 'hostX', 6379, None),
-                    call('bar', 'localhost', 1000, None),
-                    call('6379', 'hostonly', 6379, None),
-                    call('1234', 'localhost', 1234, None),
+                    call('foo', 'hostX', 6379, None, None),
+                    call('bar', 'localhost', 1000, None, None),
+                    call('6379', 'hostonly', 6379, None, None),
+                    call('1234', 'localhost', 1234, None, None),
                 ],
             },
         }
