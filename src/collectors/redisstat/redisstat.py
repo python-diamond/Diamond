@@ -137,8 +137,12 @@ class RedisCollector(diamond.collector.Collector):
                 auth = port_auth.partition('/')[2] or None
 
                 if nickname is None:
-                    nickname = os.path.splitext(os.path.basename(unix_socket))[0]
-                self.instances[nickname] = (self._DEFAULT_HOST, self._DEFAULT_PORT, unix_socket, auth)
+                    nickname = os.path.splitext(
+                        os.path.basename(unix_socket))[0]
+                self.instances[nickname] = (self._DEFAULT_HOST,
+                                            self._DEFAULT_PORT,
+                                            unix_socket,
+                                            auth)
             else:
                 if '/' in hostport:
                     parts = hostport.split('/')

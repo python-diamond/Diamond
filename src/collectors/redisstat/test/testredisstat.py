@@ -210,19 +210,26 @@ class TestRedisCollector(CollectorTestCase):
             },
             'unix_socket_host_set': {
                 'config': {'host': 'unix:/var/run/redis/myhost.sock'},
-                'calls': [call('myhost', 'localhost', 6379, '/var/run/redis/myhost.sock', None)],
+                'calls': [call('myhost', 'localhost', 6379,
+                               '/var/run/redis/myhost.sock', None)],
             },
             'instance_1_host': {
                 'config': {'instances': ['nick@myhost']},
                 'calls': [call('nick', 'myhost', 6379, None, None)],
             },
             'unix_socket_instance_1_host': {
-                'config': {'instances': ['nick@unix:/var/run/redis/myhost.sock']},
-                'calls': [call('nick', 'localhost', 6379, '/var/run/redis/myhost.sock', None)],
+                'config': {'instances': [
+                    'nick@unix:/var/run/redis/myhost.sock'
+                ]},
+                'calls': [call('nick', 'localhost', 6379,
+                               '/var/run/redis/myhost.sock', None)],
             },
             'unix_socket_instance_1_hostauth': {
-                'config': {'instances': ['nick@unix:/var/run/redis/myhost.sock:/pass']},
-                'calls': [call('nick', 'localhost', 6379, '/var/run/redis/myhost.sock', 'pass')],
+                'config': {'instances': [
+                    'nick@unix:/var/run/redis/myhost.sock:/pass'
+                ]},
+                'calls': [call('nick', 'localhost', 6379,
+                               '/var/run/redis/myhost.sock', 'pass')],
             },
             'instance_1_port': {
                 'config': {'instances': ['nick@:9191']},
@@ -233,11 +240,16 @@ class TestRedisCollector(CollectorTestCase):
                 'calls': [call('nick', 'host1', 8765, None, None)],
             },
             'instance_2': {
-                'config': {'instances': ['foo@hostX', 'bar@:1000/pass', 'unix:/var/run/redis/myhost.sock:1/pass']},
+                'config': {'instances': [
+                    'foo@hostX',
+                    'bar@:1000/pass',
+                    'unix:/var/run/redis/myhost.sock:1/pass'
+                ]},
                 'calls': [
                     call('foo', 'hostX', 6379, None, None),
                     call('bar', 'localhost', 1000, None, 'pass'),
-                    call('myhost', 'localhost', 6379, '/var/run/redis/myhost.sock', 'pass'),
+                    call('myhost', 'localhost', 6379,
+                         '/var/run/redis/myhost.sock', 'pass'),
                 ],
             },
             'old_and_new': {
