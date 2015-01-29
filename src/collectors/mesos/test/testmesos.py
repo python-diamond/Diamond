@@ -20,13 +20,6 @@ class TestMesosCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(MesosCollector)
 
-    def test_get_default_config(self):
-        self.collector.get_default_config_help() == {
-            'host': '127.0.0.1',
-            'port': 5050,
-            'path': 'metrics/snapshot',
-        }
-
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         returns = self.getFixture('master_metrics_snapshot.json')

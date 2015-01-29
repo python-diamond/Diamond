@@ -35,15 +35,15 @@ class MesosCollector(diamond.collector.Collector):
         config.update({
             'host': '127.0.0.1',
             'port': 5050,
-            'path': 'metrics/snapshot',
+            'path': 'mesos',
         })
         return config
 
-    def _get(self, host, port, path):
+    def _get(self, host, port):
         """
         Execute a Marathon API call.
         """
-        url = 'http://%s:%s/%s' % (host, port, path)
+        url = 'http://%s:%s/%s' % (host, port, 'metrics/snapshot')
         try:
             response = urllib2.urlopen(url)
         except Exception, err:
@@ -67,7 +67,6 @@ class MesosCollector(diamond.collector.Collector):
         result = self._get(
             self.config['host'],
             self.config['port'],
-            self.config['path']
         )
         if not result:
             return
