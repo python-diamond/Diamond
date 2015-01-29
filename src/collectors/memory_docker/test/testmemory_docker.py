@@ -85,6 +85,7 @@ class TestMemoryDockerCollector(CollectorTestCase):
     @patch.object(Client, 'containers',
                   Mock(return_value=docker_fixture))
     def test_should_work_with_real_data(self, publish_mock):
+        self.collector.filter_existing = False
         self.collector.collect()
 
         self.assertPublishedMany(publish_mock, {
@@ -100,9 +101,26 @@ class TestMemoryDockerCollector(CollectorTestCase):
             'docker.testcontainer.cache': 1,
             'docker.testcontainer.rss': 1,
             'docker.testcontainer.swap': 1,
+            'docker.c3341726a9b4235a35b390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc6.cache': 1,
+            'docker.c3341726a9b4235a35b390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc6.rss': 1,
+            'docker.c3341726a9b4235a35b390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc6.swap': 1,
             'docker.cache': 1,
             'docker.rss': 1,
             'docker.swap': 1,
+        })
+
+    @run_only_if_docker_client_is_available
+    @patch.object(Collector, 'publish')
+    @patch.object(Client, 'containers',
+                  Mock(return_value=docker_fixture))
+    def test_should_ignore_nonexistent_containers(self, publish_mock):
+        self.collector.filter_existing = True
+        self.collector.collect()
+
+        self.assertUnpublishedMany(publish_mock, {
+            'docker.c3341726a9b4235a35b390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc6.cache': 1,
+            'docker.c3341726a9b4235a35b390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc6.rss': 1,
+            'docker.c3341726a9b4235a35b390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc6.swap': 1,
         })
 
 if __name__ == "__main__":
