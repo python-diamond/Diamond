@@ -101,9 +101,12 @@ class TestMemoryDockerCollector(CollectorTestCase):
             'docker.testcontainer.cache': 1,
             'docker.testcontainer.rss': 1,
             'docker.testcontainer.swap': 1,
-            'docker.c3341726a9b4235a35b390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc6.cache': 1,
-            'docker.c3341726a9b4235a35b390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc6.rss': 1,
-            'docker.c3341726a9b4235a35b390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc6.swap': 1,
+            'docker.c3341726a9b4235a35b390c5f6f28e5a'
+            '6869879a48da1d609db8f6bf4275bdc6.cache': 1,
+            'docker.c3341726a9b4235a35b390c5f6f28e5a'
+            '6869879a48da1d609db8f6bf4275bdc6.rss': 1,
+            'docker.c3341726a9b4235a35b390c5f6f28e5a'
+            '6869879a48da1d609db8f6bf4275bdc6.swap': 1,
             'docker.cache': 1,
             'docker.rss': 1,
             'docker.swap': 1,
@@ -118,9 +121,12 @@ class TestMemoryDockerCollector(CollectorTestCase):
         self.collector.collect()
 
         self.assertUnpublishedMany(publish_mock, {
-            'docker.c3341726a9b4235a35b390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc6.cache': 1,
-            'docker.c3341726a9b4235a35b390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc6.rss': 1,
-            'docker.c3341726a9b4235a35b390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc6.swap': 1,
+            'docker.c3341726a9b4235a35b390c5f6f28e5a'
+            '6869879a48da1d609db8f6bf4275bdc6.cache': 1,
+            'docker.c3341726a9b4235a35b390c5f6f28e5a'
+            '6869879a48da1d609db8f6bf4275bdc6.rss': 1,
+            'docker.c3341726a9b4235a35b390c5f6f28e5a'
+            '6869879a48da1d609db8f6bf4275bdc6.swap': 1,
         })
 
 if __name__ == "__main__":
