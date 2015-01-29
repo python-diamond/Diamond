@@ -16,14 +16,26 @@ except ImportError:
 
 import diamond.collector
 
+from diamond.collector import str_to_bool
+
 
 class MesosCollector(diamond.collector.Collector):
+    def __init__(self, config=None, handlers=[], name=None, configfile=None):
+        self.master = True
+        self.known_frameworks = {}
+        super(MesosCollector, self).__init__(config, handlers, name, configfile)
+
+    def process_config(self):
+        super(MesosCollector, self).process_config()
+        self.master = str_to_bool(self.config['master'])
+
     def get_default_config_help(self):
         config_help = super(MesosCollector,
                             self).get_default_config_help()
         config_help.update({
             'host': "",
             'port': "",
+            'master': "True if host is master."
         })
         return config_help
 
@@ -36,14 +48,71 @@ class MesosCollector(diamond.collector.Collector):
             'host': '127.0.0.1',
             'port': 5050,
             'path': 'mesos',
+            'master': True
         })
         return config
 
-    def _get(self, host, port):
+    def collect(self):
+        if json is None:
+            self.log.error('Unable to import json')
+            return
+        self._collect_metrics_snapshot()
+        if not self.master:
+            self._collect_slave_state()
+            self._collect_slave_statistics()
+
+    def _collect_metrics_snapshot(self):
+        result = self._get(
+            self.config['host'],
+            self.config['port'],
+            'metrics/snapshot'
+        )
+        if not result:
+            return
+
+        for key in result:
+            value = result[key]
+            self.publish(key, value, precision=self._precision(value))
+
+    def _collect_slave_state(self):
+        result = self._get(
+            self.config['host'],
+            self.config['port'],
+            'slave(1)/state.json'
+        )
+        if not result:
+            return
+
+        for framework in result['frameworks']:
+            self.known_frameworks[framework['id']] = framework['name']
+
+        for key in ['failed_tasks', 'finished_tasks', 'staged_tasks', 'started_tasks', 'lost_tasks']:
+            value = result[key]
+            self.publish(key, value, precision=self._precision(value))
+
+    def _collect_slave_statistics(self):
+        result = self._get(
+            self.config['host'],
+            self.config['port'],
+            'monitor/statistics.json'
+        )
+        if not result:
+            return
+
+        for executor in result:
+            executor_statistics = executor['statistics']
+            for key in executor_statistics:
+                value = executor_statistics[key]
+                framework = self.known_frameworks[executor['framework_id']].replace('.', '_').replace('/', '_')
+                metric = 'frameworks.%s.executors.%s.%s' % \
+                         (framework, executor['executor_id'], key)
+                self.publish(metric, value, precision=self._precision(value))
+
+    def _get(self, host, port, path):
         """
         Execute a Marathon API call.
         """
-        url = 'http://%s:%s/%s' % (host, port, 'metrics/snapshot')
+        url = 'http://%s:%s/%s' % (host, port, path)
         try:
             response = urllib2.urlopen(url)
         except Exception, err:
@@ -58,23 +127,6 @@ class MesosCollector(diamond.collector.Collector):
             return False
 
         return doc
-
-    def collect(self):
-        if json is None:
-            self.log.error('Unable to import json')
-            return {}
-
-        result = self._get(
-            self.config['host'],
-            self.config['port'],
-        )
-        if not result:
-            return
-
-        for key in result:
-            value = result[key]
-            metric = key.replace('/', '.')
-            self.publish(metric, value, precision=self._precision(value))
 
     def _precision(self, value):
         """

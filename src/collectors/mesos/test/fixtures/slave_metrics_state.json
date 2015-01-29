@@ -1,0 +1,27 @@
+{
+  "attributes": {},
+  "build_user": "root",
+  "completed_frameworks": [],
+  "failed_tasks": 6,
+  "finished_tasks": 1,
+  "frameworks": [
+    {
+      "checkpoint": true,
+      "completed_executors": [],
+      "executors": [],
+      "failover_timeout": 604800,
+      "hostname": "master.mesos.local",
+      "id": "105146",
+      "name": "marathon-0.7.6",
+      "role": "*",
+      "user": "root"
+    }
+  ],
+  "id": "20150128-105146-168470720-5050-6603-S1",
+  "killed_tasks": 1,
+  "lost_tasks": 0,
+  "staged_tasks": 20,
+  "start_time": 1422439733.06814,
+  "started_tasks": 0,
+  "version": "0.21.1"
+}
