@@ -43,7 +43,7 @@ class MesosCollector(diamond.collector.Collector):
         """
         Execute a Marathon API call.
         """
-        url = 'http://%s:%i/%s' % (host, port, path)
+        url = 'http://%s:%s/%s' % (host, port, path)
         try:
             response = urllib2.urlopen(url)
         except Exception, err:
