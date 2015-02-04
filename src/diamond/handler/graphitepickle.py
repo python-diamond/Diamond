@@ -32,10 +32,12 @@ except ImportError:
 
 
 class GraphitePickleHandler(GraphiteHandler):
+
     """
     Overrides the GraphiteHandler class
     Sending data to graphite using batched pickle format
     """
+
     def __init__(self, config=None):
         """
         Create a new instance of the GraphitePickleHandler
@@ -75,6 +77,17 @@ class GraphitePickleHandler(GraphiteHandler):
         m = (metric.path, (metric.timestamp, metric.value))
         # Add the metric to the match
         self.batch.append(m)
+        # Don't let too many metrics back up
+        if len(self.batch) >= (
+                self.batch_size * self.max_backlog_multiplier):
+            trim_offset = (self.batch_size
+                           * self.trim_backlog_multiplier * -1)
+            self.log.warn('GraphitePickleHandler: Trimming backlog. Removing'
+                          + ' oldest %d and keeping newest %d metrics',
+                          len(self.batch) - abs(trim_offset),
+                          abs(trim_offset))
+            self.batch = self.batch[trim_offset:]
+
         # If there are sufficient metrics, then pickle and send
         if len(self.batch) >= self.batch_size:
             # Log
