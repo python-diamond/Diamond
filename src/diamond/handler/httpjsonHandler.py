@@ -45,6 +45,8 @@ class HttpJSONPostHandler(Handler):
             'How many to store before sending to the graphite server',
             'headers':
             'Header variable if needed. Will be added to every request',
+            'max_backlog_multiplier': 'how many batches to store before trimming',  # NOQA
+            'trim_backlog_multiplier': 'Trim down how many batches',
         })
 
         return config
@@ -59,6 +61,8 @@ class HttpJSONPostHandler(Handler):
             'url': 'http://httpbin.org/post',
             'batch': 100,
             'headers': {'User-Agent': 'Diamond HTTP JSON Handler'},
+            'max_backlog_multiplier': 5,
+            'trim_backlog_multiplier': 4,
         })
 
         return config
@@ -89,6 +93,16 @@ class HttpJSONPostHandler(Handler):
         self.post()
 
     def post(self):
+        # Don't let too many metrics back up
+        if len(self.metrics) >= (
+                self.batch_size * self.max_backlog_multiplier):
+            trim_offset = (self.batch_size
+                           * self.trim_backlog_multiplier * -1)
+            self.log.warn('HttpPostHandler: Trimming backlog. Removing'
+                          + ' oldest %d and keeping newest %d metrics',
+                          len(self.metrics) - abs(trim_offset),
+                          abs(trim_offset))
+            self.metrics = self.metrics[trim_offset:]
         req = urllib2.Request(self.url,
                               json.dumps((self.metrics)),
                               headers=self.config['headers'])
