@@ -20,7 +20,14 @@ from Handler import Handler
 import socket
 
 
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle as pickle
+
+
 class GraphiteHandler(Handler):
+
     """
     Implements the abstract Handler class, sending data to graphite
     """
@@ -117,6 +124,28 @@ class GraphiteHandler(Handler):
         """Flush metrics in queue"""
         self._send()
 
+    def _prepare_data(self):
+        """
+        If needed, pickle the metrics into a form that can be understood
+        by the graphite pickle connector.
+        """
+
+        if isinstance(self, GraphiteHandler):
+            pass
+
+        else:
+            self.pickle_metrics = []
+            for m in self.metrics:
+                pickle_metrics.append(
+                    metric.path, (metric.timestamp, metric.value))
+
+            # Pack Message
+            payload = pickle.dumps(pickle_metrics)
+            header = struct.pack("!L", len(payload))
+            message = header + payload
+
+            self.metrics = [message]
+
     def _send_data(self, data):
         """
         Try to send all data in buffer.
@@ -149,7 +178,10 @@ class GraphiteHandler(Handler):
                 if self.socket is None:
                     self.log.debug("GraphiteHandler: Reconnect failed.")
                 else:
+                    self._prepare_data()
+
                     # Send data to socket
+
                     self._send_data(''.join(self.metrics))
                     self.metrics = []
             except Exception:

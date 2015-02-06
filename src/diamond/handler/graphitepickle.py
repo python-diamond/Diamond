@@ -25,11 +25,6 @@ import struct
 
 from graphite import GraphiteHandler
 
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle as pickle
-
 
 class GraphitePickleHandler(GraphiteHandler):
 
@@ -45,7 +40,6 @@ class GraphitePickleHandler(GraphiteHandler):
         # Initialize GraphiteHandler
         GraphiteHandler.__init__(self, config)
         # Initialize Data
-        self.batch = []
         # Initialize Options
         self.batch_size = int(self.config['batch'])
 
@@ -73,46 +67,6 @@ class GraphitePickleHandler(GraphiteHandler):
         return config
 
     def process(self, metric):
-        # Convert metric to pickle format
-        m = (metric.path, (metric.timestamp, metric.value))
-        # Add the metric to the match
-        self.batch.append(m)
-        # Don't let too many metrics back up
-        if len(self.batch) >= (
-                self.batch_size * self.max_backlog_multiplier):
-            trim_offset = (self.batch_size
-                           * self.trim_backlog_multiplier * -1)
-            self.log.warn('GraphitePickleHandler: Trimming backlog. Removing'
-                          + ' oldest %d and keeping newest %d metrics',
-                          len(self.batch) - abs(trim_offset),
-                          abs(trim_offset))
-            self.batch = self.batch[trim_offset:]
-
-        # If there are sufficient metrics, then pickle and send
-        if len(self.batch) >= self.batch_size:
-            # Log
-            self.log.debug("GraphitePickleHandler: Sending batch size: %d",
-                           self.batch_size)
-            # Pickle the batch of metrics
-            self.metrics = [self._pickle_batch()]
-            # Send pickled batch
-            self._send()
-            # Flush the metric pack down the wire
+        self.metrics.append(str(metric))
+        if len(self.metrics) >= self.batch_size:
             self.flush()
-            # Clear Batch
-            self.batch = []
-
-    def _pickle_batch(self):
-        """
-        Pickle the metrics into a form that can be understood
-        by the graphite pickle connector.
-        """
-        # Pickle
-        payload = pickle.dumps(self.batch)
-
-        # Pack Message
-        header = struct.pack("!L", len(payload))
-        message = header + payload
-
-        # Return Message
-        return message
