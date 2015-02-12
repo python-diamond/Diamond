@@ -4,7 +4,7 @@
 SNMPCollector for Fusion IO DRives Metrics. ( Subclass of snmpCollector )
 Based heavily on the NetscalerSNMPCollector.
 
-This collecter currently assumes a single IODrive I or IODrive II and not the
+This collector currently assumes a single IODrive I or IODrive II and not the
 DUO, Octals, or multiple IODrive I or IIs. It needs to be enhanced to account
 for multiple fio devices. ( Donations being accepted )
 
