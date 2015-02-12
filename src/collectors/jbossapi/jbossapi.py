@@ -23,7 +23,7 @@ successfully doing SSL Digest Authentication.
 Plan is to make this code work with newer versions of python and possibly
 Requests. (http://docs.python-requests.org/en/latest/)
 
-If possible, please make future updates backwards compatable to call the local
+If possible, please make future updates backwards compatible to call the local
 curl as an option.
 
 

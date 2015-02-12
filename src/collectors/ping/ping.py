@@ -24,7 +24,7 @@ Test your configuration using the following command:
 
 diamond-setup --print -C PingCollector
 
-You should get a reponse back that indicates 'enabled': True and see entries
+You should get a response back that indicates 'enabled': True and see entries
 for your targets in pairs like:
 
 'target_1': 'example.org'

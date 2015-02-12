@@ -7,7 +7,7 @@ For now only monitors replication load
 
 [Blog](http://bit.ly/PbSkbN) announcement.
 
-[Sniplet](http://bit.ly/SHwYhT) to build example graph.
+[Snippet](http://bit.ly/SHwYhT) to build example graph.
 
 #### Dependencies
 

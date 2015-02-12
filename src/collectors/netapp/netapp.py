@@ -10,7 +10,7 @@ This module has been developed using v5.0 of the SDK.
 As of writing the SDK can be found at
 https://communities.netapp.com/docs/DOC-1152
 
-You'll also need to specify which NetApp instances the collecter should
+You'll also need to specify which NetApp instances the collector should
 get data from.
 
 Example NetAppCollector.conf:
