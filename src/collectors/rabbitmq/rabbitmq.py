@@ -83,12 +83,23 @@ class RabbitMQCollector(diamond.collector.Collector):
             'proc_used',
             'proc_total',
             ]
+
+        queue_total_metrics = [
+            'messages',
+            'messages_ready',
+            'messages_unacknowledged'
+        ]
+
         try:
             httpclient = pyrabbit.http.HTTPClient(self.config['host'],
                                                   self.config['user'],
                                                   self.config['password'])
-            node_name = httpclient.do_call('overview', 'GET')['node']
-            node_data = httpclient.do_call('nodes/{0}'.format(node_name), 'GET')
+            overview = httpclient.do_call('overview', 'GET')
+            for metric in queue_total_metrics:
+                self.publish('health.{0}'.format(metric),
+                             overview['queue_totals'][metric])
+            node_data = httpclient.do_call('nodes/{0}'.format(overview['node']),
+                                           'GET')
             for metric in health_metrics:
                 self.publish('health.{0}'.format(metric), node_data[metric])
             if self.config['cluster']:
