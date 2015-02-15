@@ -84,6 +84,15 @@ class TestMetric(unittest.TestCase):
         message = 'Actual %s, expected %s' % (actual_value, expected_value)
         self.assertEqual(actual_value, expected_value, message)
 
+    def test_parse(self):
+        metric = Metric('test.parse', 0)
+
+        actual_value = str(metric).strip()
+        expected_value = str(Metric.parse(actual_value)).strip()
+
+        message = 'Actual %s, expected %s' % (actual_value, expected_value)
+        self.assertEqual(actual_value, expected_value, message)
+
     def test_issue_723(self):
         metrics = [
             9.97143369909e-05,
