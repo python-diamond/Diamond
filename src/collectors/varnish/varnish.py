@@ -17,15 +17,16 @@ from diamond.collector import str_to_bool
 
 class VarnishCollector(diamond.collector.Collector):
 
-    _RE = re.compile("^(?P<stat>[\w_\(\)\.,]*)\s+(?P<psa>\d*)\s+"
-                     "(?P<psan>[\d.]*)\s(?P<desc>[\w\., /]*)$", re.M)
+    _RE = re.compile("^(?P<stat>[\w_.,]*)\s+(?P<psa>\d*)\s+"
+                     "(?P<psan>[\d.]*)\s+(?P<desc>.*)$", re.M)
     _KEYS_v3 = frozenset([
         'client_conn', 'client_drop', 'client_req', 'cache_hit',
         'cache_hitpass', 'cache_miss', 'backend_conn', 'backend_unhealthy',
         'backend_busy', 'backend_fail', 'backend_reuse', 'backend_toolate',
         'backend_recycle', 'backend_retry', 'fetch_head', 'fetch_length',
         'fetch_chunked', 'fetch_eof', 'fetch_bad', 'fetch_close',
-        'fetch_oldhttp', 'fetch_zero', 'fetch_failed', 'n_sess_mem',
+        'fetch_oldhttp', 'fetch_zero', 'fetch_failed', 'fetch_1xx',
+        'fetch_204', 'fetch_304', 'n_sess_mem',
         'n_sess', 'n_object', 'n_vampireobject', 'n_objectcore',
         'n_objecthead', 'n_waitinglist', 'n_vbc', 'n_wrk', 'n_wrk_create',
         'n_wrk_failed', 'n_wrk_max', 'n_wrk_lqueue', 'n_wrk_queued',
@@ -38,9 +39,10 @@ class VarnishCollector(diamond.collector.Collector):
         'sms_nobj', 'sms_nbytes', 'sms_balloc', 'sms_bfree', 'backend_req',
         'n_vcl', 'n_vcl_avail', 'n_vcl_discard', 'n_ban', 'n_ban_add',
         'n_ban_retire', 'n_ban_obj_test', 'n_ban_re_test', 'n_ban_dups',
-        'hcb_nolock', 'hcb_lock', 'hcb_insert', 'accept_fail',
-        'client_drop_late', 'uptime', 'dir_dns_lookups', 'dir_dns_failed',
-        'dir_dns_hit', 'dir_dns_cache_full'
+        'hcb_nolock', 'hcb_lock', 'hcb_insert', 'esi_errors',
+        'esi_warnings', 'accept_fail', 'client_drop_late', 'uptime',
+        'dir_dns_lookups', 'dir_dns_failed', 'dir_dns_hit',
+        'dir_dns_cache_full', 'n_gzip', 'n_gunzip',
     ])
 
     _KEYS_v4 = frozenset([
@@ -54,8 +56,8 @@ class VarnishCollector(diamond.collector.Collector):
         'MAIN.fetch_length', 'MAIN.fetch_chunked', 'MAIN.fetch_eof',
         'MAIN.fetch_bad', 'MAIN.fetch_close', 'MAIN.fetch_oldhttp',
         'MAIN.fetch_zero', 'MAIN.fetch_1xx', 'MAIN.fetch_204', 'MAIN.fetch_304',
-        'MAIN.fetch_failed', 'MAIN.pools', 'MAIN.threads',
-        'MAIN.threads_limited',
+        'MAIN.fetch_failed', 'MAIN.fetch_no_thread', 'MAIN.pools',
+        'MAIN.threads', 'MAIN.threads_limited',
         'MAIN.threads_created', 'MAIN.threads_destroyed', 'MAIN.threads_failed',
         'MAIN.thread_queue_len', 'MAIN.busy_sleep', 'MAIN.busy_wakeup',
         'MAIN.sess_queued', 'MAIN.sess_dropped', 'MAIN.n_object',
