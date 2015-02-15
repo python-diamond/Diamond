@@ -286,7 +286,11 @@ if __name__ == "__main__":
                                          'diamond'))
 
     getCollectorTests(cPath)
-    getCollectorTests(dPath)
+
+    if not options.collector:
+        # Only pull in diamond tests when a specific collector
+        # hasn't been specified
+        getCollectorTests(dPath)
 
     loader = unittest.TestLoader()
     tests = []
