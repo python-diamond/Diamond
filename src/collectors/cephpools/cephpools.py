@@ -16,17 +16,20 @@ Total as well as per pool.
 
 class CephPoolStatsCollector(diamond.collector.Collector):
 
-    labels = {'rd_kb':'read_kb', 'wr_kb':'written_kb', 'rd':'read_obj', 'wr':'written_obj', 'bytes_used':'used_bytes', 'objects':'objects'}
+
+    labels = {'rd_kb': 'read_kb', 'wr_kb': 'written_kb', 'rd': 'read_obj', 'wr': 'written_obj', 'bytes_used': 'used_bytes', 'objects': 'objects'}
 
     def collect(self):
 
         try:
             """
-            Unfortunately the dumpling "ceph" cli tool does not (yet) support a timeout feature. Starting with Emporer it is possible...
+            Unfortunately the dumpling "ceph" cli tool
+            does not (yet) support a timeout feature.
+            Starting with Emporer it is possible...
             """
             output = subprocess.check_output(['ceph', 'df', 'detail', '--format=json'])
         except subprocess.CalledProcessError, err:
-            self.log.info( 'Could not get stats: %s' % err)
+            self.log.info('Could not get stats: %s' % err)
             self.log.exception('Could not get stats')
             return False
 
@@ -48,8 +51,10 @@ class CephPoolStatsCollector(diamond.collector.Collector):
             metric = 'pool.' + p["name"]
 
             """
-            The "kb" values are discarded, as their content is just a duplicate
-            of the byte-based values. Grafana can handle this for us.
+            The "kb" values are discarded,
+            as their content is just a duplicate
+            of the byte-based values.
+            Grafana can handle this for us.
             """
 
             for s in p["stats"]:
