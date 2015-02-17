@@ -90,6 +90,20 @@ class MesosCollector(diamond.collector.Collector):
             value = result[key]
             self.publish(key, value, precision=self._precision(value))
 
+    def _groupTasksStatistics(self, result):
+        sum_statistics = lambda x, y: {k: x.get(k, 0) + y.get(k, 0) for k in set(x) | set(y)}
+        for item in result:
+            item['executor_id'] = item['executor_id'][:item['executor_id'].rfind('.')]
+        r = {}
+        for i in result:
+            r[i['executor_id']] = r.get(i['executor_id'], {})
+            r[i['executor_id']]['framework_id'] = i['framework_id']
+            r[i['executor_id']]['statistics'] = r[i['executor_id']].get('statistics', {})
+            r[i['executor_id']]['statistics'] = sum_statistics(i['statistics'],
+                                                               r.get(i['executor_id'], {'statistics': {}})[
+                                                                   'statistics'])
+        return r
+
     def _collect_slave_statistics(self):
         result = self._get(
             self.config['host'],
@@ -99,18 +113,19 @@ class MesosCollector(diamond.collector.Collector):
         if not result:
             return
 
-        for executor in result:
+        result = self._groupTasksStatistics(result)
+
+        for (executor_id, executor) in result.iteritems():
             executor_statistics = executor['statistics']
             for key in executor_statistics:
                 value = executor_statistics[key]
                 framework = self.known_frameworks[executor['framework_id']].replace('.', '_').replace('/', '_')
-                metric = 'frameworks.%s.executors.%s.%s' % \
-                         (framework, executor['executor_id'], key)
+                metric = 'frameworks.%s.executors.%s.%s' % (framework, executor_id, key)
                 self.publish(metric, value, precision=self._precision(value))
 
     def _get(self, host, port, path):
         """
-        Execute a Marathon API call.
+        Execute a Mesos API call.
         """
         url = 'http://%s:%s/%s' % (host, port, path)
         try:
