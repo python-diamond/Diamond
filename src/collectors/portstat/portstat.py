@@ -1,35 +1,19 @@
+"""
+The PortStatCollector collects metrics about ports listed in config file.
+
+##### Dependencies
+
+* psutil
+
+"""
+
 from collections import Counter
 
 import psutil
 import diamond.collector
 
 
-def get_port_stats(port):
-    '''
-    Iterate over connections and count states for specified port
-    :param port: port for which stats are collected
-    :return: Counter with port states
-    '''
-    cnts = Counter()
-    for c in psutil.net_connections():
-        c_port = c.laddr[1]
-        if c_port != port:
-            continue
-        status = c.status.lower()
-        cnts[status] += 1
-    return cnts
-
-
 class PortStatCollector(diamond.collector.Collector):
-
-    """
-    The PortStatCollector collects metrics about ports listed in config file.
-
-    ##### Dependencies
-
-    * psutil
-
-    """
 
     def __init__(self, *args, **kwargs):
         super(PortStatCollector, self).__init__(*args, **kwargs)
@@ -53,6 +37,22 @@ class PortStatCollector(diamond.collector.Collector):
             'port': {},
         })
         return config
+
+    @staticmethod
+    def get_port_stats(port):
+        """
+        Iterate over connections and count states for specified port
+        :param port: port for which stats are collected
+        :return: Counter with port states
+        """
+        cnts = Counter()
+        for c in psutil.net_connections():
+            c_port = c.laddr[1]
+            if c_port != port:
+                continue
+            status = c.status.lower()
+            cnts[status] += 1
+        return cnts
 
     def collect(self):
         """
