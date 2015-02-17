@@ -18,11 +18,11 @@ Total as well as per pool.
 class CephPoolStatsCollector(diamond.collector.Collector):
 
     labels = {
-        'rd_kb': 'read_kb', 
-        'wr_kb': 'written_kb', 
-        'rd': 'read_obj', 
-        'wr': 'written_obj', 
-        'bytes_used': 'used_bytes', 
+        'rd_kb': 'read_kb',
+        'wr_kb': 'written_kb',
+        'rd': 'read_obj',
+        'wr': 'written_obj',
+        'bytes_used': 'used_bytes',
         'objects': 'objects'
     }
 
@@ -35,9 +35,9 @@ class CephPoolStatsCollector(diamond.collector.Collector):
             Starting with Emporer it is possible...
             """
             output = subprocess.check_output([
-                'ceph', 
-                'df', 
-                'detail', 
+                'ceph',
+                'df',
+                'detail',
                 '--format=json'
             ])
         except subprocess.CalledProcessError, err:
@@ -72,15 +72,15 @@ class CephPoolStatsCollector(diamond.collector.Collector):
             for s in p["stats"]:
                 if s in ['bytes_used', 'objects']:
                     self.publish(
-                        metric + '.' + self.labels[s], 
-                        p["stats"][s], 
+                        metric + '.' + self.labels[s],
+                        p["stats"][s],
                         metric_type='GAUGE'
                     )
 
                 if s in ['rd_kb', 'wr_kb', 'rd', 'wr']:
                     self.publish(
-                        metric + '.' + self.labels[s], 
-                        p["stats"][s], 
+                        metric + '.' + self.labels[s],
+                        p["stats"][s],
                         metric_type='COUNTER'
                     )
 
