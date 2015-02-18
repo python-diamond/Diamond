@@ -78,7 +78,8 @@ class TestMesosCollector(CollectorTestCase):
             'failed_tasks': 6,
             'finished_tasks': 1,
             'frameworks.marathon-0_7_6.executors.task_name.cpus_limit': (1.7, 1),
-            'frameworks.marathon-0_7_6.executors.com.domain.group_anotherApp.mem_mapped_file_bytes': 45056
+            'frameworks.marathon-0_7_6.executors.task_name.instances_count': (2, 0),
+            'frameworks.marathon-0_7_6.executors.com_domain_group_anotherApp.mem_mapped_file_bytes': 45056
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
