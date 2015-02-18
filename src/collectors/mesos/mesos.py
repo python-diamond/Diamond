@@ -90,18 +90,19 @@ class MesosCollector(diamond.collector.Collector):
             value = result[key]
             self.publish(key, value, precision=self._precision(value))
 
-    def _groupTasksStatistics(self, result):
+    def _group_tasks_statistics(self, result):
         sum_statistics = lambda x, y: {k: x.get(k, 0) + y.get(k, 0) for k in set(x) | set(y)}
         for item in result:
-            item['executor_id'] = item['executor_id'][:item['executor_id'].rfind('.')]
+            executor_id = item['executor_id']
+            item['executor_id'] = executor_id[:executor_id.rfind('.')]
         r = {}
         for i in result:
-            r[i['executor_id']] = r.get(i['executor_id'], {})
-            r[i['executor_id']]['framework_id'] = i['framework_id']
-            r[i['executor_id']]['statistics'] = r[i['executor_id']].get('statistics', {})
-            r[i['executor_id']]['statistics'] = sum_statistics(i['statistics'],
-                                                               r.get(i['executor_id'], {'statistics': {}})[
-                                                                   'statistics'])
+            executor_id = i['executor_id']
+            r[executor_id] = r.get(executor_id, {})
+            r[executor_id]['framework_id'] = i['framework_id']
+            r[executor_id]['statistics'] = r[executor_id].get('statistics', {})
+            grouped_statistics = r.get(executor_id, {'statistics': {}})['statistics']
+            r[executor_id]['statistics'] = sum_statistics(i['statistics'], grouped_statistics)
         return r
 
     def _collect_slave_statistics(self):
@@ -113,13 +114,14 @@ class MesosCollector(diamond.collector.Collector):
         if not result:
             return
 
-        result = self._groupTasksStatistics(result)
+        result = self._group_tasks_statistics(result)
 
-        for (executor_id, executor) in result.iteritems():
+        for executor_id, executor in result.iteritems():
             executor_statistics = executor['statistics']
             for key in executor_statistics:
                 value = executor_statistics[key]
-                framework = self.known_frameworks[executor['framework_id']].replace('.', '_').replace('/', '_')
+                framework_id = self.known_frameworks[executor['framework_id']]
+                framework = self._sanitize_metric_name(framework_id)
                 metric = 'frameworks.%s.executors.%s.%s' % (framework, executor_id, key)
                 self.publish(metric, value, precision=self._precision(value))
 
@@ -152,3 +154,6 @@ class MesosCollector(diamond.collector.Collector):
         if decimal == -1:
             return 0
         return len(value) - decimal - 1
+
+    def _sanitize_metric_name(self, name):
+        return name.replace('.', '_').replace('/', '_')
