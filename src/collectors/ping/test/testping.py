@@ -103,6 +103,24 @@ class TestPingCollector(CollectorTestCase):
 
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
+    def test_should_work_with_real_data_fasthost_gentoo(self, publish_mock):
+        patch_communicate = patch(
+            'subprocess.Popen.communicate',
+            Mock(return_value=(
+                self.getFixture(
+                    'fasthost_gentoo').getvalue(),
+                '')))
+
+        patch_communicate.start()
+        self.collector.collect()
+        patch_communicate.stop()
+
+        self.assertPublishedMany(publish_mock, {
+            'localhost': 0.162
+        })
+
+    @patch('os.access', Mock(return_value=True))
+    @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_timeout_gentoo(self, publish_mock):
         patch_communicate = patch(
             'subprocess.Popen.communicate',
@@ -168,6 +186,23 @@ class TestPingCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {
             'localhost': 42
+        })
+
+    @patch('os.access', Mock(return_value=True))
+    @patch.object(Collector, 'publish')
+    def test_should_work_with_real_data_fasthost_osx(self, publish_mock):
+        patch_communicate = patch(
+            'subprocess.Popen.communicate',
+            Mock(return_value=(
+                self.getFixture('fasthost_osx').getvalue(),
+                '')))
+
+        patch_communicate.start()
+        self.collector.collect()
+        patch_communicate.stop()
+
+        self.assertPublishedMany(publish_mock, {
+            'localhost': 0.162
         })
 
     @patch('os.access', Mock(return_value=True))
