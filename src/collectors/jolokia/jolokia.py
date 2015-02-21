@@ -177,15 +177,15 @@ class JolokiaCollector(diamond.collector.Collector):
             instance_prefix = ""
         for k, v in obj.iteritems():
             if type(v) in [int, float, long]:
-                key = "%s.%s%s" % (prefix, instance_prefix, k)
+                key = "%s%s.%s" % (instance_prefix, prefix, k)
                 key = self.clean_up(key)
                 self.publish(key, v)
             elif type(v) in [dict]:
                 self.collect_bean(
-                    "%s.%s%s" % (prefix, instance_prefix, k), v, "")
+                    "%s%s.%s" % (instance_prefix, prefix, k), v, "")
             elif type(v) in [list]:
                 self.interpret_bean_with_list(
-                    "%s.%s%s" % (prefix, instance_prefix, k), v)
+                    "%s%s.%s" % (instance_prefix, prefix, k), v)
 
     # There's no unambiguous way to interpret list values, so
     # this hook lets subclasses handle them.
