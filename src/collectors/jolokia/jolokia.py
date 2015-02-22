@@ -68,8 +68,8 @@ class JolokiaCollector(diamond.collector.Collector):
             "stats. If not provided, all stats will be collected",
             'host': 'Hostname',
             'port': 'Port',
-            'instances': "Jolokia addresses, comma separated, syntax:"
-            + " nick1@host:port, nick2@host:port"
+            'instances': ("Jolokia addresses, comma separated, syntax:"
+                          " nick1@host:port, nick2@host:port")
 
         })
         return config_help
