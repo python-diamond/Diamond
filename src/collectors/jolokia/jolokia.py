@@ -181,6 +181,8 @@ class JolokiaCollector(diamond.collector.Collector):
                 key = self.clean_up(key)
                 self.publish(key, v)
             elif type(v) in [dict]:
+                # only use instance_prefix once, set to "" in recursive
+                # calls.
                 self.collect_bean(
                     "%s%s.%s" % (instance_prefix, prefix, k), v, "")
             elif type(v) in [list]:
