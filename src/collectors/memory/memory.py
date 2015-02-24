@@ -113,6 +113,10 @@ class MemoryCollector(diamond.collector.Collector):
 
                 value = diamond.convertor.binary.convert(
                     value=phymem_usage.available, oldUnit=units, newUnit=unit)
+                self.publish('MemAvailable', value, metric_type='GAUGE')
+
+                value = diamond.convertor.binary.convert(
+                    value=phymem_usage.free, oldUnit=units, newUnit=unit)
                 self.publish('MemFree', value, metric_type='GAUGE')
 
                 value = diamond.convertor.binary.convert(
