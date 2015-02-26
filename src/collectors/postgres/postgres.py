@@ -260,7 +260,7 @@ class DatabaseStats(QueryStats):
         JOIN pg_stat_database
         ON pg_database.datname = pg_stat_database.datname
         WHERE pg_stat_database.datname
-        NOT IN ('template0','template1','postgres')
+        NOT IN ('template0','template1','postgres', 'rdsadmin')
     """
     query = post_92_query.replace(
         'pg_stat_database.temp_files as temp_files,',
