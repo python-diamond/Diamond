@@ -160,7 +160,11 @@ class PostgresqlCollector(diamond.collector.Collector):
         else:
             conn_args['database'] = 'postgres'
 
-        conn = psycopg2.connect(**conn_args)
+        try:
+            conn = psycopg2.connect(**conn_args)
+        except Exception, e:
+            self.log.error(e)
+            raise e
 
         # Avoid using transactions, set isolation level to autocommit
         conn.set_isolation_level(0)
