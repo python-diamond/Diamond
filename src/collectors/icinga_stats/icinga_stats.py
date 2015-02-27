@@ -379,7 +379,7 @@ class IcingaStatsCollector(diamond.collector.Collector):
             alias = aliases[key]
             try:
                 sane[alias] = int(entity[key])
-            except Exception as exception:
+            except Exception:
                 sane[alias] = None
 
         if sane["active_checks"] not in [0, 1]:
@@ -396,7 +396,7 @@ class IcingaStatsCollector(diamond.collector.Collector):
         """ Given value is expected to be a binary - 0/1 """
         try:
             conv = int(value)
-        except ValueError as exception:
+        except ValueError:
             return 0
 
         if conv not in [0, 1]:
@@ -408,7 +408,7 @@ class IcingaStatsCollector(diamond.collector.Collector):
         """ Translate scheduled downtime """
         try:
             conv = int(value)
-        except ValueError as exception:
+        except ValueError:
             return 0
 
         if conv < 1:

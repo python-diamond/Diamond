@@ -52,9 +52,9 @@ class InterruptCollector(diamond.collector.Collector):
         if not os.access(self.PROC, os.R_OK):
             return False
 
-        #Open PROC file
+        # Open PROC file
         file = open(self.PROC, 'r')
-        #Get data
+        # Get data
         cpuCount = None
         for line in file:
             if not cpuCount:
@@ -99,5 +99,5 @@ class InterruptCollector(diamond.collector.Collector):
                     metric_name_node = metric_name + 'total'
                     self.publish(metric_name_node, total)
 
-        #Close file
+        # Close file
         file.close()

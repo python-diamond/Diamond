@@ -168,7 +168,7 @@ class TestGraphiteHandler(unittest.TestCase):
             handler.process(m)
         patch_send.stop()
 
-        #self.assertEqual(connect_mock.call_count, len(metrics))
+        # self.assertEqual(connect_mock.call_count, len(metrics))
         self.assertEqual(send_mock.call_count, 0)
         self.assertEqual(handler.metrics, expected_data)
 

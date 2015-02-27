@@ -80,7 +80,7 @@ class MemoryLxcCollector(Collector):
         try:
             with open(filename, "r") as fhandle:
                 stats = float(fhandle.readline().rstrip("\n"))
-        except Exception as exception:
+        except Exception:
             stats = None
 
         return stats

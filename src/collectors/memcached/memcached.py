@@ -68,7 +68,7 @@ class MemcachedCollector(diamond.collector.Collector):
             # 'telnet host port' and type stats and hit enter to see the list of
             # possibilities.
             # Leave unset to publish all
-            #'publish': ''
+            # 'publish': ''
 
             # Connection settings
             'hosts': ['localhost:11211']

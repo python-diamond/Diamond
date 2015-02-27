@@ -76,7 +76,7 @@ as cummulative nanoseconds since VM creation if this is True."""
 
         for target in tree.findall("devices/%s/target" % type):
             dev = target.get("dev")
-            if not dev in devices:
+            if dev not in devices:
                 devices.append(dev)
 
         return devices

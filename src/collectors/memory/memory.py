@@ -61,7 +61,7 @@ class MemoryCollector(diamond.collector.Collector):
             'path':     'memory',
             # Collect all the nodes or just a few standard ones?
             # Uncomment to enable
-            #'detailed': 'True'
+            # 'detailed': 'True'
         })
         return config
 

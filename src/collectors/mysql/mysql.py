@@ -272,7 +272,7 @@ class MySQLCollector(diamond.collector.Collector):
             # Which rows of 'SHOW GLOBAL STATUS' you would like to publish.
             # http://dev.mysql.com/doc/refman/5.1/en/show-status.html
             # Leave unset to publish all
-            #'publish': '',
+            # 'publish': '',
 
             'slave':    False,
             'master':   False,
