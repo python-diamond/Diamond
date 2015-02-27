@@ -58,7 +58,7 @@ class LMSensorsCollector(diamond.collector.Collector):
                     label = feature.label.replace(' ', '-')
                     try:
                         value = feature.get_value()
-                    except:
+                    except Exception:
                         if self.config['send_zero']:
                             value = 0
 
