@@ -128,7 +128,7 @@ class PostgresqlCollector(diamond.collector.Collector):
         query = """
             SELECT datname FROM pg_database
             WHERE datallowconn AND NOT datistemplate
-            AND NOT datname='postgres' ORDER BY 1
+            AND NOT datname='postgres' AND NOT datname='rdsadmin' ORDER BY 1
         """
         conn = self._connect(self.config['dbname'])
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
