@@ -82,6 +82,8 @@ class RabbitMQCollector(diamond.collector.Collector):
             'host': 'Hostname and port to collect from',
             'user': 'Username',
             'password': 'Password',
+            'replace_dot':
+            'A value to replace dot in queue names and vhosts names by',
             'queues': 'Queues to publish. Leave empty to publish all.',
             'vhosts':
             'A list of vhosts and queues for which we want to collect',
@@ -99,12 +101,13 @@ class RabbitMQCollector(diamond.collector.Collector):
         """
         config = super(RabbitMQCollector, self).get_default_config()
         config.update({
-            'path':     'rabbitmq',
-            'host':     'localhost:55672',
-            'user':     'guest',
+            'path': 'rabbitmq',
+            'host': 'localhost:55672',
+            'user': 'guest',
             'password': 'guest',
-            'queues_ignored':   [],
-            'cluster':  False,
+            'replace_dot': False,
+            'queues_ignored': [],
+            'cluster': False,
         })
         return config
 
@@ -175,9 +178,14 @@ class RabbitMQCollector(diamond.collector.Collector):
 
                     del self.config['vhosts']["*"]
 
-            # Iterate all vhosts in our vhosts configuration.  For legacy this
+            # Iterate all vhosts in our vhosts configuration. For legacy this
             # is "*" to force a single run.
             for vhost in self.config['vhosts']:
+                vhost_name = vhost
+                if self.config['replace_dot']:
+                    vhost_name = vhost_name.replace(
+                        '.', self.config['replace_dot'])
+
                 queues = self.config['vhosts'][vhost]
 
                 # Allow the use of a asterix to glob the queues, but replace
@@ -202,9 +210,15 @@ class RabbitMQCollector(diamond.collector.Collector):
                     for key in queue:
                         prefix = "queues"
                         if not legacy:
-                            prefix = "vhosts.%s.%s" % (vhost, "queues")
+                            prefix = "vhosts.%s.%s" % (vhost_name, "queues")
 
-                        name = '{0}.{1}'.format(prefix, queue['name'])
+                        queue_name = queue['name']
+                        if self.config['replace_dot']:
+                            queue_name = queue_name.replace(
+                                '.', self.config['replace_dot'])
+
+                        name = '{0}.{1}'.format(prefix, queue_name)
+
                         self._publish_metrics(name, [], key, queue)
 
             overview = client.get_overview()
