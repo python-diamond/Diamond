@@ -105,7 +105,7 @@ class TestKafkaCollector(CollectorTestCase):
     def test_build_key_prefix(self):
         objectnames = [
             'kafka:type=kafka.logs.mytopic-1',
-            'kafka.network:type=RequestMetrics,name=RequestsPerSec,request=Produce'
+            'kafka:type=RequestMetrics,name=RequestsPerSec,request=Produce'
         ]
 
         expected = [
