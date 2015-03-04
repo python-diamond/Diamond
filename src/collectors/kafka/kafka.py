@@ -95,6 +95,20 @@ class KafkaCollector(diamond.collector.Collector):
 
         return found_beans
 
+    def build_key_prefix(self, objectname):
+        key_prefix = None
+
+        for property in objectname.split(','):
+            value = property.split('=')[1]
+            value.replace('"', '')
+
+            if key_prefix is None:
+                key_prefix = value
+            else:
+                key_prefix = key_prefix + '.' + value
+
+        return key_prefix
+
     def query_mbean(self, objectname, key_prefix=None):
         query_args = {
             'objectname': objectname,
@@ -108,24 +122,7 @@ class KafkaCollector(diamond.collector.Collector):
             return
 
         if key_prefix is None:
-            # Could be 1 or 2 = in the string
-            # java.lang:type=Threading
-            # "kafka.controller":type="ControllerStats",
-            # name="LeaderElectionRateAndTimeMs"
-            split_num = objectname.count('=')
-            for i in range(split_num):
-                if i == 0:
-                    key_prefix = objectname.split('=')[1]
-                    if '"' in key_prefix:
-                        key_prefix = key_prefix.split('"')[1]
-                    if "," in key_prefix:
-                        key_prefix = key_prefix.split(',')[0]
-                elif i > 0:
-                    key = objectname.split('=')[2]
-                    if key:
-                        if '"' in key:
-                            key = key.split('"')[1]
-                        key_prefix = key_prefix + '.' + key
+            key_prefix = self.build_key_prefix(objectname)
 
         metrics = {}
 
