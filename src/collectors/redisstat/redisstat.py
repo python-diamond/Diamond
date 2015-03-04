@@ -101,7 +101,8 @@ class RedisCollector(diamond.collector.Collector):
              'process.uptime': 'uptime_in_seconds',
              'pubsub.channels': 'pubsub_channels',
              'pubsub.patterns': 'pubsub_patterns',
-             'slaves.connected': 'connected_slaves'}
+             'slaves.connected': 'connected_slaves',
+             'slaves.last_io': 'master_last_io_seconds_ago'}
     _RENAMED_KEYS = {'last_save.changes_since': 'rdb_changes_since_last_save',
                      'last_save.time': 'rdb_last_save_time'}
 
