@@ -16,6 +16,7 @@ try:
 except ImportError:
     import json
 
+from os import path
 ###############################################################################
 
 
@@ -55,7 +56,8 @@ class TestTwemproxyCollector(CollectorTestCase):
         self.collector.collect()
         patch_raw_stats2.stop()
 
-        with open('metrics.json', 'rb') as fp:
+        with open(path.join(path.dirname(__file__),
+                  'metrics.json'), 'rb') as fp:
             metrics = json.load(fp)
 
         self.setDocExample(collector=self.collector.__class__.__name__,
