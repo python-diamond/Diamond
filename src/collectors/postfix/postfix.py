@@ -8,7 +8,7 @@ get realtime cumulative stats.
 #### Dependencies
 
  * socket
- * json (or simeplejson)
+ * json (or simplejson)
  * [postfix-stats](https://github.com/disqus/postfix-stats)
 
 """
@@ -38,7 +38,7 @@ class PostfixCollector(diamond.collector.Collector):
         config_help = super(PostfixCollector,
                             self).get_default_config_help()
         config_help.update({
-            'host':             'Hostname to coonect to',
+            'host':             'Hostname to connect to',
             'port':             'Port to connect to',
             'include_clients':  'Include client connection stats',
         })

@@ -21,7 +21,8 @@ import getpass
 class IPMISensorCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
-        config_help = super(IPMISensorCollector, self).get_default_config_help()
+        config_help = super(IPMISensorCollector,
+                            self).get_default_config_help()
         config_help.update({
             'bin': 'Path to the ipmitool binary',
             'use_sudo': 'Use sudo?',
@@ -121,7 +122,9 @@ class IPMISensorCollector(diamond.collector.Collector):
                     metrics.append((metric_name + ".Upper.NonRecoverable",
                                     self.parse_value(data[9])))
 
-                [self.publish(name, value) for (name, value) in metrics]
+                [self.publish(name, value)
+                 for (name, value) in metrics
+                 if value is not None]
 
             except ValueError:
                 continue

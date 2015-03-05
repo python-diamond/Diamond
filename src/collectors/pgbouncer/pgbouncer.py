@@ -27,7 +27,6 @@ password = foobar
 """
 
 from collections import defaultdict
-from itertools import izip
 
 import diamond.collector
 

@@ -1,7 +1,7 @@
 # coding=utf-8
 
 """
-Uses /proc to collect available entropty
+Uses /proc to collect available entropy
 
 #### Dependencies
 

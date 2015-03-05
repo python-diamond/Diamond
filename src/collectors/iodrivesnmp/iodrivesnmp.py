@@ -4,7 +4,7 @@
 SNMPCollector for Fusion IO DRives Metrics. ( Subclass of snmpCollector )
 Based heavily on the NetscalerSNMPCollector.
 
-This collecter currently assumes a single IODrive I or IODrive II and not the
+This collector currently assumes a single IODrive I or IODrive II and not the
 DUO, Octals, or multiple IODrive I or IIs. It needs to be enhanced to account
 for multiple fio devices. ( Donations being accepted )
 
@@ -102,9 +102,6 @@ class IODriveSNMPCollector(parent_SNMPCollector):
         changed to be what IODRive device it being checked.
         i.e. fioa, fiob.
         """
-
-        # Log
-        #self.log.info("Collecting Fusion IO Drive statistics from: %s", device)
 
         # Set timestamp
         timestamp = time.time()

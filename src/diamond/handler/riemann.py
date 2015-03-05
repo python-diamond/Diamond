@@ -35,7 +35,7 @@ class RiemannHandler(Handler):
             logging.error("Failed to load bernhard module")
             return
 
-        # Initialize options
+        # Initialize options
         self.host = self.config['host']
         self.port = int(self.config['port'])
         self.transport = self.config['transport']

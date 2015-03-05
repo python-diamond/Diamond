@@ -41,8 +41,8 @@ class OneWireCollector(diamond.collector.Collector):
         config.update({
             'path': 'owfs',
             'owfs': '/mnt/1wire',
-            #'scan': {'temperature': 't'},
-            #'id:24.BB000000': {'file_with_value': 'alias'},
+            # 'scan': {'temperature': 't'},
+            # 'id:24.BB000000': {'file_with_value': 'alias'},
         })
         return config
 

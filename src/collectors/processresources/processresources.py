@@ -175,7 +175,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                     pi = process_info(process, self.default_info_keys)
                     if cfg['count_workers']:
                         pi.update({'workers_count': 1})
-                    uptime = time.time() - getattr(process, 'create_time')
+                    uptime = time.time() - get_value(process, 'create_time')
                     pi.update({'uptime': uptime})
                     self.save_process_info(pg_name, pi)
         except psutil.NoSuchProcess, e:

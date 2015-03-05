@@ -20,9 +20,9 @@ Uses lsof to collect data on number of open files per user per type
     NOT collect data for any user with a uid HIGHER than the specified maximum,
     unless the user is told to be included by user_include (default = None)
 
-*** Priority Explaination ***
- This is an explainatino of the priority in which users, groups, and uid, are
-    evaluated. EXLCUDE ALWAYS OVERRULES INCLUDE within the same level (ie within
+*** Priority Explanation ***
+ This is an explanation of the priority in which users, groups, and uid, are
+    evaluated. EXCLUDE ALWAYS OVERRULES INCLUDE within the same level (ie within
     users or group)
   * user_include/exclude (top level/priority)
     * group_include/exclude (second level: if user not in user_include/exclude,
@@ -34,7 +34,7 @@ Uses lsof to collect data on number of open files per user per type
     , etc). If left empty, will collect for all file types. (Note: it suggested
     to not leave type_include empty, as it would add significant load to your
     graphite box(es) (default = None)
- * type_exclude - This is a list of tile types to exlude from being collected
+ * type_exclude - This is a list of tile types to exclude from being collected
     for. If left empty, no file types will be excluded. (default = None)
 
  * collect_user_data - This enables or disables the collection of user specific

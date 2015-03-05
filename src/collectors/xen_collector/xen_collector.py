@@ -42,24 +42,24 @@ class XENCollector(Collector):
         if libvirt is None:
             self.log.error('Unable to import either libvirt')
             return {}
-        #Open a restricted (non-root) connection to the hypervisor
+        # Open a restricted (non-root) connection to the hypervisor
         conn = libvirt.openReadOnly(None)
-        #Get hardware info
+        # Get hardware info
         conninfo = conn.getInfo()
-        #Initialize variables
+        # Initialize variables
         memallocated = 0
         coresallocated = 0
         totalcores = 0
         results = {}
         domIds = conn.listDomainsID()
         if 0 in domIds:
-        #Total cores
+            # Total cores
             domU = conn.lookupByID(0)
             totalcores = domU.info()[3]
-        #Free Space
+        # Free Space
         s = os.statvfs('/')
         freeSpace = (s.f_bavail * s.f_frsize) / 1024
-        #Calculate allocated memory and cores
+        # Calculate allocated memory and cores
         for i in domIds:
             # Ignore 0
             if i == 0:
