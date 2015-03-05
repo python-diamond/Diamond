@@ -54,7 +54,7 @@ class ZookeeperCollector(diamond.collector.Collector):
             # 'telnet host port' and type mntr and hit enter to see the list of
             # possibilities.
             # Leave unset to publish all
-            #'publish': ''
+            # 'publish': ''
 
             # Connection settings
             'hosts': ['localhost:2181']

@@ -71,7 +71,7 @@ class OssecCollector(diamond.collector.Collector):
                 continue
             fragments = line.split(',')
             state = fragments[-1].lstrip()
-            if not state in states:
+            if state not in states:
                 states[state] = 1
             else:
                 states[state] += 1

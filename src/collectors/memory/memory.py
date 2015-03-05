@@ -61,7 +61,7 @@ class MemoryCollector(diamond.collector.Collector):
             'path':     'memory',
             # Collect all the nodes or just a few standard ones?
             # Uncomment to enable
-            #'detailed': 'True'
+            # 'detailed': 'True'
         })
         return config
 
@@ -110,6 +110,10 @@ class MemoryCollector(diamond.collector.Collector):
                 value = diamond.convertor.binary.convert(
                     value=phymem_usage.total, oldUnit=units, newUnit=unit)
                 self.publish('MemTotal', value, metric_type='GAUGE')
+
+                value = diamond.convertor.binary.convert(
+                    value=phymem_usage.available, oldUnit=units, newUnit=unit)
+                self.publish('MemAvailable', value, metric_type='GAUGE')
 
                 value = diamond.convertor.binary.convert(
                     value=phymem_usage.free, oldUnit=units, newUnit=unit)
