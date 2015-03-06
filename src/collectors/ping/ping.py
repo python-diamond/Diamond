@@ -100,8 +100,9 @@ class PingCollector(diamond.collector.ProcessCollector):
             metric = host.replace('.', '_')
 
             try:
-                regstr = ('(?P<min>\d+.\d+)\/(?P<avg>\d+.\d+)\/',
+                regstr = ('(?P<min>\d+.\d+)\/(?P<avg>\d+.\d+)\/'
                           '(?P<max>\d+.\d+)\/(?P<mdev>\d+.\d+)')
+
                 regex = re.compile(regstr)
                 vals = regex.search(ping).groupdict()
             except:
