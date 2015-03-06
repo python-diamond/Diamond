@@ -14,12 +14,14 @@ from ping import PingCollector
 ################################################################################
 
 
-class TestPingCollector(CollectorTestCase):
+class TestPingExtendedCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('PingCollector', {
             'interval': 10,
             'target_a': 'localhost',
-            'bin': 'true'
+            'bin': 'true',
+            'extended': 'true',
+            'count': '10'
         })
 
         self.collector = PingCollector(config, None)
@@ -41,7 +43,10 @@ class TestPingCollector(CollectorTestCase):
         patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {
-            'localhost': 0
+            'localhost.min': 0,
+            'localhost.max': 0,
+            'localhost.avg': 0,
+            'localhost.mdev': 0
         })
 
     @patch('os.access', Mock(return_value=True))
@@ -58,7 +63,10 @@ class TestPingCollector(CollectorTestCase):
         patch_communicate.stop()
 
         metrics = {
-            'localhost': 11
+            'localhost.min': 10.607,
+            'localhost.max': 10.607,
+            'localhost.avg': 10.607,
+            'localhost.mdev': 0.000
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
@@ -80,7 +88,10 @@ class TestPingCollector(CollectorTestCase):
         patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {
-            'localhost': 0
+            'localhost.min': 0.063,
+            'localhost.max': 0.063,
+            'localhost.avg': 0.063,
+            'localhost.mdev': 0.000
         })
 
     @patch('os.access', Mock(return_value=True))
@@ -98,7 +109,10 @@ class TestPingCollector(CollectorTestCase):
         patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {
-            'localhost': 10
+            'localhost.min': 10.244,
+            'localhost.max': 10.244,
+            'localhost.avg': 10.244,
+            'localhost.mdev': 0.000
         })
 
     @patch('os.access', Mock(return_value=True))
@@ -116,7 +130,10 @@ class TestPingCollector(CollectorTestCase):
         patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {
-            'localhost': 0.162
+            'localhost.min': 0.162,
+            'localhost.max': 0.162,
+            'localhost.avg': 0.162,
+            'localhost.mdev': 0.000
         })
 
     @patch('os.access', Mock(return_value=True))
@@ -134,7 +151,10 @@ class TestPingCollector(CollectorTestCase):
         patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {
-            'localhost': 0
+            'localhost.min': 0,
+            'localhost.max': 0,
+            'localhost.avg': 0,
+            'localhost.mdev': 0
         })
 
     @patch('os.access', Mock(return_value=True))
@@ -151,7 +171,10 @@ class TestPingCollector(CollectorTestCase):
         patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {
-            'localhost': 38
+            'localhost.min': 38.088,
+            'localhost.max': 38.088,
+            'localhost.avg': 38.088,
+            'localhost.mdev': 0.000
         })
 
     @patch('os.access', Mock(return_value=True))
@@ -168,7 +191,10 @@ class TestPingCollector(CollectorTestCase):
         patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {
-            'localhost': 0
+            'localhost.min': 0.223,
+            'localhost.max': 0.223,
+            'localhost.avg': 0.223,
+            'localhost.mdev': 0.000
         })
 
     @patch('os.access', Mock(return_value=True))
@@ -185,7 +211,10 @@ class TestPingCollector(CollectorTestCase):
         patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {
-            'localhost': 42
+            'localhost.min': 41.621,
+            'localhost.max': 41.621,
+            'localhost.avg': 41.621,
+            'localhost.mdev': 0.000
         })
 
     @patch('os.access', Mock(return_value=True))
@@ -202,7 +231,10 @@ class TestPingCollector(CollectorTestCase):
         patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {
-            'localhost': 0.162
+            'localhost.min': 0.162,
+            'localhost.max': 0.162,
+            'localhost.avg': 0.162,
+            'localhost.mdev': 0
         })
 
     @patch('os.access', Mock(return_value=True))
@@ -219,9 +251,11 @@ class TestPingCollector(CollectorTestCase):
         patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {
-            'localhost': 0
+            'localhost.min': 0,
+            'localhost.max': 0,
+            'localhost.avg': 0,
+            'localhost.mdev': 0
         })
-
 ################################################################################
 if __name__ == "__main__":
     unittest.main()
