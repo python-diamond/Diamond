@@ -9,6 +9,8 @@ python:
 
 # command to install dependencies, e.g. pip install -r requirements.txt
 install:
+    - apt-get update -qq
+    - apt-get install -y libsensors4-dev
     - pip install -r .travis.requirements.txt
     - pip install pep8==1.4.6
 
