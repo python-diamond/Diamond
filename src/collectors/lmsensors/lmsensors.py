@@ -42,7 +42,7 @@ class LMSensorsCollector(diamond.collector.Collector):
         config = super(LMSensorsCollector, self).get_default_config()
         config.update({
             'path': 'sensors',
-            'send_zero': 'False'
+            'send_zero': False
         })
         return config
 
@@ -56,6 +56,7 @@ class LMSensorsCollector(diamond.collector.Collector):
             for chip in sensors.iter_detected_chips():
                 for feature in chip:
                     label = feature.label.replace(' ', '-')
+                    value = None
                     try:
                         value = feature.get_value()
                     except Exception:
