@@ -350,6 +350,7 @@ class Collector(object):
         if suffix:
             prefix = '.'.join((prefix, suffix))
 
+<<<<<<< HEAD
         is_path_invalid = path == '.' or not path
 
         if is_path_invalid and prefix:
@@ -357,6 +358,13 @@ class Collector(object):
         elif prefix:
             return '.'.join([prefix, path, name])
         elif is_path_invalid:
+=======
+        if path == '.' and prefix:
+            return '.'.join([prefix, name])
+        elif prefix:
+            return '.'.join([prefix, path, name])
+        elif path == '.':
+>>>>>>> Don't join prefix if empty in Collector.get_metric_path.
             return name
         else:
             return '.'.join([path, name])
