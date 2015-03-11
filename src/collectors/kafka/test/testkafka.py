@@ -102,6 +102,25 @@ class TestKafkaCollector(CollectorTestCase):
         self.assertEqual(found_beans, None)
 
     @run_only_if_ElementTree_is_available
+    def test_build_key_prefix(self):
+        objectnames = [
+            'kafka:type=kafka.logs.mytopic-1',
+            'kafka:type=RequestMetrics,name=RequestsPerSec,request=Produce'
+        ]
+
+        expected = [
+            'kafka.logs.mytopic-1',
+            'RequestMetrics.RequestsPerSec.Produce'
+        ]
+
+        key_prefix = []
+
+        for objectname in objectnames:
+            key_prefix.append(self.collector.build_key_prefix(objectname))
+
+        self.assertEqual(key_prefix, expected)
+
+    @run_only_if_ElementTree_is_available
     @patch.object(KafkaCollector, '_get')
     def test_query_mbean(self, get_mock):
         get_mock.return_value = self._get_xml_fixture('mbean.xml')
