@@ -90,8 +90,8 @@ class IPMISensorCollector(diamond.collector.Collector):
             try:
                 # Complex keys are fun!
                 metric_name = data[0].strip()
-                metric_name = metric_name.replace(".","_")
-                metric_name = metric_name.replace(" ",self.config['delimiter'])
+                metric_name = metric_name.replace(".", "_")
+                metric_name = metric_name.replace(" ", self.config['delimiter'])
                 metrics = []
 
                 # Each sensor line is a column seperated by a | with the
