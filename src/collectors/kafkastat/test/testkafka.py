@@ -15,7 +15,7 @@ from test import unittest
 from mock import patch
 
 from diamond.collector import Collector
-from kafka import KafkaCollector
+from kafkastat import KafkaCollector
 
 ##########
 
