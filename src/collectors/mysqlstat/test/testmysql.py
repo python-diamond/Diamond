@@ -10,7 +10,7 @@ from mock import Mock
 from mock import patch
 
 from diamond.collector import Collector
-from mysql import MySQLCollector
+from mysqlstat import MySQLCollector
 
 ################################################################################
 
