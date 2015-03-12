@@ -28,7 +28,7 @@ class IPMISensorCollector(diamond.collector.Collector):
             'use_sudo': 'Use sudo?',
             'sudo_cmd': 'Path to sudo',
             'thresholds': 'Collect thresholds as well as reading',
-            'delimiter':    'Parse blanks in sensor names into a defined delimiter'
+            'delimiter': 'Parse blanks in sensor names into a delimiter'
         })
         return config_help
 
