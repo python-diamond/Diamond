@@ -27,7 +27,8 @@ class IPMISensorCollector(diamond.collector.Collector):
             'bin': 'Path to the ipmitool binary',
             'use_sudo': 'Use sudo?',
             'sudo_cmd': 'Path to sudo',
-            'thresholds': 'Collect thresholds as well as reading'
+            'thresholds': 'Collect thresholds as well as reading',
+            'delimiter':    'Parse blanks in sensor names into a defined delimiter'
         })
         return config_help
 
@@ -42,6 +43,7 @@ class IPMISensorCollector(diamond.collector.Collector):
             'sudo_cmd':         '/usr/bin/sudo',
             'path':             'ipmi.sensors',
             'thresholds':       False,
+            'delimiter':        '.'
         })
         return config
 
