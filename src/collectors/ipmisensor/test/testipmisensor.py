@@ -40,9 +40,9 @@ class TestIPMISensorCollector(CollectorTestCase):
         patch_communicate.stop()
 
         metrics = {
-            'CPU1_Temp': 0.0,
-            'CPU2_Temp': 0.0,
-            'System_Temp': 32.000000,
+            'CPU1.Temp': 0.0,
+            'CPU2.Temp': 0.0,
+            'System.Temp': 32.000000,
             'CPU1.Vcore': 1.080000,
             'CPU2.Vcore': 1.000000,
             'CPU1.VTT': 1.120000,
@@ -64,18 +64,18 @@ class TestIPMISensorCollector(CollectorTestCase):
             'Fan8': 3915.000000,
             'Intrusion': 0.000000,
             'PS.Status': 0.000000,
-            'P1-DIMM1A_Temp': 41.000000,
-            'P1-DIMM1B_Temp': 39.000000,
-            'P1-DIMM2A_Temp': 38.000000,
-            'P1-DIMM2B_Temp': 40.000000,
-            'P1-DIMM3A_Temp': 37.000000,
-            'P1-DIMM3B_Temp': 38.000000,
-            'P2-DIMM1A_Temp': 39.000000,
-            'P2-DIMM1B_Temp': 38.000000,
-            'P2-DIMM2A_Temp': 39.000000,
-            'P2-DIMM2B_Temp': 39.000000,
-            'P2-DIMM3A_Temp': 39.000000,
-            'P2-DIMM3B_Temp': 40.000000,
+            'P1-DIMM1A.Temp': 41.000000,
+            'P1-DIMM1B.Temp': 39.000000,
+            'P1-DIMM2A.Temp': 38.000000,
+            'P1-DIMM2B.Temp': 40.000000,
+            'P1-DIMM3A.Temp': 37.000000,
+            'P1-DIMM3B.Temp': 38.000000,
+            'P2-DIMM1A.Temp': 39.000000,
+            'P2-DIMM1B.Temp': 38.000000,
+            'P2-DIMM2A.Temp': 39.000000,
+            'P2-DIMM2B.Temp': 39.000000,
+            'P2-DIMM3A.Temp': 39.000000,
+            'P2-DIMM3B.Temp': 40.000000,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
@@ -97,13 +97,13 @@ class TestIPMISensorCollector(CollectorTestCase):
         patch_communicate.stop()
 
         metrics = {
-            'System_Temp.Reading': 32.0,
-            'System_Temp.Lower.NonRecoverable': 0.0,
-            'System_Temp.Lower.Critical': 0.0,
-            'System_Temp.Lower.NonCritical': 0.0,
-            'System_Temp.Upper.NonCritical': 81.0,
-            'System_Temp.Upper.Critical': 82.0,
-            'System_Temp.Upper.NonRecoverable': 83.0,
+            'System.Temp.Reading': 32.0,
+            'System.Temp.Lower.NonRecoverable': 0.0,
+            'System.Temp.Lower.Critical': 0.0,
+            'System.Temp.Lower.NonCritical': 0.0,
+            'System.Temp.Upper.NonCritical': 81.0,
+            'System.Temp.Upper.Critical': 82.0,
+            'System.Temp.Upper.NonRecoverable': 83.0,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
