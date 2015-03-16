@@ -61,7 +61,7 @@ class PortStatCollector(diamond.collector.Collector):
 
         for port_name, port_cfg in self.ports.iteritems():
             port = int(port_cfg['number'])
-            stats = get_port_stats(port)
+            stats = PortStatCollector.get_port_stats(port)
 
             for stat_name, stat_value in stats.iteritems():
                 metric_name = '%s.%s' % (port_name, stat_name)
