@@ -24,6 +24,26 @@ class TestJolokiaCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(JolokiaCollector)
 
+    def test_one_instance(self):
+        self.assertEquals(self.collector.instances, {"": ('localhost', 8778)})
+
+    def test_multiple_instances(self):
+        config = get_collector_config('JolokiaCollector', {
+            "instances": ["foo@localhost:1234", "bar@example.com:7777"]})
+        collector = JolokiaCollector(config, None)
+        instances = collector.instances
+        self.assertEquals(len(instances), 2)
+        self.assertEquals(instances["foo"], ('localhost', 1234))
+        self.assertEquals(instances["bar"], ('example.com', 7777))
+
+    def test_single_instance(self):
+        config = get_collector_config('JolokiaCollector', {
+            "instances": ["foo@localhost:1234"]})
+        collector = JolokiaCollector(config, None)
+        instances = collector.instances
+        self.assertEquals(len(instances), 1)
+        self.assertEquals(instances["foo"], ('localhost', 1234))
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         def se(url):
@@ -82,8 +102,8 @@ class TestJolokiaCollector(CollectorTestCase):
             self, interpret_bean_with_list_mock, publish_mock):
         self.collector.collect_bean('prefix', {
             'RecentWriteLatencyMicros': 100,
-            'RecentReadLatencyHistogramMicros': [1, 2, 3]
-        })
+            'RecentReadLatencyHistogramMicros': [1, 2, 3],
+        }, "")
         self.assertPublishedMany(publish_mock, {
             'prefix.RecentWriteLatencyMicros': 100
         })
