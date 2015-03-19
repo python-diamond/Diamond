@@ -63,7 +63,7 @@ class HttpPostHandler(Handler):
         if len(self.metrics) >= self.batch_size:
             self.post()
 
-    #Overriding flush to post metrics for every collector.
+    # Overriding flush to post metrics for every collector.
     def flush(self):
         """Flush metrics in queue"""
         self.post()

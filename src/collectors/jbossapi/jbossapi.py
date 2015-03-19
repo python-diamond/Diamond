@@ -23,7 +23,7 @@ successfully doing SSL Digest Authentication.
 Plan is to make this code work with newer versions of python and possibly
 Requests. (http://docs.python-requests.org/en/latest/)
 
-If possible, please make future updates backwards compatable to call the local
+If possible, please make future updates backwards compatible to call the local
 curl as an option.
 
 
@@ -72,7 +72,7 @@ except ImportError:
     import simplejson as json
 
 
-## Setup a set of VARs
+# Setup a set of VARs
 # Set this for use in curl request
 header = '"Content-Type: application/json"'
 
@@ -205,7 +205,7 @@ class JbossApiCollector(diamond.collector.Collector):
                                    current_proto, current_user, current_pword)
             if op_type == 'app' and self.config['app_stats'] == 'True':
                 if output:
-                # Grab the pool stats for each Instance
+                    # Grab the pool stats for each Instance
                     for instance in output['result']['data-source']:
                         datasource = output['result']['data-source'][instance]
                         for metric in datasource['statistics']['pool']:
@@ -219,7 +219,6 @@ class JbossApiCollector(diamond.collector.Collector):
                 if output:
                     # Grab http and ajp info (make these options)
                     for c_type in self.config['connector_options']:
-                    #for connector_type in self.config['connector_options']:
                         for metric in web_stats:
                             metricName = '%s.%s.connector.%s.%s' % (interface,
                                                                     op_type,

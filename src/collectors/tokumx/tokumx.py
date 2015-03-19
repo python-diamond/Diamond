@@ -248,7 +248,7 @@ class TokuMXCollector(diamond.collector.Collector):
 
     def _publish_metrics(self, prev_keys, key, data, publishfn=None):
         """Recursively publish keys"""
-        if not key in data:
+        if key not in data:
             return
         value = data[key]
         keys = prev_keys + [key]

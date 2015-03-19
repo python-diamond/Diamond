@@ -233,7 +233,7 @@ class Collector(object):
                 and self.config.get('metrics_blacklist', None)):
             raise DiamondException(
                 'Both metrics_whitelist and metrics_blacklist specified ' +
-                'in file %s' % configfile)
+                'in file %s' % self.configfile)
 
         if self.config.get('metrics_whitelist', None):
             self.config['metrics_whitelist'] = re.compile(

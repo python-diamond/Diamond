@@ -76,7 +76,7 @@ class HttpCollector(diamond.collector.Collector):
                             '.', '_').replace(
                             '\\', '').replace(
                             ':', '')
-                        #metric_name = url.split("/")[-1].replace(".", "_")
+                        # metric_name = url.split("/")[-1].replace(".", "_")
                         if metric_name == '':
                                 metric_name = "root"
                         self.publish_gauge(

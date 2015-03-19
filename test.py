@@ -72,28 +72,25 @@ class CollectorTestCase(unittest.TestCase):
             return False
 
         try:
-            fp = open(filePath, 'Ur')
-            content = fp.readlines()
-            fp.close()
+            with open(filePath, 'Ur') as fp:
+                content = fp.readlines()
 
-            fp = open(filePath, 'w')
-            for line in content:
-                if line.strip() == '__EXAMPLESHERE__':
-                    for metric in sorted(metrics.iterkeys()):
+            with open(filePath, 'w') as fp:
+                for line in content:
+                    if line.strip() == '__EXAMPLESHERE__':
+                        for metric in sorted(metrics.iterkeys()):
 
-                        metricPath = 'servers.hostname.'
+                            metricPath = 'servers.hostname.'
 
-                        if defaultpath:
-                            metricPath += defaultpath + '.'
+                            if defaultpath:
+                                metricPath += defaultpath + '.'
 
-                        metricPath += metric
+                            metricPath += metric
 
-                        metricPath = metricPath.replace('..', '.')
-                        fp.write('%s %s\n' % (metricPath, metrics[metric]))
-                else:
-                    fp.write(line)
-            fp.close()
-
+                            metricPath = metricPath.replace('..', '.')
+                            fp.write('%s %s\n' % (metricPath, metrics[metric]))
+                    else:
+                        fp.write(line)
         except IOError:
             return False
         return True
@@ -112,12 +109,8 @@ class CollectorTestCase(unittest.TestCase):
         return path
 
     def getFixture(self, fixture_name):
-        try:
-            f = open(self.getFixturePath(fixture_name), 'r')
-            data = StringIO(f.read())
-            return data
-        finally:
-            f.close()
+        with open(self.getFixturePath(fixture_name), 'r') as f:
+            return StringIO(f.read())
 
     def getFixtures(self):
         fixtures = []
@@ -126,15 +119,12 @@ class CollectorTestCase(unittest.TestCase):
         return fixtures
 
     def getPickledResults(self, results_name):
-        try:
-            f = open(self.getFixturePath(results_name), 'r')
-            data = pickle.load(f)
-            return data
-        finally:
-            f.close()
+        with open(self.getFixturePath(results_name), 'r') as f:
+            return pickle.load(f)
 
     def setPickledResults(self, results_name, data):
-        pickle.dump(data, open(self.getFixturePath(results_name), "w+b"))
+        with open(self.getFixturePath(results_name), 'w+b') as f:
+            pickle.dump(data, f)
 
     def assertUnpublished(self, mock, key, value, expected_value=0):
         return self.assertPublished(mock, key, value, expected_value)
@@ -296,7 +286,11 @@ if __name__ == "__main__":
                                          'diamond'))
 
     getCollectorTests(cPath)
-    getCollectorTests(dPath)
+
+    if not options.collector:
+        # Only pull in diamond tests when a specific collector
+        # hasn't been specified
+        getCollectorTests(dPath)
 
     loader = unittest.TestLoader()
     tests = []

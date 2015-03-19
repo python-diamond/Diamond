@@ -6,9 +6,9 @@ Openstack swift collector.
 #### Dependencies
 
  * swift-dispersion-report commandline tool (for dispersion report)
-   if using this, make sure swift.conf and dispersion.conf are reable by diamond
-   also get an idea of the runtime of a swift-dispersion-report call and make
-   sure the collect interval is high enough to avoid contention.
+   if using this, make sure swift.conf and dispersion.conf are readable by
+   diamond also get an idea of the runtime of a swift-dispersion-report call
+   and make sure the collect interval is high enough to avoid contention.
  * swift commandline tool (for container_metrics)
 
 both of these should come installed with swift

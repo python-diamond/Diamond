@@ -74,7 +74,7 @@ class Gmetric:
             self.socket.setsockopt(socket.IPPROTO_IP,
                                    socket.IP_MULTICAST_TTL, 20)
         self.hostport = (host, int(port))
-        #self.socket.connect(self.hostport)
+        # self.socket.connect(self.hostport)
 
     def send(self, NAME, VAL, TYPE='', UNITS='', SLOPE='both',
              TMAX=60, DMAX=0, GROUP=""):

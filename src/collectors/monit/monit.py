@@ -106,7 +106,7 @@ class MonitCollector(diamond.collector.Collector):
                                 metrics["%s.memory_total.%s_usage" % (
                                     name, unit)] = (
                                     diamond.convertor.binary.convert(
-                                        value=mem,
+                                        value=mem_total,
                                         oldUnit='kilobyte',
                                         newUnit=unit))
 

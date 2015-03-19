@@ -1,7 +1,7 @@
 # coding=utf-8
 
 """
-Collects data form sidekiq web
+Collects data from sidekiq web
 
 #### Dependencies
 

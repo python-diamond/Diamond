@@ -58,7 +58,7 @@ class DarnerCollector(diamond.collector.Collector):
             # 'telnet host port' and type stats and hit enter to see the list
             # of possibilities.
             # Leave unset to publish all
-            #'publish': ''
+            # 'publish': ''
             'publish_queues': True,
 
             # Connection settings
@@ -103,7 +103,7 @@ class DarnerCollector(diamond.collector.Collector):
                     r'^queue_(.*)_(items|waiters|open_transactions)$',
                     pieces[1])
                 queue_name = queue_match.group(1).replace('.', '_')
-                if not queue_name in queues:
+                if queue_name not in queues:
                     queues[queue_name] = {}
                 queues[queue_name][queue_match.group(2)] = int(pieces[2])
             else:
@@ -128,7 +128,7 @@ class DarnerCollector(diamond.collector.Collector):
 
             stats, queues = self.get_stats(hostname, port)
 
-            #Publish queue stats if configured
+            # Publish queue stats if configured
             if str_to_bool(self.config['publish_queues']):
                 for queue in queues:
                     for queue_stat in queues[queue]:
