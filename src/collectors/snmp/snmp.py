@@ -198,9 +198,8 @@ class SNMPCollector(diamond.collector.Collector):
         """
         auth = self.create_auth(community)
         transport = self.create_transport(host, port)
-        table = self.snmp_walk(oid, auth, transport)
-        return dict((k.prettyPrint(), v.prettyPrint())
-                    for row in table for k, v in row)
+        rows = self.snmp_walk(oid, auth, transport)
+        return dict((k.prettyPrint(), v.prettyPrint()) for k, v in rows)
 
     def snmp_get(self, oid, auth, transport):
         """
