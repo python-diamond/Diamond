@@ -237,7 +237,7 @@ class SNMPCollector(diamond.collector.Collector):
         result = self.cmdgen.nextCmd(auth, transport, self._to_oid_tuple(oid))
 
         try:
-            return result[3]
+            return [item[0] for item in result[3]]
         except IndexError:
             self.log.debug(
                 "SNMP WALK '{0}' on host '{1}' returned no data".format(
@@ -311,7 +311,7 @@ class SNMPCollector(diamond.collector.Collector):
                 fn = self.snmp_get
 
             for metric_name, metric_value in fn(oid, auth, transport):
-                self._publish(device, oid, basename, metric_name, metric_value)
+                self._publish(device.replace('.', '_'), oid, basename, metric_name, metric_value)
 
     def collect(self):
         """

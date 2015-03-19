@@ -135,13 +135,15 @@ class TestSNMPCollector(CollectorTestCase):
 
     def test_snmp_walk(self):
         metrics = (None, None, None, [
-            (Mock(prettyPrint=lambda: '1.2.1'),
-             Mock(prettyPrint=lambda: '41')),
-            (Mock(prettyPrint=lambda: '1.2.2'),
-             Mock(prettyPrint=lambda: '42')),
-            (Mock(prettyPrint=lambda: '1.2.3'),
-             Mock(prettyPrint=lambda: '43')),
+            [(Mock(prettyPrint=lambda: '1.2.1'),
+             Mock(prettyPrint=lambda: '41'))],
+            [(Mock(prettyPrint=lambda: '1.2.2'),
+             Mock(prettyPrint=lambda: '42'))],
+            [(Mock(prettyPrint=lambda: '1.2.3'),
+             Mock(prettyPrint=lambda: '43'))],
         ])
+
+        expected = [x[0] for x in metrics[3]]
 
         self.collector.cmdgen = Mock()
         self.collector.cmdgen.nextCmd.return_value = metrics
@@ -150,7 +152,7 @@ class TestSNMPCollector(CollectorTestCase):
         transport = Mock(transportAddr=('localhost', 161))
 
         ret_metrics = list(self.collector.snmp_walk('1.2', auth, transport))
-        self.assertEqual(metrics[3], ret_metrics)
+        self.assertEqual(expected, ret_metrics)
 
     @patch('snmp.IntegerType', Mock)
     @patch('snmp.cmdgen', Mock())
