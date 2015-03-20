@@ -23,6 +23,7 @@ except ImportError:
     psutil = None
 
 _KEY_MAPPING = [
+    'MemAvailable',
     'MemTotal',
     'MemFree',
     'Buffers',
