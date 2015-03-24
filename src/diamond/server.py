@@ -79,9 +79,10 @@ class Server(object):
         ########################################################################
 
         if 'handlers_path' in self.config['server']:
+            handlers_path = self.config['server']['handlers_path']
+
             # Make an list if not one
-            if isinstance(self.config['server']['handlers_path'], basestring):
-                handlers_path = self.config['server']['handlers_path']
+            if isinstance(handlers_path, basestring):
                 handlers_path = handlers_path.split(',')
                 handlers_path = map(str.strip, handlers_path)
                 self.config['server']['handlers_path'] = handlers_path
