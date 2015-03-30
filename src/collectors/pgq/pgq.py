@@ -54,7 +54,9 @@ class PgQCollector(diamond.collector.Collector):
 
         for instance, configuration in self.config['instances'].iteritems():
             connection = psycopg2.connect(configuration['dsn'])
-            connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+            connection.set_isolation_level(
+                psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT,
+            )
             self._collect_for_instance(instance, connection)
 
     def _collect_for_instance(self, instance, connection):
@@ -65,9 +67,11 @@ class PgQCollector(diamond.collector.Collector):
                     self.publish('.'.join((instance, queue, name)), metric)
 
         with connection.cursor() as cursor:
-            for queue, consumer, metrics in self.get_consumer_info(instance, cursor):
+            consumers = self.get_consumer_info(instance, cursor)
+            for queue, consumer, metrics in consumers:
                 for name, metric in metrics.items():
-                    self.publish('.'.join((instance, queue, 'consumers', consumer, name)), metric)
+                    key_parts = (instance, queue, 'consumers', consumer, name)
+                    self.publish('.'.join(key_parts), metric)
 
     QUEUE_INFO_STATEMENT = """
         SELECT
