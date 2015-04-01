@@ -29,6 +29,7 @@ username = root
 password = root
 database = graphite
 time_precision = s
+influxdb_version = 0.8
 """
 
 import time
@@ -71,6 +72,7 @@ class InfluxdbHandler(Handler):
         self.metric_max_cache = int(self.config['cache_size'])
         self.batch_count = 0
         self.time_precision = self.config['time_precision']
+        self.influxdb_version = self.config['influxdb_version']
 
         # Initialize Data
         self.batch = {}
@@ -100,6 +102,7 @@ class InfluxdbHandler(Handler):
             'database': 'Database name',
             'time_precision': 'time precision in second(s), milisecond(ms) or '
             'microsecond (u)',
+            'influxdb_version': 'InfluxDB API version, default 0.8',
         })
 
         return config
@@ -120,6 +123,7 @@ class InfluxdbHandler(Handler):
             'batch_size': 1,
             'cache_size': 20000,
             'time_precision': 's',
+            'influxdb_version': 0.8,
         })
 
         return config
@@ -170,11 +174,18 @@ class InfluxdbHandler(Handler):
                 else:
                     # build metrics data
                     metrics = []
-                    for path in self.batch:
-                        metrics.append({
-                            "points": self.batch[path],
-                            "name": path,
-                            "columns": ["time", "value"]})
+                    if self.influxdb_version == "0.8":
+                        for path in self.batch:
+                            metrics.append({
+                                "points": self.batch[path],
+                                "name": path,
+                                "columns": ["time", "value"]})
+                    elif self.influxdb_version == "0.9":
+                        for path in self.batch:
+                            metrics.append({
+                                "name": path,
+                                "timestamp": self.batch[path][0][0],
+                                "fields": {"value": self.batch[path][0][1]}})
                     # Send data to influxdb
                     self.log.debug("InfluxdbHandler: writing %d series of data",
                                    len(metrics))
