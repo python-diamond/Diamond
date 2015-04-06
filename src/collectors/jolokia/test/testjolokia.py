@@ -44,6 +44,23 @@ class TestJolokiaCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
+    def test_real_data_with_rewrite(self, publish_mock):
+        def se(url):
+            if url == 'http://localhost:8778/jolokia/list':
+                return self.getFixture('listing')
+            else:
+                return self.getFixture('stats')
+        patch_urlopen = patch('urllib2.urlopen', Mock(side_effect=se))
+
+        patch_urlopen.start()
+        self.collector.rewrite = {'memoryUsage': 'memUsed', '.*\.init': ''}
+        self.collector.collect()
+        patch_urlopen.stop()
+
+        rewritemetrics = self.get_metrics_rewrite_test()
+        self.assertPublishedMany(publish_mock, rewritemetrics)
+
+    @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
         patch_urlopen = patch('urllib2.urlopen', Mock(
                               return_value=self.getFixture('stats_blank')))
@@ -76,20 +93,6 @@ class TestJolokiaCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-    @patch.object(Collector, 'publish')
-    @patch.object(JolokiaCollector, 'interpret_bean_with_list')
-    def test_should_allow_interpretation_of_list_values(
-            self, interpret_bean_with_list_mock, publish_mock):
-        self.collector.collect_bean('prefix', {
-            'RecentWriteLatencyMicros': 100,
-            'RecentReadLatencyHistogramMicros': [1, 2, 3]
-        })
-        self.assertPublishedMany(publish_mock, {
-            'prefix.RecentWriteLatencyMicros': 100
-        })
-        interpret_bean_with_list_mock.assert_called_with(
-            'prefix.RecentReadLatencyHistogramMicros', [1, 2, 3])
-
     def get_metrics(self):
         prefix = 'java.lang.name_ParNew.type_GarbageCollector.LastGcInfo'
         return {
@@ -117,6 +120,29 @@ class TestJolokiaCollector(CollectorTestCase):
             3145728,
             prefix + '.memoryUsageBeforeGc.Par_Survivor_Space.init': 3145728,
             prefix + '.memoryUsageBeforeGc.Par_Survivor_Space.used': 414088
+        }
+
+    def get_metrics_rewrite_test(self):
+        prefix = 'java.lang.name_ParNew.type_GarbageCollector.LastGcInfo'
+        return {
+            prefix + '.startTime': 14259063,
+            prefix + '.id': 219,
+            prefix + '.duration': 2,
+            prefix + '.memUsedBeforeGc.Par_Eden_Space.max': 25165824,
+            prefix + '.memUsedBeforeGc.Par_Eden_Space.committed': 25165824,
+            prefix + '.memUsedBeforeGc.Par_Eden_Space.used': 25165824,
+            prefix + '.memUsedBeforeGc.CMS_Old_Gen.max': 73400320,
+            prefix + '.memUsedBeforeGc.CMS_Old_Gen.committed': 73400320,
+            prefix + '.memUsedBeforeGc.CMS_Old_Gen.used': 5146840,
+            prefix + '.memUsedBeforeGc.CMS_Perm_Gen.max': 85983232,
+            prefix + '.memUsedBeforeGc.CMS_Perm_Gen.committed': 23920640,
+            prefix + '.memUsedBeforeGc.CMS_Perm_Gen.used': 23796992,
+            prefix + '.memUsedBeforeGc.Code_Cache.max': 50331648,
+            prefix + '.memUsedBeforeGc.Code_Cache.committed': 2686976,
+            prefix + '.memUsedBeforeGc.Code_Cache.used': 2600768,
+            prefix + '.memUsedBeforeGc.Par_Survivor_Space.max': 3145728,
+            prefix + '.memUsedBeforeGc.Par_Survivor_Space.committed': 3145728,
+            prefix + '.memUsedBeforeGc.Par_Survivor_Space.used': 414088
         }
 
 ################################################################################

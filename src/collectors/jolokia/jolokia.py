@@ -1,7 +1,7 @@
 # coding=utf-8
 
 """
-Collects JMX metrics from the Jolokia Agent. Jolokia is an HTTP bridge that
+ Collects JMX metrics from the Jolokia Agent. Jolokia is an HTTP bridge that
 provides access to JMX MBeans without the need to write Java code. See the
 [Reference Guide](http://www.jolokia.org/reference/html/index.html) for more
 information.
@@ -21,14 +21,30 @@ name. e.g) ```java.lang:name=ParNew,type=GarbageCollector``` would become
 
 If desired, JolokiaCollector can be configured to query specific MBeans by
 providing a list of ```mbeans```. If ```mbeans``` is not provided, all MBeans
-will be queried for metrics.
+will be queried for metrics.  Note that the mbean prefix is checked both
+with and without rewrites (including fixup re-writes) applied.  This allows
+you to specify "java.lang:name=ParNew,type=GarbageCollector" (the raw name from
+jolokia) or "java.lang.name_ParNew.type_GarbageCollector" (the fixed name
+as used for output)
 
-JolokiaCollector.conf
+If the ```regex``` flag is set to True, mbeans will match based on regular
+expressions rather than a plain textual match.
+
+The ```rewrite``` section provides a way of renaming the data keys before
+it sent out to the handler.  The section consists of pairs of from-to
+regular expressions.  If the resultant name is completely blank, the
+metric is not published, providing a way to exclude specific metrics within
+an mbean.
 
 ```
-    host 'localhost'
-    port '8778'
-    mbeans '"java.lang:name=ParNew,type=GarbageCollector | org.apache.cassandra.metrics:name=WriteTimeouts,type=ClientRequestMetrics"' # noqa
+    host = localhost
+    port = 8778
+    mbeans = "java.lang:name=ParNew,type=GarbageCollector",
+     "org.apache.cassandra.metrics:name=WriteTimeouts,type=ClientRequestMetrics"
+    [rewrite]
+    java = coffee
+    "-v\d+\.\d+\.\d+" = "-AllVersions"
+    ".*GetS2Activities.*" = ""
 ```
 """
 
@@ -56,10 +72,16 @@ class JolokiaCollector(diamond.collector.Collector):
         config_help = super(JolokiaCollector,
                             self).get_default_config_help()
         config_help.update({
-            'mbeans': "Pipe delimited list of MBeans for which to collect "
-            "stats. If not provided, all stats will be collected",
+            'mbeans':  "Pipe delimited list of MBeans for which to collect"
+                       " stats. If not provided, all stats will"
+                       " be collected.",
+            'regex': "Contols if mbeans option matches with regex,"
+                       " False by default.",
             'host': 'Hostname',
             'port': 'Port',
+            'rewrite': "This sub-section of the config contains pairs of"
+                       " from-to regex rewrites.",
+            'path': 'Path to jolokia.  typically "jmx" or "jolokia"'
         })
         return config_help
 
@@ -67,26 +89,38 @@ class JolokiaCollector(diamond.collector.Collector):
         config = super(JolokiaCollector, self).get_default_config()
         config.update({
             'mbeans': [],
+            'regex': False,
+            'rewrite': [],
             'path': 'jmx',
             'host': 'localhost',
             'port': 8778,
         })
         return config
 
-    def process_config(self):
-        super(JolokiaCollector, self).process_config()
+    def __init__(self, config, handlers):
+        super(JolokiaCollector, self).__init__(config, handlers)
         self.mbeans = []
+        self.rewrite = {}
         if isinstance(self.config['mbeans'], basestring):
             for mbean in self.config['mbeans'].split('|'):
                 self.mbeans.append(mbean.strip())
         elif isinstance(self.config['mbeans'], list):
             self.mbeans = self.config['mbeans']
+        if isinstance(self.config['rewrite'], dict):
+            self.rewrite = self.config['rewrite']
 
     def check_mbean(self, mbean):
-        if mbean in self.mbeans or not self.mbeans:
+        if not self.mbeans:
             return True
+        mbeanfix = self.clean_up(mbean)
+        if self.config['regex'] is not None:
+            for chkbean in self.mbeans:
+                if re.match(chkbean, mbean) is not None or \
+                   re.match(chkbean, mbeanfix) is not None:
+                    return True
         else:
-            return False
+            if mbean in self.mbeans or mbeanfix in self.mbeans:
+                return True
 
     def collect(self):
         listing = self.list_request()
@@ -129,9 +163,11 @@ class JolokiaCollector(diamond.collector.Collector):
             return {}
 
     def clean_up(self, text):
-        text = re.sub('[:,]', '.', text)
-        text = re.sub('[=\s]', '_', text)
-        text = re.sub('["\']', '', text)
+        text = re.sub('["\'(){}<>\[\]]', '', text)
+        text = re.sub('[:,.]+', '.', text)
+        text = re.sub('[^a-zA-Z0-9_.+-]+', '_', text)
+        for (oldstr, newstr) in self.rewrite.items():
+            text = re.sub(oldstr, newstr, text)
         return text
 
     def collect_bean(self, prefix, obj):
@@ -139,13 +175,7 @@ class JolokiaCollector(diamond.collector.Collector):
             if type(v) in [int, float, long]:
                 key = "%s.%s" % (prefix, k)
                 key = self.clean_up(key)
-                self.publish(key, v)
+                if key != "":
+                    self.publish(key, v)
             elif type(v) in [dict]:
                 self.collect_bean("%s.%s" % (prefix, k), v)
-            elif type(v) in [list]:
-                self.interpret_bean_with_list("%s.%s" % (prefix, k), v)
-
-    # There's no unambiguous way to interpret list values, so
-    # this hook lets subclasses handle them.
-    def interpret_bean_with_list(self, prefix, values):
-        pass
