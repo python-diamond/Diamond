@@ -115,6 +115,9 @@ apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
 timeout = 15
 batch = 1
 
+[[SignalfxHandler]]
+auth_token = abcdefghijklmnopqrstuvwxyz
+
 # And any other config settings from GraphiteHandler are valid here
 
 [[HttpPostHandler]]
