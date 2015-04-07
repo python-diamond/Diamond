@@ -6,8 +6,8 @@
         "type": "read"
     },
     "value": {
-        "java.lang:name=ParNew,type=GarbageCollector": {
-            "Name": "ParNew",
+        "java.lang:name=(ParNew):,type=GarbageCollector": {
+            "Name": "(ParNew)",
             "LastGcInfo": {
                 "startTime": 14259063,
                 "id": 219,
