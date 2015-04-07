@@ -182,7 +182,6 @@ class Collector(object):
         """
         Process a configfile, or reload if previously given one.
         """
-
         self.config = configobj.ConfigObj()
 
         # Load in the collector's defaults
@@ -351,11 +350,13 @@ class Collector(object):
         if suffix:
             prefix = '.'.join((prefix, suffix))
 
-        if path == '.' and prefix:
+        is_path_invalid = path == '.' or not path
+
+        if is_path_invalid and prefix:
             return '.'.join([prefix, name])
         elif prefix:
             return '.'.join([prefix, path, name])
-        elif path == '.':
+        elif is_path_invalid:
             return name
         else:
             return '.'.join([path, name])
