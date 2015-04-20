@@ -8,7 +8,6 @@ Collect metrics from postgresql
  * psycopg2
 #### Example Configuration
 ```
-enabled=True
 [instances]
 
 [[postgres_port1]]
@@ -28,7 +27,7 @@ pg_version = 9.2
 port = 5432
 has_admin = True
 
-[[postgres_port2]]
+[[postgresport2]]
 enabled = True
 path_prefix = path1
 path = postgres_port2
@@ -108,6 +107,7 @@ class PostgresqlCollector(diamond.collector.Collector):
             'has_admin': True,
 	    'instances': {},
         })
+	print config
         return config
 
     def collect(self):
@@ -128,9 +128,20 @@ class PostgresqlCollector(diamond.collector.Collector):
                 }
             }
 	for name, instance in instances.iteritems():
-                self.config = instance
-                enabled = instance['enabled']
-                if enabled == 'True': 
+                	self.config['enabled'] = instance.get('enabled',self.config['enabled'])or  self.config['enabled']
+			self.config['path'] = instance.get('path',self.config['path'])or  self.config['path']
+			self.config['measure_collector_time'] = instance.get('measure_collector_time',self.config['measure_collector_time']) or self.config['measure_collector_time']
+			self.config['extended'] = instance.get('extended',self.config['extended']) or self.config['extended']
+			self.config['byte_unit'] = instance.get('byte_unit',self.config['byte_unit']) or self.config['byte_unit']
+			self.config['host'] = instance.get('host',self.config['host']) or self.config['host'] 
+			self.config['user'] = instance.get('user',self.config['user']) or self.config['user']
+			self.config['underscore'] = instance.get('underscore',self.config['underscore']) or self.config['underscore']
+			self.config['password'] = instance.get('password',self.config['password'] ) or self.config['password'] 
+			self.config['dbname'] = instance.get('dbname',self.config['dbname']) or self.config['dbname']
+			self.config['metrics'] = instance.get('metrics',self.config['metrics']) or self.config['metrics']
+			self.config['pg_version'] = instance.get('pg_version',self.config['pg_version']) or self.config['pg_version']
+			self.config['port'] = instance.get('port',self.config['port']) or self.config['port']
+			self.config['has_admin'] = instance.get('has_admin',self.config['has_admin']) or self.config['has_admin']
 
         		# Get list of databases
         		dbs = self._get_db_names()
