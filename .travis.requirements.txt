@@ -8,7 +8,7 @@ docker-py
 kitchen
 mock
 psutil
-pymongo
+pymongo<3.0
 # Disable due to bad test cases
 # https://github.com/BrightcoveOS/Diamond/issues/650
 #pyrabbit
