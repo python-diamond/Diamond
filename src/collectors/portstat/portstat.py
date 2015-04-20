@@ -7,7 +7,7 @@ The PortStatCollector collects metrics about ports listed in config file.
 
 """
 
-from collections import Counter
+from collections import defaultdict
 
 import psutil
 import diamond.collector
@@ -45,7 +45,7 @@ class PortStatCollector(diamond.collector.Collector):
         :param port: port for which stats are collected
         :return: Counter with port states
         """
-        cnts = Counter()
+        cnts = defaultdict(int)
         for c in psutil.net_connections():
             c_port = c.laddr[1]
             if c_port != port:
