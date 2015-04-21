@@ -116,7 +116,7 @@ class PostgresqlCollector(diamond.collector.Collector):
         if psycopg2 is None:
             self.log.error('Unable to import module psycopg2')
             return {}
-            instances = self.config['instances']
+        instances = self.config['instances']
         # HACK: setting default with subcategory messes up merging of configs,
         # so we only set the default if one wasn't provided.
         if not instances:
