@@ -158,7 +158,7 @@ class PostgresqlCollector(diamond.collector.Collector):
                 metrics = registry['extended']
                 if str_to_bool(self.config['has_admin']) \
                         and 'WalSegmentStats' not in metrics:
-                metrics.append('WalSegmentStats')
+                    metrics.append('WalSegmentStats')
             else:
                 metrics = registry['basic']
 
