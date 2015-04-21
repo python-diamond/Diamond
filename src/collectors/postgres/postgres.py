@@ -107,7 +107,6 @@ class PostgresqlCollector(diamond.collector.Collector):
             'has_admin': True,
 	    'instances': {},
         })
-	print config
         return config
 
     def collect(self):
@@ -142,7 +141,7 @@ class PostgresqlCollector(diamond.collector.Collector):
 			self.config['pg_version'] = instance.get('pg_version',self.config['pg_version']) or self.config['pg_version']
 			self.config['port'] = instance.get('port',self.config['port']) or self.config['port']
 			self.config['has_admin'] = instance.get('has_admin',self.config['has_admin']) or self.config['has_admin']
-
+			self.log.error(self.config) 
         		# Get list of databases
         		dbs = self._get_db_names()
         		if len(dbs) == 0:
@@ -167,9 +166,9 @@ class PostgresqlCollector(diamond.collector.Collector):
                     			'metric_name %s not found in metric registry' % metric_name)
                 			continue
 
-            		for dbase in dbs:
-                		conn = self._connect(database=dbase)
-                		try:
+            			for dbase in dbs:
+                		  conn = self._connect(database=dbase)
+                		  try:
                     			klass = metrics_registry[metric_name]
                     			stat = klass(dbase, conn,
                                  		underscore=self.config['underscore'])
@@ -186,7 +185,7 @@ class PostgresqlCollector(diamond.collector.Collector):
                     			# iteration. Otherwise, continue to remaining databases.
                     			if stat.multi_db is False:
                         			break
-                		finally:
+                		  finally:
                     			conn.close()
 
     def _get_db_names(self):
