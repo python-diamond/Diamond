@@ -80,9 +80,9 @@ class PostgresqlCollector(diamond.collector.Collector):
             " eg. in format 9.2",
             'has_admin': 'Admin privileges are required to execute some'
             ' queries.',
-	    'instances': 'A subcategory of postgres instances with a port'
+            'instances': 'A subcategory of postgres instances with a port'
             'if 2 dbservers are running on same host on difernt ports'
-	    'and all options  can be'
+            'and all options  can be'
             'overridden per instance (see example).',
         })
         return config_help
@@ -127,12 +127,17 @@ class PostgresqlCollector(diamond.collector.Collector):
                 }
             }
         for name, instance in instances.iteritems():
-            self.config['enabled'] = instance.get('enabled',self.config['enabled'])or  self.config['enabled']
-            self.config['path'] = instance.get('path',self.config['path'])or  self.config['path']
-            self.config['measure_collector_time'] = instance.get('measure_collector_time',self.config['measure_collector_time']) or self.config['measure_collector_time']
-            self.config['extended'] = instance.get('extended', self.config['extended']) or self.config['extended']
-            self.config['byte_unit'] = instance.get('byte_unit', self.config['byte_unit']) or self.config['byte_unit']
-            self.config['host'] = instance.get('host', self.config['host']) or self.config['host'] 
+            self.config['enabled'] = instance.get('enabled', self.config['enabled']) \
+                    or self.config['enabled']
+            self.config['path'] = instance.get('path', self.config['path']) \
+                    or self.config['path']
+            self.config['measure_collector_time'] = instance.get('measure_collector_time', \
+                    self.config['measure_collector_time']) or self.config['measure_collector_time']
+            self.config['extended'] = instance.get('extended', self.config['extended']) \
+                    or self.config['extended']
+            self.config['byte_unit'] = instance.get('byte_unit', self.config['byte_unit']) \
+                    or self.config['byte_unit']
+            self.config['host'] = instance.get('host', self.config['host']) or self.config['host']
             self.config['user'] = instance.get('user', self.config['user']) or self.config['user']
             self.config['underscore'] = instance.get('underscore', self.config['underscore']) or self.config['underscore']
             self.config['password'] = instance.get('password', self.config['password']) or self.config['password']
@@ -152,8 +157,8 @@ class PostgresqlCollector(diamond.collector.Collector):
             elif str_to_bool(self.config['extended']):
                 metrics = registry['extended']
                 if str_to_bool(self.config['has_admin']) \
-                    and 'WalSegmentStats' not in metrics:
-               	    metrics.append('WalSegmentStats')
+                        and 'WalSegmentStats' not in metrics:
+                metrics.append('WalSegmentStats')
             else:
                 metrics = registry['basic']
 
@@ -168,7 +173,7 @@ class PostgresqlCollector(diamond.collector.Collector):
                     try:
                         klass = metrics_registry[metric_name]
                         stat = klass(dbase, conn,
-                            underscore=self.config['underscore'])
+                                    underscore=self.config['underscore'])
                         stat.fetch(self.config['pg_version'])
                         for metric, value in stat:
                             if value is not None:
