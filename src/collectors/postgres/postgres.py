@@ -127,11 +127,11 @@ class PostgresqlCollector(diamond.collector.Collector):
                 }
             }
         for name, instance in instances.iteritems():
-            self.config['enabled'] = instance.get('enabled', self.config['enabled']) \
-                    or self.config['enabled']
-            self.config['path'] = instance.get('path', self.config['path']) \
-                    or self.config['path']
-            self.config['measure_collector_time'] = instance.get('measure_collector_time', \
+            self.config['enabled'] = instance.get('enabled', 
+                self.config['enabled']) or self.config['enabled']
+            self.config['path'] = instance.get('path', 
+                self.config['path']) or self.config['path']
+            self.config['measure_collector_time'] = instance.get('measure_collector_time', 
                     self.config['measure_collector_time']) or self.config['measure_collector_time']
             self.config['extended'] = instance.get('extended', self.config['extended']) \
                     or self.config['extended']
