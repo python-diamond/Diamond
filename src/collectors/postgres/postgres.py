@@ -167,26 +167,26 @@ class PostgresqlCollector(diamond.collector.Collector):
                 			continue
 
             			for dbase in dbs:
-                		  conn = self._connect(database=dbase)
-                		  try:
-                    			klass = metrics_registry[metric_name]
-                    			stat = klass(dbase, conn,
-                                 		underscore=self.config['underscore'])
-                    			stat.fetch(self.config['pg_version'])
-                    			for metric, value in stat:
-                        			if value is not None:
-                            				self.publish(metric, value)
+                			conn = self._connect(database=dbase)
+                		  	try:
+                    				klass = metrics_registry[metric_name]
+                    				stat = klass(dbase, conn,
+                                 			underscore=self.config['underscore'])
+                    				stat.fetch(self.config['pg_version'])
+                    				for metric, value in stat:
+                        				if value is not None:
+                            					self.publish(metric, value)
 
-                    			# Setting multi_db to True will run this query on all known
-                    			# databases. This is bad for queries that hit views like
-                    			# pg_database, which are shared across databases.
-                    			#
-                    			# If multi_db is False, bail early after the first query
-                    			# iteration. Otherwise, continue to remaining databases.
-                    			if stat.multi_db is False:
-                        			break
-                		  finally:
-                    			conn.close()
+                    				# Setting multi_db to True will run this query on all known
+                    				# databases. This is bad for queries that hit views like
+                    				# pg_database, which are shared across databases.
+                    				#
+                    				# If multi_db is False, bail early after the first query
+                    				# iteration. Otherwise, continue to remaining databases.
+                    				if stat.multi_db is False:
+                        				break
+                		  	finally:
+                    				conn.close()
 
     def _get_db_names(self):
         """
