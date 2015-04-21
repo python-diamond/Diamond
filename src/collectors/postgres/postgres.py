@@ -11,7 +11,7 @@ Collect metrics from postgresql
 [instances]
 
 [[postgres_port1]]
-enabled = True 
+enabled = True
 path_prefix = path1
 path = postgres_port1
 measure_collector_time = True
@@ -81,9 +81,9 @@ class PostgresqlCollector(diamond.collector.Collector):
             'has_admin': 'Admin privileges are required to execute some'
             ' queries.',
 	    'instances': 'A subcategory of postgres instances with a port'
-                         'if 2 dbservers are running on same host on difernt ports'
-			 'and all options  can be'
-                         'overridden per instance (see example).',
+            'if 2 dbservers are running on same host on difernt ports'
+	    'and all options  can be'
+            'overridden per instance (see example).',
         })
         return config_help
 
@@ -105,7 +105,7 @@ class PostgresqlCollector(diamond.collector.Collector):
             'metrics': [],
             'pg_version': 9.2,
             'has_admin': True,
-	    'instances': {},
+            'instances': {},
         })
         return config
 
@@ -116,7 +116,7 @@ class PostgresqlCollector(diamond.collector.Collector):
         if psycopg2 is None:
             self.log.error('Unable to import module psycopg2')
             return {}
-	instances = self.config['instances']
+            instances = self.config['instances']
         # HACK: setting default with subcategory messes up merging of configs,
         # so we only set the default if one wasn't provided.
         if not instances:
@@ -126,67 +126,64 @@ class PostgresqlCollector(diamond.collector.Collector):
                     'port': '5432',
                 }
             }
-	for name, instance in instances.iteritems():
-                	self.config['enabled'] = instance.get('enabled',self.config['enabled'])or  self.config['enabled']
-			self.config['path'] = instance.get('path',self.config['path'])or  self.config['path']
-			self.config['measure_collector_time'] = instance.get('measure_collector_time',self.config['measure_collector_time']) or self.config['measure_collector_time']
-			self.config['extended'] = instance.get('extended',self.config['extended']) or self.config['extended']
-			self.config['byte_unit'] = instance.get('byte_unit',self.config['byte_unit']) or self.config['byte_unit']
-			self.config['host'] = instance.get('host',self.config['host']) or self.config['host'] 
-			self.config['user'] = instance.get('user',self.config['user']) or self.config['user']
-			self.config['underscore'] = instance.get('underscore',self.config['underscore']) or self.config['underscore']
-			self.config['password'] = instance.get('password',self.config['password'] ) or self.config['password'] 
-			self.config['dbname'] = instance.get('dbname',self.config['dbname']) or self.config['dbname']
-			self.config['metrics'] = instance.get('metrics',self.config['metrics']) or self.config['metrics']
-			self.config['pg_version'] = instance.get('pg_version',self.config['pg_version']) or self.config['pg_version']
-			self.config['port'] = instance.get('port',self.config['port']) or self.config['port']
-			self.config['has_admin'] = instance.get('has_admin',self.config['has_admin']) or self.config['has_admin']
-			self.log.error(self.config) 
-        		# Get list of databases
-        		dbs = self._get_db_names()
-        		if len(dbs) == 0:
-            			self.log.error("I have 0 databases!")
-            			return {}
+        for name, instance in instances.iteritems():
+            self.config['enabled'] = instance.get('enabled',self.config['enabled'])or  self.config['enabled']
+            self.config['path'] = instance.get('path',self.config['path'])or  self.config['path']
+            self.config['measure_collector_time'] = instance.get('measure_collector_time',self.config['measure_collector_time']) or self.config['measure_collector_time']
+            self.config['extended'] = instance.get('extended', self.config['extended']) or self.config['extended']
+            self.config['byte_unit'] = instance.get('byte_unit', self.config['byte_unit']) or self.config['byte_unit']
+            self.config['host'] = instance.get('host', self.config['host']) or self.config['host'] 
+            self.config['user'] = instance.get('user', self.config['user']) or self.config['user']
+            self.config['underscore'] = instance.get('underscore', self.config['underscore']) or self.config['underscore']
+            self.config['password'] = instance.get('password', self.config['password']) or self.config['password']
+            self.config['dbname'] = instance.get('dbname', self.config['dbname']) or self.config['dbname']
+            self.config['metrics'] = instance.get('metrics', self.config['metrics']) or self.config['metrics']
+            self.config['pg_version'] = instance.get('pg_version', self.config['pg_version']) or self.config['pg_version']
+            self.config['port'] = instance.get('port', self.config['port']) or self.config['port']
+            self.config['has_admin'] = instance.get('has_admin', self.config['has_admin']) or self.config['has_admin']
+            # Get list of databases
+            dbs = self._get_db_names()
+            if len(dbs) == 0:
+                self.log.error("I have 0 databases!")
+                return {}
 
-        		if self.config['metrics']:
-            			metrics = self.config['metrics']
-        		elif str_to_bool(self.config['extended']):
-            			metrics = registry['extended']
-            			if str_to_bool(self.config['has_admin']) \
-                    			and 'WalSegmentStats' not in metrics:
-                			metrics.append('WalSegmentStats')
+            if self.config['metrics']:
+                metrics = self.config['metrics']
+            elif str_to_bool(self.config['extended']):
+                metrics = registry['extended']
+                if str_to_bool(self.config['has_admin']) \
+                    and 'WalSegmentStats' not in metrics:
+               	    metrics.append('WalSegmentStats')
+            else:
+                metrics = registry['basic']
 
-        		else:
-            			metrics = registry['basic']
+            # Iterate every QueryStats class
+            for metric_name in set(metrics):
+                if metric_name not in metrics_registry:
+                    self.log.error('metric_name %s not found in metric registry' % metric_name)
+                    continue
 
-        		# Iterate every QueryStats class
-        		for metric_name in set(metrics):
-            			if metric_name not in metrics_registry:
-                			self.log.error(
-                    			'metric_name %s not found in metric registry' % metric_name)
-                			continue
+                for dbase in dbs:
+                    conn = self._connect(database=dbase)
+                    try:
+                        klass = metrics_registry[metric_name]
+                        stat = klass(dbase, conn,
+                            underscore=self.config['underscore'])
+                        stat.fetch(self.config['pg_version'])
+                        for metric, value in stat:
+                            if value is not None:
+                                self.publish(metric, value)
 
-            			for dbase in dbs:
-                			conn = self._connect(database=dbase)
-                		  	try:
-                    				klass = metrics_registry[metric_name]
-                    				stat = klass(dbase, conn,
-                                 			underscore=self.config['underscore'])
-                    				stat.fetch(self.config['pg_version'])
-                    				for metric, value in stat:
-                        				if value is not None:
-                            					self.publish(metric, value)
-
-                    				# Setting multi_db to True will run this query on all known
-                    				# databases. This is bad for queries that hit views like
-                    				# pg_database, which are shared across databases.
-                    				#
-                    				# If multi_db is False, bail early after the first query
-                    				# iteration. Otherwise, continue to remaining databases.
-                    				if stat.multi_db is False:
-                        				break
-                		  	finally:
-                    				conn.close()
+                        # Setting multi_db to True will run this query on all known
+                        # databases. This is bad for queries that hit views like
+                        # pg_database, which are shared across databases.
+                        #
+                        # If multi_db is False, bail early after the first query
+                        # iteration. Otherwise, continue to remaining databases.
+                        if stat.multi_db is False:
+                            break
+                    finally:
+                        conn.close()
 
     def _get_db_names(self):
         """
