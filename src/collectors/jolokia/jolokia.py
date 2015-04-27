@@ -97,8 +97,8 @@ class JolokiaCollector(diamond.collector.Collector):
         })
         return config
 
-    def __init__(self, config, handlers):
-        super(JolokiaCollector, self).__init__(config, handlers)
+    def __init__(self, *args, **kwargs):
+        super(JolokiaCollector, self).__init__(*args, **kwargs)
         self.mbeans = []
         self.rewrite = {}
         if isinstance(self.config['mbeans'], basestring):
