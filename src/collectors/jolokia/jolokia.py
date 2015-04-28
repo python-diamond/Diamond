@@ -153,7 +153,7 @@ class JolokiaCollector(diamond.collector.Collector):
 
     def read_request(self, domain):
         try:
-            url_path = self.READ_URL % urllib.quote(domain)
+            url_path = self.READ_URL % self.escape_domain(domain)
             url = "http://%s:%s/%s" % (self.config['host'],
                                        self.config['port'], url_path)
             response = urllib2.urlopen(url)
@@ -161,6 +161,17 @@ class JolokiaCollector(diamond.collector.Collector):
         except (urllib2.HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
             return {}
+
+    # escape the JMX domain per https://jolokia.org/reference/html/protocol.html
+    # the Jolokia documentation suggests that, when using the p query parameter,
+    # simply urlencoding should be sufficient, but in practice, the '!' appears
+    # necessary (and not harmful)
+    def escape_domain(self, domain):
+        domain = re.sub('!', '!!', domain)
+        domain = re.sub('/', '!/', domain)
+        domain = re.sub('"', '!"', domain)
+        domain = urllib.quote(domain)
+        return domain
 
     def clean_up(self, text):
         text = re.sub('["\'(){}<>\[\]]', '', text)
