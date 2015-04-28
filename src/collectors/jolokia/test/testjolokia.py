@@ -93,6 +93,14 @@ class TestJolokiaCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
+    def test_should_escape_jolokia_domains(self):
+        domain_with_slash = self.collector.escape_domain('some/domain')
+        domain_with_bang = self.collector.escape_domain('some!domain')
+        domain_with_quote = self.collector.escape_domain('some"domain')
+        self.assertEqual(domain_with_slash, 'some%21/domain')
+        self.assertEqual(domain_with_bang, 'some%21%21domain')
+        self.assertEqual(domain_with_quote, 'some%21%22domain')
+
     def get_metrics(self):
         prefix = 'java.lang.name_ParNew.type_GarbageCollector.LastGcInfo'
         return {
