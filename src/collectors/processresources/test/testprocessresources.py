@@ -222,13 +222,13 @@ class ProcessMock:
         ionice = namedtuple('ionice', 'ioclass value')
         amount = namedtuple('amount', 'voluntary involuntary')
         ext_memory_info = ext_meminfo(
-                                       rss=self.rss,
-                                       vms=self.vms,
-                                       shared=1310720,
-                                       text=188416,
-                                       lib=0,
-                                       data=868352,
-                                       dirty=0)
+            rss=self.rss,
+            vms=self.vms,
+            shared=1310720,
+            text=188416,
+            lib=0,
+            data=868352,
+            dirty=0)
         all = {
             'status': 'sleeping',
             'num_ctx_switches': amount(voluntary=2243, involuntary=221),
