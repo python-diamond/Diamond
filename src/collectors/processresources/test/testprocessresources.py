@@ -25,6 +25,7 @@ def run_only_if_psutil_is_available(func):
 
 SELFMON_PID = 10001  # used for selfmonitoring
 
+
 class TestProcessResourcesCollector(CollectorTestCase):
     TEST_CONFIG = {
         'interval': 10,
@@ -195,6 +196,7 @@ class TestProcessResourcesCollector(CollectorTestCase):
         self.assertPublished(publish_mock,
                              'diamond-selfmon.memory_info_ex.rss', 1234)
 
+
 class ProcessMock:
     def __init__(self, pid, name, rss, vms, exe=None, psutil=1):
         self.pid = pid
@@ -219,7 +221,8 @@ class ProcessMock:
         group = namedtuple('group', 'real effective saved')
         ionice = namedtuple('ionice', 'ioclass value')
         amount = namedtuple('amount', 'voluntary involuntary')
-        ext_memory_info = ext_meminfo(rss=self.rss,
+        ext_memory_info = ext_meminfo(
+                                       rss=self.rss,
                                        vms=self.vms,
                                        shared=1310720,
                                        text=188416,
