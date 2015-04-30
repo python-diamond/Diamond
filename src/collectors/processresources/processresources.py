@@ -152,6 +152,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
         'num_fds',
         'memory_percent',
         'ext_memory_info',
+        'memory_info_ex'
     ]
 
     def save_process_info(self, pg_name, process_info):

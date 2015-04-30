@@ -164,14 +164,46 @@ class TestProcessResourcesCollector(CollectorTestCase):
         self.assertPublished(publish_mock,
                              'diamond-selfmon.ext_memory_info.rss', 1234)
 
+    @run_only_if_psutil_is_available
+    @patch.object(time, 'time')
+    @patch.object(os, 'getpid')
+    @patch.object(Collector, 'publish')
+    def test_psutil_2(self, publish_mock, getpid_mock, time_mock):
+        process_iter_mock = (ProcessMock(
+            pid=x['pid'],
+            name=x['name'],
+            rss=x['rss'],
+            vms=x['vms'],
+            exe=x['exe'],
+            psutil=2)
+            for x in self.PROCESS_INFO_LIST)
+
+        time_mock.return_value = 1234567890
+
+        getpid_mock.return_value = SELFMON_PID
+
+        patch_psutil_process_iter = patch('psutil.process_iter',
+                                          return_value=process_iter_mock)
+        patch_psutil_process_iter.start()
+        self.collector.collect()
+        patch_psutil_process_iter.stop()
+        self.assertPublished(publish_mock, 'postgres.memory_info_ex.rss',
+                             1000000 + 100000 + 10000 + 1000 + 100)
+        self.assertPublished(publish_mock, 'foo.memory_info_ex.rss', 1)
+        self.assertPublished(publish_mock, 'bar.memory_info_ex.rss', 3)
+        self.assertPublished(publish_mock, 'barexe.memory_info_ex.rss', 3)
+        self.assertPublished(publish_mock,
+                             'diamond-selfmon.memory_info_ex.rss', 1234)
+
 class ProcessMock:
-    def __init__(self, pid, name, rss, vms, exe=None):
+    def __init__(self, pid, name, rss, vms, exe=None, psutil=1):
         self.pid = pid
         self.name = name
         self.rss = rss
         self.vms = vms
         if exe is not None:
             self.exe = exe
+        self.psutil = psutil
 
         self.cmdline = [self.exe]
         self.create_time = 0
@@ -187,7 +219,14 @@ class ProcessMock:
         group = namedtuple('group', 'real effective saved')
         ionice = namedtuple('ionice', 'ioclass value')
         amount = namedtuple('amount', 'voluntary involuntary')
-        return {
+        ext_memory_info = ext_meminfo(rss=self.rss,
+                                       vms=self.vms,
+                                       shared=1310720,
+                                       text=188416,
+                                       lib=0,
+                                       data=868352,
+                                       dirty=0)
+        all = {
             'status': 'sleeping',
             'num_ctx_switches': amount(voluntary=2243, involuntary=221),
             'pid': self.pid,
@@ -205,13 +244,6 @@ class ProcessMock:
             'username': 'root',
             'cpu_times': cputimes(user=0.27, system=1.05),
             'io_counters': None,
-            'ext_memory_info': ext_meminfo(rss=self.rss,
-                                           vms=self.vms,
-                                           shared=1310720,
-                                           text=188416,
-                                           lib=0,
-                                           data=868352,
-                                           dirty=0),
             'threads': [thread(id=1, user_time=0.27, system_time=1.04)],
             'open_files': None,
             'name': self.name,
@@ -222,6 +254,11 @@ class ProcessMock:
             'cpu_affinity': [0, 1, 2, 3],
             'memory_percent': 0.03254831000922748,
             'memory_info': meminfo(rss=self.rss, vms=self.vms)}
+        if self.psutil == 2:
+            all['memory_info_ex'] = ext_memory_info
+        else:
+            all['ext_memory_info'] = ext_memory_info
+        return all
 
 ################################################################################
 if __name__ == "__main__":
