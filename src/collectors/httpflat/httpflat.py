@@ -36,7 +36,6 @@ class HTTPFLATCollector(diamond.collector.Collector):
         for key in data:
             yield key, data[key]
 
-
     def collect(self):
         url = self.config['url']
 
@@ -58,4 +57,4 @@ class HTTPFLATCollector(diamond.collector.Collector):
             else:
                 for metric_name, metric_value in self._flat_to_flat_metrics(
                         "", data):
-                    self.publish(metric_name, metric_value)
+                    self.publish('voip.rtstatng.' + metric_name, metric_value)
