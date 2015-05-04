@@ -31,7 +31,6 @@ class HTTPFLATCollector(diamond.collector.Collector):
         return default_config
 
     def _flat_to_flat_metrics(self, prefix, data):
-        i = 1
         data = dict(line.split("=") for line in data.split("\n"))
         for key in data:
             yield key, data[key]
@@ -51,7 +50,7 @@ class HTTPFLATCollector(diamond.collector.Collector):
             content = resp.read()
 
             try:
-                data = content
+                data = content[1:]
             except ValueError as e:
                 self.log.error("Can't parse JSON object from %s. %s", url, e)
             else:
