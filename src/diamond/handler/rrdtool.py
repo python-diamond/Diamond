@@ -159,7 +159,7 @@ class RRDHandler(Handler):
             self._flush_queue(filename)
 
     def _queue(self, filename, timestamp, value):
-        if not filename in self._queues:
+        if filename not in self._queues:
             queue = Queue.Queue()
             self._queues[filename] = queue
         else:
@@ -196,7 +196,7 @@ class RRDHandler(Handler):
                 max_timestamp = max(timestamp, max_timestamp)
 
                 # Add this update.
-                if not timestamp in updates:
+                if timestamp not in updates:
                     updates[timestamp] = []
                 updates[timestamp].append(value)
             except Queue.Empty:

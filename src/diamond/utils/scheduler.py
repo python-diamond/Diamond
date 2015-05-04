@@ -83,6 +83,10 @@ def collector_process(collector, metric_queue, log):
             reload_config = True
             pass
 
+        except Exception:
+            log.exception('Collector failed!')
+            break
+
 
 def handler_process(handlers, metric_queue, log):
     proc = multiprocessing.current_process()

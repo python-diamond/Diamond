@@ -233,7 +233,7 @@ class Collector(object):
                 and self.config.get('metrics_blacklist', None)):
             raise DiamondException(
                 'Both metrics_whitelist and metrics_blacklist specified ' +
-                'in file %s' % configfile)
+                'in file %s' % self.configfile)
 
         if self.config.get('metrics_whitelist', None):
             self.config['metrics_whitelist'] = re.compile(
@@ -481,6 +481,8 @@ class Collector(object):
                     metric_name = 'collector_time_ms'
                     metric_value = collector_time
                     self.publish(metric_name, metric_value)
+        except Exception, e:
+            self.log.exception(e)
         finally:
             # After collector run, invoke a flush
             # method on each handler.

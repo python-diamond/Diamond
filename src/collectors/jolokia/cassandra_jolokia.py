@@ -49,8 +49,8 @@ class CassandraJolokiaCollector(JolokiaCollector):
         })
         return config
 
-    def __init__(self, config, handlers):
-        super(CassandraJolokiaCollector, self).__init__(config, handlers)
+    def __init__(self, *args, **kwargs):
+        super(CassandraJolokiaCollector, self).__init__(*args, **kwargs)
         self.offsets = self.create_offsets(91)
         self.update_config(self.config)
 

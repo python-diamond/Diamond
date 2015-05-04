@@ -4,7 +4,7 @@
 Insert the collected values into a mysql table
 """
 
-from handler import Handler
+from Handler import Handler
 import MySQLdb
 
 
@@ -83,10 +83,6 @@ class MySQLHandler(Handler):
                            (data[0], data[2], data[1]))
             cursor.close()
             self.conn.commit()
-            # Insert data
-            pass
-            #self.socket.sendall(data)
-            # Done
         except BaseException, e:
             # Log Error
             self.log.error("MySQLHandler: Failed sending data. %s.", e)

@@ -33,10 +33,7 @@ We extract out the key after target_ and use it in the graphite node we push.
 
 """
 
-import subprocess
 import diamond.collector
-import os
-from diamond.collector import str_to_bool
 
 
 class PingCollector(diamond.collector.ProcessCollector):

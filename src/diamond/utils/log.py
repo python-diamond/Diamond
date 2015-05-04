@@ -10,7 +10,9 @@ import os
 class DebugFormatter(logging.Formatter):
     def __init__(self, fmt=None):
         if fmt is None:
-            fmt = '%(created)s\t[%(processName)s:%(levelname)s]\t%(message)s'
+            fmt = ('%(created)s\t' +
+                   '[%(processName)s:%(process)d:%(levelname)s]\t' +
+                   '%(message)s')
         self.fmt_default = fmt
         self.fmt_prefix = fmt.replace('%(message)s', '')
         logging.Formatter.__init__(self, fmt)

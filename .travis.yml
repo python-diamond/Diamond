@@ -23,3 +23,7 @@ notifications:
         - kormoc@gmail.com
     on_success: change
     on_failure: always
+
+addons:
+    apt_packages:
+    - libsensors4

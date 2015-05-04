@@ -11,7 +11,7 @@ import diamond.collector
 import os
 import re
 
-_RE = re.compile(r'([a-z0-9._-]+)[\s=:]([0-9-]+)(\.?\d*)')
+_RE = re.compile(r'([A-Za-z0-9._-]+)[\s=:]+(-?[0-9]+)(\.?\d*)')
 
 
 class FilesCollector(diamond.collector.Collector):

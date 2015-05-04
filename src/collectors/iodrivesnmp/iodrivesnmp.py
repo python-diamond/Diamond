@@ -103,9 +103,6 @@ class IODriveSNMPCollector(parent_SNMPCollector):
         i.e. fioa, fiob.
         """
 
-        # Log
-        #self.log.info("Collecting Fusion IO Drive statistics from: %s", device)
-
         # Set timestamp
         timestamp = time.time()
 
