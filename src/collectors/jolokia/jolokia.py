@@ -53,6 +53,7 @@ import json
 import re
 import urllib
 import urllib2
+import base64
 
 
 class JolokiaCollector(diamond.collector.Collector):
@@ -80,7 +81,10 @@ class JolokiaCollector(diamond.collector.Collector):
             'port': 'Port',
             'rewrite': "This sub-section of the config contains pairs of"
                        " from-to regex rewrites.",
-            'path': 'Path to jolokia.  typically "jmx" or "jolokia"'
+            'path': 'Path to jolokia.  typically "jmx" or "jolokia"',
+            'user': 'Username for jolokia, if necessary.',
+            'passwd': 'Password for jolokia',
+            'user-agent': 'User-agent to use when making requests to jolokia.',
         })
         return config_help
 
@@ -90,9 +94,12 @@ class JolokiaCollector(diamond.collector.Collector):
             'mbeans': [],
             'regex': False,
             'rewrite': [],
+            'user': None,
+            'passwd': None,
             'path': 'jolokia',
             'host': 'localhost',
             'port': 8778,
+            'user-agent': None,
         })
         return config
 
@@ -140,13 +147,27 @@ class JolokiaCollector(diamond.collector.Collector):
         json_str = request.read()
         return json.loads(json_str)
 
+    def open_url(self, url):
+        request = urllib2.Request(url)
+
+        if self.config['user']:
+            base64string = base64.encodestring('%s:%s' % (
+                self.config['user'], self.config['passwd'])).replace('\n', '')
+            request.add_header("Authorization", "Basic %s" % base64string)
+
+        if self.config['user-agent']:
+            request.add_header("User-Agent", self.config['user-agent'])
+
+        response = urllib2.urlopen(request)
+        return response
+
     def list_request(self):
         try:
             url = "http://%s:%s/%s%s" % (self.config['host'],
                                          self.config['port'],
                                          self.config['path'],
                                          self.LIST_URL)
-            response = urllib2.urlopen(url)
+            response = self.open_url(url)
             return self.read_json(response)
         except (urllib2.HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
@@ -159,7 +180,7 @@ class JolokiaCollector(diamond.collector.Collector):
                                          self.config['port'],
                                          self.config['path'],
                                          url_path)
-            response = urllib2.urlopen(url)
+            response = self.open_url(url)
             return self.read_json(response)
         except (urllib2.HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')

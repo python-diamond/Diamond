@@ -93,6 +93,35 @@ class TestJolokiaCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
+    def test_should_support_basic_auth(self):
+        def se(request):
+            assert request.has_header('Authorization')
+
+        patch_urlopen = patch('urllib2.urlopen', Mock(side_effect=se))
+
+        authn = {'user': 'x', 'passwd': 'y'}
+        config = get_collector_config('JolokiaCollector', authn)
+        collector_with_auth = JolokiaCollector(config, None)
+
+        patch_urlopen.start()
+        collector_with_auth.open_url("http://localhost:8778")
+        patch_urlopen.stop()
+
+    def test_should_support_setting_the_user_agent(self):
+        def se(request):
+            assert request.has_header('User-agent')
+            assert request.get_header('User-agent') == "curl/xyz"
+
+        patch_urlopen = patch('urllib2.urlopen', Mock(side_effect=se))
+
+        ua = {'user-agent': 'curl/xyz'}
+        config = get_collector_config('JolokiaCollector', ua)
+        collector_with_ua = JolokiaCollector(config, None)
+
+        patch_urlopen.start()
+        collector_with_ua.open_url("http://localhost:8778")
+        patch_urlopen.stop()
+
     def test_should_escape_jolokia_domains(self):
         domain_with_slash = self.collector.escape_domain('some/domain')
         domain_with_bang = self.collector.escape_domain('some!domain')
