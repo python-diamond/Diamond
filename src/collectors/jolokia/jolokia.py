@@ -57,9 +57,8 @@ import urllib2
 
 class JolokiaCollector(diamond.collector.Collector):
 
-    BASE_URL = "jolokia"
-    LIST_URL = BASE_URL + "/list"
-    READ_URL = BASE_URL + "/?ignoreErrors=true&p=read/%s:*"
+    LIST_URL = "/list"
+    READ_URL = "/?ignoreErrors=true&p=read/%s:*"
 
     """
     These domains contain MBeans that are for management purposes,
@@ -91,7 +90,7 @@ class JolokiaCollector(diamond.collector.Collector):
             'mbeans': [],
             'regex': False,
             'rewrite': [],
-            'path': 'jmx',
+            'path': 'jolokia',
             'host': 'localhost',
             'port': 8778,
         })
@@ -143,8 +142,10 @@ class JolokiaCollector(diamond.collector.Collector):
 
     def list_request(self):
         try:
-            url = "http://%s:%s/%s" % (self.config['host'],
-                                       self.config['port'], self.LIST_URL)
+            url = "http://%s:%s/%s%s" % (self.config['host'],
+                                         self.config['port'],
+                                         self.config['path'],
+                                         self.LIST_URL)
             response = urllib2.urlopen(url)
             return self.read_json(response)
         except (urllib2.HTTPError, ValueError):
@@ -154,8 +155,10 @@ class JolokiaCollector(diamond.collector.Collector):
     def read_request(self, domain):
         try:
             url_path = self.READ_URL % self.escape_domain(domain)
-            url = "http://%s:%s/%s" % (self.config['host'],
-                                       self.config['port'], url_path)
+            url = "http://%s:%s/%s%s" % (self.config['host'],
+                                         self.config['port'],
+                                         self.config['path'],
+                                         url_path)
             response = urllib2.urlopen(url)
             return self.read_json(response)
         except (urllib2.HTTPError, ValueError):
