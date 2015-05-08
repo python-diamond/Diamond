@@ -7,11 +7,8 @@ from test import get_collector_config
 from test import unittest
 from mock import Mock
 from mock import patch
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
+from mock import call
+from collections import Iterator
 
 from diamond.collector import Collector
 from sockstat import SockstatCollector
@@ -34,23 +31,32 @@ class TestSockstatCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_open_proc_net_sockstat(self, publish_mock, open_mock):
-        open_mock.return_value = StringIO('')
+        class Klass(Iterator):
+            def close(self):
+                pass
+
+            def next(self):
+                raise StopIteration
+
+        open_mock.return_value = Klass()
         self.collector.collect()
-        open_mock.assert_called_once_with('/proc/net/sockstat')
+        calls = [call('/proc/net/sockstat'), call('/proc/net/sockstat6')]
+        open_mock.assert_has_calls(calls)
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        SockstatCollector.PROC = self.getFixturePath('proc_net_sockstat')
+        SockstatCollector.PROCS = [self.getFixturePath('proc_net_sockstat'),
+                                   self.getFixturePath('proc_net_sockstat6')]
         self.collector.collect()
 
         metrics = {
             'used': 118,
-            'tcp_inuse': 10,
+            'tcp_inuse': 61,
             'tcp_orphan': 0,
             'tcp_tw': 1,
             'tcp_alloc': 13,
             'tcp_mem': 1,
-            'udp_inuse': 0,
+            'udp_inuse': 6,
             'udp_mem': 0
         }
 
