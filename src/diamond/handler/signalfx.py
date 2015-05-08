@@ -65,7 +65,7 @@ class SignalfxHandler(Handler):
         config = super(SignalfxHandler, self).get_default_config()
 
         config.update({
-            'url': 'https://api.signalfuse.com/v2/datapoint',
+            'url': 'https://ingest.signalfx.com/v2/datapoint',
             'batch': 300,
             # Don't wait more than 10 sec between pushes
             'batch_max_interval': 10,

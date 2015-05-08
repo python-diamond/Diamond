@@ -7,10 +7,29 @@ The PortStatCollector collects metrics about ports listed in config file.
 
 """
 
-from collections import Counter
-
-import psutil
+from collections import defaultdict
 import diamond.collector
+
+try:
+    import psutil
+except ImportError:
+    psutil = None
+
+
+def get_port_stats(port):
+    """
+    Iterate over connections and count states for specified port
+    :param port: port for which stats are collected
+    :return: Counter with port states
+    """
+    cnts = defaultdict(int)
+    for c in psutil.net_connections():
+        c_port = c.laddr[1]
+        if c_port != port:
+            continue
+        status = c.status.lower()
+        cnts[status] += 1
+    return cnts
 
 
 class PortStatCollector(diamond.collector.Collector):
@@ -38,30 +57,18 @@ class PortStatCollector(diamond.collector.Collector):
         })
         return config
 
-    @staticmethod
-    def get_port_stats(port):
-        """
-        Iterate over connections and count states for specified port
-        :param port: port for which stats are collected
-        :return: Counter with port states
-        """
-        cnts = Counter()
-        for c in psutil.net_connections():
-            c_port = c.laddr[1]
-            if c_port != port:
-                continue
-            status = c.status.lower()
-            cnts[status] += 1
-        return cnts
-
     def collect(self):
         """
         Overrides the Collector.collect method
         """
 
+        if psutil is None:
+            self.log.error('Unable to import module psutil')
+            return {}
+
         for port_name, port_cfg in self.ports.iteritems():
             port = int(port_cfg['number'])
-            stats = PortStatCollector.get_port_stats(port)
+            stats = get_port_stats(port)
 
             for stat_name, stat_value in stats.iteritems():
                 metric_name = '%s.%s' % (port_name, stat_name)
