@@ -1,8 +1,10 @@
 # coding=utf-8
 
 import time
+import math
 import multiprocessing
 import os
+import random
 import sys
 import signal
 
@@ -28,19 +30,24 @@ def collector_process(collector, metric_queue, log):
     signal.signal(signal.SIGUSR2, signal_to_exception)
 
     interval = float(collector.config['interval'])
-    max_time = int(interval * 0.9)
 
     log.debug('Starting')
     log.debug('Interval: %s seconds', interval)
-    log.debug('Max collection time: %s seconds', max_time)
 
     # Validate the interval
     if interval <= 0:
         log.critical('interval of %s is not valid!', interval)
         sys.exit(1)
 
-    next_collection = time.time()
-    reload_config = False
+    # Start the next execution at the next window plus some stagger delay to
+    # avoid having all collectors running at the same time
+    next_window = math.floor(time.time() / interval) * interval
+    stagger_offset = random.uniform(0, interval - 1)
+
+    # Allocate time till the end of the window for the collector to run. With a
+    # minimum of 1 second
+    max_time = int(max(interval - stagger_offset, 1))
+    log.debug('Max collection time: %s seconds', max_time)
 
     # Setup stderr/stdout as /dev/null so random print statements in thrid
     # party libs do not fail and prevent collectors from running.
@@ -50,11 +57,11 @@ def collector_process(collector, metric_queue, log):
 
     while(True):
         try:
-            time_to_sleep = next_collection - time.time()
+            time_to_sleep = (next_window + stagger_offset) - time.time()
             if time_to_sleep > 0:
                 time.sleep(time_to_sleep)
 
-            next_collection += interval
+            next_window += interval
 
             # Ensure collector run times fit into the collection window
             signal.alarm(max_time)
@@ -65,23 +72,25 @@ def collector_process(collector, metric_queue, log):
             # Success! Disable the alarm
             signal.alarm(0)
 
-            # Reload the config if requested
-            # This is outside of the alarm code as we don't want to interrupt
-            # it and end up with half a loaded config
-            if reload_config:
-                log.debug('Reloading config')
-                collector.load_config()
-                log.info('Config reloaded')
-                reload_config = False
-
         except SIGALRMException:
             log.error('Took too long to run! Killed!')
-            continue
+
+            # Adjust  the stagger_offset to allow for more time to run the
+            # collector
+            stagger_offset = stagger_offset * 0.9
+
+            max_time = int(max(interval - stagger_offset, 1))
+            log.debug('Max collection time: %s seconds', max_time)
 
         except SIGHUPException:
-            log.info('Scheduling config reload due to HUP')
-            reload_config = True
-            pass
+            # Reload the config if requested
+            # We must first disable the alarm as we don't want it to interrupt
+            # us and end up with half a loaded config
+            signal.alarm(0)
+
+            log.info('Reloading config reload due to HUP')
+            collector.load_config()
+            log.info('Config reloaded')
 
         except Exception:
             log.exception('Collector failed!')
@@ -100,5 +109,6 @@ def handler_process(handlers, metric_queue, log):
         for metric in metrics:
             for handler in handlers:
                 handler._process(metric)
+
         for handler in handlers:
             handler._flush()
