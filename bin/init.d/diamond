@@ -27,6 +27,7 @@ PIDFILE=/var/run/diamond.pid
 SCRIPTNAME=/etc/init.d/diamond
 LOCKDIR=/var/lock/subsys
 LOCKFILE=/var/lock/subsys/diamond
+CONF=/etc/diamond/diamond.conf
 
 # Exit if the package is not installed
 [ -x $DAEMON ] || exit 0
