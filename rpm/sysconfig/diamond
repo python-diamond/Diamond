@@ -1,0 +1,13 @@
+# Defaults for diamond initscript
+# sourced by /etc/init.d/diamond
+# installed at /etc/sysconfig/diamond by setup.py
+
+#
+# This is a POSIX shell fragment
+#
+
+# Additional options that are passed to the Daemon.
+ENABLE_DIAMOND="yes"
+DIAMOND_PID="/var/run/diamond.pid"
+DIAMOND_USER="diamond"
+
