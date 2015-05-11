@@ -44,6 +44,9 @@ fi
 . /etc/rc.d/init.d/functions
 
 start() {
+  if [ "x$ENABLE_DIAMOND" != "xyes" ]; then
+    exit 0
+  fi
   if [ -d "${LOCKDIR}" -a -w "${LOCKDIR}" ]
   then
     local pid
