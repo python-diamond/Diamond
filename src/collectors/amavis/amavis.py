@@ -42,6 +42,9 @@ class AmavisCollector(diamond.collector.Collector):
         config_help = super(AmavisCollector, self).get_default_config_help()
         config_help.update({
             'amavisd_exe': 'The path to amavisd-agent',
+            'use_sudo': 'Call amavisd-agent using sudo',
+            'sudo_exe': 'The path to sudo',
+            'sudo_user': 'The user to use if using sudo',
         })
         return config_help
 
@@ -50,6 +53,9 @@ class AmavisCollector(diamond.collector.Collector):
         config.update({
             'path': 'amavis',
             'amavisd_exe': '/usr/sbin/amavisd-agent',
+            'use_sudo': False,
+            'sudo_exe': '/usr/bin/sudo',
+            'sudo_user': 'amavis',
         })
         return config
 
@@ -58,7 +64,15 @@ class AmavisCollector(diamond.collector.Collector):
         Collect memory stats
         """
         try:
-            cmdline = [self.config['amavisd_exe'], '-c', '1']
+            if self.config['use_sudo']:
+                # Use -u instead of --user as the former is more portable. Not
+                # all versions of sudo support the long form --user.
+                cmdline = [
+                    self.config['sudo_exe'], '-u', self.config['sudo_user'],
+                    '--', self.config['amavisd_exe'], '-c', '1'
+                ]
+            else:
+                cmdline = [self.config['amavisd_exe'], '-c', '1']
             agent = subprocess.Popen(cmdline, stdout=subprocess.PIPE)
             agent_out = agent.communicate()[0]
             lines = agent_out.strip().split(os.linesep)
