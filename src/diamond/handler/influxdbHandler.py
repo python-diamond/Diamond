@@ -184,7 +184,7 @@ class InfluxdbHandler(Handler):
                         for path in self.batch:
                             metrics.append({
                                 "name": path,
-                                "precision": "ms",
+                                "precision": self.time_precision,
                                 "time": self.batch[path][0][0],
                                 "fields": {"value": self.batch[path][0][1]}})
                     # Send data to influxdb
