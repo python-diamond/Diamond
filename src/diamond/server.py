@@ -169,10 +169,10 @@ class Server(object):
                         cls_name = cls.__name__.split('.')[-1]
                         if cls_name == collector_name:
                             break
-                    if cls_name != collector_name:
-                        self.log.error('Can not find collector %s',
-                                       collector_name)
-                        continue
+                        if cls_name != collector_name:
+                            self.log.error('Can not find collector %s',
+                                           collector_name)
+                            continue
 
                     collector = initialize_collector(
                         cls,
