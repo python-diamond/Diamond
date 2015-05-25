@@ -57,6 +57,11 @@ class ElasticSearchCollector(diamond.collector.Collector):
                 port = 9200
 
             self.instances[alias] = (host, int(port))
+        
+        if len(self.config['logstash_filter']):
+            re_logstash_filter = re.compile(self.config['logstash_filter'])
+        else:
+            re_logstash_filter = RE_LOGSTASH_INDEX
 
     def get_default_config_help(self):
         config_help = super(ElasticSearchCollector,
@@ -75,6 +80,9 @@ class ElasticSearchCollector(diamond.collector.Collector):
             + "the YYYY.MM.DD suffix from the index name "
             + "(e.g. logstash-adm-syslog-2014.01.03) and use that "
             + "as a bucket for all 'day' index stats.",
+            'logstash_filter': "regular expression to strip the date "
+            + "from the index name. Default to "
+            + "'^(.*)-\d\d\d\d\.\d\d\.\d\d$'",
         })
         return config_help
 
@@ -90,6 +98,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             'path':           'elasticsearch',
             'stats':          ['jvm', 'thread_pool', 'indices'],
             'logstash_mode': False,
+            'logstash_filter': '^(.*)-\d\d\d\d\.\d\d\.\d\d$',
             'cluster':       False,
         })
         return config
@@ -134,7 +143,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             """Remove the YYYY.MM.DD bit from logstash indices.
             This way we keep using the same metric naming and not polute
             our metrics system (e.g. Graphite) with new metrics every day."""
-            m = RE_LOGSTASH_INDEX.match(prefix)
+            m = re_logstash_filter.match(prefix)
             if m:
                 prefix = m.group(1)
 
