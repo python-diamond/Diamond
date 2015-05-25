@@ -55,9 +55,9 @@ class ElasticSearchCollector(diamond.collector.Collector):
                 port = 9200
 
             self.instances[alias] = (host, int(port))
-        
+
         self.re_logstash_filter = re.compile(self.config['logstash_filter'])
-            
+   
     def get_default_config_help(self):
         config_help = super(ElasticSearchCollector,
                             self).get_default_config_help()
