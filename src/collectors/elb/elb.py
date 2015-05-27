@@ -289,10 +289,11 @@ class ElbCollector(diamond.collector.Collector):
         threads = []
         for zone in get_zones(region_cw_conn.region.name, self.auth_kwargs):
             # Create a new connection for each thread, Boto isn't threadsafe.
-            thread_conn = cloudwatch.connect_to_region(
-                                region_cw_conn.region.name, **self.auth_kwargs)
+            t_conn = cloudwatch.connect_to_region(region_cw_conn.region.name,
+                                                  **self.auth_kwargs)
             zone_thread = threading.Thread(target=self.process_zone,
-                            args=(thread_conn, zone, start_time, end_time))
+                                           args=(t_conn, zone,
+                                                 start_time, end_time))
             zone_thread.start()
 
             threads.append(zone_thread)
@@ -302,7 +303,6 @@ class ElbCollector(diamond.collector.Collector):
         # in about 7ms.
         for thread in threads:
             thread.join()
-
 
     def collect(self):
         if not self.check_boto():
