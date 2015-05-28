@@ -44,7 +44,7 @@ class CassandraJolokiaCollector(JolokiaCollector):
     def get_default_config(self):
         config = super(CassandraJolokiaCollector, self).get_default_config()
         config.update({
-            'percentiles': '50,95,99',
+            'percentiles': ['50', '95', '99'],
             'histogram_regex': '.*HistogramMicros$'
         })
         return config
@@ -56,8 +56,7 @@ class CassandraJolokiaCollector(JolokiaCollector):
 
     def update_config(self, config):
         if 'percentiles' in config:
-            self.percentiles = map(int, string.split(config['percentiles'],
-                                                     ','))
+            self.percentiles = map(int, config['percentiles'])
         if 'histogram_regex' in config:
             self.histogram_regex = re.compile(config['histogram_regex'])
 
