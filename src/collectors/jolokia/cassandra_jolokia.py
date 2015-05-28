@@ -68,10 +68,11 @@ class CassandraJolokiaCollector(JolokiaCollector):
             return
 
         buckets = values
+        offsets = self.offsets
         for percentile in self.percentiles:
-            percentile_value = self.compute_percentile(
-                self.offsets, buckets, percentile)
-            self.publish("%s.p%s" % (prefix, percentile), percentile_value)
+            value = self.compute_percentile(offsets, buckets, percentile)
+            cleaned_key = self.clean_up("%s.p%s" % (prefix, percentile))
+            self.publish(cleaned_key, value)
 
     # Adapted from Cassandra docs:
     # https://bit.ly/13M5JPE
