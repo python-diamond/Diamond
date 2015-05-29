@@ -155,6 +155,11 @@ class Server(object):
                         if process.name == process_name:
                             process.terminate()
 
+                collector_classes = dict(
+                    (cls.__name__.split('.')[-1], cls)
+                    for cls in collectors.values()
+                )
+
                 for process_name in running_collectors - running_processes:
                     # To handle running multiple collectors concurrently, we
                     # split on white space and use the first word as the
@@ -164,18 +169,13 @@ class Server(object):
                     if 'Collector' not in collector_name:
                         continue
 
-                    # Find the class
-                    for cls in collectors.values():
-                        cls_name = cls.__name__.split('.')[-1]
-                        if cls_name == collector_name:
-                            break
-                        if cls_name != collector_name:
-                            self.log.error('Can not find collector %s',
-                                           collector_name)
-                            continue
+                    if collector_name not in collector_classes:
+                        self.log.error('Can not find collector %s',
+                                       collector_name)
+                        continue
 
                     collector = initialize_collector(
-                        cls,
+                        collector_classes[collector_name],
                         name=process_name,
                         configfile=self.configfile,
                         handlers=[self.handler_queue])
