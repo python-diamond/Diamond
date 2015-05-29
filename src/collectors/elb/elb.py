@@ -44,6 +44,7 @@ import datetime
 import functools
 import re
 import time
+import threading
 from collections import namedtuple
 from string import Template
 
@@ -285,8 +286,23 @@ class ElbCollector(diamond.collector.Collector):
                              elb_name)
 
     def process_region(self, region_cw_conn, start_time, end_time):
+        threads = []
         for zone in get_zones(region_cw_conn.region.name, self.auth_kwargs):
-            self.process_zone(region_cw_conn, zone, start_time, end_time)
+            # Create a new connection for each thread, Boto isn't threadsafe.
+            t_conn = cloudwatch.connect_to_region(region_cw_conn.region.name,
+                                                  **self.auth_kwargs)
+            zone_thread = threading.Thread(target=self.process_zone,
+                                           args=(t_conn, zone,
+                                                 start_time, end_time))
+            zone_thread.start()
+
+            threads.append(zone_thread)
+
+        # Make sure all threads have completed. Also allows scheduler to work
+        # more 'correctly', because without this, the collector will 'complete'
+        # in about 7ms.
+        for thread in threads:
+            thread.join()
 
     def collect(self):
         if not self.check_boto():
