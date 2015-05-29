@@ -21,7 +21,7 @@ class HTTPJSONCollector(diamond.collector.Collector):
         config_help.update({
             'url': 'Full URL',
             'headers': 'Header variable if needed. '
-                'Will be added to every request',
+            'Will be added to every request',
         })
         return config_help
 
