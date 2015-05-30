@@ -310,7 +310,11 @@ class SNMPCollector(diamond.collector.Collector):
                 fn = self.snmp_get
 
             for metric_name, metric_value in fn(oid, auth, transport):
-                self._publish(device.replace('.', '_'), oid, basename, metric_name, metric_value)
+                self._publish(device.replace('.', '_'),
+                              oid,
+                              basename,
+                              metric_name,
+                              metric_value)
 
     def collect(self):
         """
