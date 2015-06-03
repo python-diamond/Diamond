@@ -35,7 +35,7 @@ import time
 from Handler import Handler
 
 try:
-    from influxdb.client import InfluxDBClient
+    from influxdb.influxdb08.client import InfluxDBClient
 except ImportError:
     InfluxDBClient = None
 
