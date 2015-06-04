@@ -12,6 +12,7 @@ import configobj
 import time
 import re
 import subprocess
+import signal
 
 from diamond.metric import Metric
 from diamond.utils.config import load_config
