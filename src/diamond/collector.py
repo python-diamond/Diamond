@@ -172,6 +172,10 @@ class Collector(object):
         else:
             self.name = name
 
+        # Reset signal handlers of forks/threads
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
+        signal.signal(signal.SIGTERM, signal.SIG_DFL)
+
         self.handlers = handlers
         self.last_values = {}
 
