@@ -68,7 +68,7 @@ class MongoDBCollector(diamond.collector.Collector):
                     ' Default is False',
             'replica': 'True to enable replica set logging. Reports health of'
                        ' individual nodes as well as basic aggregate stats.'
-                       ' Default is false'
+                       ' Default is False'
         })
         return config_help
 
@@ -88,7 +88,8 @@ class MongoDBCollector(diamond.collector.Collector):
             'simple': 'False',
             'translate_collections': 'False',
             'collection_sample_rate': 1,
-            'ssl': False
+            'ssl': False,
+            'replica': False
         })
         return config
 
@@ -185,7 +186,7 @@ class MongoDBCollector(diamond.collector.Collector):
                     replset_data = conn.admin.command('replSetGetStatus')
                     self._publish_replset(replset_data, base_prefix)
                 except pymongo.errors.OperationFailure as e:
-                    self.log.error('error getting replica set status', e))
+                    self.log.error('error getting replica set status', e)
             self._publish_transformed(data, base_prefix)
 
             self._publish_dict_with_prefix(data, base_prefix)
@@ -227,8 +228,8 @@ class MongoDBCollector(diamond.collector.Collector):
                                data['members'], 0)
         
         self._publish_dict_with_prefix({
-            'healthy_nodes': healthy_nodes
-            'total_nodes': total_nodes,
+            'healthy_nodes': healthy_nodes,
+            'total_nodes': total_nodes
             }, prefix)
         for node in data['members']:
             self._publish_dict_with_prefix(node,
