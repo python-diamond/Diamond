@@ -177,6 +177,10 @@ class MongoDBCollector(diamond.collector.Collector):
             self._publish_transformed(data, base_prefix)
             if str_to_bool(self.config['simple']):
                 data = self._extract_simple_data(data)
+            if str_to_bool(self.config['replica']):
+                replset_data = conn.admin.command('replSetGetStatus')
+                self._publish_replset(replset_data, base_prefix)
+            self._publish_transformed(data, base_prefix)
 
             self._publish_dict_with_prefix(data, base_prefix)
             db_name_filter = re.compile(self.config['databases'])
@@ -205,6 +209,21 @@ class MongoDBCollector(diamond.collector.Collector):
                     self._publish_dict_with_prefix(collection_stats,
                                                    collection_prefix)
 
+    def _publish_replset(self, data, base_prefix):
+        prefix = base_prefix + ['replset']
+        self._publish_dict_with_prefix(data, prefix)
+        total_nodes = len(data['members'])
+        healthy_nodes = reduce(lambda value, node: value + node['health'],
+                                data['members'], 0)
+        
+        self._publish_dict_with_prefix({
+            'total_nodes': total_nodes,
+            'healthy_nodes': healthy_nodes
+            }, prefix)
+        for node in data['members']:
+            self._publish_dict_with_prefix(node,
+                prefix + ['node', str(node['_id'])])
+ 
     def _publish_transformed(self, data, base_prefix):
         """ Publish values of type: counter or percent """
         self._publish_dict_with_prefix(data.get('opcounters', {}),
