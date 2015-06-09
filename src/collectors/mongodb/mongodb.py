@@ -59,8 +59,9 @@ class MongoDBCollector(diamond.collector.Collector):
             'of collections. This is applied after collections are ignored via'
             ' ignore_collections Sampling uses crc32 so it is consistent across'
             ' replicas. Value between 0 and 1. Default is 1',
-            'network_timeout': 'Timeout for mongodb connection (in seconds).'
-                               ' There is no timeout by default.',
+            'network_timeout': 'Timeout for mongodb connection (in'
+                               ' milliseconds). There is no timeout by'
+                               ' default.',
             'simple': 'Only collect the same metrics as mongostat.',
             'translate_collections': 'Translate dot (.) to underscores (_)'
                                      ' in collection names.',
@@ -151,16 +152,15 @@ class MongoDBCollector(diamond.collector.Collector):
                     self.config['ssl'] = str_to_bool(self.config['ssl'])
 
                 if ReadPreference is None:
-                    conn = pymongo.Connection(
+                    conn = pymongo.MongoClient(
                         host,
-                        network_timeout=self.config['network_timeout'],
+                        socketTimeoutMS=self.config['network_timeout'],
                         ssl=self.config['ssl'],
-                        slave_okay=True
                     )
                 else:
-                    conn = pymongo.Connection(
+                    conn = pymongo.MongoClient(
                         host,
-                        network_timeout=self.config['network_timeout'],
+                        socketTimeoutMS=self.config['network_timeout'],
                         ssl=self.config['ssl'],
                         read_preference=ReadPreference.SECONDARY,
                     )
