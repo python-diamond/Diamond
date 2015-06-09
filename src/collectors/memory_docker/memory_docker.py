@@ -50,6 +50,15 @@ def _parse_metric_name(metric_name):
     return None
 
 
+def _get_container_name(container_names):
+    if container_names:
+        for c_name in container_names:
+            if c_name.find('/', 1) == -1:
+                return c_name[1:]
+        return container_names[0][1:]
+    return ''
+
+
 class MemoryDockerCollector(MemoryCgroupCollector):
     def process_config(self):
         super(MemoryDockerCollector, self).process_config()
@@ -85,7 +94,7 @@ class MemoryDockerCollector(MemoryCgroupCollector):
             return
 
         self.containers = dict(
-            (c['Id'], c['Names'][0][1:] if c['Names'] else '')
+            (c['Id'], _get_container_name(c['Names']))
             for c in docker.Client().containers(all=True)
         )
         return super(MemoryDockerCollector, self).collect()

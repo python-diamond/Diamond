@@ -32,7 +32,7 @@ docker_fixture = [
     {u'Id': u'c3341726a9b4235a35b390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc5',
      u'Names': [u'/testcontainer']},
     {u'Id': u'8c209083474e13f695d5eee01d090ba474a79f1d74ce236f08ffb22419fb6127',
-     u'Names': [u'/testcontainer2']},
+     u'Names': [u'/testcontainer/testcontainer2', u'/testcontainer2']},
     {u'Id': u'9c151939e20682b924d7299875e94a4aabbe946b30b407f89e276507432c625b',
      u'Names': None},
     {u'Id': u'e8b0b1189abcf13aa438f0983328fed7b7a3ff54e445cfbd1a7a359f9855a45a',
@@ -138,6 +138,9 @@ class TestMemoryDockerCollector(CollectorTestCase):
             'docker.service.swap': 1,
         })
         self.assertUnpublishedMany(publish_mock, {
+            'docker.testcontainer.testcontainer2.cache': 1,
+            'docker.testcontainer.testcontainer2.rss': 1,
+            'docker.testcontainer.testcontainer2.swap': 1,
             'docker-8c209083474e13f695d5eee01d090ba4'
             '74a79f1d74ce236f08ffb22419fb6128.cache': 1,
             'docker-8c209083474e13f695d5eee01d090ba4'
