@@ -20,7 +20,7 @@ class TestRabbitMQCollector(CollectorTestCase):
             'host': 'localhost:55672',
             'user': 'guest',
             'password': 'password',
-            'queues_ignored': ['^ignored', ],
+            'queues_ignored': '^ignored',
             'cluster': True,
         })
         self.collector = RabbitMQCollector(config, None)
