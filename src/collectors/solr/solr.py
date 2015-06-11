@@ -93,7 +93,7 @@ class SolrCollector(diamond.collector.Collector):
             cores = [self.config['core']]
         else:
             # If no core is specified, provide statistics for all cores
-            result = self._get('/solr/admin/cores?action=STATUS&wt=json')
+            result = self._get('solr/admin/cores?action=STATUS&wt=json')
             if result:
                 cores = result['status'].keys()
 
@@ -105,7 +105,7 @@ class SolrCollector(diamond.collector.Collector):
                 path = ""
 
             ping_url = posixpath.normpath(
-                "/solr/{0}/admin/ping?wt=json".format(core))
+                "solr/{0}/admin/ping?wt=json".format(core))
 
             if 'response' in self.config['stats']:
                 result = self._get(ping_url)
@@ -120,7 +120,7 @@ class SolrCollector(diamond.collector.Collector):
                 })
 
             stats_url = posixpath.normpath(
-                "/solr/{0}/admin/mbeans?stats=true&wt=json".format(core))
+                "solr/{0}/admin/mbeans?stats=true&wt=json".format(core))
 
             result = self._get(stats_url)
             if not result:
@@ -197,7 +197,7 @@ class SolrCollector(diamond.collector.Collector):
 
             if 'jvm' in self.config['stats']:
                 system_url = posixpath.normpath(
-                    "/solr/{0}/admin/system?stats=true&wt=json".format(core))
+                    "solr/{0}/admin/system?stats=true&wt=json".format(core))
 
                 result = self._get(system_url)
                 if not result:
