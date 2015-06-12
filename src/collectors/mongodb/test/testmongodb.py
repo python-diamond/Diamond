@@ -25,8 +25,6 @@ def run_only_if_pymongo_is_available(func):
     return run_only(func, pred)
 
 
-
-
 class TestMongoDBCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MongoDBCollector', {
@@ -146,7 +144,7 @@ class TestMongoDBCollector(CollectorTestCase):
 
         self.collector.collect()
         assert call('replsetSetGetStatus') not in \
-               self.connection.admin.command.method_calls
+            self.connection.admin.command.method_calls
 
     def _annotate_connection(self, connector_mock, data):
         connector_mock.return_value = self.connection
@@ -274,6 +272,7 @@ class TestMongoMultiHostDBCollector(CollectorTestCase):
         self.connection.db.command.return_value = data
         self.connection.database_names.return_value = ['db1', 'baddb']
 
+
 class TestMongoDBCollectorWithReplica(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('MongoDBCollector', {
@@ -298,13 +297,13 @@ class TestMongoDBCollectorWithReplica(CollectorTestCase):
 
         self.collector.collect()
 
-        self.connection.admin.command.assert_called_once_with('replSetGetStatus')
+        self.connection.admin.command.assert_called_once_with(
+            'replSetGetStatus')
 
     def _annotate_connection(self, connector_mock, data):
         connector_mock.return_value = self.connection
         self.connection.db.command.return_value = data
         self.connection.database_names.return_value = ['db1', 'baddb']
-
 
 
 ################################################################################
