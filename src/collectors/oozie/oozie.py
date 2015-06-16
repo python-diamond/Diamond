@@ -33,7 +33,7 @@ class OozieCollector(Collector):
             'path':     '',
             'excluded_settings': ['logging', 'version'],
             'port': '11000',
-            'url': '/oozie/v1/admin/instrumentation',
+            'url_ext': '/oozie/v1/admin/instrumentation',
             'host': 'localhost',
         })
         return config
@@ -41,7 +41,7 @@ class OozieCollector(Collector):
     def collect(self):
         oozie_url = "http://%s:%s%s" % \
                     (self.config['host'], self.config['port'],
-                     self.config['url'])
+                     self.config['url_ext'])
         r = requests.get(oozie_url)
         results = r.json()
         for section, data in results.iteritems():
