@@ -16,6 +16,13 @@ Enable this handler
  * auth_token = SIGNALFX_AUTH_TOKEN
  * batch_size = [optional | 300 ] will wait for this many requests before
      posting
+
+ * include_filters = [optional | '^.*'] A list of regex patterns.
+     Only measurements whose path matches a filter will be submitted.
+     Useful for limiting usage to *only* desired measurements, e.g.
+       include_filters = "^diskspace\..*\.byte_avail$", "^loadavg\.01"
+       include_filters = "^sockets\.",
+                                     ^ note trailing comma to indicate a list
 """
 
 from Handler import Handler
@@ -24,6 +31,7 @@ import json
 import logging
 import time
 import urllib2
+import re
 
 
 class SignalfxHandler(Handler):
@@ -37,6 +45,13 @@ class SignalfxHandler(Handler):
         self.auth_token = self.config['auth_token']
         self.batch_max_interval = self.config['batch_max_interval']
         self.resetBatchTimeout()
+        # If a user leaves off the ending comma, cast to a array for them
+        include_filters = self.config['include_filters']
+        if isinstance(include_filters, basestring):
+            include_filters = [include_filters]
+
+        self.include_reg = re.compile(r'(?:%s)' % '|'.join(include_filters))
+
         if self.auth_token == "":
             logging.error("Failed to load Signalfx module")
             return
@@ -54,6 +69,7 @@ class SignalfxHandler(Handler):
             'url': 'Where to send metrics',
             'batch': 'How many to store before sending',
             'auth_token': 'Org API token to use when sending metrics',
+            'include_filters': 'Regex pattern to filter which metrics are sent',
             })
 
         return config
@@ -70,6 +86,7 @@ class SignalfxHandler(Handler):
             # Don't wait more than 10 sec between pushes
             'batch_max_interval': 10,
             'auth_token': '',
+            'include_filters': ['^.*'],
             })
 
         return config
@@ -78,6 +95,14 @@ class SignalfxHandler(Handler):
         """
         Queue a metric.  Flushing queue if batch size reached
         """
+        path = metric.getCollectorPath()
+        path += '.'
+        path += metric.getMetricPath()
+
+        if not self.include_reg.match(path):
+            # Skip metrics if not matched in include_filters
+            return
+
         self.metrics.append(metric)
         if self.should_flush():
             self._send()
