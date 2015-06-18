@@ -37,9 +37,12 @@ class AuroraCollector(diamond.collector.Collector):
         for line in response.readlines():
             properties = line.split()
 
+            # Not all lines returned will have a numeric metric.
+            # To account for this, we attempt to cast the 'value'
+            # portion as a float. If that's not possible, NBD, we
+            # just move on.
             try:
                 if len(properties) > 1:
-                    v = float(properties[1])
-                    self.publish(properties[0], v)
+                    self.publish(properties[0], float(properties[1]))
             except ValueError:
                 continue
