@@ -17,9 +17,7 @@ while metrics for the slaves are exposed on port 5051.
 
 import diamond.collector
 import json
-import re
 import urllib2
-from pprint import pprint
 
 
 class MesosCollector(diamond.collector.Collector):
@@ -61,13 +59,10 @@ class MesosCollector(diamond.collector.Collector):
                                        self.config['port'],
                                        self.METRICS_PATH)
 
-            response = urllib2.urlopen(url)
-            json_str = response.read()
-            return json.loads(json_str)
+            return json.load(urllib2.urlopen(url))
         except (urllib2.HTTPError, ValueError), err:
             self.log.error('Unable to read JSON response: %s' % err)
             return {}
 
     def clean_up(self, text):
-        text = re.sub('/', '.', text)
-        return text
+        return text.replace('/', '.')
