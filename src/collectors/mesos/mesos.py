@@ -2,12 +2,11 @@
 
 """
 
-Collects metrics from a mesos instance (master or slave).
+Collects metrics from a mesos instance. By default,
+the collector is set up to query the mesos-master via
+port 5050. Set the port to 5051 for mesos-slaves.
 
 #### Example Configuration
-
-Typically metrics for the master are exposed on port 5050,
-while metrics for the slaves are exposed on port 5051.
 
 ```
     host = localhost
@@ -29,8 +28,7 @@ class MesosCollector(diamond.collector.Collector):
                             self).get_default_config_help()
         config_help.update({
             'host': 'Hostname',
-            'port': 'Port',
-            'path': 'Metrics Path'
+            'port': 'Port (default is 5050; please set to 5051 for mesos-slave)'
         })
         return config_help
 
