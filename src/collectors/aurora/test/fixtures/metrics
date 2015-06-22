@@ -1,0 +1,15 @@
+async_tasks_completed 11117
+attribute_store_fetch_all_events 24
+attribute_store_fetch_all_events_per_sec 0.0
+attribute_store_fetch_all_nanos_per_event 0.0
+attribute_store_fetch_all_nanos_total 90208119
+attribute_store_fetch_all_nanos_total_per_sec 0.0
+attribute_store_fetch_one_events 33024
+jvm_prop_java_vm_version 25.20-b23
+jvm_prop_line_separator 
+
+jvm_prop_sun_os_patch_level unknown
+jvm_prop_user_country US
+system_env_PATH /usr/local/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/sbin:/bin
+tasks_FAILED_computers/prod/computer-traffic-analysis 517
+tasks_FAILED_reporting/prod/report-processing 2
