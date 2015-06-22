@@ -28,7 +28,7 @@ class AuroraCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        url = '%s://%s:%s/vars' % (self.config['scheme'],
+        url = "%s://%s:%s/vars" % (self.config['scheme'],
                                    self.config['host'],
                                    self.config['port'])
 
@@ -43,6 +43,9 @@ class AuroraCollector(diamond.collector.Collector):
             # just move on.
             try:
                 if len(properties) > 1:
-                    self.publish(properties[0], float(properties[1]))
+                    subpath = properties[0].replace('/', '.').replace('_', '.')
+                    value = float(properties[1])
+
+                    self.publish(subpath, value)
             except ValueError:
                 continue
