@@ -106,7 +106,7 @@ class RabbitMQCollector(diamond.collector.Collector):
             'user': 'guest',
             'password': 'guest',
             'replace_dot': False,
-            'queues_ignored': [],
+            'queues_ignored': '',
             'cluster': False,
         })
         return config
@@ -144,7 +144,7 @@ class RabbitMQCollector(diamond.collector.Collector):
         self.collect_health()
         matchers = []
         if self.config['queues_ignored']:
-                for reg in self.config['queues_ignored']:
+                for reg in self.config['queues_ignored'].split():
                     matchers.append(re.compile(reg))
         try:
             client = RabbitMQClient(self.config['host'],
