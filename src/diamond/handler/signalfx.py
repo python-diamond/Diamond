@@ -35,14 +35,14 @@ class SignalfxHandler(Handler):
         self.batch_size = int(self.config['batch'])
         self.url = self.config['url']
         self.auth_token = self.config['auth_token']
-        self.batch_max_interval = self.config['batch_max_interval']
+        self.batch_max_interval = int(self.config['batch_max_interval'])
         self.resetBatchTimeout()
         if self.auth_token == "":
             logging.error("Failed to load Signalfx module")
             return
 
     def resetBatchTimeout(self):
-        self.batch_max_timestamp = int(time.time() + self.batch_max_interval)
+        self.batch_max_timestamp = time.time() + self.batch_max_interval
 
     def get_default_config_help(self):
         """
