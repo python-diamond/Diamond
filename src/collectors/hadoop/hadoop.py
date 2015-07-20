@@ -43,7 +43,10 @@ class HadoopCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        for pattern in self.config['metrics']:
+        conf_metrics = self.config['metrics']
+        if type(conf_metrics) == str:
+            conf_metrics = (conf_metrics,)
+        for pattern in conf_metrics:
             for filename in glob.glob(pattern):
                 self.collect_from(filename)
 
