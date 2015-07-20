@@ -17,6 +17,11 @@ Enable this handler
 
  * batch_size = [optional | 300 ] will wait for this many requests before
      posting
+
+ * batch_max_interval = [optional | 10 ] Max interval (secs) to wait before
+     sending
+
+ * timeout = [optional | 1 ] Timeout for the HTTP Post calls.
 """
 from Handler import Handler
 import collections
@@ -42,9 +47,11 @@ class SignalfxHandler(Handler):
         url = self.config['url']
         self.batch_size = int(self.config['batch'])
         self.batch_max_interval = float(self.config['batch_max_interval'])
+        self.timeout = self.config['timeout']
         self.resetBatchTimeout()
         self.signalfx = signalfx.SignalFx(auth_token, ingest_endpoint=url,
                                           batch_size=self.batch_size,
+                                          timeout=self.timeout,
                                           user_agents=[self.user_agent()])
 
     def resetBatchTimeout(self):
@@ -59,6 +66,8 @@ class SignalfxHandler(Handler):
         config.update({
             'url': 'Where to send metrics',
             'batch': 'How many to store before sending',
+            'batch_max_interval': 'Max interval (secs) to wait before sending',
+            'timeout': 'Timeout for the HTTP Post calls.',
             'auth_token': 'Org API token to use when sending metrics',
         })
 
@@ -75,6 +84,7 @@ class SignalfxHandler(Handler):
             'batch': 300,
             # Don't wait more than 10 sec between pushes
             'batch_max_interval': 10,
+            'timeout': 1,
             'auth_token': '',
         })
 
