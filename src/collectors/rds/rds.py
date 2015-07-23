@@ -1,7 +1,7 @@
 # coding=utf-8
 
 """
-Collects data from about rds through  cloudwatch
+Collects data from  rds through  cloudwatch
 #### Notes
   parameters :
   
@@ -36,7 +36,9 @@ class RdsCollector(diamond.collector.Collector):
         """
         config = super(RdsCollector, self).get_default_config()
         config.update({
-            'path': 'rds',
+            'access_key_id': 'access_key',
+            'secret_access_key': 'secret_key',
+            'DBInstanceIdentifiers': 'test'
         })
         return config
 
