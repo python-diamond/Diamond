@@ -104,6 +104,10 @@ class HadoopCollector(diamond.collector.Collector):
                             data['name'],
                             metric, ]))
 
+                    if not self.path_allowed(path):
+                        # whitelist / blacklist
+                        continue
+
                     value = float(metrics[metric])
 
                     self.publish_metric(Metric(path,
@@ -112,6 +116,7 @@ class HadoopCollector(diamond.collector.Collector):
 
                 except ValueError:
                     pass
+
         if self.config['truncate']:
             fd.seek(0)
             fd.truncate()
