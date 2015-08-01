@@ -43,7 +43,10 @@ class HadoopCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        for pattern in self.config['metrics']:
+        conf_metrics = self.config['metrics']
+        if type(conf_metrics) == str:
+            conf_metrics = (conf_metrics,)
+        for pattern in conf_metrics:
             for filename in glob.glob(pattern):
                 self.collect_from(filename)
 
@@ -101,6 +104,10 @@ class HadoopCollector(diamond.collector.Collector):
                             data['name'],
                             metric, ]))
 
+                    if not self.path_allowed(path):
+                        # whitelist / blacklist
+                        continue
+
                     value = float(metrics[metric])
 
                     self.publish_metric(Metric(path,
@@ -109,6 +116,7 @@ class HadoopCollector(diamond.collector.Collector):
 
                 except ValueError:
                     pass
+
         if self.config['truncate']:
             fd.seek(0)
             fd.truncate()
