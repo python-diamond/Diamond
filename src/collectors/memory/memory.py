@@ -103,8 +103,8 @@ class MemoryCollector(diamond.collector.Collector):
                 self.log.error('No memory metrics retrieved')
                 return None
 
-            phymem_usage = psutil.phymem_usage()
-            virtmem_usage = psutil.virtmem_usage()
+            phymem_usage = psutil.virtual_memory()
+            virtmem_usage = psutil.swap_memory()
             units = 'B'
 
             for unit in self.config['byte_unit']:
