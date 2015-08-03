@@ -96,7 +96,7 @@ class NetworkCollector(diamond.collector.Collector):
                 self.log.error('No network metrics retrieved')
                 return None
 
-            network_stats = psutil.network_io_counters(True)
+            network_stats = psutil.net_io_counters(True)
             for device in network_stats.keys():
                 network_stat = network_stats[device]
                 results[device] = {}
