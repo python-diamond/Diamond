@@ -365,6 +365,18 @@ class Collector(object):
         """
         raise NotImplementedError()
 
+    def path_allowed(self, path):
+        """
+        Check path against whitelist & blacklist, returns bool allowed or not
+        """
+        if self.config['metrics_whitelist']:
+            if not self.config['metrics_whitelist'].match(path):
+                return False
+        elif self.config['metrics_blacklist']:
+            if self.config['metrics_blacklist'].match(path):
+                return False
+        return True
+
     def publish(self, name, value, raw_value=None, precision=0,
                 metric_type='GAUGE', instance=None):
         """
