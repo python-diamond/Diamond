@@ -106,7 +106,7 @@ class HadoopCollector(diamond.collector.Collector):
                             data['name'],
                             metric, ]))
 
-                    if not self.path_allowed(path):
+                    if not self.metric_allowed(path):
                         # whitelist / blacklist
                         continue
 

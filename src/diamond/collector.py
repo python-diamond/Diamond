@@ -228,19 +228,27 @@ class Collector(object):
             self.config['measure_collector_time'] = str_to_bool(
                 self.config['measure_collector_time'])
 
-        # Raise an error if both whitelist and blacklist are specified
-        if ((self.config.get('metrics_whitelist', None) and
-             self.config.get('metrics_blacklist', None))):
+        wlist = self.config.get('metrics_whitelist', None)
+        blist = self.config.get('metrics_blacklist', None)
+        if (wlist and blist):
+            # Raise an error if both whitelist and blacklist are specified
             raise DiamondException(
                 'Both metrics_whitelist and metrics_blacklist specified ' +
                 'in file %s' % self.configfile)
 
-        if self.config.get('metrics_whitelist', None):
-            self.config['metrics_whitelist'] = re.compile(
-                self.config['metrics_whitelist'])
-        elif self.config.get('metrics_blacklist', None):
-            self.config['metrics_blacklist'] = re.compile(
-                self.config['metrics_blacklist'])
+        # always a list so we can iterate
+        if type(wlist) == str:
+            wlist = [wlist]
+        elif wlist is None:
+            wlist = []
+
+        if type(blist) == str:
+            blist = [blist]
+        elif blist is None:
+            blist = []
+
+        self.config['metrics_whitelist'] = [re.compile(x) for x in wlist]
+        self.config['metrics_blacklist'] = [re.compile(x) for x in blist]
 
     def get_default_config_help(self):
         """
@@ -365,16 +373,26 @@ class Collector(object):
         """
         raise NotImplementedError()
 
-    def path_allowed(self, path):
+    def metric_allowed(self, metric):
         """
-        Check path against whitelist & blacklist, returns bool allowed or not
+        Check metric against whitelist & blacklist. Metric is any string, a
+        name or a full path. Returns bool allowed or not
         """
-        if self.config['metrics_whitelist']:
-            if not self.config['metrics_whitelist'].match(path):
+        inwhitelist = False
+        for wregx in self.config['metrics_whitelist']:
+            if wregx.match(metric):
+                inwhitelist = True
+                break
+        # if path isn't in *any* of the whitelists, it fails
+        # as long as whitelist isn't an empty list
+        if not inwhitelist and len(self.config['metrics_whitelist']) > 0:
+            return False
+
+        # if path is in *any* of the blacklists, it fails
+        for bregx in self.config['metrics_blacklist']:
+            if bregx.match(metric):
                 return False
-        elif self.config['metrics_blacklist']:
-            if self.config['metrics_blacklist'].match(path):
-                return False
+
         return True
 
     def publish(self, name, value, raw_value=None, precision=0,
@@ -382,13 +400,9 @@ class Collector(object):
         """
         Publish a metric with the given name
         """
-        # Check whitelist/blacklist
-        if self.config['metrics_whitelist']:
-            if not self.config['metrics_whitelist'].match(name):
-                return
-        elif self.config['metrics_blacklist']:
-            if self.config['metrics_blacklist'].match(name):
-                return
+        if not self.metric_allowed(name):
+            # whitelist / blacklist
+            return
 
         # Get metric Path
         path = self.get_metric_path(name, instance=instance)
