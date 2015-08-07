@@ -4,6 +4,10 @@
 Collects all number values from the db.serverStatus() command, other
 values are ignored.
 
+**Note:** this collector expects pymongo 2.4 and onward. See the pymongo
+changelog for more details:
+http://api.mongodb.org/python/current/changelog.html#changes-in-version-2-4
+
 #### Dependencies
 
  * pymongo
