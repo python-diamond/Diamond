@@ -1,0 +1,14 @@
+package metric;
+
+message Metric {
+  required string path = 1;
+  required float value = 2;
+  required float timestamp = 3;
+  required int32 precision = 4;
+  required string host = 5;
+  required float ttl = 6;
+}
+
+message MetricBatch {
+  repeated Metric metric = 1;
+}
