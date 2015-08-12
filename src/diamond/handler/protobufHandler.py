@@ -142,8 +142,7 @@ class ProtobufHandler(Handler):
                 data=metricbatch.SerializeToString(),
                 headers={
                     'Content-Type': 'application/x-protobuf',
-                    # TODO: set this to x-protobuf as well
-                    'Accept': 'application/json'
+                    'Accept': 'application/x-protobuf'
                 }
             )
 
