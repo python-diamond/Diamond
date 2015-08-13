@@ -12,32 +12,35 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                 'ceph'))
 from ceph import CephCollector
 
+patternchk = re.compile(r'\bclient io .*')
+numberchk = re.compile(r'\d+')
+
 
 # This is external to the CephCollector so it can be tested
 # separately.
 def process_ceph_status(output):
-    pattern = re.compile(r'\bclient io .*')
-    res = pattern.search(output)
+    if 'client io' not in output:
+        return {}
+    res = patternchk.search(output)
     if not res:
         return {}
-    try:
-        ceph_stats = res.group()
-        number = re.compile(r'\d+')
-        rd = number.search(ceph_stats)
-        if rd:
-            wr = number.search(ceph_stats, rd.end())
-            if wr:
-                iops = number.search(ceph_stats, wr.end())
-        ret = {}
-        if rd:
-            ret['rd'] = rd.group()
-        if wr:
-            ret['wr'] = wr.group()
-        if iops:
-            ret['iops'] = iops.group()
-        return ret
-    except:
+    ceph_stats = res.group()
+    if not ceph_stats:
         return {}
+    rd = wr = iops = None
+    rd = numberchk.search(ceph_stats)
+    if rd:
+        wr = numberchk.search(ceph_stats, rd.end())
+        if wr:
+            iops = numberchk.search(ceph_stats, wr.end())
+    ret = {}
+    if rd:
+        ret['rd'] = rd.group()
+    if wr:
+        ret['wr'] = wr.group()
+    if iops:
+        ret['iops'] = iops.group()
+    return ret
 
 
 class CephStatsCollector(CephCollector):
