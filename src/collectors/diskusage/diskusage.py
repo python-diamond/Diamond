@@ -63,7 +63,8 @@ class DiskUsageCollector(diamond.collector.Collector):
                          + '|sd[a-z]+[0-9]*$'
                          + '|x?vd[a-z]+[0-9]*$'
                          + '|disk[0-9]+$'
-                         + '|dm\-[0-9]+$'),
+                         + '|dm\-[0-9]+$'
+                         + '|cciss/c[0-9]+d[0-9]+$'),
             'sector_size': 512,
             'send_zero': False,
         })
