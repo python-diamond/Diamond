@@ -26,7 +26,7 @@ class HadoopCollector(diamond.collector.Collector):
         config_help = super(HadoopCollector, self).get_default_config_help()
         config_help.update({
             'metrics':  "List of paths to process metrics from",
-            'truncase': "Truncate the metrics files after reading them.",
+            'truncate': "Truncate the metrics files after reading them.",
         })
         return config_help
 
@@ -52,7 +52,11 @@ class HadoopCollector(diamond.collector.Collector):
             self.log.error('HadoopCollector unable to read "%s"', filename)
             return False
 
-        fd = open(filename, 'r+')
+        if self.config['truncate']:
+            fd = open(filename, 'r+')
+        else:
+            fd = open(filename, 'r')
+
         for line in fd:
             match = self.re_log.match(line)
             if not match:
