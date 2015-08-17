@@ -19,27 +19,23 @@ numberchk = re.compile(r'\d+')
 # This is external to the CephCollector so it can be tested
 # separately.
 def process_ceph_status(output):
-    if 'client io' not in output:
-        return {}
     res = patternchk.search(output)
     if not res:
         return {}
     ceph_stats = res.group()
     if not ceph_stats:
         return {}
+    ret = {}
     rd = wr = iops = None
     rd = numberchk.search(ceph_stats)
-    if rd:
-        wr = numberchk.search(ceph_stats, rd.end())
-        if wr:
-            iops = numberchk.search(ceph_stats, wr.end())
-    ret = {}
-    if rd:
+    if rd is not None:
         ret['rd'] = rd.group()
-    if wr:
-        ret['wr'] = wr.group()
-    if iops:
-        ret['iops'] = iops.group()
+        wr = numberchk.search(ceph_stats, rd.end())
+        if wr is not None:
+            ret['wr'] = wr.group()
+            iops = numberchk.search(ceph_stats, wr.end())
+            if iops is not None:
+                ret['iops'] = iops.group()
     return ret
 
 
