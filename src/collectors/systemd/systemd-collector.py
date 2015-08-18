@@ -31,6 +31,8 @@ class SystemdCollector(Collector):
 
     def collect(self):
 
+        manager = None
+
         try:
 
             manager = Manager()
@@ -50,4 +52,5 @@ class SystemdCollector(Collector):
 
         finally:
 
-            manager.unsubscribe()
+            if manager:
+                manager.unsubscribe()
