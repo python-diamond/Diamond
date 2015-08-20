@@ -60,6 +60,9 @@ def collector_process(collector, metric_queue, log):
             time_to_sleep = (next_window + stagger_offset) - time.time()
             if time_to_sleep > 0:
                 time.sleep(time_to_sleep)
+            elif time_to_sleep < 0:
+                # clock has jumped, lets skip missed intervals
+                next_window = time.time()
 
             next_window += interval
 
