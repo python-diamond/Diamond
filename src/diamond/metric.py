@@ -30,7 +30,7 @@ class Metric(object):
         """
 
         # Validate the path, value and metric_type submitted
-        if (None in [path, value] or metric_type not in ['COUNTER', 'GAUGE']):
+        if (None in [path, value] or metric_type not in ('COUNTER', 'GAUGE')):
             raise DiamondException(("Invalid parameter when creating new "
                                     "Metric with path: %r value: %r "
                                     "metric_type: %r")
