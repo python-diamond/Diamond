@@ -441,7 +441,7 @@ class Collector(object):
 
             # If we pass in a interval, use it rather then the configured one
             if interval is None:
-                interval = int(self.config['interval'])
+                interval = float(self.config['interval'])
 
             # Get Change in Y (time)
             if time_delta:
