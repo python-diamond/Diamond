@@ -108,10 +108,9 @@ def handler_process(handlers, metric_queue, log):
     log.debug('Starting process %s', proc.name)
 
     while(True):
-        metrics = metric_queue.get(block=True, timeout=None)
-        for metric in metrics:
-            for handler in handlers:
-                handler._process(metric)
-
+        metric = metric_queue.get(block=True, timeout=None)
         for handler in handlers:
-            handler._flush()
+            if metric is not None:
+                handler._process(metric)
+            else:
+                handler._flush()

@@ -58,7 +58,7 @@ class Server(object):
         self.manager = multiprocessing.Manager()
         if setproctitle:
             setproctitle(oldproctitle)
-        self.metric_queue = self.manager.Queue()
+        self.metric_queue = self.manager.Queue(maxsize=16384)
 
     def run(self):
         """
