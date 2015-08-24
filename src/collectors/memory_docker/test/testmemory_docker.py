@@ -8,11 +8,7 @@ from test import unittest
 from test import run_only
 from test import Mock
 from test import patch
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
+from test import StringIO
 
 try:
     from docker import Client

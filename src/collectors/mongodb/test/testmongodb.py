@@ -19,8 +19,10 @@ try:
 except ImportError:
     import simplejson as json
 
-
-##########################################################################
+try:
+    long
+except NameError:
+    long = int
 
 
 def run_only_if_pymongo_is_available(func):

@@ -161,12 +161,12 @@ class MountStatsCollector(diamond.collector.Collector):
             elif tokens[0] == 'events:':
                 for i in range(0, len(self.EVENTS_MAP)):
                     metric_name = "%s.events.%s" % (path, self.EVENTS_MAP[i])
-                    metric_value = long(tokens[i + 1])
+                    metric_value = int(tokens[i + 1])
                     self.publish_counter(metric_name, metric_value)
             elif tokens[0] == 'bytes:':
                 for i in range(0, len(self.BYTES_MAP)):
                     metric_name = "%s.bytes.%s" % (path, self.BYTES_MAP[i])
-                    metric_value = long(tokens[i + 1])
+                    metric_value = int(tokens[i + 1])
                     self.publish_counter(metric_name, metric_value)
             elif tokens[0] == 'xprt:':
                 proto = tokens[1]
@@ -177,13 +177,13 @@ class MountStatsCollector(diamond.collector.Collector):
                 for i in range(0, len(self.XPRT_MAP[proto])):
                     metric_name = "%s.xprt.%s.%s" % (path, proto,
                                                      self.XPRT_MAP[proto][i])
-                    metric_value = long(tokens[i + 2])
+                    metric_value = int(tokens[i + 2])
                     self.publish_counter(metric_name, metric_value)
             elif tokens[0][:-1] in self.RPCS_MAP:
                 rpc = tokens[0][:-1]
-                ops = long(tokens[1])
-                rtt = long(tokens[7])
-                exe = long(tokens[8])
+                ops = int(tokens[1])
+                rtt = int(tokens[7])
+                exe = int(tokens[8])
 
                 metric_fmt = "%s.rpc.%s.%s"
                 ops_name = metric_fmt % (path, rpc.lower(), 'ops')
