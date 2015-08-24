@@ -4,6 +4,7 @@ import time
 import re
 import logging
 from . error import DiamondException
+from diamond.pycompat import long
 
 
 class Metric(object):
