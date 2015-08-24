@@ -103,7 +103,7 @@ class IPCollector(diamond.collector.Collector):
             data = data.split()
 
             # Zip up the keys and values
-            for i in xrange(1, len(header)):
+            for i in range(1, len(header)):
                 metrics[header[i]] = data[i]
 
         for metric_name in metrics.keys():
