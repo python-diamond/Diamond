@@ -47,7 +47,7 @@ class MesosCollector(diamond.collector.Collector):
     def collect(self):
         metrics = self.get_metrics()
 
-        for k, v in metrics.iteritems():
+        for k, v in metrics.items():
             key = self.clean_up(k)
             self.publish(key, v)
 

@@ -164,13 +164,13 @@ class DiskUsageCollector(diamond.collector.Collector):
             self.log.error('No diskspace metrics retrieved')
             return None
 
-        for key, info in results.iteritems():
+        for key, info in results.items():
             metrics = {}
             name = info['device']
             if not reg.match(name):
                 continue
 
-            for key, value in info.iteritems():
+            for key, value in info.items():
                 if key == 'device':
                     continue
                 oldkey = key

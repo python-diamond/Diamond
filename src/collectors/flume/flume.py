@@ -94,7 +94,7 @@ class FlumeCollector(diamond.collector.Collector):
             self.log.error('Unknown error opening url: %s', e)
             return None
 
-        for comp in j.iteritems():
+        for comp in j.items():
             comp_name = comp[0]
             comp_items = comp[1]
             comp_type = comp_items['Type']

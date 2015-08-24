@@ -120,13 +120,13 @@ class ElasticSearchCollector(diamond.collector.Collector):
         return doc
 
     def _copy_one_level(self, metrics, prefix, data, filter=lambda key: True):
-        for key, value in data.iteritems():
+        for key, value in data.items():
             if filter(key):
                 metric_path = '%s.%s' % (prefix, key)
                 self._set_or_sum_metric(metrics, metric_path, value)
 
     def _copy_two_level(self, metrics, prefix, data, filter=lambda key: True):
-        for key1, d1 in data.iteritems():
+        for key1, d1 in data.items():
             self._copy_one_level(metrics, '%s.%s' % (prefix, key1), d1, filter)
 
     def _index_metrics(self, metrics, prefix, index):
@@ -210,7 +210,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
         else:
             return
 
-        for name, index in indices.iteritems():
+        for name, index in indices.items():
             self._index_metrics(metrics, 'indices.%s' % name,
                                 index['primaries'])
 
@@ -316,7 +316,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             if 'heap_used_percent' in mem:
                 metrics['jvm.mem.heap_used_percent'] = mem['heap_used_percent']
 
-            for pool, d in mem['pools'].iteritems():
+            for pool, d in mem['pools'].items():
                 pool = pool.replace(' ', '_')
                 metrics['jvm.mem.pools.%s.used' % pool] = d['used_in_bytes']
                 metrics['jvm.mem.pools.%s.max' % pool] = d['max_in_bytes']
@@ -326,7 +326,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             gc = jvm['gc']
             collection_count = 0
             collection_time_in_millis = 0
-            for collector, d in gc['collectors'].iteritems():
+            for collector, d in gc['collectors'].items():
                 metrics['jvm.gc.collection.%s.count' % collector] = d[
                     'collection_count']
                 collection_count += d['collection_count']

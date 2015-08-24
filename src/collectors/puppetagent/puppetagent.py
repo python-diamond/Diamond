@@ -55,8 +55,8 @@ class PuppetAgentCollector(diamond.collector.Collector):
 
         summary = self._get_summary()
 
-        for sect, data in summary.iteritems():
-            for stat, value in data.iteritems():
+        for sect, data in summary.items():
+            for stat, value in data.items():
                 if value is None or isinstance(value, basestring):
                     continue
 
