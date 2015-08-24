@@ -108,6 +108,8 @@ class CephCollector(diamond.collector.Collector):
                  'perf',
                  'dump',
                  ])
+            if isinstance(json_blob, bytes):
+                json_blob = json_blob.decode("utf8")
         except subprocess.CalledProcessError as err:
             self.log.info('Could not get stats from %s: %s',
                           name, err)

@@ -46,8 +46,10 @@ class NtpdCollector(diamond.collector.Collector):
             if str_to_bool(self.config['use_sudo']):
                 command.insert(0, self.config['sudo_cmd'])
 
-            return subprocess.Popen(command,
+            stdout = subprocess.Popen(command,
                                     stdout=subprocess.PIPE).communicate()[0]
+            if isinstance(stdout, bytes):
+                stdout = stdout.decode("utf8")
         except OSError:
             self.log.exception("Unable to run %s", command)
             return ""

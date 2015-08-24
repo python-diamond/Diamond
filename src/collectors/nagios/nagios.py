@@ -82,7 +82,10 @@ class NagiosStatsCollector(diamond.collector.Collector):
             command.insert(0, self.config['sudo_cmd'])
 
         p = subprocess.Popen(command,
-                             stdout=subprocess.PIPE).communicate()[0][:-1]
+                             stdout=subprocess.PIPE).communicate()[0]
+        if isinstance(p, bytes):
+            p = p.decode("utf8")
+        p = p[:-1]
 
         for i, v in enumerate(p.split("\n")):
             metric_name = self.config['vars'][i]

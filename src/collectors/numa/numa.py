@@ -31,9 +31,9 @@ class NumaCollector(diamond.collector.Collector):
 
     def collect(self):
         p = Popen([self.config['bin'], '--hardware'], stdout=PIPE, stderr=PIPE)
-
         output, errors = p.communicate()
-
+        if isinstance(output, bytes):
+            output = output.decode("utf8")
         lines = output.split('\n')
         for line in lines:
             try:

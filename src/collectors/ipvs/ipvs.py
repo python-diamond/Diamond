@@ -75,7 +75,10 @@ class IPVSCollector(diamond.collector.Collector):
                 lambda a: a != '--exact', self.statcommand)
 
         p = subprocess.Popen(self.statcommand,
-                             stdout=subprocess.PIPE).communicate()[0][:-1]
+                             stdout=subprocess.PIPE).communicate()[0]
+        if isinstance(p, bytes):
+            p = p.decode("utf8")
+        p = p[:-1]
 
         columns = {
             'conns': 2,
@@ -118,7 +121,10 @@ class IPVSCollector(diamond.collector.Collector):
                 self.publish(metric_name, metric_value)
 
         p = subprocess.Popen(self.concommand,
-                             stdout=subprocess.PIPE).communicate()[0][:-1]
+                             stdout=subprocess.PIPE).communicate()[0]
+        if isinstance(p, bytes):
+            p = p.decode("utf8")
+        p = p[:-1]
 
         columns = {
             'active': 4,

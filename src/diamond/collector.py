@@ -51,7 +51,10 @@ def get_hostname(config, method=None):
             proc = subprocess.Popen(config['hostname'],
                                     shell=True,
                                     stdout=subprocess.PIPE)
-            hostname = proc.communicate()[0].strip()
+            hostname = proc.communicate()[0]
+            if isinstance(hostname, bytes):
+                hostname = hostname.decode("utf8")
+            hostname = hostname.strip()
             if proc.returncode != 0:
                 raise subprocess.CalledProcessError(proc.returncode,
                                                     config['hostname'])
@@ -559,8 +562,13 @@ class ProcessCollector(Collector):
             if str_to_bool(self.config['use_sudo']):
                 command.insert(0, self.config['sudo_cmd'])
 
-            return subprocess.Popen(command,
-                                    stdout=subprocess.PIPE).communicate()
+            stdout, stderr = subprocess.Popen(command,
+                                              stdout=subprocess.PIPE).communicate()
+            if isinstance(stdout, bytes):
+                stdout = stdout.decode("utf8")
+            if isinstance(stderr, bytes):
+                stderr = stderr.decode("utf8")
+            return stdout, stderr
         except OSError:
             self.log.exception("Unable to run %s", command)
             return None

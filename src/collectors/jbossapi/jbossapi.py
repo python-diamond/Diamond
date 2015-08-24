@@ -325,6 +325,8 @@ class JbossApiCollector(diamond.collector.Collector):
             attributes = subprocess.Popen(the_cmd, shell=True,
                                           stdout=subprocess.PIPE
                                           ).communicate()[0]
+            if isinstance(attributes, bytes):
+                attributes = attributes.decode("utf8")
             output = json.loads(attributes)
         except Exception as e:
             self.log.error("JbossApiCollector: There was an exception %s", e)

@@ -52,7 +52,7 @@ class TestKafkaCollector(CollectorTestCase):
         result = self.collector._get('/path')
         result_string = ElementTree.tostring(result)
 
-        self.assertEqual(result_string, '<Server />')
+        self.assertEqual(result_string, b'<Server />')
 
     @run_only_if_ElementTree_is_available
     @patch(URLOPEN)
