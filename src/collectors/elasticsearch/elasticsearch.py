@@ -152,7 +152,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
         # publish all 'total' and 'time_in_millis' stats
         self._copy_two_level(
             metrics, prefix, index,
-            lambda key: key.endswith('total') or key.endswith('time_in_millis'))
+            lambda key: key.endswith('total') or key.endswith('time_in_millis') or key.endswith('in_bytes') or key.endswith('count'))
 
     def _add_metric(self, metrics, metric_path, data, data_path):
         """If the path specified by data_path (a list) exists in data,
