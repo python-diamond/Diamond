@@ -93,7 +93,7 @@ class Gmetric:
                                              TMAX,
                                              DMAX,
                                              GROUP)
-        # print msg
+        # print(msg)
 
         self.socket.sendto(meta_msg, self.hostport)
         self.socket.sendto(data_msg, self.hostport)
