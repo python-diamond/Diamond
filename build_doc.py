@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 ################################################################################
-
+from  __future__ import print_function
 import os
 import sys
 import optparse
@@ -51,8 +51,8 @@ def getCollectors(path):
                     if cls.__name__ not in collectors:
                         collectors[cls.__name__] = module
             except Exception:
-                print "Failed to import module: %s. %s" % (
-                    modname, traceback.format_exc())
+                print("Failed to import module: %s. %s" % (
+                    modname, traceback.format_exc()))
                 collectors[modname] = False
 
         elif os.path.isdir(cPath):
@@ -83,8 +83,8 @@ def getHandlers(path):
                     if cls.__name__ not in handlers:
                         handlers[cls.__name__] = module
             except Exception:
-                print "Failed to import module: %s. %s" % (
-                    modname, traceback.format_exc())
+                print("Failed to import module: %s. %s" % (
+                    modname, traceback.format_exc()))
                 handlers[modname] = False
 
         elif os.path.isdir(cPath):
@@ -117,10 +117,11 @@ if __name__ == "__main__":
     if os.path.exists(options.configfile):
         config = configobj.ConfigObj(os.path.abspath(options.configfile))
     else:
-        print >> sys.stderr, "ERROR: Config file: %s does not exist." % (
-            options.configfile)
-        print >> sys.stderr, ("Please run python config.py -c "
-                              + "/path/to/diamond.conf")
+        print("ERROR: Config file: %s does not exist." % (
+            options.configfile), file=sys.stderr)
+        print("Please run python config.py -c "
+                              + "/path/to/diamond.conf",
+              file=sys.stderr)
         parser.print_help(sys.stderr)
         sys.exit(1)
 
@@ -147,7 +148,7 @@ if __name__ == "__main__":
         if collector.startswith('Test'):
             continue
 
-        print "Processing %s..." % (collector)
+        print("Processing %s..." % (collector))
 
         if not hasattr(collectors[collector], collector):
             continue
@@ -172,7 +173,7 @@ if __name__ == "__main__":
         docFile.write("%s\n" % (collector))
         docFile.write("=====\n")
         if collectors[collector].__doc__ is None:
-            print "No __doc__ string!"
+            print("No __doc__ string!")
         docFile.write("%s\n" % (collectors[collector].__doc__))
         docFile.write("#### Options - [Generic Options](Configuration)\n")
         docFile.write("\n")
@@ -238,7 +239,7 @@ if __name__ == "__main__":
         if handler[0:4] == "Test":
             continue
 
-        print "Processing %s..." % (handler)
+        print("Processing %s..." % (handler))
 
         if not hasattr(handlers[handler], handler):
             continue
@@ -258,7 +259,7 @@ if __name__ == "__main__":
             options = obj.get_default_config_help()
             defaultOptions = obj.get_default_config()
         except Exception, e:
-            print "Caught Exception %s" % e
+            print("Caught Exception %s" % e)
 
         os.remove(tmpfile[1])
 

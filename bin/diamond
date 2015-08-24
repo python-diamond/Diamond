@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
+from __future__ import print_function
 
 import os
 import sys
@@ -109,7 +110,7 @@ def main():
         gid = -1
 
         if options.version:
-            print "Diamond version %s" % (get_diamond_version())
+            print("Diamond version %s" % (get_diamond_version()))
             sys.exit(0)
 
         # Initialize Config
@@ -117,8 +118,8 @@ def main():
         if os.path.exists(options.configfile):
             config = configobj.ConfigObj(options.configfile)
         else:
-            print >> sys.stderr, "ERROR: Config file: %s does not exist." % (
-                options.configfile)
+            print("ERROR: Config file: %s does not exist." % (
+                options.configfile), file=sys.stderr)
             parser.print_help(sys.stderr)
             sys.exit(1)
 
@@ -158,11 +159,11 @@ def main():
                     # Pid is not real
                     os.unlink(options.pidfile)
                     pid = None
-                    print >> sys.stderr, (
-                        "WARN: Bogus pid file was found. I deleted it.")
+                    print("WARN: Bogus pid file was found. I deleted it.",
+                          file=sys.stderr)
                 else:
-                    print >> sys.stderr, (
-                        "ERROR: Pidfile exists. Server already running?")
+                    print("ERROR: Pidfile exists. Server already running?",
+                          file=sys.stderr)
                     sys.exit(1)
 
             # Get final GIDs
@@ -186,7 +187,8 @@ def main():
                 try:
                     pf = file(options.pidfile, 'w+')
                 except IOError, e:
-                    print >> sys.stderr, "Failed to write PID file: %s" % (e)
+                    print("Failed to write PID file: %s" % (e),
+                          file=sys.stderr)
                     sys.exit(1)
                 pf.write("%s\n" % pid)
                 pf.close()
@@ -207,7 +209,8 @@ def main():
                     os.setuid(uid)
 
             except Exception, e:
-                print >> sys.stderr, "ERROR: Failed to set UID/GID. %s" % (e)
+                print("ERROR: Failed to set UID/GID. %s" % (e),
+                      file=sys.stderr)
                 sys.exit(1)
 
             # Log
@@ -232,7 +235,7 @@ def main():
                         # Exit first paren
                         sys.exit(0)
                 except OSError, e:
-                    print >> sys.stderr, "Failed to fork process." % (e)
+                    print("Failed to fork process." % (e), file=sys.stderr)
                     sys.exit(1)
                 # Decouple from parent environmen
                 os.setsid()
@@ -244,7 +247,7 @@ def main():
                         # Exit second paren
                         sys.exit(0)
                 except OSError, e:
-                    print >> sys.stderr, "Failed to fork process." % (e)
+                    print("Failed to fork process." % (e), file=sys.stderr)
                     sys.exit(1)
                 # Close file descriptors so that we can detach
                 sys.stdout.close()

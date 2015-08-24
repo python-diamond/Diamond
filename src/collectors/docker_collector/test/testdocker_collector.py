@@ -116,7 +116,7 @@ class TestDockerCollector(CollectorTestCase):
     # def test_should_open_memory_stat(self, publish_mock, open_mock):
     #     # open_mock.side_effect = lambda x: StringIO('')
     #     self.collector.collect()
-    #     print open_mock.mock_calls
+    #     print(open_mock.mock_calls)
     #     open_mock.assert_any_call(fixtures_path +
     #         'docker/c3341726a9b4235a35b'
     #         '390c5f6f28e5a6869879a48da1d609db8f6bf4275bdc5/memory.stat')

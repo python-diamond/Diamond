@@ -114,7 +114,7 @@ class DockerCollector(Collector):
 
             return True
         except Exception, e:
-            print e
+            print(e)
             self.log.error(e, exc_info=True)
             return False
 
