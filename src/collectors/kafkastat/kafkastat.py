@@ -179,5 +179,5 @@ class KafkaCollector(diamond.collector.Collector):
             metrics.update(stats)
 
         # Publish stats
-        for metric, value in metrics.iteritems():
+        for metric, value in metrics.items():
             self.publish(metric, value)

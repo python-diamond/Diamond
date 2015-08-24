@@ -187,7 +187,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             self.log.error('No diskspace metrics retrieved')
             return None
 
-        for info in results.itervalues():
+        for key, info in results.items():
             if info['device'] in labels:
                 name = labels[info['device']]
             else:

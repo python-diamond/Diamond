@@ -101,7 +101,7 @@ class IPVSCollector(diamond.collector.Collector):
             else:
                 continue
 
-            for metric, column in columns.iteritems():
+            for metric, column in columns.items():
                 metric_name = ".".join([external, backend, metric])
                 # metric_value = int(row[column])
                 value = row[column]
@@ -135,7 +135,7 @@ class IPVSCollector(diamond.collector.Collector):
 
             if row[0] == "TCP" or row[0] == "UDP":
                 if total:
-                    for metric, value in total.iteritems():
+                    for metric, value in total.items():
                         self.publish(
                             ".".join([external, "total", metric]), value)
 
@@ -149,7 +149,7 @@ class IPVSCollector(diamond.collector.Collector):
             else:
                 continue
 
-            for metric, column in columns.iteritems():
+            for metric, column in columns.items():
                 metric_name = ".".join([external, backend, metric])
                 # metric_value = int(row[column])
                 value = row[column]
@@ -167,5 +167,5 @@ class IPVSCollector(diamond.collector.Collector):
                 self.publish(metric_name, metric_value)
 
         if total:
-            for metric, value in total.iteritems():
+            for metric, value in total.items():
                 self.publish(".".join([external, "total", metric]), value)

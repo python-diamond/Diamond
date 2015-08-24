@@ -202,7 +202,7 @@ class JolokiaCollector(diamond.collector.Collector):
                     # The reponse was totally empty, or not an expected format
                     self.log.error('Unable to retrieve domain %s.', domain)
                     continue
-                for k, v in mbeans.iteritems():
+                for k, v in mbeans.items():
                     if self._check_mbean(k):
                         self.collect_bean(k, v)
 
@@ -287,7 +287,7 @@ class JolokiaCollector(diamond.collector.Collector):
         return text
 
     def collect_bean(self, prefix, obj):
-        for k, v in obj.iteritems():
+        for k, v in obj.items():
             if type(v) in [int, float, long]:
                 key = "%s.%s" % (prefix, k)
                 key = self.clean_up(key)

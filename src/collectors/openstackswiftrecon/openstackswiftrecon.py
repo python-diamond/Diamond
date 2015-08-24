@@ -50,7 +50,7 @@ class OpenstackSwiftReconCollector(diamond.collector.Collector):
 
     def _process_cache(self, d, path=()):
         """Recusively walk a nested recon cache dict to obtain path/values"""
-        for k, v in d.iteritems():
+        for k, v in d.items():
             if not isinstance(v, dict):
                 self.metrics.append((path + (k,), v))
             else:

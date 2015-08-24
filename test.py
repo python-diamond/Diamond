@@ -183,7 +183,7 @@ class CollectorTestCase(unittest.TestCase):
         return self.assertPublishedMany(mock, dict, expected_value)
 
     def assertPublishedMany(self, mock, dict, expected_value=1):
-        for key, value in dict.iteritems():
+        for key, value in dict.items():
             self.assertPublished(mock, key, value, expected_value)
 
         if type(mock) is list:
@@ -229,7 +229,7 @@ class CollectorTestCase(unittest.TestCase):
         return self.assertPublishedMetricMany(mock, dict, expected_value)
 
     def assertPublishedMetricMany(self, mock, dict, expected_value=1):
-        for key, value in dict.iteritems():
+        for key, value in dict.items():
             self.assertPublishedMetric(mock, key, value, expected_value)
 
         mock.reset_mock()
