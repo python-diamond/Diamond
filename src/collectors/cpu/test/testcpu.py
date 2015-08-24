@@ -1,4 +1,4 @@
-i#!/usr/bin/python
+#!/usr/bin/python
 # coding=utf-8
 ##########################################################################
 
@@ -8,6 +8,7 @@ from test import unittest
 from test import Mock
 from test import patch
 from test import StringIO
+from test import BUILTIN_OPEN
 
 from diamond.collector import Collector
 from cpu import CPUCollector
@@ -28,7 +29,7 @@ class TestCPUCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(CPUCollector)
 
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_open_proc_stat(self, publish_mock, open_mock):
@@ -39,7 +40,7 @@ class TestCPUCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
+        patch_open = patch(BUILTIN_OPEN, Mock(return_value=StringIO(
             'cpu 100 200 300 400 500 0 0 0 0 0')))
 
         patch_open.start()
@@ -48,7 +49,7 @@ class TestCPUCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
+        patch_open = patch(BUILTIN_OPEN, Mock(return_value=StringIO(
             'cpu 110 220 330 440 550 0 0 0 0 0')))
 
         patch_open.start()
@@ -200,7 +201,7 @@ class TestCPUCollectorNormalize(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_proc_stat(self, publish_mock):
-        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
+        patch_open = patch(BUILTIN_OPEN, Mock(return_value=StringIO(
             "\n".join([self.input_dict_to_proc_string('', self.input_base),
                        self.input_dict_to_proc_string('0', self.input_base),
                        self.input_dict_to_proc_string('1', self.input_base),
@@ -213,7 +214,7 @@ class TestCPUCollectorNormalize(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
+        patch_open = patch(BUILTIN_OPEN, Mock(return_value=StringIO(
             "\n".join([self.input_dict_to_proc_string('', self.input_next),
                        self.input_dict_to_proc_string('0', self.input_next),
                        self.input_dict_to_proc_string('1', self.input_next),

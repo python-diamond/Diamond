@@ -8,8 +8,9 @@ from test import unittest
 from test import Mock
 from test import patch
 from test import call
-from collections import Iterator
+from test import BUILTIN_OPEN
 
+from collections import Iterator
 from diamond.collector import Collector
 from sockstat import SockstatCollector
 
@@ -28,7 +29,7 @@ class TestSockstatCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(SockstatCollector)
 
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_open_proc_net_sockstat(self, publish_mock, open_mock):
