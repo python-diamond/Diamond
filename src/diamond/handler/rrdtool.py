@@ -7,8 +7,7 @@ Save stats in RRD files using rrdtool.
 import os
 import re
 import subprocess
-import Queue
-
+from diamond.pycompat import Queue, Empty
 from Handler import Handler
 
 #
@@ -160,7 +159,7 @@ class RRDHandler(Handler):
 
     def _queue(self, filename, timestamp, value):
         if filename not in self._queues:
-            queue = Queue.Queue()
+            queue = Queue()
             self._queues[filename] = queue
         else:
             queue = self._queues[filename]
@@ -199,7 +198,7 @@ class RRDHandler(Handler):
                 if timestamp not in updates:
                     updates[timestamp] = []
                 updates[timestamp].append(value)
-            except Queue.Empty:
+            except Empty:
                 break
 
         # Save the last update time.
