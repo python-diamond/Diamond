@@ -13,6 +13,11 @@ from test import call
 from diamond.collector import Collector
 from mongodb import MongoDBCollector
 
+try:
+    long
+except NameError:
+    long = int
+
 ################################################################################
 
 

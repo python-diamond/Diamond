@@ -10,10 +10,7 @@ from test import Mock
 from test import patch
 from mock import mock_open
 
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
+from test import StringIO
 
 try:
     from docker import Client

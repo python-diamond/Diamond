@@ -6,11 +6,7 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import Mock
 from test import patch
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
+from test import StringIO
 
 from diamond.collector import Collector
 from uptime import UptimeCollector
