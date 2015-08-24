@@ -229,7 +229,7 @@ class NginxCollector(diamond.collector.Collector):
             else:
                 self.collect_nginx(handle)
 
-        except IOError, e:
+        except IOError as e:
             self.log.error("Unable to open %s" % url)
-        except Exception, e:
+        except Exception as e:
             self.log.error("Unknown error opening url: %s", e)

@@ -68,7 +68,7 @@ class KafkaCollector(diamond.collector.Collector):
 
         try:
             response = urllib2.urlopen(url)
-        except urllib2.URLError, err:
+        except urllib2.URLError as err:
             self.log.error("%s: %s", url, err)
             return None
 

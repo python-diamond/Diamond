@@ -55,7 +55,7 @@ class MonitCollector(diamond.collector.Collector):
                 self.config['user'], self.config['passwd'])).replace('\n', '')
             request.add_header("Authorization", "Basic %s" % base64string)
             response = urllib2.urlopen(request)
-        except urllib2.HTTPError, err:
+        except urllib2.HTTPError as err:
             self.log.error("%s: %s", err, url)
             return
 

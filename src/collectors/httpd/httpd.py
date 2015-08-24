@@ -93,7 +93,7 @@ class HttpdCollector(diamond.collector.Collector):
                         break
                     url = headers['location']
                     connection.close()
-            except Exception, e:
+            except Exception as e:
                 self.log.error(
                     "Error retrieving HTTPD stats for host %s:%s, url '%s': %s",
                     service_host, str(service_port), url, e)

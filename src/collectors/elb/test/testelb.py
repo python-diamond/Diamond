@@ -203,7 +203,7 @@ def assertRaisesAndContains(excClass, contains_str, callableObj, *args,
                             **kwargs):
     try:
         callableObj(*args, **kwargs)
-    except excClass, e:
+    except excClass as e:
         msg = str(e)
         if contains_str in msg:
             return

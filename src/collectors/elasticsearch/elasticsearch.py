@@ -117,7 +117,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
                     '%s:%s' % (self.config['user'], self.config['password']))
                 request.add_header("Authorization", "Basic %s" % base64string)
             response = urllib2.urlopen(request)
-        except Exception, err:
+        except Exception as err:
             self.log.error("%s: %s" % (url, err))
             return False
 

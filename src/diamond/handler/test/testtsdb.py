@@ -427,5 +427,5 @@ class TestTSDBdHandler(unittest.TestCase):
         try:
             TSDBHandler(config)
             fail("Expected an exception")
-        except Exception, e:
+        except Exception as e:
             assert(e)

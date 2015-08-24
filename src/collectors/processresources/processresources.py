@@ -181,7 +181,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                     uptime = time.time() - get_value(process, 'create_time')
                     pi.update({'uptime': uptime})
                     self.save_process_info(pg_name, pi)
-        except psutil.NoSuchProcess, e:
+        except psutil.NoSuchProcess as e:
             self.log.info("Process exited while trying to get info: %s", e)
 
     def collect(self):

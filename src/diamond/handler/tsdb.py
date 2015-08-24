@@ -187,7 +187,7 @@ class TSDBHandler(Handler):
                 self.socket.sendall(data)
                 # Done
                 break
-            except socket.error, e:
+            except socket.error as e:
                 # Log Error
                 self.log.error("TSDBHandler: Failed sending data. %s.", e)
                 # Attempt to restablish connection
@@ -217,7 +217,7 @@ class TSDBHandler(Handler):
             # Log
             self.log.debug("Established connection to TSDB server %s:%d",
                            self.host, self.port)
-        except Exception, ex:
+        except Exception as ex:
             # Log Error
             self.log.error("TSDBHandler: Failed to connect to %s:%i. %s",
                            self.host, self.port, ex)
