@@ -147,11 +147,11 @@ class CollectorTestCase(unittest.TestCase):
     def assertPublished(self, mock, key, value, expected_value=1):
         if type(mock) is list:
             for m in mock:
-                calls = (filter(lambda x: x[0][0] == key, m.call_args_list))
+                calls = list(filter(lambda x: x[0][0] == key, m.call_args_list))
                 if len(calls) > 0:
                     break
         else:
-            calls = filter(lambda x: x[0][0] == key, mock.call_args_list)
+            calls = list(filter(lambda x: x[0][0] == key, mock.call_args_list))
 
         actual_value = len(calls)
         message = '%s: actual number of calls %d, expected %d' % (
@@ -196,8 +196,8 @@ class CollectorTestCase(unittest.TestCase):
         return self.assertPublishedMetric(mock, key, value, expected_value)
 
     def assertPublishedMetric(self, mock, key, value, expected_value=1):
-        calls = filter(lambda x: x[0][0].path.find(key) != -1,
-                       mock.call_args_list)
+        calls = list(filter(lambda x: x[0][0].path.find(key) != -1,
+                            mock.call_args_list))
 
         actual_value = len(calls)
         message = '%s: actual number of calls %d, expected %d' % (
