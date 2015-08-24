@@ -3,7 +3,7 @@
 ##########################################################################
 
 from test import unittest
-from mock import Mock
+from test import Mock
 
 import configobj
 
