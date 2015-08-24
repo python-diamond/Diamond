@@ -127,10 +127,10 @@ def main():
         log = setup_logging(options.configfile, options.log_stdout)
 
     # Pass the exit up stream rather then handle it as an general exception
-    except SystemExit, e:
+    except SystemExit as e:
         raise SystemExit
 
-    except Exception, e:
+    except Exception as e:
         import traceback
         sys.stderr.write("Unhandled exception: %s" % str(e))
         sys.stderr.write("traceback: %s" % traceback.format_exc())
@@ -186,7 +186,7 @@ def main():
                 pid = str(os.getpid())
                 try:
                     pf = file(options.pidfile, 'w+')
-                except IOError, e:
+                except IOError as e:
                     print("Failed to write PID file: %s" % (e),
                           file=sys.stderr)
                     sys.exit(1)
@@ -208,7 +208,7 @@ def main():
                     # Set UID
                     os.setuid(uid)
 
-            except Exception, e:
+            except Exception as e:
                 print("ERROR: Failed to set UID/GID. %s" % (e),
                       file=sys.stderr)
                 sys.exit(1)
@@ -234,7 +234,7 @@ def main():
                     if pid > 0:
                         # Exit first paren
                         sys.exit(0)
-                except OSError, e:
+                except OSError as e:
                     print("Failed to fork process." % (e), file=sys.stderr)
                     sys.exit(1)
                 # Decouple from parent environmen
@@ -246,7 +246,7 @@ def main():
                     if pid > 0:
                         # Exit second paren
                         sys.exit(0)
-                except OSError, e:
+                except OSError as e:
                     print("Failed to fork process." % (e), file=sys.stderr)
                     sys.exit(1)
                 # Close file descriptors so that we can detach
@@ -267,7 +267,7 @@ def main():
                 pid = str(os.getpid())
                 try:
                     pf = file(options.pidfile, 'w+')
-                except IOError, e:
+                except IOError as e:
                     log.error("Failed to write child PID file: %s" % (e))
                     sys.exit(1)
                 pf.write("%s\n" % pid)
@@ -294,10 +294,10 @@ def main():
         server.run()
 
     # Pass the exit up stream rather then handle it as an general exception
-    except SystemExit, e:
+    except SystemExit as e:
         raise SystemExit
 
-    except Exception, e:
+    except Exception as e:
         import traceback
         log.error("Unhandled exception: %s" % str(e))
         log.error("traceback: %s" % traceback.format_exc())

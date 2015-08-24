@@ -205,7 +205,7 @@ class cloudwatchHandler(Handler):
                         rule['namespace'],
                         str(metric.value)
                         )
-                except AttributeError, e:
+                except AttributeError as e:
                     self.log.error(
                         "CloudWatch: Failed publishing - %s ", str(e))
                 except Exception:  # Rough connection re-try logic.

@@ -82,7 +82,7 @@ class NginxCollector(diamond.collector.Collector):
                     self.publish_gauge('act_reads', int(m.group('reading')))
                     self.publish_gauge('act_writes', int(m.group('writing')))
                     self.publish_gauge('act_waits', int(m.group('waiting')))
-        except IOError, e:
+        except IOError as e:
             self.log.error("Unable to open %s" % url)
-        except Exception, e:
+        except Exception as e:
             self.log.error("Unknown error opening url: %s", e)

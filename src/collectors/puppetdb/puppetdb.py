@@ -78,7 +78,7 @@ class PuppetDBCollector(diamond.collector.Collector):
             url = "http://%s:%s/%s" % (
                 self.config['host'], int(self.config['port']), url)
             response = urllib2.urlopen(url)
-        except Exception, e:
+        except Exception as e:
             self.log.error('Couldn\'t connect to puppetdb: %s -> %s', url, e)
             return {}
         return json.load(response)

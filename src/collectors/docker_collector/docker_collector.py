@@ -113,7 +113,7 @@ class DockerCollector(Collector):
                 self.publish(name, value, metric_type=metric_type)
 
             return True
-        except Exception, e:
+        except Exception as e:
             print(e)
             self.log.error(e, exc_info=True)
             return False

@@ -201,7 +201,7 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
                 self._process_line(line)
 
             os.remove(path)
-        except IOError, ex:
+        except IOError as ex:
             self.log.error("Could not open file `{path}': {error}".format(
                 path=path, error=ex.strerror))
 

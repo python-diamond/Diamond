@@ -201,7 +201,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             if hasattr(os, 'statvfs'):  # POSIX
                 try:
                     data = os.statvfs(info['mount_point'])
-                except OSError, e:
+                except OSError as e:
                     self.log.exception(e)
                     continue
 

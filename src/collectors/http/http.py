@@ -86,8 +86,8 @@ class HttpCollector(diamond.collector.Collector):
                             metric_name + '.size',
                             len(the_page))
 
-                except IOError, e:
+                except IOError as e:
                         self.log.error("Unable to open %s",
                                        self.config['req_url'])
-                except Exception, e:
+                except Exception as e:
                         self.log.error("Unknown error opening url: %s", e)

@@ -148,7 +148,7 @@ def load_collectors(paths=None, filter=None):
                 try:
                     # Import the module
                     mod = __import__(modname, globals(), locals(), ['*'])
-                except (KeyboardInterrupt, SystemExit), err:
+                except (KeyboardInterrupt, SystemExit) as err:
                     log.error(
                         "System or keyboard interrupt "
                         "while loading module %s"

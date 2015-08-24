@@ -125,7 +125,7 @@ class DseOpsCenterCollector(diamond.collector.Collector):
                                              self.config['cluster_id'])
         try:
             response = urllib2.urlopen(url)
-        except Exception, err:
+        except Exception as err:
             self.log.error('%s: %s', url, err)
             return False
 
@@ -163,7 +163,7 @@ class DseOpsCenterCollector(diamond.collector.Collector):
 
         try:
             response = urllib2.urlopen(url)
-        except Exception, err:
+        except Exception as err:
             self.log.error('%s: %s', url, err)
             return False
 

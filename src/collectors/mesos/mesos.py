@@ -58,7 +58,7 @@ class MesosCollector(diamond.collector.Collector):
                                        self.METRICS_PATH)
 
             return json.load(urllib2.urlopen(url))
-        except (urllib2.HTTPError, ValueError), err:
+        except (urllib2.HTTPError, ValueError) as err:
             self.log.error('Unable to read JSON response: %s' % err)
             return {}
 

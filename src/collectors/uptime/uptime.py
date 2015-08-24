@@ -42,7 +42,7 @@ class UptimeCollector(Collector):
             fd.close()
             v = float(uptime.split()[0].strip())
             return convertor.time.convert(v, 's', self.config['metric_name'])
-        except Exception, e:
+        except Exception as e:
             self.log.error('Unable to read uptime from %s: %s' % (self.PROC,
                                                                   e))
             return None

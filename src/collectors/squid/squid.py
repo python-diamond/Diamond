@@ -77,7 +77,7 @@ class SquidCollector(diamond.collector.Collector):
                 if not data:
                     break
                 fulldata = fulldata + data
-        except Exception, e:
+        except Exception as e:
             self.log.error('Couldnt connect to squid: %s', e)
             return None
         squid_sock.close()

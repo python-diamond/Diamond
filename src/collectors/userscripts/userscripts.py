@@ -71,7 +71,7 @@ class UserScriptsCollector(diamond.collector.Collector):
                                         stdout=subprocess.PIPE,
                                         stderr=subprocess.PIPE)
                 (out, err) = proc.communicate()
-            except subprocess.CalledProcessError, e:
+            except subprocess.CalledProcessError as e:
                 self.log.error("%s error launching: %s; skipping" %
                                (absolutescriptpath, e))
                 continue

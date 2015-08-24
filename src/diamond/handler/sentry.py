@@ -333,7 +333,7 @@ class SentryHandler(Handler):
         # init rule
         try:
             return Rule(**kwargs)
-        except InvalidRule, err:
+        except InvalidRule as err:
             self.log.error(str(err))
 
     def configure_sentry_errors(self):

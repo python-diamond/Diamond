@@ -258,7 +258,7 @@ if __name__ == "__main__":
 
             options = obj.get_default_config_help()
             defaultOptions = obj.get_default_config()
-        except Exception, e:
+        except Exception as e:
             print("Caught Exception %s" % e)
 
         os.remove(tmpfile[1])

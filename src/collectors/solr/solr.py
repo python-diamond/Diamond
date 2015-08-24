@@ -71,7 +71,7 @@ class SolrCollector(diamond.collector.Collector):
             self.config['host'], int(self.config['port']), path)
         try:
             response = urllib2.urlopen(url)
-        except Exception, err:
+        except Exception as err:
             self.log.error("%s: %s", url, err)
             return False
 

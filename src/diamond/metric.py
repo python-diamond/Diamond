@@ -38,7 +38,7 @@ class Metric(object):
             if not isinstance(timestamp, int):
                 try:
                     timestamp = int(timestamp)
-                except ValueError, e:
+                except ValueError as e:
                     raise DiamondException(("Invalid timestamp when "
                                             "creating new Metric %r: %s")
                                            % (path, e))
@@ -51,7 +51,7 @@ class Metric(object):
                     value = round(float(value))
                 else:
                     value = float(value)
-            except ValueError, e:
+            except ValueError as e:
                 raise DiamondException(("Invalid value when creating new "
                                         "Metric %r: %s") % (path, e))
 

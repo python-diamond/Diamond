@@ -82,7 +82,7 @@ class RiemannHandler(Handler):
         event = self._metric_to_riemann_event(metric)
         try:
             self.client.send(event)
-        except Exception, e:
+        except Exception as e:
             self.log.error("RiemannHandler: Error sending event to Riemann: %s",
                            e)
 

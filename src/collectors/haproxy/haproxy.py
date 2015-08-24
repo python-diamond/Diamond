@@ -62,7 +62,7 @@ class HAProxyCollector(diamond.collector.Collector):
         try:
             handle = urllib2.urlopen(req)
             return handle.readlines()
-        except Exception, e:
+        except Exception as e:
             if not hasattr(e, 'code') or e.code != 401:
                 self.log.error("Error retrieving HAProxy stats. %s", e)
                 return metrics
@@ -98,7 +98,7 @@ class HAProxyCollector(diamond.collector.Collector):
             handle = urllib2.urlopen(req)
             metrics = handle.readlines()
             return metrics
-        except IOError, e:
+        except IOError as e:
             # here we shouldn't fail if the USER/PASS is right
             self.log.error("Error retrieving HAProxy stats. (Invalid username "
                            + "or password?) %s", e)
