@@ -120,7 +120,7 @@ class JolokiaCollector(diamond.collector.Collector):
     def __init__(self, *args, **kwargs):
         super(JolokiaCollector, self).__init__(*args, **kwargs)
         self.mbeans = []
-        if isinstance(self.config['mbeans'], basestring):
+        if isinstance(self.config['mbeans'], str):
             for mbean in self.config['mbeans'].split('|'):
                 self.mbeans.append(mbean.strip())
         elif isinstance(self.config['mbeans'], list):

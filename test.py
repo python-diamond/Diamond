@@ -35,11 +35,9 @@ except ImportError:
     setproctitle = None
 
 try:
-    from mock import Mock
-    from mock import patch
+    from mock import call, Mock, patch
 except ImportError:
-    from unittest.mock import Mock
-    from unittest.mock import patch
+    from unittest.mock import call, Mock, patch
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),

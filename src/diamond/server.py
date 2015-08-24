@@ -86,7 +86,7 @@ class Server(object):
             handlers_path = self.config['server']['handlers_path']
 
             # Make an list if not one
-            if isinstance(handlers_path, basestring):
+            if isinstance(handlers_path, str):
                 handlers_path = handlers_path.split(',')
                 handlers_path = map(str.strip, handlers_path)
                 self.config['server']['handlers_path'] = handlers_path
@@ -98,7 +98,7 @@ class Server(object):
             sys.exit(1)
 
         handlers = self.config['server'].get('handlers')
-        if isinstance(handlers, basestring):
+        if isinstance(handlers, str):
             handlers = [handlers]
 
         # Prevent the Queue Handler from being a normal handler

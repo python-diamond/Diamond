@@ -116,13 +116,13 @@ class FilestatCollector(diamond.collector.Collector):
         based on the variables user_include and user_exclude
         """
     # convert user/group  lists to arrays if strings
-        if isinstance(self.config['user_include'], basestring):
+        if isinstance(self.config['user_include'], str):
             self.config['user_include'] = self.config['user_include'].split()
-        if isinstance(self.config['user_exclude'], basestring):
+        if isinstance(self.config['user_exclude'], str):
             self.config['user_exclude'] = self.config['user_exclude'].split()
-        if isinstance(self.config['group_include'], basestring):
+        if isinstance(self.config['group_include'], str):
             self.config['group_include'] = self.config['group_include'].split()
-        if isinstance(self.config['group_exclude'], basestring):
+        if isinstance(self.config['group_exclude'], str):
             self.config['group_exclude'] = self.config['group_exclude'].split()
 
         rawusers = os.popen("lsof | awk '{ print $3 }' | sort | uniq -d"
@@ -206,9 +206,9 @@ class FilestatCollector(diamond.collector.Collector):
         typelist = []
 
         # convert type list into arrays if strings
-        if isinstance(self.config['type_include'], basestring):
+        if isinstance(self.config['type_include'], str):
             self.config['type_include'] = self.config['type_include'].split()
-        if isinstance(self.config['type_exclude'], basestring):
+        if isinstance(self.config['type_exclude'], str):
             self.config['type_exclude'] = self.config['type_exclude'].split()
 
         # remove any not in include list

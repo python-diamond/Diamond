@@ -48,7 +48,7 @@ class LibratoHandler(Handler):
 
         # If a user leaves off the ending comma, cast to a array for them
         include_filters = self.config['include_filters']
-        if isinstance(include_filters, basestring):
+        if isinstance(include_filters, str):
             include_filters = [include_filters]
 
         self.include_reg = re.compile(r'(?:%s)' % '|'.join(include_filters))

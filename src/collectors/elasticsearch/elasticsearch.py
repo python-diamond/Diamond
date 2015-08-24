@@ -33,7 +33,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
     def process_config(self):
         super(ElasticSearchCollector, self).process_config()
         instance_list = self.config['instances']
-        if isinstance(instance_list, basestring):
+        if isinstance(instance_list, str):
             instance_list = [instance_list]
 
         if len(instance_list) == 0:

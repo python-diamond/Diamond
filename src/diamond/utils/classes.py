@@ -40,7 +40,7 @@ def load_dynamic_class(fqn, subclass):
     """
     Dynamically load fqn class and verify it's a subclass of subclass
     """
-    if not isinstance(fqn, basestring):
+    if not isinstance(fqn, str):
         return fqn
 
     cls = load_class_from_name(fqn)
@@ -58,7 +58,7 @@ def load_handlers(config, handler_names):
 
     handlers = []
 
-    if isinstance(handler_names, basestring):
+    if isinstance(handler_names, str):
         handler_names = [handler_names]
 
     for handler in handler_names:
@@ -119,7 +119,7 @@ def load_collectors_from_paths(paths):
     if paths is None:
         return
 
-    if isinstance(paths, basestring):
+    if isinstance(paths, str):
         paths = paths.split(',')
         paths = map(str.strip, paths)
 
