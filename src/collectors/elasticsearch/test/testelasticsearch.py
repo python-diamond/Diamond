@@ -9,6 +9,7 @@ from test import Mock
 from test import patch
 
 from diamond.collector import Collector
+from diamond.pycompat import URLOPEN
 
 from elasticsearch import ElasticSearchCollector
 
@@ -63,7 +64,7 @@ class TestElasticSearchCollector(CollectorTestCase):
             self.getFixture('cluster_stats'),
             self.getFixture('indices_stats'),
         ]
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch(URLOPEN, Mock(
             side_effect=lambda *args: returns.pop(0)))
 
         self.collector.config['cluster'] = True
@@ -199,7 +200,7 @@ class TestElasticSearchCollector(CollectorTestCase):
             self.getFixture('stats'),
             self.getFixture('logstash_indices_stats'),
         ]
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch(URLOPEN, Mock(
             side_effect=lambda *args: returns.pop(0)))
 
         self.collector.config['logstash_mode'] = True
@@ -343,7 +344,7 @@ class TestElasticSearchCollector(CollectorTestCase):
             self.getFixture('stats0.90'),
             self.getFixture('indices_stats'),
         ]
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch(URLOPEN, Mock(
             side_effect=lambda *args: returns.pop(0)))
 
         urlopen_mock.start()
@@ -369,7 +370,7 @@ class TestElasticSearchCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch(URLOPEN, Mock(
                              return_value=self.getFixture('stats_blank')))
 
         urlopen_mock.start()
@@ -394,7 +395,7 @@ class TestElasticSearchCollector(CollectorTestCase):
             self.getFixture('stats2'),
             self.getFixture('indices_stats2'),
         ]
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch(URLOPEN, Mock(
             side_effect=lambda *args: returns.pop(0)))
 
         urlopen_mock.start()

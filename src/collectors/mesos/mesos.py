@@ -19,9 +19,9 @@ port = 5050
 
 import copy
 import diamond.collector
+import diamond.pycompat
+from diamond.pycompat import HTTPError
 import json
-import urllib2
-from urlparse import urlparse
 
 import diamond.collector
 
@@ -199,7 +199,7 @@ class MesosCollector(diamond.collector.Collector):
         """
         url = self._get_url(path)
         try:
-            response = urllib2.urlopen(url)
+            response = diamond.pycompat.urlopen(url)
         except Exception as err:
             self.log.error("%s: %s", url, err)
             return False

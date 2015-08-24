@@ -9,6 +9,7 @@ from test import Mock
 from test import patch
 
 from diamond.collector import Collector
+from diamond.pycompat import URLOPEN
 from bind import BindCollector
 
 ##########################################################################
@@ -28,7 +29,7 @@ class TestBindCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        patch_urlopen = patch('urllib2.urlopen', Mock(
+        patch_urlopen = patch(URLOPEN, Mock(
             return_value=self.getFixture('bind.xml')))
 
         patch_urlopen.start()

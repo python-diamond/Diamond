@@ -5,7 +5,6 @@ Collects data from sidekiq web
 
 #### Dependencies
 
- * urllib2
  * json (or simeplejson)
 
 """
@@ -15,8 +14,8 @@ try:
 except ImportError:
     import simplejson as json
 
-import urllib2
 import diamond.collector
+import diamond.pycompat
 
 
 class SidekiqWebCollector(diamond.collector.Collector):
@@ -42,7 +41,7 @@ class SidekiqWebCollector(diamond.collector.Collector):
 
     def collect(self):
         try:
-            response = urllib2.urlopen("http://%s:%s/dashboard/stats" % (
+            response = diamond.pycompat.urlopen("http://%s:%s/dashboard/stats" % (
                 self.config['host'], int(self.config['port'])))
         except Exception as e:
             self.log.error('Couldnt connect to sidekiq-web: %s', e)

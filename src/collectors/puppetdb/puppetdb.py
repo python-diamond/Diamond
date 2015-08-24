@@ -5,14 +5,13 @@ Collect metrics from Puppet DB Dashboard
 
 #### Dependencies
 
- * urllib2
  * json
 
 """
 
-import urllib2
 import diamond.collector
 from diamond.convertor import time as time_convertor
+import diamond.pycompat
 
 try:
     import json
@@ -90,7 +89,7 @@ class PuppetDBCollector(diamond.collector.Collector):
         try:
             url = "http://%s:%s/%s" % (
                 self.config['host'], int(self.config['port']), url)
-            response = urllib2.urlopen(url)
+            response = diamond.pycompat.urlopen(url)
         except Exception as e:
             self.log.error('Couldn\'t connect to puppetdb: %s -> %s', url, e)
             return {}

@@ -2,7 +2,6 @@
 # coding=utf-8
 
 import datetime
-import mock
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -99,8 +98,8 @@ class TestElbCollector(CollectorTestCase):
         collector = ElbCollector(config, handlers=[])
 
         target = ts + datetime.timedelta(minutes=1)
-        with mock.patch.object(datetime, 'datetime',
-                               mock.Mock(wraps=datetime.datetime)) as patched:
+        with patch.object(datetime, 'datetime',
+                          Mock(wraps=datetime.datetime)) as patched:
             patched.utcnow.return_value = target
             collector.collect()
 
@@ -175,8 +174,8 @@ class TestElbCollector(CollectorTestCase):
         collector = ElbCollector(config, handlers=[])
 
         target = ts + datetime.timedelta(minutes=1)
-        with mock.patch.object(datetime, 'datetime',
-                               mock.Mock(wraps=datetime.datetime)) as patched:
+        with patch.object(datetime, 'datetime',
+                          Mock(wraps=datetime.datetime)) as patched:
             patched.utcnow.return_value = target
             collector.collect()
 

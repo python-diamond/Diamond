@@ -35,9 +35,9 @@ except ImportError:
     setproctitle = None
 
 try:
-    from mock import call, MagicMock, Mock, patch
+    from mock import ANY, call, MagicMock, Mock, mock_open, patch
 except ImportError:
-    from unittest.mock import call, MagicMock, Mock, patch
+    from unittest.mock import ANY, call, MagicMock, Mock, mock_open, patch
 
 try:  # py3k way
     import builtins

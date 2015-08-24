@@ -5,14 +5,12 @@ Collect statistics from Flume
 
 #### Dependencies
 
- * urllib2
  * json or simplejson
 
 """
 
-import urllib2
 import diamond.collector
-
+import diamond.pycompat
 try:
     import simplejson as json
 except ImportError:
@@ -79,7 +77,7 @@ class FlumeCollector(diamond.collector.Collector):
         )
 
         try:
-            resp = urllib2.urlopen(url)
+            resp = diamond.pycompat.urlopen(url)
             try:
                 j = json.loads(resp.read())
                 resp.close()
@@ -87,7 +85,7 @@ class FlumeCollector(diamond.collector.Collector):
                 resp.close()
                 self.log.error('Cannot load json data: %s', e)
                 return None
-        except urllib2.URLError as e:
+        except diamond.pycompat.URLError as e:
             self.log.error('Failed to open url: %s', e)
             return None
         except Exception as e:

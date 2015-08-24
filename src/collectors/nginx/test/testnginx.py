@@ -9,6 +9,7 @@ from test import Mock
 from test import patch
 
 from diamond.collector import Collector
+from diamond.pycompat import URLOPEN
 
 from nginx import NginxCollector
 
@@ -38,7 +39,7 @@ class TestNginxCollector(CollectorTestCase):
             }
         )
 
-        patch_urlopen = patch('urllib2.urlopen', Mock(
+        patch_urlopen = patch(URLOPEN, Mock(
             return_value=mockResponse))
 
         patch_urlopen.start()
@@ -179,7 +180,7 @@ class TestNginxCollector(CollectorTestCase):
             }
         )
 
-        patch_urlopen = patch('urllib2.urlopen', Mock(
+        patch_urlopen = patch(URLOPEN, Mock(
             return_value=mockResponse))
 
         patch_urlopen.start()

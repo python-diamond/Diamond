@@ -26,8 +26,7 @@ uri = fpm-status
 
 #### Dependencies
 
- * urllib2
- * json (or simeplejson)
+ * json (or simplejson)
 
 """
 
@@ -36,8 +35,8 @@ try:
 except ImportError:
     import simplejson as json
 
-import urllib2
 import diamond.collector
+import diamond.pycompat
 
 
 class PhpFpmCollector(diamond.collector.Collector):
@@ -72,7 +71,7 @@ class PhpFpmCollector(diamond.collector.Collector):
             self.config['uri'] = self.config['uri'][1:]
 
         try:
-            response = urllib2.urlopen("http://%s:%s/%s?json" % (
+            response = diamond.pycompat.urlopen("http://%s:%s/%s?json" % (
                 self.config['host'], int(self.config['port']),
                 self.config['uri']))
         except Exception as e:

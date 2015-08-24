@@ -18,7 +18,7 @@ port=16379
 """
 
 import diamond.collector
-import urllib2
+import diamond.pycompat
 import time
 
 try:
@@ -68,7 +68,7 @@ class CelerymonCollector(diamond.collector.Collector):
 
         celerymon_url = "http://%s:%s/api/task/?since=%i" % (
             host, port, self.LastCollectTime)
-        response = urllib2.urlopen(celerymon_url)
+        response = diamond.pycompat.urlopen(celerymon_url)
         body = response.read()
         celery_data = json.loads(body)
 

@@ -3,10 +3,6 @@
 """
 Collect statistics from a HTTP or HTTPS connexion
 
-#### Dependencies
-
- * urllib2
-
 #### Usage
 Add the collector config as :
 
@@ -27,8 +23,9 @@ Metrics are collected as :
        http:__www_site_com_admin_page_html
 """
 
-import urllib2
 import diamond.collector
+import diamond.pycompat
+from diamond.pycompat import Request
 import datetime
 
 
@@ -55,7 +52,7 @@ class HttpCollector(diamond.collector.Collector):
         return default_config
 
     def collect(self):
-        # create urllib2 vars
+        # create Request vars
         if self.config['req_vhost'] != "":
             self.config['headers']['Host'] = self.config['req_vhost']
 
@@ -63,9 +60,9 @@ class HttpCollector(diamond.collector.Collector):
         for url in self.config['req_url']:
             self.log.debug("collecting %s", str(url))
             req_start = datetime.datetime.now()
-            req = urllib2.Request(url, headers=self.config['headers'])
+            req = diamond.pycompat.Request(url, headers=self.config['headers'])
             try:
-                handle = urllib2.urlopen(req)
+                handle = diamond.pycompat.urlopen(req)
                 the_page = handle.read()
                 req_end = datetime.datetime.now()
                 req_time = req_end - req_start

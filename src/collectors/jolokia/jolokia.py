@@ -51,10 +51,10 @@ an mbean.
 import diamond.collector
 import base64
 from contextlib import closing
+import diamond.pycompat
 import json
 import re
-import urllib
-import urllib2
+from diamond.pycompat import HTTPError, long, quote
 
 
 class JolokiaCollector(diamond.collector.Collector):
@@ -230,10 +230,10 @@ class JolokiaCollector(diamond.collector.Collector):
             # need some time to process the downloaded metrics, so that's why
             # timeout is lower than the interval.
             timeout = max(2, float(self.config['interval']) * 2 / 3)
-            with closing(urllib2.urlopen(self._create_request(url),
+            with closing(diamond.pycompat.urlopen(self._create_request(url),
                                          timeout=timeout)) as response:
                 return self._read_json(response)
-        except (urllib2.HTTPError, ValueError) as e:
+        except (HTTPError, ValueError) as e:
             self.log.error('Unable to read JSON response: %s', str(e))
             return {}
 
@@ -253,10 +253,10 @@ class JolokiaCollector(diamond.collector.Collector):
             # need some time to process the downloaded metrics, so that's why
             # timeout is lower than the interval.
             timeout = max(2, float(self.config['interval']) * 2 / 3)
-            with closing(urllib2.urlopen(self._create_request(url),
+            with closing(diamond.pycompat.urlopen(self._create_request(url),
                                          timeout=timeout)) as response:
                 return self._read_json(response)
-        except (urllib2.HTTPError, ValueError):
+        except (HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
             return {}
 
@@ -268,7 +268,7 @@ class JolokiaCollector(diamond.collector.Collector):
         domain = re.sub('!', '!!', domain)
         domain = re.sub('/', '!/', domain)
         domain = re.sub('"', '!"', domain)
-        domain = urllib.quote(domain)
+        domain = quote(domain)
         return domain
 
     def _create_request(self, url):

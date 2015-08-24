@@ -27,18 +27,13 @@ Or, to override the name (now "127_0_0_1"):
 You can also specify multiple and mixed instances::
 
     instances = file:///var/log/openvpn/openvpn.log, tcp://10.0.0.1:1195?admins
-
-#### Dependencies
-
- * urlparse
-
 """
 
 import socket
 import diamond.collector
 import os.path
-import urlparse
 import time
+from diamond.pycompat import urlparse
 
 
 class OpenVPNCollector(diamond.collector.Collector):
@@ -67,7 +62,7 @@ class OpenVPNCollector(diamond.collector.Collector):
         """
         Convert urlparse from a python 2.4 layout to a python 2.7 layout
         """
-        parsed = urlparse.urlparse(uri)
+        parsed = urlparse(uri)
         if 'scheme' not in parsed:
             class Object(object):
                 pass

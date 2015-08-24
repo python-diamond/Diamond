@@ -7,10 +7,9 @@ based on data in real time.
 
 from Handler import Handler
 import logging
-import urllib2
 import json
 from collections import deque
-
+from diamond.pycompat import URLError, urlopen, Request
 
 class LogentriesDiamondHandler(Handler):
     """
@@ -75,9 +74,9 @@ class LogentriesDiamondHandler(Handler):
             metric = self.queue.popleft()
             topic, value, timestamp = str(metric).split()
             msg = json.dumps({"event": {topic: value}})
-            req = urllib2.Request("https://js.logentries.com/v1/logs/" +
-                                  self.log_token, msg)
+            req = Request("https://js.logentries.com/v1/logs/" +
+                          self.log_token, msg)
             try:
-                urllib2.urlopen(req)
-            except urllib2.URLError as e:
+                urlopen(req)
+            except URLError as e:
                 logging.error("Can't send log message to Logentries %s", e)

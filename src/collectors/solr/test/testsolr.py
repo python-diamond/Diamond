@@ -9,7 +9,7 @@ from mock import call
 from test import patch
 
 from diamond.collector import Collector
-
+from diamond.pycompat import URLOPEN
 from solr import SolrCollector
 
 ##########################################################################
@@ -31,7 +31,8 @@ class TestSolrCollector(CollectorTestCase):
                    self.getFixture('ping'),
                    self.getFixture('stats'),
                    self.getFixture('system')]
-        urlopen_mock.side_effect = lambda *args: returns.pop(0)
+        urlopen_mock = patch(URLOPEN, Mock(
+            side_effect=lambda *args: returns.pop(0)))
 
         self.collector.collect()
 
@@ -140,6 +141,8 @@ class TestSolrCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock, urlopen_mock):
         urlopen_mock.return_value = self.getFixture('stats_blank')
+        urlopen_mock = patch(URLOPEN, Mock(
+                             return_value=self.getFixture('stats_blank')))
 
         self.collector.collect()
 
