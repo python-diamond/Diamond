@@ -3,7 +3,7 @@
 import time
 import re
 import logging
-from error import DiamondException
+from . error import DiamondException
 
 
 class Metric(object):
