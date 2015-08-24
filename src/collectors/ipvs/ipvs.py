@@ -12,7 +12,6 @@ Shells out to get ipvs statistics, which may or may not require sudo access
 import diamond.collector
 import subprocess
 import os
-import string
 from diamond.collector import str_to_bool
 
 
@@ -94,10 +93,10 @@ class IPVSCollector(diamond.collector.Collector):
             row = line.split()
 
             if row[0] == "TCP" or row[0] == "UDP":
-                external = row[0] + "_" + string.replace(row[1], ".", "_")
+                external = row[0] + "_" + row[1].replace(".", "_")
                 backend = "total"
             elif row[0] == "->":
-                backend = string.replace(row[1], ".", "_")
+                backend = row[1].replace(".", "_")
             else:
                 continue
 
@@ -142,10 +141,10 @@ class IPVSCollector(diamond.collector.Collector):
                 for k in columns.keys():
                     total[k] = 0.0
 
-                external = row[0] + "_" + string.replace(row[1], ".", "_")
+                external = row[0] + "_" + row[1].replace(".", "_")
                 continue
             elif row[0] == "->":
-                backend = string.replace(row[1], ".", "_")
+                backend = row[1].replace(".", "_")
             else:
                 continue
 
