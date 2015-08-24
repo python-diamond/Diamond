@@ -90,6 +90,8 @@ class DiskTemperatureCollector(diamond.collector.Collector):
         metrics = {}
         for device, p in instances.items():
             output = p.communicate()[0].strip()
+            if isinstance(output, bytes):
+                output = output.decode("utf8")
 
             try:
                 metrics[device + ".Temperature"] = float(output)

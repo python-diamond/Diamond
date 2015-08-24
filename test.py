@@ -138,7 +138,7 @@ class CollectorTestCase(unittest.TestCase):
         return fixtures
 
     def getPickledResults(self, results_name):
-        with open(self.getFixturePath(results_name), 'r') as f:
+        with open(self.getFixturePath(results_name), 'rb') as f:
             return pickle.load(f)
 
     def setPickledResults(self, results_name, data):
