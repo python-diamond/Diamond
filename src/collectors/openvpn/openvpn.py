@@ -86,7 +86,7 @@ class OpenVPNCollector(diamond.collector.Collector):
         return parsed
 
     def collect(self):
-        if isinstance(self.config['instances'], basestring):
+        if isinstance(self.config['instances'], str):
             instances = [self.config['instances']]
         else:
             instances = self.config['instances']

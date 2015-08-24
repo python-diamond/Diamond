@@ -50,12 +50,12 @@ class ConnTrackCollector(diamond.collector.Collector):
         collected = {}
         files = []
 
-        if isinstance(self.config['dir'], basestring):
+        if isinstance(self.config['dir'], str):
             dirs = [d.strip() for d in self.config['dir'].split(',')]
         elif isinstance(self.config['dir'], list):
             dirs = self.config['dir']
 
-        if isinstance(self.config['files'], basestring):
+        if isinstance(self.config['files'], str):
             files = [f.strip() for f in self.config['files'].split(',')]
         elif isinstance(self.config['files'], list):
             files = self.config['files']

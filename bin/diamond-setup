@@ -78,7 +78,7 @@ def getCollectors(path):
 
 
 def typeToString(key):
-    if isinstance(obj.config[key], basestring):
+    if isinstance(obj.config[key], str):
         user_val = obj.config[key]
     elif isinstance(obj.config[key], bool):
         user_val = str(obj.config[key])
@@ -95,7 +95,7 @@ def typeToString(key):
 def stringToType(key, val):
     if type(obj.config[key]) is type(val):
         config_file[key] = val
-    elif isinstance(obj.config[key], basestring):
+    elif isinstance(obj.config[key], str):
         if val.lower() == 'false':
             config_file[key] = False
         elif val.lower() == 'true':
@@ -103,7 +103,7 @@ def stringToType(key, val):
         else:
             config_file[key] = val
     elif isinstance(obj.config[key], bool):
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             config_file[key] = str_to_bool(val)
         else:
             config_file[key] = bool(val)
@@ -117,7 +117,7 @@ def stringToType(key, val):
 
 
 def boolCheck(val):
-    if isinstance(val, basestring):
+    if isinstance(val, str):
         return str_to_bool(val)
     elif isinstance(val, bool):
         return val

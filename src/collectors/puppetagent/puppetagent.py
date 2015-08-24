@@ -57,7 +57,7 @@ class PuppetAgentCollector(diamond.collector.Collector):
 
         for sect, data in summary.items():
             for stat, value in data.items():
-                if value is None or isinstance(value, basestring):
+                if value is None or isinstance(value, str):
                     continue
 
                 metric = '.'.join([sect, stat])

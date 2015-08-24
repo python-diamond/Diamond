@@ -77,13 +77,13 @@ class DiskSpaceCollector(diamond.collector.Collector):
         super(DiskSpaceCollector, self).process_config()
         # Precompile things
         self.exclude_filters = self.config['exclude_filters']
-        if isinstance(self.exclude_filters, basestring):
+        if isinstance(self.exclude_filters, str):
             self.exclude_filters = [self.exclude_filters]
 
         self.exclude_reg = re.compile('|'.join(self.exclude_filters))
 
         self.filesystems = []
-        if isinstance(self.config['filesystems'], basestring):
+        if isinstance(self.config['filesystems'], str):
             for filesystem in self.config['filesystems'].split(','):
                 self.filesystems.append(filesystem.strip())
         elif isinstance(self.config['filesystems'], list):
