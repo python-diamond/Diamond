@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from test import CollectorTestCase, get_collector_config
-from mock import MagicMock, patch
+from test import MagicMock, patch
 
 from pgq import PgQCollector
 

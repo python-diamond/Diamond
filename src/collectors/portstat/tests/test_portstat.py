@@ -1,7 +1,7 @@
 from test import CollectorTestCase
 from test import get_collector_config
 
-from mock import call, Mock, patch
+from test import call, Mock, patch
 from unittest import TestCase
 
 from diamond.collector import Collector
