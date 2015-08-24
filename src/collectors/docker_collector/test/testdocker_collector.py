@@ -8,6 +8,7 @@ from test import unittest
 from test import run_only
 from test import Mock
 from test import patch
+from test import BUILTIN_OPEN
 from mock import mock_open
 
 from test import StringIO
@@ -87,7 +88,7 @@ class TestDockerCollector(CollectorTestCase):
             ])
 
         m = mock_open(read_data=read_data)
-        with patch('__builtin__.open', m, create=True):
+        with patch(BUILTIN_OPEN, m, create=True):
             self.assertEqual(self.collector._default_memory_path(),
                              '/mickeymouse/memory')
 
@@ -107,7 +108,7 @@ class TestDockerCollector(CollectorTestCase):
     #         })
 
     # @run_only_if_docker_client_is_available
-    # @patch('__builtin__.open')
+    # @patch(BUILTIN_OPEN)
     # @patch.object(Client, 'containers', Mock(return_value=[]))
     # @patch.object(Collector, 'publish')
     # def test_should_open_memory_stat(self, publish_mock, open_mock):
@@ -123,7 +124,7 @@ class TestDockerCollector(CollectorTestCase):
     #     # open_mock.assert_any_call(fixtures_path + 'memory.stat')
 
     # @run_only_if_docker_client_is_available
-    # @patch('__builtin__.open')
+    # @patch(BUILTIN_OPEN)
     # @patch.object(Client, 'containers')
     # @patch.object(Collector, 'publish')
     # def test_should_get_containers(self, publish_mock, containers_mock,

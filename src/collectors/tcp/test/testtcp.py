@@ -8,6 +8,7 @@ from test import unittest
 from test import Mock
 from test import patch
 from test import StringIO
+from test import BUILTIN_OPEN
 
 from tcp import TCPCollector
 
@@ -28,7 +29,7 @@ class TestTCPCollector(CollectorTestCase):
         self.assertTrue(TCPCollector)
 
     @patch('os.access', Mock(return_value=True))
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch('diamond.collector.Collector.publish')
     def test_should_open_proc_net_netstat(self, publish_mock, open_mock):
         TCPCollector.PROC = ['/proc/net/netstat']
@@ -37,7 +38,7 @@ class TestTCPCollector(CollectorTestCase):
         open_mock.assert_called_once_with('/proc/net/netstat')
 
     @patch('os.access', Mock(return_value=True))
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch('diamond.collector.Collector.publish')
     def test_should_work_with_synthetic_data(self, publish_mock, open_mock):
         TCPCollector.PROC = ['/proc/net/netstat']

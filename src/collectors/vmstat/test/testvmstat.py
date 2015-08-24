@@ -2,6 +2,7 @@
 # coding=utf-8
 ###############################################################################
 
+from test import BUILTIN_OPEN
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -26,7 +27,7 @@ class TestVMStatCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(VMStatCollector)
 
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_open_proc_vmstat(self, publish_mock, open_mock):

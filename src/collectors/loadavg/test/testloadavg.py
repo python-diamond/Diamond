@@ -9,6 +9,7 @@ from test import unittest
 from test import Mock
 from test import patch
 from test import StringIO
+from test import BUILTIN_OPEN
 
 from diamond.collector import Collector
 from loadavg import LoadAverageCollector
@@ -27,7 +28,7 @@ class TestLoadAverageCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(LoadAverageCollector)
 
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_open_proc_loadavg(self, publish_mock, open_mock):

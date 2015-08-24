@@ -10,6 +10,7 @@ from test import unittest
 from test import Mock
 from test import patch
 from test import StringIO
+from test import BUILTIN_OPEN
 
 from diamond.collector import Collector
 from kvm import KVMCollector
@@ -32,7 +33,7 @@ class TestKVMCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
+        patch_open = patch(BUILTIN_OPEN, Mock(return_value=StringIO(
             '0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0'
             + '\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n'
         )))
