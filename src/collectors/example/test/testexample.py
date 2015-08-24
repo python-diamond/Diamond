@@ -5,7 +5,7 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import patch
+from test import patch
 
 from diamond.collector import Collector
 from example import ExampleCollector

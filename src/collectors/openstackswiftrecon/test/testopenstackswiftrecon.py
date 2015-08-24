@@ -6,7 +6,7 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 
-from mock import patch, Mock
+from test import patch, Mock
 
 from diamond.collector import Collector
 from openstackswiftrecon import OpenstackSwiftReconCollector

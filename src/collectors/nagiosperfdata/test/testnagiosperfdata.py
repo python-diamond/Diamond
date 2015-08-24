@@ -3,7 +3,7 @@
 
 from test import CollectorTestCase
 from test import get_collector_config
-from mock import patch
+from test import patch
 import os
 
 from diamond.collector import Collector

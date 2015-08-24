@@ -7,7 +7,7 @@ from test import get_collector_config
 from test import unittest
 from test import run_only
 from mock import MagicMock
-from mock import patch
+from test import patch
 from mock import call
 
 from diamond.collector import Collector
