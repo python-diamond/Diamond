@@ -11,7 +11,7 @@ from test import patch
 from diamond.collector import Collector
 from diamond.pycompat import URLOPEN
 
-from http import HttpCollector
+from http_collector import HttpCollector
 
 ################################################################################
 
