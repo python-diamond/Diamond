@@ -24,6 +24,7 @@ The IPCollector class collects metrics on IP stats
 """
 
 import diamond.collector
+from diamond.pycompat import long
 import os
 
 

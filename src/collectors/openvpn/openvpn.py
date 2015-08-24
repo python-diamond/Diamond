@@ -33,7 +33,7 @@ import socket
 import diamond.collector
 import os.path
 import time
-from diamond.pycompat import urlparse
+from diamond.pycompat import long, urlparse
 
 
 class OpenVPNCollector(diamond.collector.Collector):

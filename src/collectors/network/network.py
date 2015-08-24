@@ -12,6 +12,7 @@ using /proc/net/dev.
 
 import diamond.collector
 import diamond.convertor
+from diamond.pycompat import long
 import os
 import re
 

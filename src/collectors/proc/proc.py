@@ -13,7 +13,7 @@ The ProcessStatCollector collects metrics on process stats from
 import platform
 import os
 import diamond.collector
-
+from diamond.pycompat import long
 # Detect the architecture of the system
 # and set the counters for MAX_VALUES
 # appropriately. Otherwise, rolling over

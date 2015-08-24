@@ -177,6 +177,7 @@ flag.</td></tr>
 """
 
 import diamond.collector
+from diamond.pycompat import long
 import os
 
 
