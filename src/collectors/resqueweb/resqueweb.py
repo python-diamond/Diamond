@@ -2,15 +2,10 @@
 
 """
 Collects data for Resque Web
-
-#### Dependencies
-
- * urllib2
-
 """
 
-import urllib2
 import diamond.collector
+import diamond.pycompat
 
 
 class ResqueWebCollector(diamond.collector.Collector):
@@ -35,7 +30,7 @@ class ResqueWebCollector(diamond.collector.Collector):
 
     def collect(self):
         try:
-            response = urllib2.urlopen("http://%s:%s/stats.txt" % (
+            response = diamond.pycompat.urlopen("http://%s:%s/stats.txt" % (
                 self.config['host'], int(self.config['port'])))
         except Exception as e:
             self.log.error('Couldnt connect to resque-web: %s', e)

@@ -49,10 +49,10 @@ an mbean.
 """
 
 import diamond.collector
+import diamond.pycompat
 import json
 import re
-import urllib
-import urllib2
+from diamond.pycompat import HTTPError, long, quote
 
 
 class JolokiaCollector(diamond.collector.Collector):
@@ -146,9 +146,9 @@ class JolokiaCollector(diamond.collector.Collector):
                                          self.config['port'],
                                          self.config['path'],
                                          self.LIST_URL)
-            response = urllib2.urlopen(url)
+            response = diamond.pycompat.urlopen(url)
             return self.read_json(response)
-        except (urllib2.HTTPError, ValueError):
+        except (HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
             return {}
 
@@ -159,9 +159,9 @@ class JolokiaCollector(diamond.collector.Collector):
                                          self.config['port'],
                                          self.config['path'],
                                          url_path)
-            response = urllib2.urlopen(url)
+            response = diamond.pycompat.urlopen(url)
             return self.read_json(response)
-        except (urllib2.HTTPError, ValueError):
+        except (HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
             return {}
 
@@ -173,7 +173,7 @@ class JolokiaCollector(diamond.collector.Collector):
         domain = re.sub('!', '!!', domain)
         domain = re.sub('/', '!/', domain)
         domain = re.sub('"', '!"', domain)
-        domain = urllib.quote(domain)
+        domain = quote(domain)
         return domain
 
     def clean_up(self, text):

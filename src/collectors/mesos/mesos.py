@@ -15,8 +15,9 @@ port 5050. Set the port to 5051 for mesos-slaves.
 """
 
 import diamond.collector
+import diamond.pycompat
+from diamond.pycompat import HTTPError
 import json
-import urllib2
 
 
 class MesosCollector(diamond.collector.Collector):
@@ -57,8 +58,8 @@ class MesosCollector(diamond.collector.Collector):
                                        self.config['port'],
                                        self.METRICS_PATH)
 
-            return json.load(urllib2.urlopen(url))
-        except (urllib2.HTTPError, ValueError) as err:
+            return json.load(diamond.pycompat.urlopen(url))
+        except (HTTPError, ValueError) as err:
             self.log.error('Unable to read JSON response: %s' % err)
             return {}
 

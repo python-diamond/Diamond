@@ -3,11 +3,6 @@
 """
 Send metrics to signalfx
 
-#### Dependencies
-
- * urllib2
-
-
 #### Configuration
 Enable this handler
 
@@ -20,10 +15,10 @@ Enable this handler
 
 from Handler import Handler
 from diamond.util import get_diamond_version
+from diamond.pycompat import URLError, urlopen, Request
 import json
 import logging
 import time
-import urllib2
 
 
 class SignalfxHandler(Handler):
@@ -127,13 +122,13 @@ class SignalfxHandler(Handler):
         self.metrics = []
         postBody = json.dumps(postDictionary)
         logging.debug("Body is %s", postBody)
-        req = urllib2.Request(self.url, postBody,
-                              {"Content-type": "application/json",
-                               "X-SF-TOKEN": self.auth_token,
-                               "User-Agent": self.user_agent()})
+        req = Request(self.url, postBody,
+                      {"Content-type": "application/json",
+                       "X-SF-TOKEN": self.auth_token,
+                       "User-Agent": self.user_agent()})
         self.resetBatchTimeout()
         try:
-            urllib2.urlopen(req)
-        except urllib2.URLError:
+            urlopen(req)
+        except URLError:
             logging.exception("Unable to post signalfx metrics")
             return

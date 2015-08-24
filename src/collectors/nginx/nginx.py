@@ -3,10 +3,6 @@
 """
 Collect statistics from Nginx
 
-#### Dependencies
-
- * urllib2
-
 #### Usage
 
 To enable the nginx status page to work with defaults,
@@ -26,11 +22,9 @@ following content:
 </pre>
 
 """
-
-import urllib2
 import re
 import diamond.collector
-
+import diamond.pycompat
 
 class NginxCollector(diamond.collector.Collector):
 
@@ -61,9 +55,9 @@ class NginxCollector(diamond.collector.Collector):
         connectionStatusRE = re.compile('Reading: (?P<reading>\d+) '
                                         + 'Writing: (?P<writing>\d+) '
                                         + 'Waiting: (?P<waiting>\d+)')
-        req = urllib2.Request(url)
+        req = diamond.pycompat.Request(url)
         try:
-            handle = urllib2.urlopen(req)
+            handle = diamond.pycompat.urlopen(req)
             for l in handle.readlines():
                 l = l.rstrip('\r\n')
                 if activeConnectionsRE.match(l):

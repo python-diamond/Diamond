@@ -9,8 +9,7 @@ from test import run_only
 from test import Mock
 from test import patch
 from test import BUILTIN_OPEN
-from mock import mock_open
-
+from test import mock_open
 from test import StringIO
 
 try:

@@ -4,11 +4,6 @@
 """
 Send metrics to a http endpoint via POST
 
-#### Dependencies
-
- * urllib2
-
-
 #### Configuration
 Enable this handler
 
@@ -19,7 +14,7 @@ Enable this handler
 """
 
 from Handler import Handler
-import urllib2
+from . pycompat import Request, urlopen
 
 
 class HttpPostHandler(Handler):
@@ -69,6 +64,6 @@ class HttpPostHandler(Handler):
         self.post()
 
     def post(self):
-        req = urllib2.Request(self.url, "\n".join(self.metrics))
-        urllib2.urlopen(req)
+        req = Request(self.url, "\n".join(self.metrics))
+        urlopen(req)
         self.metrics = []

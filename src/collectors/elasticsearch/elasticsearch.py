@@ -6,16 +6,11 @@ Collect the elasticsearch stats for the local node.
 Supports multiple instances. When using the 'instances'
 parameter the instance alias will be appended to the
 'path' parameter.
-
-#### Dependencies
-
- * urlib2
-
 """
 
-import urllib2
 import re
 from diamond.collector import str_to_bool
+import diamond.pycompat
 
 try:
     import json
@@ -101,7 +96,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
         """
         url = 'http://%s:%i/%s' % (host, port, path)
         try:
-            response = urllib2.urlopen(url)
+            response = diamond.pycompat.urlopen(url)
         except Exception as err:
             self.log.error("%s: %s", url, err)
             return False
@@ -220,7 +215,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             return
 
         metrics = {}
-        node = result['nodes'].keys()[0]
+        node = list(result['nodes'].keys())[0]
         data = result['nodes'][node]
 
         #

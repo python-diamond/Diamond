@@ -7,6 +7,7 @@ from test import get_collector_config
 from test import patch
 
 from diamond.collector import Collector
+from diamond.pycompat import URLOPEN
 from endecadgraph import EndecaDgraphCollector
 
 
@@ -19,7 +20,7 @@ class TestEndecaDgraphCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(EndecaDgraphCollector)
 
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     @patch.object(Collector, 'publish')
     def test_real_data(self, publish_mock, urlopen_mock):
         urlopen_mock.return_value = self.getFixture('data1.xml')

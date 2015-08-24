@@ -5,7 +5,7 @@
 from test import unittest
 from test import run_only
 from test import patch
-from mock import ANY
+from test import ANY
 
 import configobj
 

@@ -8,6 +8,7 @@ from test import Mock
 from test import patch
 
 from diamond.collector import Collector
+from diamond.pycompat import URLOPEN
 
 from dseopscenter import DseOpsCenterCollector
 
@@ -26,12 +27,12 @@ class TestDseOpsCenterCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        urlopen_mock1 = patch('urllib2.urlopen', Mock(
+        urlopen_mock1 = patch(URLOPEN, Mock(
             side_effect=lambda *args: self.getFixture('keyspaces.json')))
         urlopen_mock1.start()
         self.collector._get_schema()
         urlopen_mock1.stop()
-        urlopen_mock2 = patch('urllib2.urlopen', Mock(
+        urlopen_mock2 = patch(URLOPEN, Mock(
             side_effect=lambda *args: self.getFixture('new-metrics.json')))
         urlopen_mock2.start()
         self.collector.collect()

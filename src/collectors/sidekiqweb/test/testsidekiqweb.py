@@ -9,6 +9,7 @@ from test import Mock
 from test import patch
 
 from diamond.collector import Collector
+from diamond.pycompat import URLOPEN
 from sidekiqweb import SidekiqWebCollector
 
 ################################################################################
@@ -27,7 +28,7 @@ class TestSidekiqWebCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        patch_urlopen = patch('urllib2.urlopen', Mock(
+        patch_urlopen = patch(URLOPEN, Mock(
             return_value=self.getFixture('stats')))
 
         patch_urlopen.start()
@@ -52,7 +53,7 @@ class TestSidekiqWebCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        patch_urlopen = patch('urllib2.urlopen', Mock(
+        patch_urlopen = patch(URLOPEN, Mock(
             return_value=self.getFixture('stats_blank')))
 
         patch_urlopen.start()

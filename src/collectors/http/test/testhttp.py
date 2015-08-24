@@ -9,6 +9,7 @@ from test import Mock
 from test import patch
 
 from diamond.collector import Collector
+from diamond.pycompat import URLOPEN
 
 from http import HttpCollector
 
@@ -29,7 +30,7 @@ class TestHttpCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        patch_urlopen = patch('urllib2.urlopen', Mock(
+        patch_urlopen = patch(URLOPEN, Mock(
             return_value=self.getFixture('index')))
 
         patch_urlopen.start()
