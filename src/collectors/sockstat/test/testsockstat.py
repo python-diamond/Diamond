@@ -13,6 +13,7 @@ from test import BUILTIN_OPEN
 from collections import Iterator
 from diamond.collector import Collector
 from sockstat import SockstatCollector
+import sys
 
 ################################################################################
 
@@ -32,14 +33,23 @@ class TestSockstatCollector(CollectorTestCase):
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_open_proc_net_sockstat(self, publish_mock, open_mock):
-        class Klass(Iterator):
+        class KlassPy2(Iterator):
+            def close(self):
+                pass
+
+            def next(self):
+                raise StopIteration()
+
+        class KlassPy3(Iterator):
             def close(self):
                 pass
 
             def __next__(self):
-                raise StopIteration
-
-        open_mock.return_value = Klass()
+                raise StopIteration()
+        if sys.version_info[0] == 2:  # py2.6x does not support the namedtuple .major
+            open_mock.return_value = KlassPy2()
+        else:
+            open_mock.return_value = KlassPy3()
         self.collector.collect()
         calls = [call('/proc/net/sockstat'), call('/proc/net/sockstat6')]
         open_mock.assert_has_calls(calls)
