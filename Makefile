@@ -4,6 +4,7 @@ VERSION :=$(shell bash version.sh )
 RELEASE :=$(shell ls -1 dist/*.noarch.rpm 2>/dev/null | wc -l )
 HASH	:=$(shell git rev-parse HEAD )
 DISTRO=precise
+PYTHON?=python3
 
 all:
 	@echo "make run      - Run Diamond from this directory"
@@ -40,19 +41,19 @@ docs: version
 	make test
 
 sdist: version
-	./setup.py sdist --prune
+	$(PYTHON) setup.py sdist
 
 bdist: version
-	./setup.py bdist --prune
+	$(PYTHON) setup.py bdist
 
 bdist_wheel: version
-	USE_SETUPTOOLS=1 ./setup.py bdist_wheel
+	$(PYTHON) setup.py bdist_wheel
 
 install: version
-	./setup.py install --root $(DESTDIR)
+	$(PYTHON) setup.py install --root $(DESTDIR)
 
 develop: version
-	USE_SETUPTOOLS=1 ./setup.py develop
+	$(PYTHON) setup.py develop
 
 rpm: buildrpm
 
@@ -62,6 +63,12 @@ buildrpm: sdist
 		--build-requires='python, python-configobj, python-setuptools' \
 		--requires='python, python-configobj, python-setuptools'
 
+buildrpmpy3: sdist
+	$(PYTHON) setup.py bdist_rpm \
+		--release=`ls dist/*.noarch.rpm | wc -l` \
+		--build-requires='python3, python3-configobj' \
+		--requires='python3, python3-configobj'
+
 deb: builddeb
 
 sdeb: buildsourcedeb
@@ -69,7 +76,7 @@ sdeb: buildsourcedeb
 builddeb: version
 	dch --newversion $(VERSION) --distribution unstable --force-distribution -b "Last Commit: $(shell git log -1 --pretty=format:'(%ai) %H %cn <%ce>')"
 	dch --release  "new upstream"
-	./setup.py sdist --prune
+	./setup.py sdist
 	mkdir -p build
 	tar -C build -zxf dist/$(PROJECT)-$(VERSION).tar.gz
 	(cd build/$(PROJECT)-$(VERSION) && debuild -us -uc -v$(VERSION))
@@ -78,7 +85,7 @@ builddeb: version
 buildsourcedeb: version
 	dch --newversion $(VERSION)~$(DISTRO) --distribution $(DISTRO) --force-distribution -b "Last Commit: $(shell git log -1 --pretty=format:'(%ai) %H %cn <%ce>')"
 	dch --release  "new upstream"
-	./setup.py sdist --prune
+	./setup.py sdist
 	mkdir -p build
 	tar -C build -zxf dist/$(PROJECT)-$(VERSION).tar.gz
 	(cd build/$(PROJECT)-$(VERSION) && debuild -S -sa -v$(VERSION))
@@ -96,6 +103,7 @@ clean:
 	./setup.py clean
 	rm -rf dist build MANIFEST .tox *.log
 	find . -name '*.pyc' -delete
+	find -name __pycache__ -delete
 
 version:
 	./version.sh > version.txt
