@@ -5,7 +5,7 @@ Send Diamond stats to your Logentries Account where you can monitor and alert
 based on data in real time.
 """
 
-from Handler import Handler
+from . Handler import Handler
 import logging
 import json
 from collections import deque

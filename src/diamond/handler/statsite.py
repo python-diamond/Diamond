@@ -52,7 +52,7 @@ store only a fraction of the samples.
 
 """
 
-from Handler import Handler
+from . Handler import Handler
 import socket
 
 

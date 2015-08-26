@@ -31,7 +31,7 @@ min = 66020000
 import logging
 import re
 
-from Handler import Handler
+from . Handler import Handler
 from diamond.collector import get_hostname
 from configobj import Section
 

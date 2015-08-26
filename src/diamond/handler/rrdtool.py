@@ -8,7 +8,7 @@ import os
 import re
 import subprocess
 from diamond.pycompat import Queue, Empty
-from Handler import Handler
+from . Handler import Handler
 
 #
 # Constants for RRD file creation.

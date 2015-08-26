@@ -41,7 +41,7 @@ unit = None
 import sys
 import datetime
 
-from Handler import Handler
+from . Handler import Handler
 from configobj import Section
 
 try:

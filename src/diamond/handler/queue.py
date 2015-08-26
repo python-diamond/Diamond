@@ -5,7 +5,7 @@ This is a meta handler to act as a shim for the new threading model. Please
 do not try to use it as a normal handler
 """
 
-from Handler import Handler
+from . Handler import Handler
 import Queue
 
 

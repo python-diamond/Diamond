@@ -50,7 +50,7 @@ yourself.
 '
 """
 
-from Handler import Handler
+from . Handler import Handler
 from diamond.metric import Metric
 import socket
 

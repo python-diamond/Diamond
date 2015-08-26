@@ -18,7 +18,7 @@ It has these options:
 
 """
 
-from Handler import Handler
+from . Handler import Handler
 import logging
 
 try:

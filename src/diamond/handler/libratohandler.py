@@ -12,7 +12,7 @@ operations more fun and efficient.
 
 """
 
-from Handler import Handler
+from . Handler import Handler
 import logging
 import time
 import re
