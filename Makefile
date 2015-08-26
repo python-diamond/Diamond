@@ -3,7 +3,7 @@ PROJECT=diamond
 VERSION :=$(shell bash version.sh )
 RELEASE :=$(shell ls -1 dist/*.noarch.rpm 2>/dev/null | wc -l )
 HASH	:=$(shell git rev-parse HEAD )
-DISTRO=precise
+DISTRO:=$(shell python -c "import platform;print(platform.linux_distribution()[0])")
 PYTHON?=python3
 
 all:
