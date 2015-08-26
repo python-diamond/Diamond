@@ -137,7 +137,7 @@ class DarnerCollector(diamond.collector.Collector):
                             queues[queue][queue_stat])
 
             # figure out what we're configured to get, defaulting to everything
-            desired = self.config.get('publish', stats.keys())
+            desired = self.config.get('publish', list(stats.keys()))
 
             # for everything we want
             for stat in desired:

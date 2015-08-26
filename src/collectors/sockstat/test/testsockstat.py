@@ -36,7 +36,7 @@ class TestSockstatCollector(CollectorTestCase):
             def close(self):
                 pass
 
-            def next(self):
+            def __next__(self):
                 raise StopIteration
 
         open_mock.return_value = Klass()

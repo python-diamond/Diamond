@@ -140,7 +140,7 @@ class TokuMXCollector(diamond.collector.Collector):
 
             serverStatus = conn.db.command('serverStatus')
             engineStatus = conn.db.command('engineStatus')
-            data = dict(serverStatus.items() + engineStatus.items())
+            data = dict(list(serverStatus.items()) + list(engineStatus.items()))
 
             self._publish_transformed(data, base_prefix)
             if str_to_bool(self.config['simple']):
