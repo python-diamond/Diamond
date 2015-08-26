@@ -37,7 +37,7 @@ except ImportError:
 try:  # py3k way
     import builtins
     BUILTIN_OPEN = "builtins.open"
-except ImportError: # py2.x way
+except ImportError:  # py2.x way
     BUILTIN_OPEN = "__builtin__.open"
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))

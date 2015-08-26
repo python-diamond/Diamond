@@ -47,7 +47,7 @@ class NtpdCollector(diamond.collector.Collector):
                 command.insert(0, self.config['sudo_cmd'])
 
             stdout = subprocess.Popen(command,
-                                    stdout=subprocess.PIPE).communicate()[0]
+                                      stdout=subprocess.PIPE).communicate()[0]
             if isinstance(stdout, bytes):
                 stdout = stdout.decode("utf8")
         except OSError:

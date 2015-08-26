@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 ################################################################################
-from  __future__ import print_function
+from __future__ import print_function
 import os
 import sys
 import optparse
@@ -119,8 +119,7 @@ if __name__ == "__main__":
     else:
         print("ERROR: Config file: %s does not exist." % (
             options.configfile), file=sys.stderr)
-        print("Please run python config.py -c "
-                              + "/path/to/diamond.conf",
+        print("Please run python config.py -c /path/to/diamond.conf",
               file=sys.stderr)
         parser.print_help(sys.stderr)
         sys.exit(1)

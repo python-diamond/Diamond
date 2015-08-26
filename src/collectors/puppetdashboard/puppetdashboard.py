@@ -8,6 +8,7 @@ import re
 import diamond.collector
 import diamond.pycompat
 
+
 class PuppetDashboardCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

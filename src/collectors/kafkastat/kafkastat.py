@@ -21,6 +21,7 @@ import diamond.collector
 import diamond.pycompat
 from diamond.pycompat import long, urlencode, URLError
 
+
 class KafkaCollector(diamond.collector.Collector):
     ATTRIBUTE_TYPES = {
         'double': float,

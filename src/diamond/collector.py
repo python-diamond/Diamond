@@ -562,8 +562,8 @@ class ProcessCollector(Collector):
             if str_to_bool(self.config['use_sudo']):
                 command.insert(0, self.config['sudo_cmd'])
 
-            stdout, stderr = subprocess.Popen(command,
-                                              stdout=subprocess.PIPE).communicate()
+            p = subprocess.Popen(command, stdout=subprocess.PIPE)
+            stdout, stderr = p.communicate()
             if isinstance(stdout, bytes):
                 stdout = stdout.decode("utf8")
             if isinstance(stderr, bytes):
