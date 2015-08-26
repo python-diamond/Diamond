@@ -27,7 +27,7 @@ of this handler.
 
 """
 
-from Handler import Handler
+from . Handler import Handler
 import logging
 try:
     import statsd

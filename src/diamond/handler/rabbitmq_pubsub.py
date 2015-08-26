@@ -4,7 +4,7 @@
 Output the collected values to RabitMQ pub/sub channel
 """
 
-from Handler import Handler
+from . Handler import Handler
 import time
 
 try:

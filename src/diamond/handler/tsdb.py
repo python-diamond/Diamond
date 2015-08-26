@@ -36,7 +36,7 @@ yourself.
 
 """
 
-from Handler import Handler
+from . Handler import Handler
 import socket
 
 

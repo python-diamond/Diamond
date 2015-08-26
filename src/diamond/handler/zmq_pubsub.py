@@ -4,7 +4,7 @@
 Output the collected values to a Zer0MQ pub/sub channel
 """
 
-from Handler import Handler
+from . Handler import Handler
 
 try:
     import zmq

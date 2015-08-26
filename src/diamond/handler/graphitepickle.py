@@ -23,7 +23,7 @@ use it.
 
 import struct
 
-from graphite import GraphiteHandler
+from . graphite import GraphiteHandler
 
 try:
     import cPickle as pickle

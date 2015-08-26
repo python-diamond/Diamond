@@ -5,7 +5,7 @@ Write the collected stats to a locally stored log file. Rotate the log file
 every night and remove after 7 days.
 """
 
-from Handler import Handler
+from . Handler import Handler
 import logging
 import logging.handlers
 

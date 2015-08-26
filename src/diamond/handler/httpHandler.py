@@ -13,7 +13,7 @@ Enable this handler
 
 """
 
-from Handler import Handler
+from . Handler import Handler
 from . pycompat import Request, urlopen
 
 

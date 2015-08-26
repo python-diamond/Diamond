@@ -4,7 +4,7 @@
 Insert the collected values into a mysql table
 """
 
-from Handler import Handler
+from . Handler import Handler
 import MySQLdb
 
 

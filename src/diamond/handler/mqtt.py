@@ -62,7 +62,7 @@ which subscribes to an MQTT broker and sends metrics off to Graphite.
 __author__ = 'Jan-Piet Mens'
 __email__ = 'jpmens@gmail.com'
 
-from Handler import Handler
+from . Handler import Handler
 from diamond.collector import get_hostname
 import os
 HAVE_SSL = True

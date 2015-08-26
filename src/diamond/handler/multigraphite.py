@@ -6,8 +6,8 @@ interface. Unlike GraphiteHandler, this one supports multiple graphite servers.
 Specify them as a list of hosts divided by comma.
 """
 
-from Handler import Handler
-from graphite import GraphiteHandler
+from . Handler import Handler
+from . graphite import GraphiteHandler
 from copy import deepcopy
 
 

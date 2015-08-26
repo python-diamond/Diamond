@@ -20,7 +20,7 @@ Enable handler
 
 """
 
-from Handler import Handler
+from . Handler import Handler
 import logging
 from collections import deque
 

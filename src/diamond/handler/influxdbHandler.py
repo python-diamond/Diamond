@@ -32,7 +32,7 @@ time_precision = s
 """
 
 import time
-from Handler import Handler
+from . Handler import Handler
 
 try:
     from influxdb.client import InfluxDBClient

@@ -13,7 +13,7 @@ Enable this handler
      posting
 """
 
-from Handler import Handler
+from . Handler import Handler
 from diamond.util import get_diamond_version
 from diamond.pycompat import URLError, urlopen, Request
 import json
