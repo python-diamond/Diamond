@@ -203,8 +203,8 @@ class RabbitMQCollector(diamond.collector.Collector):
 
                 for queue in client.get_queues(vhost):
                     # If queues are defined and it doesn't match, then skip.
-                    if (queue['name'] not in allowed_queues
-                            and len(allowed_queues) > 0):
+                    if ((queue['name'] not in allowed_queues and
+                         len(allowed_queues) > 0)):
                         continue
                     if matchers and any(
                             [m.match(queue['name']) for m in matchers]):

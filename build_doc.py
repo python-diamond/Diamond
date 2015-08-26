@@ -75,8 +75,8 @@ def getHandlers(path):
 
                 # Find the name
                 for attr in dir(module):
-                    if (not attr.endswith('Handler')
-                            or attr.startswith('Handler')):
+                    if ((not attr.endswith('Handler') or
+                         attr.startswith('Handler'))):
                         continue
 
                     cls = getattr(module, attr)
@@ -120,8 +120,8 @@ if __name__ == "__main__":
     else:
         print >> sys.stderr, "ERROR: Config file: %s does not exist." % (
             options.configfile)
-        print >> sys.stderr, ("Please run python config.py -c "
-                              + "/path/to/diamond.conf")
+        print >> sys.stderr, ("Please run python config.py -c " +
+                              "/path/to/diamond.conf")
         parser.print_help(sys.stderr)
         sys.exit(1)
 

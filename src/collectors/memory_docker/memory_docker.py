@@ -38,6 +38,7 @@ class MemoryDockerCollector(MemoryCgroupCollector):
     def publish(self, metric_name, value, metric_type):
         for container_id, container_name in self.containers.items():
             metric_name = metric_name.replace(
-                'docker.' + container_id + '.', 'docker.' + container_name + '.')
+                'docker.' + container_id + '.',
+                'docker.' + container_name + '.')
         return super(MemoryDockerCollector, self).publish(
             metric_name, value, metric_type)

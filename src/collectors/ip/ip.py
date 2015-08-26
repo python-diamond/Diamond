@@ -56,9 +56,9 @@ class IPCollector(diamond.collector.Collector):
         config = super(IPCollector, self).get_default_config()
         config.update({
             'path': 'ip',
-            'allowed_names': 'InAddrErrors, InDelivers, InDiscards, '
-            + 'InHdrErrors, InReceives, InUnknownProtos, OutDiscards, '
-            + 'OutNoRoutes, OutRequests'
+            'allowed_names': 'InAddrErrors, InDelivers, InDiscards, ' +
+            'InHdrErrors, InReceives, InUnknownProtos, OutDiscards, ' +
+            'OutNoRoutes, OutRequests'
         })
         return config
 
@@ -107,8 +107,8 @@ class IPCollector(diamond.collector.Collector):
                 metrics[header[i]] = data[i]
 
         for metric_name in metrics.keys():
-            if (len(self.config['allowed_names']) > 0
-                    and metric_name not in self.config['allowed_names']):
+            if ((len(self.config['allowed_names']) > 0 and
+                 metric_name not in self.config['allowed_names'])):
                 continue
 
             value = long(metrics[metric_name])

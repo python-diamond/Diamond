@@ -8,6 +8,7 @@ sys.path.insert(0, '../')
 sys.path.insert(0, '../../ceph')
 
 import unittest
+
 from cephstats import process_ceph_status
 
 

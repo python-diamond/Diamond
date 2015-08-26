@@ -56,11 +56,11 @@ class NginxCollector(diamond.collector.Collector):
                                   int(self.config['req_port']),
                                   self.config['req_path'])
         activeConnectionsRE = re.compile(r'Active connections: (?P<conn>\d+)')
-        totalConnectionsRE = re.compile('^\s+(?P<conn>\d+)\s+'
-                                        + '(?P<acc>\d+)\s+(?P<req>\d+)')
-        connectionStatusRE = re.compile('Reading: (?P<reading>\d+) '
-                                        + 'Writing: (?P<writing>\d+) '
-                                        + 'Waiting: (?P<waiting>\d+)')
+        totalConnectionsRE = re.compile('^\s+(?P<conn>\d+)\s+' +
+                                        '(?P<acc>\d+)\s+(?P<req>\d+)')
+        connectionStatusRE = re.compile('Reading: (?P<reading>\d+) ' +
+                                        'Writing: (?P<writing>\d+) ' +
+                                        'Waiting: (?P<waiting>\d+)')
         req = urllib2.Request(url)
         try:
             handle = urllib2.urlopen(req)

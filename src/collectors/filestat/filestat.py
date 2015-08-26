@@ -103,8 +103,8 @@ class FilestatCollector(diamond.collector.Collector):
         userlist = []
 
         # remove any not on the user include list
-        if (self.config['user_include'] is None
-                or len(self.config['user_include']) == 0):
+        if ((self.config['user_include'] is None or
+             len(self.config['user_include']) == 0)):
             userlist = rawusers
         else:
             # only work with specified include list, which is added at the end
@@ -112,8 +112,8 @@ class FilestatCollector(diamond.collector.Collector):
 
         # add any user in the group include list
         addedByGroup = []
-        if (self.config['group_include'] is not None
-                and len(self.config['group_include']) > 0):
+        if ((self.config['group_include'] is not None and
+             len(self.config['group_include']) > 0)):
             for u in rawusers:
                 self.log.info(u)
                 # get list of groups of user
@@ -125,8 +125,8 @@ class FilestatCollector(diamond.collector.Collector):
                         break
 
         # remove any user in the exclude group list
-        if (self.config['group_exclude'] is not None
-                and len(self.config['group_exclude']) > 0):
+        if ((self.config['group_exclude'] is not None and
+             len(self.config['group_exclude']) > 0)):
             # create tmp list to iterate over while editing userlist
             tmplist = userlist[:]
             for u in tmplist:
@@ -143,29 +143,29 @@ class FilestatCollector(diamond.collector.Collector):
         self.config['uid_max'] = int(self.config['uid_max'])
         tmplist = userlist[:]
         for u in tmplist:
-            if (self.config['user_include'] is None
-                    or u not in self.config['user_include']):
+            if ((self.config['user_include'] is None or
+                 u not in self.config['user_include'])):
                 if u not in addedByGroup:
                     uid = int(os.popen("id -u %s" % (u)).read())
-                    if (uid < self.config['uid_min']
-                            and self.config['uid_min'] is not None
-                            and u in userlist):
+                    if ((uid < self.config['uid_min'] and
+                         self.config['uid_min'] is not None and
+                         u in userlist)):
                         userlist.remove(u)
-                    if (uid > self.config['uid_max']
-                            and self.config['uid_max'] is not None
-                            and u in userlist):
+                    if ((uid > self.config['uid_max'] and
+                         self.config['uid_max'] is not None and
+                         u in userlist)):
                         userlist.remove(u)
 
         # add users that are in the users include list
-        if self.config['user_include'] is not None and len(
-                self.config['user_include']) > 0:
+        if ((self.config['user_include'] is not None and
+             len(self.config['user_include']) > 0)):
             for u in self.config['user_include']:
                 if u in rawusers and u not in userlist:
                     userlist.append(u)
 
         # remove any that is on the user exclude list
-        if self.config['user_exclude'] is not None and len(
-                self.config['user_exclude']) > 0:
+        if ((self.config['user_exclude'] is not None and
+             len(self.config['user_exclude']) > 0)):
             for u in self.config['user_exclude']:
                 if u in userlist:
                     userlist.remove(u)

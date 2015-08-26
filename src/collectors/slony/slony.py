@@ -52,12 +52,12 @@ class SlonyCollector(diamond.collector.Collector):
             'user': 'Username',
             'password': 'Password',
             'port': 'Port number',
-            'slony_node_string': 'Regex for SQL SUBSTRING to extract '
-                                 + 'the hostname from sl_node.no_comment',
-            'instances': 'A subcategory of slony instances that includes the '
-                         + 'slony database, and slony schema to be monitored. '
-                         + 'Optionally,user, password and slony_node_string '
-                         + 'maybe overridden per instance (see example).'
+            'slony_node_string': 'Regex for SQL SUBSTRING to extract ' +
+                                 'the hostname from sl_node.no_comment',
+            'instances': 'Subcategory of slony instances that includes the ' +
+                         'slony database, and slony schema to be monitored. ' +
+                         'Optionally, user, password and slony_node_string ' +
+                         'maybe overridden per instance (see example).'
         })
         return config_help
 

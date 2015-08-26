@@ -49,9 +49,9 @@ class TestConnTrackCollector(CollectorTestCase):
             'subprocess.Popen.communicate',
             Mock(
                 return_value=(
-                    'sysctl: cannot stat /proc/sys/net/net'
-                    + 'filter/nf_conntrack_count: '
-                    + 'No such file or directory', '')))
+                    'sysctl: cannot stat /proc/sys/net/net' +
+                    'filter/nf_conntrack_count: ' +
+                    'No such file or directory', '')))
 
         patch_communicate.start()
         self.collector.collect()

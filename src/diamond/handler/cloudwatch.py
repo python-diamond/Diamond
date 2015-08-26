@@ -182,8 +182,8 @@ class cloudwatchHandler(Handler):
                 metricname
             )
 
-            if (str(rule['collector']) == collector
-                    and str(rule['metric']) == metricname):
+            if ((str(rule['collector']) == collector and
+                 str(rule['metric']) == metricname)):
                 self.log.debug(
                     "CloudWatch: Attempting to publish metric: %s to %s "
                     "with value (%s) @%s",

@@ -38,8 +38,8 @@ class TestKVMCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
         patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
-            '0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0'
-            + '\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n'
+            '0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0' +
+            '\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n'
         )))
 
         patch_open.start()

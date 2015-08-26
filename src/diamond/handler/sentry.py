@@ -28,9 +28,6 @@ path = memory.MemFree
 min = 66020000
 """
 
-__author__ = 'Bruno Clermont'
-__email__ = 'bruno.clermont@gmail.com'
-
 import logging
 import re
 
@@ -42,6 +39,9 @@ try:
     import raven.handlers.logging
 except ImportError:
     raven = None
+
+__author__ = 'Bruno Clermont'
+__email__ = 'bruno.clermont@gmail.com'
 
 
 class InvalidRule(ValueError):
