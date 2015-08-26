@@ -17,6 +17,7 @@ except ImportError:
 import diamond.collector
 from diamond.pycompat import urlparse
 
+
 class HttpdCollector(diamond.collector.Collector):
 
     def process_config(self):

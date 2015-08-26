@@ -18,6 +18,7 @@ from diamond.collector import str_to_bool
 import diamond.pycompat
 from diamond.pycompat import HTTPError, Request
 
+
 class MonitCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
@@ -49,10 +50,11 @@ class MonitCollector(diamond.collector.Collector):
         try:
             request = Request(url)
 
-            #
             # shouldn't need to check this
-            original_string = '%s:%s' % (self.config['user'], self.config['passwd'])
-            base64string = base64.encodestring(original_string.encode("utf8")).replace(b'\n', b'')
+            original_string = '%s:%s' % (self.config['user'],
+                                         self.config['passwd'])
+            base64string = base64.encodestring(original_string.encode("utf8"))
+            base64string = base64string.replace(b'\n', b'')
             request.add_header("Authorization", "Basic %s" % base64string)
             response = diamond.pycompat.urlopen(request)
         except HTTPError as err:

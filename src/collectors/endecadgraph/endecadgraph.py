@@ -118,7 +118,10 @@ class EndecaDgraphCollector(diamond.collector.Collector):
         url = 'http://%s:%d/admin?op=stats' % (self.config['host'],
                                                self.config['port'])
         try:
-            xml = diamond.pycompat.urlopen(url, timeout=self.config['timeout']).read()
+            xml = diamond.pycompat.urlopen(
+                url,
+                timeout=self.config['timeout']).read(
+                )
         except Exception as e:
             self.log.error('Could not connect to endeca on %s: %s' % (url, e))
             return {}

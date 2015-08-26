@@ -47,7 +47,8 @@ class TestSockstatCollector(CollectorTestCase):
 
             def __next__(self):
                 raise StopIteration()
-        if sys.version_info[0] == 2:  # py2.6x does not support the namedtuple .major
+        # py2.6x does not support the namedtuple .major
+        if sys.version_info[0] == 2:
             open_mock.return_value = KlassPy2()
         else:
             open_mock.return_value = KlassPy3()

@@ -9,6 +9,7 @@ import diamond.collector
 import diamond.pycompat
 from diamond.pycompat import Request, URLError
 
+
 class HTTPJSONCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

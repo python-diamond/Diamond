@@ -8,6 +8,7 @@ import diamond.collector
 import diamond.pycompat
 from diamond.pycompat import URLError
 
+
 class WebsiteMonitorCollector(diamond.collector.Collector):
     """
     Gather HTTP response code and Duration of HTTP request

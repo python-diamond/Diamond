@@ -60,6 +60,7 @@ import json
 
 import diamond.pycompat
 
+
 class NginxCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):

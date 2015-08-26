@@ -11,6 +11,7 @@ import json
 from collections import deque
 from diamond.pycompat import URLError, urlopen, Request
 
+
 class LogentriesDiamondHandler(Handler):
     """
       Implements the abstract Handler class
