@@ -59,6 +59,7 @@ class MySQLCollector(diamond.collector.Collector):
         'Qcache_free_blocks', 'Qcache_free_memory',
         'Qcache_queries_in_cache', 'Qcache_total_blocks',
         'Seconds_Behind_Master',
+        'Slave_open_temp_tables',
         'Threads_cached', 'Threads_connected', 'Threads_created',
         'Threads_running',
         # innodb status non counter keys
