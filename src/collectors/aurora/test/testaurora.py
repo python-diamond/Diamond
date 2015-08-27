@@ -16,6 +16,7 @@ from aurora import AuroraCollector
 
 
 class TestAuroraCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('AuroraCollector', {})
 
@@ -67,6 +68,6 @@ class TestAuroraCollector(CollectorTestCase):
             'tasks.FAILED.reporting.prod.report-processing': 2.0
         }
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

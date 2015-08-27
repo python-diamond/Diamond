@@ -13,6 +13,7 @@ from gridengine import GridEngineCollector
 class TestGridEngineCollector(CollectorTestCase):
     """Set up the fixtures for the test
     """
+
     def setUp(self):
         config = get_collector_config('GridEngineCollector', {})
         self.collector = GridEngineCollector(config, None)

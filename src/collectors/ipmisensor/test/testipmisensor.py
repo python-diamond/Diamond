@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,10 +11,11 @@ from mock import patch
 from diamond.collector import Collector
 from ipmisensor import IPMISensorCollector
 
-################################################################################
+##########################################################################
 
 
 class TestIPMISensorCollector(CollectorTestCase):
+
     def setUp(self, thresholds=False):
         config = get_collector_config('IPMISensorCollector', {
             'interval': 10,
@@ -111,6 +112,6 @@ class TestIPMISensorCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

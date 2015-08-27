@@ -14,6 +14,7 @@ class DRBDCollector(diamond.collector.Collector):
     """
     DRBD Simple metric collector
     """
+
     def get_default_config_help(self):
         config_help = super(DRBDCollector, self).get_default_config_help()
         config_help.update({
@@ -51,7 +52,7 @@ class DRBDCollector(diamond.collector.Collector):
             'cs': 'connection_state',
             'ro': 'roles',
             'ds': 'disk_states'
-            }
+        }
 
         results = dict()
         try:

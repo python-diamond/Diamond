@@ -472,9 +472,9 @@ class MySQLCollector(diamond.collector.Collector):
 
             # Warn if publish contains an unknown variable
             if 'publish' in self.config and metrics['status']:
-                    for k in self.config['publish'].split():
-                        if k not in metrics['status']:
-                            self.log.error("No such key '%s' available, issue"
-                                           + " 'show global status' for a full"
-                                           + " list", k)
+                for k in self.config['publish'].split():
+                    if k not in metrics['status']:
+                        self.log.error("No such key '%s' available, issue"
+                                       + " 'show global status' for a full"
+                                       + " list", k)
             self._publish_stats(nickname, metrics)

@@ -172,7 +172,8 @@ class TokuMXCollector(diamond.collector.Collector):
                                        base_prefix + ['opcounters_per_sec'],
                                        self.publish_counter)
         self._publish_dict_with_prefix(data.get('opcountersRepl', {}),
-                                       base_prefix + ['opcountersRepl_per_sec'],
+                                       base_prefix +
+                                       ['opcountersRepl_per_sec'],
                                        self.publish_counter)
         self._publish_dict_with_prefix(data.get('network', {}),
                                        base_prefix + ['network_per_sec'],

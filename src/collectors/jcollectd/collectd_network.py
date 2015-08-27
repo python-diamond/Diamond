@@ -229,6 +229,7 @@ class Notification(Data):
 
 
 class Values(Data, list):
+
     def __str__(self):
         return "%s %s" % (Data.__str__(self), list.__str__(self))
 

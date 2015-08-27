@@ -12,6 +12,7 @@ from jcollectd import JCollectdCollector, sanitize_word
 ###############################################################################
 
 class TestJCollectdCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('JCollectdCollector', {
         })

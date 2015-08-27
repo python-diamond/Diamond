@@ -72,7 +72,8 @@ class NginxCollector(diamond.collector.Collector):
                         int(activeConnectionsRE.match(l).group('conn')))
                 elif totalConnectionsRE.match(l):
                     m = totalConnectionsRE.match(l)
-                    req_per_conn = float(m.group('req')) / float(m.group('acc'))
+                    req_per_conn = float(m.group('req')) / \
+                        float(m.group('acc'))
                     self.publish_counter('conn_accepted', int(m.group('conn')))
                     self.publish_counter('conn_handled', int(m.group('acc')))
                     self.publish_counter('req_handled', int(m.group('req')))

@@ -19,6 +19,7 @@ from ip import IPCollector
 
 
 class TestIPCollector(CollectorTestCase):
+
     def setUp(self, allowed_names=None):
         if not allowed_names:
             allowed_names = []

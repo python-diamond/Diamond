@@ -15,6 +15,7 @@ from diamond.collector import Collector
 
 
 class TestSNMPRawCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('SNMPRawCollector', {
         })

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 import os
 from test import CollectorTestCase
 from test import get_collector_config
@@ -48,6 +48,7 @@ def run_only_if_docker_client_is_available(func):
 
 
 class TestDockerCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('DockerCollector', {
             'interval': 10,
@@ -87,7 +88,7 @@ class TestDockerCollector(CollectorTestCase):
             ' rw,nosuid,nodev,noexec,relatime,memory 0 0',
             'tmpfs /dev/shm tmpfs rw,seclabel,nosuid,nodev 0 0',
             '',
-            ])
+        ])
 
         m = mock_open(read_data=read_data)
         with patch('__builtin__.open', m, create=True):

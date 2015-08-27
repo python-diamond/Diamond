@@ -68,6 +68,7 @@ class memoized(object):
     a memoization decorator with limited cache size, consider:
     bit.ly/1wtHmlM
     """
+
     def __init__(self, func):
         self.func = func
         self.cache = {}

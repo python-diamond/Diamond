@@ -55,6 +55,7 @@ _KEY_MAPPING = {
 
 
 class DockerCollector(Collector):
+
     def process_config(self):
         super(DockerCollector, self).process_config()
         self.memory_path = self.config['memory_path']
@@ -151,7 +152,7 @@ class DockerCollector(Collector):
                 (p[1], p[3].split(','))
                 for p in split_lines
                 if len(p) >= 4 and p[0] == 'cgroup'
-                ]
+            ]
 
             for mount, options in mount_and_options:
                 if 'memory' in options:
@@ -162,7 +163,7 @@ class DockerCollector(Collector):
         vars = {
             'mount': self.memory_path,
             'id': docker_id
-            }
+        }
         candidates = [
             "%(mount)s/system.slice/docker-%(id)s.scope/memory.stat" % vars,
             "%(mount)s/docker/%(id)s/memory.stat" % vars,

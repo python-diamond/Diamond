@@ -209,7 +209,7 @@ class MongoDBCollector(diamond.collector.Collector):
                         continue
                     if (self.config['collection_sample_rate'] < 1 and (
                             zlib.crc32(collection_name) & 0xffffffff
-                            ) > sample_threshold):
+                    ) > sample_threshold):
                         continue
 
                     collection_stats = conn[db_name].command('collstats',
@@ -234,7 +234,7 @@ class MongoDBCollector(diamond.collector.Collector):
         self._publish_dict_with_prefix({
             'healthy_nodes': healthy_nodes,
             'total_nodes': total_nodes
-            }, prefix)
+        }, prefix)
         for node in data['members']:
             self._publish_dict_with_prefix(node,
                                            prefix + ['node', str(node['_id'])])
@@ -245,7 +245,8 @@ class MongoDBCollector(diamond.collector.Collector):
                                        base_prefix + ['opcounters_per_sec'],
                                        self.publish_counter)
         self._publish_dict_with_prefix(data.get('opcountersRepl', {}),
-                                       base_prefix + ['opcountersRepl_per_sec'],
+                                       base_prefix +
+                                       ['opcountersRepl_per_sec'],
                                        self.publish_counter)
         self._publish_metrics(base_prefix + ['backgroundFlushing_per_sec'],
                               'flushes',

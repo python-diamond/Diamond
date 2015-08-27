@@ -14,6 +14,7 @@ class ArchiveHandler(Handler):
     """
     Implements the Handler abstract class, archiving data to a log file
     """
+
     def __init__(self, config):
         """
         Create a new instance of the ArchiveHandler class
@@ -34,7 +35,7 @@ class ArchiveHandler(Handler):
             interval=1,
             backupCount=int(self.config['days']),
             encoding=self.config['encoding']
-            )
+        )
         handler.setFormatter(formatter)
         handler.setLevel(logging.DEBUG)
         self.archive.addHandler(handler)

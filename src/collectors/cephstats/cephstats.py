@@ -40,6 +40,7 @@ def process_ceph_status(output):
 
 
 class CephStatsCollector(CephCollector):
+
     def _get_stats(self):
         """
         Get ceph stats

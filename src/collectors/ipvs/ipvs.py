@@ -106,15 +106,15 @@ class IPVSCollector(diamond.collector.Collector):
                 # metric_value = int(row[column])
                 value = row[column]
                 if (value.endswith('K')):
-                        metric_value = int(value[0:len(value) - 1]) * 1024
+                    metric_value = int(value[0:len(value) - 1]) * 1024
                 elif (value.endswith('M')):
-                        metric_value = (int(value[0:len(value) - 1]) * 1024
-                                        * 1024)
+                    metric_value = (int(value[0:len(value) - 1]) * 1024
+                                    * 1024)
                 elif (value.endswith('G')):
-                        metric_value = (int(value[0:len(value) - 1]) * 1024.0
-                                        * 1024.0 * 1024.0)
+                    metric_value = (int(value[0:len(value) - 1]) * 1024.0
+                                    * 1024.0 * 1024.0)
                 else:
-                        metric_value = float(value)
+                    metric_value = float(value)
 
                 self.publish(metric_name, metric_value)
 
@@ -155,15 +155,15 @@ class IPVSCollector(diamond.collector.Collector):
                 # metric_value = int(row[column])
                 value = row[column]
                 if (value.endswith('K')):
-                        metric_value = int(value[0:len(value) - 1]) * 1024
+                    metric_value = int(value[0:len(value) - 1]) * 1024
                 elif (value.endswith('M')):
-                        metric_value = (int(value[0:len(value) - 1]) * 1024
-                                        * 1024)
+                    metric_value = (int(value[0:len(value) - 1]) * 1024
+                                    * 1024)
                 elif (value.endswith('G')):
-                        metric_value = (int(value[0:len(value) - 1]) * 1024.0
-                                        * 1024.0 * 1024.0)
+                    metric_value = (int(value[0:len(value) - 1]) * 1024.0
+                                    * 1024.0 * 1024.0)
                 else:
-                        metric_value = float(value)
+                    metric_value = float(value)
 
                 total[metric] += metric_value
                 self.publish(metric_name, metric_value)

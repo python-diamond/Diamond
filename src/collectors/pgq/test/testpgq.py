@@ -6,6 +6,7 @@ from pgq import PgQCollector
 
 
 class TestPgQCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('PgQCollector', {})
         self.collector = PgQCollector(config, None)

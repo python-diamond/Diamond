@@ -127,21 +127,21 @@ class DiskUsageCollector(diamond.collector.Collector):
 
             disks = psutil.disk_io_counters(True)
             for disk in disks:
-                    result[(0, len(result))] = {
-                        'device': disk,
-                        'reads': disks[disk].read_count,
-                        'reads_sectors': (disks[disk].read_bytes
-                                          / int(self.config['sector_size'])),
-                        'reads_milliseconds': disks[disk].read_time,
-                        'writes': disks[disk].write_count,
-                        'writes_sectors': (disks[disk].write_bytes
-                                           / int(self.config['sector_size'])),
-                        'writes_milliseconds': disks[disk].write_time,
-                        'io_milliseconds':
-                        disks[disk].read_time + disks[disk].write_time,
-                        'io_milliseconds_weighted':
-                        disks[disk].read_time + disks[disk].write_time
-                    }
+                result[(0, len(result))] = {
+                    'device': disk,
+                    'reads': disks[disk].read_count,
+                    'reads_sectors': (disks[disk].read_bytes
+                                      / int(self.config['sector_size'])),
+                    'reads_milliseconds': disks[disk].read_time,
+                    'writes': disks[disk].write_count,
+                    'writes_sectors': (disks[disk].write_bytes
+                                       / int(self.config['sector_size'])),
+                    'writes_milliseconds': disks[disk].write_time,
+                    'io_milliseconds':
+                    disks[disk].read_time + disks[disk].write_time,
+                    'io_milliseconds_weighted':
+                    disks[disk].read_time + disks[disk].write_time
+                }
 
         return result
 

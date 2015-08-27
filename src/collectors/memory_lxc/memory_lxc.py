@@ -22,7 +22,7 @@ class MemoryLxcCollector(Collector):
         config_help = super(MemoryLxcCollector, self).get_default_config_help()
         config_help.update({
             "sys_path": "Defaults to '/sys/fs/cgroup/lxc'",
-            })
+        })
         return config_help
 
     def get_default_config(self):
@@ -33,7 +33,7 @@ class MemoryLxcCollector(Collector):
         config.update({
             "path":     "lxc",
             "sys_path": "/sys/fs/cgroup/lxc",
-            })
+        })
         return config
 
     def collect(self):

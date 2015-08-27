@@ -15,6 +15,7 @@ class TestCephStats(unittest.TestCase):
     """
     Test collect ceph data
     """
+
     def test_sample_data(self):
         """
         Get ceph information from sample data

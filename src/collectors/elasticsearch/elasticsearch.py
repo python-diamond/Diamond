@@ -281,7 +281,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
                              ['evictions'])
 
         #
-        # process mem/cpu (may not be present, depending on access restrictions)
+        # process mem/cpu (may not be present, depending on access
+        # restrictions)
         self._add_metric(metrics, 'process.cpu.percent', data,
                          ['process', 'cpu', 'percent'])
         self._add_metric(metrics, 'process.mem.resident', data,
@@ -333,7 +334,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
                 metrics['jvm.gc.collection.%s.time' % collector] = d[
                     'collection_time_in_millis']
                 collection_time_in_millis += d['collection_time_in_millis']
-            # calculate the totals, as they're absent in elasticsearch > 0.90.10
+            # calculate the totals, as they're absent in elasticsearch >
+            # 0.90.10
             if 'collection_count' in gc:
                 metrics['jvm.gc.collection.count'] = gc['collection_count']
             else:

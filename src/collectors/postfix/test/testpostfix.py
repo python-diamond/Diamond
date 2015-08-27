@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,10 +11,11 @@ from mock import patch
 from diamond.collector import Collector
 from postfix import PostfixCollector
 
-################################################################################
+##########################################################################
 
 
 class TestPostfixCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('PostfixCollector', {
             'host':     'localhost',
@@ -62,6 +63,6 @@ class TestPostfixCollector(CollectorTestCase):
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

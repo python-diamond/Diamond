@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,10 +12,11 @@ from diamond.collector import Collector
 
 from solr import SolrCollector
 
-################################################################################
+##########################################################################
 
 
 class TestSolrCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('SolrCollector', {})
         self.collector = SolrCollector(config, None)
@@ -140,6 +141,6 @@ class TestSolrCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

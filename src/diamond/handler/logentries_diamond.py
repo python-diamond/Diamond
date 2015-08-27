@@ -31,6 +31,7 @@ class LogentriesDiamondHandler(Handler):
     """
       Implements the abstract Handler class
     """
+
     def __init__(self, config=None):
         """
         New instance of LogentriesDiamondHandler class

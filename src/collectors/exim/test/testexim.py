@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,10 +11,11 @@ from mock import patch
 from diamond.collector import Collector
 from exim import EximCollector
 
-################################################################################
+##########################################################################
 
 
 class TestEximCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('EximCollector', {
             'interval': 10,
@@ -63,6 +64,6 @@ class TestEximCollector(CollectorTestCase):
         self.collector.collect()
         self.assertPublishedMany(publish_mock, {})
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

@@ -12,6 +12,7 @@ from sqs import SqsCollector
 ###############################################################################
 
 class TestSqsCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('SqsCollector', {
         })

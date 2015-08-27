@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,6 +11,7 @@ from endecadgraph import EndecaDgraphCollector
 
 
 class TestEndecaDgraphCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('EndecaDgraphCollector', {
         })

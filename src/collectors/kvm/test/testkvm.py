@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 import os
 
@@ -18,10 +18,11 @@ except ImportError:
 from diamond.collector import Collector
 from kvm import KVMCollector
 
-################################################################################
+##########################################################################
 
 
 class TestKVMCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('KVMCollector', {
             'interval': 10,
@@ -89,6 +90,6 @@ class TestKVMCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()
