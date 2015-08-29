@@ -10,7 +10,7 @@ python:
 # command to install dependencies, e.g. pip install -r requirements.txt
 install:
     - pip install -r .travis.requirements.txt
-    - pip install pep8==1.6.2
+    - pip install pep8==1.5.7
 
 # command to run tests, e.g. python setup.py test
 script:
