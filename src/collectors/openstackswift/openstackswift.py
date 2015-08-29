@@ -32,8 +32,8 @@ class OpenstackSwiftCollector(diamond.collector.Collector):
             'enable_dispersion_report': 'gather swift-dispersion-report ' +
                                         'metrics (default False)',
             'enable_container_metrics': 'gather containers metrics ' +
-                                        '(# objects, bytes used, x_timestamp. ' +
-                                        'default True)',
+                                        '(# objects, bytes used, ' +
+                                        'x_timestamp. default True)',
             'auth_url': 'authentication url (for enable_container_metrics)',
             'account': 'swift auth account (for enable_container_metrics)',
             'user': 'swift auth user (for enable_container_metrics)',
