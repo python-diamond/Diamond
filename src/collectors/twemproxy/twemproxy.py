@@ -26,7 +26,6 @@ TO use a unix socket, set a host string like this
 import diamond.collector
 import socket
 import re
-from diamond.collector import str_to_bool
 
 try:
     import simplejson as json
