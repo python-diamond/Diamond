@@ -163,7 +163,8 @@ def load_collectors(paths=None, filter=None):
                                  traceback.format_exc())
                     continue
 
-                collectors.update(get_collectors_from_module(mod))
+                for name, cls in get_collectors_from_module(mod):
+                    collectors[name] = cls
 
     # Return Collector classes
     return collectors
