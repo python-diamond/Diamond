@@ -6,6 +6,7 @@ import sys
 import logging
 import inspect
 import traceback
+import pkg_resources
 
 from diamond.util import load_class_from_name
 from diamond.collector import Collector
@@ -98,7 +99,16 @@ def load_handlers(config, handler_names):
     return handlers
 
 
-def load_collectors(paths=None, filter=None):
+def load_collectors(paths):
+    """
+    Load all collectors
+    """
+    collectors = load_collectors_from_paths(paths)
+    collectors.update(load_collectors_from_entry_point('diamond.collectors'))
+    return collectors
+
+
+def load_collectors_from_paths(paths):
     """
     Scan for collectors to load from path
     """
@@ -128,7 +138,7 @@ def load_collectors(paths=None, filter=None):
             # Are we a directory? If so process down the tree
             fpath = os.path.join(path, f)
             if os.path.isdir(fpath):
-                subcollectors = load_collectors([fpath])
+                subcollectors = load_collectors_from_paths([fpath])
                 for key in subcollectors:
                     collectors[key] = subcollectors[key]
 
@@ -161,17 +171,35 @@ def load_collectors(paths=None, filter=None):
                     logger.error("Failed to import module: %s. %s",
                                  modname,
                                  traceback.format_exc())
-                    continue
-
-                for name, cls in get_collectors_from_module(mod):
-                    collectors[name] = cls
+                else:
+                    for name, cls in get_collectors_from_module(mod):
+                        collectors[name] = cls
 
     # Return Collector classes
     return collectors
 
 
+def load_collectors_from_entry_point(path):
+    """
+    Load collectors that were installed into an entry_point.
+    """
+    collectors = {}
+    for ep in pkg_resources.iter_entry_points(path):
+        try:
+            mod = ep.load()
+        except Exception:
+            logger.error('Failed to import entry_point: %s. %s',
+                         ep.name,
+                         traceback.format_exec())
+        else:
+            collectors.update(get_collectors_from_module(mod))
+    return collectors
+
+
 def get_collectors_from_module(mod):
-    # Find all classes defined in the module
+    """
+    Locate all of the collector classes within a given module
+    """
     for attrname in dir(mod):
         attr = getattr(mod, attrname)
         # Only attempt to load classes that are infact classes
