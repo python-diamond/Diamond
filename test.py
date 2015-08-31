@@ -11,10 +11,10 @@ import logging
 import configobj
 
 try:
-    import unittest
-except ImportError:
     # python 2.6
     import unittest2 as unittest
+except ImportError:
+    import unittest
 
 try:
     import cPickle as pickle
