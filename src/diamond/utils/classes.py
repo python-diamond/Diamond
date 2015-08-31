@@ -156,7 +156,7 @@ def load_collectors(paths=None, filter=None):
                     if isinstance(err, SystemExit):
                         sys.exit(err.code)
                     raise KeyboardInterrupt
-                except:
+                except Exception:
                     # Log error
                     logger.error("Failed to import module: %s. %s",
                                  modname,
