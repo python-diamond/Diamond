@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,10 +11,11 @@ from mock import patch
 from diamond.collector import Collector
 from rabbitmq import RabbitMQCollector
 
-################################################################################
+##########################################################################
 
 
 class TestRabbitMQCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('RabbitMQCollector', {
             'host': 'localhost:55672',
@@ -167,6 +168,6 @@ class TestRabbitMQCollector(CollectorTestCase):
 
         self.collector.config['replace_dot'] = False
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

@@ -29,6 +29,7 @@ import diamond.collector
 
 
 class PhpFpmCollector(diamond.collector.Collector):
+
     def get_default_config_help(self):
         config_help = super(PhpFpmCollector, self).get_default_config_help()
         config_help.update({

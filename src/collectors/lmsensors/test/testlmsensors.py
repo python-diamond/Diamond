@@ -11,6 +11,7 @@ from lmsensors import LMSensorsCollector
 
 
 class FeatureMock:
+
     def __init__(self, label, value=None):
         self.label = label
         self.value = value
@@ -23,6 +24,7 @@ class FeatureMock:
 
 
 class ChipMock:
+
     def __init__(self, label, features):
         self.label = label
         self.features = features
@@ -36,6 +38,7 @@ class ChipMock:
 
 
 class TestLMSensorsCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('LMSensorsCollector', {})
         self.collector = LMSensorsCollector(config, None)

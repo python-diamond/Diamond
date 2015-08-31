@@ -36,6 +36,7 @@ class GraphitePickleHandler(GraphiteHandler):
     Overrides the GraphiteHandler class
     Sending data to graphite using batched pickle format
     """
+
     def __init__(self, config=None):
         """
         Create a new instance of the GraphitePickleHandler

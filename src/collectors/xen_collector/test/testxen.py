@@ -26,6 +26,7 @@ def run_only_if_libvirt_is_available(func):
 
 
 class TestXENCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('XENCollector', {
         })
@@ -41,6 +42,7 @@ class TestXENCollector(CollectorTestCase):
     def test_centos6(self, publish_mock, libvirt_mock, os_mock):
 
         class info:
+
             def __init__(self, id):
                 self.id = id
 

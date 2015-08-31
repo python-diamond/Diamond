@@ -9,6 +9,7 @@ from Handler import Handler
 
 
 class QueueHandler(Handler):
+
     def __init__(self, config=None, queue=None, log=None):
         # Initialize Handler
         Handler.__init__(self, config=config, log=log)

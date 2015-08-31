@@ -20,6 +20,7 @@ from vmstat import VMStatCollector
 
 
 class TestVMStatCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('VMStatCollector', {
             'interval': 10

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 import os
 from test import CollectorTestCase
@@ -17,10 +17,11 @@ except ImportError:
 from diamond.collector import Collector
 from loadavg import LoadAverageCollector
 
-################################################################################
+##########################################################################
 
 
 class TestLoadAverageCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('LoadAverageCollector', {
             'interval': 10
@@ -63,6 +64,6 @@ class TestLoadAverageCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

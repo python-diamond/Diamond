@@ -126,7 +126,7 @@ class SolrCollector(diamond.collector.Collector):
                 continue
 
             s = result['solr-mbeans']
-            stats = dict((s[i], s[i+1]) for i in xrange(0, len(s), 2))
+            stats = dict((s[i], s[i + 1]) for i in xrange(0, len(s), 2))
 
             if 'core' in self.config['stats']:
                 core_searcher = stats["CORE"]["searcher"]["stats"]

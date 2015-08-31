@@ -229,8 +229,8 @@ class Collector(object):
                 self.config['measure_collector_time'])
 
         # Raise an error if both whitelist and blacklist are specified
-        if (self.config.get('metrics_whitelist', None)
-                and self.config.get('metrics_blacklist', None)):
+        if ((self.config.get('metrics_whitelist', None) and
+             self.config.get('metrics_blacklist', None))):
             raise DiamondException(
                 'Both metrics_whitelist and metrics_blacklist specified ' +
                 'in file %s' % self.configfile)

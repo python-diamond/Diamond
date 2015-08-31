@@ -68,6 +68,7 @@ class memoized(object):
     a memoization decorator with limited cache size, consider:
     bit.ly/1wtHmlM
     """
+
     def __init__(self, func):
         self.func = func
         self.cache = {}
@@ -147,8 +148,8 @@ class ElbCollector(diamond.collector.Collector):
                 raise Exception('Interval must be a multiple of 60 seconds: %s'
                                 % self.interval)
 
-        if ('access_key_id' in self.config
-                and 'secret_access_key' in self.config):
+        if (('access_key_id' in self.config and
+             'secret_access_key' in self.config)):
             self.auth_kwargs = {
                 'aws_access_key_id': self.config['access_key_id'],
                 'aws_secret_access_key': self.config['secret_access_key']

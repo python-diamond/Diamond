@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 import os
 from test import CollectorTestCase
 from test import get_collector_config
@@ -45,6 +45,7 @@ def run_only_if_docker_client_is_available(func):
 
 
 class TestMemoryDockerCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('MemoryDockerCollector', {
             'interval': 10,

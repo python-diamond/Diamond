@@ -56,6 +56,7 @@ class LoadAverageCollector(diamond.collector.Collector):
             for line in file:
                 match = self.PROC_LOADAVG_RE.match(line)
                 if match:
-                    self.publish_gauge('processes_running', int(match.group(4)))
+                    self.publish_gauge('processes_running',
+                                       int(match.group(4)))
                     self.publish_gauge('processes_total', int(match.group(5)))
             file.close()

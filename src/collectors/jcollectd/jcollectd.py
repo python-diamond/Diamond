@@ -108,6 +108,7 @@ class JCollectdCollector(diamond.collector.Collector):
 
 
 class ListenerThread(threading.Thread):
+
     def __init__(self, host, port, log, poll_interval=0.4):
         super(ListenerThread, self).__init__()
         self.name = 'JCollectdListener'  # thread name
@@ -203,6 +204,7 @@ def sanitize_word(s):
 
 
 class Datapoint(object):
+
     def __init__(self, host, time, name, value, is_counter):
         self.host = host
         self.time = time

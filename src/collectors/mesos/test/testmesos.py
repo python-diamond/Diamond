@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,10 +12,11 @@ from diamond.collector import Collector
 
 from mesos import MesosCollector
 
-################################################################################
+##########################################################################
 
 
 class TestMesosCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('MesosCollector', {})
 
@@ -63,6 +64,6 @@ class TestMesosCollector(CollectorTestCase):
             'master.disk_used': 398787
         }
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

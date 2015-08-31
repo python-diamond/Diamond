@@ -8,6 +8,7 @@ sys.path.insert(0, '../')
 sys.path.insert(0, '../../ceph')
 
 import unittest
+
 from cephstats import process_ceph_status
 
 
@@ -15,6 +16,7 @@ class TestCephStats(unittest.TestCase):
     """
     Test collect ceph data
     """
+
     def test_sample_data(self):
         """
         Get ceph information from sample data

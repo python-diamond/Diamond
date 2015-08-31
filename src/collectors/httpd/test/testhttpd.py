@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,10 +12,11 @@ from diamond.collector import Collector
 from httpd import HttpdCollector
 import httplib
 
-################################################################################
+##########################################################################
 
 
 class TestHTTPResponse(httplib.HTTPResponse):
+
     def __init__(self):
         pass
 
@@ -24,6 +25,7 @@ class TestHTTPResponse(httplib.HTTPResponse):
 
 
 class TestHttpdCollector(CollectorTestCase):
+
     def setUp(self, config=None):
         if config is None:
             config = get_collector_config('HttpdCollector', {
@@ -328,6 +330,6 @@ class TestHttpdCollector(CollectorTestCase):
 
         self.assertEqual(self.collector.urls, expected_urls)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

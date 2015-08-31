@@ -71,9 +71,9 @@ class IPMISensorCollector(diamond.collector.Collector):
         return None
 
     def collect(self):
-        if (not os.access(self.config['bin'], os.X_OK)
-            or (self.config['use_sudo']
-                and not os.access(self.config['sudo_cmd'], os.X_OK))):
+        if ((not os.access(self.config['bin'], os.X_OK) or
+             (self.config['use_sudo'] and
+              not os.access(self.config['sudo_cmd'], os.X_OK)))):
             return False
 
         command = [self.config['bin'], 'sensor']

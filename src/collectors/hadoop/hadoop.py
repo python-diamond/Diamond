@@ -103,9 +103,10 @@ class HadoopCollector(diamond.collector.Collector):
 
                     value = float(metrics[metric])
 
-                    self.publish_metric(Metric(path,
-                                        value,
-                                        timestamp=int(data['timestamp'])/1000))
+                    self.publish_metric(
+                        Metric(path,
+                               value,
+                               timestamp=int(data['timestamp']) / 1000))
 
                 except ValueError:
                     pass

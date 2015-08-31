@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,7 +12,7 @@ from mock import patch
 from diamond.collector import Collector
 from mysqlstat import MySQLCollector
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_MySQLdb_is_available(func):
@@ -25,6 +25,7 @@ def run_only_if_MySQLdb_is_available(func):
 
 
 class TestMySQLCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('MySQLCollector', {
             'slave':    'True',
@@ -121,6 +122,6 @@ class TestMySQLCollector(CollectorTestCase):
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

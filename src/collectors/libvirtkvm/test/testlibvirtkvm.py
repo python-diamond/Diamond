@@ -12,6 +12,7 @@ from libvirtkvm import LibvirtKVMCollector
 ###############################################################################
 
 class TestLibvirtKVMCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('LibvirtKVMCollector', {
         })

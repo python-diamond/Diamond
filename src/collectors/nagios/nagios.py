@@ -69,9 +69,9 @@ class NagiosStatsCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        if (not os.access(self.config['bin'], os.X_OK)
-            or (str_to_bool(self.config['use_sudo'])
-                and not os.access(self.config['sudo_cmd'], os.X_OK))):
+        if ((not os.access(self.config['bin'], os.X_OK) or
+             (str_to_bool(self.config['use_sudo']) and
+              not os.access(self.config['sudo_cmd'], os.X_OK)))):
             return
 
         command = [self.config['bin'],

@@ -11,6 +11,7 @@ from nagiosperfdata import NagiosPerfdataCollector
 
 
 class TestNagiosPerfdataCollector(CollectorTestCase):
+
     def setUp(self):
         """Set up the fixtures for the test
         """

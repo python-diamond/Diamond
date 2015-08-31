@@ -12,6 +12,7 @@ from flume import FlumeCollector
 
 
 class TestFlumeCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('FlumeCollector', {
             'interval': 10

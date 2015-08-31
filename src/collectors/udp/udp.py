@@ -37,9 +37,9 @@ class UDPCollector(diamond.collector.Collector):
         """
         config = super(UDPCollector, self).get_default_config()
         config.update({
-            'path':             'udp',
-            'allowed_names':    'InDatagrams, NoPorts, '
-            + 'InErrors, OutDatagrams, RcvbufErrors, SndbufErrors'
+            'path':          'udp',
+            'allowed_names': 'InDatagrams, NoPorts, InErrors, ' +
+                             'OutDatagrams, RcvbufErrors, SndbufErrors'
         })
         return config
 
@@ -87,8 +87,8 @@ class UDPCollector(diamond.collector.Collector):
                 metrics[header[i]] = data[i]
 
         for metric_name in metrics.keys():
-            if (len(self.config['allowed_names']) > 0
-                    and metric_name not in self.config['allowed_names']):
+            if ((len(self.config['allowed_names']) > 0 and
+                 metric_name not in self.config['allowed_names'])):
                 continue
 
             value = metrics[metric_name]

@@ -12,6 +12,7 @@ from netapp_inode import netapp_inode
 ###############################################################################
 
 class Testnetapp_inode(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('netapp_inode', {
         })
