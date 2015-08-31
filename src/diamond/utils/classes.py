@@ -11,6 +11,8 @@ from diamond.util import load_class_from_name
 from diamond.collector import Collector
 from diamond.handler.Handler import Handler
 
+logger = logging.getLogger('diamond')
+
 
 def load_include_path(paths):
     """
@@ -51,7 +53,6 @@ def load_handlers(config, handler_names):
     """
     Load handlers
     """
-    log = logging.getLogger('diamond')
 
     handlers = []
 
@@ -59,7 +60,7 @@ def load_handlers(config, handler_names):
         handler_names = [handler_names]
 
     for handler in handler_names:
-        log.debug('Loading Handler %s', handler)
+        logger.debug('Loading Handler %s', handler)
         try:
             # Load Handler Class
             cls = load_dynamic_class(handler, Handler)
@@ -89,9 +90,9 @@ def load_handlers(config, handler_names):
 
         except (ImportError, SyntaxError):
             # Log Error
-            log.warning("Failed to load handler %s. %s",
-                        handler,
-                        traceback.format_exc())
+            logger.warning("Failed to load handler %s. %s",
+                           handler,
+                           traceback.format_exc())
             continue
 
     return handlers
@@ -103,7 +104,6 @@ def load_collectors(paths=None, filter=None):
     """
     # Initialize return value
     collectors = {}
-    log = logging.getLogger('diamond')
 
     if paths is None:
         return
@@ -149,7 +149,7 @@ def load_collectors(paths=None, filter=None):
                     # Import the module
                     mod = __import__(modname, globals(), locals(), ['*'])
                 except (KeyboardInterrupt, SystemExit), err:
-                    log.error(
+                    logger.error(
                         "System or keyboard interrupt "
                         "while loading module %s"
                         % modname)
@@ -158,44 +158,48 @@ def load_collectors(paths=None, filter=None):
                     raise KeyboardInterrupt
                 except:
                     # Log error
-                    log.error("Failed to import module: %s. %s",
-                              modname,
-                              traceback.format_exc())
+                    logger.error("Failed to import module: %s. %s",
+                                 modname,
+                                 traceback.format_exc())
                     continue
 
-                # Find all classes defined in the module
-                for attrname in dir(mod):
-                    attr = getattr(mod, attrname)
-                    # Only attempt to load classes that are infact classes
-                    # are Collectors but are not the base Collector class
-                    if ((inspect.isclass(attr) and
-                         issubclass(attr, Collector) and
-                         attr != Collector)):
-                        if attrname.startswith('parent_'):
-                            continue
-                        # Get class name
-                        fqcn = '.'.join([modname, attrname])
-                        try:
-                            # Load Collector class
-                            cls = load_dynamic_class(fqcn, Collector)
-                            # Add Collector class
-                            collectors[cls.__name__] = cls
-                        except Exception:
-                            # Log error
-                            log.error(
-                                "Failed to load Collector: %s. %s",
-                                fqcn, traceback.format_exc())
-                            continue
+                for name, cls in get_collectors_from_module(mod):
+                    collectors[name] = cls
 
     # Return Collector classes
     return collectors
+
+
+def get_collectors_from_module(mod):
+    # Find all classes defined in the module
+    for attrname in dir(mod):
+        attr = getattr(mod, attrname)
+        # Only attempt to load classes that are infact classes
+        # are Collectors but are not the base Collector class
+        if ((inspect.isclass(attr) and
+             issubclass(attr, Collector) and
+             attr != Collector)):
+            if attrname.startswith('parent_'):
+                continue
+            # Get class name
+            fqcn = '.'.join([mod.__name__, attrname])
+            try:
+                # Load Collector class
+                cls = load_dynamic_class(fqcn, Collector)
+                # Add Collector class
+                yield cls.__name__, cls
+            except Exception:
+                # Log error
+                logger.error(
+                    "Failed to load Collector: %s. %s",
+                    fqcn, traceback.format_exc())
+                continue
 
 
 def initialize_collector(cls, name=None, configfile=None, handlers=[]):
     """
     Initialize collector
     """
-    log = logging.getLogger('diamond')
     collector = None
 
     try:
@@ -203,8 +207,8 @@ def initialize_collector(cls, name=None, configfile=None, handlers=[]):
         collector = cls(name=name, configfile=configfile, handlers=handlers)
     except Exception:
         # Log error
-        log.error("Failed to initialize Collector: %s. %s",
-                  cls.__name__, traceback.format_exc())
+        logger.error("Failed to initialize Collector: %s. %s",
+                     cls.__name__, traceback.format_exc())
 
     # Return collector
     return collector
