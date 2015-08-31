@@ -1,0 +1,14 @@
+system peer:          lithium.constant.com
+system peer mode:     client
+leap indicator:       00
+stratum:              3
+precision:            -22
+root distance:        0.07663 s
+root dispersion:      0.09311 s
+reference ID:         [108.61.56.35]
+reference time:       d985f299.ead358ea  Mon, Aug 24 2015 19:44:25.917
+system flags:         auth monitor ntp kernel stats
+jitter:               0.000000 s
+stability:            0.000 ppm
+broadcastdelay:       0.000000 s
+authdelay:            0.000000 s
