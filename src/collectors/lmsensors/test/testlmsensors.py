@@ -2,12 +2,19 @@
 # coding=utf-8
 ###############################################################################
 
+import unittest
 from test import CollectorTestCase
 from test import get_collector_config
 from mock import patch
 
 from diamond.collector import Collector
 from lmsensors import LMSensorsCollector
+
+try:
+    import sensors
+    sensors
+except ImportError:
+    sensors = None
 
 
 class FeatureMock:
@@ -37,6 +44,7 @@ class ChipMock:
         return self.label
 
 
+@unittest.skipIf(sensors is None, "No PySensors module found")
 class TestLMSensorsCollector(CollectorTestCase):
 
     def setUp(self):
