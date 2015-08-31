@@ -4,12 +4,17 @@
 
 import os
 import sys
-import unittest
 import inspect
 import traceback
 import optparse
 import logging
 import configobj
+
+try:
+    import unittest
+except ImportError:
+    # python 2.6
+    import unittest2 as unittest
 
 try:
     import cPickle as pickle
