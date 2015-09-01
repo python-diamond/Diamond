@@ -46,9 +46,9 @@ class IPCollector(diamond.collector.Collector):
         'InAddrErrors', 'InDelivers', 'InDiscards', 'InHdrErrors',
         'InReceives', 'InUnknownProtos', 'OutDiscards', 'OutNoRoutes',
         'OutRequests',
-        'Ip6InAddrErrors', 'Ip6InDelivers', 'Ip6InDiscards', 'Ip6InHdrErrors',
-        'Ip6InReceives', 'Ip6InUnknownProtos', 'Ip6OutDiscards', 'Ip6OutNoRoutes',
-        'Ip6OutRequests'
+        'Ip6InAddrErrors', 'Ip6InDelivers', 'Ip6InDiscards',
+        'Ip6InHdrErrors', 'Ip6InReceives', 'Ip6InUnknownProtos',
+        'Ip6OutDiscards', 'Ip6OutNoRoutes', 'Ip6OutRequests'
     ]
 
     def process_config(self):

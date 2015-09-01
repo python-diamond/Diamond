@@ -92,7 +92,8 @@ C6    2
     @patch('diamond.collector.Collector.publish')
     def test_should_work_with_real_data(self, publish_mock):
         self.setUp(['InDiscards', 'InReceives', 'OutDiscards', 'OutRequests',
-                    'Ip6InDiscards', 'Ip6InReceives', 'Ip6OutDiscards', 'Ip6OutRequests'])
+                    'Ip6InDiscards', 'Ip6InReceives', 'Ip6OutDiscards',
+                    'Ip6OutRequests'])
 
         IPCollector.PROC = [self.getFixturePath('proc_net_snmp_1')]
         IPCollector.PROC6 = [self.getFixturePath('proc_net_snmp6_1')]
