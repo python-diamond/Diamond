@@ -27,7 +27,8 @@ class IPMISensorCollector(diamond.collector.Collector):
             'bin': 'Path to the ipmitool binary',
             'use_sudo': 'Use sudo?',
             'sudo_cmd': 'Path to sudo',
-            'thresholds': 'Collect thresholds as well as reading'
+            'thresholds': 'Collect thresholds as well as reading',
+            'delimiter': 'Parse blanks in sensor names into a delimiter'
         })
         return config_help
 
@@ -42,6 +43,7 @@ class IPMISensorCollector(diamond.collector.Collector):
             'sudo_cmd':         '/usr/bin/sudo',
             'path':             'ipmi.sensors',
             'thresholds':       False,
+            'delimiter':        '.'
         })
         return config
 
@@ -87,8 +89,9 @@ class IPMISensorCollector(diamond.collector.Collector):
             data = v.split("|")
             try:
                 # Complex keys are fun!
-                metric_name = data[0].strip().replace(".",
-                                                      "_").replace(" ", ".")
+                metric_name = data[0].strip()
+                metric_name = metric_name.replace(".", "_")
+                metric_name = metric_name.replace(" ", self.config['delimiter'])
                 metrics = []
 
                 # Each sensor line is a column seperated by a | with the
