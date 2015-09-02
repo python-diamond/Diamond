@@ -149,10 +149,6 @@ def load_collectors_from_paths(paths):
                   f[0:4] != 'test' and
                   f[0] != '.'):
 
-                # Check filter
-                if filter and os.path.join(path, f) != filter:
-                    continue
-
                 modname = f[:-3]
 
                 try:
