@@ -68,6 +68,8 @@ class MemoryDockerCollector(MemoryCgroupCollector):
             self.truncate_ids = int(trunc)
         except (TypeError, ValueError):
             self.truncate_ids = 0
+        self.docker_url = self.config['docker_base_url']
+        self.docker_version = self.config['docker_version']
 
     def get_default_config_help(self):
         config_help = super(
@@ -79,6 +81,10 @@ class MemoryDockerCollector(MemoryCgroupCollector):
                          "and containers without a name. If set to equal to "
                          "or lower than zero, metric names are not changed "
                          "in length.",
+            docker_url="URL to the Docker service. Not required, if Docker "
+                       "is running with its default configuration.",
+            docker_version="Docker service API version. The default, 'auto', "
+                           "will sets the required version automatically."
         )
         return config_help
 
@@ -86,17 +92,21 @@ class MemoryDockerCollector(MemoryCgroupCollector):
         config = super(MemoryDockerCollector, self).get_default_config()
         config.update(filter_existing=False)
         config.update(truncate_ids=0)
+        config.update(docker_base_url=None)
+        config.update(docker_version='auto')
         return config
 
     def collect(self):
         if docker is None:
             self.log.error('Unable to import docker')
             return
+        if not hasattr(self, 'docker_client'):
+            self.docker_client = docker.Client(base_url=self.docker_url, version=self.docker_version)
 
-        self.containers = dict(
-            (c['Id'], _get_container_name(c['Names']))
-            for c in docker.Client().containers(all=True)
-        )
+        self.containers = {
+            c['Id']: _get_container_name(c['Names'])
+            for c in self.docker_client.containers(all=True)
+        }
         return super(MemoryDockerCollector, self).collect()
 
     def publish(self, metric_name, *args, **kwargs):

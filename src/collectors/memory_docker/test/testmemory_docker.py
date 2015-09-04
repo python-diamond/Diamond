@@ -59,6 +59,7 @@ class TestMemoryDockerCollector(CollectorTestCase):
             'interval': 10,
             'byte_unit': 'megabyte',
             'memory_path': fixtures_path,
+            'docker_version': None,
         })
 
         self.collector = MemoryDockerCollector(config, None)
