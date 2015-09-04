@@ -99,16 +99,16 @@ def load_handlers(config, handler_names):
     return handlers
 
 
-def load_collectors(paths, filter=None):
+def load_collectors(paths, file_filter=None):
     """
     Load all collectors
     """
-    collectors = load_collectors_from_paths(paths, filter)
+    collectors = load_collectors_from_paths(paths, file_filter)
     collectors.update(load_collectors_from_entry_point('diamond.collectors'))
     return collectors
 
 
-def load_collectors_from_paths(paths, filter=None):
+def load_collectors_from_paths(paths, file_filter=None):
     """
     Scan for collectors to load from path
     """
@@ -143,14 +143,10 @@ def load_collectors_from_paths(paths, filter=None):
                     collectors[key] = subcollectors[key]
 
             # Ignore anything that isn't a .py file
-            elif (os.path.isfile(fpath) and
-                          len(f) > 3 and
-                          f[-3:] == '.py' and
-                          f[0:4] != 'test' and
-                          f[0] != '.'):
+            elif os.path.isfile(fpath) and len(f) > 3 and f[-3:] == '.py' and f[0:4] != 'test' and f[0] != '.':
 
                 # Check filter
-                if filter and os.path.join(path, f) != filter:
+                if file_filter and os.path.join(path, f) != file_filter:
                     continue
 
                 modname = f[:-3]
