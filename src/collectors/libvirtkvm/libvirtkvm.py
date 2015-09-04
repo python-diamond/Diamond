@@ -10,7 +10,7 @@ Uses libvirt to harvest per KVM instance stats
 """
 
 import diamond.collector
-
+from diamond.collector import str_to_bool
 try:
     from xml.etree import ElementTree
 except ImportError:
@@ -106,7 +106,7 @@ as cummulative nanoseconds since VM creation if this is True."""
 
         conn = libvirt.openReadOnly(self.config['uri'])
         for dom in [conn.lookupByID(n) for n in conn.listDomainsID()]:
-            if self.config['sort_by_uuid'] is True:
+            if str_to_bool(self.config['sort_by_uuid']) is True:
                 name = dom.UUIDString()
             else:
                 name = dom.name()
