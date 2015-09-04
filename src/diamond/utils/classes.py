@@ -99,16 +99,16 @@ def load_handlers(config, handler_names):
     return handlers
 
 
-def load_collectors(paths):
+def load_collectors(paths, filter=None):
     """
     Load all collectors
     """
-    collectors = load_collectors_from_paths(paths)
+    collectors = load_collectors_from_paths(paths, filter)
     collectors.update(load_collectors_from_entry_point('diamond.collectors'))
     return collectors
 
 
-def load_collectors_from_paths(paths):
+def load_collectors_from_paths(paths, filter=None):
     """
     Scan for collectors to load from path
     """
@@ -144,10 +144,14 @@ def load_collectors_from_paths(paths):
 
             # Ignore anything that isn't a .py file
             elif (os.path.isfile(fpath) and
-                  len(f) > 3 and
-                  f[-3:] == '.py' and
-                  f[0:4] != 'test' and
-                  f[0] != '.'):
+                          len(f) > 3 and
+                          f[-3:] == '.py' and
+                          f[0:4] != 'test' and
+                          f[0] != '.'):
+
+                # Check filter
+                if filter and os.path.join(path, f) != filter:
+                    continue
 
                 modname = f[:-3]
 
@@ -201,8 +205,8 @@ def get_collectors_from_module(mod):
         # Only attempt to load classes that are infact classes
         # are Collectors but are not the base Collector class
         if ((inspect.isclass(attr) and
-             issubclass(attr, Collector) and
-             attr != Collector)):
+                 issubclass(attr, Collector) and
+                     attr != Collector)):
             if attrname.startswith('parent_'):
                 continue
             # Get class name
