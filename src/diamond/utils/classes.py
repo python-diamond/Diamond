@@ -143,11 +143,11 @@ def load_collectors_from_paths(paths, file_filter=None):
                     collectors[key] = subcollectors[key]
 
             # Ignore anything that isn't a .py file
-            elif os.path.isfile(fpath) and \
-                            len(f) > 3 and \
-                            f[-3:] == '.py' and \
-                            f[0:4] != 'test' and \
-                            f[0] != '.':
+            elif (os.path.isfile(fpath) and
+                  len(f) > 3 and
+                  f[-3:] == '.py' and
+                  f[0:4] != 'test' and
+                  f[0] != '.'):
 
                 # Check filter
                 if file_filter and os.path.join(path, f) != file_filter:
@@ -204,9 +204,9 @@ def get_collectors_from_module(mod):
         attr = getattr(mod, attrname)
         # Only attempt to load classes that are infact classes
         # are Collectors but are not the base Collector class
-        if inspect.isclass(attr) and \
-                issubclass(attr, Collector) and \
-                        attr != Collector:
+        if (inspect.isclass(attr) and
+                issubclass(attr, Collector) and
+                attr != Collector):
             if attrname.startswith('parent_'):
                 continue
             # Get class name
