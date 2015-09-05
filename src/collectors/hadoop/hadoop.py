@@ -114,7 +114,7 @@ class HadoopCollector(diamond.collector.Collector):
 
                 except ValueError:
                     pass
-        if self.config['truncate']:
+        if diamond.collector.str_to_bool(self.config['truncate']):
             fd.seek(0)
             fd.truncate()
         fd.close()

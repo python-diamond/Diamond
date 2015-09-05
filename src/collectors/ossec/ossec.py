@@ -47,7 +47,7 @@ class OssecCollector(diamond.collector.Collector):
     def collect(self):
         command = [self.config['bin'], '-l']
 
-        if self.config['use_sudo']:
+        if diamond.collector.str_to_bool(self.config['use_sudo']):
             command.insert(0, self.config['sudo_cmd'])
 
         try:

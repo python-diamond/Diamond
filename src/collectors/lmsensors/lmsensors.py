@@ -60,7 +60,8 @@ class LMSensorsCollector(diamond.collector.Collector):
                     try:
                         value = feature.get_value()
                     except Exception:
-                        if self.config['send_zero']:
+                        if diamond.collector.str_to_bool(
+                                self.config['send_zero']):
                             value = 0
 
                     if value is not None:

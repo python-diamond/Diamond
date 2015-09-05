@@ -72,16 +72,17 @@ class UnboundCollector(diamond.collector.ProcessCollector):
 
         raw_histogram = {}
 
+        include_hist = diamond.collector.str_to_bool(self.config['histogram'])
         for line in stats_output.splitlines():
             stat_name, stat_value = line.split('=')
 
             if not stat_name.startswith('histogram'):
                 self.publish(stat_name, stat_value)
-            elif self.config['histogram']:
+            elif include_hist:
                 hist_intv = float(stat_name.split('.', 4)[4])
                 raw_histogram[hist_intv] = float(stat_value)
 
-        if self.config['histogram']:
+        if include_hist:
             histogram = self.get_massaged_histogram(raw_histogram)
 
             for intv, value in histogram.iteritems():

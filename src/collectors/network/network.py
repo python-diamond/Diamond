@@ -60,7 +60,7 @@ class NetworkCollector(diamond.collector.Collector):
             file = open(self.PROC)
             # Build Regular Expression
             greed = ''
-            if self.config['greedy'].lower() == 'true':
+            if diamond.collector.str_to_bool(self.config['greedy']):
                 greed = '\S*'
 
             exp = (('^(?:\s*)((?:%s)%s):(?:\s*)' +

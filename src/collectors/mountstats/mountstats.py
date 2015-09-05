@@ -111,7 +111,7 @@ class MountStatsCollector(diamond.collector.Collector):
         the statvers value returned by mountstats.
         """
 
-        if self.config['use_sudo']:
+        if diamond.collector.str_to_bool(self.config['use_sudo']):
             if not os.access(self.config['sudo_cmd'], os.X_OK):
                 self.log.error("Cannot find or exec %s"
                                % self.config['sudo_cmd'])

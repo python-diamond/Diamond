@@ -64,7 +64,7 @@ class AmavisCollector(diamond.collector.Collector):
         Collect memory stats
         """
         try:
-            if self.config['use_sudo']:
+            if diamond.collector.str_to_bool(self.config['use_sudo']):
                 # Use -u instead of --user as the former is more portable. Not
                 # all versions of sudo support the long form --user.
                 cmdline = [
