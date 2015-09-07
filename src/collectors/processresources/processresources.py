@@ -31,6 +31,7 @@ for example: cgi workers.
 import os
 import re
 import time
+import configobj
 
 import diamond.collector
 import diamond.convertor
@@ -105,6 +106,16 @@ class ProcessResourcesCollector(diamond.collector.Collector):
             count_workers: [boolean]
         }
         """
+        if 'path' in self.config['process']:
+            config_extension = self.config['process'].get('extension', '.conf')
+            for cfgfile in os.listdir(self.config['process']['path']):
+                cfgfile = os.path.join(self.config['process']['path'], cfgfile)
+                cfgfile = os.path.abspath(cfgfile)
+                if not cfgfile.endswith(config_extension):
+                    continue
+                newconfig = configobj.ConfigObj(cfgfile)
+                self.config.merge(newconfig)
+        [self.config['process'].pop(item, None) for item in ['path', 'extension']]
         self.processes = {}
         self.processes_info = {}
         for pg_name, cfg in self.config['process'].items():
