@@ -49,6 +49,7 @@ from collections import namedtuple
 from string import Template
 
 import diamond.collector
+from diamond.collector import str_to_bool
 from diamond.metric import Metric
 
 try:
@@ -141,7 +142,7 @@ class ElbCollector(diamond.collector.Collector):
 
     def process_config(self):
         super(ElbCollector, self).process_config()
-        if diamond.collector.str_to_bool(self.config['enabled']):
+        if str_to_bool(self.config['enabled']):
             self.interval = self.config.as_int('interval')
             # Why is this?
             if self.interval % 60 != 0:

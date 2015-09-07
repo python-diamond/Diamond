@@ -13,6 +13,7 @@ with server hardware but usually not available in consumer hardware.
 """
 
 import diamond.collector
+from diamond.collector import str_to_bool
 from subprocess import Popen, PIPE
 import os
 import getpass
@@ -73,7 +74,7 @@ class IPMISensorCollector(diamond.collector.Collector):
         return None
 
     def collect(self):
-        use_sudo = diamond.collector.str_to_bool(self.config['use_sudo'])
+        use_sudo = str_to_bool(self.config['use_sudo'])
         if ((not os.access(self.config['bin'], os.X_OK) or
              (use_sudo and
               not os.access(self.config['sudo_cmd'], os.X_OK)))):

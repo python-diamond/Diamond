@@ -15,6 +15,7 @@ except ImportError:
     from kitchen.pycompat25.collections import defaultdict
 
 import diamond.collector
+from diamond.collector import str_to_bool
 
 
 class UnboundCollector(diamond.collector.ProcessCollector):
@@ -72,7 +73,7 @@ class UnboundCollector(diamond.collector.ProcessCollector):
 
         raw_histogram = {}
 
-        include_hist = diamond.collector.str_to_bool(self.config['histogram'])
+        include_hist = str_to_bool(self.config['histogram'])
         for line in stats_output.splitlines():
             stat_name, stat_value = line.split('=')
 
