@@ -11,6 +11,7 @@ using /proc/net/dev.
 """
 
 import diamond.collector
+from diamond.collector import str_to_bool
 import diamond.convertor
 import os
 import re
@@ -60,7 +61,7 @@ class NetworkCollector(diamond.collector.Collector):
             file = open(self.PROC)
             # Build Regular Expression
             greed = ''
-            if self.config['greedy'].lower() == 'true':
+            if str_to_bool(self.config['greedy']):
                 greed = '\S*'
 
             exp = (('^(?:\s*)((?:%s)%s):(?:\s*)' +

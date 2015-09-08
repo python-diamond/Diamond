@@ -49,6 +49,7 @@ from collections import namedtuple
 from string import Template
 
 import diamond.collector
+from diamond.collector import str_to_bool
 from diamond.metric import Metric
 
 try:
@@ -141,7 +142,7 @@ class ElbCollector(diamond.collector.Collector):
 
     def process_config(self):
         super(ElbCollector, self).process_config()
-        if self.config['enabled']:
+        if str_to_bool(self.config['enabled']):
             self.interval = self.config.as_int('interval')
             # Why is this?
             if self.interval % 60 != 0:
@@ -180,7 +181,8 @@ class ElbCollector(diamond.collector.Collector):
         return config
 
     def publish_delayed_metric(self, name, value, timestamp, raw_value=None,
-                               precision=0, metric_type='GAUGE', instance=None):
+                               precision=0, metric_type='GAUGE',
+                               instance=None):
         """
         Metrics may not be immediately available when querying cloudwatch.
         Hence, allow the ability to publish a metric from some the past given
@@ -275,7 +277,8 @@ class ElbCollector(diamond.collector.Collector):
             self.process_stat(region_cw_conn.region.name, zone, elb_name,
                               metric, stat, end_time)
 
-    def process_elb(self, region_cw_conn, zone, start_time, end_time, elb_name):
+    def process_elb(self, region_cw_conn, zone,
+                    start_time, end_time, elb_name):
         for metric in self.metrics:
             self.process_metric(region_cw_conn, zone, start_time, end_time,
                                 elb_name, metric)

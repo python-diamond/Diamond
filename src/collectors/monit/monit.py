@@ -15,6 +15,7 @@ import base64
 from xml.dom.minidom import parseString
 
 import diamond.collector
+from diamond.collector import str_to_bool
 
 
 class MonitCollector(diamond.collector.Collector):
@@ -82,7 +83,7 @@ class MonitCollector(diamond.collector.Collector):
                             'cpu')[0].getElementsByTagName(
                             'percent')[0].firstChild.data
                         metrics["%s.cpu.percent" % name] = cpu
-                        if self.config['send_totals']:
+                        if str_to_bool(self.config['send_totals']):
                             cpu_total = svc.getElementsByTagName(
                                 'cpu')[0].getElementsByTagName(
                                 'percenttotal')[0].firstChild.data
@@ -98,7 +99,7 @@ class MonitCollector(diamond.collector.Collector):
                                     oldUnit='kilobyte',
                                     newUnit=unit))
                         metrics["%s.uptime" % name] = uptime
-                        if self.config['send_totals']:
+                        if str_to_bool(self.config['send_totals']):
                             mem_total = int(svc.getElementsByTagName(
                                 'memory')[0].getElementsByTagName(
                                 'kilobytetotal')[0].firstChild.data)
