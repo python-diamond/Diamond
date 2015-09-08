@@ -23,6 +23,7 @@ class MesosCollector(diamond.collector.Collector):
     def __init__(self, config=None, handlers=[], name=None, configfile=None):
         self.master = True
         self.known_frameworks = {}
+        self.executors_prev_read = {}
         super(MesosCollector, self).__init__(config, handlers, name, configfile)
 
     def process_config(self):
@@ -86,9 +87,28 @@ class MesosCollector(diamond.collector.Collector):
         for framework in result['frameworks']:
             self.known_frameworks[framework['id']] = framework['name']
 
-        for key in ['failed_tasks', 'finished_tasks', 'staged_tasks', 'started_tasks', 'lost_tasks']:
+        for key in ['failed_tasks', 'finished_tasks', 'staged_tasks',
+                    'started_tasks', 'lost_tasks']:
             value = result[key]
             self.publish(key, value, precision=self._precision(value))
+
+    def _add_cpu_usage(self, cur_read):
+        """Compute cpu usage based on cpu time spent compared to elapsed time
+        """
+
+        for executor_id, cur_data in cur_read.items():
+            if executor_id in self.executors_prev_read:
+                prev_data = self.executors_prev_read[executor_id]
+                prev_stats = prev_data['statistics']
+                cur_stats = cur_data['statistics']
+                # from sum of current cpus time subtract previous sum
+                cpus_time_diff_s = cur_stats['cpus_user_time_secs']
+                cpus_time_diff_s += cur_stats['cpus_system_time_secs']
+                cpus_time_diff_s -= prev_stats['cpus_user_time_secs']
+                cpus_time_diff_s -= prev_stats['cpus_system_time_secs']
+                ts_diff = cur_stats['timestamp'] - prev_stats['timestamp']
+                cur_stats['cpus_utilisation'] = cpus_time_diff_s / ts_diff
+        self.executors_prev_read = cur_read
 
     def _group_tasks_statistics(self, result):
         """This function group statistics of same tasks by adding them.
@@ -105,16 +125,19 @@ class MesosCollector(diamond.collector.Collector):
         """
         for i in result:
             executor_id = i['executor_id']
-            i['statistics']['instances_count'] = 1
             i['executor_id'] = executor_id[:executor_id.rfind('.')]
+            i['statistics']['instances_count'] = 1
+
         r = {}
         for i in result:
             executor_id = i['executor_id']
             r[executor_id] = r.get(executor_id, {})
             r[executor_id]['framework_id'] = i['framework_id']
             r[executor_id]['statistics'] = r[executor_id].get('statistics', {})
-            grouped_statistics = r.get(executor_id, {'statistics': {}})['statistics']
-            r[executor_id]['statistics'] = self._sum_statistics(i['statistics'], grouped_statistics)
+            r[executor_id]['statistics'] = self._sum_statistics(
+                i['statistics'], r[executor_id]['statistics'])
+
+        self._add_cpu_usage(r)
         return r
 
     def _sum_statistics(self, x, y):
@@ -130,11 +153,11 @@ class MesosCollector(diamond.collector.Collector):
             self.config['port'],
             'monitor/statistics.json'
         )
+
         if not result:
             return
 
         result = self._group_tasks_statistics(result)
-
         for executor_id, executor in result.iteritems():
             executor_statistics = executor['statistics']
             for key in executor_statistics:
@@ -142,7 +165,8 @@ class MesosCollector(diamond.collector.Collector):
                 framework_id = self.known_frameworks[executor['framework_id']]
                 framework = self._sanitize_metric_name(framework_id)
                 executor_name = self._sanitize_metric_name(executor_id)
-                metric = 'frameworks.%s.executors.%s.%s' % (framework, executor_name, key)
+                metric = 'frameworks.%s.executors.%s.%s' % (
+                    framework, executor_name, key)
                 self.publish(metric, value, precision=self._precision(value))
 
     def _get(self, host, port, path):
@@ -160,7 +184,7 @@ class MesosCollector(diamond.collector.Collector):
             doc = json.load(response)
         except (TypeError, ValueError):
             self.log.error("Unable to parse response from Mesos as a"
-                           + " json object")
+                           " json object")
             return False
 
         return doc

@@ -83,9 +83,37 @@ class TestMesosCollector(CollectorTestCase):
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
-                                metrics=metrics,
-                                defaultpath=self.collector.config['path'])
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
+
+    @patch.object(Collector, 'publish')
+    def test_should_compute_cpus_utilisation(self, publish_mock):
+        config = get_collector_config('MesosCollector', {'master': False})
+        self.collector = MesosCollector(config, None)
+        self.assertEqual(self.collector.master, False)
+
+        returns = [
+            self.getFixture('master_metrics_snapshot.json'),
+            self.getFixture('slave_metrics_state.json'),
+            self.getFixture('slave_monitor_statistics_cpus_utilisation_next.json'),
+            self.getFixture('master_metrics_snapshot.json'),
+            self.getFixture('slave_metrics_state.json'),
+            self.getFixture('slave_monitor_statistics_cpus_utilisation.json'),
+        ]
+
+        urlopen_mock = patch('urllib2.urlopen', Mock(
+            side_effect=lambda *args: returns.pop(0)))
+
+        urlopen_mock.start()
+        self.collector.collect()
+        publish_mock.reset_mock()
+        self.collector.collect()
+        urlopen_mock.stop()
+        self.assertPublished(
+            publish_mock,
+            'frameworks.marathon-0_7_6.executors.task_name.cpus_utilisation',
+            0.5)
 
 
 if __name__ == "__main__":
