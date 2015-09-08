@@ -16,3 +16,4 @@ src/*.egg-info
 .tox
 gentoo/diamond-*.ebuild
 .vagrant
+.python-version
