@@ -93,6 +93,7 @@ class TestMesosCollector(CollectorTestCase):
         self.collector = MesosCollector(config, None)
         self.assertEqual(self.collector.master, False)
 
+        # we need 2 collect calls to see new metrics
         returns = [
             self.getFixture('master_metrics_snapshot.json'),
             self.getFixture('slave_metrics_state.json'),

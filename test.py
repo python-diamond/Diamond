@@ -75,7 +75,6 @@ class CollectorTestCase(unittest.TestCase):
 
         if not os.access(filePath, os.R_OK):
             return False
-
         try:
             with open(filePath, 'Ur') as fp:
                 content = fp.readlines()

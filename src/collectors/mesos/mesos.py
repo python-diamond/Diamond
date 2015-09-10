@@ -107,7 +107,8 @@ class MesosCollector(diamond.collector.Collector):
                 cpus_time_diff_s -= prev_stats['cpus_user_time_secs']
                 cpus_time_diff_s -= prev_stats['cpus_system_time_secs']
                 ts_diff = cur_stats['timestamp'] - prev_stats['timestamp']
-                cur_stats['cpus_utilisation'] = cpus_time_diff_s / ts_diff
+                if ts_diff != 0:
+                    cur_stats['cpus_utilisation'] = cpus_time_diff_s / ts_diff
         self.executors_prev_read = cur_read
 
     def _group_tasks_statistics(self, result):
