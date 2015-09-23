@@ -127,17 +127,17 @@ class ElbCollector(diamond.collector.Collector):
     metrics = [
         MetricInfo('HealthyHostCount', 'Average', 'GAUGE', 0, False),
         MetricInfo('UnHealthyHostCount', 'Average', 'GAUGE', 0, False),
-        MetricInfo('RequestCount', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('RequestCount', 'Sum', 'GAUGE', 0, True),
         MetricInfo('Latency', 'Average', 'GAUGE', 4, False),
-        MetricInfo('HTTPCode_ELB_4XX', 'Sum', 'COUNTER', 0, True),
-        MetricInfo('HTTPCode_ELB_5XX', 'Sum', 'COUNTER', 0, True),
-        MetricInfo('HTTPCode_Backend_2XX', 'Sum', 'COUNTER', 0, True),
-        MetricInfo('HTTPCode_Backend_3XX', 'Sum', 'COUNTER', 0, True),
-        MetricInfo('HTTPCode_Backend_4XX', 'Sum', 'COUNTER', 0, True),
-        MetricInfo('HTTPCode_Backend_5XX', 'Sum', 'COUNTER', 0, True),
-        MetricInfo('BackendConnectionErrors', 'Sum', 'COUNTER', 0, True),
+        MetricInfo('HTTPCode_ELB_4XX', 'Sum', 'GAUGE', 0, True),
+        MetricInfo('HTTPCode_ELB_5XX', 'Sum', 'GAUGE', 0, True),
+        MetricInfo('HTTPCode_Backend_2XX', 'Sum', 'GAUGE', 0, True),
+        MetricInfo('HTTPCode_Backend_3XX', 'Sum', 'GAUGE', 0, True),
+        MetricInfo('HTTPCode_Backend_4XX', 'Sum', 'GAUGE', 0, True),
+        MetricInfo('HTTPCode_Backend_5XX', 'Sum', 'GAUGE', 0, True),
+        MetricInfo('BackendConnectionErrors', 'Sum', 'GAUGE', 0, True),
         MetricInfo('SurgeQueueLength', 'Maximum', 'GAUGE', 0, True),
-        MetricInfo('SpilloverCount', 'Sum', 'COUNTER', 0, True)
+        MetricInfo('SpilloverCount', 'Sum', 'GAUGE', 0, True)
     ]
 
     def process_config(self):
