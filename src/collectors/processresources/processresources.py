@@ -115,7 +115,8 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                     continue
                 newconfig = configobj.ConfigObj(cfgfile)
                 self.config.merge(newconfig)
-        [self.config['process'].pop(item, None) for item in ['path', 'extension']]
+        [self.config['process'].pop(item, None)
+            for item in ['path', 'extension']]
         self.processes = {}
         self.processes_info = {}
         for pg_name, cfg in self.config['process'].items():
@@ -213,7 +214,8 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                     ("%s.%s" % (pg_name, key), value)
                     for key, value in counters.iteritems())
             else:
-                metrics = (("%s.%s" % (pg_name, key), -1) for key in self.default_info_keys)
+                metrics = (("%s.%s" % (pg_name, key), -1)
+                           for key in self.default_info_keys)
             [self.publish(*metric) for metric in metrics]
             # reinitialize process info
             self.processes_info[pg_name] = {}
