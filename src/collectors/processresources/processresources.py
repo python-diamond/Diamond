@@ -32,6 +32,7 @@ import os
 import re
 import time
 import configobj
+import itertools
 
 import diamond.collector
 import diamond.convertor
@@ -214,8 +215,11 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                     ("%s.%s" % (pg_name, key), value)
                     for key, value in counters.iteritems())
             else:
-                metrics = (("%s.%s" % (pg_name, key), -1)
-                           for key in self.default_info_keys)
+                metrics = [("%s.%s" % (pg_name, key), -1)
+                           for key in self.default_info_keys]
+                if cfg['count_workers']:
+                    metrics.append(('%s.workers_count' % pg_name: -1))
+
             [self.publish(*metric) for metric in metrics]
             # reinitialize process info
             self.processes_info[pg_name] = {}
