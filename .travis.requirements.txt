@@ -5,6 +5,7 @@ bernhard
 boto
 configobj
 docker-py
+futures
 kitchen
 mock
 psutil
@@ -15,6 +16,7 @@ pymongo<3.0
 python-statsd
 pyutmp
 redis
+requests
 simplejson
 setproctitle
 psycopg2
