@@ -32,7 +32,6 @@ import os
 import re
 import time
 import configobj
-import itertools
 
 import diamond.collector
 import diamond.convertor
@@ -118,6 +117,11 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                 self.config.merge(newconfig)
         [self.config['process'].pop(item, None)
             for item in ['path', 'extension']]
+
+        if 'report_missing' in self.config:
+            self.config['report_missing'] = diamond.collector.str_to_bool(
+                self.config['report_missing'])
+
         self.processes = {}
         self.processes_info = {}
         for pg_name, cfg in self.config['process'].items():
@@ -146,11 +150,13 @@ class ProcessResourcesCollector(diamond.collector.Collector):
     def get_default_config(self):
         """
         Default settings are:
+            report_missing: False
             path: 'process'
             unit: 'B'
         """
         config = super(ProcessResourcesCollector, self).get_default_config()
         config.update({
+            'report_missing': False,
             'path': 'process',
             'unit': 'B',
             'process': {},
@@ -215,10 +221,13 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                     ("%s.%s" % (pg_name, key), value)
                     for key, value in counters.iteritems())
             else:
-                metrics = [("%s.%s" % (pg_name, key), -1)
-                           for key in self.default_info_keys]
-                if cfg['count_workers']:
-                    metrics.append(('%s.workers_count' % pg_name: -1))
+                if self.config['report_missing']:
+                    metrics = [("%s.%s" % (pg_name, key), -1)
+                               for key in self.default_info_keys]
+                    if self.processes[pg_name]['count_workers']:
+                        metrics.append(('%s.workers_count' % pg_name, -1))
+                else:
+                    metrics = ()
 
             [self.publish(*metric) for metric in metrics]
             # reinitialize process info
