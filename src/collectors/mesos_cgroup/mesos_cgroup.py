@@ -94,8 +94,9 @@ class MesosCGroupCollector(diamond.collector.Collector):
         state = self.get_mesos_state()
 
         containers = {
-            'options': ''
+            'flags': state['flags']
         }
+
         if 'frameworks' in state:
             for framework in state['frameworks']:
                 for executor in framework['executors']:
