@@ -14,6 +14,42 @@ duration back from now.
     * requests
     * futures
 
+Example config file LogglyCollector.conf
+
+```
+enabled = true
+interval = 60
+
+[ metric ]
+[[ test.metric ]]
+subdomain = example
+username = loggly_user
+password = loggly_pass
+field = some.field
+query = tag:some_tag AND some_text_field='VALUE'
+```
+
+Example config file LogglyCollector.conf using split configuration
+
+```
+enabled = true
+interval = 60
+
+[ metric ]
+path = "/etc/diamond/configs/loggly/"
+```
+
+Example metric file for split configuration
+
+```
+[ metric ]
+[[ test.metric ]]
+subdomain = example
+username = loggly_user
+password = loggly_pass
+field = some.field
+query = '*'
+```
 """
 
 import diamond.collector as collector
@@ -70,7 +106,7 @@ class LogglyCollector(collector.Collector):
         return config_help
 
     def process_config(self):
-        """Prepare loggly URIs from configuration values."""
+        """Prepare metrics' configuration."""
         def set_defaults(config):
             defaults = {
                 'timestamp_field': 'timestamp',
