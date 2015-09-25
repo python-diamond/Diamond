@@ -31,6 +31,7 @@ for example: cgi workers.
 import os
 import re
 import time
+import configobj
 
 import diamond.collector
 import diamond.convertor
@@ -105,6 +106,22 @@ class ProcessResourcesCollector(diamond.collector.Collector):
             count_workers: [boolean]
         }
         """
+        if 'path' in self.config['process']:
+            config_extension = self.config['process'].get('extension', '.conf')
+            for cfgfile in os.listdir(self.config['process']['path']):
+                cfgfile = os.path.join(self.config['process']['path'], cfgfile)
+                cfgfile = os.path.abspath(cfgfile)
+                if not cfgfile.endswith(config_extension):
+                    continue
+                newconfig = configobj.ConfigObj(cfgfile)
+                self.config.merge(newconfig)
+        [self.config['process'].pop(item, None)
+            for item in ['path', 'extension']]
+
+        if 'report_missing' in self.config:
+            self.config['report_missing'] = diamond.collector.str_to_bool(
+                self.config['report_missing'])
+
         self.processes = {}
         self.processes_info = {}
         for pg_name, cfg in self.config['process'].items():
@@ -133,11 +150,13 @@ class ProcessResourcesCollector(diamond.collector.Collector):
     def get_default_config(self):
         """
         Default settings are:
+            report_missing: False
             path: 'process'
             unit: 'B'
         """
         config = super(ProcessResourcesCollector, self).get_default_config()
         config.update({
+            'report_missing': False,
             'path': 'process',
             'unit': 'B',
             'process': {},
@@ -197,9 +216,19 @@ class ProcessResourcesCollector(diamond.collector.Collector):
 
         # publish results
         for pg_name, counters in self.processes_info.iteritems():
-            metrics = (
-                ("%s.%s" % (pg_name, key), value)
-                for key, value in counters.iteritems())
+            if counters:
+                metrics = (
+                    ("%s.%s" % (pg_name, key), value)
+                    for key, value in counters.iteritems())
+            else:
+                if self.config['report_missing']:
+                    metrics = [("%s.%s" % (pg_name, key), -1)
+                               for key in self.default_info_keys]
+                    if self.processes[pg_name]['count_workers']:
+                        metrics.append(('%s.workers_count' % pg_name, -1))
+                else:
+                    metrics = ()
+
             [self.publish(*metric) for metric in metrics]
             # reinitialize process info
             self.processes_info[pg_name] = {}
