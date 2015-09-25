@@ -44,6 +44,7 @@ class InfluxdbHandler(Handler):
     """
     Sending data to Influxdb using batched format
     """
+
     def __init__(self, config=None):
         """
         Create a new instance of the InfluxdbeHandler
@@ -161,39 +162,39 @@ class InfluxdbHandler(Handler):
         """
         # Check to see if we have a valid socket. If not, try to connect.
         try:
-                if self.influx is None:
-                    self.log.debug("InfluxdbHandler: Socket is not connected. "
-                                   "Reconnecting.")
-                    self._connect()
-                if self.influx is None:
-                    self.log.debug("InfluxdbHandler: Reconnect failed.")
-                else:
-                    # build metrics data
-                    metrics = []
-                    for path in self.batch:
-                        metrics.append({
-                            "points": self.batch[path],
-                            "name": path,
-                            "columns": ["time", "value"]})
-                    # Send data to influxdb
-                    self.log.debug("InfluxdbHandler: writing %d series of data",
-                                   len(metrics))
-                    self.influx.write_points(metrics,
-                                             time_precision=self.time_precision)
+            if self.influx is None:
+                self.log.debug("InfluxdbHandler: Socket is not connected. "
+                               "Reconnecting.")
+                self._connect()
+            if self.influx is None:
+                self.log.debug("InfluxdbHandler: Reconnect failed.")
+            else:
+                # build metrics data
+                metrics = []
+                for path in self.batch:
+                    metrics.append({
+                        "points": self.batch[path],
+                        "name": path,
+                        "columns": ["time", "value"]})
+                # Send data to influxdb
+                self.log.debug("InfluxdbHandler: writing %d series of data",
+                               len(metrics))
+                self.influx.write_points(metrics,
+                                         time_precision=self.time_precision)
 
-                    # empty batch buffer
-                    self.batch = {}
-                    self.batch_count = 0
-                    self.time_multiplier = 1
+                # empty batch buffer
+                self.batch = {}
+                self.batch_count = 0
+                self.time_multiplier = 1
 
         except Exception:
-                self._close()
-                if self.time_multiplier < 5:
-                    self.time_multiplier += 1
-                self._throttle_error(
-                    "InfluxdbHandler: Error sending metrics, waiting for %ds.",
-                    2**self.time_multiplier)
-                raise
+            self._close()
+            if self.time_multiplier < 5:
+                self.time_multiplier += 1
+            self._throttle_error(
+                "InfluxdbHandler: Error sending metrics, waiting for %ds.",
+                2**self.time_multiplier)
+            raise
 
     def _connect(self):
         """

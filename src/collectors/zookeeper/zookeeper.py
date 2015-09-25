@@ -34,11 +34,13 @@ class ZookeeperCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(ZookeeperCollector, self).get_default_config_help()
         config_help.update({
-            'publish': "Which rows of 'status' you would like to publish."
-            + " Telnet host port' and type stats and hit enter to see the list"
-            + " of possibilities. Leave unset to publish all.",
-            'hosts': "List of hosts, and ports to collect. Set an alias by "
-            + " prefixing the host:port with alias@",
+            'publish':
+                "Which rows of 'status' you would like to publish." +
+                " Telnet host port' and type stats and hit enter to see the " +
+                " list of possibilities. Leave unset to publish all.",
+            'hosts':
+                "List of hosts, and ports to collect. Set an alias by " +
+                " prefixing the host:port with alias@",
         })
         return config_help
 

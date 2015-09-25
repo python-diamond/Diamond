@@ -61,8 +61,8 @@ class IPVSCollector(diamond.collector.Collector):
                            self.config['bin'])
             return False
 
-        if (str_to_bool(self.config['use_sudo'])
-                and not os.access(self.config['sudo_cmd'], os.X_OK)):
+        if ((str_to_bool(self.config['use_sudo']) and
+             not os.access(self.config['sudo_cmd'], os.X_OK))):
             self.log.error("%s does not exist, or is not executable",
                            self.config['sudo_cmd'])
             return False
@@ -105,16 +105,15 @@ class IPVSCollector(diamond.collector.Collector):
                 metric_name = ".".join([external, backend, metric])
                 # metric_value = int(row[column])
                 value = row[column]
-                if (value.endswith('K')):
-                        metric_value = int(value[0:len(value) - 1]) * 1024
-                elif (value.endswith('M')):
-                        metric_value = (int(value[0:len(value) - 1]) * 1024
-                                        * 1024)
-                elif (value.endswith('G')):
-                        metric_value = (int(value[0:len(value) - 1]) * 1024.0
-                                        * 1024.0 * 1024.0)
+                if value.endswith('K'):
+                    metric_value = int(value[0:len(value) - 1]) * 1024
+                elif value.endswith('M'):
+                    metric_value = (int(value[0:len(value) - 1]) * 1024 * 1024)
+                elif value.endswith('G'):
+                    metric_value = (
+                        int(value[0:len(value) - 1]) * 1024 * 1024 * 1024)
                 else:
-                        metric_value = float(value)
+                    metric_value = float(value)
 
                 self.publish(metric_name, metric_value)
 
@@ -154,16 +153,15 @@ class IPVSCollector(diamond.collector.Collector):
                 metric_name = ".".join([external, backend, metric])
                 # metric_value = int(row[column])
                 value = row[column]
-                if (value.endswith('K')):
-                        metric_value = int(value[0:len(value) - 1]) * 1024
-                elif (value.endswith('M')):
-                        metric_value = (int(value[0:len(value) - 1]) * 1024
-                                        * 1024)
-                elif (value.endswith('G')):
-                        metric_value = (int(value[0:len(value) - 1]) * 1024.0
-                                        * 1024.0 * 1024.0)
+                if value.endswith('K'):
+                    metric_value = int(value[0:len(value) - 1]) * 1024
+                elif value.endswith('M'):
+                    metric_value = int(value[0:len(value) - 1]) * 1024 * 1024
+                elif value.endswith('G'):
+                    metric_value = (
+                        int(value[0:len(value) - 1]) * 1024 * 1024 * 1024)
                 else:
-                        metric_value = float(value)
+                    metric_value = float(value)
 
                 total[metric] += metric_value
                 self.publish(metric_name, metric_value)

@@ -41,9 +41,9 @@ class HttpdCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(HttpdCollector, self).get_default_config_help()
         config_help.update({
-            'urls': "Urls to server-status in auto format, comma seperated,"
-            + " Format 'nickname http://host:port/server-status?auto, "
-            + ", nickname http://host:port/server-status?auto, etc'",
+            'urls': "Urls to server-status in auto format, comma seperated," +
+                    " Format 'nickname http://host:port/server-status?auto, " +
+                    ", nickname http://host:port/server-status?auto, etc'",
         })
         return config_help
 
@@ -87,8 +87,8 @@ class HttpdCollector(diamond.collector.Collector):
                     response = connection.getresponse()
                     data = response.read()
                     headers = dict(response.getheaders())
-                    if ('location' not in headers
-                            or headers['location'] == url):
+                    if (('location' not in headers or
+                         headers['location'] == url)):
                         connection.close()
                         break
                     url = headers['location']

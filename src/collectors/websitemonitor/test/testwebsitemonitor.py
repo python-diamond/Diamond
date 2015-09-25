@@ -27,11 +27,12 @@ class MockResponse(object):
 
 
 class TestWebsiteCollector(CollectorTestCase):
+
     def setUp(self, config=None):
         if config is None:
             config = get_collector_config('WebsiteCollector', {
                 'url': ''
-                })
+            })
         else:
             config = get_collector_config('WebsiteCollector', config)
 

@@ -15,6 +15,7 @@ import base64
 from xml.dom.minidom import parseString
 
 import diamond.collector
+from diamond.collector import str_to_bool
 
 
 class MonitCollector(diamond.collector.Collector):
@@ -66,29 +67,29 @@ class MonitCollector(diamond.collector.Collector):
             self.log.error("Got an empty response from the monit server")
             return
 
-        for service in dom.getElementsByTagName('service'):
-            if int(service.getAttribute('type')) == 3:
-                name = service.getElementsByTagName('name')[0].firstChild.data
-                if (service.getElementsByTagName(
-                    'status')[0].firstChild.data == '0'
-                    and service.getElementsByTagName(
-                        'monitor')[0].firstChild.data == '1'):
+        for svc in dom.getElementsByTagName('service'):
+            if int(svc.getAttribute('type')) == 3:
+                name = svc.getElementsByTagName('name')[0].firstChild.data
+                status = svc.getElementsByTagName('status')[0].firstChild.data
+                monitor = svc.getElementsByTagName(
+                    'monitor')[0].firstChild.data
+                if status == '0' and monitor == '1':
                     try:
-                        uptime = service.getElementsByTagName(
+                        uptime = svc.getElementsByTagName(
                             'uptime')[0].firstChild.data
                         metrics["%s.uptime" % name] = uptime
 
-                        cpu = service.getElementsByTagName(
+                        cpu = svc.getElementsByTagName(
                             'cpu')[0].getElementsByTagName(
                             'percent')[0].firstChild.data
                         metrics["%s.cpu.percent" % name] = cpu
-                        if self.config['send_totals']:
-                            cpu_total = service.getElementsByTagName(
+                        if str_to_bool(self.config['send_totals']):
+                            cpu_total = svc.getElementsByTagName(
                                 'cpu')[0].getElementsByTagName(
                                 'percenttotal')[0].firstChild.data
                             metrics["%s.cpu.percent_total" % name] = cpu_total
 
-                        mem = int(service.getElementsByTagName(
+                        mem = int(svc.getElementsByTagName(
                             'memory')[0].getElementsByTagName(
                             'kilobyte')[0].firstChild.data)
                         for unit in self.config['byte_unit']:
@@ -98,8 +99,8 @@ class MonitCollector(diamond.collector.Collector):
                                     oldUnit='kilobyte',
                                     newUnit=unit))
                         metrics["%s.uptime" % name] = uptime
-                        if self.config['send_totals']:
-                            mem_total = int(service.getElementsByTagName(
+                        if str_to_bool(self.config['send_totals']):
+                            mem_total = int(svc.getElementsByTagName(
                                 'memory')[0].getElementsByTagName(
                                 'kilobytetotal')[0].firstChild.data)
                             for unit in self.config['byte_unit']:

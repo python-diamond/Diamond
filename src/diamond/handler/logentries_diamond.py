@@ -31,6 +31,7 @@ class LogentriesDiamondHandler(Handler):
     """
       Implements the abstract Handler class
     """
+
     def __init__(self, config=None):
         """
         New instance of LogentriesDiamondHandler class
@@ -88,8 +89,8 @@ class LogentriesDiamondHandler(Handler):
             metric = self.queue.popleft()
             topic, value, timestamp = str(metric).split()
             msg = json.dumps({"event": {topic: value}})
-            req = urllib2.Request("https://js.logentries.com/v1/logs/"
-                                  + self.log_token, msg)
+            req = urllib2.Request("https://js.logentries.com/v1/logs/" +
+                                  self.log_token, msg)
             try:
                 urllib2.urlopen(req)
             except urllib2.URLError, e:

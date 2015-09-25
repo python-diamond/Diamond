@@ -29,16 +29,17 @@ class OpenstackSwiftCollector(diamond.collector.Collector):
         config_help = super(OpenstackSwiftCollector,
                             self).get_default_config_help()
         config_help.update({
-            'enable_dispersion_report': 'gather swift-dispersion-report metrics'
-            + ' (default False)',
-            'enable_container_metrics': 'gather containers metrics'
-            + '(# objects, bytes used, x_timestamp.  default True)',
+            'enable_dispersion_report': 'gather swift-dispersion-report ' +
+                                        'metrics (default False)',
+            'enable_container_metrics': 'gather containers metrics ' +
+                                        '(# objects, bytes used, ' +
+                                        'x_timestamp. default True)',
             'auth_url': 'authentication url (for enable_container_metrics)',
             'account': 'swift auth account (for enable_container_metrics)',
             'user': 'swift auth user (for enable_container_metrics)',
             'password': 'swift auth password (for enable_container_metrics)',
-            'containers': 'containers on which to count number of objects, '
-            + 'space separated list (for enable_container_metrics)'
+            'containers': 'containers on which to count number of objects, ' +
+                          'space separated list (for enable_container_metrics)'
         })
         return config_help
 

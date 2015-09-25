@@ -80,8 +80,8 @@ class CephCollector(diamond.collector.Collector):
         with ceph daemons.
         """
         socket_pattern = os.path.join(self.config['socket_path'],
-                                      (self.config['socket_prefix']
-                                       + '*.' + self.config['socket_ext']))
+                                      (self.config['socket_prefix'] +
+                                       '*.' + self.config['socket_ext']))
         return glob.glob(socket_pattern)
 
     def _get_counter_prefix_from_socket_name(self, name):

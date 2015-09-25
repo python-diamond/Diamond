@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -13,7 +13,7 @@ from mock import call
 from diamond.collector import Collector
 from tokumx import TokuMXCollector
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_pymongo_is_available(func):
@@ -26,6 +26,7 @@ def run_only_if_pymongo_is_available(func):
 
 
 class TestTokuMXCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('TokuMXCollector', {
             'host': 'localhost:27017',
@@ -143,6 +144,7 @@ class TestTokuMXCollector(CollectorTestCase):
 
 
 class TestMongoMultiHostDBCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('TokuMXCollector', {
             'hosts': ['localhost:27017', 'localhost:27057'],
@@ -264,6 +266,6 @@ class TestMongoMultiHostDBCollector(CollectorTestCase):
         self.connection.database_names.return_value = ['db1', 'baddb']
 
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

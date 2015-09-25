@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 import os
 from test import CollectorTestCase
 from test import get_collector_config
@@ -17,6 +17,7 @@ from cpuacct_cgroup import CpuAcctCgroupCollector
 
 
 class TestCpuAcctCgroupCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('CpuAcctCgroupCollector', {
             'interval': 10

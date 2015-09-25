@@ -17,6 +17,7 @@ import re
 import subprocess
 
 import diamond.collector
+from diamond.collector import str_to_bool
 
 
 class MountStatsCollector(diamond.collector.Collector):
@@ -80,12 +81,14 @@ class MountStatsCollector(diamond.collector.Collector):
         config_help = super(MountStatsCollector,
                             self).get_default_config_help()
         config_help.update({
-            'exclude_filters': "A list of regex patterns. Any filesystem"
-            + " matching any of these patterns will be excluded from"
-            + " mount stats metrics collection.",
-            'include_filters': "A list of regex patterns. Any filesystem"
-            + " matching any of these patterns will be included from"
-            + " mount stats metrics collection.",
+            'exclude_filters':
+                "A list of regex patterns. Any filesystem" +
+                " matching any of these patterns will be excluded from" +
+                " mount stats metrics collection.",
+            'include_filters':
+                "A list of regex patterns. Any filesystem" +
+                " matching any of these patterns will be included from" +
+                " mount stats metrics collection.",
             'use_sudo': 'Use sudo?',
             'sudo_cmd': 'Path to sudo',
         })
@@ -109,7 +112,7 @@ class MountStatsCollector(diamond.collector.Collector):
         the statvers value returned by mountstats.
         """
 
-        if self.config['use_sudo']:
+        if str_to_bool(self.config['use_sudo']):
             if not os.access(self.config['sudo_cmd'], os.X_OK):
                 self.log.error("Cannot find or exec %s"
                                % self.config['sudo_cmd'])

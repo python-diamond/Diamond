@@ -60,7 +60,7 @@ class NetAppCollector(diamond.collector.Collector):
         'aggregate': [
             ("user_reads", "user_read_iops", 1),
             ("user_writes", "user_write_iops", 1)
-            ],
+        ],
         'disk': [
             ("disk_busy", "disk_busy_pct", 100),
             ("base_for_disk_busy", "base_for_disk_busy", 1),
@@ -68,21 +68,21 @@ class NetAppCollector(diamond.collector.Collector):
             ("user_write_blocks", "user_write_blocks_per_sec", 1),
             ("user_read_latency", "user_read_latency", 0.001),
             ("user_write_latency", "user_write_latency", 0.001)
-            ],
+        ],
         'ifnet': [
             ("send_data", "tx_bytes_per_sec", 1),
             ("recv_data", "rx_bytes_per_sec", 1)
-            ],
+        ],
         'lun': [
             ("total_ops", "total_iops", 1),
             ("read_ops", "read_iops", 1),
             ("write_ops", "write_iops", 1),
             ("avg_latency", "avg_latency", 1)
-            ],
+        ],
         'processor': [
             ("processor_busy", "processor_busy_pct", 100),
             ("processor_elapsed_time", "processor_elapsed_time", 1)
-            ],
+        ],
         'system': [
             ("nfs_ops", "nfs_iops", 1),
             ("cifs_ops", "cifs_iops", 1),
@@ -103,7 +103,7 @@ class NetAppCollector(diamond.collector.Collector):
             ("sys_read_latency", "sys_read_latency", 1),
             ("sys_write_latency", "sys_write_latency", 1),
             ("sys_avg_latency", "sys_avg_latency", 1)
-            ],
+        ],
         'vfiler': [
             ("vfiler_cpu_busy", "cpu_busy_pct", 100),
             ("vfiler_cpu_busy_base", "cpu_busy_base", 1),
@@ -113,7 +113,7 @@ class NetAppCollector(diamond.collector.Collector):
             ("vfiler_write_ops", "write_iops", 1),
             ("vfiler_read_bytes", "read_bytes_per_sec", 1000),
             ("vfiler_write_bytes", "write_bytes_per_sec", 1000),
-            ],
+        ],
         'volume': [
             ("total_ops", "total_iops", 1),
             ("avg_latency", "avg_latency", 0.001),
@@ -147,7 +147,7 @@ class NetAppCollector(diamond.collector.Collector):
             ("nfs_write_latency", "nfs_write_latency", 0.001),
             ("nfs_read_ops", "nfs_read_iops", 1),
             ("nfs_write_ops", "nfs_write_iops", 1)
-            ],
+        ],
     }
 
     # For some metrics we need to divide one value from the API with another.
@@ -341,7 +341,7 @@ class NetAppCollector(diamond.collector.Collector):
                             non_zero_blocks = [
                                 block for block in raw_name.split(":")
                                 if block != "00000000"
-                                ]
+                            ]
                             raw_name = "".join(non_zero_blocks)
                         instance_name = re.sub(r'\W', '_', raw_name)
                         counters_list = instance.child_get("counters")

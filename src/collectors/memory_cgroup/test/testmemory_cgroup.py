@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 import os
 from test import CollectorTestCase
 from test import get_collector_config

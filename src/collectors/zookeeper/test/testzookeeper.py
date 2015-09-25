@@ -12,6 +12,7 @@ from zookeeper import ZookeeperCollector
 ###############################################################################
 
 class TestZookeeperCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('ZookeeperCollector', {
         })

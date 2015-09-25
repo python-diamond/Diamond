@@ -15,6 +15,7 @@ import re
 
 import diamond.collector
 import diamond.convertor
+from diamond.collector import str_to_bool
 
 
 class AmavisCollector(diamond.collector.Collector):
@@ -64,7 +65,7 @@ class AmavisCollector(diamond.collector.Collector):
         Collect memory stats
         """
         try:
-            if self.config['use_sudo']:
+            if str_to_bool(self.config['use_sudo']):
                 # Use -u instead of --user as the former is more portable. Not
                 # all versions of sudo support the long form --user.
                 cmdline = [

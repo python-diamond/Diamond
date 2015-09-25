@@ -38,6 +38,7 @@ class RabbitMQClient(object):
     """
     Tiny interface into the rabbit http api
     """
+
     def __init__(self, host, user, password, timeout=5):
         self.base_url = 'http://%s/api/' % host
         self.timeout = timeout
@@ -133,7 +134,8 @@ class RabbitMQCollector(diamond.collector.Collector):
             for metric in health_metrics:
                 self.publish('health.{0}'.format(metric), node_data[metric])
             if self.config['cluster']:
-                self.publish('cluster.partitions', len(node_data['partitions']))
+                self.publish('cluster.partitions',
+                             len(node_data['partitions']))
                 content = client.get_nodes()
                 self.publish('cluster.nodes', len(content))
         except Exception, e:
@@ -144,8 +146,8 @@ class RabbitMQCollector(diamond.collector.Collector):
         self.collect_health()
         matchers = []
         if self.config['queues_ignored']:
-                for reg in self.config['queues_ignored'].split():
-                    matchers.append(re.compile(reg))
+            for reg in self.config['queues_ignored'].split():
+                matchers.append(re.compile(reg))
         try:
             client = RabbitMQClient(self.config['host'],
                                     self.config['user'],
@@ -201,8 +203,8 @@ class RabbitMQCollector(diamond.collector.Collector):
 
                 for queue in client.get_queues(vhost):
                     # If queues are defined and it doesn't match, then skip.
-                    if (queue['name'] not in allowed_queues
-                            and len(allowed_queues) > 0):
+                    if ((queue['name'] not in allowed_queues and
+                         len(allowed_queues) > 0)):
                         continue
                     if matchers and any(
                             [m.match(queue['name']) for m in matchers]):

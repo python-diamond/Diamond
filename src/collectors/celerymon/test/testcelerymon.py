@@ -12,6 +12,7 @@ from celerymon import CelerymonCollector
 ###############################################################################
 
 class TestCelerymonCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('CelerymonCollector', {
         })

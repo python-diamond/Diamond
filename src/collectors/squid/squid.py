@@ -45,8 +45,8 @@ class SquidCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(SquidCollector, self).get_default_config_help()
         config_help.update({
-            'hosts': 'List of hosts to collect from. Format is '
-            + '[nickname@]host[:port], [nickname@]host[:port], etc',
+            'hosts': 'List of hosts to collect from. Format is ' +
+            '[nickname@]host[:port], [nickname@]host[:port], etc',
         })
         return config_help
 
@@ -66,9 +66,11 @@ class SquidCollector(diamond.collector.Collector):
             squid_sock = socket.socket()
             squid_sock.connect((host, int(port)))
             squid_sock.settimeout(0.25)
-            squid_sock.sendall("GET cache_object://localhost/counters HTTP/1.0"
-                               + "\r\nHost: localhost\r\nAccept: */*\r\nConnec"
-                               + "tion: close\r\n\r\n")
+            squid_sock.sendall(
+                "GET cache_object://localhost/counters HTTP/1.0\r\n" +
+                "Host: localhost\r\n" +
+                "Accept: */*\r\n" +
+                "Connection: close\r\n\r\n")
 
             fulldata = ''
 

@@ -180,8 +180,8 @@ class RedisCollector(diamond.collector.Collector):
             'db': '',
             'auth': 'Password?',
             'databases': 'how many database instances to collect',
-            'instances': "Redis addresses, comma separated, syntax:"
-            + " nick1@host:port, nick2@:port or nick3@host"
+            'instances': "Redis addresses, comma separated, syntax:" +
+                         " nick1@host:port, nick2@:port or nick3@host"
         })
         return config_help
 
@@ -297,7 +297,7 @@ class RedisCollector(diamond.collector.Collector):
 
         # Look for databaase speific stats
         for dbnum in range(0, int(self.config.get('databases',
-                                  self._DATABASE_COUNT))):
+                                                  self._DATABASE_COUNT))):
             db = 'db%i' % dbnum
             if db in info:
                 for key in info[db]:

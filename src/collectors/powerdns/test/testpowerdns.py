@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,10 +11,11 @@ from mock import patch
 from diamond.collector import Collector
 from powerdns import PowerDNSCollector
 
-################################################################################
+##########################################################################
 
 
 class TestPowerDNSCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('PowerDNSCollector', {
             'interval': 1,
@@ -35,7 +36,7 @@ class TestPowerDNSCollector(CollectorTestCase):
             Mock(return_value=(
                 self.getFixture(
                     'pdns_control-2.9.22.6-1.el6-A'
-                    ).getvalue(),
+                ).getvalue(),
                 '')))
 
         patch_communicate.start()
@@ -84,6 +85,6 @@ class TestPowerDNSCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()
