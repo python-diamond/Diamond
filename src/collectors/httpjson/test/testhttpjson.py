@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 from test import CollectorTestCase
 from test import get_collector_config
 from mock import Mock
@@ -8,10 +8,11 @@ from mock import patch
 from diamond.collector import Collector
 from httpjson import HTTPJSONCollector
 
-################################################################################
+##########################################################################
 
 
 class TestHTTPJSONCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('HTTPJSONCollector', {})
         self.collector = HTTPJSONCollector(config, None)

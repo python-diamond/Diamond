@@ -16,6 +16,7 @@ from varnish import VarnishCollector
 
 
 class TestVarnishCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('VarnishCollector', {})
 

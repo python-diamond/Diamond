@@ -12,7 +12,7 @@ Send metrics to a http endpoint via POST
 #### Configuration
 Enable this handler
 
- * handers = diamond.handler.httpHandler.HttpPostHandler
+ * handlers = diamond.handler.httpHandler.HttpPostHandler
 
  * url = http://www.example.com/endpoint
 

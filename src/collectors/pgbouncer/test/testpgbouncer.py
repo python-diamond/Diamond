@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -10,7 +10,7 @@ from mock import patch
 
 from pgbouncer import PgbouncerCollector
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_psycopg2_is_available(func):
@@ -23,6 +23,7 @@ def run_only_if_psycopg2_is_available(func):
 
 
 class TestPgbouncerCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('PgbouncerCollector', {})
 
@@ -102,6 +103,6 @@ class TestPgbouncerCollector(CollectorTestCase):
             '127.0.0.2', '6432', 'pgbouncer', '')
 
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

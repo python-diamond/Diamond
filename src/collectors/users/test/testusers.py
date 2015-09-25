@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -14,7 +14,7 @@ from users import UsersCollector
 import sys
 
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_pyutmp_is_available(func):
@@ -31,6 +31,7 @@ def run_only_if_pyutmp_is_available(func):
 
 
 class TestUsersCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('UsersCollector', {
             'utmp': self.getFixturePath('utmp.centos6'),
@@ -63,6 +64,6 @@ class TestUsersCollector(CollectorTestCase):
 
             self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

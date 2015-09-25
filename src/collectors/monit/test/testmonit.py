@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,10 +12,11 @@ from diamond.collector import Collector
 
 from monit import MonitCollector
 
-################################################################################
+##########################################################################
 
 
 class TestMonitCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('MonitCollector',
                                       {'byte_unit': 'kilobyte', })
@@ -76,6 +77,6 @@ class TestMonitCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

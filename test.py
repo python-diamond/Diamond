@@ -4,12 +4,17 @@
 
 import os
 import sys
-import unittest
 import inspect
 import traceback
 import optparse
 import logging
 import configobj
+
+try:
+    # python 2.6
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 try:
     import cPickle as pickle
@@ -225,10 +230,10 @@ def getCollectorTests(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
 
-        if (os.path.isfile(cPath)
-                and len(f) > 3
-                and f[-3:] == '.py'
-                and f[0:4] == 'test'):
+        if ((os.path.isfile(cPath) and
+             len(f) > 3 and
+             f[-3:] == '.py' and
+             f[0:4] == 'test')):
             sys.path.append(os.path.dirname(cPath))
             sys.path.append(os.path.dirname(os.path.dirname(cPath)))
             modname = f[:-3]

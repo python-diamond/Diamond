@@ -142,7 +142,8 @@ class cloudwatchHandler(Handler):
             "CloudWatch: Attempting to connect to CloudWatch at Region: %s",
             self.region)
         try:
-            self.connection = boto.ec2.cloudwatch.connect_to_region(self.region)
+            self.connection = boto.ec2.cloudwatch.connect_to_region(
+                self.region)
             self.log.debug(
                 "CloudWatch: Succesfully Connected to CloudWatch at Region: %s",
                 self.region)
@@ -179,10 +180,10 @@ class cloudwatchHandler(Handler):
                 collector,
                 str(rule['metric']),
                 metricname
-                )
+            )
 
-            if (str(rule['collector']) == collector
-                    and str(rule['metric']) == metricname):
+            if ((str(rule['collector']) == collector and
+                 str(rule['metric']) == metricname)):
                 self.log.debug(
                     "CloudWatch: Attempting to publish metric: %s to %s "
                     "with value (%s) @%s",
@@ -190,7 +191,7 @@ class cloudwatchHandler(Handler):
                     rule['namespace'],
                     str(metric.value),
                     str(metric.timestamp)
-                    )
+                )
                 try:
                     self.connection.put_metric_data(
                         str(rule['namespace']),
@@ -204,7 +205,7 @@ class cloudwatchHandler(Handler):
                         rule['name'],
                         rule['namespace'],
                         str(metric.value)
-                        )
+                    )
                 except AttributeError, e:
                     self.log.error(
                         "CloudWatch: Failed publishing - %s ", str(e))

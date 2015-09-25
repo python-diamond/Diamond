@@ -210,12 +210,13 @@ class TCPCollector(diamond.collector.Collector):
         """
         config = super(TCPCollector, self).get_default_config()
         config.update({
-            'path':             'tcp',
-            'allowed_names':    'ListenOverflows, ListenDrops, TCPLoss, '
-            + 'TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, '
-            + 'TCPForwardRetrans, TCPSlowStartRetrans, CurrEstab, '
-            + 'TCPAbortOnMemory, TCPBacklogDrop, AttemptFails, '
-            + 'EstabResets, InErrs, ActiveOpens, PassiveOpens',
+            'path': 'tcp',
+            'allowed_names':
+                'ListenOverflows, ListenDrops, TCPLoss, ' +
+                'TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, ' +
+                'TCPForwardRetrans, TCPSlowStartRetrans, CurrEstab, ' +
+                'TCPAbortOnMemory, TCPBacklogDrop, AttemptFails, ' +
+                'EstabResets, InErrs, ActiveOpens, PassiveOpens',
         })
         return config
 
@@ -263,8 +264,8 @@ class TCPCollector(diamond.collector.Collector):
                 metrics[header[i]] = data[i]
 
         for metric_name in metrics.keys():
-            if (len(self.config['allowed_names']) > 0
-                    and metric_name not in self.config['allowed_names']):
+            if ((len(self.config['allowed_names']) > 0 and
+                 metric_name not in self.config['allowed_names'])):
                 continue
 
             value = long(metrics[metric_name])

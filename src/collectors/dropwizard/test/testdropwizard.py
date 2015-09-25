@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,10 +12,11 @@ from diamond.collector import Collector
 
 from dropwizard import DropwizardCollector
 
-################################################################################
+##########################################################################
 
 
 class TestDropwizardCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('DropwizardCollector', {})
 
@@ -78,6 +79,6 @@ class TestDropwizardCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

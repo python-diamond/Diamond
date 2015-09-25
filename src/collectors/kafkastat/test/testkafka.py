@@ -30,6 +30,7 @@ def run_only_if_ElementTree_is_available(func):
 
 
 class TestKafkaCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('KafkaCollector', {
             'interval': 10

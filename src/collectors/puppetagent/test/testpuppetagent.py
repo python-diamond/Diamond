@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,7 +11,7 @@ from mock import patch
 from diamond.collector import Collector
 from puppetagent import PuppetAgentCollector
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_yaml_is_available(func):
@@ -24,6 +24,7 @@ def run_only_if_yaml_is_available(func):
 
 
 class TestPuppetAgentCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('PuppetAgentCollector', {
             'interval': 10,
@@ -86,6 +87,6 @@ class TestPuppetAgentCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, metrics)
         self.assertUnpublishedMany(publish_mock, unpublished_metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

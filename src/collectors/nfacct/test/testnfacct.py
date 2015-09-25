@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,10 +11,11 @@ from mock import patch
 from diamond.collector import Collector
 from nfacct import NetfilterAccountingCollector
 
-################################################################################
+##########################################################################
 
 
 class TestNetfilterAccountingCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('NetfilterAccountingCollector', {
             'interval': 10,
@@ -58,6 +59,6 @@ class TestNetfilterAccountingCollector(CollectorTestCase):
         })
 
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

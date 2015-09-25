@@ -77,8 +77,8 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
     HOST_FIELDS = ['HOSTPERFDATA']
     SERVICE_FIELDS = ['SERVICEDESC', 'SERVICEPERFDATA']
     TOKENIZER_RE = (
-        r"([^\s]+|'[^']+')=([-.\d]+)(c|s|ms|us|B|KB|MB|GB|TB|%)?"
-        + r"(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?")
+        r"([^\s]+|'[^']+')=([-.\d]+)(c|s|ms|us|B|KB|MB|GB|TB|%)?" +
+        r"(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?")
 
     def get_default_config_help(self):
         config_help = super(NagiosPerfdataCollector,

@@ -65,18 +65,18 @@ class Server(object):
         Load handler and collector classes and then start collectors
         """
 
-        ########################################################################
+        #######################################################################
         # Config
-        ########################################################################
+        #######################################################################
         self.config = load_config(self.configfile)
 
         collectors = load_collectors(self.config['server']['collectors_path'])
 
-        ########################################################################
+        #######################################################################
         # Handlers
         #
         # TODO: Eventually move each handler to it's own process space?
-        ########################################################################
+        #######################################################################
 
         if 'handlers_path' in self.config['server']:
             handlers_path = self.config['server']['handlers_path']
@@ -106,7 +106,7 @@ class Server(object):
         QueueHandler = load_dynamic_class(
             'diamond.handler.queue.QueueHandler',
             Handler
-            )
+        )
 
         self.handler_queue = QueueHandler(
             config=self.config, queue=self.metric_queue, log=self.log)
@@ -120,13 +120,13 @@ class Server(object):
         process.daemon = True
         process.start()
 
-        ########################################################################
+        #######################################################################
         # Signals
-        ########################################################################
+        #######################################################################
 
         signal.signal(signal.SIGHUP, signal_to_exception)
 
-        ########################################################################
+        #######################################################################
 
         while True:
             try:
@@ -192,7 +192,7 @@ class Server(object):
                         name=process_name,
                         target=collector_process,
                         args=(collector, self.metric_queue, self.log)
-                        )
+                    )
                     process.daemon = True
                     process.start()
 

@@ -12,6 +12,7 @@ from files import FilesCollector
 ###############################################################################
 
 class TestFilesCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('FilesCollector', {
         })

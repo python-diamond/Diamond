@@ -37,9 +37,10 @@ class DiskSpaceCollector(diamond.collector.Collector):
         config_help = super(DiskSpaceCollector, self).get_default_config_help()
         config_help.update({
             'filesystems': "filesystems to examine",
-            'exclude_filters': "A list of regex patterns. Any filesystem"
-            + " matching any of these patterns will be excluded from disk"
-            + " space metrics collection",
+            'exclude_filters':
+                "A list of regex patterns. Any filesystem" +
+                " matching any of these patterns will be excluded from disk" +
+                " space metrics collection",
         })
         return config_help
 
@@ -51,8 +52,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
         config.update({
             'path': 'diskspace',
             # filesystems to examine
-            'filesystems': 'ext2, ext3, ext4, xfs, glusterfs, nfs, ntfs, hfs,'
-            + ' fat32, fat16, btrfs',
+            'filesystems': 'ext2, ext3, ext4, xfs, glusterfs, nfs, nfs4, ' +
+                           ' ntfs, hfs, fat32, fat16, btrfs',
 
             # exclude_filters
             #   A list of regex patterns
@@ -129,20 +130,20 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 # Skip the filesystem if it is not in the list of valid
                 # filesystems
                 if fs_type not in self.filesystems:
-                    self.log.debug("Ignoring %s since it is of type %s which "
-                                   + " is not in the list of filesystems.",
+                    self.log.debug("Ignoring %s since it is of type %s " +
+                                   " which is not in the list of filesystems.",
                                    mount_point, fs_type)
                     continue
 
                 # Process the filters
                 if self.exclude_reg.search(mount_point):
-                    self.log.debug("Ignoring %s since it is in the "
-                                   + "exclude_filter list.", mount_point)
+                    self.log.debug("Ignoring %s since it is in the " +
+                                   "exclude_filter list.", mount_point)
                     continue
 
-                if (mount_point.startswith('/dev')
-                    or mount_point.startswith('/proc')
-                        or mount_point.startswith('/sys')):
+                if ((mount_point.startswith('/dev') or
+                     mount_point.startswith('/proc') or
+                     mount_point.startswith('/sys'))):
                     continue
 
                 if '/' in device and mount_point.startswith('/'):

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 import os
 
@@ -18,10 +18,11 @@ except ImportError:
 from diamond.collector import Collector
 from kvm import KVMCollector
 
-################################################################################
+##########################################################################
 
 
 class TestKVMCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('KVMCollector', {
             'interval': 10,
@@ -37,8 +38,8 @@ class TestKVMCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
         patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
-            '0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0'
-            + '\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n'
+            '0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0' +
+            '\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n'
         )))
 
         patch_open.start()
@@ -89,6 +90,6 @@ class TestKVMCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

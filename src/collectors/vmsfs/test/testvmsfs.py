@@ -12,6 +12,7 @@ from vmsfs import VMSFSCollector
 ###############################################################################
 
 class TestVMSFSCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('VMSFSCollector', {
         })

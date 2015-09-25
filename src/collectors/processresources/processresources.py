@@ -91,6 +91,7 @@ def get_value(process, name):
 
 
 class ProcessResourcesCollector(diamond.collector.Collector):
+
     def process_config(self):
         super(ProcessResourcesCollector, self).process_config()
         """

@@ -12,6 +12,7 @@ from vmsdoms import VMSDomsCollector
 ###############################################################################
 
 class TestVMSDomsCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('VMSDomsCollector', {
         })

@@ -49,6 +49,7 @@ from collections import namedtuple
 from string import Template
 
 import diamond.collector
+from diamond.collector import str_to_bool
 from diamond.metric import Metric
 
 try:
@@ -68,6 +69,7 @@ class memoized(object):
     a memoization decorator with limited cache size, consider:
     bit.ly/1wtHmlM
     """
+
     def __init__(self, func):
         self.func = func
         self.cache = {}
@@ -140,15 +142,15 @@ class ElbCollector(diamond.collector.Collector):
 
     def process_config(self):
         super(ElbCollector, self).process_config()
-        if self.config['enabled']:
+        if str_to_bool(self.config['enabled']):
             self.interval = self.config.as_int('interval')
             # Why is this?
             if self.interval % 60 != 0:
                 raise Exception('Interval must be a multiple of 60 seconds: %s'
                                 % self.interval)
 
-        if ('access_key_id' in self.config
-                and 'secret_access_key' in self.config):
+        if (('access_key_id' in self.config and
+             'secret_access_key' in self.config)):
             self.auth_kwargs = {
                 'aws_access_key_id': self.config['access_key_id'],
                 'aws_secret_access_key': self.config['secret_access_key']
@@ -179,7 +181,8 @@ class ElbCollector(diamond.collector.Collector):
         return config
 
     def publish_delayed_metric(self, name, value, timestamp, raw_value=None,
-                               precision=0, metric_type='GAUGE', instance=None):
+                               precision=0, metric_type='GAUGE',
+                               instance=None):
         """
         Metrics may not be immediately available when querying cloudwatch.
         Hence, allow the ability to publish a metric from some the past given
@@ -274,7 +277,8 @@ class ElbCollector(diamond.collector.Collector):
             self.process_stat(region_cw_conn.region.name, zone, elb_name,
                               metric, stat, end_time)
 
-    def process_elb(self, region_cw_conn, zone, start_time, end_time, elb_name):
+    def process_elb(self, region_cw_conn, zone,
+                    start_time, end_time, elb_name):
         for metric in self.metrics:
             self.process_metric(region_cw_conn, zone, start_time, end_time,
                                 elb_name, metric)

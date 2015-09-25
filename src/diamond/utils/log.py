@@ -8,6 +8,7 @@ import os
 
 
 class DebugFormatter(logging.Formatter):
+
     def __init__(self, fmt=None):
         if fmt is None:
             fmt = ('%(created)s\t' +

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,7 +12,7 @@ from mock import patch
 from diamond.collector import Collector
 from diskspace import DiskSpaceCollector
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_major_is_available(func):
@@ -27,6 +27,7 @@ def run_only_if_major_is_available(func):
 
 
 class TestDiskSpaceCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('DiskSpaceCollector', {
             'interval': 10,
@@ -144,6 +145,6 @@ class TestDiskSpaceCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

@@ -69,7 +69,7 @@ class SupervisordCollector(diamond.collector.Collector):
             server = xmlrpclib.ServerProxy(
                 'http://127.0.0.1',
                 supervisor.xmlrpc.SupervisorTransport(None, None, uri)
-                ).supervisor
+            ).supervisor
 
         elif protocol == 'http':
             server = xmlrpclib.Server(uri).supervisor

@@ -17,6 +17,7 @@ class WebsiteMonitorCollector(diamond.collector.Collector):
     """
     Gather HTTP response code and Duration of HTTP request
     """
+
     def get_default_config_help(self):
         config_help = super(WebsiteMonitorCollector,
                             self).get_default_config_help()

@@ -25,8 +25,8 @@ class HAProxyCollector(diamond.collector.Collector):
             'url': "Url to stats in csv format",
             'user': "Username",
             'pass': "Password",
-            'ignore_servers': "Ignore servers, just collect frontend and "
-                              + "backend stats",
+            'ignore_servers': "Ignore servers, just collect frontend and " +
+                              "backend stats",
         })
         return config_help
 
@@ -72,8 +72,8 @@ class HAProxyCollector(diamond.collector.Collector):
         authline = e.headers['www-authenticate']
 
         # this regular expression is used to extract scheme and realm
-        authre = (r'''(?:\s*www-authenticate\s*:)?\s*'''
-                  + '''(\w*)\s+realm=['"]([^'"]+)['"]''')
+        authre = (r'''(?:\s*www-authenticate\s*:)?\s*''' +
+                  '''(\w*)\s+realm=['"]([^'"]+)['"]''')
         authobj = re.compile(authre, re.IGNORECASE)
         matchobj = authobj.match(authline)
         if not matchobj:
@@ -100,8 +100,8 @@ class HAProxyCollector(diamond.collector.Collector):
             return metrics
         except IOError, e:
             # here we shouldn't fail if the USER/PASS is right
-            self.log.error("Error retrieving HAProxy stats. (Invalid username "
-                           + "or password?) %s", e)
+            self.log.error("Error retrieving HAProxy stats. " +
+                           "(Invalid username or password?) %s", e)
             return metrics
 
     def _generate_headings(self, row):
@@ -120,8 +120,8 @@ class HAProxyCollector(diamond.collector.Collector):
         section_name = section and self._sanitize(section.lower()) + '.' or ''
 
         for row in data:
-            if (self._get_config_value(section, 'ignore_servers')
-                    and row[1].lower() not in ['frontend', 'backend']):
+            if ((self._get_config_value(section, 'ignore_servers') and
+                 row[1].lower() not in ['frontend', 'backend'])):
                 continue
 
             part_one = self._sanitize(row[0].lower())

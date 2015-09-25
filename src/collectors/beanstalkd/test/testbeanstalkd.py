@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,7 +12,7 @@ from mock import patch
 from diamond.collector import Collector
 from beanstalkd import BeanstalkdCollector
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_beanstalkc_is_available(func):
@@ -25,6 +25,7 @@ def run_only_if_beanstalkc_is_available(func):
 
 
 class TestBeanstalkdCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('BeanstalkdCollector', {
             'host': 'localhost',
@@ -103,8 +104,8 @@ class TestBeanstalkdCollector(CollectorTestCase):
                     'current-jobs-reserved': 0,
                     'current-using': 10,
                     'current-jobs-urgent': 0,
-                    }
-                ]
+                }
+            ]
         }
 
         patch_get_stats = patch.object(BeanstalkdCollector,
@@ -181,6 +182,6 @@ class TestBeanstalkdCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

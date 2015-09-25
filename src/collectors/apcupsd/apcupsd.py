@@ -27,8 +27,10 @@ class ApcupsdCollector(diamond.collector.Collector):
         config_help.update({
             'hostname': 'Hostname to collect from',
             'port': 'port to collect from. defaults to 3551',
-            'metrics': 'List of metrics. Valid metric keys can be found [here]'
-            + '(http://www.apcupsd.com/manual/manual.html#status-report-fields)'
+            'metrics':
+                'List of metrics. Valid metric keys can be found [here]' +
+                '(http://www.apcupsd.com/manual/' +
+                'manual.html#status-report-fields)'
         })
         return config_help
 

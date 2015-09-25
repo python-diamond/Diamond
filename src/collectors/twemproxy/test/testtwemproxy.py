@@ -21,6 +21,7 @@ from os import path
 
 
 class TestTwemproxyCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('TwemproxyCollector', {
             'interval': 60,
@@ -57,7 +58,7 @@ class TestTwemproxyCollector(CollectorTestCase):
         patch_raw_stats2.stop()
 
         with open(path.join(path.dirname(__file__),
-                  'metrics.json'), 'rb') as fp:
+                            'metrics.json'), 'rb') as fp:
             metrics = json.load(fp)
 
         self.setDocExample(collector=self.collector.__class__.__name__,

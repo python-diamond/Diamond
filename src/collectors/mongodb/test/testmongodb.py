@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -13,7 +13,7 @@ from mock import call
 from diamond.collector import Collector
 from mongodb import MongoDBCollector
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_pymongo_is_available(func):
@@ -26,10 +26,11 @@ def run_only_if_pymongo_is_available(func):
 
 
 class TestMongoDBCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('MongoDBCollector', {
             'host': 'localhost:27017',
-            'databases': '^db',
+            'databases': '^db'
         })
         self.collector = MongoDBCollector(config, None)
         self.connection = MagicMock()
@@ -38,7 +39,7 @@ class TestMongoDBCollector(CollectorTestCase):
         self.assertTrue(MongoDBCollector)
 
     @run_only_if_pymongo_is_available
-    @patch('pymongo.Connection')
+    @patch('pymongo.MongoClient')
     @patch.object(Collector, 'publish')
     def test_should_publish_nested_keys_for_server_stats(self,
                                                          publish_mock,
@@ -55,7 +56,7 @@ class TestMongoDBCollector(CollectorTestCase):
         })
 
     @run_only_if_pymongo_is_available
-    @patch('pymongo.Connection')
+    @patch('pymongo.MongoClient')
     @patch.object(Collector, 'publish')
     def test_should_publish_nested_keys_for_db_stats(self,
                                                      publish_mock,
@@ -77,7 +78,7 @@ class TestMongoDBCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, metrics)
 
     @run_only_if_pymongo_is_available
-    @patch('pymongo.Connection')
+    @patch('pymongo.MongoClient')
     @patch.object(Collector, 'publish')
     def test_should_publish_stats_with_long_type(self,
                                                  publish_mock,
@@ -94,7 +95,7 @@ class TestMongoDBCollector(CollectorTestCase):
         })
 
     @run_only_if_pymongo_is_available
-    @patch('pymongo.Connection')
+    @patch('pymongo.MongoClient')
     @patch.object(Collector, 'publish')
     def test_should_ignore_unneeded_databases(self,
                                               publish_mock,
@@ -106,7 +107,7 @@ class TestMongoDBCollector(CollectorTestCase):
         assert call('baddb') not in self.connection.__getitem__.call_args_list
 
     @run_only_if_pymongo_is_available
-    @patch('pymongo.Connection')
+    @patch('pymongo.MongoClient')
     @patch.object(Collector, 'publish')
     def test_should_ignore_unneeded_collections(self,
                                                 publish_mock,
@@ -133,6 +134,19 @@ class TestMongoDBCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, metrics)
 
+    @run_only_if_pymongo_is_available
+    @patch('pymongo.MongoClient')
+    @patch.object(Collector, 'publish')
+    def test_should_ignore_replset_status_if_disabled(self,
+                                                      publish_mock,
+                                                      connector_mock):
+        data = {'more_keys': long(1), 'key': 2, 'string': 'str'}
+        self._annotate_connection(connector_mock, data)
+
+        self.collector.collect()
+        assert call('replsetSetGetStatus') not in \
+            self.connection.admin.command.method_calls
+
     def _annotate_connection(self, connector_mock, data):
         connector_mock.return_value = self.connection
         self.connection.db.command.return_value = data
@@ -140,6 +154,7 @@ class TestMongoDBCollector(CollectorTestCase):
 
 
 class TestMongoMultiHostDBCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('MongoDBCollector', {
             'hosts': ['localhost:27017', 'localhost:27057'],
@@ -152,7 +167,7 @@ class TestMongoMultiHostDBCollector(CollectorTestCase):
         self.assertTrue(MongoDBCollector)
 
     @run_only_if_pymongo_is_available
-    @patch('pymongo.Connection')
+    @patch('pymongo.MongoClient')
     @patch.object(Collector, 'publish')
     def test_should_publish_nested_keys_for_server_stats(self,
                                                          publish_mock,
@@ -171,7 +186,7 @@ class TestMongoMultiHostDBCollector(CollectorTestCase):
         })
 
     @run_only_if_pymongo_is_available
-    @patch('pymongo.Connection')
+    @patch('pymongo.MongoClient')
     @patch.object(Collector, 'publish')
     def test_should_publish_nested_keys_for_db_stats(self,
                                                      publish_mock,
@@ -195,7 +210,7 @@ class TestMongoMultiHostDBCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, metrics)
 
     @run_only_if_pymongo_is_available
-    @patch('pymongo.Connection')
+    @patch('pymongo.MongoClient')
     @patch.object(Collector, 'publish')
     def test_should_publish_stats_with_long_type(self,
                                                  publish_mock,
@@ -214,7 +229,7 @@ class TestMongoMultiHostDBCollector(CollectorTestCase):
         })
 
     @run_only_if_pymongo_is_available
-    @patch('pymongo.Connection')
+    @patch('pymongo.MongoClient')
     @patch.object(Collector, 'publish')
     def test_should_ignore_unneeded_databases(self,
                                               publish_mock,
@@ -226,7 +241,7 @@ class TestMongoMultiHostDBCollector(CollectorTestCase):
         assert call('baddb') not in self.connection.__getitem__.call_args_list
 
     @run_only_if_pymongo_is_available
-    @patch('pymongo.Connection')
+    @patch('pymongo.MongoClient')
     @patch.object(Collector, 'publish')
     def test_should_ignore_unneeded_collections(self,
                                                 publish_mock,
@@ -260,6 +275,40 @@ class TestMongoMultiHostDBCollector(CollectorTestCase):
         self.connection.database_names.return_value = ['db1', 'baddb']
 
 
-################################################################################
+class TestMongoDBCollectorWithReplica(CollectorTestCase):
+
+    def setUp(self):
+        config = get_collector_config('MongoDBCollector', {
+            'host': 'localhost:27017',
+            'databases': '^db',
+            'replica': True
+        })
+        self.collector = MongoDBCollector(config, None)
+        self.connection = MagicMock()
+
+    def test_import(self):
+        self.assertTrue(MongoDBCollector)
+
+    @run_only_if_pymongo_is_available
+    @patch('pymongo.MongoClient')
+    @patch.object(Collector, 'publish')
+    def test_should_publish_replset_status_if_enabled(self,
+                                                      publish_mock,
+                                                      connector_mock):
+        data = {'more_keys': long(1), 'key': 2, 'string': 'str'}
+        self._annotate_connection(connector_mock, data)
+
+        self.collector.collect()
+
+        self.connection.admin.command.assert_called_once_with(
+            'replSetGetStatus')
+
+    def _annotate_connection(self, connector_mock, data):
+        connector_mock.return_value = self.connection
+        self.connection.db.command.return_value = data
+        self.connection.database_names.return_value = ['db1', 'baddb']
+
+
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

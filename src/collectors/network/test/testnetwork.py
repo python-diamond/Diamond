@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -16,10 +16,11 @@ except ImportError:
 from diamond.collector import Collector
 from network import NetworkCollector
 
-################################################################################
+##########################################################################
 
 
 class TestNetworkCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('NetworkCollector', {
             'interfaces': ['eth', 'em', 'bond', 'veth', 'br-lxc'],
@@ -321,6 +322,6 @@ class TestNetworkCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

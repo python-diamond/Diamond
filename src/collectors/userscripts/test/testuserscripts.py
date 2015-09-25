@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 import os
 import sys
@@ -14,7 +14,7 @@ from mock import patch
 from diamond.collector import Collector
 from userscripts import UserScriptsCollector
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_kitchen_is_available(func):
@@ -30,6 +30,7 @@ def run_only_if_kitchen_is_available(func):
 
 
 class TestUserScriptsCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('UserScriptsCollector', {
             'interval': 10,
@@ -64,6 +65,6 @@ class TestUserScriptsCollector(CollectorTestCase):
         # be due to raising an exception. Meh.
         assert publish_mock.call_args_list
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()
