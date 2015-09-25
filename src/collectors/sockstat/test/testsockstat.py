@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -13,10 +13,11 @@ from collections import Iterator
 from diamond.collector import Collector
 from sockstat import SockstatCollector
 
-################################################################################
+##########################################################################
 
 
 class TestSockstatCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('SockstatCollector', {
             'interval': 10
@@ -32,6 +33,7 @@ class TestSockstatCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_open_proc_net_sockstat(self, publish_mock, open_mock):
         class Klass(Iterator):
+
             def close(self):
                 pass
 
@@ -65,6 +67,6 @@ class TestSockstatCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

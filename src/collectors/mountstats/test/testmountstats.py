@@ -12,6 +12,7 @@ from mountstats import MountStatsCollector
 
 
 class TestMountStatsCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('MountStatsCollector', {
             'exclude_filters': ['^/mnt/path2'],

@@ -229,8 +229,8 @@ class Collector(object):
                 self.config['measure_collector_time'])
 
         # Raise an error if both whitelist and blacklist are specified
-        if (self.config.get('metrics_whitelist', None)
-                and self.config.get('metrics_blacklist', None)):
+        if ((self.config.get('metrics_whitelist', None) and
+             self.config.get('metrics_blacklist', None))):
             raise DiamondException(
                 'Both metrics_whitelist and metrics_blacklist specified ' +
                 'in file %s' % self.configfile)
@@ -441,7 +441,7 @@ class Collector(object):
 
             # If we pass in a interval, use it rather then the configured one
             if interval is None:
-                interval = int(self.config['interval'])
+                interval = float(self.config['interval'])
 
             # Get Change in Y (time)
             if time_delta:

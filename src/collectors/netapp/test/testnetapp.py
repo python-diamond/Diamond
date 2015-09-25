@@ -12,6 +12,7 @@ from netapp import NetAppCollector
 ###############################################################################
 
 class TestNetAppCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('NetAppCollector', {
         })

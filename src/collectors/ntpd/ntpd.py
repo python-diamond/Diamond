@@ -97,11 +97,11 @@ class NtpdCollector(diamond.collector.Collector):
 
         return data.items()
 
-    def get_ntpdc_output(self):
+    def get_ntpdc_kerninfo_output(self):
         return self.run_command([self.config['ntpdc_bin'], '-c', 'kerninfo'])
 
-    def get_ntpdc_stats(self):
-        output = self.get_ntpdc_output()
+    def get_ntpdc_kerninfo_stats(self):
+        output = self.get_ntpdc_kerninfo_output()
 
         data = {}
 
@@ -117,6 +117,30 @@ class NtpdCollector(diamond.collector.Collector):
                 data['max_error'] = val
             elif key == 'estimated error':
                 data['est_error'] = val
+            elif key == 'status':
+                data['status'] = val
+
+        return data.items()
+
+    def get_ntpdc_sysinfo_output(self):
+        return self.run_command([self.config['ntpdc_bin'], '-c', 'sysinfo'])
+
+    def get_ntpdc_sysinfo_stats(self):
+        output = self.get_ntpdc_sysinfo_output()
+
+        data = {}
+
+        for line in output.splitlines():
+            key, val = line.split(':')[0:2]
+            try:
+                val = float(val.split()[0])
+
+                if key == 'root distance':
+                    data['root_distance'] = val
+                elif key == 'root dispersion':
+                    data['root_dispersion'] = val
+            except Exception:
+                pass
 
         return data.items()
 
@@ -124,5 +148,8 @@ class NtpdCollector(diamond.collector.Collector):
         for stat, val in self.get_ntpq_stats():
             self.publish(stat, val)
 
-        for stat, val in self.get_ntpdc_stats():
+        for stat, val in self.get_ntpdc_kerninfo_stats():
+            self.publish(stat, val)
+
+        for stat, val in self.get_ntpdc_sysinfo_stats():
             self.publish(stat, val)

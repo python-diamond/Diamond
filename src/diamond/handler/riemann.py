@@ -27,6 +27,7 @@ except ImportError:
 
 
 class RiemannHandler(Handler):
+
     def __init__(self, config=None):
         # Initialize Handler
         Handler.__init__(self, config)

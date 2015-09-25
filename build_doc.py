@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 import os
 import sys
@@ -9,7 +9,8 @@ import configobj
 import traceback
 import tempfile
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
+sys.path.append(os.path.abspath(
+    os.path.join(os.path.dirname(__file__), 'src')))
 
 
 def getIncludePaths(path):
@@ -74,8 +75,8 @@ def getHandlers(path):
 
                 # Find the name
                 for attr in dir(module):
-                    if (not attr.endswith('Handler')
-                            or attr.startswith('Handler')):
+                    if ((not attr.endswith('Handler') or
+                         attr.startswith('Handler'))):
                         continue
 
                     cls = getattr(module, attr)
@@ -90,7 +91,7 @@ def getHandlers(path):
         elif os.path.isdir(cPath):
             getHandlers(cPath)
 
-################################################################################
+##########################################################################
 
 if __name__ == "__main__":
 
@@ -119,13 +120,14 @@ if __name__ == "__main__":
     else:
         print >> sys.stderr, "ERROR: Config file: %s does not exist." % (
             options.configfile)
-        print >> sys.stderr, ("Please run python config.py -c "
-                              + "/path/to/diamond.conf")
+        print >> sys.stderr, ("Please run python config.py -c " +
+                              "/path/to/diamond.conf")
         parser.print_help(sys.stderr)
         sys.exit(1)
 
     collector_path = config['server']['collectors_path']
-    docs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'docs'))
+    docs_path = os.path.abspath(os.path.join(
+        os.path.dirname(__file__), 'docs'))
     handler_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                 'src', 'diamond', 'handler'))
 
@@ -253,7 +255,7 @@ if __name__ == "__main__":
         try:
             obj = cls({
                 'log_file': tmpfile[1],
-                })
+            })
 
             options = obj.get_default_config_help()
             defaultOptions = obj.get_default_config()

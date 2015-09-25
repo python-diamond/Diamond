@@ -44,8 +44,8 @@ class DiskUsageCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(DiskUsageCollector, self).get_default_config_help()
         config_help.update({
-            'devices': "A regex of which devices to gather metrics for."
-                       + " Defaults to md, sd, xvd, disk, and dm devices",
+            'devices': "A regex of which devices to gather metrics for." +
+                       " Defaults to md, sd, xvd, disk, and dm devices",
             'sector_size': 'The size to use to calculate sector usage',
             'send_zero': 'Send io data even when there is no io',
         })
@@ -58,12 +58,12 @@ class DiskUsageCollector(diamond.collector.Collector):
         config = super(DiskUsageCollector, self).get_default_config()
         config.update({
             'path':     'iostat',
-            'devices':  ('PhysicalDrive[0-9]+$'
-                         + '|md[0-9]+$'
-                         + '|sd[a-z]+[0-9]*$'
-                         + '|x?vd[a-z]+[0-9]*$'
-                         + '|disk[0-9]+$'
-                         + '|dm\-[0-9]+$'),
+            'devices':  ('PhysicalDrive[0-9]+$' +
+                         '|md[0-9]+$' +
+                         '|sd[a-z]+[0-9]*$' +
+                         '|x?vd[a-z]+[0-9]*$' +
+                         '|disk[0-9]+$' +
+                         '|dm\-[0-9]+$'),
             'sector_size': 512,
             'send_zero': False,
         })
@@ -97,8 +97,8 @@ class DiskUsageCollector(diamond.collector.Collector):
                         minor = int(columns[1])
                         device = columns[2]
 
-                        if (device.startswith('ram')
-                                or device.startswith('loop')):
+                        if ((device.startswith('ram') or
+                             device.startswith('loop'))):
                             continue
 
                         result[(major, minor)] = {
@@ -126,22 +126,21 @@ class DiskUsageCollector(diamond.collector.Collector):
                 return None
 
             disks = psutil.disk_io_counters(True)
+            sector_size = int(self.config['sector_size'])
             for disk in disks:
-                    result[(0, len(result))] = {
-                        'device': disk,
-                        'reads': disks[disk].read_count,
-                        'reads_sectors': (disks[disk].read_bytes
-                                          / int(self.config['sector_size'])),
-                        'reads_milliseconds': disks[disk].read_time,
-                        'writes': disks[disk].write_count,
-                        'writes_sectors': (disks[disk].write_bytes
-                                           / int(self.config['sector_size'])),
-                        'writes_milliseconds': disks[disk].write_time,
-                        'io_milliseconds':
+                result[(0, len(result))] = {
+                    'device': disk,
+                    'reads': disks[disk].read_count,
+                    'reads_sectors': disks[disk].read_bytes / sector_size,
+                    'reads_milliseconds': disks[disk].read_time,
+                    'writes': disks[disk].write_count,
+                    'writes_sectors': disks[disk].write_bytes / sector_size,
+                    'writes_milliseconds': disks[disk].write_time,
+                    'io_milliseconds':
                         disks[disk].read_time + disks[disk].write_time,
-                        'io_milliseconds_weighted':
+                    'io_milliseconds_weighted':
                         disks[disk].read_time + disks[disk].write_time
-                    }
+                }
 
         return result
 
@@ -228,13 +227,10 @@ class DiskUsageCollector(diamond.collector.Collector):
             metrics['io'] = metrics['reads'] + metrics['writes']
 
             metrics['average_queue_length'] = (
-                metrics['io_milliseconds_weighted']
-                / time_delta
-                / 1000.0)
+                metrics['io_milliseconds_weighted'] / time_delta / 1000.0)
 
-            metrics['util_percentage'] = (metrics['io_milliseconds']
-                                          / time_delta
-                                          / 10.0)
+            metrics['util_percentage'] = (
+                metrics['io_milliseconds'] / time_delta / 10.0)
 
             if metrics['reads'] > 0:
                 metrics['read_await'] = (
@@ -264,18 +260,17 @@ class DiskUsageCollector(diamond.collector.Collector):
                 metrics['service_time'] = (
                     metrics['io_milliseconds'] / metrics['io'])
                 metrics['await'] = (
-                    metrics['reads_milliseconds']
-                    + metrics['writes_milliseconds']) / metrics['io']
+                    metrics['reads_milliseconds'] +
+                    metrics['writes_milliseconds']) / metrics['io']
             else:
                 metrics['service_time'] = 0
                 metrics['await'] = 0
 
             # http://www.scribd.com/doc/15013525
             # Page 28
-            metrics['concurrent_io'] = (metrics['reads_per_second']
-                                        + metrics['writes_per_second']
-                                        ) * (metrics['service_time']
-                                             / 1000.0)
+            metrics['concurrent_io'] = (
+                (metrics['reads_per_second'] + metrics['writes_per_second']) *
+                (metrics['service_time'] / 1000.0))
 
             # Only publish when we have io figures
             if (metrics['io'] > 0 or self.config['send_zero']):

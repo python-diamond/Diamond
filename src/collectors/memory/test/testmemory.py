@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -16,10 +16,11 @@ except ImportError:
 from diamond.collector import Collector
 from memory import MemoryCollector
 
-################################################################################
+##########################################################################
 
 
 class TestMemoryCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('MemoryCollector', {
             'interval': 10,
@@ -66,6 +67,6 @@ class TestMemoryCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

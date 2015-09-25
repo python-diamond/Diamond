@@ -7,10 +7,15 @@ python:
   - "2.6"
   - "2.7"
 
+cache:
+  directories:
+    - $HOME/.cache/pip
+
 # command to install dependencies, e.g. pip install -r requirements.txt
 install:
     - pip install -r .travis.requirements.txt
-    - pip install pep8==1.4.6
+    - pip install pep8==1.5.7
+    - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install unittest2; fi
 
 # command to run tests, e.g. python setup.py test
 script:

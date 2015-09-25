@@ -20,6 +20,7 @@ def run_only_if_psycopg2_is_available(func):
 
 
 class TestSlonyCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('SlonyCollector', {})
         self.collector = SlonyCollector(config, None)

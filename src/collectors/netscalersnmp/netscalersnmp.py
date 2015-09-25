@@ -131,10 +131,10 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
             'host': 'netscaler dns address',
             'port': 'Netscaler port to collect snmp data',
             'community': 'SNMP community',
-            'exclude_service_type': "list of service types to exclude"
-            + " (see MIB EntityProtocolType)",
-            'exclude_vserver_type': "list of vserver types to exclude"
-            + " (see MIB EntityProtocolType)"
+            'exclude_service_type': "list of service types to exclude" +
+                                    " (see MIB EntityProtocolType)",
+            'exclude_vserver_type': "list of vserver types to exclude" +
+                                    " (see MIB EntityProtocolType)"
         })
         return config_help
 

@@ -52,7 +52,8 @@ class ResqueWebCollector(diamond.collector.Collector):
 
                 if item == "resque":
                     if queue[-1] == "+":
-                        self.publish("%s.total" % queue.replace("+", ""), count)
+                        self.publish("%s.total" %
+                                     queue.replace("+", ""), count)
                     else:
                         self.publish("%s.current" % queue, count)
                 else:

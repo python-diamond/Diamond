@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -15,10 +15,11 @@ except ImportError:
 
 from tcp import TCPCollector
 
-################################################################################
+##########################################################################
 
 
 class TestTCPCollector(CollectorTestCase):
+
     def setUp(self, allowed_names=None):
         if not allowed_names:
             allowed_names = []
@@ -72,7 +73,8 @@ TcpExt: 0 1 2
 
     @patch('diamond.collector.Collector.publish')
     def test_should_work_with_real_data(self, publish_mock):
-        self.setUp(['ListenOverflows', 'ListenDrops', 'TCPLoss', 'TCPTimeouts'])
+        self.setUp(['ListenOverflows', 'ListenDrops',
+                    'TCPLoss', 'TCPTimeouts'])
 
         TCPCollector.PROC = [self.getFixturePath('proc_net_netstat_1')]
         self.collector.collect()
@@ -97,14 +99,14 @@ TcpExt: 0 1 2
         TCPCollector.PROC = [
             self.getFixturePath('proc_net_netstat_1'),
             self.getFixturePath('proc_net_snmp_1'),
-            ]
+        ]
         self.collector.collect()
         self.assertPublishedMany(publish_mock, {})
 
         TCPCollector.PROC = [
             self.getFixturePath('proc_net_netstat_2'),
             self.getFixturePath('proc_net_snmp_2'),
-            ]
+        ]
         self.collector.collect()
 
         metrics = {
@@ -208,6 +210,6 @@ TcpExt: 0 1 2
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

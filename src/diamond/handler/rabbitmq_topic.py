@@ -150,5 +150,6 @@ class rmqHandler (Handler):
                 body="%s" % metric)
 
         except Exception:  # Rough connection re-try logic.
-            self.log.info("Failed publishing to rabbitMQ. Attempting reconnect")
+            self.log.info(
+                "Failed publishing to rabbitMQ. Attempting reconnect")
             self._bind()

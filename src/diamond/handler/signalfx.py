@@ -54,7 +54,7 @@ class SignalfxHandler(Handler):
             'url': 'Where to send metrics',
             'batch': 'How many to store before sending',
             'auth_token': 'Org API token to use when sending metrics',
-            })
+        })
 
         return config
 
@@ -70,7 +70,7 @@ class SignalfxHandler(Handler):
             # Don't wait more than 10 sec between pushes
             'batch_max_interval': 10,
             'auth_token': '',
-            })
+        })
 
         return config
 

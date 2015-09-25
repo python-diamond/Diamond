@@ -11,6 +11,7 @@ using /proc/net/dev.
 """
 
 import diamond.collector
+from diamond.collector import str_to_bool
 import diamond.convertor
 import os
 import re
@@ -40,7 +41,8 @@ class NetworkCollector(diamond.collector.Collector):
         config = super(NetworkCollector, self).get_default_config()
         config.update({
             'path':         'network',
-            'interfaces':   ['eth', 'bond', 'em', 'p1p'],
+            'interfaces':   ['eth', 'bond', 'em', 'p1p', 'eno', 'enp', 'ens',
+                             'enx'],
             'byte_unit':    ['bit', 'byte'],
             'greedy':       'true',
         })
@@ -60,27 +62,27 @@ class NetworkCollector(diamond.collector.Collector):
             file = open(self.PROC)
             # Build Regular Expression
             greed = ''
-            if self.config['greedy'].lower() == 'true':
+            if str_to_bool(self.config['greedy']):
                 greed = '\S*'
 
-            exp = ('^(?:\s*)((?:%s)%s):(?:\s*)'
-                   + '(?P<rx_bytes>\d+)(?:\s*)'
-                   + '(?P<rx_packets>\w+)(?:\s*)'
-                   + '(?P<rx_errors>\d+)(?:\s*)'
-                   + '(?P<rx_drop>\d+)(?:\s*)'
-                   + '(?P<rx_fifo>\d+)(?:\s*)'
-                   + '(?P<rx_frame>\d+)(?:\s*)'
-                   + '(?P<rx_compressed>\d+)(?:\s*)'
-                   + '(?P<rx_multicast>\d+)(?:\s*)'
-                   + '(?P<tx_bytes>\d+)(?:\s*)'
-                   + '(?P<tx_packets>\w+)(?:\s*)'
-                   + '(?P<tx_errors>\d+)(?:\s*)'
-                   + '(?P<tx_drop>\d+)(?:\s*)'
-                   + '(?P<tx_fifo>\d+)(?:\s*)'
-                   + '(?P<tx_frame>\d+)(?:\s*)'
-                   + '(?P<tx_compressed>\d+)(?:\s*)'
-                   + '(?P<tx_multicast>\d+)(?:.*)$') % (
-                ('|'.join(self.config['interfaces'])), greed)
+            exp = (('^(?:\s*)((?:%s)%s):(?:\s*)' +
+                    '(?P<rx_bytes>\d+)(?:\s*)' +
+                    '(?P<rx_packets>\w+)(?:\s*)' +
+                    '(?P<rx_errors>\d+)(?:\s*)' +
+                    '(?P<rx_drop>\d+)(?:\s*)' +
+                    '(?P<rx_fifo>\d+)(?:\s*)' +
+                    '(?P<rx_frame>\d+)(?:\s*)' +
+                    '(?P<rx_compressed>\d+)(?:\s*)' +
+                    '(?P<rx_multicast>\d+)(?:\s*)' +
+                    '(?P<tx_bytes>\d+)(?:\s*)' +
+                    '(?P<tx_packets>\w+)(?:\s*)' +
+                    '(?P<tx_errors>\d+)(?:\s*)' +
+                    '(?P<tx_drop>\d+)(?:\s*)' +
+                    '(?P<tx_fifo>\d+)(?:\s*)' +
+                    '(?P<tx_frame>\d+)(?:\s*)' +
+                    '(?P<tx_compressed>\d+)(?:\s*)' +
+                    '(?P<tx_multicast>\d+)(?:.*)$') %
+                   (('|'.join(self.config['interfaces'])), greed))
             reg = re.compile(exp)
             # Match Interfaces
             for line in file:

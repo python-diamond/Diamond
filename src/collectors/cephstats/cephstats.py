@@ -8,13 +8,39 @@ import subprocess
 import re
 import os
 import sys
-
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                 'ceph'))
 from ceph import CephCollector
 
+patternchk = re.compile(r'\bclient io .*')
+numberchk = re.compile(r'\d+')
+
+
+# This is external to the CephCollector so it can be tested
+# separately.
+def process_ceph_status(output):
+    res = patternchk.search(output)
+    if not res:
+        return {}
+    ceph_stats = res.group()
+    if not ceph_stats:
+        return {}
+    ret = {}
+    rd = wr = iops = None
+    rd = numberchk.search(ceph_stats)
+    if rd is not None:
+        ret['rd'] = rd.group()
+        wr = numberchk.search(ceph_stats, rd.end())
+        if wr is not None:
+            ret['wr'] = wr.group()
+            iops = numberchk.search(ceph_stats, wr.end())
+            if iops is not None:
+                ret['iops'] = iops.group()
+    return ret
+
 
 class CephStatsCollector(CephCollector):
+
     def _get_stats(self):
         """
         Get ceph stats
@@ -27,14 +53,7 @@ class CephStatsCollector(CephCollector):
             self.log.exception('Could not get stats')
             return {}
 
-        pattern = re.compile(r'\bclient io .*')
-        ceph_stats = pattern.search(output).group()
-        number = re.compile(r'\d+')
-        rd = number.search(ceph_stats)
-        wr = number.search(ceph_stats, rd.end())
-        iops = number.search(ceph_stats, wr.end())
-
-        return {'rd': rd.group(), 'wr': wr.group(), 'iops': iops.group()}
+        return process_ceph_status(output)
 
     def collect(self):
         """

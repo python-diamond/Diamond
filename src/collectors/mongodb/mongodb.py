@@ -4,6 +4,10 @@
 Collects all number values from the db.serverStatus() command, other
 values are ignored.
 
+**Note:** this collector expects pymongo 2.4 and onward. See the pymongo
+changelog for more details:
+http://api.mongodb.org/python/current/changelog.html#changes-in-version-2-4
+
 #### Dependencies
 
  * pymongo
@@ -59,13 +63,17 @@ class MongoDBCollector(diamond.collector.Collector):
             'of collections. This is applied after collections are ignored via'
             ' ignore_collections Sampling uses crc32 so it is consistent across'
             ' replicas. Value between 0 and 1. Default is 1',
-            'network_timeout': 'Timeout for mongodb connection (in seconds).'
-                               ' There is no timeout by default.',
+            'network_timeout': 'Timeout for mongodb connection (in'
+                               ' milliseconds). There is no timeout by'
+                               ' default.',
             'simple': 'Only collect the same metrics as mongostat.',
             'translate_collections': 'Translate dot (.) to underscores (_)'
                                      ' in collection names.',
             'ssl': 'True to enable SSL connections to the MongoDB server.'
-                    ' Default is False'
+                    ' Default is False',
+            'replica': 'True to enable replica set logging. Reports health of'
+                       ' individual nodes as well as basic aggregate stats.'
+                       ' Default is False'
         })
         return config_help
 
@@ -85,7 +93,8 @@ class MongoDBCollector(diamond.collector.Collector):
             'simple': 'False',
             'translate_collections': 'False',
             'collection_sample_rate': 1,
-            'ssl': False
+            'ssl': False,
+            'replica': False
         })
         return config
 
@@ -147,16 +156,15 @@ class MongoDBCollector(diamond.collector.Collector):
                     self.config['ssl'] = str_to_bool(self.config['ssl'])
 
                 if ReadPreference is None:
-                    conn = pymongo.Connection(
+                    conn = pymongo.MongoClient(
                         host,
-                        network_timeout=self.config['network_timeout'],
+                        socketTimeoutMS=self.config['network_timeout'],
                         ssl=self.config['ssl'],
-                        slave_okay=True
                     )
                 else:
-                    conn = pymongo.Connection(
+                    conn = pymongo.MongoClient(
                         host,
-                        network_timeout=self.config['network_timeout'],
+                        socketTimeoutMS=self.config['network_timeout'],
                         ssl=self.config['ssl'],
                         read_preference=ReadPreference.SECONDARY,
                     )
@@ -169,14 +177,22 @@ class MongoDBCollector(diamond.collector.Collector):
                 try:
                     conn.admin.authenticate(user, passwd)
                 except Exception, e:
-                    self.log.error('User auth given, but could not autheticate'
-                                   + ' with host: %s, err: %s' % (host, e))
+                    self.log.error(
+                        'User auth given, but could not autheticate' +
+                        ' with host: %s, err: %s' % (host, e))
                     return{}
 
             data = conn.db.command('serverStatus')
             self._publish_transformed(data, base_prefix)
             if str_to_bool(self.config['simple']):
                 data = self._extract_simple_data(data)
+            if str_to_bool(self.config['replica']):
+                try:
+                    replset_data = conn.admin.command('replSetGetStatus')
+                    self._publish_replset(replset_data, base_prefix)
+                except pymongo.errors.OperationFailure as e:
+                    self.log.error('error getting replica set status', e)
+            self._publish_transformed(data, base_prefix)
 
             self._publish_dict_with_prefix(data, base_prefix)
             db_name_filter = re.compile(self.config['databases'])
@@ -194,7 +210,7 @@ class MongoDBCollector(diamond.collector.Collector):
                         continue
                     if (self.config['collection_sample_rate'] < 1 and (
                             zlib.crc32(collection_name) & 0xffffffff
-                            ) > sample_threshold):
+                    ) > sample_threshold):
                         continue
 
                     collection_stats = conn[db_name].command('collstats',
@@ -205,13 +221,33 @@ class MongoDBCollector(diamond.collector.Collector):
                     self._publish_dict_with_prefix(collection_stats,
                                                    collection_prefix)
 
+    def _publish_replset(self, data, base_prefix):
+        """ Given a response to replSetGetStatus, publishes all numeric values
+            of the instance, aggregate stats of healthy nodes vs total nodes,
+            and the observed statuses of all nodes in the replica set.
+        """
+        prefix = base_prefix + ['replset']
+        self._publish_dict_with_prefix(data, prefix)
+        total_nodes = len(data['members'])
+        healthy_nodes = reduce(lambda value, node: value + node['health'],
+                               data['members'], 0)
+
+        self._publish_dict_with_prefix({
+            'healthy_nodes': healthy_nodes,
+            'total_nodes': total_nodes
+        }, prefix)
+        for node in data['members']:
+            self._publish_dict_with_prefix(node,
+                                           prefix + ['node', str(node['_id'])])
+
     def _publish_transformed(self, data, base_prefix):
         """ Publish values of type: counter or percent """
         self._publish_dict_with_prefix(data.get('opcounters', {}),
                                        base_prefix + ['opcounters_per_sec'],
                                        self.publish_counter)
         self._publish_dict_with_prefix(data.get('opcountersRepl', {}),
-                                       base_prefix + ['opcountersRepl_per_sec'],
+                                       base_prefix +
+                                       ['opcountersRepl_per_sec'],
                                        self.publish_counter)
         self._publish_metrics(base_prefix + ['backgroundFlushing_per_sec'],
                               'flushes',

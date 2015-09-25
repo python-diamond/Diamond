@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,10 +11,11 @@ from mock import Mock
 from diamond.collector import Collector
 from numa import NumaCollector
 
-################################################################################
+##########################################################################
 
 
 class TestNumaCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('NumaCollector', {
             'interval': 10,
@@ -50,6 +51,6 @@ class TestNumaCollector(CollectorTestCase):
             defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

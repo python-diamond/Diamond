@@ -220,10 +220,11 @@ class JbossApiCollector(diamond.collector.Collector):
                     # Grab http and ajp info (make these options)
                     for c_type in self.config['connector_options']:
                         for metric in web_stats:
-                            metricName = '%s.%s.connector.%s.%s' % (interface,
-                                                                    op_type,
-                                                                    c_type,
-                                                                    metric)
+                            metricName = ('%s.%s.connector.%s.%s' %
+                                          (interface,
+                                           op_type,
+                                           c_type,
+                                           metric))
                             connector = output['result']['connector']
                             metricValue = connector[c_type][metric]
                             self.publish(metricName, float(metricValue))
@@ -235,13 +236,13 @@ class JbossApiCollector(diamond.collector.Collector):
                         mempool = output['result']['type']['memory-pool']
                         for pool_name in mempool['name']:
                             for metric in memory_types:
-                                metricName = '%s.%s.%s.%s.%s.%s' % (interface,
-                                                                    op_type,
-                                                                    'memory-'
-                                                                    + 'pool',
-                                                                    pool_name,
-                                                                    'usage',
-                                                                    metric)
+                                metricName = ('%s.%s.%s.%s.%s.%s' %
+                                              (interface,
+                                               op_type,
+                                               'memory-pool',
+                                               pool_name,
+                                               'usage',
+                                               metric))
                                 metricValue = mempool['name'][pool_name][
                                     'usage'][metric]
                                 self.publish(metricName, float(metricValue))
@@ -251,11 +252,12 @@ class JbossApiCollector(diamond.collector.Collector):
                         bufferpool = output['result']['type']['buffer-pool']
                         for pool in bufferpool['name']:
                             for metric in buffer_pool_types:
-                                metricName = '%s.%s.%s.%s.%s' % (interface,
-                                                                 op_type,
-                                                                 'buffer-pool',
-                                                                 pool,
-                                                                 metric)
+                                metricName = ('%s.%s.%s.%s.%s' %
+                                              (interface,
+                                               op_type,
+                                               'buffer-pool',
+                                               pool,
+                                               metric))
                                 metricValue = bufferpool['name'][pool][metric]
                                 self.publish(metricName, float(metricValue))
 
@@ -263,11 +265,12 @@ class JbossApiCollector(diamond.collector.Collector):
                     if self.config['jvm_memory_stats'] == 'True':
                         for mem_type in memory_topics:
                             for metric in memory_types:
-                                metricName = '%s.%s.%s.%s.%s' % (interface,
-                                                                 op_type,
-                                                                 'memory',
-                                                                 mem_type,
-                                                                 metric)
+                                metricName = ('%s.%s.%s.%s.%s' %
+                                              (interface,
+                                               op_type,
+                                               'memory',
+                                               mem_type,
+                                               metric))
                                 memory = output['result']['type']['memory']
                                 metricValue = memory[mem_type][metric]
                                 self.publish(metricName, float(metricValue))
@@ -277,20 +280,23 @@ class JbossApiCollector(diamond.collector.Collector):
                         garbage = output['result']['type']['garbage-collector']
                         for gc_name in garbage['name']:
                             for metric in gc_types:
-                                metricName = '%s.%s.%s.%s.%s' % (interface,
-                                                                 op_type,
-                                                                 'garbage-'
-                                                                 + 'collector',
-                                                                 gc_name,
-                                                                 metric)
+                                metricName = ('%s.%s.%s.%s.%s' %
+                                              (interface,
+                                               op_type,
+                                               'garbage-collector',
+                                               gc_name,
+                                               metric))
                                 metricValue = garbage['name'][gc_name][metric]
                                 self.publish(metricName, float(metricValue))
 
                     # Grab threading stats
                     if self.config['jvm_thread_stats'] == 'True':
                         for metric in thread_types:
-                            metricName = '%s.%s.%s.%s' % (interface, op_type,
-                                                          'threading', metric)
+                            metricName = ('%s.%s.%s.%s' %
+                                          (interface,
+                                           op_type,
+                                           'threading',
+                                           metric))
                             threading = output['result']['type']['threading']
                             metricValue = threading[metric]
                             self.publish(metricName, float(metricValue))
@@ -301,21 +307,25 @@ class JbossApiCollector(diamond.collector.Collector):
                  current_user, current_pword):
         output = {}
         if op_type == 'app':
-            data = ('{"operation":"read-resource", "include-runtime":"true", '
-                    + '"recursive":"true" , "address":["subsystem",'
-                    + '"datasources"]}')
+            data = ('{"operation":"read-resource", ' +
+                    '"include-runtime":"true", ' +
+                    '"recursive":"true", ' +
+                    '"address":["subsystem","datasources"]}')
 
         if op_type == 'web':
-            data = ('{"operation":"read-resource", "include-runtime":"true", '
-                    + '"recursive":"true" , "address":["subsystem","web"]}')
+            data = ('{"operation":"read-resource", ' +
+                    '"include-runtime":"true", ' +
+                    '"recursive":"true", ' +
+                    '"address":["subsystem","web"]}')
 
         if op_type == 'jvm':
-            data = ('{"operation":"read-resource", "include-runtime":"true", '
-                    + '"recursive":"true" , "address":["core-service",'
-                    + '"platform-mbean"]}')
+            data = ('{"operation":"read-resource", ' +
+                    '"include-runtime":"true", ' +
+                    '"recursive":"true", ' +
+                    '"address":["core-service","platform-mbean"]}')
 
-        the_cmd = (("%s --connect-timeout %s %s %s %s://%s:%s/management "
-                   + "--header %s -d '%s' -u %s:%s") % (
+        the_cmd = (("%s --connect-timeout %s %s %s %s://%s:%s/management " +
+                    "--header %s -d '%s' -u %s:%s") % (
             self.config['curl_bin'], self.config['connect_timeout'],
             self.config['ssl_options'], self.config['curl_options'],
             current_proto, current_host, current_port, header, data,

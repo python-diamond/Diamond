@@ -12,6 +12,7 @@ from netappDisk import netappDisk
 ###############################################################################
 
 class TestnetappDisk(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('netappDisk', {
         })

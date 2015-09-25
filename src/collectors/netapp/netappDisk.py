@@ -92,7 +92,8 @@ class netappDiskCol(object):
             temp = {}
             for element in instance_data.findall(".//counters/counter-data"):
                 if element.find('name').text in names:
-                    temp[element.find('name').text] = element.find('value').text
+                    temp[element.find('name').text] = element.find(
+                        'value').text
 
             agr_name = temp['raid_name']
             agr_name = agr_name[agr_name.find('/', 0):agr_name.find('/', 1)]
@@ -103,7 +104,8 @@ class netappDiskCol(object):
             temp = {}
             for element in instance_data.findall(".//counters/counter-data"):
                 if element.find('name').text in names:
-                    temp[element.find('name').text] = element.find('value').text
+                    temp[element.find('name').text] = element.find(
+                        'value').text
 
             agr_name = temp['raid_name']
             agr_name = agr_name[agr_name.find('/', 0):agr_name.find('/', 1)]

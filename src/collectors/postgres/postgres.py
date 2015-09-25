@@ -28,7 +28,8 @@ class PostgresqlCollector(diamond.collector.Collector):
         """
         Return help text for collector
         """
-        config_help = super(PostgresqlCollector, self).get_default_config_help()
+        config_help = super(PostgresqlCollector,
+                            self).get_default_config_help()
         config_help.update({
             'host': 'Hostname',
             'dbname': 'DB to connect to in order to get list of DBs in PgSQL',

@@ -14,6 +14,7 @@ from disktemp import DiskTemperatureCollector
 
 
 class TestDiskTemperatureCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('DiskTemperatureCollector', {
             'interval': 10,
