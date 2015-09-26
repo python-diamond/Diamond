@@ -40,7 +40,7 @@ class NovaHypervisorStatsCollector(diamond.collector.Collector):
         """
         config = super(NovaHypervisorStatsCollector, self).get_default_config()
         config.update({
-            'path':       'nova.hypervisorstats',
+            'path':           'nova.hypervisorstats',
             'username':   'admin',
             'password':   'admin',
             'tenant':     'admin',
@@ -67,6 +67,7 @@ class NovaHypervisorStatsCollector(diamond.collector.Collector):
 
         hypervisors = nova.hypervisors.list()
         if hypervisors:
+            s = []
             for h in hypervisors:
                 hv = nova.hypervisors.get(h.id)
                 stats = hv._info.copy()
@@ -75,20 +76,24 @@ class NovaHypervisorStatsCollector(diamond.collector.Collector):
                 max_vcpus = (int(stats['vcpus']) *
                              float(self.config['cpu_allocation_ratio']))
                 vcpus_percent_used = ((stats['vcpus_used']/max_vcpus) * 100)
-                self.publish(hostname[0] + '.max_vcpus', max_vcpus)
-                self.publish(hostname[0] + '.vcpus_percent_used',
-                             vcpus_percent_used)
+
+                s.append({hostname[0] + '.max_vcpus': max_vcpus})
+                s.append({hostname[0] + '.vcpus_percent_used':
+                          vcpus_percent_used})
 
                 max_ram = (int(stats['memory_mb']) *
                            float(self.config['ram_allocation_ratio']))
                 ram_percent_used = ((stats['memory_mb_used']/max_ram) * 100)
-                self.publish(hostname[0] + '.max_ram', max_ram)
-                self.publish(hostname[0] + '.ram_percent_used',
-                             ram_percent_used)
+                s.append({hostname[0] + '.max_ram': max_ram})
+                s.append({hostname[0] + '.ram_percent_used':
+                          ram_percent_used})
 
                 for k, v in sorted(stats.items()):
                     if k in metrics:
                         hostname = h.hypervisor_hostname.split('.')
                         metric_name = ("%s.%s") % (hostname[0], k)
+                        s.append({metric_name: v})
 
-                        self.publish(metric_name, v)
+            for metric in s:
+                for key, val in metric.items():
+                    self.publish(key, val)
