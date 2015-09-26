@@ -40,7 +40,7 @@ class NovaHypervisorStatsCollector(diamond.collector.Collector):
         """
         config = super(NovaHypervisorStatsCollector, self).get_default_config()
         config.update({
-            'path':           'nova.hypervisorstats',
+            'path':       'nova.hypervisorstats',
             'username':   'admin',
             'password':   'admin',
             'tenant':     'admin',
@@ -89,6 +89,6 @@ class NovaHypervisorStatsCollector(diamond.collector.Collector):
                 for k, v in sorted(stats.items()):
                     if k in metrics:
                         hostname = h.hypervisor_hostname.split('.')
-                metric_name = ("%s.%s") % (hostname[0], k)
+                        metric_name = ("%s.%s") % (hostname[0], k)
 
-                self.publish(metric_name, v)
+                        self.publish(metric_name, v)
