@@ -197,9 +197,16 @@ class ProcessResourcesCollector(diamond.collector.Collector):
 
         # publish results
         for pg_name, counters in self.processes_info.iteritems():
-            metrics = (
-                ("%s.%s" % (pg_name, key), value)
-                for key, value in counters.iteritems())
+            if counters:
+                metrics = (
+                    ("%s.%s" % (pg_name, key), value)
+                    for key, value in counters.iteritems())
+            else:
+                if self.processes[pg_name]['count_workers']:
+                    metrics = (('%s.workers_count' % pg_name, 0), )
+                else:
+                    metrics = ()
+
             [self.publish(*metric) for metric in metrics]
             # reinitialize process info
             self.processes_info[pg_name] = {}
