@@ -1,12 +1,14 @@
 # coding=utf-8
 
 """
-Send metrics to an [ElasticSearch](https://www.elastic.co/products/elasticsearch) cluster.
+Send metrics to an
+[ElasticSearch](https://www.elastic.co/products/elasticsearch) cluster.
 
-ElasticSearch is an easily scalable database with a REST/JSON API. It has 
+ElasticSearch is an easily scalable database with a REST/JSON API. It has
 been used for log storage and analysis and now for metrics as well!
 
-ElasticSearch has introduced the [Beats](https://www.elastic.co/products/beats) library to ship various metrics
+ElasticSearch has introduced the
+[Beats](https://www.elastic.co/products/beats) library to ship various metrics
 to ES. This handler is Beats compatible.
 
 #### Dependencies
@@ -89,16 +91,18 @@ try:
 except ImportError:
     Elasticsearch = None
 
+
 class ElasticSearchHandler(Handler):
 
     def __init__(self, *args, **kwargs):
         super(ElasticSearchHandler, self).__init__(*args, **kwargs)
 
         if Elasticsearch is None:
-            self.log.error('Failed to import elasticsearch module. Handler disabled')
+            self.log.error(
+                'Failed to import elasticsearch module. Handler disabled')
             self.enabled = False
             return
-        # attempt to connect 
+        # attempt to connect
         try:
             url_list = []
             for host in self.config['host_urls'].split(','):
@@ -122,15 +126,18 @@ class ElasticSearchHandler(Handler):
         self.log.debug("ElasticSearchHandler initialized.")
 
     def get_default_config_help(self):
-        config = super(ElasticsearchHandler, self).get_default_config_help()
+        config = super(ElasticSearchHandler, self).get_default_config_help()
         config.update({
             'host_urls': "ElasticSearch server URLs separated by commas",
             'batch_size': "Max number of metrics to send in one batch",
             'flush_seconds': "Max seconds between writes to server",
-            'index_format': "What to name indices (default 'diamond-YYYY.MM.DD')",
-            'timestamp_field': "Field used for timestamp (default 'timestamp')",
+            'index_format':
+                "What to name indices (default 'diamond-YYYY.MM.DD')",
+            'timestamp_field':
+                "Field used for timestamp (default 'timestamp')",
             'host_field': "Field used for host name (default 'shipper')",
-            'collector_field': "Field used for collector name (default 'type')",
+            'collector_field':
+                "Field used for collector name (default 'type')",
             'doc_type': "document type in ES index (default 'metric')"
         })
         return config
@@ -154,7 +161,8 @@ class ElasticSearchHandler(Handler):
         if not self.enabled:
             return
         self.queue.append(metric)
-        if time.time() > self.flush_time + self.flush_seconds or len(self.queue) > self.batch_size:
+        if time.time() > self.flush_time + self.flush_seconds or \
+                len(self.queue) > self.batch_size:
             self.flush_time = time.time()
             self.flush()
 
@@ -171,7 +179,7 @@ class ElasticSearchHandler(Handler):
         current_host = ''
         while len(self.queue) > 0:
             metric = self.queue.popleft()
-            if (metric.timestamp != current_timestamp or 
+            if (metric.timestamp != current_timestamp or
                     metric.getCollectorPath() != current_collector or
                     metric.host != current_host):
                 # create empty action document
@@ -193,7 +201,7 @@ class ElasticSearchHandler(Handler):
             # merge new metric into the action structure
             partialaction = action['_source'][current_collector]
             position = 3
-            length = len(metric.path.split('.')) - 1 
+            length = len(metric.path.split('.')) - 1
             for portion in metric.path.split('.')[3:]:
                 if not partialaction.get(str(portion)):
                     if position == length:
@@ -203,7 +211,7 @@ class ElasticSearchHandler(Handler):
                         partialaction[str(portion)] = {}
                 position += 1
                 partialaction = partialaction[str(portion)]
-            
+
         if action is not None:
             actions.append(action)
 
@@ -211,10 +219,14 @@ class ElasticSearchHandler(Handler):
             try:
                 result = helpers.bulk(
                     client=self.es,
-                    index=time.strftime(self.index_format, time.localtime(self.flush_time)),
+                    index=time.strftime(
+                        self.index_format, time.localtime(self.flush_time)
+                    ),
                     actions=actions,
                     stats_only=True
                 )
-                self.log.debug("ElasticSearchHandler docs written: {}, writes failed: {}".format(result[0], result[1]))
+                self.log.debug(
+                    "ElasticSearchHandler docs written: {}, writes failed: {}"
+                        .format(result[0], result[1]))
             except Exception as exc:
                 self._throttle_error("ElasticSearchHandler: {}".format(exc))
