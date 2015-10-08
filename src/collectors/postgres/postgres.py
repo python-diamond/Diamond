@@ -545,14 +545,15 @@ class LongestRunningQueries(QueryStats):
 
 class UserConnectionCount(QueryStats):
     path = "%(datname)s.user_connections.%(metric)s"
-    multi_db = True
+    multi_db = False
     query = """
-        SELECT usename,
+        SELECT datname,
+               usename,
                count(*) as count
         FROM pg_stat_activity
         WHERE procpid != pg_backend_pid()
-        GROUP BY usename
-        ORDER BY 1
+        GROUP BY 1, 2
+        ORDER BY 1, 2
     """
     post_92_query = query.replace('procpid', 'pid')
 
