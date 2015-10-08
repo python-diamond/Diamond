@@ -159,9 +159,9 @@ class RabbitMQCollector(diamond.collector.Collector):
                 legacy = True
 
                 if 'queues' in self.config:
-                    self.config['vhosts'] = {"*": self.config['queues']}
+                    vhost_conf = {"*": self.config['queues']}
                 else:
-                    self.config['vhosts'] = {"*": ""}
+                    vhost_conf = {"*": ""}
 
             # Legacy configurations, those that don't include the [vhosts]
             # section require special care so that we do not break metric
@@ -179,16 +179,17 @@ class RabbitMQCollector(diamond.collector.Collector):
                                 'vhosts']['*']
 
                     del self.config['vhosts']["*"]
+                vhost_conf = self.config['vhosts']
 
             # Iterate all vhosts in our vhosts configuration. For legacy this
             # is "*" to force a single run.
-            for vhost in self.config['vhosts']:
+            for vhost in vhost_conf:
                 vhost_name = vhost
                 if self.config['replace_dot']:
                     vhost_name = vhost_name.replace(
                         '.', self.config['replace_dot'])
 
-                queues = self.config['vhosts'][vhost]
+                queues = vhost_conf[vhost]
 
                 # Allow the use of a asterix to glob the queues, but replace
                 # with a empty string to match how legacy config was.
