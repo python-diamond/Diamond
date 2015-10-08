@@ -180,6 +180,9 @@ class PostgresqlCollector(diamond.collector.Collector):
 
 
 class QueryStats(object):
+    SPECIAL_COLUMNS = set(('datname', 'schemaname', 'relname', 'indexrelname',
+                           'funcname'))
+
     query = None
     path = None
 
@@ -198,6 +201,39 @@ class QueryStats(object):
             datname = datname.replace("_", ".")
         return datname
 
+    def _parse_row(self, kv_pairs):
+        """
+        :param kv_pairs: list of (column name, value) pairs
+        :type  kv_pairs: list
+        :returns: (special-columns-dict, unknown-kv-pairs-list)
+        :rtype:   (dict, list)
+
+        >>> import pprint
+        >>> pprint.pprint(QueryStats(dbname="myDB", conn=None)._parse_row([('queue_size', 123)]))
+        ({'datname': 'myDB'}, [('queue_size', 123)])
+        >>> pprint.pprint(QueryStats(dbname="myDB", conn=None)._parse_row([('datname', 'wordpress'), ('state', 'running'), ('count', 100)]))
+        ({'datname': 'wordpress'}, [('state', 'running'), ('count', 100)])
+        >>> pprint.pprint(QueryStats(dbname="myDB", conn=None)._parse_row([('datname', 'wordpress'), ('schemaname', 'public'), ('relname', 'posts'), ('rows', 3), ('locks', 0)]))
+        ({'datname': 'wordpress', 'relname': 'posts', 'schemaname': 'public'},
+         [('rows', 3), ('locks', 0)])
+        """
+
+        special_dict = dict()
+        remaining_kv_pairs = list()
+
+        for key, value in kv_pairs:
+            if key in self.SPECIAL_COLUMNS:
+                special_dict[key] = value
+            else:
+                remaining_kv_pairs.append((key, value))
+
+        # handle 'datname' specially:
+        datname = special_dict.get('datname', self.dbname)
+        if datname is not None:
+            special_dict['datname'] = self._translate_datname(datname)
+
+        return (special_dict, remaining_kv_pairs)
+
     def fetch(self, pg_version):
         if float(pg_version) >= 9.2 and hasattr(self, 'post_92_query'):
             q = self.post_92_query
@@ -208,33 +244,27 @@ class QueryStats(object):
         try:
             cursor.execute(q, self.parameters)
             rows = cursor.fetchall()
-            for row in rows:
-                # If row is length 2, assume col1, col2 forms key: value
-                if len(row) == 2:
-                    self.data.append({
-                        'datname': self._translate_datname(self.dbname),
-                        'metric': row[0],
-                        'value': row[1],
-                    })
+            columns = [d[0] for d in cursor.description]
+            columns_set = set(columns)
 
-                # If row > length 2, assume each column name maps to
-                # key => value
-                else:
-                    for key, value in row.iteritems():
-                        if key in ('datname', 'schemaname', 'relname',
-                                   'indexrelname', 'funcname',):
-                            continue
+            # If we have exactly 2 unfamiliar columns, assume they form a
+            # (key, value) pair:
+            if len(columns_set.difference(self.SPECIAL_COLUMNS)) == 2:
+                for row in rows:
+                    special_dict, remaining_kv_pairs = self._parse_row(zip(columns, row))
 
-                        self.data.append({
-                            'datname': self._translate_datname(row.get(
-                                'datname', self.dbname)),
-                            'schemaname': row.get('schemaname', None),
-                            'relname': row.get('relname', None),
-                            'indexrelname': row.get('indexrelname', None),
-                            'funcname': row.get('funcname', None),
-                            'metric': key,
-                            'value': value,
-                        })
+                    data_dict = special_dict
+                    data_dict['metric'] = remaining_kv_pairs[0][1]
+                    data_dict['value'] = remaining_kv_pairs[1][1]
+                    self.data.append(data_dict)
+            else:
+                # Assume each non-special column is a separate metric:
+                for row in rows:
+                    special_dict, remaining_kv_pairs = self._parse_row(zip(columns, row))
+
+                    for column, value in remaining_kv_pairs:
+                        data_dict = dict(special_dict, metric=column, value=value)
+                        self.data.append(data_dict)
 
         # Clean up
         finally:
