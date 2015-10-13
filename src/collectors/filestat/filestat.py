@@ -5,20 +5,7 @@ Uses lsof to collect data on number of open files per user per type
 
 #### Config Options
 
- * user_include - This is list of users to collect data for. If this is left
-    empty, its a wildcard to collector for all users (default = None)
- * user_exclude - This is a list of users to exclude from collecting data. If
-    this is left empty, no specific users will be excluded (default = None)
- * group_include - This is a list of groups to include in data collection. If
-    this DOES NOT override user_exclude. (default = None)
- * group_exclude - This is a list of groups to exclude from collecting data.
-    It DOES NOT override user_include. (default = None)
- * uid_min - This creates a floor for the user's uid. This means that it WILL
-    NOT collect data for any user with a uid LOWER than the specified minimum,
-    unless the user is told to be included by user_include (default = None)
- * uid_max - This creates a ceiling for the user's uid. This means that it WILL
-    NOT collect data for any user with a uid HIGHER than the specified maximum,
-    unless the user is told to be included by user_include (default = None)
+ Check Options table below
 
 *** Priority Explanation ***
  This is an explanation of the priority in which users, groups, and uid, are
@@ -61,6 +48,46 @@ class FilestatCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(FilestatCollector, self).get_default_config_help()
         config_help.update({
+            'user_include': "This is list of users to collect data for."
+                            " If this is left empty, its a wildcard"
+                            " to collector for all users"
+                            " (default = None)",
+            'user_exclude': "This is a list of users to exclude"
+                            " from collecting data. If this is left empty,"
+                            " no specific users will be excluded"
+                            " (default = None)",
+            'group_include': "This is a list of groups to include"
+                             " in data collection. This DOES NOT"
+                             " override user_exclude."
+                             " (default = None)",
+            'group_exclude': "This is a list of groups to exclude"
+                             " from collecting data. It DOES NOT override"
+                             " user_include. (default = None)",
+            'uid_min': "This creates a floor for the user's uid."
+                       " This means that it WILL NOT collect data"
+                       " for any user with a uid LOWER"
+                       " than the specified minimum,"
+                       " unless the user is told to be included"
+                       " by user_include (default = 0)",
+            'uid_max': "This creates a ceiling for the user's uid."
+                       " This means that it WILL NOT collect data"
+                       " for any user with a uid HIGHER"
+                       " than the specified maximum,"
+                       " unless the user is told to be included"
+                       " by user_include (default = 65536)",
+            'type_include': "This is a list of file types to collect"
+                            " ('REG', 'DIR', 'FIFO', etc). If left empty,"
+                            " will collect for all file types."
+                            "(Note: it's suggested to not leave"
+                            " type_include empty,"
+                            " as it would add significant load"
+                            " to your graphite box(es) (default = None)",
+            'type_exclude': "This is a list of tile types to exclude"
+                            " from being collected for. If left empty,"
+                            " no file types will be excluded. (default = None)",
+            'collect_user_data': "This enables or disables"
+                                 " the collection of user specific"
+                                 " file handles. (default = False)"
         })
         return config_help
 
