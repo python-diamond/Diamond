@@ -14,6 +14,19 @@ convenience the wiki is setup as a submodule of this checkout. You can get it vi
     git submodule init
     git submodule update
 
+Getting Started
+=====
+
+Steps to getting started:
+
+  * Read the [documentation on the Wiki](https://github.com/python-diamond/Diamond/wiki)
+  * Install via "pip diamond".  The releases on github are not recommended for use.  Use
+  "pypi-install diamond" on Debian/Ubuntu systems with python-stdeb installed to build packages.
+  * Copy the "diamond.conf.example" file to "diamond.conf".
+  * Optional: Run "diamond-setup" to help set collectors in "diamond.conf".
+  * Modify "diamond.conf" for your needs.
+  * Run diamond with one of: "diamond" or "initctl start diamond" or "/etc/init.d/diamond restart".
+
 Success Stories
 =====
 
