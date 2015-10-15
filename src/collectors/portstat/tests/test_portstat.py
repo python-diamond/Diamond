@@ -47,7 +47,7 @@ class PortStatCollectorTestCase(CollectorTestCase):
 
 class GetPortStatsTestCase(TestCase):
 
-    @patch('portstat.psutil.net_connections')
+    @patch('portstat.psutil.net_connections', autospec=True, spec_set=True)
     def test_get_port_stats(self, net_connections_mock):
 
         ports = [Mock() for _ in range(5)]
