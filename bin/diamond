@@ -25,6 +25,7 @@ from diamond.server import Server
 from diamond.util import get_diamond_version
 from diamond.utils.log import setup_logging
 
+import multiprocessing
 import optparse
 import signal
 
@@ -282,6 +283,8 @@ def main():
                 os.remove(options.pidfile)
                 # Log
                 log.debug("Removed PID file: %s" % (options.pidfile))
+            for child in multiprocessing.active_children():
+                child.terminate()
             sys.exit(0)
 
         # Set the signal handlers
