@@ -2,7 +2,7 @@
 """
 Output the collected values to AWS CloudWatch
 
-Automatically adds the InstanceID Dimension
+Automatically adds the InstanceId Dimension
 
 #### Dependencies
 
@@ -77,7 +77,7 @@ class cloudwatchHandler(Handler):
             self.log.error('CloudWatch: Failed to load instance metadata')
             return
         self.instance_id = instances['instance-id']
-        self.log.debug("Setting InstanceID: " + self.instance_id)
+        self.log.debug("Setting InstanceId: " + self.instance_id)
 
         self.valid_config = ('region', 'collector', 'metric', 'namespace',
                              'name', 'unit')
@@ -198,7 +198,7 @@ class cloudwatchHandler(Handler):
                         str(rule['name']),
                         str(metric.value),
                         timestamp, str(rule['unit']),
-                        {'InstanceID': self.instance_id})
+                        {'InstanceId': self.instance_id})
                     self.log.debug(
                         "CloudWatch: Successfully published metric: %s to"
                         " %s with value (%s)",

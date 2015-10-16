@@ -241,9 +241,11 @@ if __name__ == "__main__":
             config_keys['instance_prefix'] = False
             config_keys['interval'] = False
 
+            print "*" * 60
             print "\n\t\tNow configuring " + collector
             print collectors[collector].__doc__
 
+            print "(%s)" % collector
             configureKey('enabled')
 
             if boolCheck(config_file['enabled']):
