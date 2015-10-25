@@ -167,7 +167,7 @@ class InfluxdbHandler(Handler):
                     "measurement": path,
                     "time": point[0],
                     "fields": {
-                         "value": float(point[1])
+                        "value": float(point[1])
                     }
                 })
 
