@@ -156,6 +156,23 @@ class InfluxdbHandler(Handler):
                 self.batch_count,
                 (time.time() - self.batch_timestamp))
 
+    def _build_metrics(self):
+        """
+        Build list of metrics formatted for the influxdb client.
+        """
+        metrics = []
+        for path in self.batch:
+            for point in self.batch[path]:
+                metrics.append({
+                    "measurement": path,
+                    "time": point[0],
+                    "fields": {
+                         "value": float(point[1])
+                    }
+                })
+
+        return metrics
+
     def _send(self):
         """
         Send data to Influxdb. Data that can not be sent will be kept in queued.
@@ -169,13 +186,8 @@ class InfluxdbHandler(Handler):
             if self.influx is None:
                 self.log.debug("InfluxdbHandler: Reconnect failed.")
             else:
-                # build metrics data
-                metrics = []
-                for path in self.batch:
-                    metrics.append({
-                        "points": self.batch[path],
-                        "name": path,
-                        "columns": ["time", "value"]})
+                # Build metrics.
+                metrics = self._build_metrics()
                 # Send data to influxdb
                 self.log.debug("InfluxdbHandler: writing %d series of data",
                                len(metrics))
@@ -210,6 +222,9 @@ class InfluxdbHandler(Handler):
             self.log.debug("InfluxdbHandler: Established connection to "
                            "%s:%d/%s.",
                            self.hostname, self.port, self.database)
+
+            # Create the database, if it doesn't exist.
+            self._create_database()
         except Exception, ex:
             # Log Error
             self._throttle_error("InfluxdbHandler: Failed to connect to "
@@ -224,3 +239,12 @@ class InfluxdbHandler(Handler):
         Close the socket = do nothing for influx which is http stateless
         """
         self.influx = None
+
+    def _create_database(self):
+        """
+        Create the database if it doesn't exist.
+        """
+        databases = [db['name'] for db in self.influx.get_list_database()]
+        if self.database not in databases:
+            self.influx.create_database(self.database)
+        
