@@ -247,4 +247,3 @@ class InfluxdbHandler(Handler):
         databases = [db['name'] for db in self.influx.get_list_database()]
         if self.database not in databases:
             self.influx.create_database(self.database)
-        
