@@ -41,6 +41,10 @@ class TestProcessResourcesCollector(CollectorTestCase):
             'barexe': {
                 'exe': 'bar$'
             },
+            'noprocess': {
+                'name': 'noproc',
+                'count_workers': 'true'
+            },
             'diamond-selfmon': {
                 'selfmon': 'true',
             }
@@ -223,6 +227,8 @@ class TestProcessResourcesCollector(CollectorTestCase):
         self.assertPublished(publish_mock, 'barexe.ext_memory_info.rss', 3)
         self.assertPublished(publish_mock,
                              'diamond-selfmon.ext_memory_info.rss', 1234)
+        self.assertPublished(publish_mock, 'noprocess.workers_count', 0)
+        self.assertUnpublished(publish_mock, 'noprocess.uptime', 0)
 
 ##########################################################################
 if __name__ == "__main__":

@@ -160,6 +160,8 @@ class Server(object):
                     for cls in collectors.values()
                 )
 
+                load_delay = self.config['server'].get('collectors_load_delay',
+                                                       1.0)
                 for process_name in running_collectors - running_processes:
                     # To handle running multiple collectors concurrently, we
                     # split on white space and use the first word as the
@@ -186,7 +188,7 @@ class Server(object):
                         continue
 
                     # Splay the loads
-                    time.sleep(1)
+                    time.sleep(float(load_delay))
 
                     process = multiprocessing.Process(
                         name=process_name,
