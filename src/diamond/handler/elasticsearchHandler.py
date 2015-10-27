@@ -122,6 +122,7 @@ class ElasticSearchHandler(Handler):
 
         self.queue = collections.deque([])
         self.flush_time = time.time()
+        self.last_timestamp = 0
 
         self.log.debug("ElasticSearchHandler initialized.")
 
@@ -160,11 +161,16 @@ class ElasticSearchHandler(Handler):
         """Take single metric from main Diamond process"""
         if not self.enabled:
             return
+        # only flush when a new batch is starting
+        # so we don't end up with partial metrics
+        if metric.timestamp != self.last_timestamp:
+            if time.time() > self.flush_time + self.flush_seconds or \
+                    len(self.queue) > self.batch_size:
+                self.flush_time = time.time()
+                self.flush()
+            self.last_timestamp = metric.timestamp
+        # save new metric after flushing last batch
         self.queue.append(metric)
-        if time.time() > self.flush_time + self.flush_seconds or \
-                len(self.queue) > self.batch_size:
-            self.flush_time = time.time()
-            self.flush()
 
     def flush(self):
         """Write all metrics to ES server"""
