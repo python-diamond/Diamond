@@ -119,8 +119,8 @@ class LocalName(str):
 
 
 class CephCollector(diamond.collector.Collector):
-    def __init__(self, config, handlers):
-        super(CephCollector, self).__init__(config, handlers)
+    def __init__(self, config=None, handlers=[], name=None, configfile=None):
+        super(CephCollector, self).__init__(config, handlers, name, configfile)
         self.config['short_names'] = str_to_bool(self.config['short_names'])
         self.config['service_stats_global'] = str_to_bool(self.config['service_stats_global'])
         self.config['perf_counters_enabled'] = str_to_bool(self.config['perf_counters_enabled'])
