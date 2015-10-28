@@ -138,67 +138,70 @@ class TestCephCollectorGettingStats(CollectorTestCase):
                                  ),
                              ])
         self.assertEqual(actual_stats, expected)
-#
-#    @run_only_if_subprocess_check_output_is_available
-#    @patch('subprocess.check_output')
-#    def test_ceph_command_fails(self, check_output):
-#        check_output.side_effect = subprocess.CalledProcessError(
-#            255, ['/usr/bin/ceph'], 'error!',
-#        )
-#        actual = self.collector._get_stats_from_socket('a_socket_name')
-#        check_output.assert_called_with(['/usr/bin/ceph',
-#                                         '--admin-daemon',
-#                                         'a_socket_name',
-#                                         'perf',
-#                                         'dump',
-#                                         ])
-#        self.assertEqual(actual, {})
-#
-#    @run_only_if_subprocess_check_output_is_available
-#    @patch('json.loads')
-#    @patch('subprocess.check_output')
-#    def test_json_decode_fails(self, check_output, loads):
-#        input = {'a': 1,
-#                 'b': 2,
-#                 }
-#        check_output.return_value = json.dumps(input)
-#        loads.side_effect = ValueError('bad data')
-#        actual = self.collector._get_stats_from_socket('a_socket_name')
-#        check_output.assert_called_with(['/usr/bin/ceph',
-#                                         '--admin-daemon',
-#                                         'a_socket_name',
-#                                         'perf',
-#                                         'dump',
-#                                         ])
-#        loads.assert_called_with(json.dumps(input))
-#        self.assertEqual(actual, {})
-#
-#
-#class TestCephCollectorPublish(CollectorTestCase):
-#
-#    def setUp(self):
-#        config = get_collector_config('CephCollector', {
-#            'interval': 10,
-#        })
-#        self.collector = ceph.CephCollector(config, None)
-#
-#    @patch.object(Collector, 'publish')
-#    def test_simple(self, publish_mock):
-#        self.collector._publish_stats('prefix', {'a': 1})
-#        publish_mock.assert_called_with('prefix.a', 1,
-#                                        metric_type='GAUGE', instance=None,
-#                                        precision=0)
-#
-#    @patch.object(Collector, 'publish')
-#    def test_multiple(self, publish_mock):
-#        self.collector._publish_stats('prefix', {'a': 1, 'b': 2})
-#        publish_mock.assert_has_calls([call('prefix.a', 1,
-#                                            metric_type='GAUGE', instance=None,
-#                                            precision=0),
-#                                       call('prefix.b', 2,
-#                                            metric_type='GAUGE', instance=None,
-#                                            precision=0),
-#                                       ])
+
+    @patch('ceph._popen_check_output')
+    def test_ceph_command_fails(self, check_output):
+        # this test check very little since the exceptionhandling ws moved into collect
+        # We've checked elsewhere that check_output is getting called with specific params
+        # TODO delete or sub in collect for _get_perf_counters
+        check_output.side_effect = subprocess.CalledProcessError(
+            255, ['/usr/bin/ceph'], 'error!',
+        )
+        with self.assertRaises(ceph.AdminSocketError):
+            actual_stats, actual_schema = self.collector._get_perf_counters('a_socket_name')
+
+        check_output.assert_called_with(['/usr/bin/ceph',
+                                         '--admin-daemon',
+                                         'a_socket_name',
+                                         'perf',
+                                         'dump',
+                                         ])
+
+    @patch('json.loads')
+    @patch('ceph._popen_check_output')
+    def test_json_decode_fails(self, check_output, loads):
+        input = {'a': 1,
+                 'b': 2,
+                 }
+        check_output.return_value = (json.dumps(input), '')
+        loads.side_effect = ValueError('bad data')
+        with self.assertRaises(ceph.AdminSocketError):
+            actual_stats, actual_schema = self.collector._get_perf_counters('a_socket_name')
+
+        check_output.assert_called_with(['/usr/bin/ceph',
+                                         '--admin-daemon',
+                                         'a_socket_name',
+                                         'perf',
+                                         'dump',
+                                         ])
+        loads.assert_called_with(json.dumps(input))
+
+
+class TestCephCollectorPublish(CollectorTestCase):
+
+    def setUp(self):
+        config = get_collector_config('CephCollector', {
+            'interval': 10,
+        })
+        self.collector = ceph.CephCollector(config, None)
+
+    @patch.object(Collector, 'publish')
+    def test_simple(self, publish_mock):
+        self.collector._publish_stats('prefix', {'a': 1})
+        publish_mock.assert_called_with('prefix.a', 1,
+                                        metric_type='GAUGE', instance=None,
+                                        precision=0)
+
+    @patch.object(Collector, 'publish')
+    def test_multiple(self, publish_mock):
+        self.collector._publish_stats('prefix', {'a': 1, 'b': 2})
+        publish_mock.assert_has_calls([call('prefix.a', 1,
+                                            metric_type='GAUGE', instance=None,
+                                            precision=0),
+                                       call('prefix.b', 2,
+                                            metric_type='GAUGE', instance=None,
+                                            precision=0),
+                                       ])
 
 if __name__ == "__main__":
     unittest.main()
