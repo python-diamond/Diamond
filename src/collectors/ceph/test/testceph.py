@@ -48,8 +48,14 @@ class TestCounterIterator(unittest.TestCase):
 
     @run_only_if_assertSequenceEqual_is_available
     def test_doubly_nested(self):
-        data = {'a': 1, 'b': 2, 'c': {'d': 3}, 'e': {'f': {'g': 1}}}
-        expected = [(['a'], 1), (['b'], 2), (['c', 'd'], 3), (['e', 'f', 'g'], 1)]
+        data = {'a': 1,
+                'b': 2,
+                'c': {'d': 3},
+                'e': {'f': {'g': 1}}}
+        expected = [(['a'], 1),
+                    (['b'], 2),
+                    (['c', 'd'], 3),
+                    (['e', 'f', 'g'], 1)]
         actual = list(ceph.flatten_dictionary(data))
         self.assertSequenceEqual(actual, expected)
 
@@ -113,9 +119,9 @@ class TestCephCollectorGettingStats(CollectorTestCase):
     def test_load_works(self, check_output):
         expected = {'a': 1,
                     'b': 2,
-        }
+                    }
         check_output.return_value = (json.dumps(expected), "")
-        actual_stats, actual_schema = self.collector._get_perf_counters('a_socket_name')
+        stats, schema = self.collector._get_perf_counters('a_socket_name')
         self.assertListEqual(check_output.mock_calls,
                              [
                                  call(
@@ -137,7 +143,7 @@ class TestCephCollectorGettingStats(CollectorTestCase):
                                      ]
                                  ),
                              ])
-        self.assertEqual(actual_stats, expected)
+        self.assertEqual(stats, expected)
 
     @patch('ceph._popen_check_output')
     def test_ceph_command_fails(self, check_output):
@@ -148,7 +154,7 @@ class TestCephCollectorGettingStats(CollectorTestCase):
             255, ['/usr/bin/ceph'], 'error!',
         )
         with self.assertRaises(ceph.AdminSocketError):
-            actual_stats, actual_schema = self.collector._get_perf_counters('a_socket_name')
+            stats, schema = self.collector._get_perf_counters('a_socket_name')
 
         check_output.assert_called_with(['/usr/bin/ceph',
                                          '--admin-daemon',
@@ -166,7 +172,7 @@ class TestCephCollectorGettingStats(CollectorTestCase):
         check_output.return_value = (json.dumps(input), '')
         loads.side_effect = ValueError('bad data')
         with self.assertRaises(ceph.AdminSocketError):
-            actual_stats, actual_schema = self.collector._get_perf_counters('a_socket_name')
+            stats, schema = self.collector._get_perf_counters('a_socket_name')
 
         check_output.assert_called_with(['/usr/bin/ceph',
                                          '--admin-daemon',
