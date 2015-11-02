@@ -302,7 +302,8 @@ class CephCollector(diamond.collector.Collector):
         """
         for path, stat_type in flatten_dictionary(schema):
             # remove 'stat_type' component to get metric name
-            assert path[-1] == 'type'
+            if path[-1] != 'type':
+                continue
             del path[-1]
 
             if stat_type & _PERFCOUNTER_LONGRUNAVG:
