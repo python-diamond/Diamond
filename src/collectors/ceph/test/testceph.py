@@ -193,20 +193,48 @@ class TestCephCollectorPublish(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_simple(self, publish_mock):
-        self.collector._publish_stats('prefix', {'a': 1})
-        publish_mock.assert_called_with('prefix.a', 1,
+        schema = {u'cluster': {u'a': {u'description': u'a version',
+                                      u'nick': u'',
+                                      u'type': 2}}}
+
+        self.collector._publish_stats('prefix',
+                                      {'cluster': {'a': 1}},
+                                      schema,
+                                      ceph.GlobalName)
+        publish_mock.assert_called_with('prefix.cluster.a', 1,
                                         metric_type='GAUGE', instance=None,
-                                        precision=0)
+                                        precision=2)
 
     @patch.object(Collector, 'publish')
     def test_multiple(self, publish_mock):
-        self.collector._publish_stats('prefix', {'a': 1, 'b': 2})
+        schema = {u'a': {u'description': u'a version',
+                         u'nick': u'',
+                         u'type': 2},
+                  u'b': {u'description': u'a version',
+                         u'nick': u'',
+                         u'type': 2}}
+
+        self.collector._publish_stats('prefix', {'a': 1, 'b': 2},
+                                      schema, ceph.GlobalName)
         publish_mock.assert_has_calls([call('prefix.a', 1,
                                             metric_type='GAUGE', instance=None,
-                                            precision=0),
+                                            precision=2),
                                        call('prefix.b', 2,
                                             metric_type='GAUGE', instance=None,
-                                            precision=0),
+                                            precision=2),
+                                       ])
+
+    @patch.object(Collector, 'publish')
+    def test_multiple_obeys_schema(self, publish_mock):
+        schema = {u'a': {u'description': u'a version',
+                         u'nick': u'',
+                         u'type': 2}}
+
+        self.collector._publish_stats('prefix', {'a': 1, 'b': 2},
+                                      schema, ceph.GlobalName)
+        publish_mock.assert_has_calls([call('prefix.a', 1,
+                                            metric_type='GAUGE', instance=None,
+                                            precision=2),
                                        ])
 
 if __name__ == "__main__":
