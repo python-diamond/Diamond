@@ -147,10 +147,7 @@ class TestCephCollectorGettingStats(CollectorTestCase):
 
     @patch('ceph._popen_check_output')
     def test_ceph_command_fails(self, check_output):
-        # this test check very little since the exceptionhandling ws moved into collect
-        # We've checked elsewhere that check_output is getting called with specific params
-        # TODO delete or sub in collect for _get_perf_counters
-        check_output.side_effect = subprocess.CalledProcessError(
+        check_output.side_effect = ceph.CalledProcessError(
             255, ['/usr/bin/ceph'], 'error!',
         )
         with self.assertRaises(ceph.AdminSocketError):
