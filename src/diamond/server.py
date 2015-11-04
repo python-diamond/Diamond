@@ -124,7 +124,8 @@ class Server(object):
         # Signals
         #######################################################################
 
-        signal.signal(signal.SIGHUP, signal_to_exception)
+        if hasattr(signal, 'SIGHUP'):
+            signal.signal(signal.SIGHUP, signal_to_exception)
 
         #######################################################################
 
