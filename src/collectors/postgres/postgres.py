@@ -385,68 +385,60 @@ class UserIndexIOStats(QueryStats):
 
 class ConnectionStateStats(QueryStats):
     path = "%(datname)s.connections.%(metric)s"
-    multi_db = True
+    multi_db = False
     query = """
-        SELECT tmp.state AS key,COALESCE(count,0) FROM
-               (VALUES ('active'),
-                       ('waiting'),
-                       ('idle'),
-                       ('idletransaction'),
-                       ('unknown')
-                ) AS tmp(state)
-        LEFT JOIN
-             (SELECT CASE WHEN waiting THEN 'waiting'
-                          WHEN current_query = '<IDLE>' THEN 'idle'
-                          WHEN current_query = '<IDLE> in transaction'
-                              THEN 'idletransaction'
-                          WHEN current_query = '<insufficient privilege>'
-                              THEN 'unknown'
-                          ELSE 'active' END AS state,
-                     count(*) AS count
-               FROM pg_stat_activity
-               WHERE procpid != pg_backend_pid()
-               GROUP BY CASE WHEN waiting THEN 'waiting'
-                             WHEN current_query = '<IDLE>' THEN 'idle'
-                             WHEN current_query = '<IDLE> in transaction'
-                                 THEN 'idletransaction'
-                             WHEN current_query = '<insufficient privilege>'
-                                 THEN 'unknown' ELSE 'active' END
-             ) AS tmp2
-        ON tmp.state=tmp2.state ORDER BY 1
+        WITH tr(current_query, state_pretty) AS (
+          VALUES ('<IDLE>',                        'idle'),
+                 ('<IDLE> in transaction',         'idle_in_transaction'),
+                 ('<insufficient privilege>',      'unknown'),
+                 ('running',                       'blocked'),
+                 ('blocked',                       'running')
+        ),
+        tmp AS (
+          SELECT datname,
+                 COALESCE(CASE WHEN waiting THEN 'blocked' ELSE tr.state_pretty END, 'running') AS state_pretty,
+                 count(*)
+          FROM pg_stat_activity
+          LEFT JOIN tr USING (current_query)
+          WHERE procpid != pg_backend_pid()
+          GROUP by 1, 2
+        )
+        SELECT d.datname,
+               pretty_states.state_pretty,
+               COALESCE(tmp.count, 0) AS count
+        FROM pg_database d
+        CROSS JOIN (SELECT DISTINCT state_pretty from tr) AS pretty_states(state_pretty)
+        LEFT JOIN tmp USING (datname, state_pretty)
+        WHERE d.datname NOT IN ('template0', 'template1', 'postgres', 'rdsadmin')
+        ORDER by 1, 2
     """
     post_92_query = """
-        SELECT tmp.mstate AS state,COALESCE(count,0) FROM
-               (VALUES ('active'),
-                       ('waiting'),
-                       ('idle'),
-                       ('idletransaction'),
-                       ('unknown')
-               ) AS tmp(mstate)
-        LEFT JOIN
-             (SELECT CASE WHEN waiting THEN 'waiting'
-                          WHEN state = 'idle' THEN 'idle'
-                          WHEN state LIKE 'idle in transaction%'
-                              THEN 'idletransaction'
-                          WHEN state = 'disabled'
-                              THEN 'unknown'
-                          WHEN query = '<insufficient privilege>'
-                              THEN 'unknown'
-                          ELSE 'active' END AS mstate,
-                     count(*) AS count
-               FROM pg_stat_activity
-               WHERE pid != pg_backend_pid()
-               GROUP BY CASE WHEN waiting THEN 'waiting'
-                             WHEN state = 'idle' THEN 'idle'
-                             WHEN state LIKE 'idle in transaction%'
-                                 THEN 'idletransaction'
-                             WHEN state = 'disabled'
-                                 THEN 'unknown'
-                             WHEN query = '<insufficient privilege>'
-                                 THEN 'unknown'
-                             ELSE 'active'
-                        END
-             ) AS tmp2
-        ON tmp.mstate=tmp2.mstate ORDER BY 1
+        WITH tr(state, state_pretty) AS (
+          VALUES ('active',                        'running'),
+                 ('idle',                          'idle'),
+                 ('idle in transaction',           'idle_in_transaction'),
+                 ('idle in transaction (aborted)', 'idle_in_transaction_aborted'),
+                 ('fastpath function call',        'fastpath_function_call'),
+                 ('blocked',                       'blocked'),
+                 (NULL,                            'unknown')
+        ),
+        tmp AS (
+          SELECT datname,
+                 COALESCE(CASE WHEN state = 'active' AND waiting THEN 'blocked' ELSE tr.state_pretty END, 'unknown') AS state_pretty,
+                 count(*)
+          FROM pg_stat_activity
+          LEFT JOIN tr USING (state)
+          WHERE pid != pg_backend_pid()
+          GROUP by 1, 2
+        )
+        SELECT d.datname,
+               pretty_states.state_pretty,
+               COALESCE(tmp.count, 0) AS count
+        FROM pg_database d
+        CROSS JOIN (SELECT DISTINCT state_pretty from tr) AS pretty_states(state_pretty)
+        LEFT JOIN tmp USING (datname, state_pretty)
+        WHERE d.datname NOT IN ('template0', 'template1', 'postgres', 'rdsadmin')
+        ORDER by 1, 2
     """
 
 
