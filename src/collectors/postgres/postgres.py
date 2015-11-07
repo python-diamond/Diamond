@@ -559,11 +559,11 @@ class UserConnectionCount(QueryStats):
 
 
 class DatabaseConnectionCount(QueryStats):
-    path = "database.%(metric)s.connections"
+    path = "%(datname)s.total_connections"
     multi_db = False
     query = """
         SELECT datname,
-               count(datname) as connections
+               count(datname)
         FROM pg_stat_activity
         GROUP BY pg_stat_activity.datname
     """
