@@ -89,32 +89,43 @@ class TestMesosCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_compute_cpus_utilisation(self, publish_mock):
+        self.fixture_cpu_utilisation(publish_mock)
+
+        self.assertPublished(
+            publish_mock,
+            'frameworks.marathon-0_7_6.executors.task_name.cpus_utilisation',
+            0.5)
+
+    @patch.object(Collector, 'publish')
+    def test_should_compute_cpus_percent(self, publish_mock):
+        self.fixture_cpu_utilisation(publish_mock)
+
+        self.assertPublished(
+            publish_mock,
+            'frameworks.marathon-0_7_6.executors.task_name.cpus_percent',
+            0.5/1.7)
+
+    def fixture_cpu_utilisation(self, publish_mock):
         config = get_collector_config('MesosCollector', {'master': False})
         self.collector = MesosCollector(config, None)
         self.assertEqual(self.collector.master, False)
-
         # we need 2 collect calls to see new metrics
         returns = [
             self.getFixture('master_metrics_snapshot.json'),
             self.getFixture('slave_metrics_state.json'),
-            self.getFixture('slave_monitor_statistics_cpus_utilisation_next.json'),
+            self.getFixture(
+                'slave_monitor_statistics_cpus_utilisation_next.json'),
             self.getFixture('master_metrics_snapshot.json'),
             self.getFixture('slave_metrics_state.json'),
             self.getFixture('slave_monitor_statistics_cpus_utilisation.json'),
         ]
-
         urlopen_mock = patch('urllib2.urlopen', Mock(
             side_effect=lambda *args: returns.pop(0)))
-
         urlopen_mock.start()
         self.collector.collect()
         publish_mock.reset_mock()
         self.collector.collect()
         urlopen_mock.stop()
-        self.assertPublished(
-            publish_mock,
-            'frameworks.marathon-0_7_6.executors.task_name.cpus_utilisation',
-            0.5)
 
 
 if __name__ == "__main__":

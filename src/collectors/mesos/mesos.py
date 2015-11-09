@@ -111,6 +111,16 @@ class MesosCollector(diamond.collector.Collector):
                     cur_stats['cpus_utilisation'] = cpus_time_diff_s / ts_diff
         self.executors_prev_read = cur_read
 
+    def _add_cpu_percent(self, cur_read):
+        """Compute cpu percent basing on the provided utilisation
+        """
+        for executor_id, cur_data in cur_read.items():
+            stats = cur_data['statistics']
+            cpus_limit = stats.get('cpus_limit')
+            cpus_utilisation = stats.get('cpus_utilisation')
+            if cpus_utilisation and cpus_limit != 0:
+                stats['cpus_percent'] = cpus_utilisation / cpus_limit
+
     def _group_tasks_statistics(self, result):
         """This function group statistics of same tasks by adding them.
         It also add 'instances_count' statistic to get information about
@@ -139,6 +149,7 @@ class MesosCollector(diamond.collector.Collector):
                 i['statistics'], r[executor_id]['statistics'])
 
         self._add_cpu_usage(r)
+        self._add_cpu_percent(r)
         return r
 
     def _sum_statistics(self, x, y):
