@@ -96,6 +96,9 @@ def _popen_check_output(*popenargs):
 
 
 class AdminSocketError(Exception):
+    """
+    Indicates an error communicating with Ceph services through their sockets
+    """
     def __init__(self, socket_name, command):
         self.socket_name = socket_name
         self.command = command
@@ -106,6 +109,9 @@ class AdminSocketError(Exception):
 
 
 class MonError(Exception):
+    """
+    Indicates an error in commands sent to the Ceph monitor
+    """
     def __init__(self, cluster_name, command):
         self.cluster_name = cluster_name
         self.command = command
