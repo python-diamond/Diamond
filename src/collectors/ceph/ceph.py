@@ -28,6 +28,8 @@ _PATH_SEP = "."
 _NSEC_PER_SEC = 1000000000
 
 # Performance metric data types
+# see http://docs.ceph.com/docs/master/dev/perf_counters/#schema
+# for the source of these values
 _PERFCOUNTER_NONE = 0
 _PERFCOUNTER_TIME = 0x1
 _PERFCOUNTER_U64 = 0x2
