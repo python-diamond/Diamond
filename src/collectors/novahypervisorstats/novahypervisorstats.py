@@ -24,7 +24,6 @@ class NovaHypervisorStatsCollector(diamond.collector.Collector):
             'tenant':     'Tenancy to use',
             'auth_url':   'Keystone ip or hostname',
             'auth_proto': 'HTTP protocol to use',
-            'metrics':    'List of metric names to collect',
             'cpu_allocation_ratio': 'As per nova.conf, '
                                     'the allocation ratio of '
                                     'real to virtual cores',
@@ -46,15 +45,12 @@ class NovaHypervisorStatsCollector(diamond.collector.Collector):
             'tenant':     'admin',
             'auth_url':   '127.0.0.1',
             'auth_proto': 'http',
-            'metrics':  "memory_mb, memory_mb_used,running_vms,"
-                        "vcpus,vcpus_used,local_gb,local_gb_used",
             'cpu_allocation_ratio': '16',
             'ram_allocation_ratio': '1.5',
         })
         return config
 
     def collect(self):
-        metrics = [f.strip() for f in self.config['metrics'].split(',')]
         url = self.config['auth_proto'] + '://' + \
             self.config['auth_url'] + ':5000/v2.0/'
 
@@ -65,9 +61,31 @@ class NovaHypervisorStatsCollector(diamond.collector.Collector):
                              service_type="compute",
                              no_cache=True)
 
+        s = []
+
+        rollup = nova.hypervisors.statistics()._info
+        s.append({rollup + '.disk.local_gb': rollup['local_gb']})
+        s.append({rollup + '.disk.local_gb_used': rollup['local_gb_used']})
+        s.append({rollup + '.disk.free_disk_gb': rollup['free_disk_gb']})
+        s.append({rollup + '.disk.disk_available_least':
+                  rollup['disk_available_least']})
+        s.append({rollup + '.memory.total':
+                  rollup['memory_mb'] * ram_allocation_ratio})
+        s.append({rollup + '.memory.real': rollup['memory_mb']})
+        s.append({rollup + '.memory.used': rollup['memory_mb_used']})
+        s.append({rollup + '.memory.free_real': rollup['free_ram_mb']})
+        s.append({rollup + '.memory.free':
+                  rollup['memory_mb'] * ram_allocation_ratio -
+                  rollup['memory_mb_used']})
+        s.append({rollup + '.running_vms': rollup['running_vms']})
+        s.append({rollup + '.vcpus.total':
+                  rollup['vcpus'] * cpu_allocation_ratio})
+        s.append({rollup + '.vcpus.used':
+                  rollup['vcpus_used'] * cpu_allocation_ratio})
+        s.append({rollup + '.vcpus.real':
+                  rollup['vcpus'] * cpu_allocation_ratio})
         hypervisors = nova.hypervisors.list()
         if hypervisors:
-            s = []
             for h in hypervisors:
                 hv = nova.hypervisors.get(h.id)
                 stats = hv._info.copy()
@@ -89,11 +107,10 @@ class NovaHypervisorStatsCollector(diamond.collector.Collector):
                           ram_percent_used})
 
                 for k, v in sorted(stats.items()):
-                    if k in metrics:
-                        hostname = h.hypervisor_hostname.split('.')
-                        metric_name = ("%s.%s") % (hostname[0], k)
-                        s.append({metric_name: v})
+                    hostname = h.hypervisor_hostname.split('.')
+                    metric_name = ("%s.%s") % (hostname[0], k)
+                    s.append({metric_name: v})
 
-            for metric in s:
-                for key, val in metric.items():
-                    self.publish(key, val)
+        for metric in s:
+            for key, val in metric.items():
+                self.publish(key, val)
