@@ -42,7 +42,7 @@ class TestCounterIterator(unittest.TestCase):
     @run_only_if_assertSequenceEqual_is_available
     def test_nested(self):
         data = {'a': 1, 'b': 2, 'c': {'d': 3}}
-        expected = [(['a'], 1), (['b'], 2), (['c','d'], 3)]
+        expected = [(['a'], 1), (['b'], 2), (['c', 'd'], 3)]
         actual = list(ceph.flatten_dictionary(data))
         self.assertSequenceEqual(actual, expected)
 
