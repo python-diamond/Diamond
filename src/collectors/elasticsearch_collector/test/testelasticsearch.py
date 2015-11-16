@@ -10,7 +10,7 @@ from mock import patch
 
 from diamond.collector import Collector
 
-from elasticsearch import ElasticSearchCollector
+from elasticsearch_collector import ElasticSearchCollector
 
 ##########################################################################
 
