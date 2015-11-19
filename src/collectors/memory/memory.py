@@ -19,13 +19,14 @@ import os
 
 try:
     import psutil
+    psutil  # workaround for pyflakes issue #13
 except ImportError:
     psutil = None
 
 _KEY_MAPPING = [
-    'MemAvailable',
     'MemTotal',
     'MemFree',
+    'MemAvailable',  # needs kernel 3.14
     'Buffers',
     'Cached',
     'Active',
@@ -59,7 +60,9 @@ class MemoryCollector(diamond.collector.Collector):
         """
         config = super(MemoryCollector, self).get_default_config()
         config.update({
-            'path':     'memory',
+            'path': 'memory',
+            'method': 'Threaded',
+            'force_psutil': 'False'
             # Collect all the nodes or just a few standard ones?
             # Uncomment to enable
             # 'detailed': 'True'
@@ -70,7 +73,8 @@ class MemoryCollector(diamond.collector.Collector):
         """
         Collect memory stats
         """
-        if os.access(self.PROC, os.R_OK):
+        if ((os.access(self.PROC, os.R_OK) and
+             self.config.get('force_psutil') != 'True')):
             file = open(self.PROC)
             data = file.read()
             file.close()
@@ -138,5 +142,3 @@ class MemoryCollector(diamond.collector.Collector):
                 break
 
             return True
-
-        return None
