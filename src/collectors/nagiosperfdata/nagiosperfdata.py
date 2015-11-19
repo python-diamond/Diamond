@@ -161,13 +161,13 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
         if unit == 'us':
             return value / 1000000.0
         if unit == 'KB':
-            return value * 1024.0
+            return value * 1024
         if unit == 'MB':
-            return value * 1024768.0
+            return value * 1024 * 1024
         if unit == 'GB':
-            return value * 1073741824.0
+            return value * 1024 * 1024 * 1024
         if unit == 'TB':
-            return value * 1099511627776.0
+            return value * 1024 * 1024 * 1024 * 1024
 
         return value
 
