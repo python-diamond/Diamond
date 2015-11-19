@@ -62,6 +62,12 @@ class TestJolokiaCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, rewritemetrics)
 
     @patch.object(Collector, 'publish')
+    def test_should_work_with_real_data_and_basic_auth(self, publish_mock):
+        self.collector.config["username"] = "user"
+        self.collector.config["password"] = "password"
+        self.test_should_work_with_real_data()
+
+    @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
         patch_urlopen = patch('urllib2.urlopen', Mock(
                               return_value=self.getFixture('stats_blank')))
