@@ -28,6 +28,7 @@ Metrics with total_ prefixes - summarized data from children CGroups.
 """
 
 import diamond.collector
+import diamond.convertor
 import os
 import re
 
