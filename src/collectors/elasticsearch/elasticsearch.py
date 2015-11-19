@@ -356,7 +356,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
         #
         # network
-        self._copy_two_level(metrics, 'network', data['network'])
+        if 'network' in data:
+            self._copy_two_level(metrics, 'network', data['network'])
 
         #
         # cluster (optional)
