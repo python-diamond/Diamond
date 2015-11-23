@@ -124,7 +124,8 @@ class Server(object):
         # Signals
         #######################################################################
 
-        signal.signal(signal.SIGHUP, signal_to_exception)
+        if hasattr(signal, 'SIGHUP'):
+            signal.signal(signal.SIGHUP, signal_to_exception)
 
         #######################################################################
 
@@ -203,7 +204,13 @@ class Server(object):
                 time.sleep(1)
 
             except SIGHUPException:
+                # ignore further SIGHUPs for now
+                original_sighup_handler = signal.getsignal(signal.SIGHUP)
+                signal.signal(signal.SIGHUP, signal.SIG_IGN)
+
                 self.log.info('Reloading state due to HUP')
                 self.config = load_config(self.configfile)
                 collectors = load_collectors(
                     self.config['server']['collectors_path'])
+                # restore SIGHUP handler
+                signal.signal(signal.SIGHUP, original_sighup_handler)

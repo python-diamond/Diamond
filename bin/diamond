@@ -199,6 +199,10 @@ def main():
         if not options.skip_change_user:
             # Switch user to specified user/group if required
             try:
+                if gid != -1 and uid != -1:
+                    # Manually set the groups since they aren't set by default
+                    os.initgroups(pwd.getpwuid(uid).pw_name, gid)
+
                 if gid != -1 and os.getgid() != gid:
                     # Set GID
                     os.setgid(gid)

@@ -64,10 +64,10 @@ class GetPortStatsTestCase(TestCase):
 
         cnts = get_port_stats(5222)
 
-        net_connections_mock.assert_called_once()
+        self.assertEqual(net_connections_mock.call_count, 1)
         self.assertEqual(cnts, {'ok': 1})
 
         cnts = get_port_stats(8888)
 
-        net_connections_mock.assert_called_once()
+        self.assertEqual(net_connections_mock.call_count, 2)
         self.assertEqual(cnts, {'ok': 2, 'bad': 1})

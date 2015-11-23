@@ -49,6 +49,7 @@ an mbean.
 """
 
 import diamond.collector
+import base64
 import json
 import re
 import urllib
@@ -76,6 +77,8 @@ class JolokiaCollector(diamond.collector.Collector):
                        " be collected.",
             'regex': "Contols if mbeans option matches with regex,"
                        " False by default.",
+            'username': None,
+            'password': None,
             'host': 'Hostname',
             'port': 'Port',
             'rewrite': "This sub-section of the config contains pairs of"
@@ -91,6 +94,8 @@ class JolokiaCollector(diamond.collector.Collector):
             'regex': False,
             'rewrite': [],
             'path': 'jolokia',
+            'username': None,
+            'password': None,
             'host': 'localhost',
             'port': 8778,
         })
@@ -146,7 +151,7 @@ class JolokiaCollector(diamond.collector.Collector):
                                          self.config['port'],
                                          self.config['path'],
                                          self.LIST_URL)
-            response = urllib2.urlopen(url)
+            response = urllib2.urlopen(self._create_request(url))
             return self.read_json(response)
         except (urllib2.HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
@@ -159,7 +164,7 @@ class JolokiaCollector(diamond.collector.Collector):
                                          self.config['port'],
                                          self.config['path'],
                                          url_path)
-            response = urllib2.urlopen(url)
+            response = urllib2.urlopen(self._create_request(url))
             return self.read_json(response)
         except (urllib2.HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
@@ -175,6 +180,16 @@ class JolokiaCollector(diamond.collector.Collector):
         domain = re.sub('"', '!"', domain)
         domain = urllib.quote(domain)
         return domain
+
+    def _create_request(self, url):
+        req = urllib2.Request(url)
+        username = self.config["username"]
+        password = self.config["password"]
+        if username is not None and password is not None:
+            base64string = base64.encodestring('%s:%s' % (
+                username, password)).replace('\n', '')
+            req.add_header("Authorization", "Basic %s" % base64string)
+        return req
 
     def clean_up(self, text):
         text = re.sub('["\'(){}<>\[\]]', '', text)
