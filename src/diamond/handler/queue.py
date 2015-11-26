@@ -35,7 +35,7 @@ class QueueHandler(Handler):
         try:
             self.queue.put(metric, block=False)
         except Queue.Full:
-            pass
+            self._throttle_error('Queue full, check handlers for delays')
 
     def flush(self):
         return self._flush()
@@ -49,4 +49,4 @@ class QueueHandler(Handler):
         try:
             self.queue.put(None, block=False)
         except Queue.Full:
-            pass
+            self._throttle_error('Queue full, check handlers for delays')
