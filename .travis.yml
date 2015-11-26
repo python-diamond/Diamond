@@ -20,9 +20,8 @@ install:
 
 # command to run tests, e.g. python setup.py test
 script:
-    - python test.py
+    - coverage run --source=diamond test.py
     - pep8 --config=.pep8 src bin/diamond bin/diamond-setup build_doc.py setup.py test.py
-    - coverage run --source=diamond setup.py test
 
 after_success:
     coveralls
