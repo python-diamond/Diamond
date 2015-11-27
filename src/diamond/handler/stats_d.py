@@ -135,6 +135,8 @@ class StatsdHandler(Handler):
                     statsd.Counter(prefix, self.connection).increment(
                         name, value)
 
+        if hasattr(statsd, 'StatsClient'):
+            self.connection.send()
         self.metrics = []
 
     def flush(self):
@@ -152,7 +154,7 @@ class StatsdHandler(Handler):
             self.connection = statsd.StatsClient(
                 host=self.host,
                 port=self.port
-            )
+            ).pipeline()
         else:
             # Create socket
             self.connection = statsd.Connection(
