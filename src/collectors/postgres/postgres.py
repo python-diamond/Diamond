@@ -36,6 +36,8 @@ class PostgresqlCollector(diamond.collector.Collector):
             'user': 'Username',
             'password': 'Password',
             'port': 'Port number',
+            'password_provider': "Whether to auth with supplied password or"
+            " .pgpass file  <password|pgpass>",
             'sslmode': 'Whether to use SSL - <disable|allow|require|...>',
             'underscore': 'Convert _ to .',
             'extended': 'Enable collection of extended database stats.',
@@ -59,6 +61,7 @@ class PostgresqlCollector(diamond.collector.Collector):
             'user': 'postgres',
             'password': 'postgres',
             'port': 5432,
+            'password_provider': 'password',
             'sslmode': 'disable',
             'underscore': False,
             'extended': False,
@@ -160,6 +163,10 @@ class PostgresqlCollector(diamond.collector.Collector):
             conn_args['database'] = database
         else:
             conn_args['database'] = 'postgres'
+
+        # libpq will use ~/.pgpass only if no password supplied
+        if self.config['password_provider'] == 'pgpass':
+            del conn_args['password']
 
         try:
             conn = psycopg2.connect(**conn_args)
