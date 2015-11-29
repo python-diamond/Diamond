@@ -7,8 +7,8 @@ It's OK.
 
 #### Dependencies
 
- * [python-statsd](http://pypi.python.org/pypi/python-statsd/)
- * [statsd](https://github.com/etsy/statsd) v0.1.1 or newer.
+ * [statsd](https://pypi.python.org/pypi/statsd/) v2.0.0 or newer.
+ * A compatible implementation of [statsd](https://github.com/etsy/statsd)
 
 #### Configuration
 
@@ -49,6 +49,11 @@ class StatsdHandler(Handler):
             self.log.error('statsd import failed. Handler disabled')
             self.enabled = False
             return
+
+        if not hasattr(statsd, 'StatsClient'):
+            self.log.warn('python-statsd support is deprecated '
+                          'and will be removed in the future. '
+                          'Please use https://pypi.python.org/pypi/statsd/')
 
         # Initialize Options
         self.host = self.config['host']
