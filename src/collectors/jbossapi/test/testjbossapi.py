@@ -12,6 +12,7 @@ from jbossapi import JbossApiCollector
 ###############################################################################
 
 class TestJbossApiCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('JbossApiCollector', {
         })

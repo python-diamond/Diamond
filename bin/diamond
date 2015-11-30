@@ -25,6 +25,7 @@ from diamond.server import Server
 from diamond.util import get_diamond_version
 from diamond.utils.log import setup_logging
 
+import multiprocessing
 import optparse
 import signal
 
@@ -198,6 +199,10 @@ def main():
         if not options.skip_change_user:
             # Switch user to specified user/group if required
             try:
+                if gid != -1 and uid != -1:
+                    # Manually set the groups since they aren't set by default
+                    os.initgroups(pwd.getpwuid(uid).pw_name, gid)
+
                 if gid != -1 and os.getgid() != gid:
                     # Set GID
                     os.setgid(gid)
@@ -236,7 +241,7 @@ def main():
                     sys.exit(1)
                 # Decouple from parent environmen
                 os.setsid()
-                os.umask(0)
+                os.umask(0o022)
                 # Fork 2
                 try:
                     pid = os.fork()
@@ -282,6 +287,8 @@ def main():
                 os.remove(options.pidfile)
                 # Log
                 log.debug("Removed PID file: %s" % (options.pidfile))
+            for child in multiprocessing.active_children():
+                child.terminate()
             sys.exit(0)
 
         # Set the signal handlers

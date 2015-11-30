@@ -4,12 +4,17 @@
 
 import os
 import sys
-import unittest
 import inspect
 import traceback
 import optparse
 import logging
 import configobj
+
+try:
+    # python 2.6
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 try:
     import cPickle as pickle
@@ -190,24 +195,25 @@ class CollectorTestCase(unittest.TestCase):
 
         self.assertEqual(actual_value, expected_value, message)
 
-        actual_value = calls[0][0][0].value
-        expected_value = value
-        precision = 0
+        if expected_value:
+            actual_value = calls[0][0][0].value
+            expected_value = value
+            precision = 0
 
-        if isinstance(value, tuple):
-            expected_value, precision = expected_value
+            if isinstance(value, tuple):
+                expected_value, precision = expected_value
 
-        message = '%s: actual %r, expected %r' % (key,
-                                                  actual_value,
-                                                  expected_value)
+            message = '%s: actual %r, expected %r' % (key,
+                                                      actual_value,
+                                                      expected_value)
 
-        if precision is not None:
-            self.assertAlmostEqual(float(actual_value),
-                                   float(expected_value),
-                                   places=precision,
-                                   msg=message)
-        else:
-            self.assertEqual(actual_value, expected_value, message)
+            if precision is not None:
+                self.assertAlmostEqual(float(actual_value),
+                                       float(expected_value),
+                                       places=precision,
+                                       msg=message)
+            else:
+                self.assertEqual(actual_value, expected_value, message)
 
     def assertUnpublishedMetricMany(self, mock, dict, expected_value=0):
         return self.assertPublishedMetricMany(mock, dict, expected_value)
@@ -225,10 +231,10 @@ def getCollectorTests(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
 
-        if (os.path.isfile(cPath)
-                and len(f) > 3
-                and f[-3:] == '.py'
-                and f[0:4] == 'test'):
+        if ((os.path.isfile(cPath) and
+             len(f) > 3 and
+             f[-3:] == '.py' and
+             f[0:4] == 'test')):
             sys.path.append(os.path.dirname(cPath))
             sys.path.append(os.path.dirname(os.path.dirname(cPath)))
             modname = f[:-3]

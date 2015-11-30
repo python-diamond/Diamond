@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,7 +12,7 @@ from mock import patch, call
 from diamond.collector import Collector
 from redisstat import RedisCollector
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_redis_is_available(func):
@@ -28,6 +28,7 @@ def run_only_if_redis_is_available(func):
 
 
 class TestRedisCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('RedisCollector', {
             'interval': '1',
@@ -352,6 +353,6 @@ class TestRedisCollector(CollectorTestCase):
             publish_mock.assert_has_calls(exp_call)
 
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

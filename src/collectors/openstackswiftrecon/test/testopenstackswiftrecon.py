@@ -13,6 +13,7 @@ from openstackswiftrecon import OpenstackSwiftReconCollector
 
 
 class TestOpenstackSwiftReconCollector(CollectorTestCase):
+
     def setUp(self, allowed_names=None):
         if not allowed_names:
             allowed_names = []

@@ -28,6 +28,7 @@ import re
 
 class CassandraJolokiaCollector(JolokiaCollector):
     # override to allow setting which percentiles will be collected
+
     def get_default_config_help(self):
         config_help = super(CassandraJolokiaCollector,
                             self).get_default_config_help()
@@ -44,20 +45,19 @@ class CassandraJolokiaCollector(JolokiaCollector):
     def get_default_config(self):
         config = super(CassandraJolokiaCollector, self).get_default_config()
         config.update({
-            'percentiles': '50,95,99',
+            'percentiles': ['50', '95', '99'],
             'histogram_regex': '.*HistogramMicros$'
         })
         return config
 
-    def __init__(self, config, handlers):
-        super(CassandraJolokiaCollector, self).__init__(config, handlers)
+    def __init__(self, *args, **kwargs):
+        super(CassandraJolokiaCollector, self).__init__(*args, **kwargs)
         self.offsets = self.create_offsets(91)
         self.update_config(self.config)
 
     def update_config(self, config):
         if 'percentiles' in config:
-            self.percentiles = map(int, string.split(config['percentiles'],
-                                                     ','))
+            self.percentiles = map(int, config['percentiles'])
         if 'histogram_regex' in config:
             self.histogram_regex = re.compile(config['histogram_regex'])
 
@@ -68,10 +68,11 @@ class CassandraJolokiaCollector(JolokiaCollector):
             return
 
         buckets = values
+        offsets = self.offsets
         for percentile in self.percentiles:
-            percentile_value = self.compute_percentile(
-                self.offsets, buckets, percentile)
-            self.publish("%s.p%s" % (prefix, percentile), percentile_value)
+            value = self.compute_percentile(offsets, buckets, percentile)
+            cleaned_key = self.clean_up("%s.p%s" % (prefix, percentile))
+            self.publish(cleaned_key, value)
 
     # Adapted from Cassandra docs:
     # https://bit.ly/13M5JPE

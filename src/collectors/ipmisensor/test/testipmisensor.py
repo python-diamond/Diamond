@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,10 +11,11 @@ from mock import patch
 from diamond.collector import Collector
 from ipmisensor import IPMISensorCollector
 
-################################################################################
+##########################################################################
 
 
 class TestIPMISensorCollector(CollectorTestCase):
+
     def setUp(self, thresholds=False):
         config = get_collector_config('IPMISensorCollector', {
             'interval': 10,
@@ -111,6 +112,34 @@ class TestIPMISensorCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+    @patch('os.access', Mock(return_value=True))
+    @patch.object(Collector, 'publish')
+    def test_should_work_with_real_data_hpilo(self, publish_mock):
+        patch_communicate = patch(
+            'subprocess.Popen.communicate',
+            Mock(return_value=(self.getFixture('ipmihp.out').getvalue(), '')))
+
+        patch_communicate.start()
+        self.collector.collect()
+        patch_communicate.stop()
+
+        metrics = {
+            '01-Inlet.Ambient': 18.0,
+            '02-CPU': 40.0,
+            '03-P1.DIMM.1-2': 28.0,
+            '05-Chipset': 55.00,
+            '06-Chipset.Zone': 40.00,
+            '07-VR.P1.Zone': 45.00,
+            '09-iLO.Zone': 40.00,
+            'Fan.1': 15.68,
+        }
+
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
+        self.assertPublishedMany(publish_mock, metrics)
+
+
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

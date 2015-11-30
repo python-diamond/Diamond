@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,10 +11,11 @@ from diamond.collector import Collector
 
 from dseopscenter import DseOpsCenterCollector
 
-################################################################################
+##########################################################################
 
 
 class TestDseOpsCenterCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('DseOpsCenterCollector',
                                       {'cluster_id': 'MyTestCluster'})

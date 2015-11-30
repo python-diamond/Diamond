@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,10 +12,11 @@ from diamond.collector import Collector
 
 from unbound import UnboundCollector
 
-################################################################################
+##########################################################################
 
 
 class TestUnboundCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('UnboundCollector', {})
 
@@ -232,6 +233,6 @@ class TestUnboundCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, metrics)
         self.assertUnpublishedMany(publish_mock, histogram)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

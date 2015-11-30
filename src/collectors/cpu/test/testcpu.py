@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -16,10 +16,11 @@ except ImportError:
 from diamond.collector import Collector
 from cpu import CPUCollector
 
-################################################################################
+##########################################################################
 
 
 class TestCPUCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('CPUCollector', {
             'interval': 10,
@@ -256,6 +257,6 @@ class TestCPUCollectorNormalize(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, self.expected)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

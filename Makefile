@@ -44,6 +44,9 @@ sdist: version
 bdist: version
 	./setup.py bdist --prune
 
+bdist_wheel: version
+	USE_SETUPTOOLS=1 ./setup.py bdist_wheel
+
 install: version
 	./setup.py install --root $(DESTDIR)
 
@@ -105,7 +108,7 @@ reltest:
 distrotest:
 	echo ${DISTRO}
 
-pypi: version
-	python setup.py sdist upload
+pypi: version sdist bdist_wheel
+	twine upload -s dist/*
 
-.PHONY: run watch config test docs sdist bdist install rpm buildrpm deb sdeb builddeb buildsourcedeb ebuild buildebuild tar clean cleanws version reltest vertest distrotest pypi
+.PHONY: run watch config test docs sdist bdist bdist_wheel install rpm buildrpm deb sdeb builddeb buildsourcedeb ebuild buildebuild tar clean cleanws version reltest vertest distrotest pypi

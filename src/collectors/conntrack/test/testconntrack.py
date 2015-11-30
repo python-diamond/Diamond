@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,10 +11,11 @@ from mock import patch
 from diamond.collector import Collector
 from conntrack import ConnTrackCollector
 
-################################################################################
+##########################################################################
 
 
 class TestConnTrackCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('ConnTrackCollector', {
             'interval': 10,
@@ -48,9 +49,9 @@ class TestConnTrackCollector(CollectorTestCase):
             'subprocess.Popen.communicate',
             Mock(
                 return_value=(
-                    'sysctl: cannot stat /proc/sys/net/net'
-                    + 'filter/nf_conntrack_count: '
-                    + 'No such file or directory', '')))
+                    'sysctl: cannot stat /proc/sys/net/net' +
+                    'filter/nf_conntrack_count: ' +
+                    'No such file or directory', '')))
 
         patch_communicate.start()
         self.collector.collect()
@@ -64,6 +65,6 @@ class TestConnTrackCollector(CollectorTestCase):
         self.collector.collect()
         self.assertPublishedMany(publish_mock, {})
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

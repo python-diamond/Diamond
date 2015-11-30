@@ -24,6 +24,7 @@ class GridEngineCollector(diamond.collector.Collector):
     """
 
     class QueueStatsEntry:
+
         def __init__(self, name=None, load=None, used=None, resv=None,
                      available=None, total=None, temp_disabled=None,
                      manual_intervention=None):
@@ -37,6 +38,7 @@ class GridEngineCollector(diamond.collector.Collector):
             self.manual_intervention = manual_intervention
 
     class StatsParser(object):
+
         def __init__(self, document):
             self.dom = xml.dom.minidom.parseString(document.strip())
 
@@ -52,6 +54,7 @@ class GridEngineCollector(diamond.collector.Collector):
             return ''.join(rc)
 
     class QueueStatsParser(StatsParser):
+
         def __init__(self, document):
             self.dom = xml.dom.minidom.parseString(document.strip())
 

@@ -50,7 +50,7 @@ class PassengerCollector(diamond.collector.Collector):
             "bin":          "/usr/lib/ruby-flo/bin/passenger-memory-stats",
             "use_sudo":     False,
             "sudo_cmd":     "/usr/bin/sudo",
-            })
+        })
         return config
 
     def get_passenger_memory_stats(self):
@@ -105,7 +105,8 @@ class PassengerCollector(diamond.collector.Collector):
                     dict_stats["nginx_mem_total"] += float(line_splitted[4])
                 elif passenger_flag == 1:
                     dict_stats["passenger_procs"].append(line_splitted[0])
-                    dict_stats["passenger_mem_total"] += float(line_splitted[3])
+                    dict_stats[
+                        "passenger_mem_total"] += float(line_splitted[3])
 
             elif "Processes:" in line:
                 passenger_flag = 0

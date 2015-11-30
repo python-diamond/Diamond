@@ -28,7 +28,8 @@ class PostgresqlCollector(diamond.collector.Collector):
         """
         Return help text for collector
         """
-        config_help = super(PostgresqlCollector, self).get_default_config_help()
+        config_help = super(PostgresqlCollector,
+                            self).get_default_config_help()
         config_help.update({
             'host': 'Hostname',
             'dbname': 'DB to connect to in order to get list of DBs in PgSQL',
@@ -128,7 +129,7 @@ class PostgresqlCollector(diamond.collector.Collector):
         query = """
             SELECT datname FROM pg_database
             WHERE datallowconn AND NOT datistemplate
-            AND NOT datname='postgres' ORDER BY 1
+            AND NOT datname='postgres' AND NOT datname='rdsadmin' ORDER BY 1
         """
         conn = self._connect(self.config['dbname'])
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)

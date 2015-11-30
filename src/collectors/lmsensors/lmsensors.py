@@ -18,7 +18,7 @@ written against: sensors version 3.1.2 with libsensors version 3.1.2
 """
 
 import diamond.collector
-
+from diamond.collector import str_to_bool
 try:
     import sensors
     sensors  # workaround for pyflakes issue #13
@@ -60,7 +60,7 @@ class LMSensorsCollector(diamond.collector.Collector):
                     try:
                         value = feature.get_value()
                     except Exception:
-                        if self.config['send_zero']:
+                        if str_to_bool(self.config['send_zero']):
                             value = 0
 
                     if value is not None:

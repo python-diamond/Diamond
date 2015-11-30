@@ -4,6 +4,7 @@ import unittest
 
 
 class TestConvertor(unittest.TestCase):
+
     def test_basic(self):
         self.assertEquals(time.convert(60, 's', 's'), 60.0)
         self.assertEquals(time.convert(60, 's', 'm'), 1.0)

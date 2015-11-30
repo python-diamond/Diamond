@@ -57,37 +57,37 @@ class HttpCollector(diamond.collector.Collector):
     def collect(self):
         # create urllib2 vars
         if self.config['req_vhost'] != "":
-                self.config['headers']['Host'] = self.config['req_vhost']
+            self.config['headers']['Host'] = self.config['req_vhost']
 
         # time the request
         for url in self.config['req_url']:
-                self.log.debug("collecting %s", str(url))
-                req_start = datetime.datetime.now()
-                req = urllib2.Request(url, headers=self.config['headers'])
-                try:
-                        handle = urllib2.urlopen(req)
-                        the_page = handle.read()
-                        req_end = datetime.datetime.now()
-                        req_time = req_end - req_start
+            self.log.debug("collecting %s", str(url))
+            req_start = datetime.datetime.now()
+            req = urllib2.Request(url, headers=self.config['headers'])
+            try:
+                handle = urllib2.urlopen(req)
+                the_page = handle.read()
+                req_end = datetime.datetime.now()
+                req_time = req_end - req_start
 
-                        # build a compatible name : no '.' and no'/' in the name
-                        metric_name = url.replace(
-                            '/', '_').replace(
-                            '.', '_').replace(
-                            '\\', '').replace(
-                            ':', '')
-                        # metric_name = url.split("/")[-1].replace(".", "_")
-                        if metric_name == '':
-                                metric_name = "root"
-                        self.publish_gauge(
-                            metric_name + '.time',
-                            req_time.seconds*1000000+req_time.microseconds)
-                        self.publish_gauge(
-                            metric_name + '.size',
-                            len(the_page))
+                # build a compatible name : no '.' and no'/' in the name
+                metric_name = url.replace(
+                    '/', '_').replace(
+                    '.', '_').replace(
+                    '\\', '').replace(
+                    ':', '')
+                # metric_name = url.split("/")[-1].replace(".", "_")
+                if metric_name == '':
+                    metric_name = "root"
+                self.publish_gauge(
+                    metric_name + '.time',
+                    req_time.seconds * 1000000 + req_time.microseconds)
+                self.publish_gauge(
+                    metric_name + '.size',
+                    len(the_page))
 
-                except IOError, e:
-                        self.log.error("Unable to open %s",
-                                       self.config['req_url'])
-                except Exception, e:
-                        self.log.error("Unknown error opening url: %s", e)
+            except IOError, e:
+                self.log.error("Unable to open %s",
+                               self.config['req_url'])
+            except Exception, e:
+                self.log.error("Unknown error opening url: %s", e)

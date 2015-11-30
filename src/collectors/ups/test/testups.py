@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,10 +11,11 @@ from mock import patch
 from diamond.collector import Collector
 from ups import UPSCollector
 
-################################################################################
+##########################################################################
 
 
 class TestUPSCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('UPSCollector', {
             'interval': 10,
@@ -73,6 +74,6 @@ class TestUPSCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

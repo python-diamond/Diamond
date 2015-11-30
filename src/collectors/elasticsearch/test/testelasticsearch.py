@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,10 +12,11 @@ from diamond.collector import Collector
 
 from elasticsearch import ElasticSearchCollector
 
-################################################################################
+##########################################################################
 
 
 class TestElasticSearchCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('ElasticSearchCollector', {})
 
@@ -264,6 +265,6 @@ class TestElasticSearchCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()
