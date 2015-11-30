@@ -241,7 +241,7 @@ def main():
                     sys.exit(1)
                 # Decouple from parent environmen
                 os.setsid()
-                os.umask(0)
+                os.umask(0o022)
                 # Fork 2
                 try:
                     pid = os.fork()

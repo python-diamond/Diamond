@@ -49,6 +49,7 @@ class Server(object):
         self.handlers = []
         self.handler_queue = []
         self.modules = {}
+        self.metric_queue = None
 
         # We do this weird process title swap around to get the sync manager
         # title correct for ps
@@ -58,7 +59,6 @@ class Server(object):
         self.manager = multiprocessing.Manager()
         if setproctitle:
             setproctitle(oldproctitle)
-        self.metric_queue = self.manager.Queue()
 
     def run(self):
         """
@@ -71,6 +71,10 @@ class Server(object):
         self.config = load_config(self.configfile)
 
         collectors = load_collectors(self.config['server']['collectors_path'])
+        metric_queue_size = int(self.config['server'].get('metric_queue_size',
+                                                          16384))
+        self.metric_queue = self.manager.Queue(maxsize=metric_queue_size)
+        self.log.debug('metric_queue_size: %d', metric_queue_size)
 
         #######################################################################
         # Handlers
