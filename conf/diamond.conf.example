@@ -35,6 +35,11 @@ handlers_config_path = /etc/diamond/handlers/
 # Directory to load handler modules from
 handlers_path = /usr/share/diamond/handlers/
 
+# Maximum number of metrics waiting to be processed by handlers.
+# When metric queue is full, new metrics are dropped.
+metric_queue_size = 16384
+
+
 ################################################################################
 ### Options for handlers
 [handlers]

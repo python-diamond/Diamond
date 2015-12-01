@@ -17,6 +17,7 @@ Enable this handler
 
  * user = LIBRATO_USERNAME
  * apikey = LIBRATO_API_KEY
+ * apply_metric_prefix = [optional] Bool which applies the dimaond metric prefix
 
  * queue_max_size = [optional | 300] max measurements to queue before submitting
  * queue_max_interval [optional | 60] @max seconds to wait before submitting
@@ -82,6 +83,7 @@ class LibratoHandler(Handler):
         config.update({
             'user': '',
             'apikey': '',
+            'apply_metric_prefix': '',
             'queue_max_size': '',
             'queue_max_interval': '',
             'include_filters': '',
@@ -98,6 +100,7 @@ class LibratoHandler(Handler):
         config.update({
             'user': '',
             'apikey': '',
+            'apply_metric_prefix': False,
             'queue_max_size': 300,
             'queue_max_interval': 60,
             'include_filters': ['^.*'],
@@ -112,6 +115,8 @@ class LibratoHandler(Handler):
         path = metric.getCollectorPath()
         path += '.'
         path += metric.getMetricPath()
+        if self.config['apply_metric_prefix']:
+            path = metric.getPathPrefix() + '.' + path
 
         if self.include_reg.match(path):
             if metric.metric_type == 'GAUGE':

@@ -7,8 +7,8 @@ It's OK.
 
 #### Dependencies
 
- * [python-statsd](http://pypi.python.org/pypi/python-statsd/)
- * [statsd](https://github.com/etsy/statsd) v0.1.1 or newer.
+ * [statsd](https://pypi.python.org/pypi/statsd/) v2.0.0 or newer.
+ * A compatible implementation of [statsd](https://github.com/etsy/statsd)
 
 #### Configuration
 
@@ -49,6 +49,11 @@ class StatsdHandler(Handler):
             self.log.error('statsd import failed. Handler disabled')
             self.enabled = False
             return
+
+        if not hasattr(statsd, 'StatsClient'):
+            self.log.warn('python-statsd support is deprecated '
+                          'and will be removed in the future. '
+                          'Please use https://pypi.python.org/pypi/statsd/')
 
         # Initialize Options
         self.host = self.config['host']
@@ -135,6 +140,8 @@ class StatsdHandler(Handler):
                     statsd.Counter(prefix, self.connection).increment(
                         name, value)
 
+        if hasattr(statsd, 'StatsClient'):
+            self.connection.send()
         self.metrics = []
 
     def flush(self):
@@ -152,7 +159,7 @@ class StatsdHandler(Handler):
             self.connection = statsd.StatsClient(
                 host=self.host,
                 port=self.port
-            )
+            ).pipeline()
         else:
             # Create socket
             self.connection = statsd.Connection(

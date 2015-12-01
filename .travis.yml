@@ -15,17 +15,22 @@ cache:
 install:
     - pip install -r .travis.requirements.txt
     - pip install pep8==1.5.7
+    - pip install coveralls
     - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install unittest2; fi
 
 # command to run tests, e.g. python setup.py test
 script:
-    - python test.py
+    - coverage run --source=diamond test.py
     - pep8 --config=.pep8 src bin/diamond bin/diamond-setup build_doc.py setup.py test.py
+
+after_success:
+    coveralls
 
 notifications:
   email:
     recipients:
         - kormoc@gmail.com
+        - gaurav@gauravjain.org
     on_success: change
     on_failure: always
 

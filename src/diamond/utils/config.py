@@ -99,7 +99,12 @@ def load_config(configfile):
                 if collector not in config['collectors']:
                     config['collectors'][collector] = configobj.ConfigObj()
 
-                newconfig = configobj.ConfigObj(cfgfile)
+                try:
+                    newconfig = configobj.ConfigObj(cfgfile)
+                except Exception, e:
+                    raise Exception("Failed to load config file %s due to %s" %
+                                    (cfgfile, e))
+
                 config['collectors'][collector].merge(newconfig)
 
     # Convert enabled to a bool
