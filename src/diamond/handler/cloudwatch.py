@@ -156,7 +156,7 @@ class cloudwatchHandler(Handler):
             self.cloudwatch = boto.ec2.cloudwatch.connect_to_region(
                 self.region)
             self.log.debug(
-                "CloudWatch: Succesfully Connected to CloudWatch at Region: %s",
+                "CloudWatch: Succesfully Connected to CloudWatch Region: %s",
                 self.region)
         except boto.exception.EC2ResponseError:
             self.log.error('CloudWatch: CloudWatch Exception Handler: ')
@@ -210,7 +210,9 @@ class cloudwatchHandler(Handler):
                 )
                 try:
                     if self.autoscaling:
-                        self.log.debug('Cloudwatch: Publishing metric to AutoScaling')
+                        self.log.debug(
+                            'Cloudwatch: Publishing metric to AutoScaling'
+                        )
                         self.cloudwatch.put_metric_data(
                             str(rule['namespace']),
                             str(rule['name']),
