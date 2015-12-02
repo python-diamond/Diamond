@@ -210,7 +210,7 @@ class cloudwatchHandler(Handler):
                 )
                 try:
                     if self.autoscaling:
-                        self.log.debug('Cloudwatch: Publishing metric to autoscaling')
+                        self.log.debug('Cloudwatch: Publishing metric to AutoScaling')
                         self.cloudwatch.put_metric_data(
                             str(rule['namespace']),
                             str(rule['name']),
@@ -235,7 +235,7 @@ class cloudwatchHandler(Handler):
                 except AttributeError, e:
                     self.log.error(
                         "CloudWatch: Failed publishing - %s ", str(e))
-                except Exception as e:  # Rough connection re-try logic.
+                except Exception:  # Rough connection re-try logic.
                     self.log.error(
                         "CloudWatch: Failed publishing - %s ",
                         str(sys.exc_info()[0]))
