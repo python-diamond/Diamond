@@ -19,14 +19,15 @@ Example Config:
 [[cloudwatchHandler]]
 region = us-east-1
 
-[[[LoadAvg01]]]
+[[[LoadAvg01]]] # this example sends metrics for an autoscaling group
 collector = loadavg
 metric = 01
-namespace = MachineLoad
+namespace = "AWS/AutoScaling"
+autoscaling = true
 name = Avg01
 unit = None
 
-[[[LoadAvg05]]]
+[[[LoadAvg05]]] # this example sends metrics for a single instance
 collector = loadavg
 metric = 05
 namespace = MachineLoad
@@ -42,6 +43,7 @@ from configobj import Section
 
 try:
     import boto
+    import boto.ec2
     import boto.ec2.cloudwatch
     import boto.utils
 except ImportError:
@@ -68,7 +70,8 @@ class cloudwatchHandler(Handler):
             return
 
         # Initialize Data
-        self.connection = None
+        self.cloudwatch = None
+        self.autoscaling = False
 
         # Initialize Options
         self.region = self.config['region']
@@ -80,7 +83,10 @@ class cloudwatchHandler(Handler):
         self.log.debug("Setting InstanceId: " + self.instance_id)
 
         self.valid_config = ('region', 'collector', 'metric', 'namespace',
-                             'name', 'unit')
+                             'name', 'unit', 'autoscaling')
+
+        if self.config['autoscaling']:
+            self.autoscaling = True
 
         self.rules = []
         for key_name, section in self.config.items():
@@ -92,6 +98,8 @@ class cloudwatchHandler(Handler):
                         self.log.warning("invalid key %s in section %s",
                                          key, section.name)
                     else:
+                        if key == 'autoscaling':
+                            self.autoscaling = True
                         rules[key] = section[key]
 
                 self.rules.append(rules)
@@ -112,6 +120,7 @@ class cloudwatchHandler(Handler):
             'name': '',
             'unit': '',
             'collector': '',
+            'autoscaling': ''
         })
 
         return config
@@ -129,6 +138,7 @@ class cloudwatchHandler(Handler):
             'namespace': 'MachineLoad',
             'name': 'Avg01',
             'unit': 'None',
+            'autoscaling': 'false'
         })
 
         return config
@@ -142,7 +152,8 @@ class cloudwatchHandler(Handler):
             "CloudWatch: Attempting to connect to CloudWatch at Region: %s",
             self.region)
         try:
-            self.connection = boto.ec2.cloudwatch.connect_to_region(
+            self.ec2 = boto.ec2.connect_to_region(self.region)
+            self.cloudwatch = boto.ec2.cloudwatch.connect_to_region(
                 self.region)
             self.log.debug(
                 "CloudWatch: Succesfully Connected to CloudWatch at Region: %s",
@@ -155,7 +166,7 @@ class cloudwatchHandler(Handler):
           Destroy instance of the cloudWatchHandler class
         """
         try:
-            self.connection = None
+            self.cloudwatch = None
         except AttributeError:
             pass
 
@@ -169,6 +180,11 @@ class cloudwatchHandler(Handler):
         collector = str(metric.getCollectorPath())
         metricname = str(metric.getMetricPath())
         timestamp = datetime.datetime.fromtimestamp(metric.timestamp)
+
+        if self.autoscaling:
+            instance = self.ec2.get_only_instances([self.instance_id])
+            self.log.debug(instance[0].tags['aws:autoscaling:groupName'])
+            autoscaling_group = instance[0].tags['aws:autoscaling:groupName']
 
         # Send the data as ......
 
@@ -193,12 +209,22 @@ class cloudwatchHandler(Handler):
                     str(metric.timestamp)
                 )
                 try:
-                    self.connection.put_metric_data(
-                        str(rule['namespace']),
-                        str(rule['name']),
-                        str(metric.value),
-                        timestamp, str(rule['unit']),
-                        {'InstanceId': self.instance_id})
+                    if self.autoscaling:
+                        self.log.debug('Cloudwatch: Publishing metric to autoscaling')
+                        self.cloudwatch.put_metric_data(
+                            str(rule['namespace']),
+                            str(rule['name']),
+                            str(metric.value),
+                            timestamp, str(rule['unit']),
+                            {'AutoScalingGroupName': autoscaling_group})
+                    else:
+                        self.log.debug('Cloudwatch: Publishing metric to EC2')
+                        self.cloudwatch.put_metric_data(
+                            str(rule['namespace']),
+                            str(rule['name']),
+                            str(metric.value),
+                            timestamp, str(rule['unit']),
+                            {'InstanceId': self.instance_id})
                     self.log.debug(
                         "CloudWatch: Successfully published metric: %s to"
                         " %s with value (%s)",
@@ -209,7 +235,7 @@ class cloudwatchHandler(Handler):
                 except AttributeError, e:
                     self.log.error(
                         "CloudWatch: Failed publishing - %s ", str(e))
-                except Exception:  # Rough connection re-try logic.
+                except Exception as e:  # Rough connection re-try logic.
                     self.log.error(
                         "CloudWatch: Failed publishing - %s ",
                         str(sys.exc_info()[0]))
