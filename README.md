@@ -20,7 +20,7 @@ Getting Started
 Steps to getting started:
 
   * Read the [documentation on the Wiki](https://github.com/python-diamond/Diamond/wiki)
-  * Install via "pip diamond".  The releases on github are not recommended for use.  Use
+  * Install via "pip install diamond".  The releases on github are not recommended for use.  Use
   "pypi-install diamond" on Debian/Ubuntu systems with python-stdeb installed to build packages.
   * Copy the "diamond.conf.example" file to "diamond.conf".
   * Optional: Run "diamond-setup" to help set collectors in "diamond.conf".
