@@ -236,7 +236,7 @@ class FilestatCollector(diamond.collector.Collector):
         d = {}
         for u in users:
             d[u] = {}
-            tmp = os.popen("lsof -bu %s | awk '{ print $5 }'" % (
+            tmp = os.popen("lsof -wbu %s | awk '{ print $5 }'" % (
                 u)).read().split()
             for t in types:
                 d[u][t] = tmp.count(t)
