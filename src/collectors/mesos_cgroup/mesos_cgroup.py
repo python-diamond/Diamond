@@ -81,6 +81,13 @@ class MesosCGroupCollector(diamond.collector.Collector):
                 # list task_id items
                 task_id = os.path.join(aspect_path, task_id)
 
+                if aspect == "cpuacct":
+                    with open(os.path.join(task_id, "%.usage" % aspect)) as f:
+                        value = f.readline()
+                        self.publish(
+                            self.clean_up(
+                                '.'.join(key_parts + ['usage', key])), value)
+
                 with open(os.path.join(task_id, "%s.stat" % aspect)) as f:
                     data = f.readlines()
 
