@@ -45,8 +45,8 @@ class HadoopCollector(diamond.collector.Collector):
 
     def collect(self):
         conf_metrics = self.config['metrics']
-        if type(conf_metrics) == str:
-            conf_metrics = (conf_metrics,)
+        if isinstance(conf_metrics, basestring):
+            conf_metrics = [conf_metrics]
         for pattern in conf_metrics:
             for filename in glob.glob(pattern):
                 self.collect_from(filename)
