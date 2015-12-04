@@ -189,7 +189,9 @@ class cloudwatchHandler(Handler):
 
         try:
             if self.config['autoscaling']:
-                instances = self.ec2.get_only_instances(["%s" % self.instance_id])
+                instances = self.ec2.get_only_instances([
+                    "%s" % self.instance_id
+                ])
                 inst = instances[0]
                 self.log.debug(inst.tags['aws:autoscaling:groupName'])
                 autoscaling_group = inst.tags['aws:autoscaling:groupName']
