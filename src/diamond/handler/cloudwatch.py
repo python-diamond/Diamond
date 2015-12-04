@@ -38,7 +38,7 @@ unit = None
 import sys
 import datetime
 
-from Handler import Handler
+from diamond.handler.Handler import Handler
 from configobj import Section
 
 try:
@@ -48,6 +48,17 @@ try:
     import boto.utils
 except ImportError:
     boto = None
+
+
+class InstanceTypeError(Exception):
+    """
+    This is thrown when the user tries to publish a metric to the
+    wrong instance type
+
+    Example: Trying to publish a metric to AutoScaling for an
+             instance that is not in an AutoScaling Group
+    """
+    pass
 
 
 class cloudwatchHandler(Handler):
@@ -71,7 +82,6 @@ class cloudwatchHandler(Handler):
 
         # Initialize Data
         self.cloudwatch = None
-        self.autoscaling = False
 
         # Initialize Options
         self.region = self.config['region']
@@ -85,11 +95,8 @@ class cloudwatchHandler(Handler):
         self.valid_config = ('region', 'collector', 'metric', 'namespace',
                              'name', 'unit', 'autoscaling')
 
-        if self.config['autoscaling']:
-            self.autoscaling = True
-
         self.rules = []
-        for key_name, section in self.config.items():
+        for _, section in self.config.items():
             if section.__class__ is Section:
                 keys = section.keys()
                 rules = {}
@@ -98,8 +105,6 @@ class cloudwatchHandler(Handler):
                         self.log.warning("invalid key %s in section %s",
                                          key, section.name)
                     else:
-                        if key == 'autoscaling':
-                            self.autoscaling = True
                         rules[key] = section[key]
 
                 self.rules.append(rules)
@@ -173,6 +178,7 @@ class cloudwatchHandler(Handler):
     def process(self, metric):
         """
           Process a metric and send it to CloudWatch
+          :param metric: Object
         """
         if not boto:
             return
@@ -181,10 +187,16 @@ class cloudwatchHandler(Handler):
         metricname = str(metric.getMetricPath())
         timestamp = datetime.datetime.fromtimestamp(metric.timestamp)
 
-        if self.autoscaling:
-            instance = self.ec2.get_only_instances([self.instance_id])
-            self.log.debug(instance[0].tags['aws:autoscaling:groupName'])
-            autoscaling_group = instance[0].tags['aws:autoscaling:groupName']
+        try:
+            if self.config['autoscaling']:
+                instances = self.ec2.get_only_instances(["%s" % self.instance_id])
+                inst = instances[0]
+                self.log.debug(inst.tags['aws:autoscaling:groupName'])
+                autoscaling_group = inst.tags['aws:autoscaling:groupName']
+        except KeyError:
+            raise InstanceTypeError(
+                'This instance is not in an AutoScaling group'
+            )
 
         # Send the data as ......
 
@@ -209,24 +221,24 @@ class cloudwatchHandler(Handler):
                     str(metric.timestamp)
                 )
                 try:
-                    if self.autoscaling:
+                    if self.config['autoscaling']:
+                        target = {'AutoScalingGroupName': autoscaling_group}
                         self.log.debug(
                             'Cloudwatch: Publishing metric to AutoScaling'
                         )
-                        self.cloudwatch.put_metric_data(
-                            str(rule['namespace']),
-                            str(rule['name']),
-                            str(metric.value),
-                            timestamp, str(rule['unit']),
-                            {'AutoScalingGroupName': autoscaling_group})
                     else:
-                        self.log.debug('Cloudwatch: Publishing metric to EC2')
-                        self.cloudwatch.put_metric_data(
-                            str(rule['namespace']),
-                            str(rule['name']),
-                            str(metric.value),
-                            timestamp, str(rule['unit']),
-                            {'InstanceId': self.instance_id})
+                        target = {'InstanceId': self.instance_id}
+                        self.log.debug(
+                            'Cloudwatch: Publishing metric to Instance'
+                        )
+
+                    self.cloudwatch.put_metric_data(
+                        str(rule['namespace']),
+                        str(rule['name']),
+                        str(metric.value),
+                        timestamp, str(rule['unit']),
+                        target)
+
                     self.log.debug(
                         "CloudWatch: Successfully published metric: %s to"
                         " %s with value (%s)",
@@ -234,9 +246,9 @@ class cloudwatchHandler(Handler):
                         rule['namespace'],
                         str(metric.value)
                     )
-                except AttributeError, e:
+                except AttributeError as err:
                     self.log.error(
-                        "CloudWatch: Failed publishing - %s ", str(e))
+                        "CloudWatch: Failed publishing - %s ", str(err))
                 except Exception:  # Rough connection re-try logic.
                     self.log.error(
                         "CloudWatch: Failed publishing - %s ",
