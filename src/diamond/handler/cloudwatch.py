@@ -49,6 +49,8 @@ try:
 except ImportError:
     boto = None
 
+from json import load
+import os
 
 class InstanceTypeError(Exception):
     """
@@ -82,18 +84,41 @@ class cloudwatchHandler(Handler):
 
         # Initialize Data
         self.cloudwatch = None
+        self.cached_aws_info = None
 
-        # Initialize Options
-        self.region = self.config['region']
-        instances = boto.utils.get_instance_metadata()
-        if 'instance-id' not in instances:
-            self.log.error('CloudWatch: Failed to load instance metadata')
-            return
-        self.instance_id = instances['instance-id']
+        try:
+            self.cached_aws_info = self.config['awsinfo']
+            self.log.debug("Found cached AWS Instance details, I won't call AWS for them")
+        except KeyError as e:
+            self.log.debug("Proceeding by calling AWS for instance details")
+
+        if self.cached_aws_info:
+            with open(self.config['awsinfo'], 'r') as f:
+                info = load(f)
+                self.instance_id = info['instance']
+                self.autoscaling_group_name = info['autoscaling_group_name']
+                self.region = info['region']
+                self.log.debug("Grabbed AWS Info from file")
+        else:
+            # Initialize Options
+            self.region = self.config['region']
+            instances = boto.utils.get_instance_metadata()
+            if 'instance-id' not in instances:
+                self.log.error('CloudWatch: Failed to load instance metadata')
+                return
+            self.instance_id = instances['instance-id']
+            self.autoscaling_group_name = None
+            self.log.debug("Grabbed AWS Info from Boto")
         self.log.debug("Setting InstanceId: " + self.instance_id)
 
-        self.valid_config = ('region', 'collector', 'metric', 'namespace',
-                             'name', 'unit', 'autoscaling')
+        self.valid_config = ('region',
+                             'collector',
+                             'metric',
+                             'namespace',
+                             'name',
+                             'unit',
+                             'autoscaling',
+                             'awsinfo')
 
         self.rules = []
         for _, section in self.config.items():
@@ -125,7 +150,8 @@ class cloudwatchHandler(Handler):
             'name': '',
             'unit': '',
             'collector': '',
-            'autoscaling': ''
+            'autoscaling': '',
+            'awsinfo': ''
         })
 
         return config
@@ -143,7 +169,8 @@ class cloudwatchHandler(Handler):
             'namespace': 'MachineLoad',
             'name': 'Avg01',
             'unit': 'None',
-            'autoscaling': 'false'
+            'autoscaling': 'false',
+            'awsinfo': None
         })
 
         return config
@@ -189,12 +216,15 @@ class cloudwatchHandler(Handler):
 
         try:
             if self.config['autoscaling']:
-                instances = self.ec2.get_only_instances([
-                    "%s" % self.instance_id
-                ])
-                inst = instances[0]
-                self.log.debug(inst.tags['aws:autoscaling:groupName'])
-                autoscaling_group = inst.tags['aws:autoscaling:groupName']
+                if not self.autoscaling_group_name:
+                    self.log.debug("Grabbing AutoScaling group name from Boto")
+                    instances = self.ec2.get_only_instances(["%s" % self.instance_id])
+                    inst = instances[0]
+                    self.log.debug(inst.tags['aws:autoscaling:groupName'])
+                    autoscaling_group = inst.tags['aws:autoscaling:groupName']
+                else:
+                    self.log.debug("AutoScaling group name read from cache, sending to it.")
+                    autoscaling_group = self.autoscaling_group_name
         except KeyError:
             raise InstanceTypeError(
                 'This instance is not in an AutoScaling group'
