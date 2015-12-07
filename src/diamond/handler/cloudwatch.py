@@ -88,7 +88,9 @@ class cloudwatchHandler(Handler):
 
         try:
             self.cached_aws_info = self.config['awsinfo']
-            self.log.debug("Found cached AWS Instance details, I won't call AWS for them")
+            self.log.debug(
+                "Found cached AWS Instance details, I won't call AWS for them"
+            )
         except KeyError:
             self.log.debug("Proceeding by calling AWS for instance details")
 
@@ -219,13 +221,19 @@ class cloudwatchHandler(Handler):
         try:
             if self.config['autoscaling']:
                 if not self.autoscaling_group_name:
-                    self.log.debug("Grabbing AutoScaling group name from Boto")
-                    instances = self.ec2.get_only_instances(["%s" % self.instance_id])
+                    self.log.debug(
+                        "Grabbing AutoScaling group name from Boto"
+                    )
+                    instances = self.ec2.get_only_instances([
+                        "%s" % self.instance_id
+                    ])
                     inst = instances[0]
                     self.log.debug(inst.tags['aws:autoscaling:groupName'])
                     autoscaling_group = inst.tags['aws:autoscaling:groupName']
                 else:
-                    self.log.debug("AutoScaling group name read from cache, sending to it.")
+                    self.log.debug(
+                        "AutoScaling group name read from cache, sending to it."
+                    )
                     autoscaling_group = self.autoscaling_group_name
         except KeyError:
             raise InstanceTypeError(
