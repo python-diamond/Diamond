@@ -50,7 +50,6 @@ except ImportError:
     boto = None
 
 from json import load
-import os
 
 class InstanceTypeError(Exception):
     """
@@ -89,12 +88,12 @@ class cloudwatchHandler(Handler):
         try:
             self.cached_aws_info = self.config['awsinfo']
             self.log.debug("Found cached AWS Instance details, I won't call AWS for them")
-        except KeyError as e:
+        except KeyError:
             self.log.debug("Proceeding by calling AWS for instance details")
 
         if self.cached_aws_info:
-            with open(self.config['awsinfo'], 'r') as f:
-                info = load(f)
+            with open(self.config['awsinfo'], 'r') as awsinfo:
+                info = load(awsinfo)
                 self.instance_id = info['instance']
                 self.autoscaling_group_name = info['autoscaling_group_name']
                 self.region = info['region']
