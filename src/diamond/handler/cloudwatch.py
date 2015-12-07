@@ -51,6 +51,7 @@ except ImportError:
 
 from json import load
 
+
 class InstanceTypeError(Exception):
     """
     This is thrown when the user tries to publish a metric to the
@@ -92,8 +93,8 @@ class cloudwatchHandler(Handler):
             self.log.debug("Proceeding by calling AWS for instance details")
 
         if self.cached_aws_info:
-            with open(self.config['awsinfo'], 'r') as awsinfo:
-                info = load(awsinfo)
+            with open(self.config['awsinfo'], 'r') as f:
+                info = load(f)
                 self.instance_id = info['instance']
                 self.autoscaling_group_name = info['autoscaling_group_name']
                 self.region = info['region']
@@ -212,6 +213,8 @@ class cloudwatchHandler(Handler):
         collector = str(metric.getCollectorPath())
         metricname = str(metric.getMetricPath())
         timestamp = datetime.datetime.fromtimestamp(metric.timestamp)
+
+        autoscaling_group = None
 
         try:
             if self.config['autoscaling']:
