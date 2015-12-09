@@ -86,7 +86,7 @@ class MesosCGroupCollector(diamond.collector.Collector):
                         value = f.readline()
                         self.publish(
                             self.clean_up(
-                                '.'.join(key_parts + ['usage', key])), value)
+                                '.'.join(key_parts + ['usage'])), value)
 
                 with open(os.path.join(task_id, "%s.stat" % aspect)) as f:
                     data = f.readlines()
