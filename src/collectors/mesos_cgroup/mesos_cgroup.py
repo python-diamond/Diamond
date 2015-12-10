@@ -40,7 +40,7 @@ class MesosCGroupCollector(diamond.collector.Collector):
         return config_help
 
     def get_default_config(self):
-        # https://github.com/BrightcoveOS/Diamond/blob/master/src/diamond/collector.py#L312-L358
+        # https://github.com/python-diamond/Diamond/blob/master/src/diamond/collector.py#L312-L358
         config = super(MesosCGroupCollector, self).get_default_config()
         config.update({
             'mesos_state_path': 'state.json',
@@ -86,7 +86,7 @@ class MesosCGroupCollector(diamond.collector.Collector):
                         value = f.readline()
                         self.publish(
                             self.clean_up(
-                                '.'.join(key_parts + ['usage', key])), value)
+                                '.'.join(key_parts + ['usage'])), value)
 
                 with open(os.path.join(task_id, "%s.stat" % aspect)) as f:
                     data = f.readlines()
