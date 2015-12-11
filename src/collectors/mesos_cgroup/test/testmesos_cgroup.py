@@ -28,6 +28,8 @@ class TestMesosCGroupCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
 
+        task_id = 'b0d5971e-915c-414b-aa25-0da46e64ff4e'
+
         def urlopen_se(url):
             if url == 'http://localhost:5051/state.json':
                 return self.getFixture('state.json')
@@ -50,9 +52,9 @@ class TestMesosCGroupCollector(CollectorTestCase):
 
         def isdir_se(directory):
             task_directories = [
-                '/sys/fs/cgroup/cpuacct/mesos/b0d5971e-915c-414b-aa25-0da46e64ff4e',
-                '/sys/fs/cgroup/cpu/mesos/b0d5971e-915c-414b-aa25-0da46e64ff4e',
-                '/sys/fs/cgroup/memory/mesos/b0d5971e-915c-414b-aa25-0da46e64ff4e'
+                '/sys/fs/cgroup/cpuacct/mesos/%s' % task_id,
+                '/sys/fs/cgroup/cpu/mesos/%s' % task_id,
+                '/sys/fs/cgroup/memory/mesos/%s' % task_id
             ]
 
             if directory in task_directories:
@@ -62,21 +64,25 @@ class TestMesosCGroupCollector(CollectorTestCase):
                 raise NotImplementedError()
 
         def open_se(path, mode='r', create=True):
-            if path == '/sys/fs/cgroup/cpuacct/mesos/b0d5971e-915c-414b-aa25-0da46e64ff4e/cpuacct.usage':
-                m = mock_open(read_data=self.getFixture('cpuacct.usage').getvalue())
-                m.__enter__.return_value = self.getFixture('cpuacct.usage')
+            if path.endswith('cpuacct/mesos/%s/cpuacct.usage' % task_id):
+                fixture = self.getFixture('cpuacct.usage')
+                m = mock_open(read_data=fixture.getvalue())
+                m.__enter__.return_value = fixture
                 return m
-            elif path == '/sys/fs/cgroup/cpuacct/mesos/b0d5971e-915c-414b-aa25-0da46e64ff4e/cpuacct.stat':
-                m = mock_open(read_data=self.getFixture('cpuacct.stat').getvalue())
-                m.__enter__.return_value = self.getFixture('cpuacct.stat')
+            elif path.endswith('cpuacct/mesos/%s/cpuacct.stat' % task_id):
+                fixture = self.getFixture('cpuacct.stat')
+                m = mock_open(read_data=fixture.getvalue())
+                m.__enter__.return_value = fixture
                 return m
-            elif path == '/sys/fs/cgroup/cpu/mesos/b0d5971e-915c-414b-aa25-0da46e64ff4e/cpu.stat':
-                m = mock_open(read_data=self.getFixture('cpu.stat').getvalue())
-                m.__enter__.return_value = self.getFixture('cpu.stat')
+            elif path.endswith('cpu/mesos/%s/cpu.stat' % task_id):
+                fixture = self.getFixture('cpu.stat')
+                m = mock_open(read_data=fixture.getvalue())
+                m.__enter__.return_value = fixture
                 return m
-            elif path == '/sys/fs/cgroup/memory/mesos/b0d5971e-915c-414b-aa25-0da46e64ff4e/memory.stat':
-                m = mock_open(read_data=self.getFixture('memory.stat').getvalue())
-                m.__enter__.return_value = self.getFixture('memory.stat')
+            elif path.endswith('memory/mesos/%s/memory.stat' % task_id):
+                fixture = self.getFixture('memory.stat')
+                m = mock_open(read_data=fixture.getvalue())
+                m.__enter__.return_value = fixture
                 return m
             else:
                 patch_open.stop()
@@ -87,7 +93,8 @@ class TestMesosCGroupCollector(CollectorTestCase):
         patch_urlopen = patch('urllib2.urlopen', Mock(side_effect=urlopen_se))
         patch_listdir = patch('os.listdir', Mock(side_effect=listdir_se))
         patch_isdir = patch('os.path.isdir', Mock(side_effect=isdir_se))
-        patch_open = patch('__builtin__.open', MagicMock(spec=file, side_effect=open_se))
+        patch_open = patch('__builtin__.open', MagicMock(spec=file,
+                                                         side_effect=open_se))
 
         patch_urlopen.start()
         patch_listdir.start()
@@ -128,7 +135,7 @@ class TestMesosCGroupCollector(CollectorTestCase):
             'ENVIRONMENT.ROLE.TASK.0.memory.inactive_file': '52654080',
             'ENVIRONMENT.ROLE.TASK.0.memory.active_file': '180727808',
             'ENVIRONMENT.ROLE.TASK.0.memory.unevictable': '0',
-            'ENVIRONMENT.ROLE.TASK.0.memory.hierarchical_memory_limit': '3355443200',
+            'ENVIRONMENT.ROLE.TASK.0.memory.hierarchical_memory_limit': '3355443200',  # noqa
             'ENVIRONMENT.ROLE.TASK.0.memory.total_cache': '233398272',
             'ENVIRONMENT.ROLE.TASK.0.memory.total_rss': '1789911040',
             'ENVIRONMENT.ROLE.TASK.0.memory.total_rss_huge': '1642070016',
