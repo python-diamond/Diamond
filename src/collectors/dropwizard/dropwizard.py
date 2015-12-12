@@ -3,10 +3,6 @@
 """
 Collect [dropwizard](http://dropwizard.codahale.com/) stats for the local node
 
-#### Dependencies
-
- * urlib2
-
 """
 
 import urllib2

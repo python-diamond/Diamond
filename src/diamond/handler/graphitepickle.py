@@ -14,11 +14,6 @@ the e-commerce monitoring system. Today many
 [large companies](http://graphite.readthedocs.org/en/latest/who-is-using.html)
 use it.
 
-- enable it in `diamond.conf` :
-
-`    handlers = diamond.handler.graphitepickle.GraphitePickleHandler
-`
-
 """
 
 import struct

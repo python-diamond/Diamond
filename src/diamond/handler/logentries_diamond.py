@@ -3,21 +3,6 @@
 [Logentries: Log Management & Analytics Made Easy ](https://logentries.com/).
 Send Diamond stats to your Logentries Account where you can monitor and alert
 based on data in real time.
-
-#### Dependencies
-
-
-#### Configuration
-
-Enable this handler
-
- * handers = diamond.handler.logentries.LogentriesDiamondHandler
-
- * log_token = [Your Log Token](https://logentries.com/doc/input-token/)
-
- * queue_size = Integer value
-
-
 """
 
 from Handler import Handler
@@ -52,7 +37,8 @@ class LogentriesDiamondHandler(Handler):
                        self).get_default_config_help()
 
         config.update({
-            'log_token': '',
+            'log_token':
+                '[Your log token](https://logentries.com/doc/input-token/)',
             'queue_size': ''
         })
 
