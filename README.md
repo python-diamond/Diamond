@@ -11,12 +11,13 @@ Additionally, it features an API for implementing custom collectors for gatherin
 Steps to getting started:
 
   * Read the [documentation](http://diamond.readthedocs.org)
-  * Install via "pip install diamond".  The releases on github are not recommended for use.  Use
-  "pypi-install diamond" on Debian/Ubuntu systems with python-stdeb installed to build packages.
-  * Copy the "diamond.conf.example" file to "diamond.conf".
-  * Optional: Run "diamond-setup" to help set collectors in "diamond.conf".
-  * Modify "diamond.conf" for your needs.
-  * Run diamond with one of: "diamond" or "initctl start diamond" or "/etc/init.d/diamond restart".
+  * Install via `pip install diamond`.
+    The releases on GitHub are not recommended for use.
+    Use `pypi-install diamond` on Debian/Ubuntu systems with python-stdeb installed to build packages.
+  * Copy the `diamond.conf.example` file to `diamond.conf`.
+  * Optional: Run `diamond-setup` to help set collectors in `diamond.conf`.
+  * Modify `diamond.conf` for your needs.
+  * Run diamond with one of: `diamond` or `initctl start diamond` or `/etc/init.d/diamond restart`.
 
 ## Success Stories
 
