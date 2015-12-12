@@ -49,6 +49,9 @@ def getCollectors(path):
 
                     cls = getattr(module, attr)
 
+                    if cls.__module__ != modname:
+                        continue
+
                     if cls.__name__ not in collectors:
                         collectors[cls.__name__] = module
             except Exception:
