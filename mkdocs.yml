@@ -1,0 +1,4 @@
+site_name: Diamond
+repo_url: https://github.com/python-diamond/diamond
+include_next_prev: false
+theme: mkdocs

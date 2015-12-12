@@ -1,5 +1,6 @@
-Configuration
-=====
+# Configuration
+
+## Configuration File
 
 If you've installed diamond via a package, a example configuration file is /etc/diamond/diamond.conf.example.
 Please copy this to /etc/diamond/diamond.conf and configure at will. By default, diamond
@@ -19,8 +20,7 @@ We also have diamond-setup. It will walk you though setting up diamond and it's 
 
 If you have any questions at all, please feel free to stop by and talk to us on irc, [#python-diamond](irc://chat.freenode.net:6667/%23python-diamond) on [freenode](http://www.freenode.net). [Webchat](http://webchat.freenode.net/?channels=python-diamond)
 
-Logging
-=====
+## Logging
 
 Diamond defaults to logging at /var/log/diamond/diamond.log
 
@@ -62,8 +62,7 @@ format = [%(asctime)s] [%(threadName)s] %(message)s
 datefmt =
 ```
 
-Collector Settings
-=====
+## Collector Settings
 
 Every collector has some default options
 
@@ -83,8 +82,7 @@ Every collector has some default options
    * uname_rev   = uname -r in reverse (com.example.www)
    * none        = no hostname autodetection. just use the statically defined hostname
 
-Enable / Disable Collector
-===
+## Enable / Disable Collector
 
 Diamond collectors that require a separate configuration file should place a
 .conf file in /etc/diamond/collectors/.
