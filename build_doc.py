@@ -172,6 +172,11 @@ if __name__ == "__main__":
 
         enabled = ''
 
+        docFile.write("<!--")
+        docFile.write("This file was generated from the python source\n")
+        docFile.write("Please edit the source to make changes\n")
+        docFile.write("-->\n")
+
         docFile.write("%s\n" % (collector))
         docFile.write("=====\n")
         if collectors[collector].__doc__ is None:
@@ -216,9 +221,6 @@ if __name__ == "__main__":
         docFile.write("```\n")
         docFile.write("__EXAMPLESHERE__\n")
         docFile.write("```\n")
-        docFile.write("\n")
-        docFile.write("### This file was generated from the python source\n")
-        docFile.write("### Please edit the source to make changes\n")
         docFile.write("\n")
 
         docFile.close()
@@ -266,6 +268,11 @@ if __name__ == "__main__":
         docFile = open(os.path.join(handlers_doc_path,
                                     handler + ".md"), 'w')
 
+        docFile.write("<!--")
+        docFile.write("This file was generated from the python source\n")
+        docFile.write("Please edit the source to make changes\n")
+        docFile.write("-->\n")
+
         docFile.write("%s\n" % (handler))
         docFile.write("====\n")
         docFile.write("%s" % (handlers[handler].__doc__))
@@ -305,10 +312,5 @@ if __name__ == "__main__":
                 docFile.write("</tr>\n")
 
         docFile.write("</table>\n")
-
-        docFile.write("\n")
-        docFile.write("### This file was generated from the python source\n")
-        docFile.write("### Please edit the source to make changes\n")
-        docFile.write("\n")
 
         docFile.close()
