@@ -142,10 +142,6 @@ if __name__ == "__main__":
     getCollectors(os.path.join(collector_path, 'snmp'))
     getCollectors(collector_path)
 
-    collectorIndexFile = open(os.path.join(docs_path, "Collectors.md"), 'w')
-    collectorIndexFile.write("## Collectors\n")
-    collectorIndexFile.write("\n")
-
     collectors_doc_path = os.path.join(docs_path, "collectors")
     shutil.rmtree(collectors_doc_path)
     os.mkdir(collectors_doc_path)
@@ -175,10 +171,6 @@ if __name__ == "__main__":
                                     collector + ".md"), 'w')
 
         enabled = ''
-
-        collectorIndexFile.write(" - [%s](collectors/%s)%s\n" % (collector,
-                                                                 collector,
-                                                                 enabled))
 
         docFile.write("%s\n" % (collector))
         docFile.write("=====\n")
@@ -231,14 +223,8 @@ if __name__ == "__main__":
 
         docFile.close()
 
-    collectorIndexFile.close()
-
     getIncludePaths(handler_path)
     getHandlers(handler_path)
-
-    handlerIndexFile = open(os.path.join(docs_path, "Handlers.md"), 'w')
-    handlerIndexFile.write("## Handlers\n")
-    handlerIndexFile.write("\n")
 
     handlers_doc_path = os.path.join(docs_path, "handlers")
     shutil.rmtree(handlers_doc_path)
@@ -279,8 +265,6 @@ if __name__ == "__main__":
 
         docFile = open(os.path.join(handlers_doc_path,
                                     handler + ".md"), 'w')
-
-        handlerIndexFile.write(" - [%s](handlers/%s)\n" % (handler, handler))
 
         docFile.write("%s\n" % (handler))
         docFile.write("====\n")
@@ -328,5 +312,3 @@ if __name__ == "__main__":
         docFile.write("\n")
 
         docFile.close()
-
-    handlerIndexFile.close()
