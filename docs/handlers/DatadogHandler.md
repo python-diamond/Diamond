@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 DatadogHandler
 ====
 
@@ -8,27 +11,13 @@ by their apps, tools and services into actionable insight.
 
 #### Dependencies
 
-  * [dogapi]
+  * [dogapi](https://github.com/DataDog/datadogpy)
 
-#### Configuration
+#### Options
 
-Enable handler
-
-  * handlers = diamond.handler.datadog.DatadogHandler,
-
-  * api_key = DATADOG_API_KEY
-
-  * queue_size = [optional | 1]
-
-#### Options - [Generic Options](Configuration)
-
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>api_key</td><td></td><td></td><td>str</td></tr>
-<tr><td>get_default_config_help</td><td></td><td>get_default_config_help</td><td></td></tr>
-<tr><td>queue_size</td><td></td><td></td><td>str</td></tr>
-<tr><td>server_error_interval</td><td>120</td><td>How frequently to send repeated server errors</td><td>int</td></tr>
-</table>
-
-### This file was generated from the python source
-### Please edit the source to make changes
-
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+api_key |  | Datadog API key | str
+get_default_config_help |  | get_default_config_help | 
+queue_size |  | Number of metrics to queue before send | str
+server_error_interval | 120 | How frequently to send repeated server errors | int

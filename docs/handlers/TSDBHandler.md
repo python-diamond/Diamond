@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 TSDBHandler
 ====
 
@@ -34,18 +37,14 @@ yourself.
 `    handlers = diamond.handler.tsdb.TSDBHandler
 `
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>format</td><td>{Collector}.{Metric} {timestamp} {value} hostname={host}{tags}</td><td></td><td>str</td></tr>
-<tr><td>get_default_config_help</td><td></td><td>get_default_config_help</td><td></td></tr>
-<tr><td>host</td><td></td><td></td><td>str</td></tr>
-<tr><td>port</td><td>1234</td><td></td><td>int</td></tr>
-<tr><td>server_error_interval</td><td>120</td><td>How frequently to send repeated server errors</td><td>int</td></tr>
-<tr><td>tags</td><td></td><td></td><td>str</td></tr>
-<tr><td>timeout</td><td>5</td><td></td><td>int</td></tr>
-</table>
-
-### This file was generated from the python source
-### Please edit the source to make changes
-
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+format | {Collector}.{Metric} {timestamp} {value} hostname={host}{tags} |  | str
+get_default_config_help |  | get_default_config_help | 
+host |  |  | str
+port | 1234 |  | int
+server_error_interval | 120 | How frequently to send repeated server errors | int
+tags |  |  | str
+timeout | 5 |  | int

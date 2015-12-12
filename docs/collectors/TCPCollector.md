@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 TCPCollector
 =====
 
@@ -175,23 +178,112 @@ flag.</td></tr>
 </table>
 
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>allowed_names</td><td>ListenOverflows, ListenDrops, TCPLoss, TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, TCPForwardRetrans, TCPSlowStartRetrans, CurrEstab, TCPAbortOnMemory, TCPBacklogDrop, AttemptFails, EstabResets, InErrs, ActiveOpens, PassiveOpens</td><td>list of entries to collect, empty to collect all</td><td>str</td></tr>
-<tr><td>byte_unit</td><td>byte</td><td>Default numeric output(s)</td><td>str</td></tr>
-<tr><td>enabled</td><td>False</td><td>Enable collecting these metrics</td><td>bool</td></tr>
-<tr><td>measure_collector_time</td><td>False</td><td>Collect the collector run time in ms</td><td>bool</td></tr>
-<tr><td>metrics_blacklist</td><td>None</td><td>Regex to match metrics to block. Mutually exclusive with metrics_whitelist</td><td>NoneType</td></tr>
-<tr><td>metrics_whitelist</td><td>None</td><td>Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist</td><td>NoneType</td></tr>
-</table>
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+allowed_names | ListenOverflows, ListenDrops, TCPLoss, TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, TCPForwardRetrans, TCPSlowStartRetrans, CurrEstab, TCPAbortOnMemory, TCPBacklogDrop, AttemptFails, EstabResets, InErrs, ActiveOpens, PassiveOpens | list of entries to collect, empty to collect all | str
+byte_unit | byte | Default numeric output(s) | str
+enabled | False | Enable collecting these metrics | bool
+measure_collector_time | False | Collect the collector run time in ms | bool
+metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
+metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
 
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.tcp.ActiveOpens 0.0
+servers.hostname.tcp.ArpFilter 0.0
+servers.hostname.tcp.AttemptFails 0.0
+servers.hostname.tcp.CurrEstab 3.0
+servers.hostname.tcp.DelayedACKLocked 144.0
+servers.hostname.tcp.DelayedACKLost 10118.0
+servers.hostname.tcp.DelayedACKs 125491.0
+servers.hostname.tcp.EmbryonicRsts 0.0
+servers.hostname.tcp.EstabResets 0.0
+servers.hostname.tcp.IPReversePathFilter 0.0
+servers.hostname.tcp.InErrs 0.0
+servers.hostname.tcp.InSegs 1.0
+servers.hostname.tcp.ListenDrops 0.0
+servers.hostname.tcp.ListenOverflows 0.0
+servers.hostname.tcp.LockDroppedIcmps 4.0
+servers.hostname.tcp.MaxConn -1.0
+servers.hostname.tcp.OfoPruned 0.0
+servers.hostname.tcp.OutOfWindowIcmps 10.0
+servers.hostname.tcp.OutRsts 0.0
+servers.hostname.tcp.OutSegs 0.0
+servers.hostname.tcp.PAWSActive 0.0
+servers.hostname.tcp.PAWSEstab 0.0
+servers.hostname.tcp.PAWSPassive 0.0
+servers.hostname.tcp.PassiveOpens 0.0
+servers.hostname.tcp.PruneCalled 0.0
+servers.hostname.tcp.RcvPruned 0.0
+servers.hostname.tcp.RetransSegs 0.0
+servers.hostname.tcp.RtoAlgorithm 0.0
+servers.hostname.tcp.RtoMax 0.0
+servers.hostname.tcp.RtoMin 0.0
+servers.hostname.tcp.SyncookiesFailed 9.0
+servers.hostname.tcp.SyncookiesRecv 0.0
+servers.hostname.tcp.SyncookiesSent 0.0
+servers.hostname.tcp.TCPAbortFailed 0.0
+servers.hostname.tcp.TCPAbortOnClose 38916.0
+servers.hostname.tcp.TCPAbortOnData 143.0
+servers.hostname.tcp.TCPAbortOnLinger 0.0
+servers.hostname.tcp.TCPAbortOnMemory 0.0
+servers.hostname.tcp.TCPAbortOnSyn 0.0
+servers.hostname.tcp.TCPAbortOnTimeout 68.0
+servers.hostname.tcp.TCPBacklogDrop 0.0
+servers.hostname.tcp.TCPDSACKIgnoredNoUndo 1025.0
+servers.hostname.tcp.TCPDSACKIgnoredOld 292.0
+servers.hostname.tcp.TCPDSACKOfoRecv 0.0
+servers.hostname.tcp.TCPDSACKOfoSent 0.0
+servers.hostname.tcp.TCPDSACKOldSent 10175.0
+servers.hostname.tcp.TCPDSACKRecv 1580.0
+servers.hostname.tcp.TCPDSACKUndo 2448.0
+servers.hostname.tcp.TCPDeferAcceptDrop 0.0
+servers.hostname.tcp.TCPDirectCopyFromBacklog 35660.0
+servers.hostname.tcp.TCPDirectCopyFromPrequeue 19340531.0
+servers.hostname.tcp.TCPFACKReorder 0.0
+servers.hostname.tcp.TCPFastRetrans 1184.0
+servers.hostname.tcp.TCPForwardRetrans 41.0
+servers.hostname.tcp.TCPFullUndo 0.0
+servers.hostname.tcp.TCPHPAcks 12673896.0
+servers.hostname.tcp.TCPHPHits 10361792.0
+servers.hostname.tcp.TCPHPHitsToUser 5667.0
+servers.hostname.tcp.TCPLoss 188.0
+servers.hostname.tcp.TCPLossFailures 7.0
+servers.hostname.tcp.TCPLossUndo 6538.0
+servers.hostname.tcp.TCPLostRetransmit 7.0
+servers.hostname.tcp.TCPMD5NotFound 0.0
+servers.hostname.tcp.TCPMD5Unexpected 0.0
+servers.hostname.tcp.TCPMemoryPressures 0.0
+servers.hostname.tcp.TCPMinTTLDrop 0.0
+servers.hostname.tcp.TCPPartialUndo 0.0
+servers.hostname.tcp.TCPPrequeueDropped 0.0
+servers.hostname.tcp.TCPPrequeued 114232.0
+servers.hostname.tcp.TCPPureAcks 1003528.0
+servers.hostname.tcp.TCPRcvCollapsed 0.0
+servers.hostname.tcp.TCPRenoFailures 0.0
+servers.hostname.tcp.TCPRenoRecovery 0.0
+servers.hostname.tcp.TCPRenoRecoveryFail 0.0
+servers.hostname.tcp.TCPRenoReorder 0.0
+servers.hostname.tcp.TCPSACKDiscard 0.0
+servers.hostname.tcp.TCPSACKReneging 0.0
+servers.hostname.tcp.TCPSACKReorder 0.0
+servers.hostname.tcp.TCPSackFailures 502.0
+servers.hostname.tcp.TCPSackMerged 1121.0
+servers.hostname.tcp.TCPSackRecovery 364.0
+servers.hostname.tcp.TCPSackRecoveryFail 13.0
+servers.hostname.tcp.TCPSackShiftFallback 3091.0
+servers.hostname.tcp.TCPSackShifted 2356.0
+servers.hostname.tcp.TCPSchedulerFailed 0.0
+servers.hostname.tcp.TCPSlowStartRetrans 2540.0
+servers.hostname.tcp.TCPSpuriousRTOs 9.0
+servers.hostname.tcp.TCPTSReorder 0.0
+servers.hostname.tcp.TCPTimeWaitOverflow 0.0
+servers.hostname.tcp.TCPTimeouts 15265.0
+servers.hostname.tcp.TW 89479.0
+servers.hostname.tcp.TWKilled 0.0
+servers.hostname.tcp.TWRecycled 0.0
 ```
-
-### This file was generated from the python source
-### Please edit the source to make changes
 

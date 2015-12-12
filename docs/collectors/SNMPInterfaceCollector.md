@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 SNMPInterfaceCollector
 =====
 
@@ -60,24 +63,21 @@ locally. If you want to collect a large number of remote metrics, consider
 https://github.com/GreggBzz/snmp-interface-poll as an alternative collector
 
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>byte_unit</td><td>bit, byte,</td><td>Default numeric output(s)</td><td>list</td></tr>
-<tr><td>enabled</td><td>False</td><td>Enable collecting these metrics</td><td>bool</td></tr>
-<tr><td>measure_collector_time</td><td>False</td><td>Collect the collector run time in ms</td><td>bool</td></tr>
-<tr><td>metrics_blacklist</td><td>None</td><td>Regex to match metrics to block. Mutually exclusive with metrics_whitelist</td><td>NoneType</td></tr>
-<tr><td>metrics_whitelist</td><td>None</td><td>Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist</td><td>NoneType</td></tr>
-<tr><td>retries</td><td>3</td><td>Number of times to retry before bailing</td><td>int</td></tr>
-<tr><td>timeout</td><td>5</td><td>Seconds before timing out the snmp connection</td><td>int</td></tr>
-</table>
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+byte_unit | bit, byte, | Default numeric output(s) | list
+enabled | False | Enable collecting these metrics | bool
+measure_collector_time | False | Collect the collector run time in ms | bool
+metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
+metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
+retries | 3 | Number of times to retry before bailing | int
+timeout | 5 | Seconds before timing out the snmp connection | int
 
 #### Example Output
 
 ```
 __EXAMPLESHERE__
 ```
-
-### This file was generated from the python source
-### Please edit the source to make changes
 

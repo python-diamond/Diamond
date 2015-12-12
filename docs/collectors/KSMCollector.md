@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 KSMCollector
 =====
 
@@ -14,23 +17,27 @@ It can be enabled, if compiled into your kernel, by echoing 1 to
  will be less than useful if it isn't:-)
 
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>byte_unit</td><td>byte</td><td>Default numeric output(s)</td><td>str</td></tr>
-<tr><td>enabled</td><td>False</td><td>Enable collecting these metrics</td><td>bool</td></tr>
-<tr><td>ksm_path</td><td>/sys/kernel/mm/ksm</td><td>location where KSM kernel data can be found</td><td>str</td></tr>
-<tr><td>measure_collector_time</td><td>False</td><td>Collect the collector run time in ms</td><td>bool</td></tr>
-<tr><td>metrics_blacklist</td><td>None</td><td>Regex to match metrics to block. Mutually exclusive with metrics_whitelist</td><td>NoneType</td></tr>
-<tr><td>metrics_whitelist</td><td>None</td><td>Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist</td><td>NoneType</td></tr>
-</table>
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+byte_unit | byte | Default numeric output(s) | str
+enabled | False | Enable collecting these metrics | bool
+ksm_path | /sys/kernel/mm/ksm | location where KSM kernel data can be found | str
+measure_collector_time | False | Collect the collector run time in ms | bool
+metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
+metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
 
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.ksm.full_scans 123.0
+servers.hostname.ksm.pages_shared 124.0
+servers.hostname.ksm.pages_sharing 125.0
+servers.hostname.ksm.pages_to_scan 100.0
+servers.hostname.ksm.pages_unshared 126.0
+servers.hostname.ksm.pages_volatile 127.0
+servers.hostname.ksm.run 1.0
+servers.hostname.ksm.sleep_millisecs 20.0
 ```
-
-### This file was generated from the python source
-### Please edit the source to make changes
 

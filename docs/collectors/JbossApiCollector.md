@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 JbossApiCollector
 =====
 
@@ -60,32 +63,29 @@ jvm_thread_stats = True | False
 
 
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>app_stats</td><td>True</td><td>Collect application pool stats</td><td>str</td></tr>
-<tr><td>byte_unit</td><td>byte</td><td>Default numeric output(s)</td><td>str</td></tr>
-<tr><td>connector_options</td><td>http, ajp,</td><td>Types of connectors to collect</td><td>list</td></tr>
-<tr><td>connector_stats</td><td>True</td><td>Collect HTTP and AJP Connector stats</td><td>str</td></tr>
-<tr><td>curl_bin</td><td>/usr/bin/curl</td><td>Path to system curl executable</td><td>str</td></tr>
-<tr><td>enabled</td><td>False</td><td>Enable collecting these metrics</td><td>bool</td></tr>
-<tr><td>hosts</td><td>,</td><td>List of hosts to collect from. Format is yourusername:yourpassword@host:port:proto</td><td>list</td></tr>
-<tr><td>jvm_buffer_pool_stats</td><td>True</td><td>Collect JVM buffer-pool stats</td><td>str</td></tr>
-<tr><td>jvm_gc_stats</td><td>True</td><td>Collect JVM garbage-collector stats</td><td>str</td></tr>
-<tr><td>jvm_memory_pool_stats</td><td>True</td><td>Collect JVM memory-pool stats</td><td>str</td></tr>
-<tr><td>jvm_memory_stats</td><td>True</td><td>Collect JVM basic memory stats</td><td>str</td></tr>
-<tr><td>jvm_thread_stats</td><td>True</td><td>Collect JVM thread stas</td><td>str</td></tr>
-<tr><td>measure_collector_time</td><td>False</td><td>Collect the collector run time in ms</td><td>bool</td></tr>
-<tr><td>metrics_blacklist</td><td>None</td><td>Regex to match metrics to block. Mutually exclusive with metrics_whitelist</td><td>NoneType</td></tr>
-<tr><td>metrics_whitelist</td><td>None</td><td>Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist</td><td>NoneType</td></tr>
-</table>
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+app_stats | True | Collect application pool stats | str
+byte_unit | byte | Default numeric output(s) | str
+connector_options | http, ajp, | Types of connectors to collect | list
+connector_stats | True | Collect HTTP and AJP Connector stats | str
+curl_bin | /usr/bin/curl | Path to system curl executable | str
+enabled | False | Enable collecting these metrics | bool
+hosts | , | List of hosts to collect from. Format is yourusername:yourpassword@host:port:proto | list
+jvm_buffer_pool_stats | True | Collect JVM buffer-pool stats | str
+jvm_gc_stats | True | Collect JVM garbage-collector stats | str
+jvm_memory_pool_stats | True | Collect JVM memory-pool stats | str
+jvm_memory_stats | True | Collect JVM basic memory stats | str
+jvm_thread_stats | True | Collect JVM thread stas | str
+measure_collector_time | False | Collect the collector run time in ms | bool
+metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
+metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
 
 #### Example Output
 
 ```
 __EXAMPLESHERE__
 ```
-
-### This file was generated from the python source
-### Please edit the source to make changes
 

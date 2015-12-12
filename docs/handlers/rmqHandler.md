@@ -1,12 +1,11 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 rmqHandler
 ====
 
 Output the collected values to RabitMQ pub/sub channel
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-</table>
-
-### This file was generated from the python source
-### Please edit the source to make changes
-
+Setting | Default | Description | Type
+--------|---------|-------------|-----
