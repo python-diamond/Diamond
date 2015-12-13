@@ -34,7 +34,7 @@ if os.name == 'nt':
         (os.path.join(base_files, 'collectors'), glob('conf/collectors/*')),
         (os.path.join(base_files, 'handlers'), glob('conf/handlers/*')),
     ]
-    install_requires = ['ConfigObj', 'psutil', ],
+    install_requires = ['configobj', 'psutil', ],
 
 else:
     data_files = [
@@ -79,13 +79,13 @@ else:
 
     # Are we in a virtenv?
     if running_under_virtualenv():
-        install_requires = ['ConfigObj', 'psutil', ]
+        install_requires = ['configobj', 'psutil', ]
     else:
         if distro == ['debian', 'ubuntu']:
             install_requires = ['python-configobj', 'python-psutil', ]
         # Default back to pip style requires
         else:
-            install_requires = ['ConfigObj', 'psutil', ]
+            install_requires = ['configobj', 'psutil', ]
 
 
 def get_version():
