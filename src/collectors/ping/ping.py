@@ -77,4 +77,4 @@ class PingCollector(diamond.collector.ProcessCollector):
                 else:
                     metric_value = 10000
 
-                self.publish(metric_name, metric_value)
+                self.publish(metric_name, metric_value, precision=3)
