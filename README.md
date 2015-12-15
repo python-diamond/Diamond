@@ -22,7 +22,8 @@ Steps to getting started:
 ## Success Stories
 
  * Diamond has successfully been deployed to a cluster of 1000 machines pushing [3 million points per minute](https://answers.launchpad.net/graphite/+question/178969).
- * Have a story? Please share!
+ * Diamond is deployed on [Fabric's](https://get.fabric.io/) infrastructure, polling hundreds of metric sources and pushing millions of points per minute.
+ * **Have a story? Please share!**
 
 ## Repos
 
