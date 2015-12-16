@@ -1,0 +1,376 @@
+[
+    {
+    "ctid": 113,
+    "veid": 113,
+    "vpsid": 113,
+    "private": "/var/lib/vz/private/113",
+    "root": "/var/lib/vz/root/113",
+    "mount_opts": null,
+    "origin_sample": null,
+    "hostname": "dns.home.loc",
+    "name": null,
+    "smart_name": 113,
+    "description": null,
+    "ostemplate": "debian-7.0-standard_7.0-1_amd64.tar.gz",
+    "ip": ["192.168.252.202"],
+    "nameserver": ["192.168.252.202"],
+    "searchdomain": ["home.loc"],
+    "status": "running",
+    "kmemsize": {
+      "held": 5151725,
+      "maxheld": 74436608,
+      "barrier": 121634816,
+      "limit": 134217728,
+      "failcnt": 0
+    },
+    "lockedpages": {
+      "held": 0,
+      "maxheld": 3120,
+      "barrier": 32768,
+      "limit": 32768,
+      "failcnt": 0
+    },
+    "privvmpages": {
+      "held": 45871,
+      "maxheld": 224626,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "shmpages": {
+      "held": 14,
+      "maxheld": 671,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numproc": {
+      "held": 24,
+      "maxheld": 66,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "physpages": {
+      "held": 18202,
+      "maxheld": 65538,
+      "barrier": 0,
+      "limit": 65536,
+      "failcnt": 0
+    },
+    "vmguarpages": {
+      "held": 0,
+      "maxheld": 0,
+      "barrier": 0,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "oomguarpages": {
+      "held": 13561,
+      "maxheld": 52196,
+      "barrier": 0,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numtcpsock": {
+      "held": 9,
+      "maxheld": 23,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numflock": {
+      "held": 5,
+      "maxheld": 12,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numpty": {
+      "held": 0,
+      "maxheld": 4,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numsiginfo": {
+      "held": 0,
+      "maxheld": 18,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "tcpsndbuf": {
+      "held": 156960,
+      "maxheld": 1220800,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "tcprcvbuf": {
+      "held": 147456,
+      "maxheld": 736464,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "othersockbuf": {
+      "held": 165176,
+      "maxheld": 2720624,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "dgramrcvbuf": {
+      "held": 0,
+      "maxheld": 170512,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numothersock": {
+      "held": 117,
+      "maxheld": 1794,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "dcachesize": {
+      "held": 2279574,
+      "maxheld": 67108864,
+      "barrier": 60817408,
+      "limit": 67108864,
+      "failcnt": 0
+    },
+    "numfile": {
+      "held": 409,
+      "maxheld": 2140,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numiptent": {
+      "held": 20,
+      "maxheld": 20,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "swappages": {
+      "held": 914,
+      "maxheld": 25026,
+      "barrier": 0,
+      "limit": 65536,
+      "failcnt": 0
+    },
+    "diskspace": {
+      "usage": 0,
+      "softlimit": 0,
+      "hardlimit": 0
+    },
+    "diskinodes": {
+      "usage": 37010,
+      "softlimit": 4294967295,
+      "hardlimit": 4294967295
+    },
+    "laverage": [0.01, 0.05, 0.15],
+    "uptime": 1316250.125,
+    "cpulimit": 0,
+    "cpuunits": 1000,
+    "cpus": 1,
+    "ioprio": 0,
+    "onboot": false,
+    "bootorder": null,
+    "layout": "simfs",
+    "features": null,
+    "vswap": true,
+    "disabled": false
+  },
+  {
+    "ctid": 114,
+    "veid": 114,
+    "vpsid": 114,
+    "private": "/var/lib/vz/private/114",
+    "root": "/var/lib/vz/root/114",
+    "mount_opts": null,
+    "origin_sample": null,
+    "hostname": "mqtt.home.loc",
+    "name": null,
+    "smart_name": 114,
+    "description": null,
+    "ostemplate": "debian-7.0-standard_7.0-1_amd64.tar.gz",
+    "ip": ["192.168.252.205"],
+    "nameserver": ["192.168.252.202"],
+    "searchdomain": ["home.loc"],
+    "status": "running",
+    "kmemsize": {
+      "held": 4930969,
+      "maxheld": 71958528,
+      "barrier": 121634816,
+      "limit": 134217728,
+      "failcnt": 0
+    },
+    "lockedpages": {
+      "held": 0,
+      "maxheld": 3116,
+      "barrier": 32768,
+      "limit": 32768,
+      "failcnt": 0
+    },
+    "privvmpages": {
+      "held": 30762,
+      "maxheld": 213927,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "shmpages": {
+      "held": 14,
+      "maxheld": 671,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numproc": {
+      "held": 21,
+      "maxheld": 60,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "physpages": {
+      "held": 10583,
+      "maxheld": 65552,
+      "barrier": 0,
+      "limit": 65536,
+      "failcnt": 0
+    },
+    "vmguarpages": {
+      "held": 0,
+      "maxheld": 0,
+      "barrier": 0,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "oomguarpages": {
+      "held": 7715,
+      "maxheld": 57547,
+      "barrier": 0,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numtcpsock": {
+      "held": 11,
+      "maxheld": 23,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numflock": {
+      "held": 5,
+      "maxheld": 13,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numpty": {
+      "held": 0,
+      "maxheld": 4,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numsiginfo": {
+      "held": 0,
+      "maxheld": 12,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "tcpsndbuf": {
+      "held": 191840,
+      "maxheld": 405480,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "tcprcvbuf": {
+      "held": 180224,
+      "maxheld": 2055552,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "othersockbuf": {
+      "held": 159528,
+      "maxheld": 212096,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "dgramrcvbuf": {
+      "held": 0,
+      "maxheld": 3864,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numothersock": {
+      "held": 100,
+      "maxheld": 129,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "dcachesize": {
+      "held": 2252757,
+      "maxheld": 67108860,
+      "barrier": 60817408,
+      "limit": 67108864,
+      "failcnt": 0
+    },
+    "numfile": {
+      "held": 379,
+      "maxheld": 740,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "numiptent": {
+      "held": 20,
+      "maxheld": 20,
+      "barrier": 9223372036854775807,
+      "limit": 9223372036854775807,
+      "failcnt": 0
+    },
+    "swappages": {
+      "held": 2510,
+      "maxheld": 25026,
+      "barrier": 0,
+      "limit": 65536,
+      "failcnt": 0
+    },
+    "diskspace": {
+      "usage": 0,
+      "softlimit": 0,
+      "hardlimit": 0
+    },
+    "diskinodes": {
+      "usage": 36548,
+      "softlimit": 4294967295,
+      "hardlimit": 4294967295
+    },
+    "laverage": [0.10, 0.50, 1.50],
+    "uptime": 126481.188,
+    "cpulimit": 0,
+    "cpuunits": 1000,
+    "cpus": 1,
+    "ioprio": 0,
+    "onboot": false,
+    "bootorder": null,
+    "layout": "simfs",
+    "features": null,
+    "vswap": true,
+    "disabled": false
+  }
+]
