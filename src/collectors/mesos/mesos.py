@@ -121,6 +121,16 @@ class MesosCollector(diamond.collector.Collector):
             if cpus_utilisation and cpus_limit != 0:
                 stats['cpus_percent'] = cpus_utilisation / cpus_limit
 
+    def _add_mem_percent(self, cur_read):
+        """Compute memory percent utilisation based on the mem_rss_bytes and mem_limit_bytes
+        """
+        for executor_id, cur_data in cur_read.items():
+            stats = cur_data['statistics']
+            mem_rss_bytes = stats.get('mem_rss_bytes')
+            mem_limit_bytes = stats.get('mem_limit_bytes')
+            if mem_rss_bytes and mem_limit_bytes != 0:
+                stats['mem_percent'] = mem_rss_bytes / float(mem_limit_bytes)
+
     def _group_tasks_statistics(self, result):
         """This function group statistics of same tasks by adding them.
         It also add 'instances_count' statistic to get information about
@@ -150,6 +160,7 @@ class MesosCollector(diamond.collector.Collector):
 
         self._add_cpu_usage(r)
         self._add_cpu_percent(r)
+        self._add_mem_percent(r)
         return r
 
     def _sum_statistics(self, x, y):
