@@ -144,6 +144,7 @@ class CPUCollector(diamond.collector.Collector):
             file.close()
 
             metrics = {}
+            metrics['ncpus'] = ncpus
 
             for cpu in results.keys():
                 stats = results[cpu]
