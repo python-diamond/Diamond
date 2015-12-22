@@ -49,18 +49,18 @@ class Server(object):
         self.handlers = []
         self.handler_queue = []
         self.modules = {}
-        self.metric_queue = None
+        self.running = True
 
+    def run(self):
         # We do this weird process title swap around to get the sync manager
         # title correct for ps
         if setproctitle:
             oldproctitle = getproctitle()
             setproctitle('%s - SyncManager' % getproctitle())
-        self.manager = multiprocessing.Manager()
+        l_manager = multiprocessing.Manager()
         if setproctitle:
             setproctitle(oldproctitle)
 
-    def run(self):
         """
         Load handler and collector classes and then start collectors
         """
@@ -73,7 +73,7 @@ class Server(object):
         collectors = load_collectors(self.config['server']['collectors_path'])
         metric_queue_size = int(self.config['server'].get('metric_queue_size',
                                                           16384))
-        self.metric_queue = self.manager.Queue(maxsize=metric_queue_size)
+        l_metric_queue = l_manager.Queue(maxsize=metric_queue_size)
         self.log.debug('metric_queue_size: %d', metric_queue_size)
 
         #######################################################################
@@ -113,16 +113,29 @@ class Server(object):
         )
 
         self.handler_queue = QueueHandler(
-            config=self.config, queue=self.metric_queue, log=self.log)
+            config=self.config, queue=l_metric_queue, log=self.log)
+
+        # https://vimmaniac.com/blog/codejunkie/safe-use-of-unix-signals-with-multiprocessing-module-in-python/
+        l_SIGINT_default_handler = signal.getsignal(signal.SIGINT)
+        l_SIGTERM_default_handler = signal.getsignal(signal.SIGTERM)
+
+        # Set signal handling of SIGINT to ignore mode.
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
+        signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
         process = multiprocessing.Process(
             name="Handlers",
             target=handler_process,
-            args=(self.handlers, self.metric_queue, self.log),
+            args=(self.handlers, l_metric_queue, self.log),
         )
 
         process.daemon = True
         process.start()
+
+        # Since we spawned all the necessary processes already,
+        # restore default signal handling for the parent process.
+        signal.signal(signal.SIGINT, l_SIGINT_default_handler)
+        signal.signal(signal.SIGTERM, l_SIGTERM_default_handler)
 
         #######################################################################
         # Signals
@@ -133,7 +146,7 @@ class Server(object):
 
         #######################################################################
 
-        while True:
+        while self.running:
             try:
                 active_children = multiprocessing.active_children()
                 running_processes = []
@@ -195,13 +208,26 @@ class Server(object):
                     # Splay the loads
                     time.sleep(float(load_delay))
 
+                    # https://vimmaniac.com/blog/codejunkie/safe-use-of-unix-signals-with-multiprocessing-module-in-python/
+                    l_SIGINT_default_handler = signal.getsignal(signal.SIGINT)
+                    l_SIGTERM_default_handler = signal.getsignal(signal.SIGTERM)
+
+                    # Set signal handling of SIGINT to ignore mode.
+                    signal.signal(signal.SIGINT, signal.SIG_DFL)
+                    signal.signal(signal.SIGTERM, signal.SIG_DFL)
+
                     process = multiprocessing.Process(
                         name=process_name,
                         target=collector_process,
-                        args=(collector, self.metric_queue, self.log)
+                        args=(collector, l_metric_queue, self.log)
                     )
                     process.daemon = True
                     process.start()
+
+                    # Since we spawned all the necessary processes already,
+                    # restore default signal handling for the parent process.
+                    signal.signal(signal.SIGINT, l_SIGINT_default_handler)
+                    signal.signal(signal.SIGTERM, l_SIGTERM_default_handler)
 
                 ##############################################################
 
@@ -218,3 +244,5 @@ class Server(object):
                     self.config['server']['collectors_path'])
                 # restore SIGHUP handler
                 signal.signal(signal.SIGHUP, original_sighup_handler)
+
+        l_manager.shutdown()
