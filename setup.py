@@ -45,6 +45,10 @@ else:
     distro = platform.dist()[0]
     distro_major_version = platform.dist()[1].split('.')[0]
 
+    if not distro:
+        if 'amzn' in platform.uname()[2]:
+            distro = 'centos'
+
     if running_under_virtualenv():
         data_files.append(('etc/diamond',
                            glob('conf/*.conf.*')))
