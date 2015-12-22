@@ -98,7 +98,7 @@ class OpenLDAPCollector(diamond.collector.Collector):
         'threads.backload': {
             'base': 'cn=Backload,cn=Threads,cn=Monitor',
             'attr': 'monitoredInfo'},
-        }
+    }
 
     def get_default_config_help(self):
         config_help = super(OpenLDAPCollector, self).get_default_config_help()

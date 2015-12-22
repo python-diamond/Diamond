@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -16,10 +16,11 @@ except ImportError:
 from diamond.collector import Collector
 from soft import SoftInterruptCollector
 
-################################################################################
+##########################################################################
 
 
 class TestSoftInterruptCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('SoftInterruptCollector', {
             'interval': 1
@@ -101,6 +102,6 @@ class TestSoftInterruptCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

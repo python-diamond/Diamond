@@ -49,6 +49,7 @@ an mbean.
 """
 
 import diamond.collector
+import base64
 import json
 import re
 import urllib
@@ -57,9 +58,8 @@ import urllib2
 
 class JolokiaCollector(diamond.collector.Collector):
 
-    BASE_URL = "jolokia"
-    LIST_URL = BASE_URL + "/list"
-    READ_URL = BASE_URL + "/?ignoreErrors=true&p=read/%s:*"
+    LIST_URL = "/list"
+    READ_URL = "/?ignoreErrors=true&p=read/%s:*"
 
     """
     These domains contain MBeans that are for management purposes,
@@ -77,6 +77,8 @@ class JolokiaCollector(diamond.collector.Collector):
                        " be collected.",
             'regex': "Contols if mbeans option matches with regex,"
                        " False by default.",
+            'username': "Username for authentication",
+            'password': "Password for authentication",
             'host': 'Hostname',
             'port': 'Port',
             'rewrite': "This sub-section of the config contains pairs of"
@@ -91,14 +93,16 @@ class JolokiaCollector(diamond.collector.Collector):
             'mbeans': [],
             'regex': False,
             'rewrite': [],
-            'path': 'jmx',
+            'path': 'jolokia',
+            'username': None,
+            'password': None,
             'host': 'localhost',
             'port': 8778,
         })
         return config
 
-    def __init__(self, config, handlers):
-        super(JolokiaCollector, self).__init__(config, handlers)
+    def __init__(self, *args, **kwargs):
+        super(JolokiaCollector, self).__init__(*args, **kwargs)
         self.mbeans = []
         self.rewrite = {}
         if isinstance(self.config['mbeans'], basestring):
@@ -143,9 +147,11 @@ class JolokiaCollector(diamond.collector.Collector):
 
     def list_request(self):
         try:
-            url = "http://%s:%s/%s" % (self.config['host'],
-                                       self.config['port'], self.LIST_URL)
-            response = urllib2.urlopen(url)
+            url = "http://%s:%s/%s%s" % (self.config['host'],
+                                         self.config['port'],
+                                         self.config['path'],
+                                         self.LIST_URL)
+            response = urllib2.urlopen(self._create_request(url))
             return self.read_json(response)
         except (urllib2.HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
@@ -153,14 +159,37 @@ class JolokiaCollector(diamond.collector.Collector):
 
     def read_request(self, domain):
         try:
-            url_path = self.READ_URL % urllib.quote(domain)
-            url = "http://%s:%s/%s" % (self.config['host'],
-                                       self.config['port'], url_path)
-            response = urllib2.urlopen(url)
+            url_path = self.READ_URL % self.escape_domain(domain)
+            url = "http://%s:%s/%s%s" % (self.config['host'],
+                                         self.config['port'],
+                                         self.config['path'],
+                                         url_path)
+            response = urllib2.urlopen(self._create_request(url))
             return self.read_json(response)
         except (urllib2.HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
             return {}
+
+    # escape the JMX domain per https://jolokia.org/reference/html/protocol.html
+    # the Jolokia documentation suggests that, when using the p query parameter,
+    # simply urlencoding should be sufficient, but in practice, the '!' appears
+    # necessary (and not harmful)
+    def escape_domain(self, domain):
+        domain = re.sub('!', '!!', domain)
+        domain = re.sub('/', '!/', domain)
+        domain = re.sub('"', '!"', domain)
+        domain = urllib.quote(domain)
+        return domain
+
+    def _create_request(self, url):
+        req = urllib2.Request(url)
+        username = self.config["username"]
+        password = self.config["password"]
+        if username is not None and password is not None:
+            base64string = base64.encodestring('%s:%s' % (
+                username, password)).replace('\n', '')
+            req.add_header("Authorization", "Basic %s" % base64string)
+        return req
 
     def clean_up(self, text):
         text = re.sub('["\'(){}<>\[\]]', '', text)
@@ -179,3 +208,10 @@ class JolokiaCollector(diamond.collector.Collector):
                     self.publish(key, v)
             elif type(v) in [dict]:
                 self.collect_bean("%s.%s" % (prefix, k), v)
+            elif type(v) in [list]:
+                self.interpret_bean_with_list("%s.%s" % (prefix, k), v)
+
+    # There's no unambiguous way to interpret list values, so
+    # this hook lets subclasses handle them.
+    def interpret_bean_with_list(self, prefix, values):
+        pass

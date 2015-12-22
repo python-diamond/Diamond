@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,10 +12,11 @@ from diamond.collector import Collector
 
 from http import HttpCollector
 
-################################################################################
+##########################################################################
 
 
 class TestHttpCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('HttpCollector', {
             'req_vhost': 'www.my_server.com',
@@ -46,6 +47,6 @@ class TestHttpCollector(CollectorTestCase):
         self.assertPublishedMany([publish_mock,
                                   ], metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

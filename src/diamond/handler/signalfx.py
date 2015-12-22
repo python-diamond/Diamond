@@ -54,7 +54,7 @@ class SignalfxHandler(Handler):
             'url': 'Where to send metrics',
             'batch': 'How many to store before sending',
             'auth_token': 'Org API token to use when sending metrics',
-            })
+        })
 
         return config
 
@@ -65,12 +65,12 @@ class SignalfxHandler(Handler):
         config = super(SignalfxHandler, self).get_default_config()
 
         config.update({
-            'url': 'https://api.signalfuse.com/v2/datapoint',
+            'url': 'https://ingest.signalfx.com/v2/datapoint',
             'batch': 300,
             # Don't wait more than 10 sec between pushes
             'batch_max_interval': 10,
             'auth_token': '',
-            })
+        })
 
         return config
 

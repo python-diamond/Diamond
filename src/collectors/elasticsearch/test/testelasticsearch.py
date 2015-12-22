@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,10 +12,11 @@ from diamond.collector import Collector
 
 from elasticsearch import ElasticSearchCollector
 
-################################################################################
+##########################################################################
 
 
 class TestElasticSearchCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('ElasticSearchCollector', {})
 
@@ -264,6 +265,37 @@ class TestElasticSearchCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+    @patch.object(Collector, 'publish')
+    def test_should_work_with_real_1_7_data(self, publish_mock):
+        returns = [
+            self.getFixture('stats1.7'),
+            self.getFixture('indices_stats'),
+        ]
+        urlopen_mock = patch('urllib2.urlopen', Mock(
+            side_effect=lambda *args: returns.pop(0)))
+
+        urlopen_mock.start()
+        self.collector.collect()
+        urlopen_mock.stop()
+
+        # check how many fixtures were consumed
+        self.assertEqual(urlopen_mock.new.call_count, 2)
+
+        # test some 1.7 specific stats
+        metrics = {
+            'segments.count': 7,
+            'segments.mem.size': 75726,
+            'segments.index_writer.mem.size': 0,
+            'segments.index_writer.mem.max_size': 469762048,
+            'segments.version_map.mem.size': 0,
+            'segments.fixed_bit_set.mem.size': 0
+        }
+
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
+        self.assertPublishedMany(publish_mock, metrics)
+
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

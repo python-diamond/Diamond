@@ -5,42 +5,33 @@ import sys
 curdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(curdir)
 sys.path.insert(0, '../')
+sys.path.insert(0, '../../ceph')
 
 import unittest
-import re
+
+from cephstats import process_ceph_status
 
 
-def get_ceph_info(info):
-    # pattern for ceph information
-    pattern = re.compile(r'\bclient io .*')
-    ceph_info = pattern.search(info).group()
-
-    # pattern to get number
-    number = re.compile(r'\d+')
-
-    read_per_second = number.search(ceph_info)
-    write_per_second = number.search(
-        ceph_info, read_per_second.end()
-        )
-    iops = number.search(ceph_info, write_per_second.end())
-
-    return (
-        read_per_second.group(),
-        write_per_second.group(),
-        iops.group()
-        )
-
-
-class TestCeph(unittest.TestCase):
+class TestCephStats(unittest.TestCase):
     """
     Test collect ceph data
     """
+
     def test_sample_data(self):
         """
         Get ceph information from sample data
         """
         f = open('sample.txt')
-        self.assertEqual(get_ceph_info(f.read()), ('8643', '4821', '481'))
+        ret = {'rd': '8643', 'wr': '4821', 'iops': '481'}
+        self.assertEqual(process_ceph_status(f.read()), ret)
+        f.close()
+
+    def test_sample_data_noio(self):
+        """
+        Get ceph information from sample data, missing the 'client io'
+        """
+        f = open('sample-noio.txt')
+        self.assertEqual(process_ceph_status(f.read()), {})
         f.close()
 
 if __name__ == '__main__':

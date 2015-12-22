@@ -28,13 +28,16 @@ class PostgresqlCollector(diamond.collector.Collector):
         """
         Return help text for collector
         """
-        config_help = super(PostgresqlCollector, self).get_default_config_help()
+        config_help = super(PostgresqlCollector,
+                            self).get_default_config_help()
         config_help.update({
             'host': 'Hostname',
             'dbname': 'DB to connect to in order to get list of DBs in PgSQL',
             'user': 'Username',
             'password': 'Password',
             'port': 'Port number',
+            'password_provider': "Whether to auth with supplied password or"
+            " .pgpass file  <password|pgpass>",
             'sslmode': 'Whether to use SSL - <disable|allow|require|...>',
             'underscore': 'Convert _ to .',
             'extended': 'Enable collection of extended database stats.',
@@ -58,6 +61,7 @@ class PostgresqlCollector(diamond.collector.Collector):
             'user': 'postgres',
             'password': 'postgres',
             'port': 5432,
+            'password_provider': 'password',
             'sslmode': 'disable',
             'underscore': False,
             'extended': False,
@@ -128,7 +132,7 @@ class PostgresqlCollector(diamond.collector.Collector):
         query = """
             SELECT datname FROM pg_database
             WHERE datallowconn AND NOT datistemplate
-            AND NOT datname='postgres' ORDER BY 1
+            AND NOT datname='postgres' AND NOT datname='rdsadmin' ORDER BY 1
         """
         conn = self._connect(self.config['dbname'])
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -159,6 +163,10 @@ class PostgresqlCollector(diamond.collector.Collector):
             conn_args['database'] = database
         else:
             conn_args['database'] = 'postgres'
+
+        # libpq will use ~/.pgpass only if no password supplied
+        if self.config['password_provider'] == 'pgpass':
+            del conn_args['password']
 
         try:
             conn = psycopg2.connect(**conn_args)

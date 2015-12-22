@@ -19,7 +19,9 @@ class HTTPJSONCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(HTTPJSONCollector, self).get_default_config_help()
         config_help.update({
-            'url': 'Full URL'
+            'url': 'Full URL',
+            'headers': 'Header variable if needed. '
+            'Will be added to every request',
         })
         return config_help
 
@@ -27,7 +29,8 @@ class HTTPJSONCollector(diamond.collector.Collector):
         default_config = super(HTTPJSONCollector, self).get_default_config()
         default_config.update({
             'path': 'httpjson',
-            'url': 'http://localhost/stat'
+            'url': 'http://localhost/stat',
+            'headers': {'User-Agent': 'Diamond HTTP collector'},
         })
         return default_config
 
@@ -48,7 +51,7 @@ class HTTPJSONCollector(diamond.collector.Collector):
     def collect(self):
         url = self.config['url']
 
-        req = urllib2.Request(url)
+        req = urllib2.Request(url, headers=self.config['headers'])
         req.add_header('Content-type', 'application/json')
 
         try:

@@ -105,9 +105,9 @@ class MySQLPerfCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(MySQLPerfCollector, self).get_default_config_help()
         config_help.update({
-            'hosts': 'List of hosts to collect from. Format is '
-            + 'yourusername:yourpassword@host:'
-            + 'port/performance_schema[/nickname]',
+            'hosts': 'List of hosts to collect from. Format is ' +
+                     'yourusername:yourpassword@host:' +
+                     'port/performance_schema[/nickname]',
             'slave': 'Collect Slave Replication Metrics',
         })
         return config_help
@@ -185,26 +185,29 @@ class MySQLPerfCollector(diamond.collector.Collector):
 
         # Summarize a few things
         thread_name = thread[thread.rfind('/') + 1:]
-        data.append(['wait/synch/mutex/innodb',
-                     sum([x[1] for x in data if x[0].startswith(
-                         'wait/synch/mutex/innodb')])])
-        data.append(['wait/synch/mutex',
-                     sum([x[1] for x in data if x[0].startswith(
-                         'wait/synch/mutex')
-                         and x[0] not in self.monitors[thread_name]])
-                     - data[-1][1]])
-        data.append(['wait/synch/rwlock',
-                     sum([x[1] for x in data if x[0].startswith(
-                         'wait/synch/rwlock')])])
-        data.append(['wait/io',
-                     sum([x[1] for x in data if x[0].startswith(
-                         'wait/io')
-                         and x[0] not in self.monitors[thread_name]])])
+        data.append(
+            ['wait/synch/mutex/innodb',
+             sum([x[1] for x in data
+                  if x[0].startswith('wait/synch/mutex/innodb')])])
+        data.append(
+            ['wait/synch/mutex',
+             sum([x[1] for x in data
+                  if (x[0].startswith('wait/synch/mutex') and
+                      x[0] not in self.monitors[thread_name])]) - data[-1][1]])
+        data.append(
+            ['wait/synch/rwlock',
+             sum([x[1] for x in data
+                  if x[0].startswith('wait/synch/rwlock')])])
+        data.append(
+            ['wait/io',
+             sum([x[1] for x in data
+                  if (x[0].startswith('wait/io') and
+                      x[0] not in self.monitors[thread_name])])])
 
         for d in zip(self.last_data[thread], data):
             if d[0][0] in self.monitors[thread_name]:
-                self.publish(nickname + thread_name + '.'
-                             + self.monitors[thread_name][d[0][0]],
+                self.publish(nickname + thread_name + '.' +
+                             self.monitors[thread_name][d[0][0]],
                              (d[1][1] - d[0][1]) / time_delta * 100)
 
         # Also log what's unaccounted for. This is where Actual Work gets done

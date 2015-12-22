@@ -24,6 +24,10 @@ import diamond.collector
 
 class SolrCollector(diamond.collector.Collector):
 
+    def __init__(self, *args, **kwargs):
+        super(SolrCollector, self).__init__(*args, ** kwargs)
+        self.config['host'] = self.config['host'].rstrip('/')
+
     def get_default_config_help(self):
         config_help = super(SolrCollector, self).get_default_config_help()
         config_help.update({
@@ -67,6 +71,7 @@ class SolrCollector(diamond.collector.Collector):
             return value
 
     def _get(self, path):
+        path = path.lstrip('/')
         url = 'http://%s:%i/%s' % (
             self.config['host'], int(self.config['port']), path)
         try:
@@ -126,7 +131,7 @@ class SolrCollector(diamond.collector.Collector):
                 continue
 
             s = result['solr-mbeans']
-            stats = dict((s[i], s[i+1]) for i in xrange(0, len(s), 2))
+            stats = dict((s[i], s[i + 1]) for i in xrange(0, len(s), 2))
 
             if 'core' in self.config['stats']:
                 core_searcher = stats["CORE"]["searcher"]["stats"]

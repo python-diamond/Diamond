@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 import os
 import time
@@ -13,7 +13,7 @@ from mock import patch
 from diamond.collector import Collector
 from processresources import ProcessResourcesCollector
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_psutil_is_available(func):
@@ -40,6 +40,10 @@ class TestProcessResourcesCollector(CollectorTestCase):
             },
             'barexe': {
                 'exe': 'bar$'
+            },
+            'noprocess': {
+                'name': 'noproc',
+                'count_workers': 'true'
             },
             'diamond-selfmon': {
                 'selfmon': 'true',
@@ -138,6 +142,7 @@ class TestProcessResourcesCollector(CollectorTestCase):
         ]
 
         class ProcessMock:
+
             def __init__(self, pid, name, rss, vms, exe=None):
                 self.pid = pid
                 self.name = name
@@ -222,7 +227,9 @@ class TestProcessResourcesCollector(CollectorTestCase):
         self.assertPublished(publish_mock, 'barexe.ext_memory_info.rss', 3)
         self.assertPublished(publish_mock,
                              'diamond-selfmon.ext_memory_info.rss', 1234)
+        self.assertPublished(publish_mock, 'noprocess.workers_count', 0)
+        self.assertUnpublished(publish_mock, 'noprocess.uptime', 0)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

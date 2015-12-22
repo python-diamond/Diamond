@@ -1,0 +1,11 @@
+{
+    "retries": 1,
+    "lost": 4807542,
+    "scribe_overall_sent_since_last_reconnect": 0,
+    "received_good": 9702186773,
+    "sent_since_last_reconnect": 9697379033,
+    "denied_for_queue_size": 33,
+    "denied_for_total_queue_size": 44545,
+    "denied_for_rate": 18,
+    "sent": 9697379033
+}

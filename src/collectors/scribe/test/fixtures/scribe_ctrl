@@ -1,0 +1,9 @@
+retries: 1
+lost: 4807542
+scribe overall:sent since last reconnect: 0
+received good: 9702186773
+sent since last reconnect: 9697379033
+denied for queue size: 33
+denied for total queue size: 44545
+denied for rate: 18
+sent: 9697379033

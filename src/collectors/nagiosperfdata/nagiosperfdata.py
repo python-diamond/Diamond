@@ -77,8 +77,8 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
     HOST_FIELDS = ['HOSTPERFDATA']
     SERVICE_FIELDS = ['SERVICEDESC', 'SERVICEPERFDATA']
     TOKENIZER_RE = (
-        r"([^\s]+|'[^']+')=([-.\d]+)(c|s|ms|us|B|KB|MB|GB|TB|%)?"
-        + r"(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?")
+        r"([^\s]+|'[^']+')=([-.\d]+)(c|s|ms|us|B|KB|MB|GB|TB|%)?" +
+        r"(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?(?:;([-.\d]+))?")
 
     def get_default_config_help(self):
         config_help = super(NagiosPerfdataCollector,
@@ -161,13 +161,13 @@ class NagiosPerfdataCollector(diamond.collector.Collector):
         if unit == 'us':
             return value / 1000000.0
         if unit == 'KB':
-            return value * 1024.0
+            return value * 1024
         if unit == 'MB':
-            return value * 1024768.0
+            return value * 1024 * 1024
         if unit == 'GB':
-            return value * 1073741824.0
+            return value * 1024 * 1024 * 1024
         if unit == 'TB':
-            return value * 1099511627776.0
+            return value * 1024 * 1024 * 1024 * 1024
 
         return value
 

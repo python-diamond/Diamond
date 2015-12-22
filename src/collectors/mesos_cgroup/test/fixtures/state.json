@@ -1,0 +1,136 @@
+{
+  "attributes": {
+    "host": "mesos-worker101.example.local",
+    "instance_id": "i-asdf",
+    "instance_type": "c3.4xlarge",
+    "rack": "us-east-1c"
+  },
+  "build_date": "2015-07-24 10:05:39",
+  "build_time": 1437732339,
+  "build_user": "root",
+  "completed_frameworks": [],
+  "flags": {
+    "attributes": "host:mesos-worker101.example.local;rack:us-east-1c;instance_id:asdf;instance_type:c3.4xlarge",
+    "authenticatee": "crammd5",
+    "cgroups_cpu_enable_pids_and_tids_count": "false",
+    "cgroups_enable_cfs": "false",
+    "cgroups_hierarchy": "/sys/fs/cgroup",
+    "cgroups_limit_swap": "false",
+    "cgroups_root": "mesos",
+    "container_disk_watch_interval": "15secs",
+    "containerizers": "mesos",
+    "default_role": "*",
+    "disk_watch_interval": "1mins",
+    "docker": "docker",
+    "docker_kill_orphans": "true",
+    "docker_remove_delay": "6hrs",
+    "docker_sandbox_directory": "/mnt/mesos/sandbox",
+    "docker_socket": "/var/run/docker.sock",
+    "docker_stop_timeout": "0ns",
+    "enforce_container_disk_quota": "false",
+    "executor_registration_timeout": "1mins",
+    "executor_shutdown_grace_period": "5secs",
+    "fetcher_cache_dir": "/tmp/mesos/fetch",
+    "fetcher_cache_size": "2GB",
+    "frameworks_home": "",
+    "gc_delay": "1weeks",
+    "gc_disk_headroom": "0.1",
+    "hadoop_home": "",
+    "help": "false",
+    "hostname": "mesos-worker101.example.local",
+    "initialize_driver_logging": "true",
+    "ip": "10.113.197.14",
+    "isolation": "cgroups/cpu,cgroups/mem",
+    "launcher_dir": "/usr/libexec/mesos",
+    "log_dir": "/var/log/mesos",
+    "logbufsecs": "0",
+    "logging_level": "INFO",
+    "master": "zk",
+    "oversubscribed_resources_interval": "15secs",
+    "perf_duration": "10secs",
+    "perf_interval": "1mins",
+    "port": "5051",
+    "qos_correction_interval_min": "0ns",
+    "quiet": "false",
+    "recover": "reconnect",
+    "recovery_timeout": "15mins",
+    "registration_backoff_factor": "1secs",
+    "resource_monitoring_interval": "1secs",
+    "resources": "cpus:16",
+    "revocable_cpu_low_priority": "true",
+    "strict": "true",
+    "switch_user": "true",
+    "version": "false",
+    "work_dir": "/mnt/mesos"
+  },
+  "frameworks": [
+    {
+      "checkpoint": true,
+      "executors": [
+        {
+          "completed_tasks": [],
+          "container": "b0d5971e-915c-414b-aa25-0da46e64ff4e",
+          "directory": "/mnt/mesos/slaves/20150729-213810-1276885514-5050-21492-S31/frameworks/20150507-194526-3627858186-5050-8132-0000/executors/thermos-1442505224463-ROLE-ENVIRONMENT-TASK-0-0c145f91-d46f-4089-a57e-3ccd89e49c36/runs/b0d5971e-915c-414b-aa25-0da46e64ff4e",
+          "id": "thermos-1442505224463-ROLE-ENVIRONMENT-TASK-0-0c145f91-d46f-4089-a57e-3ccd89e49c36",
+          "name": "aurora.task",
+          "queued_tasks": [],
+          "resources": {
+            "cpus": 0.5,
+            "disk": 14336,
+            "mem": 5920,
+            "ports": "[31130-31130, 31163-31163, 31656-31656, 31707-31707]"
+          },
+          "source": "ROLE.ENVIRONMENT.TASK.0",
+          "tasks": [
+            {
+              "executor_id": "thermos-1442505224463-ROLE-ENVIRONMENT-TASK-0-0c145f91-d46f-4089-a57e-3ccd89e49c36",
+              "framework_id": "20150507-194526-3627858186-5050-8132-0000",
+              "id": "1442505224463-ROLE-ENVIRONMENT-TASK-0-0c145f91-d46f-4089-a57e-3ccd89e49c36",
+              "labels": [],
+              "name": "ROLE/ENVIRONMENT/TASK",
+              "resources": {
+                "cpus": 0.49,
+                "disk": 14335,
+                "mem": 5888,
+                "ports": "[31130-31130, 31163-31163, 31656-31656, 31707-31707]"
+              },
+              "slave_id": "20150729-213810-1276885514-5050-21492-S31",
+              "state": "TASK_RUNNING",
+              "statuses": [
+                {
+                  "state": "TASK_STARTING",
+                  "timestamp": 1442505225.13683
+                },
+                {
+                  "state": "TASK_RUNNING",
+                  "timestamp": 1442505226.43909
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "failover_timeout": 1814400,
+      "hostname": "mesos-master101",
+      "id": "20150507-194526-3627858186-5050-8132-0000",
+      "name": "TwitterScheduler",
+      "role": "*",
+      "user": "root"
+    }
+  ],
+  "git_sha": "4ce5475346a0abb7ef4b7ffc9836c5836d7c7a66",
+  "git_tag": "0.23.0",
+  "hostname": "mesos-worker101.example.local",
+  "id": "20150729-213810-1276885514-5050-21492-S31",
+  "log_dir": "/var/log/mesos",
+  "master_hostname": "ip-10-11-132-141.ec2.internal",
+  "pid": "slave(1)@10.113.197.14:5051",
+  "resources": {
+    "cpus": 16,
+    "disk": 302319,
+    "mem": 29124,
+    "ports": "[31000-32000]"
+  },
+  "start_time": 1442854419.06138,
+  "version": "0.23.0"
+}

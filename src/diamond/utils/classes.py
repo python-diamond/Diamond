@@ -6,10 +6,13 @@ import sys
 import logging
 import inspect
 import traceback
+import pkg_resources
 
 from diamond.util import load_class_from_name
 from diamond.collector import Collector
 from diamond.handler.Handler import Handler
+
+logger = logging.getLogger('diamond')
 
 
 def load_include_path(paths):
@@ -51,7 +54,6 @@ def load_handlers(config, handler_names):
     """
     Load handlers
     """
-    log = logging.getLogger('diamond')
 
     handlers = []
 
@@ -59,7 +61,7 @@ def load_handlers(config, handler_names):
         handler_names = [handler_names]
 
     for handler in handler_names:
-        log.debug('Loading Handler %s', handler)
+        logger.debug('Loading Handler %s', handler)
         try:
             # Load Handler Class
             cls = load_dynamic_class(handler, Handler)
@@ -89,21 +91,29 @@ def load_handlers(config, handler_names):
 
         except (ImportError, SyntaxError):
             # Log Error
-            log.warning("Failed to load handler %s. %s",
-                        handler,
-                        traceback.format_exc())
+            logger.warning("Failed to load handler %s. %s",
+                           handler,
+                           traceback.format_exc())
             continue
 
     return handlers
 
 
-def load_collectors(paths=None, filter=None):
+def load_collectors(paths):
+    """
+    Load all collectors
+    """
+    collectors = load_collectors_from_paths(paths)
+    collectors.update(load_collectors_from_entry_point('diamond.collectors'))
+    return collectors
+
+
+def load_collectors_from_paths(paths):
     """
     Scan for collectors to load from path
     """
     # Initialize return value
     collectors = {}
-    log = logging.getLogger('diamond')
 
     if paths is None:
         return
@@ -128,20 +138,16 @@ def load_collectors(paths=None, filter=None):
             # Are we a directory? If so process down the tree
             fpath = os.path.join(path, f)
             if os.path.isdir(fpath):
-                subcollectors = load_collectors([fpath])
+                subcollectors = load_collectors_from_paths([fpath])
                 for key in subcollectors:
                     collectors[key] = subcollectors[key]
 
             # Ignore anything that isn't a .py file
-            elif (os.path.isfile(fpath)
-                  and len(f) > 3
-                  and f[-3:] == '.py'
-                  and f[0:4] != 'test'
-                  and f[0] != '.'):
-
-                # Check filter
-                if filter and os.path.join(path, f) != filter:
-                    continue
+            elif (os.path.isfile(fpath) and
+                  len(f) > 3 and
+                  f[-3:] == '.py' and
+                  f[0:4] != 'test' and
+                  f[0] != '.'):
 
                 modname = f[:-3]
 
@@ -149,53 +155,75 @@ def load_collectors(paths=None, filter=None):
                     # Import the module
                     mod = __import__(modname, globals(), locals(), ['*'])
                 except (KeyboardInterrupt, SystemExit), err:
-                    log.error(
+                    logger.error(
                         "System or keyboard interrupt "
                         "while loading module %s"
                         % modname)
                     if isinstance(err, SystemExit):
                         sys.exit(err.code)
                     raise KeyboardInterrupt
-                except:
+                except Exception:
                     # Log error
-                    log.error("Failed to import module: %s. %s",
-                              modname,
-                              traceback.format_exc())
-                    continue
-
-                # Find all classes defined in the module
-                for attrname in dir(mod):
-                    attr = getattr(mod, attrname)
-                    # Only attempt to load classes that are infact classes
-                    # are Collectors but are not the base Collector class
-                    if (inspect.isclass(attr)
-                            and issubclass(attr, Collector)
-                            and attr != Collector):
-                        if attrname.startswith('parent_'):
-                            continue
-                        # Get class name
-                        fqcn = '.'.join([modname, attrname])
-                        try:
-                            # Load Collector class
-                            cls = load_dynamic_class(fqcn, Collector)
-                            # Add Collector class
-                            collectors[cls.__name__] = cls
-                        except Exception:
-                            # Log error
-                            log.error(
-                                "Failed to load Collector: %s. %s",
-                                fqcn, traceback.format_exc())
-                            continue
+                    logger.error("Failed to import module: %s. %s",
+                                 modname,
+                                 traceback.format_exc())
+                else:
+                    for name, cls in get_collectors_from_module(mod):
+                        collectors[name] = cls
 
     # Return Collector classes
     return collectors
+
+
+def load_collectors_from_entry_point(path):
+    """
+    Load collectors that were installed into an entry_point.
+    """
+    collectors = {}
+    for ep in pkg_resources.iter_entry_points(path):
+        try:
+            mod = ep.load()
+        except Exception:
+            logger.error('Failed to import entry_point: %s. %s',
+                         ep.name,
+                         traceback.format_exec())
+        else:
+            collectors.update(get_collectors_from_module(mod))
+    return collectors
+
+
+def get_collectors_from_module(mod):
+    """
+    Locate all of the collector classes within a given module
+    """
+    for attrname in dir(mod):
+        attr = getattr(mod, attrname)
+        # Only attempt to load classes that are infact classes
+        # are Collectors but are not the base Collector class
+        if ((inspect.isclass(attr) and
+             issubclass(attr, Collector) and
+             attr != Collector)):
+            if attrname.startswith('parent_'):
+                continue
+            # Get class name
+            fqcn = '.'.join([mod.__name__, attrname])
+            try:
+                # Load Collector class
+                cls = load_dynamic_class(fqcn, Collector)
+                # Add Collector class
+                yield cls.__name__, cls
+            except Exception:
+                # Log error
+                logger.error(
+                    "Failed to load Collector: %s. %s",
+                    fqcn, traceback.format_exc())
+                continue
 
 
 def initialize_collector(cls, name=None, configfile=None, handlers=[]):
     """
     Initialize collector
     """
-    log = logging.getLogger('diamond')
     collector = None
 
     try:
@@ -203,8 +231,8 @@ def initialize_collector(cls, name=None, configfile=None, handlers=[]):
         collector = cls(name=name, configfile=configfile, handlers=handlers)
     except Exception:
         # Log error
-        log.error("Failed to initialize Collector: %s. %s",
-                  cls.__name__, traceback.format_exc())
+        logger.error("Failed to initialize Collector: %s. %s",
+                     cls.__name__, traceback.format_exc())
 
     # Return collector
     return collector

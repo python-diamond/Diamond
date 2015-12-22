@@ -51,7 +51,7 @@ class IcingaStatsCollector(diamond.collector.Collector):
                             self).get_default_config_help()
         config_help.update({
             "status_path": "Path to Icinga status.dat file"
-            })
+        })
         return config_help
 
     def get_default_config(self):
@@ -62,7 +62,7 @@ class IcingaStatsCollector(diamond.collector.Collector):
         config.update({
             "path": "icinga_stats",
             "status_path": "/var/lib/icinga/status.dat",
-            })
+        })
         return config
 
     def get_icinga_stats(self, app_stats):
@@ -133,7 +133,7 @@ class IcingaStatsCollector(diamond.collector.Collector):
             "hosts.scheduled": 0,
             "hosts.active_checks": 0,
             "hosts.passive_checks": 0,
-            }
+        }
         for host in list(hosts):
             if type(host) is not dict:
                 continue
@@ -141,7 +141,8 @@ class IcingaStatsCollector(diamond.collector.Collector):
             sane = self._sanitize_entity(host)
             stats["hosts.total"] += 1
             stats["hosts.flapping"] += self._trans_binary(sane["flapping"])
-            stats["hosts.in_downtime"] += self._trans_dtime(sane["in_downtime"])
+            stats[
+                "hosts.in_downtime"] += self._trans_dtime(sane["in_downtime"])
             stats["hosts.checked"] += self._trans_binary(sane["checked"])
             stats["hosts.scheduled"] += self._trans_binary(sane["scheduled"])
             stats["hosts.active_checks"] += sane["active_checks"]
@@ -165,7 +166,7 @@ class IcingaStatsCollector(diamond.collector.Collector):
             "services.scheduled": 0,
             "services.active_checks": 0,
             "services.passive_checks": 0,
-            }
+        }
         for svc in svcs:
             if type(svc) is not dict:
                 continue
@@ -176,7 +177,8 @@ class IcingaStatsCollector(diamond.collector.Collector):
             stats["services.in_downtime"] += self._trans_dtime(
                 sane["in_downtime"])
             stats["services.checked"] += self._trans_binary(sane["checked"])
-            stats["services.scheduled"] += self._trans_binary(sane["scheduled"])
+            stats[
+                "services.scheduled"] += self._trans_binary(sane["scheduled"])
             stats["services.active_checks"] += sane["active_checks"]
             stats["services.passive_checks"] += sane["passive_checks"]
             state_key = self._trans_svc_state(sane["state"])
@@ -217,7 +219,7 @@ class IcingaStatsCollector(diamond.collector.Collector):
             "active_scheduled_service_check_stats",
             "active_ondemand_host_check_stats",
             "active_ondemand_service_check_stats",
-            ]
+        ]
         for app_key in app_keys:
             if app_key not in app_stats.keys():
                 continue
@@ -241,7 +243,7 @@ class IcingaStatsCollector(diamond.collector.Collector):
         app_keys = [
             "cached_host_check_stats",
             "cached_service_check_stats",
-            ]
+        ]
         for app_key in app_keys:
             if app_key not in app_stats.keys():
                 continue
@@ -264,7 +266,7 @@ class IcingaStatsCollector(diamond.collector.Collector):
         app_keys = [
             "serial_host_check_stats",
             "parallel_host_check_stats",
-            ]
+        ]
         for app_key in app_keys:
             if app_key not in app_stats.keys():
                 continue
@@ -296,7 +298,7 @@ class IcingaStatsCollector(diamond.collector.Collector):
             "x01": "external_command.01",
             "x05": "external_command.05",
             "x15": "external_command.15",
-            }
+        }
         stats = {}
         if khigh in app_stats.keys() and str(app_stats[khigh]).isdigit():
             key = aliases[khigh]
@@ -366,7 +368,7 @@ class IcingaStatsCollector(diamond.collector.Collector):
             "should_be_scheduled": "scheduled",
             "active_checks_enabled": "active_checks",
             "passive_checks_enabled": "passive_checks",
-            }
+        }
         sane = {}
         for akey in aliases.keys():
             sane[aliases[akey]] = None

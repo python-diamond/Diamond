@@ -6,14 +6,15 @@ do not try to use it as a normal handler
 """
 
 from Handler import Handler
+import Queue
 
 
 class QueueHandler(Handler):
+
     def __init__(self, config=None, queue=None, log=None):
         # Initialize Handler
         Handler.__init__(self, config=config, log=log)
 
-        self.metrics = []
         self.queue = queue
 
     def __del__(self):
@@ -31,7 +32,10 @@ class QueueHandler(Handler):
         We skip any locking code due to the fact that this is now a single
         process per collector
         """
-        self.metrics.append(metric)
+        try:
+            self.queue.put(metric, block=False)
+        except Queue.Full:
+            self._throttle_error('Queue full, check handlers for delays')
 
     def flush(self):
         return self._flush()
@@ -41,6 +45,8 @@ class QueueHandler(Handler):
         We skip any locking code due to the fact that this is now a single
         process per collector
         """
-        if len(self.metrics) > 0:
-            self.queue.put(self.metrics, block=False)
-            self.metrics = []
+        # Send a None down the queue to indicate a flush
+        try:
+            self.queue.put(None, block=False)
+        except Queue.Full:
+            self._throttle_error('Queue full, check handlers for delays')

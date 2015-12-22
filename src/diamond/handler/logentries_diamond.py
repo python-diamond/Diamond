@@ -3,21 +3,6 @@
 [Logentries: Log Management & Analytics Made Easy ](https://logentries.com/).
 Send Diamond stats to your Logentries Account where you can monitor and alert
 based on data in real time.
-
-#### Dependencies
-
-
-#### Configuration
-
-Enable this handler
-
- * handers = diamond.handler.logentries.LogentriesDiamondHandler
-
- * log_token = [Your Log Token](https://logentries.com/doc/input-token/)
-
- * queue_size = Integer value
-
-
 """
 
 from Handler import Handler
@@ -31,6 +16,7 @@ class LogentriesDiamondHandler(Handler):
     """
       Implements the abstract Handler class
     """
+
     def __init__(self, config=None):
         """
         New instance of LogentriesDiamondHandler class
@@ -51,7 +37,8 @@ class LogentriesDiamondHandler(Handler):
                        self).get_default_config_help()
 
         config.update({
-            'log_token': '',
+            'log_token':
+                '[Your log token](https://logentries.com/doc/input-token/)',
             'queue_size': ''
         })
 
@@ -88,8 +75,8 @@ class LogentriesDiamondHandler(Handler):
             metric = self.queue.popleft()
             topic, value, timestamp = str(metric).split()
             msg = json.dumps({"event": {topic: value}})
-            req = urllib2.Request("https://js.logentries.com/v1/logs/"
-                                  + self.log_token, msg)
+            req = urllib2.Request("https://js.logentries.com/v1/logs/" +
+                                  self.log_token, msg)
             try:
                 urllib2.urlopen(req)
             except urllib2.URLError, e:

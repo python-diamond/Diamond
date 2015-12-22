@@ -67,14 +67,16 @@ class ElasticSearchCollector(diamond.collector.Collector):
             'instances': "List of instances. When set this overrides "
             "the 'host' and 'port' settings. Instance format: "
             "instance [<alias>@]<hostname>[:<port>]",
-            'stats': "Available stats: \n"
-            + " - jvm (JVM information) \n"
-            + " - thread_pool (Thread pool information) \n"
-            + " - indices (Individual index stats)\n",
-            'logstash_mode': "If 'indices' stats are gathered, remove "
-            + "the YYYY.MM.DD suffix from the index name "
-            + "(e.g. logstash-adm-syslog-2014.01.03) and use that "
-            + "as a bucket for all 'day' index stats.",
+            'stats':
+                "Available stats:\n" +
+                " - jvm (JVM information)\n" +
+                " - thread_pool (Thread pool information)\n" +
+                " - indices (Individual index stats)\n",
+            'logstash_mode':
+                "If 'indices' stats are gathered, remove " +
+                "the YYYY.MM.DD suffix from the index name " +
+                "(e.g. logstash-adm-syslog-2014.01.03) and use that " +
+                "as a bucket for all 'day' index stats.",
         })
         return config_help
 
@@ -109,8 +111,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
         try:
             doc = json.load(response)
         except (TypeError, ValueError):
-            self.log.error("Unable to parse response from elasticsearch as a"
-                           + " json object")
+            self.log.error("Unable to parse response from elasticsearch as a" +
+                           " json object")
             return False
 
         if assert_key and assert_key not in doc:
@@ -152,7 +154,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
         # publish all 'total' and 'time_in_millis' stats
         self._copy_two_level(
             metrics, prefix, index,
-            lambda key: key.endswith('total') or key.endswith('time_in_millis'))
+            lambda key: key.endswith('total') or key.endswith('time_in_millis') or key.endswith('in_bytes'))  # noqa
 
     def _add_metric(self, metrics, metric_path, data, data_path):
         """If the path specified by data_path (a list) exists in data,
@@ -195,8 +197,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
     def collect_instance_index_stats(self, host, port, metrics):
         result = self._get(host, port,
-                           '_stats?clear=true&docs=true&store=true&'
-                           + 'indexing=true&get=true&search=true', '_all')
+                           '_stats?clear=true&docs=true&store=true&' +
+                           'indexing=true&get=true&search=true', '_all')
         if not result:
             return
 
@@ -272,6 +274,16 @@ class ElasticSearchCollector(diamond.collector.Collector):
             self._add_metric(metrics, 'cache.id.size', cache,
                              ['memory_size_in_bytes'])
 
+        if 'query_cache' in indices:
+            cache = indices['query_cache']
+
+            metrics['cache.query.evictions'] = cache['evictions']
+            metrics['cache.query.size'] = cache['memory_size_in_bytes']
+            self._add_metric(metrics, 'cache.query.hit_count', cache,
+                             ['hit_count'])
+            self._add_metric(metrics, 'cache.query.miss_count', cache,
+                             ['miss_count'])
+
         # elasticsearch >= 0.90
         if 'fielddata' in indices:
             fielddata = indices['fielddata']
@@ -280,8 +292,23 @@ class ElasticSearchCollector(diamond.collector.Collector):
             self._add_metric(metrics, 'fielddata.evictions', fielddata,
                              ['evictions'])
 
+        if 'segments' in indices:
+            segments = indices['segments']
+            self._add_metric(metrics, 'segments.count', segments, ['count'])
+            self._add_metric(metrics, 'segments.mem.size', segments,
+                             ['memory_in_bytes'])
+            self._add_metric(metrics, 'segments.index_writer.mem.size',
+                             segments, ['index_writer_memory_in_bytes'])
+            self._add_metric(metrics, 'segments.index_writer.mem.max_size',
+                             segments, ['index_writer_max_memory_in_bytes'])
+            self._add_metric(metrics, 'segments.version_map.mem.size',
+                             segments, ['version_map_memory_in_bytes'])
+            self._add_metric(metrics, 'segments.fixed_bit_set.mem.size',
+                             segments, ['fixed_bit_set_memory_in_bytes'])
+
         #
-        # process mem/cpu (may not be present, depending on access restrictions)
+        # process mem/cpu (may not be present, depending on access
+        # restrictions)
         self._add_metric(metrics, 'process.cpu.percent', data,
                          ['process', 'cpu', 'percent'])
         self._add_metric(metrics, 'process.mem.resident', data,
@@ -333,7 +360,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
                 metrics['jvm.gc.collection.%s.time' % collector] = d[
                     'collection_time_in_millis']
                 collection_time_in_millis += d['collection_time_in_millis']
-            # calculate the totals, as they're absent in elasticsearch > 0.90.10
+            # calculate the totals, as they're absent in elasticsearch >
+            # 0.90.10
             if 'collection_count' in gc:
                 metrics['jvm.gc.collection.count'] = gc['collection_count']
             else:
@@ -352,7 +380,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
         #
         # network
-        self._copy_two_level(metrics, 'network', data['network'])
+        if 'network' in data:
+            self._copy_two_level(metrics, 'network', data['network'])
 
         #
         # cluster (optional)

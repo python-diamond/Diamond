@@ -3,19 +3,6 @@
 
 """
 Send metrics to a http endpoint via POST
-
-#### Dependencies
-
- * urllib2
-
-
-#### Configuration
-Enable this handler
-
- * handers = diamond.handler.httpHandler.HttpPostHandler
-
- * url = http://www.example.com/endpoint
-
 """
 
 from Handler import Handler

@@ -2,11 +2,6 @@
 
 """
 Collect the DataStax OpsCenter metrics
-
-#### Dependencies
-
- * urlib2
-
 """
 
 import urllib2
@@ -117,8 +112,8 @@ class DseOpsCenterCollector(diamond.collector.Collector):
 
     def _get_schema(self):
         time_now = int(datetime.datetime.utcnow().strftime('%s'))
-        if (self.column_families is None
-                or (time_now - self.last_schema_sync_time < 3600)):
+        if ((self.column_families is None or
+             (time_now - self.last_schema_sync_time < 3600))):
             return False
         url = 'http://%s:%i/%s/keyspaces' % (self.config['host'],
                                              int(self.config['port']),

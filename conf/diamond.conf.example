@@ -26,11 +26,19 @@ collectors_path = /usr/share/diamond/collectors/
 # Directory to load collector configs from
 collectors_config_path = /etc/diamond/collectors/
 
+# Number of seconds between each collector load
+# collectors_load_delay = 1.0
+
 # Directory to load handler configs from
 handlers_config_path = /etc/diamond/handlers/
 
 # Directory to load handler modules from
 handlers_path = /usr/share/diamond/handlers/
+
+# Maximum number of metrics waiting to be processed by handlers.
+# When metric queue is full, new metrics are dropped.
+metric_queue_size = 16384
+
 
 ################################################################################
 ### Options for handlers

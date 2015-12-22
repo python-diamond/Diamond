@@ -7,8 +7,14 @@ from error import DiamondException
 
 
 class Metric(object):
-
-    _METRIC_TYPES = ['COUNTER', 'GAUGE']
+    # This saves a significant amount of memory per object. This only matters
+    # due to the queue system that moves objects between processes and can end
+    # up storing a large number of objects in the queue waiting for the
+    # handlers to flush.
+    __slots__ = [
+        'path', 'value', 'raw_value', 'timestamp', 'precision',
+        'host', 'metric_type', 'ttl'
+        ]
 
     def __init__(self, path, value, raw_value=None, timestamp=None, precision=0,
                  host=None, metric_type='COUNTER', ttl=None):
@@ -24,7 +30,7 @@ class Metric(object):
         """
 
         # Validate the path, value and metric_type submitted
-        if (None in [path, value] or metric_type not in self._METRIC_TYPES):
+        if (None in [path, value] or metric_type not in ('COUNTER', 'GAUGE')):
             raise DiamondException(("Invalid parameter when creating new "
                                     "Metric with path: %r value: %r "
                                     "metric_type: %r")
@@ -38,7 +44,7 @@ class Metric(object):
             if not isinstance(timestamp, int):
                 try:
                     timestamp = int(timestamp)
-                except ValueError, e:
+                except ValueError as e:
                     raise DiamondException(("Invalid timestamp when "
                                             "creating new Metric %r: %s")
                                            % (path, e))
@@ -51,7 +57,7 @@ class Metric(object):
                     value = round(float(value))
                 else:
                     value = float(value)
-            except ValueError, e:
+            except ValueError as e:
                 raise DiamondException(("Invalid value when creating new "
                                         "Metric %r: %s") % (path, e))
 
@@ -79,14 +85,25 @@ class Metric(object):
         # Return formated string
         return fstring % (self.path, self.value, self.timestamp)
 
+    def __getstate__(self):
+        return dict(
+            (slot, getattr(self, slot))
+            for slot in self.__slots__
+            if hasattr(self, slot)
+        )
+
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            setattr(self, slot, value)
+
     @classmethod
     def parse(cls, string):
         """
         Parse a string and create a metric
         """
-        match = re.match(r'^(?P<name>[A-Za-z0-9\.\-_]+)\s+'
-                         + '(?P<value>[0-9\.]+)\s+'
-                         + '(?P<timestamp>[0-9\.]+)(\n?)$',
+        match = re.match(r'^(?P<name>[A-Za-z0-9\.\-_]+)\s+' +
+                         '(?P<value>[0-9\.]+)\s+' +
+                         '(?P<timestamp>[0-9\.]+)(\n?)$',
                          string)
         try:
             groups = match.groupdict()

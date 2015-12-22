@@ -1,21 +1,21 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import Mock
-from mock import patch
+from mock import call, patch
 
 from diamond.collector import Collector
 
 from solr import SolrCollector
 
-################################################################################
+##########################################################################
 
 
 class TestSolrCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('SolrCollector', {})
         self.collector = SolrCollector(config, None)
@@ -23,18 +23,16 @@ class TestSolrCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(SolrCollector)
 
+    @patch('urllib2.urlopen')
     @patch.object(Collector, 'publish')
-    def test_should_work_with_real_data(self, publish_mock):
+    def test_should_work_with_real_data(self, publish_mock, urlopen_mock):
         returns = [self.getFixture('cores'),
                    self.getFixture('ping'),
                    self.getFixture('stats'),
                    self.getFixture('system')]
-        urlopen_mock = patch('urllib2.urlopen', Mock(
-            side_effect=lambda *args: returns.pop(0)))
+        urlopen_mock.side_effect = lambda *args: returns.pop(0)
 
-        urlopen_mock.start()
         self.collector.collect()
-        urlopen_mock.stop()
 
         metrics = {
             'response.QueryTime': 5,
@@ -129,17 +127,26 @@ class TestSolrCollector(CollectorTestCase):
                            metrics=metrics)
         self.assertPublishedMany(publish_mock, metrics)
 
-    @patch.object(Collector, 'publish')
-    def test_should_fail_gracefully(self, publish_mock):
-        urlopen_mock = patch('urllib2.urlopen', Mock(
-                             return_value=self.getFixture('stats_blank')))
+        urlopen_mock.assert_has_calls([
+            call(
+                'http://localhost:8983/solr/admin/cores?action=STATUS&wt=json'),
+            call('http://localhost:8983/solr/admin/ping?wt=json'),
+            call('http://localhost:8983/solr/admin/mbeans?stats=true&wt=json'),
+            call('http://localhost:8983/solr/admin/system?stats=true&wt=json')
+        ])
 
-        urlopen_mock.start()
+    @patch('urllib2.urlopen')
+    @patch.object(Collector, 'publish')
+    def test_should_fail_gracefully(self, publish_mock, urlopen_mock):
+        urlopen_mock.return_value = self.getFixture('stats_blank')
+
         self.collector.collect()
-        urlopen_mock.stop()
 
         self.assertPublishedMany(publish_mock, {})
+        urlopen_mock.assert_called_once_with(
+            'http://localhost:8983/solr/admin/cores?action=STATUS&wt=json')
 
-################################################################################
+
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

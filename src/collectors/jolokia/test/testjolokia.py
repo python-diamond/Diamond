@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,10 +12,11 @@ from diamond.collector import Collector
 
 from jolokia import JolokiaCollector
 
-################################################################################
+##########################################################################
 
 
 class TestJolokiaCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('JolokiaCollector', {})
 
@@ -61,6 +62,12 @@ class TestJolokiaCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, rewritemetrics)
 
     @patch.object(Collector, 'publish')
+    def test_should_work_with_real_data_and_basic_auth(self, publish_mock):
+        self.collector.config["username"] = "user"
+        self.collector.config["password"] = "password"
+        self.test_should_work_with_real_data()
+
+    @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
         patch_urlopen = patch('urllib2.urlopen', Mock(
                               return_value=self.getFixture('stats_blank')))
@@ -92,6 +99,14 @@ class TestJolokiaCollector(CollectorTestCase):
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
+
+    def test_should_escape_jolokia_domains(self):
+        domain_with_slash = self.collector.escape_domain('some/domain')
+        domain_with_bang = self.collector.escape_domain('some!domain')
+        domain_with_quote = self.collector.escape_domain('some"domain')
+        self.assertEqual(domain_with_slash, 'some%21/domain')
+        self.assertEqual(domain_with_bang, 'some%21%21domain')
+        self.assertEqual(domain_with_quote, 'some%21%22domain')
 
     def get_metrics(self):
         prefix = 'java.lang.name_ParNew.type_GarbageCollector.LastGcInfo'
@@ -145,6 +160,6 @@ class TestJolokiaCollector(CollectorTestCase):
             prefix + '.memUsedBeforeGc.Par_Survivor_Space.used': 414088
         }
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

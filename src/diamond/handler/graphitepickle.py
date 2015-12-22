@@ -14,11 +14,6 @@ the e-commerce monitoring system. Today many
 [large companies](http://graphite.readthedocs.org/en/latest/who-is-using.html)
 use it.
 
-- enable it in `diamond.conf` :
-
-`    handlers = diamond.handler.graphitepickle.GraphitePickleHandler
-`
-
 """
 
 import struct
@@ -36,6 +31,7 @@ class GraphitePickleHandler(GraphiteHandler):
     Overrides the GraphiteHandler class
     Sending data to graphite using batched pickle format
     """
+
     def __init__(self, config=None):
         """
         Create a new instance of the GraphitePickleHandler

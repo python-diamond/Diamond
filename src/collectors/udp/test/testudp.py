@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -16,10 +16,11 @@ except ImportError:
 from diamond.collector import Collector
 from udp import UDPCollector
 
-################################################################################
+##########################################################################
 
 
 class TestUDPCollector(CollectorTestCase):
+
     def setUp(self, allowed_names=None):
         if not allowed_names:
             allowed_names = []
@@ -47,13 +48,13 @@ class TestUDPCollector(CollectorTestCase):
 
         UDPCollector.PROC = [
             self.getFixturePath('proc_net_snmp_1'),
-            ]
+        ]
         self.collector.collect()
         self.assertPublishedMany(publish_mock, {})
 
         UDPCollector.PROC = [
             self.getFixturePath('proc_net_snmp_2'),
-            ]
+        ]
         self.collector.collect()
 
         metrics = {
@@ -68,6 +69,6 @@ class TestUDPCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

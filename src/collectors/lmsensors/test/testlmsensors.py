@@ -4,13 +4,21 @@
 
 from test import CollectorTestCase
 from test import get_collector_config
+from test import unittest
 from mock import patch
 
 from diamond.collector import Collector
 from lmsensors import LMSensorsCollector
 
+try:
+    import sensors
+    sensors
+except ImportError:
+    sensors = None
+
 
 class FeatureMock:
+
     def __init__(self, label, value=None):
         self.label = label
         self.value = value
@@ -23,6 +31,7 @@ class FeatureMock:
 
 
 class ChipMock:
+
     def __init__(self, label, features):
         self.label = label
         self.features = features
@@ -35,7 +44,9 @@ class ChipMock:
         return self.label
 
 
+@unittest.skipIf(sensors is None, "No PySensors module found")
 class TestLMSensorsCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('LMSensorsCollector', {})
         self.collector = LMSensorsCollector(config, None)
