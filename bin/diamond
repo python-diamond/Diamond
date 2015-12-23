@@ -30,6 +30,7 @@ import multiprocessing
 import optparse
 import signal
 
+
 def main():
     try:
         # Initialize Options
@@ -158,8 +159,8 @@ def main():
                     sys.exit(1)
 
                 try:
-                    # Try to get an exclusive lock on the file. This will fail if another process has the file
-                    # locked.
+                    #Try to get an exclusive lock on the file. This will fail
+                    #if another process has the file locked.
                     fcntl.flock(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 except IOError:
                     log.error("Unable to lock on the pidfile.")
@@ -263,12 +264,12 @@ def main():
             if not options.foreground and not options.collector:
 
                 try:
-                   lockfile.write("%s" % (os.getpid()))
-                   lockfile.flush()
+                    lockfile.write("%s" % (os.getpid()))
+                    lockfile.flush()
 
                 except IOError:
-                   log.error("Unable to write pid to the pidfile.")
-                   sys.exit(1)
+                    log.error("Unable to write pid to the pidfile.")
+                    sys.exit(1)
 
                 # Log
                 log.debug("Wrote child PID file: %s" % (options.pidfile))
@@ -287,11 +288,11 @@ def main():
         server.run()
 
         for child in multiprocessing.active_children():
-           log.info(child.name)
+            log.info(child.name)
 
-           while child.is_alive():
-              child.terminate()
-              child.join(0.1)
+            while child.is_alive():
+                child.terminate()
+                child.join(0.1)
 
         # Delete Pidfile
         if not options.skip_pidfile and os.path.exists(options.pidfile):
