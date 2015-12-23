@@ -159,8 +159,8 @@ def main():
                     sys.exit(1)
 
                 try:
-                    #Try to get an exclusive lock on the file. This will fail
-                    #if another process has the file locked.
+                    # Try to get an exclusive lock on the file. This will fail
+                    # if another process has the file locked.
                     fcntl.flock(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 except IOError:
                     log.error("Unable to lock on the pidfile.")
