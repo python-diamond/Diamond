@@ -154,7 +154,7 @@ def main():
                 try:
                     lockfile = open(options.pidfile, "w")
 
-                except IOError:
+                except IOError, e:
                     log.error("Failed to write child PID file: %s" % (e))
                     sys.exit(1)
 
