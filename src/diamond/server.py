@@ -51,7 +51,7 @@ class Server(object):
         self.modules = {}
         self.running = True
 
-    def run(self):
+    def run(self, _onInitDone):
         # We do this weird process title swap around to get the sync manager
         # title correct for ps
         if setproctitle:
@@ -145,6 +145,9 @@ class Server(object):
             signal.signal(signal.SIGHUP, signal_to_exception)
 
         #######################################################################
+
+        if not _onInitDone is None:
+            _onInitDone()
 
         while self.running:
             try:

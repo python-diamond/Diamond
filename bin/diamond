@@ -4,6 +4,7 @@
 import os
 import sys
 import configobj
+import socket
 if os.name != 'nt':
     import pwd
     import grp
@@ -226,16 +227,28 @@ def main():
 
                 # Double fork to serverize process
                 log.info('Detaching Process.')
+                l_read, l_write = socket.socketpair()
 
                 # Fork 1
                 try:
                     pid = os.fork()
                     if pid > 0:
+                        l_write.close()
+                        l_status = l_read.recv(1)
+
                         # Exit first paren
-                        sys.exit(0)
+                        if l_status == "r":
+                            sys.exit(0)
+
+                        else:
+                            sys.exit(1)
+
                 except OSError, e:
                     print >> sys.stderr, "Failed to fork process." % (e)
                     sys.exit(1)
+
+                l_read.close()
+
                 # Decouple from parent environmen
                 os.setsid()
                 os.umask(0o022)
@@ -285,7 +298,11 @@ def main():
         signal.signal(signal.SIGINT, sigint_handler)
         signal.signal(signal.SIGTERM, sigint_handler)
 
-        server.run()
+        def __onInitDone():
+            l_write.sendall("r")
+            l_write.close()
+
+        server.run(__onInitDone)
 
         for child in multiprocessing.active_children():
             log.info(child.name)
