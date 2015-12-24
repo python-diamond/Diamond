@@ -298,11 +298,15 @@ def main():
         signal.signal(signal.SIGINT, sigint_handler)
         signal.signal(signal.SIGTERM, sigint_handler)
 
-        def __onInitDone():
-            l_write.sendall("r")
-            l_write.close()
+        if not options.skip_fork:
+            def __onInitDone():
+                l_write.sendall("r")
+                l_write.close()
 
-        server.run(__onInitDone)
+            server.run(__onInitDone)
+
+        else:
+            server.run()
 
         for child in multiprocessing.active_children():
             log.info(child.name)
@@ -312,7 +316,7 @@ def main():
                 child.join(0.1)
 
         # Delete Pidfile
-        if not options.skip_pidfile and os.path.exists(options.pidfile):
+        if not options.skip_pidfile and (not options.pidfile is None) and os.path.exists(options.pidfile):
             os.remove(options.pidfile)
             # Log
             log.debug("Removed PID file: %s" % (options.pidfile))
