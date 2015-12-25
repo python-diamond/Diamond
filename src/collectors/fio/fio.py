@@ -14,23 +14,32 @@ try:
 except ImportError:
     import simplejson as json
 
-import glob
-import os
 import re
 import subprocess
 
 import diamond.collector
 
 
-def flatten_dict(d):
-    def items():
-        for key, value in d.items():
-            if isinstance(value, dict):
-                for subkey, subvalue in flatten_dict(value).items():
-                        yield key + "." + subkey, subvalue
-            else:
+def flatten_dictionary(input, sep='.', prefix=None):
+    """Produces iterator of pairs where the first value is
+    the joined key names and the second value is the value
+    associated with the lowest level key. For example::
+
+      {'a': {'b': 10},
+       'c': 20,
+       }
+
+    produces::
+
+      [('a.b', 10), ('c', 20)]
+    """
+
+    for key, value in sorted(input.items()):
+        if isinstance(value, dict):
+            for subkey, subvalue in flatten_dictionary(value):
+                yield key + "." + subkey, subvalue
+        else:
                 yield key, value
-    return dict(items())
 
 
 class FioCollector(diamond.collector.Collector):
@@ -39,10 +48,11 @@ class FioCollector(diamond.collector.Collector):
         config_help.update({
             'ioengine': 'default: libaio',
             'iodepth': 'default: 4',
-            'rw': 'default: write',
+            'rw': 'default: readwrite',
             'bs': 'default: 32k',
             'direct': 'default: 0',
-            'size': 'default: 1024M',
+            'size': 'default: 100M',
+            'directory': 'default: /tmp'
         })
         return config_help
 
@@ -59,17 +69,18 @@ class FioCollector(diamond.collector.Collector):
             'bs': '32k',
             'direct': '0',
             'size': '100M',
+            'directory': '/tmp',
         })
         return config
 
-    def _get_fio_output(self):
+    def _get_stats_from_fio(self):
         """Return the parsed JSON fio output
         """
 
         try:
             json_blob = subprocess.check_output(
                 ['/usr/bin/fio',
-                 '--name=blah',
+                 '--name=fio',
                  '--ioengine=' + self.config['ioengine'],
                  '--iodepth=' + self.config['iodepth'],
                  '--rw=' + self.config['rw'],
@@ -77,6 +88,7 @@ class FioCollector(diamond.collector.Collector):
                  '--direct=' + self.config['direct'],
                  '--size=' + self.config['size'],
                  '--numjobs=1',
+                 '--directory=' + self.config['directory'],
                  '--output-format=json',
                  ])
         except subprocess.CalledProcessError, err:
@@ -89,25 +101,21 @@ class FioCollector(diamond.collector.Collector):
             self.log.exception('Could not parse fio output %s', err)
             return {}
 
-        return json_data
+        # only return first job, no support for multiple jobs yet
+        return json_data['jobs'][0]
 
     def _publish_stats(self, stats):
-        """Given a stats dictionary from _get_stats_from_socket,
-        publish the individual values.
-        """
-
-        for job in stats['jobs']:
-            job_data = flatten_dict(job)
-            for stat in job_data:
-                if stat == 'jobname':
-                    continue
-                stat_name = re.sub('>=', 'gte-', stat)
-                self.publish_gauge(stat_name, job_data[stat])
+        """ Publish stats """
+        for stat_name, stat_value in flatten_dictionary(
+            stats,
+            prefix='fio',
+        ):
+            if not stat_value.isdigit():
+                continue
+            self.publish_gauge(stat_name, stat_value)
 
     def collect(self):
-        """
-        Collect stats
-        """
-        stats = self._get_fio_output()
+        """ Collect stats """
+        stats = self._get_stats_from_fio()
         self._publish_stats(stats)
         return
