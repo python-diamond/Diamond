@@ -6,17 +6,7 @@ by their apps, tools and services into actionable insight.
 
 #### Dependencies
 
-  * [dogapi]
-
-#### Configuration
-
-Enable handler
-
-  * handlers = diamond.handler.datadog.DatadogHandler,
-
-  * api_key = DATADOG_API_KEY
-
-  * queue_size = [optional | 1]
+  * [dogapi](https://github.com/DataDog/datadogpy)
 
 """
 
@@ -56,8 +46,8 @@ class DatadogHandler(Handler):
         config = super(DatadogHandler, self).get_default_config_help()
 
         config.update({
-            'api_key': '',
-            'queue_size': '',
+            'api_key': 'Datadog API key',
+            'queue_size': 'Number of metrics to queue before send',
         })
 
         return config

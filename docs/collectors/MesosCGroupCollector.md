@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 MesosCGroupCollector
 =====
 
@@ -21,24 +24,55 @@ you're going to have a bad time.
     port = 5051
 ```
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>byte_unit</td><td>byte</td><td>Default numeric output(s)</td><td>str</td></tr>
-<tr><td>enabled</td><td>False</td><td>Enable collecting these metrics</td><td>bool</td></tr>
-<tr><td>host</td><td>localhost</td><td>Hostname</td><td>str</td></tr>
-<tr><td>measure_collector_time</td><td>False</td><td>Collect the collector run time in ms</td><td>bool</td></tr>
-<tr><td>metrics_blacklist</td><td>None</td><td>Regex to match metrics to block. Mutually exclusive with metrics_whitelist</td><td>NoneType</td></tr>
-<tr><td>metrics_whitelist</td><td>None</td><td>Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist</td><td>NoneType</td></tr>
-<tr><td>port</td><td>5051</td><td>Port</td><td>int</td></tr>
-</table>
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+byte_unit | byte | Default numeric output(s) | str
+enabled | False | Enable collecting these metrics | bool
+host | localhost | Hostname | str
+measure_collector_time | False | Collect the collector run time in ms | bool
+metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
+metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
+port | 5051 | Port | int
 
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.cpu.nr_periods 26848849
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.cpu.nr_throttled 85144
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.cpu.throttled_time 34709931864651
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.cpuacct.system 2774846
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.cpuacct.usage 170379797227518
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.cpuacct.user 9333852
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.active_anon 1789911040
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.active_file 180727808
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.cache 233398272
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.hierarchical_memory_limit 3355443200
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.inactive_anon 0
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.inactive_file 52654080
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.mapped_file 1118208
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.pgfault 353980394
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.pgmajfault 157
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.pgpgin 375953210
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.pgpgout 385688436
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.rss 1789911040
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.rss_huge 1642070016
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_active_anon 1789911040
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_active_file 180727808
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_cache 233398272
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_inactive_anon 0
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_inactive_file 52654080
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_mapped_file 1118208
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_pgfault 353980394
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_pgmajfault 157
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_pgpgin 375953210
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_pgpgout 385688436
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_rss 1789911040
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_rss_huge 1642070016
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_unevictable 0
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.total_writeback 0
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.unevictable 0
+servers.hostname.tasks.ENVIRONMENT.ROLE.TASK.0.memory.writeback 0
 ```
-
-### This file was generated from the python source
-### Please edit the source to make changes
 

@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 SentryHandler
 ====
 
@@ -26,14 +29,10 @@ max = 8.5
 name = Free Memory
 path = memory.MemFree
 min = 66020000
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>dsn</td><td></td><td></td><td>str</td></tr>
-<tr><td>get_default_config_help</td><td></td><td>get_default_config_help</td><td></td></tr>
-<tr><td>server_error_interval</td><td>120</td><td>How frequently to send repeated server errors</td><td>int</td></tr>
-</table>
-
-### This file was generated from the python source
-### Please edit the source to make changes
-
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+dsn |  |  | str
+get_default_config_help |  | get_default_config_help | 
+server_error_interval | 120 | How frequently to send repeated server errors | int

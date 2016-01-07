@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 JolokiaCollector
 =====
 
@@ -47,30 +50,49 @@ an mbean.
     ".*GetS2Activities.*" = ""
 ```
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>byte_unit</td><td>byte</td><td>Default numeric output(s)</td><td>str</td></tr>
-<tr><td>enabled</td><td>False</td><td>Enable collecting these metrics</td><td>bool</td></tr>
-<tr><td>host</td><td>localhost</td><td>Hostname</td><td>str</td></tr>
-<tr><td>mbeans</td><td>,</td><td>Pipe delimited list of MBeans for which to collect stats. If not provided, all stats will be collected.</td><td>list</td></tr>
-<tr><td>measure_collector_time</td><td>False</td><td>Collect the collector run time in ms</td><td>bool</td></tr>
-<tr><td>metrics_blacklist</td><td>None</td><td>Regex to match metrics to block. Mutually exclusive with metrics_whitelist</td><td>NoneType</td></tr>
-<tr><td>metrics_whitelist</td><td>None</td><td>Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist</td><td>NoneType</td></tr>
-<tr><td>password</td><td>None</td><td>Password for authentication</td><td>NoneType</td></tr>
-<tr><td>path</td><td>jolokia</td><td>Path to jolokia.  typically "jmx" or "jolokia"</td><td>str</td></tr>
-<tr><td>port</td><td>8778</td><td>Port</td><td>int</td></tr>
-<tr><td>regex</td><td>False</td><td>Contols if mbeans option matches with regex, False by default.</td><td>bool</td></tr>
-<tr><td>rewrite</td><td>,</td><td>This sub-section of the config contains pairs of from-to regex rewrites.</td><td>list</td></tr>
-<tr><td>username</td><td>None</td><td>Username for authentication</td><td>NoneType</td></tr>
-</table>
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+byte_unit | byte | Default numeric output(s) | str
+enabled | False | Enable collecting these metrics | bool
+host | localhost | Hostname | str
+mbeans | , | Pipe delimited list of MBeans for which to collect stats. If not provided, all stats will be collected. | list
+measure_collector_time | False | Collect the collector run time in ms | bool
+metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
+metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
+password | None | Password for authentication | NoneType
+path | jolokia | Path to jolokia.  typically "jmx" or "jolokia" | str
+port | 8778 | Port | int
+regex | False | Contols if mbeans option matches with regex, False by default. | bool
+rewrite | , | This sub-section of the config contains pairs of from-to regex rewrites. | list
+username | None | Username for authentication | NoneType
 
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.duration 2
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.id 219
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.CMS_Old_Gen.committed 73400320
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.CMS_Old_Gen.init 73400320
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.CMS_Old_Gen.max 73400320
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.CMS_Old_Gen.used 5146840
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.CMS_Perm_Gen.committed 23920640
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.CMS_Perm_Gen.init 21757952
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.CMS_Perm_Gen.max 85983232
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.CMS_Perm_Gen.used 23796992
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Code_Cache.committed 2686976
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Code_Cache.init 2555904
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Code_Cache.max 50331648
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Code_Cache.used 2600768
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Par_Eden_Space.committed 25165824
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Par_Eden_Space.init 25165824
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Par_Eden_Space.max 25165824
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Par_Eden_Space.used 25165824
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Par_Survivor_Space.committed 3145728
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Par_Survivor_Space.init 3145728
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Par_Survivor_Space.max 3145728
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.memoryUsageBeforeGc.Par_Survivor_Space.used 414088
+servers.hostname.jolokia.java.lang.name_ParNew.type_GarbageCollector.LastGcInfo.startTime 14259063
 ```
-
-### This file was generated from the python source
-### Please edit the source to make changes
 

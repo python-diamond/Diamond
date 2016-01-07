@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 DiskSpaceCollector
 =====
 
@@ -19,24 +22,26 @@ Uses /proc/mounts and os.statvfs() to get disk space usage
     exclude_filters = m,
 
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>byte_unit</td><td>byte,</td><td>Default numeric output(s)</td><td>list</td></tr>
-<tr><td>enabled</td><td>False</td><td>Enable collecting these metrics</td><td>bool</td></tr>
-<tr><td>exclude_filters</td><td>^/export/home,</td><td>A list of regex patterns. Any filesystem matching any of these patterns will be excluded from disk space metrics collection</td><td>list</td></tr>
-<tr><td>filesystems</td><td>ext2, ext3, ext4, xfs, glusterfs, nfs, nfs4,  ntfs, hfs, fat32, fat16, btrfs</td><td>filesystems to examine</td><td>str</td></tr>
-<tr><td>measure_collector_time</td><td>False</td><td>Collect the collector run time in ms</td><td>bool</td></tr>
-<tr><td>metrics_blacklist</td><td>None</td><td>Regex to match metrics to block. Mutually exclusive with metrics_whitelist</td><td>NoneType</td></tr>
-<tr><td>metrics_whitelist</td><td>None</td><td>Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist</td><td>NoneType</td></tr>
-</table>
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+byte_unit | byte, | Default numeric output(s) | list
+enabled | False | Enable collecting these metrics | bool
+exclude_filters | ^/export/home, | A list of regex patterns. Any filesystem matching any of these patterns will be excluded from disk space metrics collection | list
+filesystems | ext2, ext3, ext4, xfs, glusterfs, nfs, nfs4,  ntfs, hfs, fat32, fat16, btrfs | filesystems to examine | str
+measure_collector_time | False | Collect the collector run time in ms | bool
+metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
+metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
 
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.diskspace.root.gigabyte_avail (1020.962, 2)
+servers.hostname.diskspace.root.gigabyte_free (1090.826, 2)
+servers.hostname.diskspace.root.gigabyte_used (284.525, 2)
+servers.hostname.diskspace.root.inodes_avail 91229495
+servers.hostname.diskspace.root.inodes_free 91229495
+servers.hostname.diskspace.root.inodes_used 348873
 ```
-
-### This file was generated from the python source
-### Please edit the source to make changes
 

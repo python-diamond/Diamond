@@ -1,8 +1,6 @@
-FAQ
-=====
+# FAQ
 
-Why am I missing metrics?
--------------------------
+## Why am I missing metrics?
 
 Graphite has a configuration variable called `MAX_CREATES_PER_MINUTE`, which
 prevents the carbon server from creating too many whisper files at once.

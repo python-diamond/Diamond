@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 RabbitMQCollector
 =====
 
@@ -20,30 +23,42 @@ Collects data from RabbitMQ through the admin interface
   **   * = *
   **
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>byte_unit</td><td>byte</td><td>Default numeric output(s)</td><td>str</td></tr>
-<tr><td>cluster</td><td>False</td><td>If this node is part of a cluster, will collect metrics on the cluster health</td><td>bool</td></tr>
-<tr><td>enabled</td><td>False</td><td>Enable collecting these metrics</td><td>bool</td></tr>
-<tr><td>host</td><td>localhost:55672</td><td>Hostname and port to collect from</td><td>str</td></tr>
-<tr><td>measure_collector_time</td><td>False</td><td>Collect the collector run time in ms</td><td>bool</td></tr>
-<tr><td>metrics_blacklist</td><td>None</td><td>Regex to match metrics to block. Mutually exclusive with metrics_whitelist</td><td>NoneType</td></tr>
-<tr><td>metrics_whitelist</td><td>None</td><td>Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist</td><td>NoneType</td></tr>
-<tr><td>password</td><td>guest</td><td>Password</td><td>str</td></tr>
-<tr><td>queues</td><td></td><td>Queues to publish. Leave empty to publish all.</td><td></td></tr>
-<tr><td>queues_ignored</td><td></td><td>A list of queues or regexes for queue names not to report on.</td><td>str</td></tr>
-<tr><td>replace_dot</td><td>False</td><td>A value to replace dot in queue names and vhosts names by</td><td>bool</td></tr>
-<tr><td>user</td><td>guest</td><td>Username</td><td>str</td></tr>
-<tr><td>vhosts</td><td></td><td>A list of vhosts and queues for which we want to collect</td><td></td></tr>
-</table>
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+byte_unit | byte | Default numeric output(s) | str
+cluster | False | If this node is part of a cluster, will collect metrics on the cluster health | bool
+enabled | False | Enable collecting these metrics | bool
+host | localhost:55672 | Hostname and port to collect from | str
+measure_collector_time | False | Collect the collector run time in ms | bool
+metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
+metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
+password | guest | Password | str
+queues |  | Queues to publish. Leave empty to publish all. | 
+queues_ignored |  | A list of queues or regexes for queue names not to report on. | str
+replace_dot | False | A value to replace dot in queue names and vhosts names by | bool
+user | guest | Username | str
+vhosts |  | A list of vhosts and queues for which we want to collect | 
 
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.rabbitmq.cluster.nodes 3
+servers.hostname.rabbitmq.cluster.partitions 0
+servers.hostname.rabbitmq.health.disk_free 1
+servers.hostname.rabbitmq.health.disk_free_limit 1
+servers.hostname.rabbitmq.health.fd_total 2
+servers.hostname.rabbitmq.health.fd_used 1
+servers.hostname.rabbitmq.health.mem_limit 4
+servers.hostname.rabbitmq.health.mem_used 2
+servers.hostname.rabbitmq.health.proc_total 1
+servers.hostname.rabbitmq.health.proc_used 1
+servers.hostname.rabbitmq.health.sockets_total 2
+servers.hostname.rabbitmq.health.sockets_used 1
+servers.hostname.rabbitmq.key 4
+servers.hostname.rabbitmq.more_keys.nested_key 3
+servers.hostname.rabbitmq.queues.test_queue.key 2
+servers.hostname.rabbitmq.queues.test_queue.more_keys.nested_key 1
 ```
-
-### This file was generated from the python source
-### Please edit the source to make changes
 

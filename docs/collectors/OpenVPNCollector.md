@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 OpenVPNCollector
 =====
 
@@ -33,24 +36,32 @@ You can also specify multiple and mixed instances::
  * urlparse
 
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>byte_unit</td><td>byte</td><td>Default numeric output(s)</td><td>str</td></tr>
-<tr><td>enabled</td><td>False</td><td>Enable collecting these metrics</td><td>bool</td></tr>
-<tr><td>instances</td><td>file:///var/log/openvpn/status.log</td><td>List of instances to collect stats from</td><td>str</td></tr>
-<tr><td>measure_collector_time</td><td>False</td><td>Collect the collector run time in ms</td><td>bool</td></tr>
-<tr><td>metrics_blacklist</td><td>None</td><td>Regex to match metrics to block. Mutually exclusive with metrics_whitelist</td><td>NoneType</td></tr>
-<tr><td>metrics_whitelist</td><td>None</td><td>Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist</td><td>NoneType</td></tr>
-<tr><td>timeout</td><td>10</td><td>network timeout</td><td>str</td></tr>
-</table>
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+byte_unit | byte | Default numeric output(s) | str
+enabled | False | Enable collecting these metrics | bool
+instances | file:///var/log/openvpn/status.log | List of instances to collect stats from | str
+measure_collector_time | False | Collect the collector run time in ms | bool
+metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
+metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
+timeout | 10 | network timeout | str
 
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.openvpn.status.clients.a_example_org.bytes_rx 109619579.0
+servers.hostname.openvpn.status.clients.a_example_org.bytes_tx 935436488.0
+servers.hostname.openvpn.status.clients.b_example_org.bytes_rx 25067295.0
+servers.hostname.openvpn.status.clients.b_example_org.bytes_tx 10497532.0
+servers.hostname.openvpn.status.clients.c_example_org.bytes_rx 21842093.0
+servers.hostname.openvpn.status.clients.c_example_org.bytes_tx 20185134.0
+servers.hostname.openvpn.status.clients.connected 5
+servers.hostname.openvpn.status.clients.d_example_org.bytes_rx 4559242.0
+servers.hostname.openvpn.status.clients.d_example_org.bytes_tx 11133831.0
+servers.hostname.openvpn.status.clients.e_example_org.bytes_rx 13090090.0
+servers.hostname.openvpn.status.clients.e_example_org.bytes_tx 13401853.0
+servers.hostname.openvpn.status.global.max_bcast-mcast_queue_length 14.0
 ```
-
-### This file was generated from the python source
-### Please edit the source to make changes
 

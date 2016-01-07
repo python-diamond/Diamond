@@ -1,5 +1,7 @@
-Diamond Related Projects
-=====
+# Related Projects
+
+## Integrations
+
  * [puppet-diamond](https://github.com/vimeo/puppet-diamond) - diamond module for puppet
  * [chef-diamond](https://github.com/CBarraford/diamond_cookbook) - diamond cookbook for chef (Reported Broken)
  * [chef-diamond](https://github.com/damm/diamond) - Alternative diamond cookbook for chef (Reported Broken)

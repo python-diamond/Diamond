@@ -144,6 +144,7 @@ class CPUCollector(diamond.collector.Collector):
             file.close()
 
             metrics = {}
+            metrics['cpu_count'] = ncpus
 
             for cpu in results.keys():
                 stats = results[cpu]
@@ -243,6 +244,8 @@ class CPUCollector(diamond.collector.Collector):
                 self.derivative(metric_name + '.idle',
                                 total_time.idle,
                                 self.MAX_VALUES['idle']) / cpu_count)
+
+            self.publish('cpu_count', psutil.cpu_count())
 
             return True
 

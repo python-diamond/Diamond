@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 StatsdHandler
 ====
 
@@ -25,11 +28,7 @@ having the python library called statsd and this handler's module being called
 statsd, so we use an odd name for this handler. This doesn't affect the usage
 of this handler.
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-</table>
-
-### This file was generated from the python source
-### Please edit the source to make changes
-
+Setting | Default | Description | Type
+--------|---------|-------------|-----

@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 CassandraJolokiaCollector
 =====
 
@@ -19,32 +22,29 @@ CassandraJolokiaCollector.conf
     histogram_regex '.*HistogramMicros$'
 ```
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>byte_unit</td><td>byte</td><td>Default numeric output(s)</td><td>str</td></tr>
-<tr><td>enabled</td><td>False</td><td>Enable collecting these metrics</td><td>bool</td></tr>
-<tr><td>histogram_regex</td><td>.*HistogramMicros$</td><td>Filter to only process attributes that match this regex</td><td>str</td></tr>
-<tr><td>host</td><td>localhost</td><td>Hostname</td><td>str</td></tr>
-<tr><td>mbeans</td><td>,</td><td>Pipe delimited list of MBeans for which to collect stats. If not provided, all stats will be collected.</td><td>list</td></tr>
-<tr><td>measure_collector_time</td><td>False</td><td>Collect the collector run time in ms</td><td>bool</td></tr>
-<tr><td>metrics_blacklist</td><td>None</td><td>Regex to match metrics to block. Mutually exclusive with metrics_whitelist</td><td>NoneType</td></tr>
-<tr><td>metrics_whitelist</td><td>None</td><td>Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist</td><td>NoneType</td></tr>
-<tr><td>password</td><td>None</td><td>Password for authentication</td><td>NoneType</td></tr>
-<tr><td>path</td><td>jolokia</td><td>Path to jolokia.  typically "jmx" or "jolokia"</td><td>str</td></tr>
-<tr><td>percentiles</td><td>50, 95, 99,</td><td>Comma separated list of percentiles to be collected (e.g., "50,95,99").</td><td>list</td></tr>
-<tr><td>port</td><td>8778</td><td>Port</td><td>int</td></tr>
-<tr><td>regex</td><td>False</td><td>Contols if mbeans option matches with regex, False by default.</td><td>bool</td></tr>
-<tr><td>rewrite</td><td>,</td><td>This sub-section of the config contains pairs of from-to regex rewrites.</td><td>list</td></tr>
-<tr><td>username</td><td>None</td><td>Username for authentication</td><td>NoneType</td></tr>
-</table>
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+byte_unit | byte | Default numeric output(s) | str
+enabled | False | Enable collecting these metrics | bool
+histogram_regex | .*HistogramMicros$ | Filter to only process attributes that match this regex | str
+host | localhost | Hostname | str
+mbeans | , | Pipe delimited list of MBeans for which to collect stats. If not provided, all stats will be collected. | list
+measure_collector_time | False | Collect the collector run time in ms | bool
+metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
+metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
+password | None | Password for authentication | NoneType
+path | jolokia | Path to jolokia.  typically "jmx" or "jolokia" | str
+percentiles | 50, 95, 99, | Comma separated list of percentiles to be collected (e.g., "50,95,99"). | list
+port | 8778 | Port | int
+regex | False | Contols if mbeans option matches with regex, False by default. | bool
+rewrite | , | This sub-section of the config contains pairs of from-to regex rewrites. | list
+username | None | Username for authentication | NoneType
 
 #### Example Output
 
 ```
 __EXAMPLESHERE__
 ```
-
-### This file was generated from the python source
-### Please edit the source to make changes
 

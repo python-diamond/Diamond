@@ -172,22 +172,21 @@ if __name__ == "__main__":
 
         enabled = ''
 
+        docFile.write("<!--")
+        docFile.write("This file was generated from the python source\n")
+        docFile.write("Please edit the source to make changes\n")
+        docFile.write("-->\n")
+
         docFile.write("%s\n" % (collector))
         docFile.write("=====\n")
         if collectors[collector].__doc__ is None:
             print "No __doc__ string!"
         docFile.write("%s\n" % (collectors[collector].__doc__))
-        docFile.write("#### Options - [Generic Options](Configuration)\n")
+        docFile.write("#### Options\n")
         docFile.write("\n")
 
-        docFile.write("<table>")
-
-        docFile.write("<tr>")
-        docFile.write("<th>Setting</th>")
-        docFile.write("<th>Default</th>")
-        docFile.write("<th>Description</th>")
-        docFile.write("<th>Type</th>")
-        docFile.write("</tr>\n")
+        docFile.write("Setting | Default | Description | Type\n")
+        docFile.write("--------|---------|-------------|-----\n")
 
         for option in sorted(options.keys()):
             defaultOption = ''
@@ -200,15 +199,11 @@ if __name__ == "__main__":
                 else:
                     defaultOption = str(defaultOptions[option])
 
-            docFile.write("<tr>")
-            docFile.write("<td>%s</td>" % (option))
-            docFile.write("<td>%s</td>" % (defaultOption))
-            docFile.write("<td>%s</td>" % (options[option].replace(
-                "\n", '<br>\n')))
-            docFile.write("<td>%s</td>" % (defaultOptionType))
-            docFile.write("</tr>\n")
-
-        docFile.write("</table>\n")
+            docFile.write("%s | %s | %s | %s\n"
+                          % (option,
+                             defaultOption,
+                             options[option].replace("\n", '<br>\n'),
+                             defaultOptionType))
 
         docFile.write("\n")
         docFile.write("#### Example Output\n")
@@ -216,9 +211,6 @@ if __name__ == "__main__":
         docFile.write("```\n")
         docFile.write("__EXAMPLESHERE__\n")
         docFile.write("```\n")
-        docFile.write("\n")
-        docFile.write("### This file was generated from the python source\n")
-        docFile.write("### Please edit the source to make changes\n")
         docFile.write("\n")
 
         docFile.close()
@@ -266,21 +258,20 @@ if __name__ == "__main__":
         docFile = open(os.path.join(handlers_doc_path,
                                     handler + ".md"), 'w')
 
+        docFile.write("<!--")
+        docFile.write("This file was generated from the python source\n")
+        docFile.write("Please edit the source to make changes\n")
+        docFile.write("-->\n")
+
         docFile.write("%s\n" % (handler))
         docFile.write("====\n")
         docFile.write("%s" % (handlers[handler].__doc__))
 
-        docFile.write("#### Options - [Generic Options](Configuration)\n")
+        docFile.write("#### Options\n")
         docFile.write("\n")
 
-        docFile.write("<table>")
-
-        docFile.write("<tr>")
-        docFile.write("<th>Setting</th>")
-        docFile.write("<th>Default</th>")
-        docFile.write("<th>Description</th>")
-        docFile.write("<th>Type</th>")
-        docFile.write("</tr>\n")
+        docFile.write("Setting | Default | Description | Type\n")
+        docFile.write("--------|---------|-------------|-----\n")
 
         if options:
             for option in sorted(options.keys()):
@@ -296,19 +287,10 @@ if __name__ == "__main__":
                     else:
                         defaultOption = str(defaultOptions[option])
 
-                docFile.write("<tr>")
-                docFile.write("<td>%s</td>" % (option))
-                docFile.write("<td>%s</td>" % (defaultOption))
-                docFile.write("<td>%s</td>" % (options[option].replace(
-                    "\n", '<br>\n')))
-                docFile.write("<td>%s</td>" % (defaultOptionType))
-                docFile.write("</tr>\n")
-
-        docFile.write("</table>\n")
-
-        docFile.write("\n")
-        docFile.write("### This file was generated from the python source\n")
-        docFile.write("### Please edit the source to make changes\n")
-        docFile.write("\n")
+                docFile.write("%s | %s | %s | %s\n"
+                              % (option,
+                                 defaultOption,
+                                 options[option].replace("\n", '<br>\n'),
+                                 defaultOptionType))
 
         docFile.close()

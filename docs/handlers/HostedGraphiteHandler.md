@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 HostedGraphiteHandler
 ====
 
@@ -14,21 +17,17 @@ Enable this handler
 
  * apikey = API_KEY
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-<tr><td>apikey</td><td></td><td>Api key to use</td><td>str</td></tr>
-<tr><td>batch</td><td>1</td><td>How many to store before sending to the graphite server</td><td>int</td></tr>
-<tr><td>get_default_config_help</td><td></td><td>get_default_config_help</td><td></td></tr>
-<tr><td>host</td><td>carbon.hostedgraphite.com</td><td>Hostname</td><td>str</td></tr>
-<tr><td>max_backlog_multiplier</td><td>5</td><td>how many batches to store before trimming</td><td>int</td></tr>
-<tr><td>port</td><td>2003</td><td>Port</td><td>int</td></tr>
-<tr><td>proto</td><td>tcp</td><td>udp or tcp</td><td>str</td></tr>
-<tr><td>server_error_interval</td><td>120</td><td>How frequently to send repeated server errors</td><td>int</td></tr>
-<tr><td>timeout</td><td>15</td><td></td><td>int</td></tr>
-<tr><td>trim_backlog_multiplier</td><td>4</td><td>Trim down how many batches</td><td>int</td></tr>
-</table>
-
-### This file was generated from the python source
-### Please edit the source to make changes
-
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+apikey |  | Api key to use | str
+batch | 1 | How many to store before sending to the graphite server | int
+get_default_config_help |  | get_default_config_help | 
+host | carbon.hostedgraphite.com | Hostname | str
+max_backlog_multiplier | 5 | how many batches to store before trimming | int
+port | 2003 | Port | int
+proto | tcp | udp or tcp | str
+server_error_interval | 120 | How frequently to send repeated server errors | int
+timeout | 15 |  | int
+trim_backlog_multiplier | 4 | Trim down how many batches | int

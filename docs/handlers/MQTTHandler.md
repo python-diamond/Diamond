@@ -1,3 +1,6 @@
+<!--This file was generated from the python source
+Please edit the source to make changes
+-->
 MQTTHandler
 ====
 
@@ -57,11 +60,7 @@ which subscribes to an MQTT broker and sends metrics off to Graphite.
 * Support for reconnecting to a broker is implemented and ought to
   work.
 
-#### Options - [Generic Options](Configuration)
+#### Options
 
-<table><tr><th>Setting</th><th>Default</th><th>Description</th><th>Type</th></tr>
-</table>
-
-### This file was generated from the python source
-### Please edit the source to make changes
-
+Setting | Default | Description | Type
+--------|---------|-------------|-----
