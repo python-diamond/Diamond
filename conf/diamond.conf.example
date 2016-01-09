@@ -135,6 +135,12 @@ url = http://localhost:8888/
 ### Metrics batch size
 batch = 100
 
+[[PubsubHandler]]
+topic = 'projects/your-project/topics/your-topic'
+scopes = 'https://www.googleapis.com/auth/pubsub'
+retries = 3
+batch = count
+batch_size = 10
 
 ################################################################################
 ### Options for collectors
