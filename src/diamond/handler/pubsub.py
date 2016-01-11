@@ -156,7 +156,6 @@ class PubsubHandler(Handler):
 
                 self.metrics.append(tmp_msg)
 
-
     def _convert_to_pubsub(self, metric):
         """
         Convert a metric to a dictionary representing a Pub/Sub event.
