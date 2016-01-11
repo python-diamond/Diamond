@@ -26,8 +26,9 @@ Author: dcochran@google.com
  * [ApiClient](https://github.com/google/google-api-python-client/).
  * [Oauth2Client](https://github.com/google/oauth2client/).
 
- In addition if you are not running this on a host in your GCE project you will need to have the
- GOOGLE_APPLICATION_CREDENTIALS environment variable pointing to a credentials file for the user
+ In addition if you are not running this on a host in your GCE project you
+ will need to have the GOOGLE_APPLICATION_CREDENTIALS environment variable
+ pointing to a credentials file for the user
  you are running diamond as.
 
 #### Configuration
@@ -40,9 +41,12 @@ It has these options:
  * `retries` - Number of retries for failed publish attempts.
  * `batch` - Whether to batch msgs or not.  Values:
                 - None
-                - count (batch by count of msgs...i.e 7 to batch in 7 msgs increments.
-                - size (batch by total size of batch in bytes...i.e 64000 to send in 64K increments.
- * `batch_size` - If msgs are to be batched this will contain either the count number or size in bytes.
+                - count (batch by count of msgs...i.e 7 to batch in 7 msgs
+                  increments.
+                - size (batch by total size of batch in bytes...i.e 64000
+                  to send in 64K increments.
+ * `batch_size` - If msgs are to be batched this will contain either the
+                  count number or size in bytes.
 
 """
 
@@ -68,7 +72,8 @@ class PubsubHandler(Handler):
             logging.error("Failed to load apiclient.discovery")
             return
         elif GoogleCredentials is None:
-            logging.error("Failed to load oauth2client.client.GoogleCredentials")
+            logging.error("Failed to load "
+                          "oauth2client.client.GoogleCredentials")
             return
 
         # Initialize options
@@ -96,7 +101,8 @@ class PubsubHandler(Handler):
             'scopes': 'Pub/Sub Scopes',
             'retries': 'Number of retries to publish a metric',
             'batch': 'Should msgs be batched.  Values: None, count, or size',
-            'batch_size': 'If batch msgs, will contain the count number or size in bytes',
+            'batch_size': 'If batch msgs, will contain the count number or size'
+                          ' in bytes',
         })
 
         return config
@@ -134,13 +140,18 @@ class PubsubHandler(Handler):
             else:
                 # batch up by size of msgs
                 tmp_msg = self._convert_to_pubsub(metric)
-                avg_size = len(json.dumps(self.metrics)) / (len(self.metrics) + 1)
+                avg_size = \
+                    len(json.dumps(self.metrics)) / (len(self.metrics) + 1)
 
-                # TODO: see if there is a better way than json.dumps to get byte size.
+                # TODO: see if there is a better way than json.dumps to get
+                # byte size.
                 next_bytecount = len(tmp_msg) + len(json.dumps(self.metrics))
-                logging.debug("Next dataframe size: %s | Avg size: %s" % (next_bytecount, avg_size))
-                # add additional avg message size to cover msg envelope overhead
-                if next_bytecount >= ((self.batch_size - len(tmp_msg)) - avg_size):
+                logging.debug("Next dataframe size: %s | Avg size: %s" %
+                              (next_bytecount, avg_size))
+                # add additional avg message size to cover msg envelope
+                # overhead
+                if next_bytecount >= \
+                        ((self.batch_size - len(tmp_msg)) - avg_size):
                     self._send()
 
                 self.metrics.append(tmp_msg)
@@ -151,7 +162,8 @@ class PubsubHandler(Handler):
         Convert a metric to a dictionary representing a Pub/Sub event.
         Each metric should be loaded into a separate data slot
         """
-        # Using separate "host" field, so remove from the path.  This was taken from the Riemann Handler.
+        # Using separate "host" field, so remove from the path.
+        # This was taken from the Riemann Handler.
         path = '%s.%s.%s' % (
             metric.getPathPrefix(),
             metric.getCollectorPath(),
@@ -175,7 +187,8 @@ class PubsubHandler(Handler):
         """
         body = {'messages': self.metrics}
         logging.debug("Number of messages being sent: %s", len(self.metrics))
-        logging.debug("Size of message batch being sent: %s", len(json.dumps(body)))
+        logging.debug("Size of message batch being sent: %s",
+                      len(json.dumps(body)))
         try:
             resp = self.client.projects().topics().publish(
                 topic=self.topic, body=body).execute(num_retries=self.retries)
