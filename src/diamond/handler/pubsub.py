@@ -137,23 +137,21 @@ class PubsubHandler(Handler):
                 avg_size = len(json.dumps(self.metrics)) / (len(self.metrics) + 1)
 
                 # TODO: see if there is a better way than json.dumps to get byte size.
-                next_size = len(tmp_msg) + len(json.dumps(self.metrics))
-                logging.debug("Size check: %s | Avg size: %s" % (next_size, avg_size))
-                # use 1 avg_size msg less to assume the costs for additional array and message header overhead
-                if (len(tmp_msg) + len(json.dumps(self.metrics))) < (self.batch_size - avg_size):
-                    # add to batch array
-                    self.metrics.append(tmp_msg)
-                else:
-                    # send current batch array and then add to blank array
+                next_bytecount = len(tmp_msg) + len(json.dumps(self.metrics))
+                logging.debug("Next dataframe size: %s | Avg size: %s" % (next_bytecount, avg_size))
+                # add additional avg message size to cover msg envelope overhead
+                if next_bytecount >= ((self.batch_size - len(tmp_msg)) - avg_size):
                     self._send()
-                    self.metrics.append(tmp_msg)
+
+                self.metrics.append(tmp_msg)
+
 
     def _convert_to_pubsub(self, metric):
         """
         Convert a metric to a dictionary representing a Pub/Sub event.
         Each metric should be loaded into a separate data slot
         """
-        # Riemann has a separate "host" field, so remove from the path.
+        # Using separate "host" field, so remove from the path.  This was taken from the Riemann Handler.
         path = '%s.%s.%s' % (
             metric.getPathPrefix(),
             metric.getCollectorPath(),
@@ -175,9 +173,9 @@ class PubsubHandler(Handler):
         """
         Send data to pub/sub.
         """
-        logging.debug("Number of messages being sent: %s", len(self.metrics))
-        logging.debug("Size of message batch being sent: %s", len(json.dumps(self.metrics)))
         body = {'messages': self.metrics}
+        logging.debug("Number of messages being sent: %s", len(self.metrics))
+        logging.debug("Size of message batch being sent: %s", len(json.dumps(body)))
         try:
             resp = self.client.projects().topics().publish(
                 topic=self.topic, body=body).execute(num_retries=self.retries)
@@ -188,7 +186,7 @@ class PubsubHandler(Handler):
 
     def _close(self):
         """
-        Nothing to do since Pub/Sub publishes to a Restful API
+        Nothing to do since Pub/Sub publishes to a Rest API
         """
         self.client = None
 
