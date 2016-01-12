@@ -136,11 +136,12 @@ url = http://localhost:8888/
 batch = 100
 
 [[PubsubHandler]]
-topic = 'projects/your-project/topics/your-topic'
-scopes = 'https://www.googleapis.com/auth/pubsub'
+topic = projects/your-project/topics/your-topic
+scopes = https://www.googleapis.com/auth/pubsub
 retries = 3
 batch = count
 batch_size = 10
+tags = key1: value1, key2: value2
 
 ################################################################################
 ### Options for collectors

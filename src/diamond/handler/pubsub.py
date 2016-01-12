@@ -47,7 +47,8 @@ It has these options:
                   to send in 64K increments.
  * `batch_size` - If msgs are to be batched this will contain either the
                   count number or size in bytes.
-
+ * `tags` - Comma separated free-form field for additional key/value pairs
+            to be sent.
 """
 
 from Handler import Handler
@@ -78,11 +79,16 @@ class PubsubHandler(Handler):
 
         # Initialize options
         self.topic = self.config['topic']
-        self.scopes = self.config['scopes'].split(',')
+        self.scopes = self.config['scopes']
         self.retries = int(self.config['retries'])
         self.batch = self.config['batch']
         self.batch_size = int(self.config['batch_size'])
         self.metrics = []
+        tags_items = self.config['tags']
+        self.tags = {}
+        for item in tags_items:
+            k, v = item.split(':')
+            self.tags[k] = v
 
         # Initialize client
         credentials = GoogleCredentials.get_application_default()
@@ -103,6 +109,8 @@ class PubsubHandler(Handler):
             'batch': 'Should msgs be batched.  Values: None, count, or size',
             'batch_size': 'If batch msgs, will contain the count number or size'
                           ' in bytes',
+            'tags': 'Comma separated free-form field to hold additional'
+                    ' key/value pairs to be sent.',
         })
 
         return config
@@ -119,6 +127,7 @@ class PubsubHandler(Handler):
             'retries': 3,
             'batch': None,
             'batch_size': 0,
+            'tags': ''
         })
 
         return config
@@ -175,6 +184,7 @@ class PubsubHandler(Handler):
             'time': metric.timestamp,
             'metric': float(metric.value),
             'ttl': metric.ttl,
+            'tags': self.tags,
             }
         data = base64.b64encode(json.dumps(payload))
 
