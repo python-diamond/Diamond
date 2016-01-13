@@ -128,7 +128,7 @@ class JolokiaCollector(diamond.collector.Collector):
                 return True
 
     def collect(self):
-        listing = self.list_request()
+        listing = self._list_request()
         try:
             domains = listing['value'] if listing['status'] == 200 else {}
             for domain in domains.keys():
@@ -146,20 +146,28 @@ class JolokiaCollector(diamond.collector.Collector):
         json_str = request.read()
         return json.loads(json_str)
 
-    def list_request(self):
+    def _list_request(self):
+        """Retruns a dictionary with JMX domain names as keys"""
         try:
-            url = "http://%s:%s/%s%s" % (self.config['host'],
-                                         self.config['port'],
-                                         self.config['path'],
-                                         self.LIST_URL)
+            # https://jolokia.org/reference/html/protocol.html
+            # The optional parameter maxDepth can be used to restrict the depth
+            # of the return tree. Two value are possible: A maxDepth of 1
+            # restricts the return value to a map with the JMX domains as keys,
+            # a maxDepth of 2 truncates the map returned to the domain names
+            # (first level) and the MBean's properties (second level). The final
+            # values of the maps don't have any meaning and are dummy values.
+            url = "http://%s:%s/%s%s?maxDepth=1" % (self.config['host'],
+                                                    self.config['port'],
+                                                    self.config['path'],
+                                                    self.LIST_URL)
             # need some time to process the downloaded metrics, so that's why
             # timeout is lower than the interval.
             timeout = max(2, float(self.config['interval']) * 2 / 3)
             with closing(urllib2.urlopen(self._create_request(url),
                                          timeout=timeout)) as response:
                 return self.read_json(response)
-        except (urllib2.HTTPError, ValueError):
-            self.log.error('Unable to read JSON response.')
+        except (urllib2.HTTPError, ValueError) as e:
+            self.log.error('Unable to read JSON response: %s', str(e))
             return {}
 
     def read_request(self, domain):
