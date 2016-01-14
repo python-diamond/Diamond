@@ -111,8 +111,17 @@ class JolokiaCollector(diamond.collector.Collector):
                 self.mbeans.append(mbean.strip())
         elif isinstance(self.config['mbeans'], list):
             self.mbeans = self.config['mbeans']
+        if self.config['regex'] is not None:
+            self.mbeans = [re.compile(mbean) for mbean in self.mbeans]
+
+        self.rewrite = [
+            (re.compile('["\'(){}<>\[\]]'), ''),
+            (re.compile('[:,.]+'), '.'),
+            (re.compile('[^a-zA-Z0-9_.+-]+'), '_'),
+        ]
         if isinstance(self.config['rewrite'], dict):
-            self.rewrite = self.config['rewrite']
+            self.rewrite.extend([(re.compile(old), new) for old, new in
+                                 self.config['rewrite'].items()])
 
     def check_mbean(self, mbean):
         if not self.mbeans:
@@ -120,8 +129,8 @@ class JolokiaCollector(diamond.collector.Collector):
         mbeanfix = self.clean_up(mbean)
         if self.config['regex'] is not None:
             for chkbean in self.mbeans:
-                if re.match(chkbean, mbean) is not None or \
-                   re.match(chkbean, mbeanfix) is not None:
+                if chkbean.match(mbean) is not None or \
+                   chkbean.match(mbeanfix) is not None:
                     return True
         else:
             if mbean in self.mbeans or mbeanfix in self.mbeans:
@@ -209,11 +218,8 @@ class JolokiaCollector(diamond.collector.Collector):
         return req
 
     def clean_up(self, text):
-        text = re.sub('["\'(){}<>\[\]]', '', text)
-        text = re.sub('[:,.]+', '.', text)
-        text = re.sub('[^a-zA-Z0-9_.+-]+', '_', text)
-        for (oldstr, newstr) in self.rewrite.items():
-            text = re.sub(oldstr, newstr, text)
+        for (oldregex, newstr) in self.rewrite.items():
+            text = oldregex.sub(newstr, text)
         return text
 
     def collect_bean(self, prefix, obj):
