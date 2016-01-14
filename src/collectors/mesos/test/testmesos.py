@@ -74,7 +74,6 @@ class TestMesosCollector(CollectorTestCase):
             'system/mem_free_bytes': 5663678464.1,
             'registrar/state_store_ms/p9999': (17.8412544, 6),
             'staged_tasks': 20,
-            'started_tasks': 0,
             'failed_tasks': 6,
             'finished_tasks': 1,
             'frameworks.marathon-0_7_6.executors.task_name.cpus_limit': (1.7, 1),

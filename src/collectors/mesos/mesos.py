@@ -89,8 +89,9 @@ class MesosCollector(diamond.collector.Collector):
 
         for key in ['failed_tasks', 'finished_tasks', 'staged_tasks',
                     'started_tasks', 'lost_tasks']:
-            value = result[key]
-            self.publish(key, value, precision=self._precision(value))
+            value = result.get(key)
+            if value is not None:
+                self.publish(key, value, precision=self._precision(value))
 
     def _add_cpu_usage(self, cur_read):
         """Compute cpu usage based on cpu time spent compared to elapsed time
