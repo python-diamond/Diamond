@@ -73,6 +73,10 @@ class JolokiaCollector(diamond.collector.Collector):
         config_help = super(JolokiaCollector,
                             self).get_default_config_help()
         config_help.update({
+            'domains_to_check': "Pipe delimited list of JMX domains from which"
+                                " to collect stats. If not provided, the list"
+                                " of all domains will be downloaded from"
+                                " jolokia.",
             'mbeans':  "Pipe delimited list of MBeans for which to collect"
                        " stats. If not provided, all stats will"
                        " be collected.",
@@ -123,6 +127,30 @@ class JolokiaCollector(diamond.collector.Collector):
             self.rewrite.extend([(re.compile(old), new) for old, new in
                                  self.config['rewrite'].items()])
 
+        self.domains = []
+        if 'domains_to_check' in self.config:
+            if isinstance(self.config['domains_to_check'], basestring):
+                for domain in self.config['domains_to_check'].split('|'):
+                    self.domains.append(domain.strip())
+            elif isinstance(self.config['domains_to_check'], list):
+                self.domains = self.config['domains_to_check']
+
+        self._get_domains()
+
+    def _get_domains(self):
+        # if not set it __init__
+        if not self.domains:
+            listing = self.list_request()
+            try:
+                if listing['status'] == 200:
+                    self.domains = listing['value'].keys()
+                else:
+                    self.log.error('Jolokia status %s while retrieving MBean '
+                                   'listing.', listing['status'])
+            except KeyError:
+                # The reponse was totally empty, or not an expected format
+                self.log.error('Unable to retrieve MBean listing.')
+
     def check_mbean(self, mbean):
         if not self.mbeans:
             return True
@@ -137,19 +165,20 @@ class JolokiaCollector(diamond.collector.Collector):
                 return True
 
     def collect(self):
-        listing = self._list_request()
-        try:
-            domains = listing['value'] if listing['status'] == 200 else {}
-            for domain in domains.keys():
-                if domain not in self.IGNORE_DOMAINS:
-                    obj = self.read_request(domain)
+        if not self.domains:
+            self._get_domains()
+        for domain in self.domains:
+            if domain not in self.IGNORE_DOMAINS:
+                obj = self.read_request(domain)
+                try:
                     mbeans = obj['value'] if obj['status'] == 200 else {}
-                    for k, v in mbeans.iteritems():
-                        if self.check_mbean(k):
-                            self.collect_bean(k, v)
-        except KeyError:
-            # The reponse was totally empty, or not an expected format
-            self.log.error('Unable to retrieve MBean listing.')
+                except KeyError:
+                    # The reponse was totally empty, or not an expected format
+                    self.log.error('Unable to retrieve domain %s.', domain)
+                    continue
+                for k, v in mbeans.iteritems():
+                    if self.check_mbean(k):
+                        self.collect_bean(k, v)
 
     def read_json(self, request):
         json_str = request.read()
