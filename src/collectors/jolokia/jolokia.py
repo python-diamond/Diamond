@@ -50,6 +50,7 @@ an mbean.
 
 import diamond.collector
 import base64
+from contextlib import closing
 import json
 import re
 import urllib
@@ -151,8 +152,12 @@ class JolokiaCollector(diamond.collector.Collector):
                                          self.config['port'],
                                          self.config['path'],
                                          self.LIST_URL)
-            response = urllib2.urlopen(self._create_request(url))
-            return self.read_json(response)
+            # need some time to process the downloaded metrics, so that's why
+            # timeout is lower than the interval.
+            timeout = max(2, float(self.config['interval']) * 2 / 3)
+            with closing(urllib2.urlopen(self._create_request(url),
+                                         timeout=timeout)) as response:
+                return self.read_json(response)
         except (urllib2.HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
             return {}
@@ -164,8 +169,12 @@ class JolokiaCollector(diamond.collector.Collector):
                                          self.config['port'],
                                          self.config['path'],
                                          url_path)
-            response = urllib2.urlopen(self._create_request(url))
-            return self.read_json(response)
+            # need some time to process the downloaded metrics, so that's why
+            # timeout is lower than the interval.
+            timeout = max(2, float(self.config['interval']) * 2 / 3)
+            with closing(urllib2.urlopen(self._create_request(url),
+                                         timeout=timeout)) as response:
+                return self.read_json(response)
         except (urllib2.HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
             return {}
