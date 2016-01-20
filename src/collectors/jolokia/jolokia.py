@@ -118,7 +118,6 @@ class JolokiaCollector(diamond.collector.Collector):
     def __init__(self, *args, **kwargs):
         super(JolokiaCollector, self).__init__(*args, **kwargs)
         self.mbeans = []
-        self.rewrite = {}
         if isinstance(self.config['mbeans'], basestring):
             for mbean in self.config['mbeans'].split('|'):
                 self.mbeans.append(mbean.strip())
@@ -144,12 +143,10 @@ class JolokiaCollector(diamond.collector.Collector):
             elif isinstance(self.config['domains_to_check'], list):
                 self.domains = self.config['domains_to_check']
 
-        self._get_domains()
-
     def _get_domains(self):
         # if not set it __init__
         if not self.domains:
-            listing = self.list_request()
+            listing = self._list_request()
             try:
                 if listing['status'] == 200:
                     self.domains = listing['value'].keys()
@@ -261,7 +258,7 @@ class JolokiaCollector(diamond.collector.Collector):
         return req
 
     def clean_up(self, text):
-        for (oldregex, newstr) in self.rewrite.items():
+        for (oldregex, newstr) in self.rewrite:
             text = oldregex.sub(newstr, text)
         return text
 
