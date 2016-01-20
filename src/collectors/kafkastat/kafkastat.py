@@ -112,25 +112,27 @@ class KafkaCollector(diamond.collector.Collector):
             # java.lang:type=Threading
             # "kafka.controller":type="ControllerStats",
             # name="LeaderElectionRateAndTimeMs"
-            split_num = objectname.count('=')
-            for i in range(split_num):
-                if i == 0:
-                    key_prefix = objectname.split('=')[1]
-                    if '"' in key_prefix:
-                        key_prefix = key_prefix.split('"')[1]
-                    if "," in key_prefix:
-                        key_prefix = key_prefix.split(',')[0]
-                elif i > 0:
-                    key = objectname.split('=')[2]
-                    if key:
-                        if '"' in key:
-                            key = key.split('"')[1]
-                        key_prefix = key_prefix + '.' + key
+            key_prefix = ''
+            for i, item in enumerate(objectname.split(',')):
+              if i == 0:
+                  key_prefix = item.split('=')[1]
+                  if '"' in key_prefix:
+                      key_prefix = key_prefix.split('"')[1]
+                  if "," in key_prefix:
+                      key_prefix = key_prefix.split(',')[0]
+              else:
+                  key = item.split('=')[1]
+                  if key:
+                      if '"' in key:
+                          key = key.split('"')[1]
+                      key_prefix = key_prefix + '.' + key.replace('.', '_')
 
         metrics = {}
-
         for attrib in attributes.getiterator(tag='Attribute'):
-            atype = attrib.get('type')
+            if 'FetcherLagMetrics' in objectname:
+                atype = float
+            else:
+                atype = attrib.get('type')
 
             ptype = self.ATTRIBUTE_TYPES.get(atype)
             if not ptype:
