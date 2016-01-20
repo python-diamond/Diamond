@@ -60,7 +60,6 @@ import urllib2
 class JolokiaCollector(diamond.collector.Collector):
 
     LIST_URL = "/list"
-    READ_URL = "/?ignoreErrors=true&p=read/%s:*"
 
     """
     These domains contain MBeans that are for management purposes,
@@ -88,7 +87,16 @@ class JolokiaCollector(diamond.collector.Collector):
             'port': 'Port',
             'rewrite': "This sub-section of the config contains pairs of"
                        " from-to regex rewrites.",
-            'path': 'Path to jolokia.  typically "jmx" or "jolokia"'
+            'path': 'Path to jolokia.  typically "jmx" or "jolokia"',
+            # https://github.com/rhuss/jolokia/blob/959424888a82abc2b1906c60547cd4df280f3b71/client/java/src/main/java/org/jolokia/client/request/J4pQueryParameter.java#L68
+            'use_cannonical_names': 'Whether property keys of ObjectNames'
+                                    ' should be ordered in the canonical way'
+                                    ' or in the way that they are created. The'
+                                    ' allowed values are either "True" in'
+                                    ' which case the canonical key order (=='
+                                    ' alphabetical sorted) is used or "False"'
+                                    ' for getting the keys as registered.'
+                                    ' Default is "True',
         })
         return config_help
 
@@ -103,6 +111,7 @@ class JolokiaCollector(diamond.collector.Collector):
             'password': None,
             'host': 'localhost',
             'port': 8778,
+            'use_cannonical_names': True,
         })
         return config
 
@@ -210,7 +219,12 @@ class JolokiaCollector(diamond.collector.Collector):
 
     def read_request(self, domain):
         try:
-            url_path = self.READ_URL % self.escape_domain(domain)
+            url_path = '/?%s' % urllib.urlencode({
+                'ignoreErrors': 'true',
+                'canonicalNaming':
+                    'true' if self.config['use_cannonical_names'] else 'false',
+                'p': 'read/%s:*' % self.escape_domain(domain),
+            })
             url = "http://%s:%s/%s%s" % (self.config['host'],
                                          self.config['port'],
                                          self.config['path'],
