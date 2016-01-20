@@ -40,6 +40,8 @@ class NginxCollector(diamond.collector.Collector):
             'req_host': 'Hostname',
             'req_port': 'Port',
             'req_path': 'Path',
+            'req_ssl': 'SSL Support',
+            'req_host_header': 'HTTP Host header (required for SSL)',
         })
         return config_help
 
@@ -48,20 +50,34 @@ class NginxCollector(diamond.collector.Collector):
         default_config['req_host'] = 'localhost'
         default_config['req_port'] = 8080
         default_config['req_path'] = '/nginx_status'
+        default_config['req_ssl'] = False
+        default_config['req_host_header'] = None
         default_config['path'] = 'nginx'
         return default_config
 
     def collect(self):
-        url = 'http://%s:%i%s' % (self.config['req_host'],
-                                  int(self.config['req_port']),
-                                  self.config['req_path'])
+        # Determine what HTTP scheme to use based on SSL usage or not
+        if str(self.config['req_ssl']).lower() == 'true':
+            scheme = 'https'
+        else:
+            scheme = 'http'
+
+        # Add host headers if present (Required for SSL cert validation)
+        if self.config['req_host_header'] is not None:
+            headers = {'Host': str(self.config['req_host_header'])}
+        else:
+            headers = {}
+        url = '%s://%s:%i%s' % (scheme,
+                                self.config['req_host'],
+                                int(self.config['req_port']),
+                                self.config['req_path'])
         activeConnectionsRE = re.compile(r'Active connections: (?P<conn>\d+)')
         totalConnectionsRE = re.compile('^\s+(?P<conn>\d+)\s+' +
                                         '(?P<acc>\d+)\s+(?P<req>\d+)')
         connectionStatusRE = re.compile('Reading: (?P<reading>\d+) ' +
                                         'Writing: (?P<writing>\d+) ' +
                                         'Waiting: (?P<waiting>\d+)')
-        req = urllib2.Request(url)
+        req = urllib2.Request(url=url, headers=headers)
         try:
             handle = urllib2.urlopen(req)
             for l in handle.readlines():
