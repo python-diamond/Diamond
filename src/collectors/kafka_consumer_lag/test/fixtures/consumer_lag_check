@@ -1,0 +1,12 @@
+Group           Topic                          Pid Offset          logSize         Lag             Owner
+stage_nginx_access nginx_access                   0   123305117       123305117       0               stage_nginx_access_logstash-01-1453252639637-68eb3e58-0
+stage_nginx_access nginx_access                   1   131335441       131335443       2               stage_nginx_access_logstash-01-1453252639637-68eb3e58-0
+stage_nginx_access nginx_access                   2   126961253       126961253       0               stage_nginx_access_logstash-01-1453252639637-68eb3e58-0
+stage_nginx_access nginx_access                   3   126639604       126639604       0               stage_nginx_access_logstash-01-1453252639637-68eb3e58-0
+stage_nginx_access nginx_access                   4   133458750       133458750       0               stage_nginx_access_logstash-01-1453252639637-68eb3e58-0
+stage_nginx_access nginx_access                   5   123259366       123259366       0               stage_nginx_access_logstash-01-1453252639637-68eb3e58-0
+stage_nginx_access nginx_access                   6   129250182       129250182       0               stage_nginx_access_logstash-01-1453252639637-68eb3e58-0
+stage_nginx_access nginx_access                   7   129216099       129216151       52              stage_nginx_access_logstash-01-1453252639637-68eb3e58-0
+stage_nginx_access nginx_access                   8   125522947       125522947       0               stage_nginx_access_logstash-01-1453252639637-68eb3e58-0
+stage_nginx_access nginx_access                   9   137825984       137825984       0               stage_nginx_access_logstash-01-1453252639637-68eb3e58-0
+stage_nginx_access nginx_access                   10  119944751       119944751       0               stage_nginx_access_logstash-01-1453252639637-68eb3e58-0
