@@ -1,11 +1,13 @@
 # coding=utf-8
 
 """
-A Simple collector which calls the Eventstore API for the status of projections and
-parses this to flat metrics.
+A Simple collector which calls the Eventstore API for
+the status of projections and parses this to flat metrics.
 String values are ignored, except for the name and status.
-Name is used for the metric path, status is translated to an integer (running = 1, stopped = 0).
-Note: "$" are replaced by underscores (_) in the projection name to avoid problems with grafana.
+Name is used for the metric path, status is translated to
+an integer (running = 1, stopped = 0).
+Note: "$" are replaced by underscores (_) in the projection
+name to avoid problems with grafana.
 
 This collector is based upon the HTTPJSONCollector.
 
@@ -36,7 +38,7 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
         default_config.update({
             'path': 'eventstore',
             'url': 'http://hostname:2113/projections/all-non-transient',
-            'headers': {'User-Agent': 'Diamond Eventstore Projections metrics collector'},
+            'headers': {'User-Agent': 'Diamond Eventstore metrics collector'},
         })
         return default_config
 
@@ -62,7 +64,7 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
                 try:
                     int(value)
                 except ValueError:
-                    self.log.debug("typecasting to int failed, value = %s", value)
+                    self.log.debug("cast to int failed, value = %s", value)
                 finally:
                     yield ("%s.%s" % (prefix, key), value)
 
