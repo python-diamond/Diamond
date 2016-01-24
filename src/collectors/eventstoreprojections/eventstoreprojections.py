@@ -25,7 +25,9 @@ import diamond.collector
 class EventstoreProjectionsCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
-        config_help = super(EventstoreProjectionsCollector, self).get_default_config_help()
+        config_help = super(
+            EventstoreProjectionsCollector, self).get_default_config_help(
+        )
         config_help.update({
             'url': 'Full URL',
             'headers': 'Header variable if needed. '
@@ -34,7 +36,9 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
         return config_help
 
     def get_default_config(self):
-        default_config = super(EventstoreProjectionsCollector, self).get_default_config()
+        default_config = super(
+            EventstoreProjectionsCollector, self).get_default_config(
+        )
         default_config.update({
             'path': 'eventstore',
             'url': 'http://hostname:2113/projections/all-non-transient',
