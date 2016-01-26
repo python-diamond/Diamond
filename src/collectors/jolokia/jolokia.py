@@ -86,7 +86,7 @@ class JolokiaCollector(diamond.collector.Collector):
             'port': 'Port',
             'rewrite': "This sub-section of the config contains pairs of"
                        " from-to regex rewrites.",
-            'path': 'Path to jolokia.  typically "jmx" or "jolokia"',
+            'path': 'Path component of the reported metrics.',
             # https://github.com/rhuss/jolokia/blob/959424888a82abc2b1906c60547cd4df280f3b71/client/java/src/main/java/org/jolokia/client/request/J4pQueryParameter.java#L68
             'use_canonical_names': 'Whether property keys of ObjectNames'
                                    ' should be ordered in the canonical way'
@@ -96,6 +96,8 @@ class JolokiaCollector(diamond.collector.Collector):
                                    ' alphabetical sorted) is used or "False"'
                                    ' for getting the keys as registered.'
                                    ' Default is "True',
+            'jolokia_path': 'Path to jolokia.  typically "jmx" or "jolokia".'
+                            ' Defaults to the value of "path" variable.',
         })
         return config_help
 
@@ -106,6 +108,7 @@ class JolokiaCollector(diamond.collector.Collector):
             'regex': False,
             'rewrite': [],
             'path': 'jolokia',
+            'jolokia_path': None,
             'username': None,
             'password': None,
             'host': 'localhost',
@@ -141,6 +144,11 @@ class JolokiaCollector(diamond.collector.Collector):
                     self.domains.append(domain.strip())
             elif isinstance(self.config['domains'], list):
                 self.domains = self.config['domains']
+
+        if self.config['jolokia_path'] is not None:
+            self.jolokia_path = self.config['jolokia_path']
+        else:
+            self.jolokia_path = self.config['path']
 
     def _get_domains(self):
         # if not set it __init__
@@ -198,7 +206,7 @@ class JolokiaCollector(diamond.collector.Collector):
             # and are dummy values.
             url = "http://%s:%s/%s%s?maxDepth=1" % (self.config['host'],
                                                     self.config['port'],
-                                                    self.config['path'],
+                                                    self.jolokia_path,
                                                     self.LIST_URL)
             # need some time to process the downloaded metrics, so that's why
             # timeout is lower than the interval.
@@ -220,7 +228,7 @@ class JolokiaCollector(diamond.collector.Collector):
             })
             url = "http://%s:%s/%s%s" % (self.config['host'],
                                          self.config['port'],
-                                         self.config['path'],
+                                         self.jolokia_path,
                                          url_path)
             # need some time to process the downloaded metrics, so that's why
             # timeout is lower than the interval.
