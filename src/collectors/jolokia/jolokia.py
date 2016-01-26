@@ -72,10 +72,9 @@ class JolokiaCollector(diamond.collector.Collector):
         config_help = super(JolokiaCollector,
                             self).get_default_config_help()
         config_help.update({
-            'domains_to_check': "Pipe delimited list of JMX domains from which"
-                                " to collect stats. If not provided, the list"
-                                " of all domains will be downloaded from"
-                                " jolokia.",
+            'domains': "Pipe delimited list of JMX domains from which to"
+                       " collect stats. If not provided, the list of all"
+                       " domains will be downloaded from jolokia.",
             'mbeans':  "Pipe delimited list of MBeans for which to collect"
                        " stats. If not provided, all stats will"
                        " be collected.",
@@ -89,14 +88,14 @@ class JolokiaCollector(diamond.collector.Collector):
                        " from-to regex rewrites.",
             'path': 'Path to jolokia.  typically "jmx" or "jolokia"',
             # https://github.com/rhuss/jolokia/blob/959424888a82abc2b1906c60547cd4df280f3b71/client/java/src/main/java/org/jolokia/client/request/J4pQueryParameter.java#L68
-            'use_cannonical_names': 'Whether property keys of ObjectNames'
-                                    ' should be ordered in the canonical way'
-                                    ' or in the way that they are created. The'
-                                    ' allowed values are either "True" in'
-                                    ' which case the canonical key order (=='
-                                    ' alphabetical sorted) is used or "False"'
-                                    ' for getting the keys as registered.'
-                                    ' Default is "True',
+            'use_canonical_names': 'Whether property keys of ObjectNames'
+                                   ' should be ordered in the canonical way'
+                                   ' or in the way that they are created. The'
+                                   ' allowed values are either "True" in'
+                                   ' which case the canonical key order (=='
+                                   ' alphabetical sorted) is used or "False"'
+                                   ' for getting the keys as registered.'
+                                   ' Default is "True',
         })
         return config_help
 
@@ -111,7 +110,7 @@ class JolokiaCollector(diamond.collector.Collector):
             'password': None,
             'host': 'localhost',
             'port': 8778,
-            'use_cannonical_names': True,
+            'use_canonical_names': True,
         })
         return config
 
@@ -136,12 +135,12 @@ class JolokiaCollector(diamond.collector.Collector):
                                  self.config['rewrite'].items()])
 
         self.domains = []
-        if 'domains_to_check' in self.config:
-            if isinstance(self.config['domains_to_check'], basestring):
-                for domain in self.config['domains_to_check'].split('|'):
+        if 'domains' in self.config:
+            if isinstance(self.config['domains'], basestring):
+                for domain in self.config['domains'].split('|'):
                     self.domains.append(domain.strip())
-            elif isinstance(self.config['domains_to_check'], list):
-                self.domains = self.config['domains_to_check']
+            elif isinstance(self.config['domains'], list):
+                self.domains = self.config['domains']
 
     def _get_domains(self):
         # if not set it __init__
@@ -157,7 +156,7 @@ class JolokiaCollector(diamond.collector.Collector):
                 # The reponse was totally empty, or not an expected format
                 self.log.error('Unable to retrieve MBean listing.')
 
-    def check_mbean(self, mbean):
+    def _check_mbean(self, mbean):
         if not self.mbeans:
             return True
         mbeanfix = self.clean_up(mbean)
@@ -175,7 +174,7 @@ class JolokiaCollector(diamond.collector.Collector):
             self._get_domains()
         for domain in self.domains:
             if domain not in self.IGNORE_DOMAINS:
-                obj = self.read_request(domain)
+                obj = self._read_request(domain)
                 try:
                     mbeans = obj['value'] if obj['status'] == 200 else {}
                 except KeyError:
@@ -183,23 +182,20 @@ class JolokiaCollector(diamond.collector.Collector):
                     self.log.error('Unable to retrieve domain %s.', domain)
                     continue
                 for k, v in mbeans.iteritems():
-                    if self.check_mbean(k):
+                    if self._check_mbean(k):
                         self.collect_bean(k, v)
 
-    def read_json(self, request):
+    def _read_json(self, request):
         json_str = request.read()
         return json.loads(json_str)
 
     def _list_request(self):
-        """Retruns a dictionary with JMX domain names as keys"""
+        """Returns a dictionary with JMX domain names as keys"""
         try:
             # https://jolokia.org/reference/html/protocol.html
-            # The optional parameter maxDepth can be used to restrict the depth
-            # of the return tree. Two value are possible: A maxDepth of 1
-            # restricts the return value to a map with the JMX domains as keys,
-            # a maxDepth of 2 truncates the map returned to the domain names
-            # (first level) and the MBean's properties (second level). The final
-            # values of the maps don't have any meaning and are dummy values.
+            # A maxDepth of 1 restricts the return value to a map with the JMX
+            # domains as keys. The values of the maps don't have any meaning
+            # and are dummy values.
             url = "http://%s:%s/%s%s?maxDepth=1" % (self.config['host'],
                                                     self.config['port'],
                                                     self.config['path'],
@@ -209,18 +205,18 @@ class JolokiaCollector(diamond.collector.Collector):
             timeout = max(2, float(self.config['interval']) * 2 / 3)
             with closing(urllib2.urlopen(self._create_request(url),
                                          timeout=timeout)) as response:
-                return self.read_json(response)
+                return self._read_json(response)
         except (urllib2.HTTPError, ValueError) as e:
             self.log.error('Unable to read JSON response: %s', str(e))
             return {}
 
-    def read_request(self, domain):
+    def _read_request(self, domain):
         try:
             url_path = '/?%s' % urllib.urlencode({
                 'ignoreErrors': 'true',
                 'canonicalNaming':
-                    'true' if self.config['use_cannonical_names'] else 'false',
-                'p': 'read/%s:*' % self.escape_domain(domain),
+                    'true' if self.config['use_canonical_names'] else 'false',
+                'p': 'read/%s:*' % self._escape_domain(domain),
             })
             url = "http://%s:%s/%s%s" % (self.config['host'],
                                          self.config['port'],
@@ -231,7 +227,7 @@ class JolokiaCollector(diamond.collector.Collector):
             timeout = max(2, float(self.config['interval']) * 2 / 3)
             with closing(urllib2.urlopen(self._create_request(url),
                                          timeout=timeout)) as response:
-                return self.read_json(response)
+                return self._read_json(response)
         except (urllib2.HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
             return {}
@@ -240,7 +236,7 @@ class JolokiaCollector(diamond.collector.Collector):
     # the Jolokia documentation suggests that, when using the p query parameter,
     # simply urlencoding should be sufficient, but in practice, the '!' appears
     # necessary (and not harmful)
-    def escape_domain(self, domain):
+    def _escape_domain(self, domain):
         domain = re.sub('!', '!!', domain)
         domain = re.sub('/', '!/', domain)
         domain = re.sub('"', '!"', domain)

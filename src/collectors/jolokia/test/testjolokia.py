@@ -106,9 +106,9 @@ class TestJolokiaCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, metrics)
 
     def test_should_escape_jolokia_domains(self):
-        domain_with_slash = self.collector.escape_domain('some/domain')
-        domain_with_bang = self.collector.escape_domain('some!domain')
-        domain_with_quote = self.collector.escape_domain('some"domain')
+        domain_with_slash = self.collector._escape_domain('some/domain')
+        domain_with_bang = self.collector._escape_domain('some!domain')
+        domain_with_quote = self.collector._escape_domain('some"domain')
         self.assertEqual(domain_with_slash, 'some%21/domain')
         self.assertEqual(domain_with_bang, 'some%21%21domain')
         self.assertEqual(domain_with_quote, 'some%21%22domain')
