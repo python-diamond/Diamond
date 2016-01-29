@@ -92,12 +92,18 @@ class SNMPCollector(diamond.collector.Collector):
 
         # Assemble SNMP Auth Data
 <<<<<<< HEAD
+<<<<<<< HEAD
         snmpAuthData = cmdgen.CommunityData(
             'agent-{0}'.format(community),
             community)
 =======
         snmpAuthData = cmdgen.CommunityData('agent-{0}'.format(community), community)
 >>>>>>> Allow SNMP collector to address different communities
+=======
+        snmpAuthData = cmdgen.CommunityData(
+            'agent-{0}'.format(community),
+            community)
+>>>>>>> Line lengths
 
         # Assemble SNMP Transport Data
         snmpTransportData = cmdgen.UdpTransportTarget(
@@ -132,12 +138,18 @@ class SNMPCollector(diamond.collector.Collector):
 
         # Assemble SNMP Auth Data
 <<<<<<< HEAD
+<<<<<<< HEAD
         snmpAuthData = cmdgen.CommunityData(
             'agent-{0}'.format(community),
             community)
 =======
         snmpAuthData = cmdgen.CommunityData('agent-{0}'.format(community), community)
 >>>>>>> Allow SNMP collector to address different communities
+=======
+        snmpAuthData = cmdgen.CommunityData(
+            'agent-{0}'.format(community),
+            community)
+>>>>>>> Line lengths
 
         # Assemble SNMP Transport Data
         snmpTransportData = cmdgen.UdpTransportTarget(
