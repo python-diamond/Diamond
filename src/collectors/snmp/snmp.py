@@ -91,9 +91,13 @@ class SNMPCollector(diamond.collector.Collector):
         host = socket.gethostbyname(host)
 
         # Assemble SNMP Auth Data
+<<<<<<< HEAD
         snmpAuthData = cmdgen.CommunityData(
             'agent-{0}'.format(community),
             community)
+=======
+        snmpAuthData = cmdgen.CommunityData('agent-{0}'.format(community), community)
+>>>>>>> Allow SNMP collector to address different communities
 
         # Assemble SNMP Transport Data
         snmpTransportData = cmdgen.UdpTransportTarget(
@@ -127,9 +131,13 @@ class SNMPCollector(diamond.collector.Collector):
         host = socket.gethostbyname(host)
 
         # Assemble SNMP Auth Data
+<<<<<<< HEAD
         snmpAuthData = cmdgen.CommunityData(
             'agent-{0}'.format(community),
             community)
+=======
+        snmpAuthData = cmdgen.CommunityData('agent-{0}'.format(community), community)
+>>>>>>> Allow SNMP collector to address different communities
 
         # Assemble SNMP Transport Data
         snmpTransportData = cmdgen.UdpTransportTarget(
