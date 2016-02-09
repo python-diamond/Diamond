@@ -128,8 +128,7 @@ class KafkaCollector(diamond.collector.Collector):
                         key_prefix = key_prefix + '.' + key
 
         metrics = {}
-        trans_table = string.maketrans(', ','__')
-        
+
         for attrib in attributes.getiterator(tag='Attribute'):
             atype = attrib.get('type')
 
@@ -142,7 +141,7 @@ class KafkaCollector(diamond.collector.Collector):
             name = '.'.join([key_prefix, attrib.get('name')])
             # Some prefixes and attributes could have spaces, thus we must
             # sanitize them
-            name = name.translate(trans_table)
+            name = name.replace(' ', '')
 
             metrics[name] = value
 
