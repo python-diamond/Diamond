@@ -9,7 +9,7 @@ Collect stats via MX4J from Kafka
  * xml.etree
 """
 import urllib2
-
+import string
 from urllib import urlencode
 
 try:
