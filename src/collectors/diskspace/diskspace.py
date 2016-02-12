@@ -41,8 +41,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 "A list of regex patterns. Any filesystem" +
                 " matching any of these patterns will be excluded from disk" +
                 " space metrics collection",
-            'no_major_minor': "Don't rely on the major/minor numbers from an os.stat"
-            + " call on these filesystem types (e.g. nfs)",
+            'no_major_minor': "Don't rely on the major/minor numbers from" +
+                " an os.stat call on these filesystem types (e.g. nfs)",
         })
         return config_help
 
