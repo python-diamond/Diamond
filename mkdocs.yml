@@ -2,5 +2,3 @@ site_name: Diamond
 repo_name: GitHub
 repo_url: https://github.com/python-diamond/diamond
 theme: readthedocs
-pages:
-- 'index.md'
