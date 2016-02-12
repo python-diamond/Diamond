@@ -41,6 +41,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 "A list of regex patterns. Any filesystem" +
                 " matching any of these patterns will be excluded from disk" +
                 " space metrics collection",
+            'no_major_minor': "Don't rely on the major/minor numbers from an os.stat"
+            + " call on these filesystem types (e.g. nfs)",
         })
         return config_help
 
@@ -68,7 +70,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             #       exclude_filters = m,
             # exclude everything that includes the letter "m"
             'exclude_filters': ['^/export/home'],
-
+            'no_major_minor': ['nfs'],
             # Default numeric output
             'byte_unit': ['byte']
         })
@@ -78,6 +80,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
         super(DiskSpaceCollector, self).process_config()
         # Precompile things
         self.exclude_filters = self.config['exclude_filters']
+        self.no_major_minor = self.config['no_major_minor']
         if isinstance(self.exclude_filters, basestring):
             self.exclude_filters = [self.exclude_filters]
 
@@ -144,6 +147,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 if ((mount_point.startswith('/dev') or
                      mount_point.startswith('/proc') or
                      mount_point.startswith('/sys'))):
+                    self.log.debug("Ignoring %s since it is a system " +
+                                   "mount point" % mount_point)
                     continue
 
                 if '/' in device and mount_point.startswith('/'):
@@ -156,8 +161,12 @@ class DiskSpaceCollector(diamond.collector.Collector):
                                        mount_point)
                         continue
 
-                    if (major, minor) in result:
+                    if (major, minor) in result \
+                            and mount_point not in self.no_major_minor:
                         continue
+                    elif mountpoint in self.no_major_minor:
+                        major = 0
+                        minor = len(results)
 
                     result[(major, minor)] = {
                         'device': os.path.realpath(device),
