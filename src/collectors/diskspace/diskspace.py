@@ -166,7 +166,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                         continue
                     elif fs_type in self.no_major_minor:
                         major = 0
-                        minor = len(results)
+                        minor = len(result)
 
                     result[(major, minor)] = {
                         'device': os.path.realpath(device),
