@@ -154,7 +154,7 @@ class TestProcessResourcesCollector(CollectorTestCase):
                 self.cmdline = [self.exe]
                 self.create_time = 0
 
-            def as_dict(self):
+            def as_dict(self, attrs=None, ad_value=None):
                 from collections import namedtuple
                 meminfo = namedtuple('meminfo', 'rss vms')
                 ext_meminfo = namedtuple('meminfo',
