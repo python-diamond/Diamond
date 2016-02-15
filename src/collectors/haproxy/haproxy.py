@@ -14,6 +14,7 @@ import re
 import urllib2
 import base64
 import csv
+import socket
 import diamond.collector
 
 
@@ -22,9 +23,12 @@ class HAProxyCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(HAProxyCollector, self).get_default_config_help()
         config_help.update({
+            'method': "Method to use for data collection. Possible values: " +
+                      "http, unix",
             'url': "Url to stats in csv format",
             'user': "Username",
             'pass': "Password",
+            'sock': "Path to admin UNIX-domain socket",
             'ignore_servers': "Ignore servers, just collect frontend and " +
                               "backend stats",
         })
@@ -36,10 +40,12 @@ class HAProxyCollector(diamond.collector.Collector):
         """
         config = super(HAProxyCollector, self).get_default_config()
         config.update({
+            'method':           'http',
             'path':             'haproxy',
             'url':              'http://localhost/haproxy?stats;csv',
             'user':             'admin',
             'pass':             'password',
+            'sock':             '/var/run/haproxy.sock',
             'ignore_servers':   False,
         })
         return config
@@ -53,7 +59,7 @@ class HAProxyCollector(diamond.collector.Collector):
         else:
             return self.config[key]
 
-    def get_csv_data(self, section=None):
+    def http_get_csv_data(self, section=None):
         """
         Request stats from HAProxy Server
         """
@@ -104,6 +110,24 @@ class HAProxyCollector(diamond.collector.Collector):
                            "(Invalid username or password?) %s", e)
             return metrics
 
+    def unix_get_csv_data(self):
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        data = str()
+
+        try:
+            sock.connect(self.config['sock'])
+            sock.send('show stat\n')
+            while 1:
+                buf = sock.recv(4096)
+                if not buf:
+                    break
+                data += buf
+        except socket.error, e:
+            self.log.error("Error retrieving HAProxy stats. %s", e)
+            return []
+
+        return data.strip().split('\n')
+
     def _generate_headings(self, row):
         headings = {}
         for index, heading in enumerate(row):
@@ -114,7 +138,15 @@ class HAProxyCollector(diamond.collector.Collector):
         """
         Collect HAProxy Stats
         """
-        csv_data = self.get_csv_data(section)
+        if self.config['method'] == 'http':
+            csv_data = self.http_get_csv_data(section)
+        elif self.config['method'] == 'unix':
+            csv_data = self.unix_get_csv_data()
+        else:
+            self.log.error("Unknown collection method: %s",
+                           self.config['method'])
+            csv_data = []
+
         data = list(csv.reader(csv_data))
         headings = self._generate_headings(data[0])
         section_name = section and self._sanitize(section.lower()) + '.' or ''
