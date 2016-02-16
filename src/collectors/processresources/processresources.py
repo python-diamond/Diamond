@@ -11,10 +11,14 @@ Example config file ProcessResourcesCollector.conf
 enabled=True
 unit=B
 cpu_interval=0.1
+info_keys='num_ctx_switches','cpu_percent','cpu_times','io_counters','num_threads','num_fds','memory_percent','memory_info_ex'
 [process]
 [[postgres]]
 exe=^\/usr\/lib\/postgresql\/+d.+d\/bin\/postgres$
 name=^postgres,^pg
+
+[[elasticsearch]]
+cmdline=java.*Elasticsearch
 
 [[diamond]]
 selfmon=True
@@ -71,7 +75,7 @@ def match_process(pid, name, cmdline, exe, cfg):
 
 def process_info(process, info_keys):
     results = {}
-    process_info = process.as_dict()
+    process_info = process.as_dict(info_keys)
     metrics = ((key, process_info.get(key, None)) for key in info_keys)
     for key, value in metrics:
         if type(value) in [float, int]:
@@ -124,6 +128,9 @@ class ProcessResourcesCollector(diamond.collector.Collector):
         config_help = super(ProcessResourcesCollector,
                             self).get_default_config_help()
         config_help.update({
+            'info_keys': 'List of process metrics to collect. ' +
+                         'Valid list of metrics can be found ' +
+                         '[here](https://pythonhosted.org/psutil/)',
             'unit': 'The unit in which memory data is collected.',
             'process': ("A subcategory of settings inside of which each "
                         "collected process has it's configuration"),
@@ -133,27 +140,22 @@ class ProcessResourcesCollector(diamond.collector.Collector):
     def get_default_config(self):
         """
         Default settings are:
+            info_keys: ['num_ctx_switches', 'cpu_percent', 'cpu_times',
+                        'io_counters', 'num_threads', 'num_fds',
+                        'memory_percent', 'memory_info_ex', ]
             path: 'process'
             unit: 'B'
         """
         config = super(ProcessResourcesCollector, self).get_default_config()
         config.update({
+            'info_keys': ['num_ctx_switches', 'cpu_percent', 'cpu_times',
+                          'io_counters', 'num_threads', 'num_fds',
+                          'memory_percent', 'memory_info_ex', ],
             'path': 'process',
             'unit': 'B',
             'process': {},
         })
         return config
-
-    default_info_keys = [
-        'num_ctx_switches',
-        'cpu_percent',
-        'cpu_times',
-        'io_counters',
-        'num_threads',
-        'num_fds',
-        'memory_percent',
-        'ext_memory_info',
-    ]
 
     def save_process_info(self, pg_name, process_info):
         for key, value in process_info.iteritems():
@@ -173,7 +175,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                 exe = ""
             for pg_name, cfg in self.processes.items():
                 if match_process(pid, name, cmdline, exe, cfg):
-                    pi = process_info(process, self.default_info_keys)
+                    pi = process_info(process, self.config['info_keys'])
                     if cfg['count_workers']:
                         pi.update({'workers_count': 1})
                     uptime = time.time() - get_value(process, 'create_time')
