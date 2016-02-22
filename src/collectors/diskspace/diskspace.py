@@ -162,7 +162,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                         continue
 
                     if (major, minor) in result \
-                            and mount_point not in self.no_major_minor:
+                            and fs_type not in self.no_major_minor:
                         continue
                     elif fs_type in self.no_major_minor:
                         major = 0
