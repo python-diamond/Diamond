@@ -9,6 +9,8 @@ import traceback
 import optparse
 import logging
 import configobj
+import imp
+import copy
 
 try:
     # python 2.6
@@ -32,10 +34,8 @@ except ImportError:
     setproctitle = None
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                             'src')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                             'src', 'collectors')))
+sys.path.insert(0, os.path.abspath(os.path.join(
+    os.path.dirname(__file__), 'src')))
 
 
 def run_only(func, predicate):
@@ -227,7 +227,9 @@ class CollectorTestCase(unittest.TestCase):
 collectorTests = {}
 
 
-def getCollectorTests(path):
+def getTests(path, class_prefix="collectortest_"):
+    origin_path = copy.copy(sys.path)
+
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
 
@@ -240,10 +242,13 @@ def getCollectorTests(path):
             modname = f[:-3]
             try:
                 # Import the module
-                collectorTests[modname] = __import__(modname,
-                                                     globals(),
-                                                     locals(),
-                                                     ['*'])
+                custom_name = '%s%s' % (class_prefix, modname)
+                f, pathname, desc = imp.find_module(
+                    modname, sys.path)
+                collectorTests[modname] = imp.load_module(
+                    custom_name, f, pathname, desc)
+                if f is not None:
+                    f.close()
             except Exception:
                 print "Failed to import module: %s. %s" % (
                     modname, traceback.format_exc())
@@ -252,7 +257,9 @@ def getCollectorTests(path):
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
         if os.path.isdir(cPath):
-            getCollectorTests(cPath)
+            getTests(cPath, class_prefix)
+
+    sys.path = origin_path
 
 ###############################################################################
 
@@ -291,12 +298,12 @@ if __name__ == "__main__":
                                          'src',
                                          'diamond'))
 
-    getCollectorTests(cPath)
+    getTests(cPath, 'collectortest_')
 
     if not options.collector:
         # Only pull in diamond tests when a specific collector
         # hasn't been specified
-        getCollectorTests(dPath)
+        getTests(dPath, 'diamondtest_')
 
     loader = unittest.TestLoader()
     tests = []
