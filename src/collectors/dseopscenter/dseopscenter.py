@@ -2,11 +2,6 @@
 
 """
 Collect the DataStax OpsCenter metrics
-
-#### Dependencies
-
- * urlib2
-
 """
 
 import urllib2

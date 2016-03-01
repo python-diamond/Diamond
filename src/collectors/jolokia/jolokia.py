@@ -77,8 +77,8 @@ class JolokiaCollector(diamond.collector.Collector):
                        " be collected.",
             'regex': "Contols if mbeans option matches with regex,"
                        " False by default.",
-            'username': None,
-            'password': None,
+            'username': "Username for authentication",
+            'password': "Password for authentication",
             'host': 'Hostname',
             'port': 'Port',
             'rewrite': "This sub-section of the config contains pairs of"

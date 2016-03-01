@@ -65,7 +65,7 @@ class CollectorTestCase(unittest.TestCase):
             return False
 
         filePath = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                'docs', 'collectors-' + collector + '.md')
+                                'docs', 'collectors',  collector + '.md')
 
         if not os.path.exists(filePath):
             return False

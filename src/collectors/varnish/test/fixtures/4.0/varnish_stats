@@ -67,6 +67,7 @@ MAIN.s_pipe_hdrbytes               0         0.00 Pipe request header bytes
 MAIN.s_pipe_in                     0         0.00 Piped bytes from client
 MAIN.s_pipe_out                    0         0.00 Piped bytes to client
 MAIN.sess_closed               58799        69.09 Session Closed
+MAIN.sess_closed_err            6412         7.53 Session Closed with error
 MAIN.sess_pipeline                53         0.06 Session Pipeline
 MAIN.sess_readahead               17         0.02 Session Read Ahead
 MAIN.sess_herd               4924320      5786.51 Session herd

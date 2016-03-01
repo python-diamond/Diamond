@@ -10,16 +10,12 @@ v1.2 : added a timer to delay influxdb writing in case of failure
        this whill avoid the 100% cpu loop when influx in not responding
        Sebastien Prune THOMAS - prune@lecentre.net
 
-- Dependency:
-    - influxdb client (pip install influxdb)
-      you need version > 0.1.6 for HTTPS (not yet released)
+#### Dependencies
+ * [influxdb](https://github.com/influxdb/influxdb-python)
 
-- enable it in `diamond.conf` :
 
-handlers = diamond.handler.influxdbHandler.InfluxdbHandler
-
-- add config to `diamond.conf` :
-
+#### Configuration
+```
 [[InfluxdbHandler]]
 hostname = localhost
 port = 8086 #8084 for HTTPS
@@ -29,6 +25,7 @@ username = root
 password = root
 database = graphite
 time_precision = s
+```
 """
 
 import time

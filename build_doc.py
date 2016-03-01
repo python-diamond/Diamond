@@ -2,12 +2,13 @@
 # coding=utf-8
 ##########################################################################
 
-import os
-import sys
-import optparse
 import configobj
-import traceback
+import optparse
+import os
+import shutil
+import sys
 import tempfile
+import traceback
 
 sys.path.append(os.path.abspath(
     os.path.join(os.path.dirname(__file__), 'src')))
@@ -48,6 +49,9 @@ def getCollectors(path):
                         continue
 
                     cls = getattr(module, attr)
+
+                    if cls.__module__ != modname:
+                        continue
 
                     if cls.__name__ not in collectors:
                         collectors[cls.__name__] = module
@@ -128,6 +132,7 @@ if __name__ == "__main__":
     collector_path = config['server']['collectors_path']
     docs_path = os.path.abspath(os.path.join(
         os.path.dirname(__file__), 'docs'))
+
     handler_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                 'src', 'diamond', 'handler'))
 
@@ -137,9 +142,9 @@ if __name__ == "__main__":
     getCollectors(os.path.join(collector_path, 'snmp'))
     getCollectors(collector_path)
 
-    collectorIndexFile = open(os.path.join(docs_path, "Collectors.md"), 'w')
-    collectorIndexFile.write("## Collectors\n")
-    collectorIndexFile.write("\n")
+    collectors_doc_path = os.path.join(docs_path, "collectors")
+    shutil.rmtree(collectors_doc_path)
+    os.mkdir(collectors_doc_path)
 
     for collector in sorted(collectors.iterkeys()):
 
@@ -162,31 +167,26 @@ if __name__ == "__main__":
 
         defaultOptions = obj.get_default_config()
 
-        docFile = open(os.path.join(docs_path,
-                                    "collectors-" + collector + ".md"), 'w')
+        docFile = open(os.path.join(collectors_doc_path,
+                                    collector + ".md"), 'w')
 
         enabled = ''
 
-        collectorIndexFile.write(" - [%s](collectors-%s)%s\n" % (collector,
-                                                                 collector,
-                                                                 enabled))
+        docFile.write("<!--")
+        docFile.write("This file was generated from the python source\n")
+        docFile.write("Please edit the source to make changes\n")
+        docFile.write("-->\n")
 
         docFile.write("%s\n" % (collector))
         docFile.write("=====\n")
         if collectors[collector].__doc__ is None:
             print "No __doc__ string!"
         docFile.write("%s\n" % (collectors[collector].__doc__))
-        docFile.write("#### Options - [Generic Options](Configuration)\n")
+        docFile.write("#### Options\n")
         docFile.write("\n")
 
-        docFile.write("<table>")
-
-        docFile.write("<tr>")
-        docFile.write("<th>Setting</th>")
-        docFile.write("<th>Default</th>")
-        docFile.write("<th>Description</th>")
-        docFile.write("<th>Type</th>")
-        docFile.write("</tr>\n")
+        docFile.write("Setting | Default | Description | Type\n")
+        docFile.write("--------|---------|-------------|-----\n")
 
         for option in sorted(options.keys()):
             defaultOption = ''
@@ -199,15 +199,11 @@ if __name__ == "__main__":
                 else:
                     defaultOption = str(defaultOptions[option])
 
-            docFile.write("<tr>")
-            docFile.write("<td>%s</td>" % (option))
-            docFile.write("<td>%s</td>" % (defaultOption))
-            docFile.write("<td>%s</td>" % (options[option].replace(
-                "\n", '<br>\n')))
-            docFile.write("<td>%s</td>" % (defaultOptionType))
-            docFile.write("</tr>\n")
-
-        docFile.write("</table>\n")
+            docFile.write("%s | %s | %s | %s\n"
+                          % (option,
+                             defaultOption,
+                             options[option].replace("\n", '<br>\n'),
+                             defaultOptionType))
 
         docFile.write("\n")
         docFile.write("#### Example Output\n")
@@ -216,20 +212,15 @@ if __name__ == "__main__":
         docFile.write("__EXAMPLESHERE__\n")
         docFile.write("```\n")
         docFile.write("\n")
-        docFile.write("### This file was generated from the python source\n")
-        docFile.write("### Please edit the source to make changes\n")
-        docFile.write("\n")
 
         docFile.close()
-
-    collectorIndexFile.close()
 
     getIncludePaths(handler_path)
     getHandlers(handler_path)
 
-    handlerIndexFile = open(os.path.join(docs_path, "Handlers.md"), 'w')
-    handlerIndexFile.write("## Handlers\n")
-    handlerIndexFile.write("\n")
+    handlers_doc_path = os.path.join(docs_path, "handlers")
+    shutil.rmtree(handlers_doc_path)
+    os.mkdir(handlers_doc_path)
 
     for handler in sorted(handlers.iterkeys()):
 
@@ -264,26 +255,23 @@ if __name__ == "__main__":
 
         os.remove(tmpfile[1])
 
-        docFile = open(os.path.join(docs_path,
-                                    "handler-" + handler + ".md"), 'w')
+        docFile = open(os.path.join(handlers_doc_path,
+                                    handler + ".md"), 'w')
 
-        handlerIndexFile.write(" - [%s](handler-%s)\n" % (handler, handler))
+        docFile.write("<!--")
+        docFile.write("This file was generated from the python source\n")
+        docFile.write("Please edit the source to make changes\n")
+        docFile.write("-->\n")
 
         docFile.write("%s\n" % (handler))
         docFile.write("====\n")
         docFile.write("%s" % (handlers[handler].__doc__))
 
-        docFile.write("#### Options - [Generic Options](Configuration)\n")
+        docFile.write("#### Options\n")
         docFile.write("\n")
 
-        docFile.write("<table>")
-
-        docFile.write("<tr>")
-        docFile.write("<th>Setting</th>")
-        docFile.write("<th>Default</th>")
-        docFile.write("<th>Description</th>")
-        docFile.write("<th>Type</th>")
-        docFile.write("</tr>\n")
+        docFile.write("Setting | Default | Description | Type\n")
+        docFile.write("--------|---------|-------------|-----\n")
 
         if options:
             for option in sorted(options.keys()):
@@ -299,21 +287,10 @@ if __name__ == "__main__":
                     else:
                         defaultOption = str(defaultOptions[option])
 
-                docFile.write("<tr>")
-                docFile.write("<td>%s</td>" % (option))
-                docFile.write("<td>%s</td>" % (defaultOption))
-                docFile.write("<td>%s</td>" % (options[option].replace(
-                    "\n", '<br>\n')))
-                docFile.write("<td>%s</td>" % (defaultOptionType))
-                docFile.write("</tr>\n")
-
-        docFile.write("</table>\n")
-
-        docFile.write("\n")
-        docFile.write("### This file was generated from the python source\n")
-        docFile.write("### Please edit the source to make changes\n")
-        docFile.write("\n")
+                docFile.write("%s | %s | %s | %s\n"
+                              % (option,
+                                 defaultOption,
+                                 options[option].replace("\n", '<br>\n'),
+                                 defaultOptionType))
 
         docFile.close()
-
-    handlerIndexFile.close()
