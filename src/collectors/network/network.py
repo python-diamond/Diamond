@@ -42,7 +42,7 @@ class NetworkCollector(diamond.collector.Collector):
         config.update({
             'path':         'network',
             'interfaces':   ['eth', 'bond', 'em', 'p1p', 'eno', 'enp', 'ens',
-                             'enx'],
+                             'enx', 'en'],
             'byte_unit':    ['bit', 'byte'],
             'greedy':       'true',
         })
@@ -56,15 +56,16 @@ class NetworkCollector(diamond.collector.Collector):
         # Initialize results
         results = {}
 
+        greed = ''
+        if str_to_bool(self.config['greedy']):
+            greed = '\S*'
+
         if os.access(self.PROC, os.R_OK):
 
             # Open File
             file = open(self.PROC)
-            # Build Regular Expression
-            greed = ''
-            if str_to_bool(self.config['greedy']):
-                greed = '\S*'
 
+            # Build Regular Expression
             exp = (('^(?:\s*)((?:%s)%s):(?:\s*)' +
                     '(?P<rx_bytes>\d+)(?:\s*)' +
                     '(?P<rx_packets>\w+)(?:\s*)' +
@@ -83,6 +84,7 @@ class NetworkCollector(diamond.collector.Collector):
                     '(?P<tx_carrier>\d+)(?:\s*)' +
                     '(?P<tx_compressed>\d+)(?:.*)$') %
                    (('|'.join(self.config['interfaces'])), greed))
+
             reg = re.compile(exp)
             # Match Interfaces
             for line in file:
@@ -98,14 +100,22 @@ class NetworkCollector(diamond.collector.Collector):
                 self.log.error('No network metrics retrieved')
                 return None
 
-            network_stats = psutil.network_io_counters(True)
+            network_stats = psutil.net_io_counters(pernic=True)
+
+            exp = ('^(?:\s*)((?:%s)%s)' %
+                (('|'.join(self.config['interfaces'])), greed))
+
+            reg = re.compile(exp)
+            # Match Interfaces
             for device in network_stats.keys():
-                network_stat = network_stats[device]
-                results[device] = {}
-                results[device]['rx_bytes'] = network_stat.bytes_recv
-                results[device]['tx_bytes'] = network_stat.bytes_sent
-                results[device]['rx_packets'] = network_stat.packets_recv
-                results[device]['tx_packets'] = network_stat.packets_sent
+                match = reg.match(device)
+                if match:
+                    network_stat = network_stats[device]
+                    results[device] = {}
+                    results[device]['rx_bytes'] = network_stat.bytes_recv
+                    results[device]['tx_bytes'] = network_stat.bytes_sent
+                    results[device]['rx_packets'] = network_stat.packets_recv
+                    results[device]['tx_packets'] = network_stat.packets_sent
 
         for device in results:
             stats = results[device]

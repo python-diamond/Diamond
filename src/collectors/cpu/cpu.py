@@ -1,11 +1,11 @@
 # coding=utf-8
 
 """
-The CPUCollector collects CPU utilization metric using /proc/stat.
+The CPUCollector collects CPU utilization metric using /proc/stat or psutil for non linux platforms.
 
 #### Dependencies
 
- * /proc/stat
+ * /proc/stat or psutil
 
 """
 
@@ -44,6 +44,7 @@ class CPUCollector(diamond.collector.Collector):
             'percore':  'Collect metrics per cpu core or just total',
             'simple':   'only return aggregate CPU% metric',
             'normalize': 'for cpu totals, divide by the number of CPUs',
+            'include_cpu_pct': 'report aggregate CPU% metric regardless of simple mode setting',
         })
         return config_help
 
@@ -58,6 +59,7 @@ class CPUCollector(diamond.collector.Collector):
             'xenfix':   None,
             'simple':   'False',
             'normalize': 'False',
+            'include_cpu_pct': 'True'
         })
         return config
 
@@ -91,12 +93,14 @@ class CPUCollector(diamond.collector.Collector):
 
         if os.access(self.PROC, os.R_OK):
 
-            # If simple only return aggregate CPU% metric
-            if str_to_bool(self.config['simple']):
+            # calculate aggregate CPU% metric
+            # only return if simple mode on or include_cpu_pct true
+            if str_to_bool(self.config['simple']) or str_to_bool(self.config['include_cpu_pct']):
                 dt = cpu_delta_time(self.INTERVAL)
                 cpuPct = 100 - (dt[len(dt) - 1] * 100.00 / sum(dt))
                 self.publish('percent', str('%.4f' % cpuPct))
-                return True
+                if str_to_bool(self.config['simple']):
+                    return True
 
             results = {}
             # Open file
@@ -195,55 +199,69 @@ class CPUCollector(diamond.collector.Collector):
                 self.log.error('No cpu metrics retrieved')
                 return None
 
-            cpu_time = psutil.cpu_times(True)
-            cpu_count = len(cpu_time)
-            total_time = psutil.cpu_times()
-            for i in range(0, len(cpu_time)):
-                metric_name = 'cpu' + str(i)
+            # If simple or we asked for it, return aggregate CPU% metric
+            if str_to_bool(self.config['simple']) or str_to_bool(self.config['include_cpu_pct']):
+                cpuPct = psutil.cpu_percent(interval=1, percpu=False)
+                self.publish('percent', str('%.4f' % cpuPct))
+
+            # if not in simple mode, report total
+            if not str_to_bool(self.config['simple']):
+                total_time = psutil.cpu_times()
+                cpu_count = psutil.cpu_count() if str_to_bool(self.config['normalize']) else 1
+
+                metric_name = 'total'
                 self.publish(
                     metric_name + '.user',
                     self.derivative(metric_name + '.user',
-                                    cpu_time[i].user,
-                                    self.MAX_VALUES['user']))
-                if hasattr(cpu_time[i], 'nice'):
+                                    total_time.user,
+                                    self.MAX_VALUES['user']) / cpu_count)
+                if hasattr(total_time, 'nice'):
                     self.publish(
                         metric_name + '.nice',
                         self.derivative(metric_name + '.nice',
-                                        cpu_time[i].nice,
-                                        self.MAX_VALUES['nice']))
+                                        total_time.nice,
+                                        self.MAX_VALUES['nice']) / cpu_count)
                 self.publish(
                     metric_name + '.system',
                     self.derivative(metric_name + '.system',
-                                    cpu_time[i].system,
-                                    self.MAX_VALUES['system']))
+                                    total_time.system,
+                                    self.MAX_VALUES['system']) / cpu_count)
                 self.publish(
                     metric_name + '.idle',
                     self.derivative(metric_name + '.idle',
-                                    cpu_time[i].idle,
-                                    self.MAX_VALUES['idle']))
+                                    total_time.idle,
+                                    self.MAX_VALUES['idle']) / cpu_count)
 
-            metric_name = 'total'
-            self.publish(
-                metric_name + '.user',
-                self.derivative(metric_name + '.user',
-                                total_time.user,
-                                self.MAX_VALUES['user']) / cpu_count)
-            if hasattr(total_time, 'nice'):
-                self.publish(
-                    metric_name + '.nice',
-                    self.derivative(metric_name + '.nice',
-                                    total_time.nice,
-                                    self.MAX_VALUES['nice']) / cpu_count)
-            self.publish(
-                metric_name + '.system',
-                self.derivative(metric_name + '.system',
-                                total_time.system,
-                                self.MAX_VALUES['system']) / cpu_count)
-            self.publish(
-                metric_name + '.idle',
-                self.derivative(metric_name + '.idle',
-                                total_time.idle,
-                                self.MAX_VALUES['idle']) / cpu_count)
+            # if per core, report each core
+            if str_to_bool(self.config['percore']):
+                cpu_time = psutil.cpu_times(True)
+                cpuPct = psutil.cpu_percent(interval=1, percpu=True)
+
+                for i in range(0, len(cpu_time)):
+                    metric_name = 'cpu' + str(i)
+                    self.publish(
+                        metric_name + '.user',
+                        self.derivative(metric_name + '.user',
+                                        cpu_time[i].user,
+                                        self.MAX_VALUES['user']))
+                    if hasattr(cpu_time[i], 'nice'):
+                        self.publish(
+                            metric_name + '.nice',
+                            self.derivative(metric_name + '.nice',
+                                            cpu_time[i].nice,
+                                            self.MAX_VALUES['nice']))
+                    self.publish(
+                        metric_name + '.system',
+                        self.derivative(metric_name + '.system',
+                                        cpu_time[i].system,
+                                        self.MAX_VALUES['system']))
+                    self.publish(
+                        metric_name + '.idle',
+                        self.derivative(metric_name + '.idle',
+                                        cpu_time[i].idle,
+                                        self.MAX_VALUES['idle']))
+
+                    self.publish(metric_name + '.percent', str('%.4f' % cpuPct[i]))
 
             self.publish('cpu_count', psutil.cpu_count())
 
