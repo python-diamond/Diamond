@@ -85,6 +85,8 @@ class RabbitMQCollector(diamond.collector.Collector):
             'password': 'Password',
             'replace_dot':
             'A value to replace dot in queue names and vhosts names by',
+            'replace_slash':
+            'A value to replace a slash in queue names and vhosts names by',
             'queues': 'Queues to publish. Leave empty to publish all.',
             'vhosts':
             'A list of vhosts and queues for which we want to collect',
@@ -107,6 +109,7 @@ class RabbitMQCollector(diamond.collector.Collector):
             'user': 'guest',
             'password': 'guest',
             'replace_dot': False,
+            'replace_slash': False,
             'queues_ignored': '',
             'cluster': False,
             'scheme': 'http',
@@ -192,6 +195,10 @@ class RabbitMQCollector(diamond.collector.Collector):
                     vhost_name = vhost_name.replace(
                         '.', self.config['replace_dot'])
 
+                if self.config['replace_slash']:
+                    vhost_name = vhost_name.replace(
+                        '/', self.config['replace_slash'])
+
                 queues = vhost_conf[vhost]
 
                 # Allow the use of a asterix to glob the queues, but replace
@@ -222,6 +229,10 @@ class RabbitMQCollector(diamond.collector.Collector):
                         if self.config['replace_dot']:
                             queue_name = queue_name.replace(
                                 '.', self.config['replace_dot'])
+
+                        if self.config['replace_slash']:
+                            queue_name = queue_name.replace(
+                                '/', self.config['replace_slash'])
 
                         name = '{0}.{1}'.format(prefix, queue_name)
 
