@@ -11,7 +11,6 @@ Installation
 - CentOS or Ubuntu
 - Python 2.4+
 - python-configobj
-- python-setuptools
 - [Python Psutil](http://code.google.com/p/psutil/) for non linux system metrics
 
 ### Unit Test Dependencies 
