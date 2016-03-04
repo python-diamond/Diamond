@@ -6,13 +6,11 @@ Collect the solr stats for the local node
 #### Dependencies
 
  * posixpath
- * urllib2
  * json
 
 """
 
 import posixpath
-import urllib2
 
 try:
     import json
@@ -20,6 +18,7 @@ except ImportError:
     import simplejson as json
 
 import diamond.collector
+import diamond.pycompat
 
 
 class SolrCollector(diamond.collector.Collector):
@@ -75,8 +74,8 @@ class SolrCollector(diamond.collector.Collector):
         url = 'http://%s:%i/%s' % (
             self.config['host'], int(self.config['port']), path)
         try:
-            response = urllib2.urlopen(url)
-        except Exception, err:
+            response = diamond.pycompat.urlopen(url)
+        except Exception as err:
             self.log.error("%s: %s", url, err)
             return False
 

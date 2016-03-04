@@ -62,8 +62,8 @@ defaults to /sys/fs/cgroup/cpuacct/. Redhat/CentOS/SL use /cgroup"""
                 stat_file.close()
 
         # create metrics from collected utimes and stimes for cgroups
-        for parent, cpuacct in results.iteritems():
-            for key, value in cpuacct.iteritems():
+        for parent, cpuacct in results.items():
+            for key, value in cpuacct.items():
                 metric_name = '.'.join([parent, key])
                 self.publish(metric_name, value, metric_type='GAUGE')
         return True

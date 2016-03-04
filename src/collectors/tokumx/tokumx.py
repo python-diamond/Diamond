@@ -125,7 +125,7 @@ class TokuMXCollector(diamond.collector.Collector):
                         network_timeout=self.config['network_timeout'],
                         read_preference=ReadPreference.SECONDARY,
                     )
-            except Exception, e:
+            except Exception as e:
                 self.log.error('Couldnt connect to mongodb: %s', e)
                 continue
 
@@ -133,15 +133,14 @@ class TokuMXCollector(diamond.collector.Collector):
             if user:
                 try:
                     conn.admin.authenticate(user, passwd)
-                except Exception, e:
-                    self.log.error(
-                        'User auth given, but could not autheticate' +
-                        ' with host: %s, err: %s' % (host, e))
+                except Exception as e:
+                    self.log.error('User auth given, but could not authenticate'
+                                   ' with host: %s, err: %s' % (host, e))
                     return{}
 
             serverStatus = conn.db.command('serverStatus')
             engineStatus = conn.db.command('engineStatus')
-            data = dict(serverStatus.items() + engineStatus.items())
+            data = dict(list(serverStatus.items()) + list(engineStatus.items()))
 
             self._publish_transformed(data, base_prefix)
             if str_to_bool(self.config['simple']):

@@ -94,7 +94,7 @@ class SlonyCollector(diamond.collector.Collector):
                 }
             }
 
-        for name, instance in instances.iteritems():
+        for name, instance in instances.items():
             host = self.config['host']
             port = self.config['port']
             user = instance.get('user') or self.config['user']

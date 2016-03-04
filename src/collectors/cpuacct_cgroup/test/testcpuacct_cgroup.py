@@ -5,12 +5,9 @@ import os
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import patch
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
+from test import patch
+from test import StringIO
+from test import BUILTIN_OPEN
 
 from diamond.collector import Collector
 from cpuacct_cgroup import CpuAcctCgroupCollector
@@ -28,7 +25,7 @@ class TestCpuAcctCgroupCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(CpuAcctCgroupCollector)
 
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch.object(Collector, 'publish')
     def test_should_open_all_cpuacct_stat(self, publish_mock, open_mock):
         return

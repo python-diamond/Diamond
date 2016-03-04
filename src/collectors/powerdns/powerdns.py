@@ -60,6 +60,8 @@ class PowerDNSCollector(diamond.collector.Collector):
 
         data = subprocess.Popen(command,
                                 stdout=subprocess.PIPE).communicate()[0]
+        if isinstance(data, bytes):
+            data = data.decode("utf8")
 
         for metric in data.split(','):
             if not metric.strip():

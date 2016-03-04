@@ -5,13 +5,8 @@ Collect stats via MX4J from Kafka
 
 #### Dependencies
 
- * urllib2
  * xml.etree
 """
-import urllib2
-
-from urllib import urlencode
-
 try:
     from xml.etree import ElementTree
 except ImportError:
@@ -23,6 +18,8 @@ except ImportError:
     ETParseError = Exception
 
 import diamond.collector
+import diamond.pycompat
+from diamond.pycompat import long, urlencode, URLError
 
 
 class KafkaCollector(diamond.collector.Collector):
@@ -67,8 +64,8 @@ class KafkaCollector(diamond.collector.Collector):
             path, urlencode(qargs))
 
         try:
-            response = urllib2.urlopen(url)
-        except urllib2.URLError, err:
+            response = diamond.pycompat.urlopen(url)
+        except URLError as err:
             self.log.error("%s: %s", url, err)
             return None
 
@@ -171,5 +168,5 @@ class KafkaCollector(diamond.collector.Collector):
             metrics.update(stats)
 
         # Publish stats
-        for metric, value in metrics.iteritems():
+        for metric, value in metrics.items():
             self.publish(metric, value)

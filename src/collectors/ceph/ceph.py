@@ -108,7 +108,9 @@ class CephCollector(diamond.collector.Collector):
                  'perf',
                  'dump',
                  ])
-        except subprocess.CalledProcessError, err:
+            if isinstance(json_blob, bytes):
+                json_blob = json_blob.decode("utf8")
+        except subprocess.CalledProcessError as err:
             self.log.info('Could not get stats from %s: %s',
                           name, err)
             self.log.exception('Could not get stats from %s' % name)
@@ -116,7 +118,7 @@ class CephCollector(diamond.collector.Collector):
 
         try:
             json_data = json.loads(json_blob)
-        except Exception, err:
+        except Exception as err:
             self.log.info('Could not parse stats from %s: %s',
                           name, err)
             self.log.exception('Could not parse stats from %s' % name)

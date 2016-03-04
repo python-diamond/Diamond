@@ -4,9 +4,10 @@
 
 from test import CollectorTestCase
 from test import get_collector_config
-from mock import patch
+from test import patch
 
 from diamond.collector import Collector
+from diamond.pycompat import URLOPEN
 
 from websitemonitor import WebsiteMonitorCollector
 
@@ -38,7 +39,7 @@ class TestWebsiteCollector(CollectorTestCase):
 
         self.collector = WebsiteMonitorCollector(config, None)
 
-        self.patcher = patch('urllib2.urlopen')
+        self.patcher = patch(URLOPEN)
         self.urlopen_mock = self.patcher.start()
 
     def test_import(self):

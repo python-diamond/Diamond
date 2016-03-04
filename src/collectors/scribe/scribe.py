@@ -36,7 +36,7 @@ class ScribeCollector(diamond.collector.Collector):
 
     def key_to_metric(self, key):
         """Replace all non-letter characters with underscores"""
-        return ''.join(l if l in string.letters else '_' for l in key)
+        return ''.join(l if l in string.ascii_letters else '_' for l in key)
 
     def get_scribe_ctrl_output(self):
         cmd = [self.config['scribe_ctrl_bin'], 'counters']

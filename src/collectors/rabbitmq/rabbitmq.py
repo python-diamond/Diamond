@@ -22,10 +22,9 @@ Collects data from RabbitMQ through the admin interface
 """
 
 import diamond.collector
+import diamond.pycompat
+from diamond.pycompat import quote, Request, urljoin
 import re
-from urlparse import urljoin
-from urllib import quote
-import urllib2
 from base64 import b64encode
 
 try:
@@ -46,9 +45,9 @@ class RabbitMQClient(object):
 
     def do_call(self, path):
         url = urljoin(self.base_url, path)
-        req = urllib2.Request(url)
+        req = Request(url)
         req.add_header('Authorization', self._authorization)
-        return json.load(urllib2.urlopen(req, timeout=self.timeout))
+        return json.load(diamond.pycompat.urlopen(req, timeout=self.timeout))
 
     def get_all_vhosts(self):
         return self.do_call('vhosts')
@@ -140,7 +139,7 @@ class RabbitMQCollector(diamond.collector.Collector):
                              len(node_data['partitions']))
                 content = client.get_nodes()
                 self.publish('cluster.nodes', len(content))
-        except Exception, e:
+        except Exception as e:
             self.log.error('Couldnt connect to rabbitmq %s', e)
             return {}
 
@@ -230,7 +229,7 @@ class RabbitMQCollector(diamond.collector.Collector):
             overview = client.get_overview()
             for key in overview:
                 self._publish_metrics('', [], key, overview)
-        except Exception, e:
+        except Exception as e:
             self.log.error('An error occurred collecting from RabbitMQ, %s', e)
             return {}
 

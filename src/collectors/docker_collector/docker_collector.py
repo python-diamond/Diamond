@@ -98,5 +98,5 @@ class DockerCollector(diamond.collector.Collector):
                 (value, metric_type) = results[name]
                 self.publish(name, value, metric_type=metric_type)
 
-        except Exception, e:
+        except Exception as e:
             self.log.error(e, exc_info=True)

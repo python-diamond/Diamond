@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
 ###############################################################################
-import urllib2
-
 try:
     from xml.etree import ElementTree
 except ImportError:
@@ -12,9 +10,10 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import run_only
 from test import unittest
-from mock import patch
+from test import patch
 
 from diamond.collector import Collector
+from diamond.pycompat import long, URLError, URLOPEN
 from kafkastat import KafkaCollector
 
 ##########
@@ -47,26 +46,26 @@ class TestKafkaCollector(CollectorTestCase):
         self.assertTrue(KafkaCollector)
 
     @run_only_if_ElementTree_is_available
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     def test_get(self, urlopen_mock):
         urlopen_mock.return_value = self.getFixture('empty.xml')
 
         result = self.collector._get('/path')
         result_string = ElementTree.tostring(result)
 
-        self.assertEqual(result_string, '<Server />')
+        self.assertEqual(result_string, b'<Server />')
 
     @run_only_if_ElementTree_is_available
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     def test_get_httperror(self, urlopen_mock):
-        urlopen_mock.side_effect = urllib2.URLError('BOOM')
+        urlopen_mock.side_effect = URLError('BOOM')
 
         result = self.collector._get('/path')
 
         self.assertFalse(result)
 
     @run_only_if_ElementTree_is_available
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     def test_get_bad_xml(self, urlopen_mock):
         urlopen_mock.return_value = self.getFixture('bad.xml')
 
@@ -145,7 +144,7 @@ class TestKafkaCollector(CollectorTestCase):
         self.assertEqual(metrics, None)
 
     @run_only_if_ElementTree_is_available
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     @patch.object(Collector, 'publish')
     def test(self, publish_mock, urlopen_mock):
         urlopen_mock.side_effect = [

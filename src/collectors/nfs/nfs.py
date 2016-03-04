@@ -11,6 +11,7 @@ The NfsCollector collects nfs utilization metrics using /proc/net/rpc/nfs.
 
 import diamond.collector
 import os
+from diamond.pycompat import long
 
 
 class NfsCollector(diamond.collector.Collector):

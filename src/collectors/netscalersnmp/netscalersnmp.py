@@ -215,8 +215,8 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
                                        community)[serviceTypeOid].strip("\'"))
 
             # Filter excluded service types
-            if serviceType in map(lambda v: int(v),
-                                  self.config.get('exclude_service_type')):
+            if serviceType in [int(v) for v in
+                               self.config.get('exclude_service_type')]:
                 continue
 
             # Get Service State
@@ -228,8 +228,8 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
                                         community)[serviceStateOid].strip("\'"))
 
             # Filter excluded service states
-            if serviceState in map(lambda v: int(v),
-                                   self.config.get('exclude_service_state')):
+            if serviceState in \
+               [int(v) for v in self.config.get('exclude_service_state')]:
                 continue
 
             for k, v in self.NETSCALER_SERVICE_GUAGES.items():
@@ -270,8 +270,8 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
                                        community)[vserverTypeOid].strip("\'"))
 
             # filter excluded vserver types
-            if vserverType in map(lambda v: int(v),
-                                  self.config.get('exclude_vserver_type')):
+            if vserverType in \
+               [int(v) for v in self.config.get('exclude_vserver_type')]:
                 continue
 
             # Get Service State
@@ -283,8 +283,8 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
                                         community)[vserverStateOid].strip("\'"))
 
             # Filter excluded vserver state
-            if vserverState in map(lambda v: int(v),
-                                   self.config.get('exclude_vserver_state')):
+            if vserverState in \
+               [int(v) for v in self.config.get('exclude_vserver_state')]:
                 continue
 
             for k, v in self.NETSCALER_VSERVER_GUAGES.items():

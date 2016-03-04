@@ -16,7 +16,7 @@ use it.
 
 """
 
-from Handler import Handler
+from . Handler import Handler
 import socket
 
 
@@ -187,7 +187,7 @@ class GraphiteHandler(Handler):
             connection_struct = (self.host, self.port)
             try:
                 addrinfo = socket.getaddrinfo(self.host, self.port, 0, stream)
-            except socket.gaierror, ex:
+            except socket.gaierror as ex:
                 self.log.error("GraphiteHandler: Error looking up graphite host"
                                " '%s' - %s",
                                self.host, ex)
@@ -226,7 +226,7 @@ class GraphiteHandler(Handler):
             self.log.debug("GraphiteHandler: Established connection to "
                            "graphite server %s:%d.",
                            self.host, self.port)
-        except Exception, ex:
+        except Exception as ex:
             # Log Error
             self._throttle_error("GraphiteHandler: Failed to connect to "
                                  "%s:%i. %s.", self.host, self.port, ex)

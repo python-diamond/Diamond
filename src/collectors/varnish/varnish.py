@@ -176,6 +176,8 @@ class VarnishCollector(diamond.collector.Collector):
 
             output = subprocess.Popen(command,
                                       stdout=subprocess.PIPE).communicate()[0]
+            if isinstance(output, bytes):
+                output = output.decode("utf8")
         except OSError:
             output = ""
 

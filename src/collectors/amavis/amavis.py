@@ -76,6 +76,8 @@ class AmavisCollector(diamond.collector.Collector):
                 cmdline = [self.config['amavisd_exe'], '-c', '1']
             agent = subprocess.Popen(cmdline, stdout=subprocess.PIPE)
             agent_out = agent.communicate()[0]
+            if isinstance(agent_out, bytes):
+                agent_out = agent_out.decode("utf8")
             lines = agent_out.strip().split(os.linesep)
             for line in lines:
                 for rex in self.matchers:

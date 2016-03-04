@@ -13,6 +13,7 @@ using /proc/net/dev.
 import diamond.collector
 from diamond.collector import str_to_bool
 import diamond.convertor
+from diamond.pycompat import long
 import os
 import re
 
