@@ -58,8 +58,8 @@ rpm: buildrpm
 buildrpm: sdist
 	./setup.py bdist_rpm \
 		--release=`ls dist/*.noarch.rpm | wc -l` \
-		--build-requires='python, python-configobj' \
-		--requires='python, python-configobj'
+		--build-requires='python, python-configobj, python-setuptools' \
+		--requires='python, python-configobj, python-setuptools'
 
 deb: builddeb
 

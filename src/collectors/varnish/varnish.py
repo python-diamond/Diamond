@@ -69,6 +69,7 @@ class VarnishCollector(diamond.collector.Collector):
         'MAIN.s_req_hdrbytes', 'MAIN.s_req_bodybytes', 'MAIN.s_resp_hdrbytes',
         'MAIN.s_resp_bodybytes', 'MAIN.s_pipe_hdrbytes', 'MAIN.s_pipe_in',
         'MAIN.s_pipe_out', 'MAIN.sess_closed', 'MAIN.sess_pipeline',
+        'MAIN.sess_closed_err',
         'MAIN.sess_readahead', 'MAIN.sess_herd', 'MAIN.shm_records',
         'MAIN.shm_writes', 'MAIN.shm_flushes', 'MAIN.shm_cont',
         'MAIN.shm_cycles',
