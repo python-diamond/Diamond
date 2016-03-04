@@ -39,7 +39,7 @@ class GraphiteHandler(Handler):
         self.proto = self.config['proto'].lower().strip()
         self.host = self.config['host']
         self.port = int(self.config['port'])
-        self.timeout = float(self.config['timeout'])
+        self.timeout = int(self.config['timeout'])
         self.keepalive = bool(self.config['keepalive'])
         self.keepaliveinterval = int(self.config['keepaliveinterval'])
         self.batch_size = int(self.config['batch'])
