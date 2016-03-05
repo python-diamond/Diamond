@@ -20,7 +20,7 @@ except ImportError:
 
 import diamond.collector
 import diamond.pycompat
-from diamond.pycompat import long, urlencode, URLError
+from diamond.pycompat import urlencode, URLError
 
 
 class KafkaCollector(diamond.collector.Collector):
@@ -28,7 +28,7 @@ class KafkaCollector(diamond.collector.Collector):
         'double': float,
         'float': float,
         'int': int,
-        'long': long,
+        'long': int,
     }
 
     def get_default_config_help(self):

@@ -191,7 +191,7 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
             # Get Metric Path
             metricPath = '.'.join(['devices', device, 'system', metricName])
             # Get Metric Value
-            metricValue = self.derivative(metricPath, long(
+            metricValue = self.derivative(metricPath, int(
                 self.get(v, host, port, community)[v]), self.MAX_VALUE)
             # Create Metric
             metric = Metric(metricPath, metricValue, timestamp, 0)

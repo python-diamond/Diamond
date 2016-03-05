@@ -53,7 +53,7 @@ import base64
 import diamond.pycompat
 import json
 import re
-from diamond.pycompat import HTTPError, long, quote
+from diamond.pycompat import HTTPError, quote
 
 
 class JolokiaCollector(diamond.collector.Collector):
@@ -201,7 +201,7 @@ class JolokiaCollector(diamond.collector.Collector):
 
     def collect_bean(self, prefix, obj):
         for k, v in obj.items():
-            if type(v) in [int, float, long]:
+            if type(v) in [int, float]:
                 key = "%s.%s" % (prefix, k)
                 key = self.clean_up(key)
                 if key != "":

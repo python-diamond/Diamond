@@ -24,7 +24,7 @@ The IPCollector class collects metrics on IP stats
 """
 
 import diamond.collector
-from diamond.pycompat import long
+from six.moves import range
 import os
 
 
@@ -112,7 +112,7 @@ class IPCollector(diamond.collector.Collector):
                  metric_name not in self.config['allowed_names'])):
                 continue
 
-            value = long(metrics[metric_name])
+            value = int(metrics[metric_name])
 
             # Publish the metric
             if metric_name in self.GAUGES:

@@ -12,7 +12,6 @@ command, other values are ignored.
 
 import diamond.collector
 from diamond.collector import str_to_bool
-from diamond.pycompat import long
 import re
 
 try:
@@ -261,8 +260,6 @@ class TokuMXCollector(diamond.collector.Collector):
                 self._publish_metrics(keys, new_key, value)
         elif isinstance(value, int) or isinstance(value, float):
             publishfn('.'.join(keys), value)
-        elif isinstance(value, long):
-            publishfn('.'.join(keys), float(value))
 
     def _extract_simple_data(self, data):
         return {

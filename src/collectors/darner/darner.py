@@ -25,6 +25,7 @@ import diamond.collector
 import socket
 import re
 from diamond.collector import str_to_bool
+from six import iterkeys
 
 
 class DarnerCollector(diamond.collector.Collector):
@@ -140,7 +141,7 @@ class DarnerCollector(diamond.collector.Collector):
                             queues[queue][queue_stat])
 
             # figure out what we're configured to get, defaulting to everything
-            desired = self.config.get('publish', list(stats.keys()))
+            desired = self.config.get('publish', iterkeys(stats))
 
             # for everything we want
             for stat in desired:

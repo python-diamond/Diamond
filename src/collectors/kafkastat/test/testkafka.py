@@ -13,7 +13,7 @@ from test import unittest
 from test import patch
 
 from diamond.collector import Collector
-from diamond.pycompat import long, URLError, URLOPEN
+from diamond.pycompat import URLError, URLOPEN
 from kafkastat import KafkaCollector
 
 import re
@@ -109,10 +109,10 @@ class TestKafkaCollector(CollectorTestCase):
         get_mock.return_value = self._get_xml_fixture('mbean.xml')
 
         expected_metrics = {
-            'kafka.logs.mytopic-1.CurrentOffset': long('213500615'),
-            'kafka.logs.mytopic-1.NumAppendedMessages': long('224634137'),
+            'kafka.logs.mytopic-1.CurrentOffset': int('213500615'),
+            'kafka.logs.mytopic-1.NumAppendedMessages': int('224634137'),
             'kafka.logs.mytopic-1.NumberOfSegments': int('94'),
-            'kafka.logs.mytopic-1.Size': long('50143615339'),
+            'kafka.logs.mytopic-1.Size': int('50143615339'),
         }
 
         metrics = self.collector.query_mbean('kafka:type=kafka.logs.mytopic-1')
@@ -125,10 +125,10 @@ class TestKafkaCollector(CollectorTestCase):
         get_mock.return_value = self._get_xml_fixture('mbean.xml')
 
         expected_metrics = {
-            'some.prefix.CurrentOffset': long('213500615'),
-            'some.prefix.NumAppendedMessages': long('224634137'),
+            'some.prefix.CurrentOffset': int('213500615'),
+            'some.prefix.NumAppendedMessages': int('224634137'),
             'some.prefix.NumberOfSegments': int('94'),
-            'some.prefix.Size': long('50143615339'),
+            'some.prefix.Size': int('50143615339'),
         }
 
         metrics = self.collector.query_mbean('kafka:type=kafka.logs.mytopic-0',

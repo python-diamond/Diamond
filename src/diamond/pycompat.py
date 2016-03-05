@@ -11,8 +11,6 @@ except ImportError:
     from queue import Full, Empty, Queue
 
 try:
-    long = long
     unicode = unicode
 except NameError:
-    long = int
     unicode = str

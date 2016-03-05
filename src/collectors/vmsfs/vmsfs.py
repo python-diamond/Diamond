@@ -32,7 +32,7 @@ class VMSFSCollector(diamond.collector.Collector):
 
             for line in stats_fd:
                 tokens = line.split()
-                stats[tokens[0][0:-1]] = long(tokens[1])
+                stats[tokens[0][0:-1]] = int(tokens[1])
         except:
             if stats_fd:
                 stats_fd.close()

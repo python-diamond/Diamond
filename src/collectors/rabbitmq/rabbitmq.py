@@ -23,7 +23,7 @@ Collects data from RabbitMQ through the admin interface
 
 import diamond.collector
 import diamond.pycompat
-from diamond.pycompat import long, quote, Request, urljoin
+from diamond.pycompat import quote, Request, urljoin
 import re
 from base64 import b64encode
 
@@ -240,7 +240,7 @@ class RabbitMQCollector(diamond.collector.Collector):
         if isinstance(value, dict):
             for new_key in value:
                 self._publish_metrics(name, keys, new_key, value)
-        elif isinstance(value, (float, int, long)):
+        elif isinstance(value, (float, int)):
             joined_keys = '.'.join(keys)
             if name:
                 publish_key = '{0}.{1}'.format(name, joined_keys)

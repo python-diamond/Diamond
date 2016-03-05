@@ -4,7 +4,6 @@ import time
 import re
 import logging
 from . error import DiamondException
-from diamond.pycompat import long
 
 
 class Metric(object):
@@ -88,7 +87,7 @@ class Metric(object):
         """
         Return the Metric value as string
         """
-        if not isinstance(self.precision, (int, long)):
+        if not isinstance(self.precision, int):
             log = logging.getLogger('diamond')
             log.warn('Metric %s does not have a valid precision', self.path)
             self.precision = 0

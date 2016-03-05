@@ -33,7 +33,7 @@ import socket
 import diamond.collector
 import os.path
 import time
-from diamond.pycompat import long, urlparse
+from diamond.pycompat import urlparse
 
 
 class OpenVPNCollector(diamond.collector.Collector):
@@ -232,7 +232,7 @@ class OpenVPNCollector(diamond.collector.Collector):
     def publish_number(self, key, value):
         key = key.replace('/', '-').replace(' ', '_').lower()
         try:
-            value = long(value)
+            value = int(value)
         except ValueError:
             self.log.error('OpenVPN expected a number for "%s", got "%s"',
                            key, value)

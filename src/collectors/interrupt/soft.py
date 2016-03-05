@@ -13,7 +13,6 @@ The SoftInterruptCollector collects metrics on software interrupts from
 import platform
 import os
 import diamond.collector
-from diamond.pycompat import long
 
 # Detect the architecture of the system
 # and set the counters for MAX_VALUES
@@ -69,7 +68,7 @@ class SoftInterruptCollector(diamond.collector.Collector):
             metric_value = int(data[1])
             metric_value = int(self.derivative(
                 metric_name,
-                long(metric_value), counter))
+                int(metric_value), counter))
             self.publish(metric_name, metric_value)
 
             for i in range(2, len(data)):
@@ -77,7 +76,7 @@ class SoftInterruptCollector(diamond.collector.Collector):
                 metric_value = int(data[i])
                 metric_value = int(self.derivative(
                     metric_name,
-                    long(metric_value), counter))
+                    int(metric_value), counter))
                 self.publish(metric_name, metric_value)
 
         # Close file

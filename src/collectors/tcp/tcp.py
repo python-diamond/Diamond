@@ -177,7 +177,6 @@ flag.</td></tr>
 """
 
 import diamond.collector
-from diamond.pycompat import long
 import os
 
 
@@ -269,7 +268,7 @@ class TCPCollector(diamond.collector.Collector):
                  metric_name not in self.config['allowed_names'])):
                 continue
 
-            value = long(metrics[metric_name])
+            value = int(metrics[metric_name])
 
             # Publish the metric
             if metric_name in self.GAUGES:

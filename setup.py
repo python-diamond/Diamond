@@ -17,8 +17,12 @@ def running_under_virtualenv():
     return False
 
 
-from setuptools import setup
-setup_kwargs = dict(zip_safe=0)
+if os.environ.get('USE_SETUPTOOLS'):
+    from setuptools import setup
+    setup_kwargs = dict(zip_safe=0)
+else:
+    from distutils.core import setup
+    setup_kwargs = dict()
 
 if os.name == 'nt':
     pgm_files = os.environ["ProgramFiles"]

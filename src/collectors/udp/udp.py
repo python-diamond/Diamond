@@ -10,7 +10,6 @@ The UDPCollector class collects metrics on UDP stats (surprise!)
 """
 
 import diamond.collector
-from diamond.pycompat import long
 import os
 
 
@@ -93,7 +92,7 @@ class UDPCollector(diamond.collector.Collector):
                 continue
 
             value = metrics[metric_name]
-            value = self.derivative(metric_name, long(value))
+            value = self.derivative(metric_name, int(value))
 
             # Publish the metric
             self.publish(metric_name, value, 0)

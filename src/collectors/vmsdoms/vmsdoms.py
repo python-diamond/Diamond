@@ -103,7 +103,7 @@ class VMSDomsCollector(diamond.collector.Collector):
             for dom, ctrl in vms_domains:
                 try:
                     # Get value and scale.
-                    value = long(ctrl.get(key)) * scale
+                    value = int(ctrl.get(key)) * scale
                 except vms.control.ControlException:
                     continue
 

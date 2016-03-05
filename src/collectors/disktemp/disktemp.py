@@ -67,7 +67,8 @@ class DiskTemperatureCollector(diamond.collector.Collector):
             # If the regex has a capture group for pretty printing, pick
             # the last matched capture group
             if self.devices.groups > 0:
-                key = '.'.join([_f for _f in [g for g in m.groups()] if _f])
+                key = '.'.join([_f for _f in [g for g in m.groups()]
+                                if _f is not None])
 
             return {key: self.get_temp(os.path.join('/dev', device))}
 
