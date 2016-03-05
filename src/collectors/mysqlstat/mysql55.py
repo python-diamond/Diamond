@@ -11,8 +11,12 @@ For now only monitors replication load
 
 #### Dependencies
 
+Python 2.X:
  * MySQLdb
  * MySQL 5.5.3+
+
+Python 3.X:
+ * mysqlclient (MySQLdb fork)
 
 """
 

@@ -47,7 +47,6 @@ class TestUsersCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
 
         metrics = {
-            'kormoc':   2,
             'root':     3,
             'total':    5,
         }
