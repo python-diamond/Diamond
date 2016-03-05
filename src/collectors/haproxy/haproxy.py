@@ -121,7 +121,7 @@ class HAProxyCollector(diamond.collector.Collector):
                 if not buf:
                     break
                 data += buf
-        except socket.error, e:
+        except socket.error as e:
             self.log.error("Error retrieving HAProxy stats. %s", e)
             return []
 

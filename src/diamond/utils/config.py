@@ -101,7 +101,7 @@ def load_config(configfile):
 
                 try:
                     newconfig = configobj.ConfigObj(cfgfile)
-                except Exception, e:
+                except Exception as e:
                     raise Exception("Failed to load config file %s due to %s" %
                                     (cfgfile, e))
 

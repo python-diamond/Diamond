@@ -11,6 +11,7 @@ from test import patch
 from test import call
 
 from diamond.collector import Collector
+from diamond.pycompat import long
 from mongodb import MongoDBCollector
 
 try:

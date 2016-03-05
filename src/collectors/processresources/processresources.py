@@ -35,6 +35,7 @@ for example: cgi workers.
 import os
 import re
 import time
+import six
 
 import diamond.collector
 import diamond.convertor
@@ -198,11 +199,12 @@ class ProcessResourcesCollector(diamond.collector.Collector):
             self.collect_process_info(process)
 
         # publish results
-        for pg_name, counters in self.processes_info.iteritems():
+        for pg_name, counters in six.iteritems(self.processes_info):
             if counters:
                 metrics = (
                     ("%s.%s" % (pg_name, key), value)
-                    for key, value in counters.iteritems())
+                    for key, value in six.iteritems(counters)
+                )
             else:
                 if self.processes[pg_name]['count_workers']:
                     metrics = (('%s.workers_count' % pg_name, 0), )

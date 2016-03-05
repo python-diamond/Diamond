@@ -59,7 +59,7 @@ class TestTwemproxyCollector(CollectorTestCase):
 
         with open(path.join(path.dirname(__file__),
                             'metrics.json'), 'rb') as fp:
-            metrics = json.load(fp)
+            metrics = json.loads(fp.read().decode('utf-8'))
 
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,

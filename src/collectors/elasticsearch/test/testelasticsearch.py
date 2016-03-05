@@ -277,7 +277,7 @@ class TestElasticSearchCollector(CollectorTestCase):
             self.getFixture('stats1.7'),
             self.getFixture('indices_stats'),
         ]
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch(URLOPEN, Mock(
             side_effect=lambda *args: returns.pop(0)))
 
         urlopen_mock.start()

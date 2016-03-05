@@ -8,11 +8,8 @@ from test import unittest
 from mock import Mock
 from mock import patch
 
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
-
+from test import StringIO
+from test import BUILTIN_OPEN
 from diamond.collector import Collector
 from xfs import XFSCollector
 
@@ -30,7 +27,7 @@ class TestXFSCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(XFSCollector)
 
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_open_proc_stat(self, publish_mock, open_mock):

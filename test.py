@@ -97,7 +97,7 @@ class CollectorTestCase(unittest.TestCase):
             with open(filePath, 'w') as fp:
                 for line in content:
                     if line.strip() == '__EXAMPLESHERE__':
-                        for metric in sorted(metrics.iterkeys()):
+                        for metric in sorted(metrics.keys()):
 
                             metricPath = 'servers.hostname.'
 

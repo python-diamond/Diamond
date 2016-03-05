@@ -12,6 +12,7 @@ command, other values are ignored.
 
 import diamond.collector
 from diamond.collector import str_to_bool
+from diamond.pycompat import long
 import re
 
 try:

@@ -23,7 +23,7 @@ Collects data from RabbitMQ through the admin interface
 
 import diamond.collector
 import diamond.pycompat
-from diamond.pycompat import quote, Request, urljoin
+from diamond.pycompat import long, quote, Request, urljoin
 import re
 from base64 import b64encode
 

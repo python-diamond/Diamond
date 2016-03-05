@@ -1,12 +1,14 @@
 #!/usr/bin/python
 # coding=utf-8
 ##########################################################################
+from __future__ import print_function
 
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 from test import call
 from test import patch
+from test import Mock
 
 from diamond.collector import Collector
 from diamond.pycompat import URLOPEN
@@ -24,18 +26,19 @@ class TestSolrCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(SolrCollector)
 
-    @patch('urllib2.urlopen')
     @patch.object(Collector, 'publish')
-    def test_should_work_with_real_data(self, publish_mock, urlopen_mock):
+    def test_should_work_with_real_data(self, publish_mock):
         returns = [self.getFixture('cores'),
                    self.getFixture('ping'),
                    self.getFixture('stats'),
                    self.getFixture('system')]
 
-        urlopen_mock = patch(URLOPEN, Mock(
+        urlopen_mock_patch = patch(URLOPEN, Mock(
             side_effect=lambda *args: returns.pop(0)))
 
+        urlopen_mock = urlopen_mock_patch.start()
         self.collector.collect()
+        urlopen_mock_patch.stop()
 
         metrics = {
             'response.QueryTime': 5,
@@ -138,13 +141,15 @@ class TestSolrCollector(CollectorTestCase):
             call('http://localhost:8983/solr/admin/system?stats=true&wt=json')
         ])
 
-    @patch('urllib2.urlopen')
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        urlopen_mock = patch(URLOPEN, Mock(
-                             return_value=self.getFixture('stats_blank')))
+        urlopen_mock_patch = patch(
+            URLOPEN,
+            Mock(return_value=self.getFixture('stats_blank')))
 
+        urlopen_mock = urlopen_mock_patch.start()
         self.collector.collect()
+        urlopen_mock_patch.stop()
 
         self.assertPublishedMany(publish_mock, {})
         urlopen_mock.assert_called_once_with(
