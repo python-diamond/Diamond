@@ -35,6 +35,7 @@ for example: cgi workers.
 import os
 import re
 import time
+import six
 
 import diamond.collector
 import diamond.convertor
@@ -81,7 +82,7 @@ def process_info(process, info_keys):
         if type(value) in [float, int]:
             results.update({key: value})
         elif hasattr(value, '_asdict'):
-            for subkey, subvalue in value._asdict().iteritems():
+            for subkey, subvalue in value._asdict().items():
                 results.update({"%s.%s" % (key, subkey): subvalue})
     return results
 
@@ -158,7 +159,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
         return config
 
     def save_process_info(self, pg_name, process_info):
-        for key, value in process_info.iteritems():
+        for key, value in process_info.items():
             if key in self.processes_info[pg_name]:
                 self.processes_info[pg_name][key] += value
             else:
@@ -181,7 +182,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
                     uptime = time.time() - get_value(process, 'create_time')
                     pi.update({'uptime': uptime})
                     self.save_process_info(pg_name, pi)
-        except psutil.NoSuchProcess, e:
+        except psutil.NoSuchProcess as e:
             self.log.info("Process exited while trying to get info: %s", e)
 
     def collect(self):
@@ -198,11 +199,12 @@ class ProcessResourcesCollector(diamond.collector.Collector):
             self.collect_process_info(process)
 
         # publish results
-        for pg_name, counters in self.processes_info.iteritems():
+        for pg_name, counters in six.iteritems(self.processes_info):
             if counters:
                 metrics = (
                     ("%s.%s" % (pg_name, key), value)
-                    for key, value in counters.iteritems())
+                    for key, value in six.iteritems(counters)
+                )
             else:
                 if self.processes[pg_name]['count_workers']:
                     metrics = (('%s.workers_count' % pg_name, 0), )

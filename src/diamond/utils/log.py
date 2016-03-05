@@ -53,7 +53,7 @@ def setup_logging(configfile, stdout=False):
                 logging.config.fileConfig(configfile)
                 for logger in logging.root.manager.loggerDict.values():
                     logger.disabled = 0
-        except Exception, e:
+        except Exception as e:
             sys.stderr.write("Error occurs when initialize logging: ")
             sys.stderr.write(str(e))
             sys.stderr.write(os.linesep)

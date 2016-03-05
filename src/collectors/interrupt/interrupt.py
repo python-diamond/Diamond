@@ -68,7 +68,7 @@ class InterruptCollector(diamond.collector.Collector):
                     metric_value = data[1]
                     self.publish(metric_name,
                                  self.derivative(metric_name,
-                                                 long(metric_value),
+                                                 int(metric_value),
                                                  counter))
                 else:
                     if len(data[0]) == cpuCount + 1:
@@ -90,7 +90,7 @@ class InterruptCollector(diamond.collector.Collector):
 
                         metric_name_node = metric_name + 'CPU' + str(index - 1)
                         value = int(self.derivative(metric_name_node,
-                                                    long(value), counter))
+                                                    int(value), counter))
                         total += value
                         self.publish(metric_name_node, value)
 

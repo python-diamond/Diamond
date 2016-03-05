@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
 ###############################################################################
-import urllib2
-
 try:
     from xml.etree import ElementTree
 except ImportError:
@@ -12,10 +10,13 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import run_only
 from test import unittest
-from mock import patch
+from test import patch
 
 from diamond.collector import Collector
+from diamond.pycompat import URLError, URLOPEN
 from kafkastat import KafkaCollector
+
+import re
 
 ##########
 
@@ -47,26 +48,26 @@ class TestKafkaCollector(CollectorTestCase):
         self.assertTrue(KafkaCollector)
 
     @run_only_if_ElementTree_is_available
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     def test_get(self, urlopen_mock):
         urlopen_mock.return_value = self.getFixture('empty.xml')
 
         result = self.collector._get('/path')
         result_string = ElementTree.tostring(result)
 
-        self.assertEqual(result_string, '<Server />')
+        self.assertEqual(result_string, b'<Server />')
 
     @run_only_if_ElementTree_is_available
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     def test_get_httperror(self, urlopen_mock):
-        urlopen_mock.side_effect = urllib2.URLError('BOOM')
+        urlopen_mock.side_effect = URLError('BOOM')
 
         result = self.collector._get('/path')
 
         self.assertFalse(result)
 
     @run_only_if_ElementTree_is_available
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     def test_get_bad_xml(self, urlopen_mock):
         urlopen_mock.return_value = self.getFixture('bad.xml')
 
@@ -108,10 +109,10 @@ class TestKafkaCollector(CollectorTestCase):
         get_mock.return_value = self._get_xml_fixture('mbean.xml')
 
         expected_metrics = {
-            'kafka.logs.mytopic-1.CurrentOffset': long('213500615'),
-            'kafka.logs.mytopic-1.NumAppendedMessages': long('224634137'),
+            'kafka.logs.mytopic-1.CurrentOffset': int('213500615'),
+            'kafka.logs.mytopic-1.NumAppendedMessages': int('224634137'),
             'kafka.logs.mytopic-1.NumberOfSegments': int('94'),
-            'kafka.logs.mytopic-1.Size': long('50143615339'),
+            'kafka.logs.mytopic-1.Size': int('50143615339'),
         }
 
         metrics = self.collector.query_mbean('kafka:type=kafka.logs.mytopic-1')
@@ -124,10 +125,10 @@ class TestKafkaCollector(CollectorTestCase):
         get_mock.return_value = self._get_xml_fixture('mbean.xml')
 
         expected_metrics = {
-            'some.prefix.CurrentOffset': long('213500615'),
-            'some.prefix.NumAppendedMessages': long('224634137'),
+            'some.prefix.CurrentOffset': int('213500615'),
+            'some.prefix.NumAppendedMessages': int('224634137'),
             'some.prefix.NumberOfSegments': int('94'),
-            'some.prefix.Size': long('50143615339'),
+            'some.prefix.Size': int('50143615339'),
         }
 
         metrics = self.collector.query_mbean('kafka:type=kafka.logs.mytopic-0',
@@ -145,18 +146,40 @@ class TestKafkaCollector(CollectorTestCase):
         self.assertEqual(metrics, None)
 
     @run_only_if_ElementTree_is_available
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     @patch.object(Collector, 'publish')
     def test(self, publish_mock, urlopen_mock):
-        urlopen_mock.side_effect = [
-            self.getFixture('serverbydomain_logs_only.xml'),
-            self.getFixture('serverbydomain_gc.xml'),
-            self.getFixture('serverbydomain_threading.xml'),
-            self.getFixture('gc_scavenge.xml'),
-            self.getFixture('gc_marksweep.xml'),
-            self.getFixture('mbean.xml'),
-            self.getFixture('threading.xml'),
-        ]
+        def get_right_fixture(url):
+            search = re.search(
+                r'/(?P<endpoint>[^/?]+)\?'
+                '.*(querynames|objectname)=(?P<objectname>[^&]+)',
+                url
+            )
+            if search:
+                endpoint = search.group('endpoint')
+                objectname = search.group('objectname')
+
+            if endpoint == 'serverbydomain':
+                if 'GarbageCollector' in objectname:
+                    return self.getFixture('serverbydomain_gc.xml')
+                elif 'Threading' in objectname:
+                    return self.getFixture('serverbydomain_threading.xml')
+                else:
+                    return self.getFixture('serverbydomain_logs_only.xml')
+            elif endpoint == 'mbean':
+                if 'MarkSweep' in objectname:
+                    return self.getFixture('gc_marksweep.xml')
+                elif 'Scavenge' in objectname:
+                    return self.getFixture('gc_scavenge.xml')
+                elif 'Threading' in objectname:
+                    return self.getFixture('threading.xml')
+                else:
+                    return self.getFixture('mbean.xml')
+            else:
+                return ''
+
+        urlopen_mock.side_effect = get_right_fixture
+
         self.collector.collect()
 
         expected_metrics = {

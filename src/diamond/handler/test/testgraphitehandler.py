@@ -5,9 +5,9 @@
 import time
 
 from test import unittest
-from mock import Mock
-from mock import patch
-from mock import call
+from test import Mock
+from test import patch
+from test import call
 
 import configobj
 

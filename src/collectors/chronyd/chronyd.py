@@ -66,6 +66,8 @@ class ChronydCollector(diamond.collector.Collector):
 
     def collect(self):
         output = self.get_output()
+        if isinstance(output, bytes):
+            output = output.decode("utf8")
 
         for line in output.strip().split("\n"):
             m = LINE_PATTERN.search(line)
@@ -78,7 +80,7 @@ class ChronydCollector(diamond.collector.Collector):
 
             try:
                 value = diamond.convertor.time.convert(offset, unit, 'ms')
-            except NotImplementedError, e:
+            except NotImplementedError as e:
                 self.log.error('Unable to convert %s%s: %s', offset, unit, e)
                 continue
 

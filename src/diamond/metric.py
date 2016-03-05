@@ -3,7 +3,7 @@
 import time
 import re
 import logging
-from error import DiamondException
+from . error import DiamondException
 
 
 class Metric(object):
@@ -14,7 +14,7 @@ class Metric(object):
     __slots__ = [
         'path', 'value', 'raw_value', 'timestamp', 'precision',
         'host', 'metric_type', 'ttl'
-        ]
+    ]
 
     def __init__(self, path, value, raw_value=None, timestamp=None, precision=0,
                  host=None, metric_type='COUNTER', ttl=None):
@@ -30,7 +30,10 @@ class Metric(object):
         """
 
         # Validate the path, value and metric_type submitted
-        if (None in [path, value] or metric_type not in ('COUNTER', 'GAUGE')):
+        if (
+            None in [path, value] or
+            metric_type not in ('COUNTER', 'GAUGE')
+        ):
             raise DiamondException(("Invalid parameter when creating new "
                                     "Metric with path: %r value: %r "
                                     "metric_type: %r")
@@ -74,16 +77,26 @@ class Metric(object):
         """
         Return the Metric as a string
         """
-        if not isinstance(self.precision, (int, long)):
+        # Return formated string
+        return (
+            "%s %s %i\n"
+            % (self.path, self.get_formatted_value(), self.timestamp)
+        )
+
+    def get_formatted_value(self):
+        """
+        Return the Metric value as string
+        """
+        if not isinstance(self.precision, int):
             log = logging.getLogger('diamond')
             log.warn('Metric %s does not have a valid precision', self.path)
             self.precision = 0
 
         # Set the format string
-        fstring = "%%s %%0.%if %%i\n" % self.precision
+        fstring = "%%0.%if" % self.precision
 
         # Return formated string
-        return fstring % (self.path, self.value, self.timestamp)
+        return fstring % self.value
 
     def __getstate__(self):
         return dict(

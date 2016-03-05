@@ -6,7 +6,7 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 from test import run_only
-from mock import patch
+from test import patch
 
 from diamond.collector import Collector
 from users import UsersCollector
@@ -47,7 +47,6 @@ class TestUsersCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_mock):
 
         metrics = {
-            'kormoc':   2,
             'root':     3,
             'total':    5,
         }

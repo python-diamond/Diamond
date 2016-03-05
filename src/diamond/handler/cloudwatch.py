@@ -37,7 +37,7 @@ unit = None
 import sys
 import datetime
 
-from Handler import Handler
+from . Handler import Handler
 from configobj import Section
 
 try:
@@ -206,7 +206,7 @@ class cloudwatchHandler(Handler):
                         rule['namespace'],
                         str(metric.value)
                     )
-                except AttributeError, e:
+                except AttributeError as e:
                     self.log.error(
                         "CloudWatch: Failed publishing - %s ", str(e))
                 except Exception:  # Rough connection re-try logic.

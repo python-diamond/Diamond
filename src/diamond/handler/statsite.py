@@ -52,7 +52,7 @@ store only a fraction of the samples.
 
 """
 
-from Handler import Handler
+from . Handler import Handler
 import socket
 
 
@@ -148,7 +148,7 @@ class StatsiteHandler(Handler):
                 self.socket.sendall(data)
                 # Done
                 break
-            except socket.error, e:
+            except socket.error as e:
                 # Log Error
                 self.log.error("StatsiteHandler: Failed sending data. %s.", e)
                 # Attempt to restablish connection
@@ -183,7 +183,7 @@ class StatsiteHandler(Handler):
             # Log
             self.log.debug("Established connection to statsite server %s:%d",
                            self.host, self.port)
-        except Exception, ex:
+        except Exception as ex:
             # Log Error
             self.log.error("StatsiteHandler: Failed to connect to %s:%i. %s",
                            self.host, self.port, ex)

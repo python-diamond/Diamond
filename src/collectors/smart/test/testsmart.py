@@ -5,9 +5,9 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import Mock
-from mock import call
-from mock import patch
+from test import Mock
+from test import call
+from test import patch
 
 from diamond.collector import Collector
 from smart import SmartCollector

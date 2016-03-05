@@ -3,9 +3,10 @@
 ##########################################################################
 from test import CollectorTestCase
 from test import get_collector_config
-from mock import Mock
-from mock import patch
+from test import Mock
+from test import patch
 from diamond.collector import Collector
+from diamond.pycompat import URLOPEN
 from httpjson import HTTPJSONCollector
 
 ##########################################################################
@@ -22,7 +23,7 @@ class TestHTTPJSONCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        urlopen_mock = patch('urllib2.urlopen',
+        urlopen_mock = patch(URLOPEN,
                              Mock(return_value=self.getFixture('stats.json')))
 
         urlopen_mock.start()

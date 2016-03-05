@@ -18,10 +18,9 @@ try:
 except ImportError:
     UtmpFile = None
 try:
-    from utmp import UtmpRecord
-    import UTMPCONST
+    import utmp as utmp_mod
 except ImportError:
-    UtmpRecord = None
+    utmp_mod = None
 
 
 class UsersCollector(diamond.collector.Collector):
@@ -47,7 +46,7 @@ class UsersCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        if UtmpFile is None and UtmpRecord is None:
+        if UtmpFile is None and utmp_mod is None:
             self.log.error('Unable to import either pyutmp or python-utmp')
             return False
 
@@ -60,11 +59,13 @@ class UsersCollector(diamond.collector.Collector):
                     metrics[utmp.ut_user] = metrics.get(utmp.ut_user, 0) + 1
                     metrics['total'] = metrics['total'] + 1
 
-        if UtmpRecord:
-            for utmp in UtmpRecord(fname=self.config['utmp']):
-                if utmp.ut_type == UTMPCONST.USER_PROCESS:
-                    metrics[utmp.ut_user] = metrics.get(utmp.ut_user, 0) + 1
-                    metrics['total'] = metrics['total'] + 1
+        if utmp_mod:
+            with open(self.config['utmp'], 'rb') as fd:
+                buf = fd.read()
+                for entry in utmp_mod.read(buf):
+                    if entry.type.name == "user_process":
+                        metrics[entry.user] = metrics.get(entry.user, 0) + 1
+                        metrics['total'] = metrics['total'] + 1
 
         for metric_name in metrics.keys():
             self.publish(metric_name, metrics[metric_name])

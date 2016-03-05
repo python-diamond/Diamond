@@ -83,15 +83,15 @@ class PgbouncerCollector(diamond.collector.Collector):
                 }
             }
 
-        for name, instance in instances.iteritems():
+        for name, instance in instances.items():
             host = instance['host']
             port = instance['port']
             user = instance.get('user') or self.config['user']
             password = instance.get('password') or self.config['password']
 
             for database, stats in self._get_stats_by_database(
-                    host, port, user, password).iteritems():
-                for stat_name, stat_value in stats.iteritems():
+                    host, port, user, password).items():
+                for stat_name, stat_value in stats.items():
                     self.publish(
                         self._get_metric_name(name, database, stat_name),
                         stat_value)

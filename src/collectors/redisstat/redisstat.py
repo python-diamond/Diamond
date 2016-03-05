@@ -110,7 +110,7 @@ class RedisCollector(diamond.collector.Collector):
         super(RedisCollector, self).process_config()
         instance_list = self.config['instances']
         # configobj make str of single-element list, let's convert
-        if isinstance(instance_list, basestring):
+        if isinstance(instance_list, str):
             instance_list = [instance_list]
 
         # process original single redis instance
@@ -221,7 +221,7 @@ class RedisCollector(diamond.collector.Collector):
                               unix_socket_path=unix_socket)
             cli.ping()
             return cli
-        except Exception, ex:
+        except Exception as ex:
             self.log.error("RedisCollector: failed to connect to %s:%i. %s.",
                            unix_socket or host, port, ex)
 

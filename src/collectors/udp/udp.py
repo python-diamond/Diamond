@@ -83,7 +83,7 @@ class UDPCollector(diamond.collector.Collector):
             header = header.split()
             data = data.split()
 
-            for i in xrange(1, len(header)):
+            for i in range(1, len(header)):
                 metrics[header[i]] = data[i]
 
         for metric_name in metrics.keys():
@@ -92,7 +92,7 @@ class UDPCollector(diamond.collector.Collector):
                 continue
 
             value = metrics[metric_name]
-            value = self.derivative(metric_name, long(value))
+            value = self.derivative(metric_name, int(value))
 
             # Publish the metric
             self.publish(metric_name, value, 0)

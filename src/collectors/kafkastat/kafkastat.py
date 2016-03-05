@@ -5,13 +5,9 @@ Collect stats via MX4J from Kafka
 
 #### Dependencies
 
- * urllib2
  * xml.etree
 """
-import urllib2
-
-from urllib import urlencode
-
+import six
 try:
     from xml.etree import ElementTree
 except ImportError:
@@ -23,6 +19,8 @@ except ImportError:
     ETParseError = Exception
 
 import diamond.collector
+import diamond.pycompat
+from diamond.pycompat import urlencode, URLError
 
 
 class KafkaCollector(diamond.collector.Collector):
@@ -30,7 +28,7 @@ class KafkaCollector(diamond.collector.Collector):
         'double': float,
         'float': float,
         'int': int,
-        'long': long,
+        'long': int,
     }
 
     def get_default_config_help(self):
@@ -67,8 +65,8 @@ class KafkaCollector(diamond.collector.Collector):
             path, urlencode(qargs))
 
         try:
-            response = urllib2.urlopen(url)
-        except urllib2.URLError, err:
+            response = diamond.pycompat.urlopen(url)
+        except URLError as err:
             self.log.error("%s: %s", url, err)
             return None
 
@@ -158,18 +156,17 @@ class KafkaCollector(diamond.collector.Collector):
             'java.lang:type=GarbageCollector,name=*',
             'java.lang:type=Threading'
         ]
+
         mbeans = set()
+
         for pattern in query_list:
-            match = self.get_mbeans(pattern)
-            mbeans.update(match)
-
-        metrics = {}
-
-        # Query each one for stats
-        for mbean in mbeans:
-            stats = self.query_mbean(mbean)
-            metrics.update(stats)
-
-        # Publish stats
-        for metric, value in metrics.iteritems():
-            self.publish(metric, value)
+            matches = self.get_mbeans(pattern)
+            for match in matches:
+                stats = self.query_mbean(match)
+                for metric, value in six.iteritems(stats):
+                    try:
+                        self.publish(metric, int(value))
+                    except (OverflowError, ValueError) as e:
+                        self.log.debug(
+                            "KafkaCollector: ValueError on metric %s"
+                            "with value %s" % (metric, str(value)))

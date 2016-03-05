@@ -8,6 +8,8 @@ from test import unittest
 from mock import MagicMock, Mock, mock_open
 from mock import patch
 
+from test import BUILTIN_OPEN
+from diamond.pycompat import URLOPEN
 from diamond.collector import Collector
 
 from mesos_cgroup import MesosCGroupCollector
@@ -34,7 +36,7 @@ class TestMesosCGroupCollector(CollectorTestCase):
             if url == 'http://localhost:5051/state.json':
                 return self.getFixture('state.json')
             else:
-                print url
+                print(url)
                 raise NotImplementedError()
 
         def listdir_se(directory):
@@ -47,7 +49,7 @@ class TestMesosCGroupCollector(CollectorTestCase):
             if directory in cgroup_directories:
                 return ["b0d5971e-915c-414b-aa25-0da46e64ff4e"]
             else:
-                print directory
+                print(directory)
                 raise NotImplementedError()
 
         def isdir_se(directory):
@@ -60,7 +62,7 @@ class TestMesosCGroupCollector(CollectorTestCase):
             if directory in task_directories:
                 return True
             else:
-                print directory
+                print(directory)
                 raise NotImplementedError()
 
         def open_se(path, mode='r', create=True):
@@ -90,11 +92,12 @@ class TestMesosCGroupCollector(CollectorTestCase):
                 patch_open.start()
                 return o
 
-        patch_urlopen = patch('urllib2.urlopen', Mock(side_effect=urlopen_se))
+        patch_urlopen = patch(URLOPEN, Mock(side_effect=urlopen_se))
         patch_listdir = patch('os.listdir', Mock(side_effect=listdir_se))
         patch_isdir = patch('os.path.isdir', Mock(side_effect=isdir_se))
-        patch_open = patch('__builtin__.open', MagicMock(spec=file,
-                                                         side_effect=open_se))
+        patch_open = patch(
+            BUILTIN_OPEN,
+            Mock(__enter__=open_se, __exit__=None, side_effect=open_se))
 
         patch_urlopen.start()
         patch_listdir.start()

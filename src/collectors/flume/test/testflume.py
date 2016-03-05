@@ -4,10 +4,11 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import patch
-from mock import Mock
+from test import patch
+from test import Mock
 
 from diamond.collector import Collector
+from diamond.pycompat import URLOPEN
 from flume import FlumeCollector
 
 
@@ -30,7 +31,7 @@ class TestFlumeCollector(CollectorTestCase):
                                  publish_mock,
                                  publish_gauge_mock,
                                  publish_counter_mock):
-        patch_urlopen = patch('urllib2.urlopen',
+        patch_urlopen = patch(URLOPEN,
                               Mock(return_value=self.getFixture('metrics')))
 
         patch_urlopen.start()
@@ -70,7 +71,7 @@ class TestFlumeCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_blank_should_fail_gracefully(self, publish_mock):
-        patch_urlopen = patch('urllib2.urlopen', Mock(
+        patch_urlopen = patch(URLOPEN, Mock(
             return_value=self.getFixture('metrics_blank')))
 
         patch_urlopen.start()
@@ -82,7 +83,7 @@ class TestFlumeCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_invalid_should_fail_gracefully(self, publish_mock):
         patch_urlopen = patch(
-            'urllib2.urlopen',
+            URLOPEN,
             Mock(return_value=self.getFixture('metrics_invalid')))
 
         patch_urlopen.start()

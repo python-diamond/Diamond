@@ -11,8 +11,12 @@ For now only monitors replication load
 
 #### Dependencies
 
+Python 2.X:
  * MySQLdb
  * MySQL 5.5.3+
+
+Python 3.X:
+ * mysqlclient (MySQLdb fork)
 
 """
 
@@ -133,7 +137,7 @@ class MySQLPerfCollector(diamond.collector.Collector):
 
         try:
             self.db = MySQLdb.connect(**params)
-        except MySQLError, e:
+        except MySQLError as e:
             self.log.error('MySQLPerfCollector couldnt connect to database %s',
                            e)
             return {}

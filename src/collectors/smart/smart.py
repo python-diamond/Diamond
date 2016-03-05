@@ -60,7 +60,10 @@ class SmartCollector(diamond.collector.Collector):
                 attributes = subprocess.Popen(
                     command,
                     stdout=subprocess.PIPE
-                ).communicate()[0].strip().splitlines()
+                ).communicate()[0]
+                if isinstance(attributes, bytes):
+                    attributes = attributes.decode("utf8")
+                attributes = attributes.strip().splitlines()
 
                 metrics = {}
 

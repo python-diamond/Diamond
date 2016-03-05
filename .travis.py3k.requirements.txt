@@ -1,0 +1,20 @@
+mysqlclient
+PyYAML
+# TODO: adapt to python3
+# beanstalkc
+python3-protobuf
+bernhard
+boto
+configobj
+docker-py
+kitchen
+mock
+psutil
+pymongo<3.0
+statsd
+utmp
+redis
+simplejson
+setproctitle
+psycopg2
+elasticsearch

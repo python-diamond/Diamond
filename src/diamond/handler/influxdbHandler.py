@@ -29,7 +29,7 @@ time_precision = s
 """
 
 import time
-from Handler import Handler
+from . Handler import Handler
 
 try:
     from influxdb.client import InfluxDBClient
@@ -207,7 +207,7 @@ class InfluxdbHandler(Handler):
             self.log.debug("InfluxdbHandler: Established connection to "
                            "%s:%d/%s.",
                            self.hostname, self.port, self.database)
-        except Exception, ex:
+        except Exception as ex:
             # Log Error
             self._throttle_error("InfluxdbHandler: Failed to connect to "
                                  "%s:%d/%s. %s",
