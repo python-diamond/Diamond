@@ -6,6 +6,7 @@ import os
 import signal
 import sys
 import time
+from six import string_types
 
 try:
     from setproctitle import getproctitle, setproctitle
@@ -86,7 +87,7 @@ class Server(object):
             handlers_path = self.config['server']['handlers_path']
 
             # Make an list if not one
-            if isinstance(handlers_path, str):
+            if isinstance(handlers_path, string_types):
                 handlers_path = handlers_path.split(',')
                 handlers_path = map(str.strip, handlers_path)
                 self.config['server']['handlers_path'] = handlers_path
@@ -98,7 +99,7 @@ class Server(object):
             sys.exit(1)
 
         handlers = self.config['server'].get('handlers')
-        if isinstance(handlers, str):
+        if isinstance(handlers, string_types):
             handlers = [handlers]
 
         # Prevent the Queue Handler from being a normal handler

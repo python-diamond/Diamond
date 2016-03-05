@@ -3,6 +3,7 @@
 ##########################################################################
 
 from test import unittest
+from six.moves import range
 
 from diamond.metric import Metric
 

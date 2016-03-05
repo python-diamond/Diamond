@@ -24,6 +24,7 @@ import diamond.collector
 import diamond.convertor
 import os
 import re
+from six import string_types
 
 try:
     import psutil
@@ -78,13 +79,13 @@ class DiskSpaceCollector(diamond.collector.Collector):
         super(DiskSpaceCollector, self).process_config()
         # Precompile things
         self.exclude_filters = self.config['exclude_filters']
-        if isinstance(self.exclude_filters, str):
+        if isinstance(self.exclude_filters, string_types):
             self.exclude_filters = [self.exclude_filters]
 
         self.exclude_reg = re.compile('|'.join(self.exclude_filters))
 
         self.filesystems = []
-        if isinstance(self.config['filesystems'], str):
+        if isinstance(self.config['filesystems'], string_types):
             for filesystem in self.config['filesystems'].split(','):
                 self.filesystems.append(filesystem.strip())
         elif isinstance(self.config['filesystems'], list):

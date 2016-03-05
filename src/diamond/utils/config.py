@@ -2,6 +2,7 @@
 
 import configobj
 import os
+from six import string_types
 
 
 def str_to_bool(value):
@@ -9,7 +10,7 @@ def str_to_bool(value):
     Converts string truthy/falsey strings to a bool
     Empty strings are false
     """
-    if isinstance(value, str):
+    if isinstance(value, string_types):
         value = value.strip().lower()
         if value in ['true', 't', 'yes', 'y']:
             return True

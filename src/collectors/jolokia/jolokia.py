@@ -54,6 +54,7 @@ import diamond.pycompat
 import json
 import re
 from diamond.pycompat import HTTPError, quote
+from six import string_types
 
 
 class JolokiaCollector(diamond.collector.Collector):
@@ -105,7 +106,7 @@ class JolokiaCollector(diamond.collector.Collector):
         super(JolokiaCollector, self).__init__(*args, **kwargs)
         self.mbeans = []
         self.rewrite = {}
-        if isinstance(self.config['mbeans'], str):
+        if isinstance(self.config['mbeans'], string_types):
             for mbean in self.config['mbeans'].split('|'):
                 self.mbeans.append(mbean.strip())
         elif isinstance(self.config['mbeans'], list):

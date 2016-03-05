@@ -11,6 +11,7 @@ parameter the instance alias will be appended to the
 import re
 from diamond.collector import str_to_bool
 import diamond.pycompat
+from six import string_types
 
 try:
     import json
@@ -27,7 +28,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
     def process_config(self):
         super(ElasticSearchCollector, self).process_config()
         instance_list = self.config['instances']
-        if isinstance(instance_list, str):
+        if isinstance(instance_list, string_types):
             instance_list = [instance_list]
 
         if len(instance_list) == 0:

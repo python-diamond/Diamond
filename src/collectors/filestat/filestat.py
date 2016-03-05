@@ -37,6 +37,7 @@ Uses lsof to collect data on number of open files per user per type
 import diamond.collector
 import re
 import os
+from six import string_types
 
 _RE = re.compile(r'(\d+)\s+(\d+)\s+(\d+)')
 
@@ -116,13 +117,13 @@ class FilestatCollector(diamond.collector.Collector):
         based on the variables user_include and user_exclude
         """
     # convert user/group  lists to arrays if strings
-        if isinstance(self.config['user_include'], str):
+        if isinstance(self.config['user_include'], string_types):
             self.config['user_include'] = self.config['user_include'].split()
-        if isinstance(self.config['user_exclude'], str):
+        if isinstance(self.config['user_exclude'], string_types):
             self.config['user_exclude'] = self.config['user_exclude'].split()
-        if isinstance(self.config['group_include'], str):
+        if isinstance(self.config['group_include'], string_types):
             self.config['group_include'] = self.config['group_include'].split()
-        if isinstance(self.config['group_exclude'], str):
+        if isinstance(self.config['group_exclude'], string_types):
             self.config['group_exclude'] = self.config['group_exclude'].split()
 
         rawusers = os.popen("lsof | awk '{ print $3 }' | sort | uniq -d"
@@ -206,9 +207,9 @@ class FilestatCollector(diamond.collector.Collector):
         typelist = []
 
         # convert type list into arrays if strings
-        if isinstance(self.config['type_include'], str):
+        if isinstance(self.config['type_include'], string_types):
             self.config['type_include'] = self.config['type_include'].split()
-        if isinstance(self.config['type_exclude'], str):
+        if isinstance(self.config['type_exclude'], string_types):
             self.config['type_exclude'] = self.config['type_exclude'].split()
 
         # remove any not in include list

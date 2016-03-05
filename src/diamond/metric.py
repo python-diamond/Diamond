@@ -4,6 +4,7 @@ import time
 import re
 import logging
 from . error import DiamondException
+from six import integer_types
 
 
 class Metric(object):
@@ -44,7 +45,7 @@ class Metric(object):
             timestamp = int(time.time())
         else:
             # If the timestamp isn't an int, then make it one
-            if not isinstance(timestamp, int):
+            if not isinstance(timestamp, integer_types):
                 try:
                     timestamp = int(timestamp)
                 except ValueError as e:
@@ -87,7 +88,7 @@ class Metric(object):
         """
         Return the Metric value as string
         """
-        if not isinstance(self.precision, int):
+        if not isinstance(self.precision, integer_types):
             log = logging.getLogger('diamond')
             log.warn('Metric %s does not have a valid precision', self.path)
             self.precision = 0

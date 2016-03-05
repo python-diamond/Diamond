@@ -26,6 +26,7 @@ import diamond.collector
 from diamond.collector import str_to_bool
 import re
 import zlib
+from six import string_types
 
 try:
     import pymongo
@@ -108,7 +109,7 @@ class MongoDBCollector(diamond.collector.Collector):
         hosts = self.config.get('hosts')
 
         # Convert a string config value to be an array
-        if isinstance(hosts, str):
+        if isinstance(hosts, string_types):
             hosts = [hosts]
 
         # we need this for backwards compatibility
@@ -152,7 +153,7 @@ class MongoDBCollector(diamond.collector.Collector):
 
             try:
                 # Ensure that the SSL option is a boolean.
-                if type(self.config['ssl']) is str:
+                if isinstance(self.config['ssl'], string_types):
                     self.config['ssl'] = str_to_bool(self.config['ssl'])
 
                 if ReadPreference is None:

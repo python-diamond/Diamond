@@ -28,6 +28,7 @@ TO use a unix socket, set a host string like this
 import diamond.collector
 import socket
 import re
+from six import string_types
 
 
 class MemcachedCollector(diamond.collector.Collector):
@@ -138,7 +139,7 @@ class MemcachedCollector(diamond.collector.Collector):
         hosts = self.config.get('hosts')
 
         # Convert a string config value to be an array
-        if isinstance(hosts, str):
+        if isinstance(hosts, string_types):
             hosts = [hosts]
 
         for host in hosts:

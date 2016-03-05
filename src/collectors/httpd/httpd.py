@@ -16,6 +16,7 @@ except ImportError:
 
 import diamond.collector
 from diamond.pycompat import urlparse
+from six import string_types
 
 
 class HttpdCollector(diamond.collector.Collector):
@@ -26,7 +27,7 @@ class HttpdCollector(diamond.collector.Collector):
             self.config['urls'].append(self.config['url'])
 
         self.urls = {}
-        if isinstance(self.config['urls'], str):
+        if isinstance(self.config['urls'], string_types):
             self.config['urls'] = self.config['urls'].split(',')
 
         for url in self.config['urls']:

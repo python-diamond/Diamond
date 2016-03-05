@@ -18,6 +18,7 @@ import subprocess
 
 import diamond.collector
 from diamond.collector import str_to_bool
+from six import string_types
 
 
 class MountStatsCollector(diamond.collector.Collector):
@@ -60,7 +61,7 @@ class MountStatsCollector(diamond.collector.Collector):
     def process_config(self):
         super(MountStatsCollector, self).process_config()
         self.exclude_filters = self.config['exclude_filters']
-        if isinstance(self.exclude_filters, str):
+        if isinstance(self.exclude_filters, string_types):
             self.exclude_filters = [self.exclude_filters]
 
         if len(self.exclude_filters) > 0:
@@ -69,7 +70,7 @@ class MountStatsCollector(diamond.collector.Collector):
             self.exclude_reg = None
 
         self.include_filters = self.config['include_filters']
-        if isinstance(self.include_filters, str):
+        if isinstance(self.include_filters, string_types):
             self.include_filters = [self.include_filters]
 
         if len(self.include_filters) > 0:

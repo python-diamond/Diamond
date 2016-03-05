@@ -25,7 +25,7 @@ import diamond.collector
 import socket
 import re
 from diamond.collector import str_to_bool
-from six import iterkeys
+from six import iterkeys, string_types
 
 
 class DarnerCollector(diamond.collector.Collector):
@@ -118,7 +118,7 @@ class DarnerCollector(diamond.collector.Collector):
         hosts = self.config.get('hosts')
 
         # Convert a string config value to be an array
-        if isinstance(hosts, str):
+        if isinstance(hosts, string_types):
             hosts = [hosts]
 
         for host in hosts:

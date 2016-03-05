@@ -6,6 +6,7 @@ import os
 import sys
 import optparse
 import traceback
+from six import string_types
 
 from configobj import ConfigObj
 
@@ -78,7 +79,7 @@ def getCollectors(path):
 
 
 def typeToString(key):
-    if isinstance(obj.config[key], str):
+    if isinstance(obj.config[key], string_types):
         user_val = obj.config[key]
     elif isinstance(obj.config[key], bool):
         user_val = str(obj.config[key])
@@ -95,7 +96,7 @@ def typeToString(key):
 def stringToType(key, val):
     if type(obj.config[key]) is type(val):
         config_file[key] = val
-    elif isinstance(obj.config[key], str):
+    elif isinstance(obj.config[key], string_types):
         if val.lower() == 'false':
             config_file[key] = False
         elif val.lower() == 'true':
@@ -103,7 +104,7 @@ def stringToType(key, val):
         else:
             config_file[key] = val
     elif isinstance(obj.config[key], bool):
-        if isinstance(val, str):
+        if isinstance(val, string_types):
             config_file[key] = str_to_bool(val)
         else:
             config_file[key] = bool(val)
@@ -117,7 +118,7 @@ def stringToType(key, val):
 
 
 def boolCheck(val):
-    if isinstance(val, str):
+    if isinstance(val, string_types):
         return str_to_bool(val)
     elif isinstance(val, bool):
         return val
