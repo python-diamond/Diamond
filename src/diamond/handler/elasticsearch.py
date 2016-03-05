@@ -175,9 +175,14 @@ class ElasticsearchHandler(Handler):
             )
 
             if res['errors']:
-                self.log.debug("ElasticsearchHandler: Bulk request failed"
-                               " with %s" % json.dumps(res))
-                self.log.error("ElasticsearchHandler: send data failed")
+                for idx, item in enumerate(res['items']):
+                    if 'error' in item['index']:
+                        self.log.debug(
+                            "ElasticsearchHandler: %s" % repr(item))
+                        self.log.debug(
+                            "ElasticsearchHandler: "
+                            "Failed source : %s" % repr(self.metrics[idx]))
+                self.log.error("ElasticsearchHandler: Errors sending data")
                 raise Exception("Elasticsearch Cluster returned problem")
 
     def _send(self):
@@ -189,18 +194,18 @@ class ElasticsearchHandler(Handler):
             try:
                 if self.elasticclient is None:
                     self.log.debug("ElasticsearchHandler: not connected. "
-                                   "Reconnecting.")
+                                   "Reconnecting")
                     self._connect()
 
                 if self.elasticclient is None:
-                    self.log.debug("ElasticsearchHandler: Reconnect failed.")
+                    self.log.debug("ElasticsearchHandler: Reconnect failed")
                 else:
                     # Send data
                     self._send_data()
                     self.metrics = []
             except Exception:
                 self._throttle_error("ElasticsearchHandler: "
-                                     "Error sending metrics.")
+                                     "Error sending metrics")
         finally:
             if len(self.metrics) >= (
                     self.batch_size * self.max_backlog_multiplier):
@@ -232,7 +237,7 @@ class ElasticsearchHandler(Handler):
             self.log.debug("ElasticsearchHandler: Established connection to "
                            "Elasticsearch cluster %s",
                            repr(self.hosts))
-        except Exception, ex:
+        except Exception as ex:
             # Log Error
             self._throttle_error("ElasticsearchHandler: Failed to connect to "
                                  "%s.", ex)

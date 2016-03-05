@@ -24,6 +24,7 @@ MongoDBCollector.conf
 
 import diamond.collector
 from diamond.collector import str_to_bool
+from diamond.pycompat import long
 import re
 import zlib
 
@@ -228,8 +229,9 @@ class MongoDBCollector(diamond.collector.Collector):
         prefix = base_prefix + ['replset']
         self._publish_dict_with_prefix(data, prefix)
         total_nodes = len(data['members'])
-        healthy_nodes = reduce(lambda value, node: value + node['health'],
-                               data['members'], 0)
+        healthy_nodes = 0
+        for node in data['members']:
+            healthy_nodes += node['health']
 
         self._publish_dict_with_prefix({
             'healthy_nodes': healthy_nodes,
