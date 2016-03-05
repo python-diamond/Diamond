@@ -16,6 +16,8 @@ from diamond.collector import Collector
 from diamond.pycompat import long, URLError, URLOPEN
 from kafkastat import KafkaCollector
 
+import re
+
 ##########
 
 
@@ -147,15 +149,37 @@ class TestKafkaCollector(CollectorTestCase):
     @patch(URLOPEN)
     @patch.object(Collector, 'publish')
     def test(self, publish_mock, urlopen_mock):
-        urlopen_mock.side_effect = [
-            self.getFixture('serverbydomain_logs_only.xml'),
-            self.getFixture('serverbydomain_gc.xml'),
-            self.getFixture('serverbydomain_threading.xml'),
-            self.getFixture('gc_scavenge.xml'),
-            self.getFixture('gc_marksweep.xml'),
-            self.getFixture('mbean.xml'),
-            self.getFixture('threading.xml'),
-        ]
+        def get_right_fixture(url):
+            search = re.search(
+                r'/(?P<endpoint>[^/?]+)\?'
+                '.*(querynames|objectname)=(?P<objectname>[^&]+)',
+                url
+            )
+            if search:
+                endpoint = search.group('endpoint')
+                objectname = search.group('objectname')
+
+            if endpoint == 'serverbydomain':
+                if 'GarbageCollector' in objectname:
+                    return self.getFixture('serverbydomain_gc.xml')
+                elif 'Threading' in objectname:
+                    return self.getFixture('serverbydomain_threading.xml')
+                else:
+                    return self.getFixture('serverbydomain_logs_only.xml')
+            elif endpoint == 'mbean':
+                if 'MarkSweep' in objectname:
+                    return self.getFixture('gc_marksweep.xml')
+                elif 'Scavenge' in objectname:
+                    return self.getFixture('gc_scavenge.xml')
+                elif 'Threading' in objectname:
+                    return self.getFixture('threading.xml')
+                else:
+                    return self.getFixture('mbean.xml')
+            else:
+                return ''
+
+        urlopen_mock.side_effect = get_right_fixture
+
         self.collector.collect()
 
         expected_metrics = {

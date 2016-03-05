@@ -7,6 +7,7 @@ Collect stats via MX4J from Kafka
 
  * xml.etree
 """
+import six
 try:
     from xml.etree import ElementTree
 except ImportError:
@@ -155,18 +156,17 @@ class KafkaCollector(diamond.collector.Collector):
             'java.lang:type=GarbageCollector,name=*',
             'java.lang:type=Threading'
         ]
+
         mbeans = set()
+
         for pattern in query_list:
-            match = self.get_mbeans(pattern)
-            mbeans.update(match)
-
-        metrics = {}
-
-        # Query each one for stats
-        for mbean in mbeans:
-            stats = self.query_mbean(mbean)
-            metrics.update(stats)
-
-        # Publish stats
-        for metric, value in metrics.items():
-            self.publish(metric, value)
+            matches = self.get_mbeans(pattern)
+            for match in matches:
+                stats = self.query_mbean(match)
+                for metric, value in six.iteritems(stats):
+                    try:
+                        self.publish(metric, int(value))
+                    except (OverflowError, ValueError) as e:
+                        self.log.debug(
+                            "KafkaCollector: ValueError on metric %s"
+                            "with value %s" % (metric, str(value)))
