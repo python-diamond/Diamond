@@ -7,7 +7,7 @@ String values are ignored, except for the name and status.
 Name is used for the metric path, status is translated to
 an integer (running = 1, stopped = 0).
 Note: "$" are replaced by underscores (_) in the projection
-name to avoid problems with grafana.
+name to avoid problems with hostedGraphite/Grafana.
 
 This collector is based upon the HTTPJSONCollector.
 
@@ -29,9 +29,12 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
             EventstoreProjectionsCollector, self).get_default_config_help(
         )
         config_help.update({
-            'url': 'Full URL',
-            'headers': 'Header variable if needed. '
-            'Will be added to every request',
+            'path': "name of the metric in the metricpath",
+            'url': 'URL of the evenststore instance',
+            'route': 'route in eventstore for projections',
+            'port': 'tcp port where eventstore is listening',
+            'headers': 'Header variable if needed',
+            'debug': 'Enable or disable debug mode',
         })
         return config_help
 
@@ -40,9 +43,12 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
             EventstoreProjectionsCollector, self).get_default_config(
         )
         default_config.update({
-            'path': 'eventstore',
-            'url': 'http://hostname:2113/projections/all-non-transient',
+            'path': "eventstore",
+            'url': 'http://localhost',
+            'route': '/projections/all-non-transient',
+            'port': 2113,
             'headers': {'User-Agent': 'Diamond Eventstore metrics collector'},
+            'debug': False,
         })
         return default_config
 
@@ -61,8 +67,8 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
                     value = 0
                     yield ("%s.%s" % (prefix, key), value)
                 else:
-                    # very chatty, uncomment if you want to see the output
-                    # self.log.debug("ignoring string value = %s", value)
+                    if self.config['debug']:
+                        self.log.debug("ignoring string value = %s", value)
                     continue
             else:
                 try:
@@ -73,7 +79,11 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
                     yield ("%s.%s" % (prefix, key), value)
 
     def collect(self):
-        url = self.config['url']
+        url = "%s:%s%s" % (
+            self.config['url'],
+            self.config['port'],
+            self.config['route']
+        )
 
         req = urllib2.Request(url, headers=self.config['headers'])
         req.add_header('Content-type', 'application/json')
@@ -90,8 +100,8 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
 
                 data = {}
                 for projection in projections:
-                    dataName = projection["name"].replace("$", "_")
-                    data[dataName] = projection
+                    name = projection["name"].replace("$", "_")
+                    data[name] = projection
             except ValueError as e:
                 self.log.error("Can't parse JSON object from %s. %s", url, e)
             else:
