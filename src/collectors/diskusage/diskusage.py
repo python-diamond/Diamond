@@ -277,4 +277,4 @@ class DiskUsageCollector(diamond.collector.Collector):
                 for key in metrics:
                     metric_name = '.'.join([info['device'], key]).replace(
                         '/', '_')
-                    self.publish(metric_name, metrics[key])
+                    self.publish(metric_name, metrics[key], precision=3)
