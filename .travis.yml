@@ -3,13 +3,12 @@ sudo: false
 
 language: python
 python:
-#  - "2.5"
   - "2.6"
   - "2.7"
 
 cache:
-  directories:
-    - $HOME/.cache/pip
+  apt: true
+  pip: true
 
 # command to install dependencies, e.g. pip install -r requirements.txt
 install:
@@ -26,6 +25,18 @@ script:
 after_success:
     coveralls
 
+before_deploy:
+  - make deb
+
+deploy:
+  provider: releases
+  api-key: "GITHUB OAUTH TOKEN"
+  file:
+    - '*.deb'
+  skip_cleanup: true
+  on:
+    tags: true
+
 notifications:
   email:
     recipients:
@@ -35,5 +46,13 @@ notifications:
     on_failure: always
 
 addons:
-    apt_packages:
-    - libsensors4
+  apt:
+    packages:
+      - cdbs
+      - devscripts
+      - libsensors4
+      - pbuilder
+      - python-configobj
+      - python-mock
+      - python-support
+
