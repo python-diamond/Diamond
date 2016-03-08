@@ -108,7 +108,7 @@ class PostfixCollector(diamond.collector.Collector):
 
                 dvalue = self.derivative(metric, value)
 
-                self.publish(metric, dvalue)
+                self.publish(metric, dvalue, precision=4)
 
         for action in (u'in', u'recv', u'send'):
             if action not in data:
@@ -122,7 +122,7 @@ class PostfixCollector(diamond.collector.Collector):
 
                     dvalue = self.derivative(metric, value)
 
-                    self.publish(metric, dvalue)
+                    self.publish(metric, dvalue, precision=4)
 
         if u'local' in data:
             for key, value in data[u'local'].iteritems():
@@ -130,4 +130,4 @@ class PostfixCollector(diamond.collector.Collector):
 
                 dvalue = self.derivative(metric, value)
 
-                self.publish(metric, dvalue)
+                self.publish(metric, dvalue, precision=4)

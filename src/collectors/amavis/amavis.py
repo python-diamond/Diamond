@@ -87,10 +87,13 @@ class AmavisCollector(diamond.collector.Collector):
                             if metric == 'name':
                                 continue
                             mtype = 'GAUGE'
+                            precision = 2
                             if metric in ('count', 'time'):
                                 mtype = 'COUNTER'
+                                precision = 0
                             self.publish("{0}.{1}".format(name, metric),
-                                         value, metric_type=mtype)
+                                         value, metric_type=mtype,
+                                         precision=precision)
 
         except OSError as err:
             self.log.error("Could not run %s: %s",

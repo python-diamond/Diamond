@@ -64,6 +64,8 @@ class LMSensorsCollector(diamond.collector.Collector):
                             value = 0
 
                     if value is not None:
-                        self.publish(".".join([str(chip), label]), value)
+                        self.publish(".".join([str(chip), label]),
+                                     value,
+                                     precision=2)
         finally:
             sensors.cleanup()

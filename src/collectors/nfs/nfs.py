@@ -219,7 +219,7 @@ class NfsCollector(diamond.collector.Collector):
                 metric_name = stat
                 metric_value = long(float(results[stat]))
                 metric_value = self.derivative(metric_name, metric_value)
-                self.publish(metric_name, metric_value)
+                self.publish(metric_name, metric_value, precision=3)
             return True
 
         return False
