@@ -81,8 +81,9 @@ class InfluxdbHandler(Handler):
         self.time_multiplier = 1
 
         if self.influxdb_version == '0.8' and not InfluxDB08Client:
-            self.log.error('influxdb.influxdb08.client.InfluxDBClient import failed. '
-                            'Handler disabled')
+            self.log.error(
+                'influxdb.influxdb08.client.InfluxDBClient import failed. '
+                'Handler disabled')
             self.enabled = False
             return
         elif not InfluxDBClient:
@@ -193,7 +194,7 @@ class InfluxdbHandler(Handler):
                                 "columns": ["time", "value"]})
                     elif self.influxdb_version == "0.9":
                         for path in self.batch:
-                            # split path to use influx syntax for tags and tables.
+                            # split path to use influx syntax for tags & tables
                             tokenized = path.split('.')
                             table = tokenized[2]
                             tags = {'host': tokenized[1]}
@@ -202,9 +203,10 @@ class InfluxdbHandler(Handler):
                             elif len(tokenized) == 5:
                                 tags[tokenized[2]] = tokenized[3]
                                 metricname = tokenized[4]
-                            # Cast to float to ensure it's written as a float in InfluxDB.
-                            # This prevents future errors where the data type of a field
-                            # in InfluxDB is 'int', but we try to write a float to that field.
+                            # Cast to float to ensure it's written
+                            # as a float in InfluxDB. This prevents future
+                            # errors where the data type of a field in InfluxDB
+                            # is 'int' and try to write a float to that field.
                             value = self.batch[path][0][1]
                             if isinstance(value, integer_types):
                                 value = float(value)
@@ -244,12 +246,12 @@ class InfluxdbHandler(Handler):
             if self.influxdb_version == '0.8':
                 # Use legacy client for InfluxDB 0.8
                 self.influx = InfluxDB08Client(self.hostname, self.port,
-                                        self.username, self.password,
-                                        self.database, self.ssl)
+                    self.username, self.password,
+                    self.database, self.ssl)
             else:
                 self.influx = InfluxDBClient(self.hostname, self.port,
-                                         self.username, self.password,
-                                         self.database, self.ssl)
+                    self.username, self.password,
+                    self.database, self.ssl)
             # Log
             self.log.debug("InfluxdbHandler: Established connection to "
                            "%s:%d/%s.",
