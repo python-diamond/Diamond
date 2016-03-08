@@ -196,12 +196,12 @@ class InfluxdbHandler(Handler):
                             # split path to use influx syntax for tags and tables.
                             tokenized = path.split('.')
                             table = tokenized[2]
-                            tags = {'host':tokenized[1]}
+                            tags = {'host': tokenized[1]}
                             if len(tokenized) == 4:
-                                metricname=tokenized[3]
+                                metricname = tokenized[3]
                             elif len(tokenized) == 5:
                                 tags[tokenized[2]] = tokenized[3]
-                                metricname=tokenized[4]
+                                metricname = tokenized[4]
                             # Cast to float to ensure it's written as a float in InfluxDB.
                             # This prevents future errors where the data type of a field
                             # in InfluxDB is 'int', but we try to write a float to that field.
