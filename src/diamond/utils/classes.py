@@ -186,7 +186,7 @@ def load_collectors_from_entry_point(path):
         except Exception:
             logger.error('Failed to import entry_point: %s. %s',
                          ep.name,
-                         traceback.format_exec())
+                         traceback.format_exc())
         else:
             collectors.update(get_collectors_from_module(mod))
     return collectors
