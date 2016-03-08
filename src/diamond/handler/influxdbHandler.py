@@ -246,12 +246,12 @@ class InfluxdbHandler(Handler):
             if self.influxdb_version == '0.8':
                 # Use legacy client for InfluxDB 0.8
                 self.influx = InfluxDB08Client(self.hostname, self.port,
-                    self.username, self.password,
-                    self.database, self.ssl)
+                                               self.username, self.password,
+                                               self.database, self.ssl)
             else:
                 self.influx = InfluxDBClient(self.hostname, self.port,
-                    self.username, self.password,
-                    self.database, self.ssl)
+                                             self.username, self.password,
+                                             self.database, self.ssl)
             # Log
             self.log.debug("InfluxdbHandler: Established connection to "
                            "%s:%d/%s.",
