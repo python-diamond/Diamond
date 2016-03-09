@@ -12,6 +12,7 @@ kernel module.
 
 import diamond.collector
 import os
+from six import string_types
 
 
 class ConnTrackCollector(diamond.collector.Collector):
@@ -50,12 +51,12 @@ class ConnTrackCollector(diamond.collector.Collector):
         collected = {}
         files = []
 
-        if isinstance(self.config['dir'], basestring):
+        if isinstance(self.config['dir'], string_types):
             dirs = [d.strip() for d in self.config['dir'].split(',')]
         elif isinstance(self.config['dir'], list):
             dirs = self.config['dir']
 
-        if isinstance(self.config['files'], basestring):
+        if isinstance(self.config['files'], string_types):
             files = [f.strip() for f in self.config['files'].split(',')]
         elif isinstance(self.config['files'], list):
             files = self.config['files']

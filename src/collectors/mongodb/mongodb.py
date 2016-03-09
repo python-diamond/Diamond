@@ -26,6 +26,7 @@ import diamond.collector
 from diamond.collector import str_to_bool
 import re
 import zlib
+from six import string_types
 
 try:
     import pymongo
@@ -108,7 +109,7 @@ class MongoDBCollector(diamond.collector.Collector):
         hosts = self.config.get('hosts')
 
         # Convert a string config value to be an array
-        if isinstance(hosts, basestring):
+        if isinstance(hosts, string_types):
             hosts = [hosts]
 
         # we need this for backwards compatibility
@@ -152,7 +153,7 @@ class MongoDBCollector(diamond.collector.Collector):
 
             try:
                 # Ensure that the SSL option is a boolean.
-                if type(self.config['ssl']) is str:
+                if isinstance(self.config['ssl'], string_types):
                     self.config['ssl'] = str_to_bool(self.config['ssl'])
 
                 if ReadPreference is None:
@@ -168,7 +169,7 @@ class MongoDBCollector(diamond.collector.Collector):
                         ssl=self.config['ssl'],
                         read_preference=ReadPreference.SECONDARY,
                     )
-            except Exception, e:
+            except Exception as e:
                 self.log.error('Couldnt connect to mongodb: %s', e)
                 continue
 
@@ -176,10 +177,9 @@ class MongoDBCollector(diamond.collector.Collector):
             if user:
                 try:
                     conn.admin.authenticate(user, passwd)
-                except Exception, e:
-                    self.log.error(
-                        'User auth given, but could not autheticate' +
-                        ' with host: %s, err: %s' % (host, e))
+                except Exception as e:
+                    self.log.error('User auth given, but could not authenticate'
+                                   'with host: %s, err: %s' % (host, e))
                     return{}
 
             data = conn.db.command('serverStatus')
@@ -229,8 +229,9 @@ class MongoDBCollector(diamond.collector.Collector):
         prefix = base_prefix + ['replset']
         self._publish_dict_with_prefix(data, prefix)
         total_nodes = len(data['members'])
-        healthy_nodes = reduce(lambda value, node: value + node['health'],
-                               data['members'], 0)
+        healthy_nodes = 0
+        for node in data['members']:
+            healthy_nodes += node['health']
 
         self._publish_dict_with_prefix({
             'healthy_nodes': healthy_nodes,
@@ -340,8 +341,6 @@ class MongoDBCollector(diamond.collector.Collector):
                 self._publish_metrics(keys, new_key, value)
         elif isinstance(value, int) or isinstance(value, float):
             publishfn('.'.join(keys), value)
-        elif isinstance(value, long):
-            publishfn('.'.join(keys), float(value))
 
     def _extract_simple_data(self, data):
         return {

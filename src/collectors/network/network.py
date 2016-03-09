@@ -114,7 +114,7 @@ class NetworkCollector(diamond.collector.Collector):
                 metric_name = '.'.join([device, s])
                 # Get Metric Value
                 metric_value = self.derivative(metric_name,
-                                               long(v),
+                                               int(v),
                                                diamond.collector.MAX_COUNTER)
 
                 # Convert rx_bytes and tx_bytes

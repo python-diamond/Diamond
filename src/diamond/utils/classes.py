@@ -7,6 +7,9 @@ import logging
 import inspect
 import traceback
 import pkg_resources
+import copy
+import imp
+from six import string_types
 
 from diamond.util import load_class_from_name
 from diamond.collector import Collector
@@ -35,14 +38,14 @@ def load_include_path(paths):
                 load_include_path([fpath])
 
 
-def load_dynamic_class(fqn, subclass):
+def load_dynamic_class(fqn, subclass, module_prefix=None):
     """
     Dynamically load fqn class and verify it's a subclass of subclass
     """
-    if not isinstance(fqn, basestring):
+    if not isinstance(fqn, string_types):
         return fqn
 
-    cls = load_class_from_name(fqn)
+    cls = load_class_from_name(fqn, module_prefix)
 
     if cls == subclass or not issubclass(cls, subclass):
         raise TypeError("%s is not a valid %s" % (fqn, subclass.__name__))
@@ -54,17 +57,16 @@ def load_handlers(config, handler_names):
     """
     Load handlers
     """
-
     handlers = []
 
-    if isinstance(handler_names, basestring):
+    if isinstance(handler_names, string_types):
         handler_names = [handler_names]
 
     for handler in handler_names:
         logger.debug('Loading Handler %s', handler)
         try:
             # Load Handler Class
-            cls = load_dynamic_class(handler, Handler)
+            cls = load_dynamic_class(handler, Handler, 'handler_')
             cls_name = cls.__name__
 
             # Initialize Handler config
@@ -103,8 +105,14 @@ def load_collectors(paths):
     """
     Load all collectors
     """
+    # Save sys.path
+    origin_path = copy.copy(sys.path)
+
     collectors = load_collectors_from_paths(paths)
     collectors.update(load_collectors_from_entry_point('diamond.collectors'))
+
+    sys.path = origin_path
+
     return collectors
 
 
@@ -118,7 +126,7 @@ def load_collectors_from_paths(paths):
     if paths is None:
         return
 
-    if isinstance(paths, basestring):
+    if isinstance(paths, string_types):
         paths = paths.split(',')
         paths = map(str.strip, paths)
 
@@ -153,8 +161,11 @@ def load_collectors_from_paths(paths):
 
                 try:
                     # Import the module
-                    mod = __import__(modname, globals(), locals(), ['*'])
-                except (KeyboardInterrupt, SystemExit), err:
+                    custom_name = 'collector_%s' % modname
+                    f, pathname, desc = imp.find_module(modname, sys.path)
+                    mod = imp.load_module(custom_name, f, pathname, desc)
+                    f.close()
+                except (KeyboardInterrupt, SystemExit) as err:
                     logger.error(
                         "System or keyboard interrupt "
                         "while loading module %s"
@@ -206,10 +217,9 @@ def get_collectors_from_module(mod):
             if attrname.startswith('parent_'):
                 continue
             # Get class name
-            fqcn = '.'.join([mod.__name__, attrname])
             try:
                 # Load Collector class
-                cls = load_dynamic_class(fqcn, Collector)
+                cls = attr
                 # Add Collector class
                 yield cls.__name__, cls
             except Exception:

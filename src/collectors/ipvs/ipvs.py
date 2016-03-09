@@ -12,7 +12,6 @@ Shells out to get ipvs statistics, which may or may not require sudo access
 import diamond.collector
 import subprocess
 import os
-import string
 from diamond.collector import str_to_bool
 
 
@@ -76,7 +75,10 @@ class IPVSCollector(diamond.collector.Collector):
                 lambda a: a != '--exact', self.statcommand)
 
         p = subprocess.Popen(self.statcommand,
-                             stdout=subprocess.PIPE).communicate()[0][:-1]
+                             stdout=subprocess.PIPE).communicate()[0]
+        if isinstance(p, bytes):
+            p = p.decode("utf8")
+        p = p[:-1]
 
         columns = {
             'conns': 2,
@@ -94,14 +96,14 @@ class IPVSCollector(diamond.collector.Collector):
             row = line.split()
 
             if row[0] == "TCP" or row[0] == "UDP":
-                external = row[0] + "_" + string.replace(row[1], ".", "_")
+                external = row[0] + "_" + row[1].replace(".", "_")
                 backend = "total"
             elif row[0] == "->":
-                backend = string.replace(row[1], ".", "_")
+                backend = row[1].replace(".", "_")
             else:
                 continue
 
-            for metric, column in columns.iteritems():
+            for metric, column in columns.items():
                 metric_name = ".".join([external, backend, metric])
                 # metric_value = int(row[column])
                 value = row[column]
@@ -118,7 +120,10 @@ class IPVSCollector(diamond.collector.Collector):
                 self.publish(metric_name, metric_value)
 
         p = subprocess.Popen(self.concommand,
-                             stdout=subprocess.PIPE).communicate()[0][:-1]
+                             stdout=subprocess.PIPE).communicate()[0]
+        if isinstance(p, bytes):
+            p = p.decode("utf8")
+        p = p[:-1]
 
         columns = {
             'active': 4,
@@ -135,21 +140,21 @@ class IPVSCollector(diamond.collector.Collector):
 
             if row[0] == "TCP" or row[0] == "UDP":
                 if total:
-                    for metric, value in total.iteritems():
+                    for metric, value in total.items():
                         self.publish(
                             ".".join([external, "total", metric]), value)
 
                 for k in columns.keys():
                     total[k] = 0.0
 
-                external = row[0] + "_" + string.replace(row[1], ".", "_")
+                external = row[0] + "_" + row[1].replace(".", "_")
                 continue
             elif row[0] == "->":
-                backend = string.replace(row[1], ".", "_")
+                backend = row[1].replace(".", "_")
             else:
                 continue
 
-            for metric, column in columns.iteritems():
+            for metric, column in columns.items():
                 metric_name = ".".join([external, backend, metric])
                 # metric_value = int(row[column])
                 value = row[column]
@@ -167,5 +172,5 @@ class IPVSCollector(diamond.collector.Collector):
                 self.publish(metric_name, metric_value)
 
         if total:
-            for metric, value in total.iteritems():
+            for metric, value in total.items():
                 self.publish(".".join([external, "total", metric]), value)

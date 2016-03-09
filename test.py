@@ -9,6 +9,8 @@ import traceback
 import optparse
 import logging
 import configobj
+import imp
+import copy
 
 try:
     # python 2.6
@@ -24,18 +26,30 @@ except ImportError:
 try:
     from cStringIO import StringIO
 except ImportError:
-    from StringIO import StringIO
+    try:
+        from StringIO import StringIO
+    except ImportError:
+        from io import StringIO
 
 try:
     from setproctitle import setproctitle
 except ImportError:
     setproctitle = None
 
+try:
+    from mock import ANY, call, MagicMock, Mock, mock_open, patch
+except ImportError:
+    from unittest.mock import ANY, call, MagicMock, Mock, mock_open, patch
+
+try:  # py3k way
+    import builtins
+    BUILTIN_OPEN = "builtins.open"
+except ImportError:  # py2.x way
+    BUILTIN_OPEN = "__builtin__.open"
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                             'src')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                             'src', 'collectors')))
+sys.path.insert(0, os.path.abspath(os.path.join(
+    os.path.dirname(__file__), 'src')))
 
 
 def run_only(func, predicate):
@@ -83,7 +97,7 @@ class CollectorTestCase(unittest.TestCase):
             with open(filePath, 'w') as fp:
                 for line in content:
                     if line.strip() == '__EXAMPLESHERE__':
-                        for metric in sorted(metrics.iterkeys()):
+                        for metric in sorted(metrics.keys()):
 
                             metricPath = 'servers.hostname.'
 
@@ -110,7 +124,7 @@ class CollectorTestCase(unittest.TestCase):
         path = os.path.join(self.getFixtureDirPath(),
                             fixture_name)
         if not os.access(path, os.R_OK):
-            print "Missing Fixture " + path
+            print("Missing Fixture " + path)
         return path
 
     def getFixture(self, fixture_name):
@@ -124,7 +138,7 @@ class CollectorTestCase(unittest.TestCase):
         return fixtures
 
     def getPickledResults(self, results_name):
-        with open(self.getFixturePath(results_name), 'r') as f:
+        with open(self.getFixturePath(results_name), 'rb') as f:
             return pickle.load(f)
 
     def setPickledResults(self, results_name, data):
@@ -137,11 +151,11 @@ class CollectorTestCase(unittest.TestCase):
     def assertPublished(self, mock, key, value, expected_value=1):
         if type(mock) is list:
             for m in mock:
-                calls = (filter(lambda x: x[0][0] == key, m.call_args_list))
+                calls = list(filter(lambda x: x[0][0] == key, m.call_args_list))
                 if len(calls) > 0:
                     break
         else:
-            calls = filter(lambda x: x[0][0] == key, mock.call_args_list)
+            calls = list(filter(lambda x: x[0][0] == key, mock.call_args_list))
 
         actual_value = len(calls)
         message = '%s: actual number of calls %d, expected %d' % (
@@ -173,7 +187,7 @@ class CollectorTestCase(unittest.TestCase):
         return self.assertPublishedMany(mock, dict, expected_value)
 
     def assertPublishedMany(self, mock, dict, expected_value=1):
-        for key, value in dict.iteritems():
+        for key, value in dict.items():
             self.assertPublished(mock, key, value, expected_value)
 
         if type(mock) is list:
@@ -186,8 +200,8 @@ class CollectorTestCase(unittest.TestCase):
         return self.assertPublishedMetric(mock, key, value, expected_value)
 
     def assertPublishedMetric(self, mock, key, value, expected_value=1):
-        calls = filter(lambda x: x[0][0].path.find(key) != -1,
-                       mock.call_args_list)
+        calls = list(filter(lambda x: x[0][0].path.find(key) != -1,
+                            mock.call_args_list))
 
         actual_value = len(calls)
         message = '%s: actual number of calls %d, expected %d' % (
@@ -219,7 +233,7 @@ class CollectorTestCase(unittest.TestCase):
         return self.assertPublishedMetricMany(mock, dict, expected_value)
 
     def assertPublishedMetricMany(self, mock, dict, expected_value=1):
-        for key, value in dict.iteritems():
+        for key, value in dict.items():
             self.assertPublishedMetric(mock, key, value, expected_value)
 
         mock.reset_mock()
@@ -227,7 +241,9 @@ class CollectorTestCase(unittest.TestCase):
 collectorTests = {}
 
 
-def getCollectorTests(path):
+def getTests(path, class_prefix="collectortest_"):
+    origin_path = copy.copy(sys.path)
+
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
 
@@ -240,19 +256,24 @@ def getCollectorTests(path):
             modname = f[:-3]
             try:
                 # Import the module
-                collectorTests[modname] = __import__(modname,
-                                                     globals(),
-                                                     locals(),
-                                                     ['*'])
+                custom_name = '%s%s' % (class_prefix, modname)
+                f, pathname, desc = imp.find_module(
+                    modname, sys.path)
+                collectorTests[modname] = imp.load_module(
+                    custom_name, f, pathname, desc)
+                if f is not None:
+                    f.close()
             except Exception:
-                print "Failed to import module: %s. %s" % (
-                    modname, traceback.format_exc())
+                print("Failed to import module: %s. %s" % (
+                    modname, traceback.format_exc()))
                 continue
 
     for f in os.listdir(path):
         cPath = os.path.abspath(os.path.join(path, f))
         if os.path.isdir(cPath):
-            getCollectorTests(cPath)
+            getTests(cPath, class_prefix)
+
+    sys.path = origin_path
 
 ###############################################################################
 
@@ -291,12 +312,12 @@ if __name__ == "__main__":
                                          'src',
                                          'diamond'))
 
-    getCollectorTests(cPath)
+    getTests(cPath, 'collectortest_')
 
     if not options.collector:
         # Only pull in diamond tests when a specific collector
         # hasn't been specified
-        getCollectorTests(dPath)
+        getTests(dPath, 'diamondtest_')
 
     loader = unittest.TestLoader()
     tests = []

@@ -6,15 +6,17 @@ Collect stats from Apache HTTPD server using mod_status
 #### Dependencies
 
  * mod_status
- * httplib
- * urlparse
-
 """
 
 import re
-import httplib
-import urlparse
+try:
+    from httplib import HTTPConnection
+except ImportError:
+    from http.client import HTTPConnection
+
 import diamond.collector
+from diamond.pycompat import urlparse
+from six import string_types
 
 
 class HttpdCollector(diamond.collector.Collector):
@@ -25,7 +27,7 @@ class HttpdCollector(diamond.collector.Collector):
             self.config['urls'].append(self.config['url'])
 
         self.urls = {}
-        if isinstance(self.config['urls'], basestring):
+        if isinstance(self.config['urls'], string_types):
             self.config['urls'] = self.config['urls'].split(',')
 
         for url in self.config['urls']:
@@ -66,7 +68,7 @@ class HttpdCollector(diamond.collector.Collector):
                 while True:
 
                     # Parse Url
-                    parts = urlparse.urlparse(url)
+                    parts = urlparse(url)
 
                     # Parse host and port
                     endpoint = parts[1].split(':')
@@ -78,8 +80,8 @@ class HttpdCollector(diamond.collector.Collector):
                         service_port = 80
 
                     # Setup Connection
-                    connection = httplib.HTTPConnection(service_host,
-                                                        service_port)
+                    connection = HTTPConnection(service_host,
+                                                service_port)
 
                     url = "%s?%s" % (parts[2], parts[4])
 
@@ -93,7 +95,7 @@ class HttpdCollector(diamond.collector.Collector):
                         break
                     url = headers['location']
                     connection.close()
-            except Exception, e:
+            except Exception as e:
                 self.log.error(
                     "Error retrieving HTTPD stats for host %s:%s, url '%s': %s",
                     service_host, str(service_port), url, e)

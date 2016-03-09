@@ -4,8 +4,9 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import MagicMock, Mock
-from mock import patch
+from test import MagicMock, Mock
+from test import patch
+from test import BUILTIN_OPEN
 
 from diamond.collector import Collector
 from mountstats import MountStatsCollector
@@ -24,7 +25,7 @@ class TestMountStatsCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(MountStatsCollector)
 
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_open_mountstats(self, publish_mock, open_mock):

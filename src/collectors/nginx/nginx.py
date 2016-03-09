@@ -3,10 +3,6 @@
 """
 Collect statistics from Nginx
 
-#### Dependencies
-
- * urllib2
-
 #### Usage
 
 To enable the nginx status page to work with defaults,
@@ -26,10 +22,9 @@ following content:
 </pre>
 
 """
-
-import urllib2
 import re
 import diamond.collector
+import diamond.pycompat
 
 
 class NginxCollector(diamond.collector.Collector):
@@ -56,14 +51,14 @@ class NginxCollector(diamond.collector.Collector):
                                   int(self.config['req_port']),
                                   self.config['req_path'])
         activeConnectionsRE = re.compile(r'Active connections: (?P<conn>\d+)')
-        totalConnectionsRE = re.compile('^\s+(?P<conn>\d+)\s+' +
+        totalConnectionsRE = re.compile('^\s+(?P<conn>\d+)\s+'
                                         '(?P<acc>\d+)\s+(?P<req>\d+)')
-        connectionStatusRE = re.compile('Reading: (?P<reading>\d+) ' +
-                                        'Writing: (?P<writing>\d+) ' +
+        connectionStatusRE = re.compile('Reading: (?P<reading>\d+) '
+                                        'Writing: (?P<writing>\d+) '
                                         'Waiting: (?P<waiting>\d+)')
-        req = urllib2.Request(url)
+        req = diamond.pycompat.Request(url)
         try:
-            handle = urllib2.urlopen(req)
+            handle = diamond.pycompat.urlopen(req)
             for l in handle.readlines():
                 l = l.rstrip('\r\n')
                 if activeConnectionsRE.match(l):
@@ -83,7 +78,7 @@ class NginxCollector(diamond.collector.Collector):
                     self.publish_gauge('act_reads', int(m.group('reading')))
                     self.publish_gauge('act_writes', int(m.group('writing')))
                     self.publish_gauge('act_waits', int(m.group('waiting')))
-        except IOError, e:
+        except IOError as e:
             self.log.error("Unable to open %s" % url)
-        except Exception, e:
+        except Exception as e:
             self.log.error("Unknown error opening url: %s", e)

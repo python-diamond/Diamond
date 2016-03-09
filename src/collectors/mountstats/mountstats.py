@@ -18,6 +18,7 @@ import subprocess
 
 import diamond.collector
 from diamond.collector import str_to_bool
+from six import string_types
 
 
 class MountStatsCollector(diamond.collector.Collector):
@@ -60,7 +61,7 @@ class MountStatsCollector(diamond.collector.Collector):
     def process_config(self):
         super(MountStatsCollector, self).process_config()
         self.exclude_filters = self.config['exclude_filters']
-        if isinstance(self.exclude_filters, basestring):
+        if isinstance(self.exclude_filters, string_types):
             self.exclude_filters = [self.exclude_filters]
 
         if len(self.exclude_filters) > 0:
@@ -69,7 +70,7 @@ class MountStatsCollector(diamond.collector.Collector):
             self.exclude_reg = None
 
         self.include_filters = self.config['include_filters']
-        if isinstance(self.include_filters, basestring):
+        if isinstance(self.include_filters, string_types):
             self.include_filters = [self.include_filters]
 
         if len(self.include_filters) > 0:
@@ -120,7 +121,10 @@ class MountStatsCollector(diamond.collector.Collector):
 
             command = [self.config['sudo_cmd'], '/bin/cat', self.MOUNTSTATS]
             p = subprocess.Popen(command,
-                                 stdout=subprocess.PIPE).communicate()[0][:-1]
+                                 stdout=subprocess.PIPE).communicate()[0]
+            if isinstance(p, bytes):
+                p = p.decode("utf8")
+            p = p[:-1]
             lines = p.split("\n")
 
         else:
@@ -161,12 +165,12 @@ class MountStatsCollector(diamond.collector.Collector):
             elif tokens[0] == 'events:':
                 for i in range(0, len(self.EVENTS_MAP)):
                     metric_name = "%s.events.%s" % (path, self.EVENTS_MAP[i])
-                    metric_value = long(tokens[i + 1])
+                    metric_value = int(tokens[i + 1])
                     self.publish_counter(metric_name, metric_value)
             elif tokens[0] == 'bytes:':
                 for i in range(0, len(self.BYTES_MAP)):
                     metric_name = "%s.bytes.%s" % (path, self.BYTES_MAP[i])
-                    metric_value = long(tokens[i + 1])
+                    metric_value = int(tokens[i + 1])
                     self.publish_counter(metric_name, metric_value)
             elif tokens[0] == 'xprt:':
                 proto = tokens[1]
@@ -177,13 +181,13 @@ class MountStatsCollector(diamond.collector.Collector):
                 for i in range(0, len(self.XPRT_MAP[proto])):
                     metric_name = "%s.xprt.%s.%s" % (path, proto,
                                                      self.XPRT_MAP[proto][i])
-                    metric_value = long(tokens[i + 2])
+                    metric_value = int(tokens[i + 2])
                     self.publish_counter(metric_name, metric_value)
             elif tokens[0][:-1] in self.RPCS_MAP:
                 rpc = tokens[0][:-1]
-                ops = long(tokens[1])
-                rtt = long(tokens[7])
-                exe = long(tokens[8])
+                ops = int(tokens[1])
+                rtt = int(tokens[7])
+                exe = int(tokens[8])
 
                 metric_fmt = "%s.rpc.%s.%s"
                 ops_name = metric_fmt % (path, rpc.lower(), 'ops')

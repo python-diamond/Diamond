@@ -6,8 +6,8 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 from test import run_only
-from mock import Mock
-from mock import patch, call
+from test import Mock
+from test import patch, call
 
 from diamond.collector import Collector
 from redisstat import RedisCollector
@@ -294,7 +294,7 @@ class TestRedisCollector(CollectorTestCase):
             for exp_call in data['calls']:
                 # Test expected calls 1 by 1,
                 # because self.instances is a dict (=random order)
-                mock.assert_has_calls(exp_call)
+                mock.assert_has_calls([exp_call])
 
     @run_only_if_redis_is_available
     @patch.object(Collector, 'publish')
@@ -350,7 +350,7 @@ class TestRedisCollector(CollectorTestCase):
         for exp_call in expected_calls:
             # Test expected calls 1 by 1,
             # because self.instances is a dict (=random order)
-            publish_mock.assert_has_calls(exp_call)
+            publish_mock.assert_has_calls([exp_call])
 
 
 ##########################################################################

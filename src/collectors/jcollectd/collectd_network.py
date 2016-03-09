@@ -29,6 +29,7 @@ import select
 import platform
 from datetime import datetime
 from copy import deepcopy
+from six import string_types
 
 if platform.python_version() < '2.8.0':
     # Python 2.7 and below io.StringIO does not like unicode
@@ -367,7 +368,7 @@ class Reader(object):
             if iterable is None:
                 return None
 
-        if isinstance(iterable, basestring):
+        if isinstance(iterable, string_types):
             iterable = self.decode(poll_interval, iterable)
 
         return interpret_opcodes(iterable)

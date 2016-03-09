@@ -3,6 +3,7 @@
 import os
 import sys
 import inspect
+import imp
 
 
 def get_diamond_version():
@@ -36,14 +37,27 @@ def load_modules_from_path(path):
             __import__(modname, globals(), locals(), ['*'])
 
 
-def load_class_from_name(fqcn):
+def load_class_from_name(fqcn, module_prefix=None):
     # Break apart fqcn to get module and classname
     paths = fqcn.split('.')
-    modulename = '.'.join(paths[:-1])
     classname = paths[-1]
+    if module_prefix:
+        modulename = "%s%s" % (module_prefix, paths[0])
+    else:
+        modulename = paths[0]
+
     # Import the module
-    __import__(modulename, globals(), locals(), ['*'])
-    # Get the class
+    f, filename, desc = imp.find_module(paths[0])
+    mod = imp.load_module(modulename, f, filename, desc)
+    if len(paths) > 2:
+        for path in paths[1:-1]:
+            if module_prefix:
+                modulename = "%s%s" % (module_prefix, path)
+            else:
+                modulename = path
+            f, filename, desc = imp.find_module(path, mod.__path__)
+            mod = imp.load_module(modulename, f, filename, desc)
+
     cls = getattr(sys.modules[modulename], classname)
     # Check cls
     if not inspect.isclass(cls):

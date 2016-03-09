@@ -5,15 +5,19 @@ This class collects data from libsensors. It should work against libsensors 2.x
 and 3.x, pending support within the PySensors Ctypes binding:
 [http://pypi.python.org/pypi/PySensors/](http://pypi.python.org/pypi/PySensors/)
 
-Requires: 'sensors' to be installed, configured, and the relevant kernel
-modules to be loaded. Requires: PySensors requires Python 2.6+
+Requires: module 'sensors' to be installed, configured, and the relevant kernel
+modules to be loaded.
 
 If you're having issues, check your version of 'sensors'. This collector
 written against: sensors version 3.1.2 with libsensors version 3.1.2
 
 #### Dependencies
 
+Python 2.X :
  * [PySensors](http://pypi.python.org/pypi/PySensors/)
+
+Python 3.X :
+ * [py3sensors] (https://bitbucket.org/gleb_zhulik/py3sensors/)
 
 """
 

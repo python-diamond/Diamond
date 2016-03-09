@@ -11,6 +11,7 @@ A mounted cgroup fs. Defaults to /sys/fs/cgroup/cpuacct/
 
 import diamond.collector
 import os
+from six import iteritems
 
 
 class CpuAcctCgroupCollector(diamond.collector.Collector):
@@ -62,8 +63,8 @@ defaults to /sys/fs/cgroup/cpuacct/. Redhat/CentOS/SL use /cgroup"""
                 stat_file.close()
 
         # create metrics from collected utimes and stimes for cgroups
-        for parent, cpuacct in results.iteritems():
-            for key, value in cpuacct.iteritems():
+        for parent, cpuacct in iteritems(results):
+            for key, value in iteritems(cpuacct):
                 metric_name = '.'.join([parent, key])
                 self.publish(metric_name, value, metric_type='GAUGE')
         return True

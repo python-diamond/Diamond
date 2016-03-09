@@ -70,8 +70,8 @@ class UserScriptsCollector(diamond.collector.Collector):
                 proc = subprocess.Popen([absolutescriptpath],
                                         stdout=subprocess.PIPE,
                                         stderr=subprocess.PIPE)
-                (out, err) = proc.communicate()
-            except subprocess.CalledProcessError, e:
+                out, err = proc.communicate()
+            except subprocess.CalledProcessError as e:
                 self.log.error("%s error launching: %s; skipping" %
                                (absolutescriptpath, e))
                 continue
@@ -82,10 +82,12 @@ class UserScriptsCollector(diamond.collector.Collector):
                 self.log.info("%s return no output" % absolutescriptpath)
                 continue
             if err:
-                self.log.error("%s return error output: %s" %
+                self.log.error("%s return error output: %r" %
                                (absolutescriptpath, err))
+            if isinstance(out, bytes):
+                out = out.decode("utf8")
             # Use filter to remove empty lines of output
-            for line in filter(None, out.split('\n')):
+            for line in [_f for _f in out.split('\n') if _f]:
                 # Ignore invalid lines
                 try:
                     name, value = line.split()

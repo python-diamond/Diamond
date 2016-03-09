@@ -52,7 +52,7 @@ class PgQCollector(diamond.collector.Collector):
             self.log.error('Unable to import module psycopg2')
             return None
 
-        for instance, configuration in self.config['instances'].iteritems():
+        for instance, configuration in self.config['instances'].items():
             connection = psycopg2.connect(configuration['dsn'])
             connection.set_isolation_level(
                 psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT,

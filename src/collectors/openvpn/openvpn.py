@@ -27,18 +27,13 @@ Or, to override the name (now "127_0_0_1"):
 You can also specify multiple and mixed instances::
 
     instances = file:///var/log/openvpn/openvpn.log, tcp://10.0.0.1:1195?admins
-
-#### Dependencies
-
- * urlparse
-
 """
 
 import socket
 import diamond.collector
 import os.path
-import urlparse
 import time
+from diamond.pycompat import urlparse
 
 
 class OpenVPNCollector(diamond.collector.Collector):
@@ -67,7 +62,7 @@ class OpenVPNCollector(diamond.collector.Collector):
         """
         Convert urlparse from a python 2.4 layout to a python 2.7 layout
         """
-        parsed = urlparse.urlparse(uri)
+        parsed = urlparse(uri)
         if 'scheme' not in parsed:
             class Object(object):
                 pass
@@ -86,7 +81,7 @@ class OpenVPNCollector(diamond.collector.Collector):
         return parsed
 
     def collect(self):
-        if isinstance(self.config['instances'], basestring):
+        if isinstance(self.config['instances'], str):
             instances = [self.config['instances']]
         else:
             instances = self.config['instances']
@@ -165,7 +160,7 @@ class OpenVPNCollector(diamond.collector.Collector):
             # Bye
             server.close()
 
-        except socket.error, e:
+        except socket.error as e:
             self.log.error('OpenVPN management connection error: %s', e)
             return
 
@@ -237,7 +232,7 @@ class OpenVPNCollector(diamond.collector.Collector):
     def publish_number(self, key, value):
         key = key.replace('/', '-').replace(' ', '_').lower()
         try:
-            value = long(value)
+            value = int(value)
         except ValueError:
             self.log.error('OpenVPN expected a number for "%s", got "%s"',
                            key, value)

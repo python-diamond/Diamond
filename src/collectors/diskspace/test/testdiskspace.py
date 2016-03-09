@@ -6,8 +6,9 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 from test import run_only
-from mock import Mock
-from mock import patch
+from test import Mock
+from test import patch
+from test import BUILTIN_OPEN
 
 from diamond.collector import Collector
 from diskspace import DiskSpaceCollector
@@ -52,7 +53,7 @@ class TestDiskSpaceCollector(CollectorTestCase):
         os_major_mock = patch('os.major')
         os_minor_mock = patch('os.minor')
         os_realpath_mock = patch('os.path.realpath')
-        open_mock = patch('__builtin__.open',
+        open_mock = patch(BUILTIN_OPEN,
                           Mock(return_value=self.getFixture('proc_mounts')))
 
         stat_mock = os_stat_mock.start()
@@ -113,7 +114,7 @@ class TestDiskSpaceCollector(CollectorTestCase):
         os_major_mock = patch('os.major', Mock(return_value=9))
         os_minor_mock = patch('os.minor', Mock(return_value=0))
         os_path_isdir_mock = patch('os.path.isdir', Mock(return_value=False))
-        open_mock = patch('__builtin__.open',
+        open_mock = patch(BUILTIN_OPEN,
                           Mock(return_value=self.getFixture('proc_mounts')))
         os_statvfs_mock = patch('os.statvfs', Mock(return_value=statvfs_mock))
 
