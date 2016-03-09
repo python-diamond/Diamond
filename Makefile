@@ -111,7 +111,12 @@ distrotest:
 
 pypi: clean version sdist bdist_wheel
 	twine upload -s dist/*
+<<<<<<< HEAD
 	git tag "v$(shell cat version.txt)"
 	git push --tags
+=======
+        git tag "v$(cat version.txt)"
+        git push --tags
+>>>>>>> make non-annotated tag and push it to github everytime you run the pypi target
 
 .PHONY: run watch config test docs sdist bdist bdist_wheel install rpm buildrpm deb sdeb builddeb buildsourcedeb ebuild buildebuild tar clean cleanws version reltest vertest distrotest pypi
