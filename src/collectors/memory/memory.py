@@ -17,6 +17,8 @@ import diamond.collector
 import diamond.convertor
 import os
 
+from decimal import Decimal
+
 try:
     import psutil
     psutil  # workaround for pyflakes issue #13
@@ -79,6 +81,8 @@ class MemoryCollector(diamond.collector.Collector):
             data = file.read()
             file.close()
 
+            memory_total = None
+            memory_available = None
             for line in data.splitlines():
                 try:
                     name, value, units = line.split()
@@ -88,6 +92,11 @@ class MemoryCollector(diamond.collector.Collector):
                     if ((name not in _KEY_MAPPING and
                          'detailed' not in self.config)):
                         continue
+
+                    if name in 'MemTotal':
+                        memory_total = value
+                    elif name in 'MemAvailable':
+                        memory_available = value
 
                     for unit in self.config['byte_unit']:
                         value = diamond.convertor.binary.convert(value=value,
@@ -100,6 +109,15 @@ class MemoryCollector(diamond.collector.Collector):
 
                 except ValueError:
                     continue
+
+            if memory_total is not None and memory_available is not None:
+                memory_used = memory_total - memory_available
+                memory_used_percent = Decimal(100.0 *
+                                              memory_used /
+                                              memory_total)
+                self.publish('MemUsedPercentage',
+                             round(memory_used_percent, 2),
+                             metric_type='GAUGE')
             return True
         else:
             if not psutil:
@@ -118,13 +136,22 @@ class MemoryCollector(diamond.collector.Collector):
             units = 'B'
 
             for unit in self.config['byte_unit']:
-                value = diamond.convertor.binary.convert(
+                memory_total = value = diamond.convertor.binary.convert(
                     value=phymem_usage.total, oldUnit=units, newUnit=unit)
                 self.publish('MemTotal', value, metric_type='GAUGE')
 
-                value = diamond.convertor.binary.convert(
+                memory_available = value = diamond.convertor.binary.convert(
                     value=phymem_usage.available, oldUnit=units, newUnit=unit)
                 self.publish('MemAvailable', value, metric_type='GAUGE')
+
+                memory_used = memory_total - memory_available
+
+                memory_used_percent = Decimal(100.0 *
+                                              memory_used /
+                                              memory_total)
+                self.publish('MemUsedPercentage',
+                             round(memory_used_percent, 2),
+                             metric_type='GAUGE')
 
                 value = diamond.convertor.binary.convert(
                     value=phymem_usage.free, oldUnit=units, newUnit=unit)

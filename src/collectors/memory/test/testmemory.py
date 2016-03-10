@@ -48,6 +48,8 @@ class TestMemoryCollector(CollectorTestCase):
         metrics = {
             'MemTotal': 49554212,
             'MemFree': 35194496,
+            'MemAvailable': 35194496,
+            'MemUsedPercentage': 28.98,
             'Buffers': 1526304,
             'Cached': 10726736,
             'Active': 10022168,
