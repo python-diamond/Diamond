@@ -35,6 +35,8 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
             'route': 'route in eventstore for projections',
             'port': 'tcp port where eventstore is listening',
             'headers': 'Header variable if needed',
+            'replace_dollarsign':
+            'A value to replace a dollar sign ($) in projection names by',
             'debug': 'Enable or disable debug mode',
         })
         return config_help
@@ -50,6 +52,7 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
             'route': '/projections/all-non-transient',
             'port': 2113,
             'headers': {'User-Agent': 'Diamond Eventstore metrics collector'},
+            'replace_dollarsign': '_',
             'debug': False,
         })
         return default_config
@@ -103,7 +106,13 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
 
                 data = {}
                 for projection in projections:
-                    name = projection["name"].replace("$", "_")
+                    if self.config['replace_dollarsign']:
+                        name = projection["name"].replace(
+                            '$',
+                            self.config['replace_dollarsign']
+                        )
+                    else:
+                        name = projection["name"]
                     data[name] = projection
             except ValueError as e:
                 self.log.error("failed parsing JSON Object \
