@@ -30,7 +30,8 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
         )
         config_help.update({
             'path': "name of the metric in the metricpath",
-            'url': 'URL of the evenststore instance',
+            'protocol': 'protocol used to connect to eventstore',
+            'hostname': 'hostname of the eventstore instance',
             'route': 'route in eventstore for projections',
             'port': 'tcp port where eventstore is listening',
             'headers': 'Header variable if needed',
@@ -44,7 +45,8 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
         )
         default_config.update({
             'path': "eventstore",
-            'url': 'http://localhost',
+            'protocol': 'http://',
+            'hostname': 'localhost',
             'route': '/projections/all-non-transient',
             'port': 2113,
             'headers': {'User-Agent': 'Diamond Eventstore metrics collector'},
@@ -79,19 +81,20 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
                     yield ("%s.%s" % (prefix, key), value)
 
     def collect(self):
-        url = "%s:%s%s" % (
-            self.config['url'],
+        eventstore_host = "%s%s:%s%s" % (
+            self.config['protocol'],
+            self.config['hostname'],
             self.config['port'],
             self.config['route']
         )
 
-        req = urllib2.Request(url, headers=self.config['headers'])
+        req = urllib2.Request(eventstore_host, headers=self.config['headers'])
         req.add_header('Content-type', 'application/json')
 
         try:
             resp = urllib2.urlopen(req)
         except urllib2.URLError as e:
-            self.log.error("Can't open url %s. %s", url, e)
+            self.log.error("Can't open url %s. %s", eventstore_host, e)
         else:
             content = resp.read()
             try:
@@ -103,7 +106,8 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
                     name = projection["name"].replace("$", "_")
                     data[name] = projection
             except ValueError as e:
-                self.log.error("Can't parse JSON object from %s. %s", url, e)
+                self.log.error("failed parsing JSON Object \
+                                from %s. %s", eventstore_host, e)
             else:
                 for metric_name, metric_value in self._json_to_flat_metrics(
                         "projections", data):
