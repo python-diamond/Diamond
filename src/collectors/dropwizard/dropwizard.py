@@ -38,6 +38,55 @@ class DropwizardCollector(diamond.collector.Collector):
         })
         return config
 
+    def send_metric(self, key, value):
+        try:
+            self.publish(key, value, value, 5)
+        except Exception as e:
+            self.log.error(e.message)
+
+    def report_timer(self, key, value):
+        self.send_metric(key + ".count", value['count'])
+        self.send_metric(key + ".max", value['max'])
+        self.send_metric(key + ".min", value['min'])
+        self.send_metric(key + ".mean", value['mean'])
+        self.send_metric(key + ".stddev", value['stddev'])
+        self.send_metric(key + ".p50", value['p50'])
+        self.send_metric(key + ".p75", value['p75'])
+        self.send_metric(key + ".p95", value['p95'])
+        self.send_metric(key + ".p98", value['p98'])
+        self.send_metric(key + ".p99", value['p99'])
+        self.send_metric(key + ".p999", value['p999'])
+        self.send_metric(key + ".m1_rate", value['m1_rate'])
+        self.send_metric(key + ".m5_rate", value['m5_rate'])
+        self.send_metric(key + ".m15_rate", value['m15_rate'])
+        self.send_metric(key + ".mean_rate", value['mean_rate'])
+
+    def report_counter(self, key, value):
+        self.send_metric(key + ".count", value['count'])
+
+    def report_gauge(self, key, value):
+        self.send_metric(key, value['value'])
+
+    def report_histogram(self, key, value):
+        self.send_metric(key + ".count", value['count'])
+        self.send_metric(key + ".max", value['max'])
+        self.send_metric(key + ".min", value['min'])
+        self.send_metric(key + ".mean", value['mean'])
+        self.send_metric(key + ".stddev", value['stddev'])
+        self.send_metric(key + ".p50", value['p50'])
+        self.send_metric(key + ".p75", value['p75'])
+        self.send_metric(key + ".p95", value['p95'])
+        self.send_metric(key + ".p98", value['p98'])
+        self.send_metric(key + ".p99", value['p99'])
+        self.send_metric(key + ".p999", value['p999'])
+
+    def report_meter(self, key, value):
+        self.send_metric(key + ".count", value['count'])
+        self.send_metric(key + ".m1_rate", value['m1_rate'])
+        self.send_metric(key + ".m5_rate", value['m5_rate'])
+        self.send_metric(key + ".m15_rate", value['m15_rate'])
+        self.send_metric(key + ".mean_rate", value['mean_rate'])
+
     def collect(self):
         if json is None:
             self.log.error('Unable to import json')
@@ -57,40 +106,23 @@ class DropwizardCollector(diamond.collector.Collector):
                            " a json object")
             return
 
-        metrics = {}
+        timers = result['timers']
+        histograms = result['histograms']
+        counters = result['counters']
+        gauges = result['gauges']
+        meters = result['meters']
 
-        memory = result['jvm']['memory']
-        mempool = memory['memory_pool_usages']
-        jvm = result['jvm']
-        thread_st = jvm['thread-states']
+        for key in timers:
+            self.report_timer(key, timers[key])
 
-        metrics['jvm.memory.totalInit'] = memory['totalInit']
-        metrics['jvm.memory.totalUsed'] = memory['totalUsed']
-        metrics['jvm.memory.totalMax'] = memory['totalMax']
-        metrics['jvm.memory.totalCommitted'] = memory['totalCommitted']
+        for key in histograms:
+            self.report_histogram(key, histograms[key])
 
-        metrics['jvm.memory.heapInit'] = memory['heapInit']
-        metrics['jvm.memory.heapUsed'] = memory['heapUsed']
-        metrics['jvm.memory.heapMax'] = memory['heapMax']
-        metrics['jvm.memory.heapCommitted'] = memory['heapCommitted']
-        metrics['jvm.memory.heap_usage'] = memory['heap_usage']
-        metrics['jvm.memory.non_heap_usage'] = memory['non_heap_usage']
-        metrics['jvm.memory.code_cache'] = mempool['Code Cache']
-        metrics['jvm.memory.eden_space'] = mempool['PS Eden Space']
-        metrics['jvm.memory.old_gen'] = mempool['PS Old Gen']
-        metrics['jvm.memory.perm_gen'] = mempool['PS Perm Gen']
-        metrics['jvm.memory.survivor_space'] = mempool['PS Survivor Space']
+        for key in counters:
+            self.report_counter(key, counters[key])
 
-        metrics['jvm.daemon_thread_count'] = jvm['daemon_thread_count']
-        metrics['jvm.thread_count'] = jvm['thread_count']
-        metrics['jvm.fd_usage'] = jvm['fd_usage']
+        for key in gauges:
+            self.report_gauge(key, gauges[key])
 
-        metrics['jvm.thread_states.timed_waiting'] = thread_st['timed_waiting']
-        metrics['jvm.thread_states.runnable'] = thread_st['runnable']
-        metrics['jvm.thread_states.blocked'] = thread_st['blocked']
-        metrics['jvm.thread_states.waiting'] = thread_st['waiting']
-        metrics['jvm.thread_states.new'] = thread_st['new']
-        metrics['jvm.thread_states.terminated'] = thread_st['terminated']
-
-        for key in metrics:
-            self.publish(key, metrics[key])
+        for key in meters:
+            self.report_meter(key, meters[key])
