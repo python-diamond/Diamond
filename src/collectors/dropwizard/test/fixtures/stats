@@ -1,6 +1,6 @@
 {
   "timers": {
-    "io.dropwizard.jetty.MutableServletContextHandler.post-requests": {
+    "io.dropwizard.post-requests": {
       "count": 22289,
       "max": 3.232,
       "mean": 0.3194237337346423,
@@ -36,15 +36,15 @@
     }
   },
   "counters": {
-    "io.dropwizard.jetty.MutableServletContextHandler.active-requests": {
+    "io.dropwizard.active-requests": {
       "count": 0
     },
-    "io.dropwizard.jetty.MutableServletContextHandler.active-suspended": {
+    "io.dropwizard.active-suspended": {
       "count": 0
     }
   },
   "gauges": {
-    "io.dropwizard.jetty.MutableServletContextHandler.percent-4xx-15m": {
+    "io.dropwizard.percent-4xx-15m": {
       "value": 0
     },
     "jvm.attribute.uptime": {
@@ -53,7 +53,7 @@
   },
   "version": "3.0.0",
   "meters": {
-    "io.dropwizard.jetty.MutableServletContextHandler.1xx-responses": {
+    "io.dropwizard.1xx-responses": {
       "count": 0,
       "m15_rate": 0,
       "m1_rate": 0,
