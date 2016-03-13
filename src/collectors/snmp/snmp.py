@@ -120,7 +120,7 @@ class SNMPCollector(diamond.collector.Collector):
         host = socket.gethostbyname(host)
 
         # Assemble SNMP Auth Data
-        snmpAuthData = cmdgen.CommunityData('agent', community, mpmodel = 0)
+        snmpAuthData = cmdgen.CommunityData('agent', community, mpModel = 0)
 
         # Assemble SNMP Transport Data
         snmpTransportData = cmdgen.UdpTransportTarget(
