@@ -1,3 +1,7 @@
+diamond (4.0.0-0) unstable; urgency=low
+  * update to latest upstream tag
+ -- Keith Baker <kbaker@alumni.ithaca.edu>  Sun, 13 Mar 2016 15:15:04 -0400
+
 diamond (3.1.0) unstable; urgency=low
   * new upstream
  -- Rob Smith <kormoc@gmail.com>  Tue, 05 Nov 2012 15:19:00 -0800
