@@ -67,8 +67,8 @@ class SNMPCollector(diamond.collector.Collector):
     def collect(self):
         for device in self.config['devices']:
             host = self.config['devices'][device]['host']
-            port = self.config['devices'][device]['port']
-            community = self.config['devices'][device]['community']
+            port = self.config['devices'][device].get('port', '161')
+            community = self.config['devices'][device].get('community', 'public')
             self.collect_snmp(device, host, port, community)
 
     def get(self, oid, host, port, community):
