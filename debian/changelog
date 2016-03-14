@@ -1,3 +1,7 @@
+diamond (4.0.0-5) unstable; urgency=low
+  * fixup snmp to work sorta
+ -- Keith Baker <syzygy@lafayette>  Sun, 13 Mar 2016 20:34:48 -0400
+
 diamond (4.0.0-0) unstable; urgency=low
   * update to latest upstream tag
  -- Keith Baker <kbaker@alumni.ithaca.edu>  Sun, 13 Mar 2016 15:15:04 -0400
