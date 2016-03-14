@@ -24,6 +24,8 @@ metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusiv
 #### Example Output
 
 ```
+servers.hostname.vmstat.pgfault 1000.0
+servers.hostname.vmstat.pgmajfault 5.0
 servers.hostname.vmstat.pgpgin 0.0
 servers.hostname.vmstat.pgpgout 9.2
 servers.hostname.vmstat.pswpin 0.0
