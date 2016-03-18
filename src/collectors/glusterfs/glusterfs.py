@@ -67,7 +67,7 @@ class GlusterFSCollector(diamond.collector.Collector):
                 fop_stats = {}
 
                 for fopstatselem in \
-                   self.volelem.find('cumulativeStats').find('fopStats'):
+                    self.volelem.find('cumulativeStats').find('fopStats'):
                         # self.log.info("getting gluster metrics")
                         name = fopstatselem.findtext('name')
                         hits = fopstatselem.findtext('hits')
@@ -76,17 +76,17 @@ class GlusterFSCollector(diamond.collector.Collector):
                         max_latency = float(fopstatselem.findtext('maxLatency'))
                         fop_total_avg = avg_latency * int(hits)
                         running_grand_avg_total = running_grand_avg_total + \
-                           fop_total_avg
+                            fop_total_avg
                         fop_stats[name] = hits, avg_latency, fop_total_avg, \
-                           min_latency, max_latency
+                            min_latency, max_latency
 
                 for fop in fop_stats:
                     # self.log.info("sending gluster metrics")
                     metric_name_base = self.metric_base + "." + brick_name + \
-                       "." + fop
+                        "." + fop
                     metric_name = metric_name_base + ".pctLatency"
                     metric_value = (fop_stats[fop][2] / running_grand_avg_total) \
-                       * 100
+                        * 100
                     self.publish(metric_name, metric_value)
                     metric_name = metric_name_base + ".hits"
                     metric_value = fop_stats[fop][0]
@@ -106,24 +106,24 @@ class GlusterFSCollector(diamond.collector.Collector):
 
     def collect(self):
         gluster_call = self.config['gluster_path'] + ' volume list'
-        out = subprocess.Popen([gluster_call], stdout=subprocess.PIPE, \
-              shell=True)
+        out = subprocess.Popen([gluster_call], stdout=subprocess.PIPE,
+                                shell=True)
         (volumes, err) = out.communicate()
 
         for volume in volumes.splitlines():
             # self.log.info("checking gluster volume " + volume)
             if (volume == self.config['target_volume'] or
                 self.config['target_volume'] == ''):
-                self.metric_base = volume
+                    self.metric_base = volume
 
-                xml_out = subprocess.Popen([self.config['gluster_path'] +
-                    " volume profile " + volume +
-                    " info cumulative --xml"], stdout=subprocess.PIPE,
-                    shell=True)
-                (raw_metrics, err) = xml_out.communicate()
-                xml_metrics = ET.XML(raw_metrics)
+                    xml_out = subprocess.Popen([self.config['gluster_path'] +
+                        " volume profile " + volume +
+                        " info cumulative --xml"], stdout=subprocess.PIPE,
+                        shell=True)
+                    (raw_metrics, err) = xml_out.communicate()
+                    xml_metrics = ET.XML(raw_metrics)
 
-                for self.volelem in xml_metrics.find('volProfile'):
-                    if (self.volelem.tag == 'brick'):
+                    for self.volelem in xml_metrics.find('volProfile'):
+                        if (self.volelem.tag == 'brick'):
 
-                        brick_metrics = self.get_brick_metrics()
+                            brick_metrics = self.get_brick_metrics()
