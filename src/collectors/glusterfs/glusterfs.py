@@ -1,7 +1,8 @@
 # coding=utf-8
 
 """
-The GlusterFSCollector currently only collects latency percentages from the GlusterFS storage system.
+The GlusterFSCollector currently only collects latency percentages
+from the GlusterFS storage system.
 
 version 0.3 beta
 
@@ -27,16 +28,17 @@ metric_base = "glusterfs."
 target_volume = ''
 target_brick = ''
 
+
 class GlusterFSCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
         config_help = super(GlusterFSCollector, self).get_default_config_help()
         config_help.update({
-                'gluster_path': 'complete path to gluster binary.'
+                'gluster_path': 'complete path to gluster binary.' +
                         ' Defaults to /usr/sbin/gluster',
-                'target_volume': 'which brick to send info on.'
+                'target_volume': 'which brick to send info on.' +
                         ' Defaults to all',
-                'target_brick': 'which node/server to send metrics for.'
+                'target_brick': 'which node/server to send metrics for.' +
                         ' Defaults to all',
         })
         return config_help
@@ -57,27 +59,27 @@ class GlusterFSCollector(diamond.collector.Collector):
         (volumes, err) = out.communicate()
 
         for volume in volumes.splitlines():
-                #self.log.info("checking gluster volume " + volume)
-                if ( volume == self.config['target_volume'] or self.config['target_volume'] == '' ):
+                # self.log.info("checking gluster volume " + volume)
+                if (volume == self.config['target_volume'] or self.config['target_volume'] == ''):
                         metric_base = volume
 
-                	xml_out=subprocess.Popen([self.config['gluster_path'] + " volume profile " + volume + " info cumulative --xml"], stdout=subprocess.PIPE, shell=True)
+                        xml_out=subprocess.Popen([self.config['gluster_path'] + " volume profile " + volume + " info cumulative --xml"], stdout=subprocess.PIPE, shell=True)
                         (raw_metrics, err) = xml_out.communicate()
-	                xml_metrics = ET.XML(raw_metrics)
+                        xml_metrics = ET.XML(raw_metrics)
 
                         for volelem in xml_metrics.find('volProfile'):
-                                if ( volelem.tag == 'brick' ):
+                                if (volelem.tag == 'brick'):
                                         temp_bval = volelem.find('brickName').text
                                         temp_list = temp_bval.split(':')
-	                	        brick_name = temp_list[0]
+                                        brick_name = temp_list[0]
 
-                                        #self.log.info("checking gluster brick " + brick_name)
-                                        if ( brick_name == self.config['target_brick'] or self.config['target_brick'] == '' ):
+                                        # self.log.info("checking gluster brick " + brick_name)
+                                        if (brick_name == self.config['target_brick'] or self.config['target_brick'] == ''):
                                                 running_grand_avg_total = running_avg_total = running_calls_total = 0.0
                                                 fop_stats = {}
 
                                                 for fopstatselem in volelem.find('cumulativeStats').find('fopStats'):
-                                                        #self.log.info("getting gluster metrics")
+                                                        # self.log.info("getting gluster metrics")
                                                         name = fopstatselem.findtext('name')
                                                         hits = fopstatselem.findtext('hits')
                                                         avg_latency = float(fopstatselem.findtext('avgLatency'))
@@ -88,7 +90,7 @@ class GlusterFSCollector(diamond.collector.Collector):
                                                         fop_stats[name] = hits, avg_latency, fop_total_avg, min_latency, max_latency
 
                                                 for fop in fop_stats:
-                                                        #self.log.info("sending gluster metrics")
+                                                        # self.log.info("sending gluster metrics")
                                                         metric_name = metric_base + "." + brick_name + "." + fop + ".pctLatency"
                                                         metric_value = (fop_stats[fop][2] / running_grand_avg_total) * 100
                                                         self.publish(metric_name, metric_value)
