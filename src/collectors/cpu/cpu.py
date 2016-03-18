@@ -148,7 +148,8 @@ class CPUCollector(diamond.collector.Collector):
             file.close()
 
             metrics = {}
-            metrics['cpu_count'] = ncpus
+            # "since the number of cpus rarely, if ever, changes, we don't need a cpu_count metric."
+            # metrics['cpu_count'] = ncpus
 
             for cpu in results.keys():
                 stats = results[cpu]
@@ -207,7 +208,8 @@ class CPUCollector(diamond.collector.Collector):
             # if not in simple mode, report total
             if not str_to_bool(self.config['simple']):
                 total_time = psutil.cpu_times()
-                cpu_count = psutil.cpu_count() if str_to_bool(self.config['normalize']) else 1
+                cpu_count = psutil.cpu_count() if str_to_bool(
+                    self.config['normalize']) else 1
 
                 metric_name = 'total'
                 self.publish(
@@ -261,9 +263,11 @@ class CPUCollector(diamond.collector.Collector):
                                         cpu_time[i].idle,
                                         self.MAX_VALUES['idle']))
 
-                    self.publish(metric_name + '.percent', str('%.4f' % cpuPct[i]))
+                    self.publish(metric_name + '.percent',
+                                 str('%.4f' % cpuPct[i]))
 
-            self.publish('cpu_count', psutil.cpu_count())
+            # "since the number of cpus rarely, if ever, changes, we don't need a cpu_count metric."
+            # self.publish('cpu_count', psutil.cpu_count())
 
             return True
 
