@@ -59,8 +59,8 @@ class GlusterFSCollector(diamond.collector.Collector):
         brick_name = temp_list[0]
 
         # self.log.info("checking gluster brick " + brick_name)
-        if (brick_name == self.config['target_brick']
-            or self.config['target_brick'] == ''):
+        if (brick_name == self.config['target_brick'] or
+                self.config['target_brick'] == ''):
                 running_grand_avg_total = 0.0
                 running_avg_total = 0.0
                 running_calls_total = 0.0
@@ -111,9 +111,9 @@ class GlusterFSCollector(diamond.collector.Collector):
         (volumes, err) = out.communicate()
 
         for volume in volumes.splitlines():
-           # self.log.info("checking gluster volume " + volume)
-           if (volume == self.config['target_volume']
-               or self.config['target_volume'] == ''):
+            # self.log.info("checking gluster volume " + volume)
+            if (volume == self.config['target_volume'] or
+                self.config['target_volume'] == ''):
                 self.metric_base = volume
 
                 xml_out = subprocess.Popen([self.config['gluster_path'] +
