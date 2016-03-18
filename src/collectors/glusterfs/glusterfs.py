@@ -35,11 +35,11 @@ class GlusterFSCollector(diamond.collector.Collector):
         config_help = super(GlusterFSCollector, self).get_default_config_help()
         config_help.update({
             'gluster_path': 'complete path to gluster binary.' +
-                ' Defaults to /usr/sbin/gluster',
+            ' Defaults to /usr/sbin/gluster',
             'target_volume': 'which brick to send info on.' +
-                ' Defaults to all',
+            ' Defaults to all',
             'target_brick': 'which node/server to send metrics for.' +
-                ' Defaults to all',
+            ' Defaults to all',
         })
         return config_help
 
@@ -59,8 +59,10 @@ class GlusterFSCollector(diamond.collector.Collector):
         brick_name = temp_list[0]
 
         # self.log.info("checking gluster brick " + brick_name)
-        if (brick_name == self.config['target_brick'] or 
-                self.config['target_brick'] == ''):
+        if (
+            brick_name == self.config['target_brick'] or
+            self.config['target_brick'] == ''
+           ):
             running_grand_avg_total = running_avg_total = running_calls_total = 0.0
             fop_stats = {}
 
