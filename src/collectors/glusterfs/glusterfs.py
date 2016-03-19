@@ -110,7 +110,7 @@ class GlusterFSCollector(diamond.collector.Collector):
     def collect(self):
         gluster_call = self.config['gluster_path'] + ' volume list'
         out = subprocess.Popen([gluster_call], stdout=subprocess.PIPE,
-                                shell=True)
+                            shell=True)
         (volumes, err) = out.communicate()
 
         for volume in volumes.splitlines():
