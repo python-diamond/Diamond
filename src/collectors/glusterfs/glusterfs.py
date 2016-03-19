@@ -110,7 +110,7 @@ class GlusterFSCollector(diamond.collector.Collector):
     def collect(self):
         gluster_call = self.config['gluster_path'] + ' volume list'
         out = subprocess.Popen([gluster_call], stdout=subprocess.PIPE,
-                            shell=True)
+                                shell=True)
         (volumes, err) = out.communicate()
 
         for volume in volumes.splitlines():
@@ -120,10 +120,11 @@ class GlusterFSCollector(diamond.collector.Collector):
                         self.metric_base = volume
 
                         xml_out = subprocess.Popen([self.config['gluster_path']
-                                    + " volume profile " + volume +
-                                    " info cumulative --xml"],
-                                    stdout=subprocess.PIPE,
-                                    shell=True)
+                                                   + " volume profile "
+                                                   + volume +
+                                                   " info cumulative --xml"],
+                                                   stdout=subprocess.PIPE,
+                                                   shell=True)
                         (raw_metrics, err) = xml_out.communicate()
                         xml_metrics = ET.XML(raw_metrics)
 
