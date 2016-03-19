@@ -110,23 +110,23 @@ class GlusterFSCollector(diamond.collector.Collector):
     def collect(self):
         gluster_call = self.config['gluster_path'] + ' volume list'
         out = subprocess.Popen([gluster_call], stdout=subprocess.PIPE,
-                                shell=True)
+            shell=True)
         (volumes, err) = out.communicate()
 
         for volume in volumes.splitlines():
             # self.log.info("checking gluster volume " + volume)
             if (volume == self.config['target_volume'] or
-                self.config['target_volume'] == ''):
-                    self.metric_base = volume
+                    self.config['target_volume'] == ''):
+                        self.metric_base = volume
 
-                    xml_out = subprocess.Popen([self.config['gluster_path'] +
-                        " volume profile " + volume +
-                        " info cumulative --xml"], stdout=subprocess.PIPE,
-                        shell=True)
-                    (raw_metrics, err) = xml_out.communicate()
-                    xml_metrics = ET.XML(raw_metrics)
+                        xml_out = subprocess.Popen([self.config['gluster_path']
+                            + " volume profile " + volume +
+                            " info cumulative --xml"], stdout=subprocess.PIPE,
+                            shell=True)
+                        (raw_metrics, err) = xml_out.communicate()
+                        xml_metrics = ET.XML(raw_metrics)
 
-                    for self.volelem in xml_metrics.find('volProfile'):
-                        if (self.volelem.tag == 'brick'):
+                        for self.volelem in xml_metrics.find('volProfile'):
+                            if (self.volelem.tag == 'brick'):
 
-                            brick_metrics = self.get_brick_metrics()
+                                brick_metrics = self.get_brick_metrics()
