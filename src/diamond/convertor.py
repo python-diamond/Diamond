@@ -4,6 +4,25 @@ import re
 
 _RE_FIND_FIRST_CAP = re.compile('(.)([A-Z][a-z]+)')
 _RE_SPAN_OF_CAPS = re.compile('([a-z0-9])([A-Z])')
+# Lists are in the order of increasing magnitude
+_LIST_OF_UNITS_BIT = [['bit', 'b'],
+                      ['kilobit', 'kbit', 'Kibit'],
+                      ['megabit', 'Mbit', 'Mibit', 'Mbit'],
+                      ['gigabit', 'Gbit', 'Gibit'],
+                      ['terabit', 'Tbit', 'Tibit'],
+                      ['petabit', 'Pbit', 'Pibit'],
+                      ['exabit', 'Ebit', 'Eibit'],
+                      ['zettabit', 'Zbit', 'Zibit'],
+                      ['yottabit', 'Ybit', 'Yibit']]
+_LIST_OF_UNITS_BYTE = [['byte', 'B'],
+                       ['kilobyte', 'kB', 'KiB'],
+                       ['megabyte', 'MB', 'MiB', 'Mbyte'],
+                       ['gigabyte', 'GB', 'GiB'],
+                       ['terabyte', 'TB', 'TiB'],
+                       ['petabyte', 'PB', 'PiB'],
+                       ['exabyte', 'EB', 'EiB'],
+                       ['zettabyte', 'ZB', 'ZiB'],
+                       ['yottabyte', 'YB', 'YiB']]
 
 
 def camelcase_to_underscore(name):
@@ -32,47 +51,28 @@ class binary:
     def get(self, unit=None):
         return self.do(unit=unit)
 
+    def _object_mapper(self, unit, value, mapping_list, object_type):
+        for counter, units in enumerate(mapping_list):
+            if unit in units:
+                # returning self.type_of_unit
+                return self.convertb(value, object_type, counter)
+        return "None"
+
     def do(self, value=None, unit=None):
         if not unit:
             return self.bit(value=value)
 
         if unit in ['bit', 'b']:
             return self.bit(value=value)
-        if unit in ['kilobit', 'kbit', 'Kibit']:
-            return self.kilobit(value=value)
-        if unit in ['megabit', 'Mbit', 'Mibit', 'Mbit']:
-            return self.megabit(value=value)
-        if unit in ['gigabit', 'Gbit', 'Gibit']:
-            return self.gigabit(value=value)
-        if unit in ['terabit', 'Tbit', 'Tibit']:
-            return self.terabit(value=value)
-        if unit in ['petabit', 'Pbit', 'Pibit']:
-            return self.petabit(value=value)
-        if unit in ['exabit', 'Ebit', 'Eibit']:
-            return self.exabit(value=value)
-        if unit in ['zettabit', 'Zbit', 'Zibit']:
-            return self.zettabit(value=value)
-        if unit in ['yottabit', 'Ybit', 'Yibit']:
-            return self.yottabit(value=value)
+        obj = self._object_mapper(unit, value, _LIST_OF_UNITS_BIT, self.bit)
+        if obj != "None":
+            return obj
 
         if unit in ['byte', 'B']:
             return self.byte(value=value)
-        if unit in ['kilobyte', 'kB', 'KiB']:
-            return self.kilobyte(value=value)
-        if unit in ['megabyte', 'MB', 'MiB', 'Mbyte']:
-            return self.megabyte(value=value)
-        if unit in ['gigabyte', 'GB', 'GiB']:
-            return self.gigabyte(value=value)
-        if unit in ['terabyte', 'TB', 'TiB']:
-            return self.terabyte(value=value)
-        if unit in ['petabyte', 'PB', 'PiB']:
-            return self.petabyte(value=value)
-        if unit in ['exabyte', 'EB', 'EiB']:
-            return self.exabyte(value=value)
-        if unit in ['zettabyte', 'ZB', 'ZiB']:
-            return self.zettabyte(value=value)
-        if unit in ['yottabyte', 'YB', 'YiB']:
-            return self.yottabyte(value=value)
+        obj = self._object_mapper(unit, value, _LIST_OF_UNITS_BYTE, self.byte)
+        if obj != "None":
+            return obj
 
         raise NotImplementedError("unit %s" % unit)
 
@@ -88,59 +88,11 @@ class binary:
         else:
             source(value * pow(1024, offset))
 
-    def kilobit(self, value=None):
-        return self.convertb(value, self.bit)
-
-    def megabit(self, value=None):
-        return self.convertb(value, self.bit, 2)
-
-    def gigabit(self, value=None):
-        return self.convertb(value, self.bit, 3)
-
-    def terabit(self, value=None):
-        return self.convertb(value, self.bit, 4)
-
-    def petabit(self, value=None):
-        return self.convertb(value, self.bit, 5)
-
-    def exabit(self, value=None):
-        return self.convertb(value, self.bit, 6)
-
-    def zettabit(self, value=None):
-        return self.convertb(value, self.bit, 7)
-
-    def yottabit(self, value=None):
-        return self.convertb(value, self.bit, 8)
-
     def byte(self, value=None):
         if value is None:
             return self.value / 8
         else:
             self.value = float(value) * 8
-
-    def kilobyte(self, value=None):
-        return self.convertb(value, self.byte)
-
-    def megabyte(self, value=None):
-        return self.convertb(value, self.byte, 2)
-
-    def gigabyte(self, value=None):
-        return self.convertb(value, self.byte, 3)
-
-    def terabyte(self, value=None):
-        return self.convertb(value, self.byte, 4)
-
-    def petabyte(self, value=None):
-        return self.convertb(value, self.byte, 5)
-
-    def exabyte(self, value=None):
-        return self.convertb(value, self.byte, 6)
-
-    def zettabyte(self, value=None):
-        return self.convertb(value, self.byte, 7)
-
-    def yottabyte(self, value=None):
-        return self.convertb(value, self.byte, 8)
 
 
 class time:
