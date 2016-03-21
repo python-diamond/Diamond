@@ -98,7 +98,7 @@ class CPUCollector(diamond.collector.Collector):
             if str_to_bool(self.config['simple']) or str_to_bool(self.config['include_cpu_pct']):
                 dt = cpu_delta_time(self.INTERVAL)
                 cpuPct = 100 - (dt[len(dt) - 1] * 100.00 / sum(dt))
-                self.publish('percent', str('%.4f' % cpuPct))
+                self.publish('percent', str('%.4f' % cpuPct), precision=2)
                 if str_to_bool(self.config['simple']):
                     return True
 
