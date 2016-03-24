@@ -39,7 +39,8 @@ class RabbitMQClient(object):
     Tiny interface into the rabbit http api
     """
 
-    def __init__(self, host, user, password, timeout=5, scheme="http"):
+    def __init__(self, log, host, user, password, timeout=5, scheme="http"):
+        self.log = log
         self.base_url = '%s://%s/api/' % (scheme, host)
         self.timeout = timeout
         self._authorization = 'Basic ' + b64encode('%s:%s' % (user, password))
@@ -55,7 +56,20 @@ class RabbitMQClient(object):
 
     def get_vhost_names(self):
         return [i['name'] for i in self.get_all_vhosts()]
-
+    
+    def get_queue(self, queue_name, vhost=None):
+        path = 'queues'
+        if vhost:
+            vhost = quote(vhost, '')
+            queue_name = quote(queue_name, '')
+            path += '/%s/%s' % (vhost, queue_name)
+        try:
+            queue = self.do_call(path)
+            return queue or None
+        except Exception, e:
+            self.log.error('Error querying queue %s: %s', (queue_name, e))
+            return None
+    
     def get_queues(self, vhost=None):
         path = 'queues'
         if vhost:
@@ -94,7 +108,11 @@ class RabbitMQCollector(diamond.collector.Collector):
             'A list of queues or regexes for queue names not to report on.',
             'cluster':
             'If this node is part of a cluster, will collect metrics on the'
-            ' cluster health'
+            ' cluster health',
+            'query_individual_queues':
+            'If specific queues are set, query their metrics individually.'
+            ' When this is False, queue metrics will be queried in bulk and'
+            ' filtered, which can time out for vhosts with many queues.'
         })
         return config_help
 
@@ -113,6 +131,7 @@ class RabbitMQCollector(diamond.collector.Collector):
             'queues_ignored': '',
             'cluster': False,
             'scheme': 'http',
+            'query_individual_queues': False,
         })
         return config
 
@@ -130,7 +149,8 @@ class RabbitMQCollector(diamond.collector.Collector):
             'proc_total',
         ]
         try:
-            client = RabbitMQClient(self.config['host'],
+            client = RabbitMQClient(self.log,
+                                    self.config['host'],
                                     self.config['user'],
                                     self.config['password'],
                                     scheme=self.config['scheme'])
@@ -146,15 +166,43 @@ class RabbitMQCollector(diamond.collector.Collector):
         except Exception, e:
             self.log.error('Couldnt connect to rabbitmq %s', e)
             return {}
-
-    def collect(self):
-        self.collect_health()
+    
+    def get_queue_metrics(self, client, vhost, queues):
+        # Allow the use of a asterix to glob the queues, but replace
+        # with a empty string to match how legacy config was.
+        if queues == "*":
+            queues = ""
+        allowed_queues = queues.split()
+        
         matchers = []
         if self.config['queues_ignored']:
             for reg in self.config['queues_ignored'].split():
                 matchers.append(re.compile(reg))
+        
+        if self.config['query_individual_queues']:
+            for queue_name in allowed_queues:
+                if matchers and any(
+                        [m.match(queue_name) for m in matchers]):
+                    continue
+                queue = client.get_queue(queue_name, vhost)
+                if queue is not None:
+                    yield queue
+        else:
+            for queue in client.get_queues(vhost):
+                # If queues are defined and it doesn't match, then skip.
+                if ((queue['name'] not in allowed_queues and
+                     len(allowed_queues) > 0)):
+                    continue
+                if matchers and any(
+                        [m.match(queue['name']) for m in matchers]):
+                    continue
+                yield queue
+        
+    def collect(self):
+        self.collect_health()
         try:
-            client = RabbitMQClient(self.config['host'],
+            client = RabbitMQClient(self.log,
+                                    self.config['host'],
                                     self.config['user'],
                                     self.config['password'],
                                     scheme=self.config['scheme'])
@@ -189,7 +237,7 @@ class RabbitMQCollector(diamond.collector.Collector):
 
             # Iterate all vhosts in our vhosts configuration. For legacy this
             # is "*" to force a single run.
-            for vhost in vhost_conf:
+            for vhost, queues in vhost_conf.iteritems():
                 vhost_name = vhost
                 if self.config['replace_dot']:
                     vhost_name = vhost_name.replace(
@@ -199,27 +247,12 @@ class RabbitMQCollector(diamond.collector.Collector):
                     vhost_name = vhost_name.replace(
                         '/', self.config['replace_slash'])
 
-                queues = vhost_conf[vhost]
-
-                # Allow the use of a asterix to glob the queues, but replace
-                # with a empty string to match how legacy config was.
-                if queues == "*":
-                    queues = ""
-                allowed_queues = queues.split()
-
                 # When we fetch queues, we do not want to define a vhost if
                 # legacy.
                 if legacy:
                     vhost = None
 
-                for queue in client.get_queues(vhost):
-                    # If queues are defined and it doesn't match, then skip.
-                    if ((queue['name'] not in allowed_queues and
-                         len(allowed_queues) > 0)):
-                        continue
-                    if matchers and any(
-                            [m.match(queue['name']) for m in matchers]):
-                        continue
+                for queue in self.get_queue_metrics(client, vhost, queues):
                     for key in queue:
                         prefix = "queues"
                         if not legacy:

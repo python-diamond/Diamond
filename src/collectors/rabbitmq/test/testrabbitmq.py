@@ -72,6 +72,7 @@ class TestRabbitMQCollector(CollectorTestCase):
         self.collector.collect()
 
         client.get_queues.assert_called_once_with(None)
+        client.get_queue.assert_not_called()
         client.get_nodes.assert_called_once_with()
         client.get_node.assert_called_once_with('rabbit@localhost')
 
@@ -236,6 +237,56 @@ class TestRabbitMQCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, metrics)
 
         self.collector.config['replace_slash'] = False
+
+    @patch('rabbitmq.RabbitMQClient')
+    @patch.object(Collector, 'publish')
+    def test_opt_query_individual_queues(self, publish_mock, client_mock):
+        self.collector.config['query_individual_queues'] = True
+        self.collector.config['queues'] = 'test/queue'
+        client = Mock()
+        queue_data = [{
+            'more_keys': {'nested_key': 1},
+            'key': 2,
+            'string': 'str',
+            'name': 'test/queue'
+        }, {
+            'name': 'ignored',
+            'more_keys': {'nested_key': 1},
+            'key': 2,
+            'string': 'str',
+        }]
+        overview_data = {
+            'node': 'rabbit@localhost',
+            'more_keys': {'nested_key': 3},
+            'key': 4,
+            'string': 'string',
+        }
+        node_health = {
+            'fd_used': 1,
+            'fd_total': 2,
+            'mem_used': 2,
+            'mem_limit': 4,
+            'sockets_used': 1,
+            'sockets_total': 2,
+            'disk_free_limit': 1,
+            'disk_free': 1,
+            'proc_used': 1,
+            'proc_total': 1,
+            'partitions': [],
+        }
+        client_mock.return_value = client
+        client.get_queue.return_value = queue_data[0]
+        client.get_overview.return_value = overview_data
+        client.get_nodes.return_value = [1, 2, 3]
+        client.get_node.return_value = node_health
+
+        self.collector.collect()
+        
+        client.get_queue.assert_called_once_with('test/queue', None)
+        client.get_queues.assert_not_called()
+
+        self.collector.config['query_individual_queues'] = False
+        self.collector.config['queues'] = 'test/queue'
 
 ##########################################################################
 if __name__ == "__main__":
