@@ -56,7 +56,7 @@ class RabbitMQClient(object):
 
     def get_vhost_names(self):
         return [i['name'] for i in self.get_all_vhosts()]
-    
+
     def get_queue(self, queue_name, vhost=None):
         path = 'queues'
         if vhost:
@@ -69,7 +69,7 @@ class RabbitMQClient(object):
         except Exception, e:
             self.log.error('Error querying queue %s: %s', (queue_name, e))
             return None
-    
+
     def get_queues(self, vhost=None):
         path = 'queues'
         if vhost:
@@ -166,19 +166,19 @@ class RabbitMQCollector(diamond.collector.Collector):
         except Exception, e:
             self.log.error('Couldnt connect to rabbitmq %s', e)
             return {}
-    
+
     def get_queue_metrics(self, client, vhost, queues):
         # Allow the use of a asterix to glob the queues, but replace
         # with a empty string to match how legacy config was.
         if queues == "*":
             queues = ""
         allowed_queues = queues.split()
-        
+
         matchers = []
         if self.config['queues_ignored']:
             for reg in self.config['queues_ignored'].split():
                 matchers.append(re.compile(reg))
-        
+
         if self.config['query_individual_queues']:
             for queue_name in allowed_queues:
                 if matchers and any(
@@ -197,7 +197,7 @@ class RabbitMQCollector(diamond.collector.Collector):
                         [m.match(queue['name']) for m in matchers]):
                     continue
                 yield queue
-        
+
     def collect(self):
         self.collect_health()
         try:

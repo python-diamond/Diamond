@@ -281,7 +281,7 @@ class TestRabbitMQCollector(CollectorTestCase):
         client.get_node.return_value = node_health
 
         self.collector.collect()
-        
+
         client.get_queue.assert_called_once_with('test/queue', None)
         client.get_queues.assert_not_called()
 
