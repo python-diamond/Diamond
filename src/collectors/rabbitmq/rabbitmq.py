@@ -66,8 +66,9 @@ class RabbitMQClient(object):
         try:
             queue = self.do_call(path)
             return queue or None
-        except Exception, e:
-            self.log.error('Error querying queue %s: %s', (queue_name, e))
+        except:
+            self.log.exception('Error querying queue %s/%s' %
+                (vhost, queue_name))
             return None
 
     def get_queues(self, vhost=None):
@@ -163,8 +164,8 @@ class RabbitMQCollector(diamond.collector.Collector):
                              len(node_data['partitions']))
                 content = client.get_nodes()
                 self.publish('cluster.nodes', len(content))
-        except Exception, e:
-            self.log.error('Couldnt connect to rabbitmq %s', e)
+        except:
+            self.log.exception('Couldnt connect to rabbitmq')
             return {}
 
     def get_queue_metrics(self, client, vhost, queues):
@@ -274,8 +275,8 @@ class RabbitMQCollector(diamond.collector.Collector):
             overview = client.get_overview()
             for key in overview:
                 self._publish_metrics('', [], key, overview)
-        except Exception, e:
-            self.log.error('An error occurred collecting from RabbitMQ, %s', e)
+        except:
+            self.log.exception('An error occurred collecting from RabbitMQ')
             return {}
 
     def _publish_metrics(self, name, prev_keys, key, data):
