@@ -57,7 +57,7 @@ class RabbitMQClient(object):
     def get_vhost_names(self):
         return [i['name'] for i in self.get_all_vhosts()]
 
-    def get_queue(self, queue_name, vhost=None):
+    def get_queue(self, vhost, queue_name):
         path = 'queues'
         if vhost:
             vhost = quote(vhost, '')
@@ -71,14 +71,17 @@ class RabbitMQClient(object):
                 (vhost, queue_name))
             return None
 
-    def get_queues(self, vhost=None):
+    def get_queues(self, vhost):
         path = 'queues'
-        if vhost:
-            vhost = quote(vhost, '')
-            path += '/%s' % vhost
-
-        queues = self.do_call(path)
-        return queues or []
+        vhost = quote(vhost, '')
+        path += '/%s' % vhost
+        
+        try:
+            queues = self.do_call(path)
+            return queues or []
+        except:
+            self.log.exception('Error querying queues %s' % vhost)
+            return []
 
     def get_overview(self):
         return self.do_call('overview')
@@ -185,7 +188,7 @@ class RabbitMQCollector(diamond.collector.Collector):
                 if matchers and any(
                         [m.match(queue_name) for m in matchers]):
                     continue
-                queue = client.get_queue(queue_name, vhost)
+                queue = client.get_queue(vhost, queue_name)
                 if queue is not None:
                     yield queue
         else:
@@ -247,12 +250,9 @@ class RabbitMQCollector(diamond.collector.Collector):
                     vhost_name = vhost_name.replace(
                         '/', self.config['replace_slash'])
 
-                # When we fetch queues, we do not want to define a vhost if
-                # legacy.
-                if legacy:
-                    vhost = None
-
-                for queue in self.get_queue_metrics(client, vhost, queues):
+                for queue in self.get_queue_metrics(
+                    client, vhost, queues
+                ):
                     for key in queue:
                         prefix = "queues"
                         if not legacy:
