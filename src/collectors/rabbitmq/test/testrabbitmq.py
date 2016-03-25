@@ -309,7 +309,7 @@ class TestRabbitMQCollector(CollectorTestCase):
         client.get_vhost_names.return_value = ['vhost1', 'vhost2']
 
         self.collector.collect()
-        
+
         client.get_queues.assert_not_called()
         client.get_nodes.assert_called_once_with()
         client.get_node.assert_called_once_with('rabbit@localhost')
@@ -320,7 +320,7 @@ class TestRabbitMQCollector(CollectorTestCase):
             call('vhost2', 'queue3'),
             call('vhost2', 'queue4'),
         ], any_order=True)
-        
+
         metrics = {
             'queues.queue1.key': 1,
             'queues.queue2.key': 2,
@@ -417,7 +417,7 @@ class TestRabbitMQCollector(CollectorTestCase):
         client.get_vhost_names.return_value = ['vhost1', 'vhost2']
 
         self.collector.collect()
-        
+
         client.get_queues.assert_not_called()
         client.get_nodes.assert_called_once_with()
         client.get_node.assert_called_once_with('rabbit@localhost')
@@ -428,7 +428,7 @@ class TestRabbitMQCollector(CollectorTestCase):
             call('vhost2', 'queue3'),
             call('vhost2', 'queue4'),
         ], any_order=True)
-        
+
         metrics = {
             'vhosts.vhost1.queues.queue1.key': 1,
             'vhosts.vhost1.queues.queue2.key': 2,

@@ -67,15 +67,16 @@ class RabbitMQClient(object):
             queue = self.do_call(path)
             return queue or None
         except:
-            self.log.exception('Error querying queue %s/%s' %
-                (vhost, queue_name))
+            self.log.exception('Error querying queue %s/%s' % (
+                vhost, queue_name
+            ))
             return None
 
     def get_queues(self, vhost):
         path = 'queues'
         vhost = quote(vhost, '')
         path += '/%s' % vhost
-        
+
         try:
             queues = self.do_call(path)
             return queues or []
@@ -201,7 +202,7 @@ class RabbitMQCollector(diamond.collector.Collector):
                         [m.match(queue['name']) for m in matchers]):
                     continue
                 yield queue
-    
+
     def get_vhost_conf(self, vhost_names):
         legacy = False
         if 'vhosts' in self.config:
@@ -226,7 +227,7 @@ class RabbitMQCollector(diamond.collector.Collector):
                     vhost_conf[vhost] = vhost_conf['*']
             del vhost_conf["*"]
         return vhost_conf, legacy
-    
+
     def collect(self):
         self.collect_health()
         try:
