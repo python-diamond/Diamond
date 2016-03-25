@@ -180,7 +180,7 @@ class RabbitMQCollector(diamond.collector.Collector):
             for reg in self.config['queues_ignored'].split():
                 matchers.append(re.compile(reg))
 
-        if self.config['query_individual_queues']:
+        if len(allowed_queues) and self.config['query_individual_queues']:
             for queue_name in allowed_queues:
                 if matchers and any(
                         [m.match(queue_name) for m in matchers]):
