@@ -66,9 +66,9 @@ class RabbitMQClient(object):
         try:
             queue = self.do_call(path)
             return queue or None
-        except:
-            self.log.exception('Error querying queue %s/%s' % (
-                vhost, queue_name
+        except Exception, e:
+            self.log.error('Error querying queue %s/%s: %s' % (
+                vhost, queue_name, e
             ))
             return None
 
@@ -80,8 +80,10 @@ class RabbitMQClient(object):
         try:
             queues = self.do_call(path)
             return queues or []
-        except:
-            self.log.exception('Error querying queues %s' % vhost)
+        except Exception, e:
+            self.log.error('Error querying queues %s: %s' % (
+                vhost, e
+            ))
             return []
 
     def get_overview(self):
