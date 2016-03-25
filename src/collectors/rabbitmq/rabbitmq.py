@@ -198,7 +198,32 @@ class RabbitMQCollector(diamond.collector.Collector):
                         [m.match(queue['name']) for m in matchers]):
                     continue
                 yield queue
+    
+    def get_vhost_conf(self, vhost_names):
+        legacy = False
+        if 'vhosts' in self.config:
+            vhost_conf = self.config['vhosts']
+        else:
+            # Legacy configurations, those that don't include the [vhosts]
+            # section require special care so that we do not break metric
+            # gathering for people that were using this collector before
+            # the update to support vhosts.
+            legacy = True
 
+            if 'queues' in self.config:
+                vhost_conf = {"*": self.config['queues']}
+            else:
+                vhost_conf = {"*": ""}
+
+        if "*" in vhost_conf:
+            for vhost in vhost_names:
+                # Copy the glob queue list to each vhost not
+                # specifically defined in the configuration.
+                if vhost not in vhost_conf:
+                    vhost_conf[vhost] = vhost_conf['*']
+            del vhost_conf["*"]
+        return vhost_conf, legacy
+    
     def collect(self):
         self.collect_health()
         try:
@@ -208,36 +233,10 @@ class RabbitMQCollector(diamond.collector.Collector):
                                     self.config['password'],
                                     scheme=self.config['scheme'])
 
-            legacy = False
+            vhost_names = client.get_vhost_names()
+            vhost_conf, legacy = self.get_vhost_conf(vhost_names)
 
-            if 'vhosts' not in self.config:
-                legacy = True
-
-                if 'queues' in self.config:
-                    vhost_conf = {"*": self.config['queues']}
-                else:
-                    vhost_conf = {"*": ""}
-
-            # Legacy configurations, those that don't include the [vhosts]
-            # section require special care so that we do not break metric
-            # gathering for people that were using this collector before the
-            # update to support vhosts.
-
-            if not legacy:
-                vhost_names = client.get_vhost_names()
-                if "*" in self.config['vhosts']:
-                    for vhost in vhost_names:
-                        # Copy the glob queue list to each vhost not
-                        # specifically defined in the configuration.
-                        if vhost not in self.config['vhosts']:
-                            self.config['vhosts'][vhost] = self.config[
-                                'vhosts']['*']
-
-                    del self.config['vhosts']["*"]
-                vhost_conf = self.config['vhosts']
-
-            # Iterate all vhosts in our vhosts configuration. For legacy this
-            # is "*" to force a single run.
+            # Iterate all vhosts in our vhosts configurations
             for vhost, queues in vhost_conf.iteritems():
                 vhost_name = vhost
                 if self.config['replace_dot']:
