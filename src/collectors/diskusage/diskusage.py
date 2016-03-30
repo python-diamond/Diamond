@@ -25,6 +25,10 @@ try:
 except ImportError:
     psutil = None
 
+try:
+    import pyudev
+except ImportError:
+    pyudev = None
 
 class DiskUsageCollector(diamond.collector.Collector):
 
@@ -52,6 +56,9 @@ class DiskUsageCollector(diamond.collector.Collector):
                                " metrics gathering. This regex is applied" +
                                " after the devices selection regex." +
                                " Defaults to include all devices.",
+            'persistent_naming': "Rename devices using device model name and" +
+                                 " serial number data extracted via udev." +
+                                 " Defaults to false.",
         })
         return config_help
 
@@ -71,6 +78,7 @@ class DiskUsageCollector(diamond.collector.Collector):
             'sector_size': 512,
             'send_zero': False,
             'exclude_devices': None,
+            'persistent_naming': False,
         })
         return config
 
@@ -84,6 +92,11 @@ class DiskUsageCollector(diamond.collector.Collector):
           (major, minor) -> DiskStatistics(device, ...)
         """
         result = {}
+
+        if (self.config['persistent_naming'] and not pyudev):
+            self.log.warning("Unable to import pyudev which is required for" +
+                " persistent_naming. Persistent naming support is now disabled.")
+            self.config['persistent_naming'] = False
 
         if os.access('/proc/diskstats', os.R_OK):
             self.proc_diskstats = True
@@ -178,6 +191,22 @@ class DiskUsageCollector(diamond.collector.Collector):
                     and re.match(self.config['exclude_devices'], name)):
                 continue
 
+            if (self.config['persistent_naming'] and pyudev):
+                context = pyudev.Context()
+                udev = pyudev.Device.from_name(context, "block", name)
+                persistent_name = None
+                if (udev and ('ID_MODEL' in udev) and ('ID_SERIAL' in udev)):
+                    if (udev['DEVTYPE'] == 'partition'):
+                        persistent_name = (str(udev['ID_MODEL']) + "-" +
+                                           str(udev['ID_SERIAL']) + "-part" +
+                                           str(udev['ID_PART_ENTRY_NUMBER']))
+                    else:
+                        persistent_name = (str(udev['ID_MODEL']) + "-" +
+                                           str(udev['ID_SERIAL']))
+                else:
+                    self.log.warning("Unable to create persistent name for" +
+                            " device: " + name)
+
             for key, value in info.iteritems():
                 if key == 'device':
                     continue
@@ -197,7 +226,10 @@ class DiskUsageCollector(diamond.collector.Collector):
                             oldUnit='byte',
                             newUnit=unit)
 
-                    metric_name = '.'.join([info['device'], key])
+                    if (self.config['persistent_naming']):
+                        metric_name = '.'.join([str(persistent_name), key])
+                    else:
+                        metric_name = '.'.join([info['device'], key])
                     # io_in_progress is a point in time counter, !derivative
                     if key != 'io_in_progress':
                         metric_value = self.derivative(
@@ -284,6 +316,10 @@ class DiskUsageCollector(diamond.collector.Collector):
             # Only publish when we have io figures
             if (metrics['io'] > 0 or self.config['send_zero']):
                 for key in metrics:
-                    metric_name = '.'.join([info['device'], key]).replace(
-                        '/', '_')
+                    if (self.config['persistent_naming']):
+                        metric_name = '.'.join([str(persistent_name), key]).replace(
+                            '/', '_')
+                    else:
+                        metric_name = '.'.join([info['device'], key]).replace(
+                            '/', '_')
                     self.publish(metric_name, metrics[key], precision=3)
