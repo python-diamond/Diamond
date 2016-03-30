@@ -51,7 +51,7 @@ class DiskUsageCollector(diamond.collector.Collector):
             'exclude_devices': "A regex of which devices to exclude from " +
                                " metrics gathering. This regex is applied" +
                                " after the devices selection regex." +
-                               " Defaults to include all devices.", 
+                               " Defaults to include all devices.",
         })
         return config_help
 
@@ -175,8 +175,8 @@ class DiskUsageCollector(diamond.collector.Collector):
                 continue
 
             if (self.config['exclude_devices']
-              and re.match (self.config['exclude_devices'], name)):
-              continue
+                    and re.match(self.config['exclude_devices'], name)):
+                continue
 
             for key, value in info.iteritems():
                 if key == 'device':
