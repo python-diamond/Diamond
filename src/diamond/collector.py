@@ -366,9 +366,9 @@ class Collector(object):
         raise NotImplementedError()
 
     def publish(self, name, value, raw_value=None, precision=0,
-                metric_type='GAUGE', instance=None):
+                metric_type='GAUGE', instance=None, timestamp=None):
         """
-        Publish a metric with the given name
+        Publish a metric with the given name at the given time
         """
         # Check whitelist/blacklist
         if self.config['metrics_whitelist']:
@@ -387,7 +387,7 @@ class Collector(object):
 
         # Create Metric
         try:
-            metric = Metric(path, value, raw_value=raw_value, timestamp=None,
+            metric = Metric(path, value, raw_value=raw_value, timestamp=timestamp,
                             precision=precision, host=self.get_hostname(),
                             metric_type=metric_type, ttl=ttl)
         except DiamondException:
