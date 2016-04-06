@@ -33,7 +33,7 @@ def collector_process(collector, metric_queue, log):
     signal.signal(signal.SIGALRM, signal_to_exception)
     signal.signal(signal.SIGHUP, signal_to_exception)
     signal.signal(signal.SIGUSR2, signal_to_exception)
-	signal.signal(signal.SIGINT, sigint_handler)  # add by gongping2013 20160406
+    signal.signal(signal.SIGINT, sigint_handler)  # add by gongping2013 20160406
     signal.signal(signal.SIGTERM, sigint_handler)
 
     interval = float(collector.config['interval'])
@@ -113,7 +113,7 @@ def handler_process(handlers, metric_queue, log):
         setproctitle('%s - %s' % (getproctitle(), proc.name))
 
     log.debug('Starting process %s', proc.name)
-	signal.signal(signal.SIGINT, sigint_handler)  # add by gongping2013 20160406
+    signal.signal(signal.SIGINT, sigint_handler)  # add by gongping2013 20160406
     signal.signal(signal.SIGTERM, sigint_handler)
 
     while(True):
