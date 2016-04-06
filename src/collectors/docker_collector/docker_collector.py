@@ -4,6 +4,11 @@
 The DockerCollector uses the docker stats api to
 collect data about docker and the containers.
 
+This collector uses the container name by default.
+If labels are specified, instead of the app name, the
+label values are put to the namespace after the collector 
+path, in order.
+
 #### Dependencies
 
 * docker -- Install via `pip install docker-py`
@@ -42,7 +47,8 @@ class DockerCollector(diamond.collector.Collector):
     def get_default_config(self):
         config = super(DockerCollector, self).get_default_config()
         config.update({
-            'path': 'docker'
+            'path': 'docker',
+            'labels': []
         })
         return config
 
@@ -84,13 +90,22 @@ class DockerCollector(diamond.collector.Collector):
 
             # Collect memory and cpu stats
             for container in running_containers:
-                name = "containers.".join(container['Names'][0][1:])
+                # build namespace from configured labels
+                values = [container['Labels'].get(l) for l in self.config['labels']]
+                namespace = ".".join([v for v in values if v is not None])
+
+                # if namespace is empty, use container name
+                if namespace == '':
+                    namespace = container['Names'][0][1:]
+                
+                namespace = "containers." + namespace
+
                 s = client.stats(container["Id"])
                 stat = json.loads(s.next())
                 for path in self.METRICS:
                     val = self.get_value(path, stat)
                     if val is not None:
-                        metric_key = ".".join([name, self.METRICS.get(path)])
+                        metric_key = ".".join([namespace, self.METRICS.get(path)])
                         results[metric_key] = (val, 'GAUGE')
                 s.close()
 
