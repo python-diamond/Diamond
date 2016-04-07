@@ -115,12 +115,46 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
         default_config['byte_unit'] = ['bit', 'byte']
         return default_config
 
+    def get(self, oid, host, port, community):
+        """
+        Backwards compatible snmp_get
+        """
+        auth = self.create_auth(community)
+        transport = self.create_transport(host, port)
+        rows = self.snmp_get(oid, auth, transport)
+
+        for k, v in rows:
+            if v.prettyPrint() == "No Such Instance currently exists at this OID":
+                value = None
+
+            else:
+                value = v.prettyPrint()
+
+            key = str(self._from_oid_tuple(k))
+
+            return {key: value}
+
+    def walk(self, oid, host, port, community):
+        """
+        Backwards compatible snmp_walk
+        """
+        auth = self.create_auth(community)
+        transport = self.create_transport(host, port)
+        rows = self.snmp_walk(oid, auth, transport)
+
+        ret = {}
+        for k, v in rows:
+            key = str(self._from_oid_tuple(k))
+            ret[key] = v.prettyPrint()
+
+        return ret
+
     def collect_snmp(self, device, host, port, community):
         """
         Collect SNMP interface data from device
         """
         # Log
-        self.log.info("Collecting SNMP interface statistics from: %s", device)
+        self.log.debug("Collecting SNMP interface statistics from: %s", device)
 
         # Define a list of interface indexes
         ifIndexes = []
@@ -134,9 +168,14 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
             # Get Interface Type
             ifTypeOid = '.'.join([self.IF_MIB_TYPE_OID, ifIndex])
             ifTypeData = self.get(ifTypeOid, host, port, community)
-            if ifTypeData[ifTypeOid] not in self.IF_TYPES:
-                # Skip Interface
+            try:
+                if ifTypeData[ifTypeOid] not in self.IF_TYPES:
+                    # Skip Interface
+                    continue
+
+            except KeyError:
                 continue
+
             # Get Interface Name
             ifNameOid = '.'.join([self.IF_MIB_NAME_OID, ifIndex])
             ifNameData = self.get(ifNameOid, host, port, community)
@@ -213,3 +252,6 @@ class SNMPInterfaceCollector(parent_SNMPCollector):
                                          metricValue,
                                          max_value=18446744073709600000,
                                          )
+
+        self.log.debug(
+            "Finished Collecting SNMP interface statistics from: %s", device)
