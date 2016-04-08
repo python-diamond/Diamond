@@ -144,11 +144,6 @@ class DiskSpaceCollector(diamond.collector.Collector):
                                    "exclude_filter list.", mount_point)
                     continue
 
-                if ((mount_point.startswith('/dev') or
-                     mount_point.startswith('/proc') or
-                     mount_point.startswith('/sys'))):
-                    continue
-
                 if ((('/' in device or device == 'tmpfs') and
                      mount_point.startswith('/'))):
                     try:
