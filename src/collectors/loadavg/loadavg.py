@@ -12,6 +12,7 @@ Uses /proc/loadavg to collect data on load average
 import diamond.collector
 import re
 import os
+import multiprocessing
 from diamond.collector import str_to_bool
 
 
@@ -41,13 +42,18 @@ class LoadAverageCollector(diamond.collector.Collector):
 
     def collect(self):
         load01, load05, load15 = os.getloadavg()
+        cpu_count = multiprocessing.cpu_count()
 
         if not str_to_bool(self.config['simple']):
             self.publish_gauge('01', load01, 2)
             self.publish_gauge('05', load05, 2)
             self.publish_gauge('15', load15, 2)
+            self.publish_gauge('01_normalized', load01 / cpu_count, 2)
+            self.publish_gauge('05_normalized', load05 / cpu_count, 2)
+            self.publish_gauge('15_normalized', load15 / cpu_count, 2)
         else:
             self.publish_gauge('load', load01, 2)
+            self.publish_gauge('load_normalized', load01 / cpu_count, 2)
 
         # Legacy: add process/thread counters provided by
         # /proc/loadavg (if available).
