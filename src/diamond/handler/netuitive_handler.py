@@ -254,8 +254,16 @@ class NetuitiveHandler(Handler):
                 if k.lower() == 'region':
                     region = v
 
+                if k.lower() == 'accountid':
+                    accountid = v
+
             try:
+                # old fqn format
                 child = '{0}:{1}'.format(region, instanceid)
+                self.element.add_relation(child)
+
+                # new fqn format
+                child = '{0}:EC2:{1}:{2}'.format(accountid, region, instanceid)
                 self.element.add_relation(child)
 
             except Exception as e:
