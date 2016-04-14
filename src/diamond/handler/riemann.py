@@ -21,9 +21,9 @@ It has these options:
 from Handler import Handler
 import logging
 try:
-    import bernhard
+    import riemann_client
 except ImportError:
-    bernhard = None
+    riemann_client = None
 
 
 class RiemannHandler(Handler):
@@ -32,8 +32,8 @@ class RiemannHandler(Handler):
         # Initialize Handler
         Handler.__init__(self, config)
 
-        if bernhard is None:
-            logging.error("Failed to load bernhard module")
+        if riemann_client is None:
+            logging.error("Failed to load riemann_client module")
             return
 
         # Initialize options
@@ -43,10 +43,11 @@ class RiemannHandler(Handler):
 
         # Initialize client
         if self.transport == 'tcp':
-            transportCls = bernhard.TCPTransport
+            transportCls = riemann_client.TCPTransport
         else:
-            transportCls = bernhard.UDPTransport
-        self.client = bernhard.Client(self.host, self.port, transportCls)
+            transportCls = riemann_client.UDPTransport
+        self.client = riemann_client.client.Client(
+            self.host, self.port, transportCls)
 
     def get_default_config_help(self):
         """
@@ -110,10 +111,8 @@ class RiemannHandler(Handler):
         """
         Disconnect from Riemann.
         """
-        try:
+        if self.client:
             self.client.disconnect()
-        except AttributeError:
-            pass
 
     def __del__(self):
         self._close()

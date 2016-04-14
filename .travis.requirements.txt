@@ -1,7 +1,7 @@
 MySQL-python
 PyYAML
 beanstalkc
-bernhard
+riemann-client
 boto
 configobj
 docker-py
