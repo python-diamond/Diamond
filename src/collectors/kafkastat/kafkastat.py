@@ -109,10 +109,10 @@ class KafkaCollector(diamond.collector.Collector):
 
         # extract prefix & keys from the obkect name
         # for example:
-        #  if objectname = kafka.network:type=RequestMetrics,name=RequestQueueTimeMs,request=OffsetCommit
-        #  prefix will be: kafka.network
-        #  keys   will be: ['type=RequestMetrics', 'name=RequestQueueTimeMs', 'request=OffsetCommit']
-        (prefix, keys)= objectname.split(':')
+        #  objectname: kafka.log:type=LogFlushStats,name=LogFlushRateAndTimeMs
+        #  prefix will be: kafka.log
+        #  keys will be: ['type=LogFlushStats', 'name=LogFlushRateAndTimeMs']
+        (prefix, keys) = objectname.split(':')
         keys = keys.split(',')
 
         if key_prefix is None:
