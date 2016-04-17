@@ -107,26 +107,23 @@ class KafkaCollector(diamond.collector.Collector):
         if attributes is None:
             return
 
-        if key_prefix is None:
-            # Could be 1 or 2 = in the string
-            # java.lang:type=Threading
-            # "kafka.controller":type="ControllerStats",
-            # name="LeaderElectionRateAndTimeMs"
-            split_num = objectname.count('=')
-            for i in range(split_num):
-                if i == 0:
-                    key_prefix = objectname.split('=')[1]
-                    if '"' in key_prefix:
-                        key_prefix = key_prefix.split('"')[1]
-                    if "," in key_prefix:
-                        key_prefix = key_prefix.split(',')[0]
-                elif i > 0:
-                    key = objectname.split('=')[2]
-                    if key:
-                        if '"' in key:
-                            key = key.split('"')[1]
-                        key_prefix = key_prefix + '.' + key
+        # extract prefix & keys from the obkect name
+        # for example:
+        #  if objectname = kafka.network:type=RequestMetrics,name=RequestQueueTimeMs,request=OffsetCommit
+        #  prefix will be: kafka.network
+        #  keys   will be: ['type=RequestMetrics', 'name=RequestQueueTimeMs', 'request=OffsetCommit']
+        (prefix, keys)= objectname.split(':')
+        keys = keys.split(',')
 
+        if key_prefix is None:
+            # conactinate prefix with first element from the keys,
+            # keys element splitted with = and extracted the last element
+            key_prefix = prefix + "." + keys.pop(0).split('=')[-1]
+        else:
+            keys.pop(0)
+
+        keys = map(lambda i: i.replace('=', '_').replace('.', '_'), keys)
+        metric_key = '.'.join([key_prefix] + keys)
         metrics = {}
 
         for attrib in attributes.getiterator(tag='Attribute'):
@@ -138,7 +135,7 @@ class KafkaCollector(diamond.collector.Collector):
 
             value = ptype(attrib.get('value'))
 
-            name = '.'.join([key_prefix, attrib.get('name')])
+            name = '.'.join([metric_key, attrib.get('name')])
             # Some prefixes and attributes could have spaces, thus we must
             # sanitize them
             name = name.replace(' ', '')
