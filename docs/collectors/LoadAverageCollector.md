@@ -26,8 +26,11 @@ simple | False | Only collect the 1 minute load average | str
 
 ```
 servers.hostname.loadavg.01 (0.12, 2)
+servers.hostname.loadavg.01_normalized (0.06, 2)
 servers.hostname.loadavg.05 (0.23, 2)
+servers.hostname.loadavg.05_normalized (0.115, 2)
 servers.hostname.loadavg.15 (0.34, 2)
+servers.hostname.loadavg.15_normalized (0.17, 2)
 servers.hostname.loadavg.processes_running 1
 servers.hostname.loadavg.processes_total 235
 ```
