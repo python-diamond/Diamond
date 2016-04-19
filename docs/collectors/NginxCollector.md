@@ -39,8 +39,10 @@ measure_collector_time | False | Collect the collector run time in ms | bool
 metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
 metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
 req_host | localhost | Hostname | str
+req_host_header | None | HTTP Host header (required for SSL) | NoneType
 req_path | /nginx_status | Path | str
 req_port | 8080 | Port | int
+req_ssl | False | SSL Support | bool
 
 #### Example Output
 
