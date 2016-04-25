@@ -265,6 +265,24 @@ class RedisCollector(diamond.collector.Collector):
         del client
         return info
 
+    def _get_config(self, host, port, unix_socket, auth, config_key):
+        """Return config string from specified Redis instance and config key
+
+:param str host: redis host
+:param int port: redis port
+:param str host: redis config_key
+:rtype: str
+
+        """
+
+        client = self._client(host, port, unix_socket, auth)
+        if client is None:
+            return None
+
+        config_value = client.config_get(config_key)
+        del client
+        return config_value
+
     def collect_instance(self, nick, host, port, unix_socket, auth):
         """Collect metrics from a single Redis instance
 
@@ -284,6 +302,21 @@ class RedisCollector(diamond.collector.Collector):
         # The structure should include the port for multiple instances per
         # server
         data = dict()
+
+        # Connect to redis and get the maxmemory config value
+        # Then calculate the % maxmemory of memory used
+        maxmemory_config = self._get_config(host, port, unix_socket, auth,
+                                            'maxmemory')
+        if maxmemory_config and 'maxmemory' in maxmemory_config.keys():
+            maxmemory = float(maxmemory_config['maxmemory'])
+
+            # Only report % used if maxmemory is a non zero value
+            if maxmemory == 0:
+                maxmemory_percent = 0.0
+            else:
+                maxmemory_percent = info['used_memory'] / maxmemory * 100
+                maxmemory_percent = round(maxmemory_percent, 2)
+            data['memory.used_percent'] = float("%.2f" % maxmemory_percent)
 
         # Iterate over the top level keys
         for key in self._KEYS:
