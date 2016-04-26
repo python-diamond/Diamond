@@ -14,10 +14,14 @@ Example config file ProcessResourcesCollector.conf
 enabled=True
 unit=B
 cpu_interval=0.1
+info_keys='num_ctx_switches','cpu_percent','cpu_times','io_counters','num_threads','num_fds','memory_percent','memory_info_ex'
 [process]
 [[postgres]]
 exe=^\/usr\/lib\/postgresql\/+d.+d\/bin\/postgres$
 name=^postgres,^pg
+
+[[elasticsearch]]
+cmdline=java.*Elasticsearch
 
 [[diamond]]
 selfmon=True
@@ -36,6 +40,7 @@ Setting | Default | Description | Type
 --------|---------|-------------|-----
 byte_unit | byte | Default numeric output(s) | str
 enabled | False | Enable collecting these metrics | bool
+info_keys | num_ctx_switches, cpu_percent, cpu_times, io_counters, num_threads, num_fds, memory_percent, memory_info_ex, | List of process metrics to collect. Valid list of metrics can be found [here](https://pythonhosted.org/psutil/) | list
 measure_collector_time | False | Collect the collector run time in ms | bool
 metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
 metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType

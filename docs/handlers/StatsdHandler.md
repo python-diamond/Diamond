@@ -32,3 +32,8 @@ of this handler.
 
 Setting | Default | Description | Type
 --------|---------|-------------|-----
+batch | 1 |  | int
+get_default_config_help |  | get_default_config_help | 
+host |  |  | str
+port | 1234 |  | int
+server_error_interval | 120 | How frequently to send repeated server errors | int

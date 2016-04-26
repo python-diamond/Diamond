@@ -64,3 +64,5 @@ which subscribes to an MQTT broker and sends metrics off to Graphite.
 
 Setting | Default | Description | Type
 --------|---------|-------------|-----
+get_default_config_help |  | get_default_config_help | 
+server_error_interval | 120 | How frequently to send repeated server errors | int

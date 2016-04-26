@@ -4,8 +4,8 @@ Please edit the source to make changes
 GraphiteHandler
 ====
 
-Send metrics to a [graphite](http://graphite.wikidot.com/) using the high
-performace pickle interface.
+Send metrics to a [graphite](http://graphite.wikidot.com/) using the default
+interface.
 
 Graphite is an enterprise-scale monitoring tool that runs well on cheap
 hardware. It was originally designed and written by Chris Davis at Orbitz in
