@@ -195,6 +195,13 @@ class ElasticSearchCollector(diamond.collector.Collector):
         self._add_metric(metrics, 'cluster_health.shards.initializing',
                          result, ['initializing_shards'])
 
+        CLUSTER_STATUS = {
+            'green': 2,
+            'yellow': 1,
+            'red': 0
+        }
+        metrics['cluster_health.status'] = CLUSTER_STATUS[result['status']]
+
     def collect_instance_index_stats(self, host, port, metrics):
         result = self._get(host, port,
                            '_stats?clear=true&docs=true&store=true&' +
