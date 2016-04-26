@@ -1,5 +1,6 @@
 # Diamond
 
+[![Join the chat at https://gitter.im/python-diamond/Diamond](https://badges.gitter.im/python-diamond/Diamond.svg)](https://gitter.im/python-diamond/Diamond?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/python-diamond/Diamond.svg?branch=master)](https://travis-ci.org/python-diamond/Diamond)
 
 Diamond is a python daemon that collects system metrics and publishes them to [Graphite](handlers/GraphiteHandler) (and others).
