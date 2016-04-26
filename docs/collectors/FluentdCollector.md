@@ -17,7 +17,7 @@ The FlutendCollector monitors fluentd and data about the kinesis stream.
     host = localhost
     port = 24220
     [[[collect]]]
-        kinesis = buffer_queue_length, buffer_total_queued_size, retry_count
+    kinesis = buffer_queue_length, buffer_total_queued_size, retry_count
 ```
 
 
