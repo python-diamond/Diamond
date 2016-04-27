@@ -5,7 +5,7 @@ Send metrics to [Riemann](http://aphyr.github.com/riemann/).
 
 #### Dependencies
 
- * [Bernhard](https://github.com/banjiewen/bernhard).
+ * [riemann-client](https://github.com/borntyping/python-riemann-client).
 
 #### Configuration
 
@@ -20,8 +20,11 @@ It has these options:
 
 from Handler import Handler
 import logging
+
 try:
-    import riemann_client
+    from riemann_client.transport import TCPTransport, UDPTransport
+    from riemann_client.client import Client
+    riemann_client = True
 except ImportError:
     riemann_client = None
 
@@ -43,11 +46,11 @@ class RiemannHandler(Handler):
 
         # Initialize client
         if self.transport == 'tcp':
-            transportCls = riemann_client.TCPTransport
+            self.transport = TCPTransport(self.host, self.port)
         else:
-            transportCls = riemann_client.UDPTransport
-        self.client = riemann_client.client.Client(
-            self.host, self.port, transportCls)
+            self.transport = UDPTransport(self.host, self.port)
+        self.client = Client(self.transport)
+        self._connect()
 
     def get_default_config_help(self):
         """
@@ -83,10 +86,10 @@ class RiemannHandler(Handler):
         """
         event = self._metric_to_riemann_event(metric)
         try:
-            self.client.send(event)
+            self.client.send_event(event)
         except Exception, e:
-            self.log.error("RiemannHandler: Error sending event to Riemann: %s",
-                           e)
+            self.log.error(
+                "RiemannHandler: Error sending event to Riemann: %s", e)
 
     def _metric_to_riemann_event(self, metric):
         """
@@ -99,20 +102,23 @@ class RiemannHandler(Handler):
             metric.getMetricPath()
         )
 
-        return {
+        return self.client.create_event({
             'host': metric.host,
             'service': path,
             'time': metric.timestamp,
-            'metric': float(metric.value),
+            'metric_f': float(metric.value),
             'ttl': metric.ttl,
-        }
+        })
+
+    def _connect(self):
+        self.transport.connect()
 
     def _close(self):
         """
         Disconnect from Riemann.
         """
-        if self.client:
-            self.client.disconnect()
+        if hasattr(self, 'transport'):
+            self.transport.disconnect()
 
     def __del__(self):
         self._close()
