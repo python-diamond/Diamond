@@ -84,7 +84,7 @@ class DockerCollector(diamond.collector.Collector):
 
             # Collect memory and cpu stats
             for container in running_containers:
-                name = "containers.".join(container['Names'][0][1:])
+                name = "containers." + "".join(container['Names'][0][1:])
                 s = client.stats(container["Id"])
                 stat = json.loads(s.next())
                 for path in self.METRICS:
