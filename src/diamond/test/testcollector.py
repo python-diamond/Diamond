@@ -32,3 +32,16 @@ class BaseCollectorTest(unittest.TestCase):
         }
         c = Collector(config, [])
         self.assertEquals('custom.localhost', c.get_hostname())
+
+    def test_PrefixEmpty(self):
+        config = configobj.ConfigObj()
+        config['server'] = {}
+        config['server']['collectors_config_path'] = ''
+        config['collectors'] = {}
+        config['collectors']['default'] = {
+            'path': 'dummy',
+            'path_prefix': '',
+            'hostname': '',
+        }
+        c = Collector(config, [])
+        self.assertEquals('dummy.metric', c.get_metric_path('metric'))
