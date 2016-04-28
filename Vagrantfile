@@ -103,6 +103,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     c.vm.provision "shell", inline: "sudo ln -s /vagrant/src/diamond /usr/lib/python2.7/site-packages/diamond"
     c.vm.provision "shell", inline: "sudo ln -s /vagrant/rpm/systemd/diamond.service /usr/lib/systemd/system/diamond.service"
 
+    # Install other components to test with
+
+    ## Redis
+    c.vm.provision "shell", inline: "sudo yum install -y redis"
+    c.vm.provision "shell", inline: "sudo systemctl start redis.service"
+
     # Build Diamond docs and run tests
     c.vm.provision "shell", inline: "sudo pip install pep8==1.5.7"
     c.vm.provision "shell", inline: "echo 'Build docs...' && python /vagrant/build_doc.py"
