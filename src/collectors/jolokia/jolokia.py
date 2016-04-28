@@ -201,13 +201,19 @@ class JolokiaCollector(diamond.collector.Collector):
         """Returns a dictionary with JMX domain names as keys"""
         try:
             # https://jolokia.org/reference/html/protocol.html
+            #
             # A maxDepth of 1 restricts the return value to a map with the JMX
             # domains as keys. The values of the maps don't have any meaning
             # and are dummy values.
-            url = "http://%s:%s/%s%s?maxDepth=1" % (self.config['host'],
-                                                    self.config['port'],
-                                                    self.jolokia_path,
-                                                    self.LIST_URL)
+            #
+            # maxCollectionSize=0 means "unlimited". This works around an issue
+            # prior to Jolokia 1.3 where results were truncated at 1000
+            #
+            url = "http://%s:%s/%s%s?maxDepth=1&maxCollectionSize=0" % (
+                self.config['host'],
+                self.config['port'],
+                self.jolokia_path,
+                self.LIST_URL)
             # need some time to process the downloaded metrics, so that's why
             # timeout is lower than the interval.
             timeout = max(2, float(self.config['interval']) * 2 / 3)
@@ -221,6 +227,7 @@ class JolokiaCollector(diamond.collector.Collector):
     def _read_request(self, domain):
         try:
             url_path = '/?%s' % urllib.urlencode({
+                'maxCollectionSize': '0',
                 'ignoreErrors': 'true',
                 'canonicalNaming':
                     'true' if self.config['use_canonical_names'] else 'false',
@@ -240,8 +247,8 @@ class JolokiaCollector(diamond.collector.Collector):
             self.log.error('Unable to read JSON response.')
             return {}
 
-    # escape the JMX domain per https://jolokia.org/reference/html/protocol.html
-    # the Jolokia documentation suggests that, when using the p query parameter,
+    # escape JMX domain per https://jolokia.org/reference/html/protocol.html
+    # the Jolokia documentation suggests that when using the p query parameter,
     # simply urlencoding should be sufficient, but in practice, the '!' appears
     # necessary (and not harmful)
     def _escape_domain(self, domain):
