@@ -1,0 +1,5 @@
+server 12.34.56.1, stratum 2, offset -0.000277, delay 0.02878
+server 12.34.56.2, stratum 1, offset -0.000128, delay 0.02896
+server 12.34.56.3, stratum 2, offset 0.000613, delay 0.02870
+server 12.34.56.4, stratum 2, offset -0.000351, delay 0.02864
+31 Apr 12:00:00 ntpdate[12]: adjust time server 12.34.56.2 offset -0.000128 sec
