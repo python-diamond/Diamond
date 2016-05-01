@@ -63,7 +63,7 @@ else:
         if distro == 'Ubuntu':
             data_files.append(('/etc/init',
                                ['debian/diamond.upstart']))
-        if distro in ['centos', 'redhat', 'debian', 'fedora']:
+        if distro in ['centos', 'redhat', 'debian', 'fedora', 'oracle']:
             data_files.append(('/etc/init.d',
                                ['bin/init.d/diamond']))
             data_files.append(('/var/log/diamond',
