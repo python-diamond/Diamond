@@ -162,6 +162,37 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
         """Turns a string into a list of byte values"""
         return struct.unpack('%sB' % len(s), s)
 
+    def _convert_to_oid(self, s):
+        d = s.split(".")
+        return tuple([int(x) for x in d])
+
+    def _convert_from_oid(self, oid):
+        return ".".join([str(x) for x in oid])
+
+    def get(self, oid, host, port, community):
+        """
+        Backwards compatible snmp_get
+        """
+        auth = self.create_auth(community)
+        transport = self.create_transport(host, port)
+        rows = self.snmp_get(oid, auth, transport)
+
+        ret = {}
+        for k, v in rows:
+            if v.prettyPrint() == "No Such Instance currently exists at this OID":
+                value = None
+
+            else:
+                value = v.prettyPrint()
+
+            key = str(self._from_oid_tuple(k))
+
+            ret[key] = value
+
+            self.log.debug("OID: {0} k: {1} v: {2}".format(
+                str(oid), str(key), str(value)))
+        return ret
+
     def collect_snmp(self, device, host, port, community):
         """
         Collect Netscaler SNMP stats from device

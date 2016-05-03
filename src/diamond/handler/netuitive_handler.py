@@ -343,5 +343,9 @@ class NetuitiveHandler(Handler):
                 logging.info('NetuitiveHandler: Data posted successfully. ' +
                              'Next log message in 15 minutes.')
 
+        except urllib2.HTTPError as e:
+            if e.code in self.api.kill_codes:
+                logging.exception('NetuitiveHandler: flush - %s', str(e))
+
         except Exception as e:
             logging.exception('NetuitiveHandler: flush - %s', str(e))
