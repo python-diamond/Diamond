@@ -47,8 +47,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
     def get_default_config(self):
         """
         Returns the default collector settings
-        """
-        config = super(DiskSpaceCollector, self).get_default_config()
+        """ config = super(DiskSpaceCollector, self).get_default_config()
         config.update({
             'path': 'diskspace',
             # filesystems to examine
@@ -88,8 +87,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             for filesystem in self.config['filesystems'].split(','):
                 self.filesystems.append(filesystem.strip())
         elif isinstance(self.config['filesystems'], list):
-            self.filesystems = self.config['filesystems']
-
+            self.filesystems = self.config['filesystems'] 
     def get_disk_labels(self):
         """
         Creates a mapping of device nodes to filesystem labels
@@ -97,10 +95,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
         path = '/dev/disk/by-label/'
         labels = {}
         if not os.path.isdir(path):
-            return labels
-
-        for label in os.listdir(path):
-            label = label.replace('\\x2f', '/')
+            return labels 
+        for label in os.listdir(path): label = label.replace('\\x2f', '/')
             device = os.path.realpath(path + '/' + label)
             labels[device] = label
 
@@ -146,7 +142,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
                      mount_point.startswith('/sys'))):
                     continue
 
-                if ('/' in device or device == tmpfs) and mount_point.startswith('/'):
+                if ('/' in device or device == tmpfs) and 
+                    mount_point.startswith('/'):
                     try:
                         stat = os.stat(mount_point)
                         major = os.major(stat.st_dev)
@@ -198,8 +195,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 name = name.replace('.', '_').replace('\\', '')
                 if name == '_':
                     name = 'root'
-		elif name == '_tmp':
-		    name = 'tmp'
+                elif name == '_tmp':
+                    name = 'tmp'
 
             if hasattr(os, 'statvfs'):  # POSIX
                 try:
