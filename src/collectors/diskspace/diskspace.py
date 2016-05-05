@@ -146,7 +146,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                      mount_point.startswith('/sys'))):
                     continue
 
-                if '/' in device and mount_point.startswith('/'):
+                if ('/' in device or device == tmpfs) and mount_point.startswith('/'):
                     try:
                         stat = os.stat(mount_point)
                         major = os.major(stat.st_dev)
@@ -198,6 +198,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 name = name.replace('.', '_').replace('\\', '')
                 if name == '_':
                     name = 'root'
+		elif name == '_tmp':
+		    name = 'tmp'
 
             if hasattr(os, 'statvfs'):  # POSIX
                 try:
