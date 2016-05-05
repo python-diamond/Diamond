@@ -47,7 +47,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
     def get_default_config(self):
         """
         Returns the default collector settings
-        """ config = super(DiskSpaceCollector, self).get_default_config()
+        """ 
+        config = super(DiskSpaceCollector, self).get_default_config()
         config.update({
             'path': 'diskspace',
             # filesystems to examine
@@ -87,7 +88,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
             for filesystem in self.config['filesystems'].split(','):
                 self.filesystems.append(filesystem.strip())
         elif isinstance(self.config['filesystems'], list):
-            self.filesystems = self.config['filesystems'] 
+            self.filesystems = self.config['filesystems']
+ 
     def get_disk_labels(self):
         """
         Creates a mapping of device nodes to filesystem labels
@@ -95,7 +97,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
         path = '/dev/disk/by-label/'
         labels = {}
         if not os.path.isdir(path):
-            return labels 
+            return labels
+ 
         for label in os.listdir(path): label = label.replace('\\x2f', '/')
             device = os.path.realpath(path + '/' + label)
             labels[device] = label
