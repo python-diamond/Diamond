@@ -7,6 +7,7 @@ Send metrics to a http endpoint via POST
 
 from Handler import Handler
 import urllib2
+import json
 
 
 class HttpPostHandler(Handler):
@@ -16,7 +17,8 @@ class HttpPostHandler(Handler):
         Handler.__init__(self, config)
         self.metrics = []
         self.batch_size = int(self.config['batch'])
-        self.url = self.config.get('url')
+        self.format = self.config['format']
+        self.url = self.config['url']
 
     def get_default_config_help(self):
         """
@@ -26,6 +28,7 @@ class HttpPostHandler(Handler):
 
         config.update({
             'url': 'Fully qualified url to send metrics to',
+            'format': 'Format to send metrics (PLAIN or JSON)',
             'batch': 'How many to store before sending to the graphite server',
         })
 
@@ -39,6 +42,7 @@ class HttpPostHandler(Handler):
 
         config.update({
             'url': 'http://localhost/blah/blah/blah',
+            'format': 'PLAIN',
             'batch': 100,
         })
 
@@ -46,7 +50,7 @@ class HttpPostHandler(Handler):
 
     # Join batched metrics and push to url mentioned in config
     def process(self, metric):
-        self.metrics.append(str(metric))
+        self.metrics.append(metric)
         if len(self.metrics) >= self.batch_size:
             self.post()
 
@@ -56,6 +60,28 @@ class HttpPostHandler(Handler):
         self.post()
 
     def post(self):
-        req = urllib2.Request(self.url, "\n".join(self.metrics))
+        if self.format == 'JSON':
+            header = {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            }
+            json_fmt = dict(metric=[])
+            for metric in self.metrics:
+                json_fmt['metric'].append(dict(
+                    path=metric.path,
+                    value=metric.value,
+                    timestamp=metric.timestamp,
+                    precision=metric.precision,
+                    host=metric.host,
+                    ttl=metric.ttl
+                ))
+            req = urllib2.Request(self.url,
+                                  json.dumps(json_fmt),
+                                  headers=header)
+        else:
+            # Default to PLAIN if nor JSON
+            req = urllib2.Request(self.url,
+                                  "\n".join([str(m) for m in self.metrics]))
+
         urllib2.urlopen(req)
         self.metrics = []
