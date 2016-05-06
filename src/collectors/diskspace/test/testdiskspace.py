@@ -34,7 +34,6 @@ class TestDiskSpaceCollector(CollectorTestCase):
             'byte_unit': ['gigabyte'],
             'exclude_filters': [
                 '^/export/home',
-                '^/tmpfs',
             ]
         })
 
@@ -137,7 +136,67 @@ class TestDiskSpaceCollector(CollectorTestCase):
             'root.gigabyte_avail': (1020.962, 2),
             'root.inodes_used': 348873,
             'root.inodes_free': 91229495,
-            'root.inodes_avail': 91229495
+            'root.inodes_avail': 91229495,
+        }
+
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
+        self.assertPublishedMany(publish_mock, metrics)
+
+    @run_only_if_major_is_available
+    @patch('os.access', Mock(return_value=True))
+    @patch.object(Collector, 'publish')
+    def test_should_work_with_tmpfs(self, publish_mock):
+        config = get_collector_config('DiskSpaceCollector', {
+            'interval': 10,
+            'byte_unit': ['gigabyte'],
+            'exclude_filters': [],
+            'filesystems': 'tmpfs'
+        })
+
+        self.collector = DiskSpaceCollector(config, None)
+        statvfs_mock = Mock()
+        statvfs_mock.f_bsize = 4096
+        statvfs_mock.f_frsize = 4096
+        statvfs_mock.f_blocks = 360540255
+        statvfs_mock.f_bfree = 285953527
+        statvfs_mock.f_bavail = 267639130
+        statvfs_mock.f_files = 91578368
+        statvfs_mock.f_ffree = 91229495
+        statvfs_mock.f_favail = 91229495
+        statvfs_mock.f_flag = 4096
+        statvfs_mock.f_namemax = 255
+
+        os_stat_mock = patch('os.stat')
+        os_major_mock = patch('os.major', Mock(return_value=4))
+        os_minor_mock = patch('os.minor', Mock(return_value=0))
+        os_path_isdir_mock = patch('os.path.isdir', Mock(return_value=False))
+        open_mock = patch('__builtin__.open',
+                          Mock(return_value=self.getFixture('proc_mounts')))
+        os_statvfs_mock = patch('os.statvfs', Mock(return_value=statvfs_mock))
+
+        os_stat_mock.start()
+        os_major_mock.start()
+        os_minor_mock.start()
+        os_path_isdir_mock.start()
+        open_mock.start()
+        os_statvfs_mock.start()
+        self.collector.collect()
+        os_stat_mock.stop()
+        os_major_mock.stop()
+        os_minor_mock.stop()
+        os_path_isdir_mock.stop()
+        open_mock.stop()
+        os_statvfs_mock.stop()
+
+        metrics = {
+            'tmp.gigabyte_used': (284.525, 2),
+            'tmp.gigabyte_free': (1090.826, 2),
+            'tmp.gigabyte_avail': (1020.962, 2),
+            'tmp.inodes_used': 348873,
+            'tmp.inodes_free': 91229495,
+            'tmp.inodes_avail': 91229495,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
