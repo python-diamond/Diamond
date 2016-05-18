@@ -47,14 +47,14 @@ def process_ceph_status(output):
         if runit is None:
             self.log.exception('Could not get read units')
             return {}
-        ret['rd'] = to_bytes(rd.group(), runit.group())
+        ret['rd'] = repr(to_bytes(rd.group(), runit.group()))
         wr = numberchk.search(ceph_stats, rd.end())
         if wr is not None:
             wunit = unitchk.search(ceph_stats, wr.end())
             if runit is None:
                 self.log.exception('Could not get read units')
                 return {}
-            ret['wr'] = to_bytes(wr.group(), wunit.group())
+            ret['wr'] = repr(to_bytes(wr.group(), wunit.group()))
             iops = numberchk.search(ceph_stats, wr.end())
             if iops is not None:
                 ret['iops'] = iops.group()
