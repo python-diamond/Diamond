@@ -8,9 +8,10 @@ import subprocess
 import re
 import os
 import sys
+from ceph import CephCollector
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)),
                                 'ceph'))
-from ceph import CephCollector
+
 
 patternchk = re.compile(r'\bclient io .*')
 numberchk = re.compile(r'\d+')
@@ -18,15 +19,19 @@ unitchk = re.compile(r'[a-zA-Z]{1,2}')
 
 # This is external to the CephCollector so it can be tested
 # separately.
+
+
 def to_bytes(value, unit):
     fval = float(value)
     unit = str(unit.lower()).strip()
     if unit == "b":
         return fval
-    unit_list = {'kb' : 1, 'mb': 2, 'gb' : 3, 'tb' : 4, 'pb' : 5, 'eb' : 6 }
+    unit_list = {'kb': 1, 'mb': 2, 'gb': 3, 'tb': 4, 'pb': 5, 'eb': 6}
     for i in range(unit_list[unit]):
         fval = fval * 1000
     return fval
+
+
 def process_ceph_status(output):
     res = patternchk.search(output)
     if not res:
