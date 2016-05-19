@@ -111,7 +111,6 @@ class HAProxyCollector(diamond.collector.Collector):
             return metrics
 
     def unix_get_csv_data(self, section=None):
-
         socket_path = self._get_config_value(section, 'sock')
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         data = str()
