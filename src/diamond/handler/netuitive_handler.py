@@ -340,8 +340,10 @@ class NetuitiveHandler(Handler):
                                   'of sync with the server'.format(toff))
 
                 self.flush_time = int(time.time())
-                logging.info('NetuitiveHandler: Data posted successfully. ' +
-                             'Next log message in 15 minutes.')
+
+                if self.api.disabled is False:
+                    logging.info('NetuitiveHandler: Data posted successfully. ' +
+                                 'Next log message in 15 minutes.')
 
         except urllib2.HTTPError as e:
             if e.code in self.api.kill_codes:
