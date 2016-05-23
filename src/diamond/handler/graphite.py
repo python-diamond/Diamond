@@ -18,6 +18,7 @@ use it.
 
 from Handler import Handler
 import socket
+from time import time
 
 
 class GraphiteHandler(Handler):
@@ -49,7 +50,9 @@ class GraphiteHandler(Handler):
             self.config['trim_backlog_multiplier'])
         self.flow_info = self.config['flow_info']
         self.scope_id = self.config['scope_id']
+        self.reconnect_interval = self.config['reconnect_interval']
         self.metrics = []
+        self.lastConnectionAttempt = 0
 
         # Connect
         self._connect()
@@ -72,6 +75,8 @@ class GraphiteHandler(Handler):
             'keepaliveinterval': 'How frequently to send keepalives',
             'flow_info': 'IPv6 Flow Info',
             'scope_id': 'IPv6 Scope ID',
+            'reconnect_interval':
+                    'Time to wait between reconnection attempts (optional)'
         })
 
         return config
@@ -94,6 +99,7 @@ class GraphiteHandler(Handler):
             'keepaliveinterval': 10,
             'flow_info': 0,
             'scope_id': 0,
+            'reconnect_interval': 10,
         })
 
         return config
@@ -143,12 +149,12 @@ class GraphiteHandler(Handler):
         try:
             try:
                 if self.socket is None:
-                    self.log.debug("GraphiteHandler: Socket is not connected. "
-                                   "Reconnecting.")
-                    self._connect()
-                if self.socket is None:
-                    self.log.debug("GraphiteHandler: Reconnect failed.")
-                else:
+                    if self._should_i_reconnect():
+                        self.log.debug("GraphiteHandler: "
+                                       "Socket is not connected. "
+                                       "Reconnecting.")
+                        self._connect()
+                if self.socket is not None:
                     # Send data to socket
                     self._send_data(''.join(self.metrics))
                     self.metrics = []
@@ -167,10 +173,15 @@ class GraphiteHandler(Handler):
                               abs(trim_offset))
                 self.metrics = self.metrics[trim_offset:]
 
+    def _should_i_reconnect(self):
+        return self.lastConnectionAttempt + self.reconnect_interval < time()
+
     def _connect(self):
         """
         Connect to the graphite server
         """
+        self.lastConnectionAttempt = time()
+
         if (self.proto == 'udp'):
             stream = socket.SOCK_DGRAM
         else:
