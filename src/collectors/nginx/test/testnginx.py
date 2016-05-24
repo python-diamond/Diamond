@@ -31,7 +31,7 @@ class TestNginxCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_counter_mock,
                                         publish_gauge_mock, publish_mock):
 
-        mockMimeMessage = Mock( **{ 'gettype.return_value': 'text/html'} )
+        mockMimeMessage = Mock(**{'gettype.return_value': 'text/html'})
         mockResponse = Mock(**{
             'readlines.return_value': self.getFixture('status').readlines(),
             'info.return_value': mockMimeMessage,
@@ -67,11 +67,12 @@ class TestNginxCollector(CollectorTestCase):
     @patch.object(Collector, 'publish_gauge')
     @patch.object(Collector, 'publish_counter')
     def test_plus_should_work_with_real_data(self, publish_counter_mock,
-                                        publish_gauge_mock, publish_mock):
+                                             publish_gauge_mock, publish_mock):
 
-        mockMimeMessage = Mock( **{ 'gettype.return_value': 'application/json'} )
+        mockMimeMessage = Mock(**{'gettype.return_value': 'application/json'})
         mockResponse = Mock(**{
-            'readlines.return_value': self.getFixture('plus_status').readlines(),
+            'readlines.return_value':
+                self.getFixture('plus_status').readlines(),
             'info.return_value': mockMimeMessage,
             'read.return_value': self.getFixture('plus_status').read(),
             }
@@ -134,11 +135,13 @@ class TestNginxCollector(CollectorTestCase):
             'upstreams.www-upstream.peers.1_1_1_94-8080.unavail': 0,
 
             'upstreams.www-upstream.peers.1_1_1_94-8080.responses.1xx': 0,
-            'upstreams.www-upstream.peers.1_1_1_94-8080.responses.2xx': 106277550,
+            'upstreams.www-upstream.peers.1_1_1_94-8080.responses.2xx':
+                106277550,
             'upstreams.www-upstream.peers.1_1_1_94-8080.responses.3xx': 33,
             'upstreams.www-upstream.peers.1_1_1_94-8080.responses.4xx': 39694,
             'upstreams.www-upstream.peers.1_1_1_94-8080.responses.5xx': 0,
-            'upstreams.www-upstream.peers.1_1_1_94-8080.responses.total': 106317277,
+            'upstreams.www-upstream.peers.1_1_1_94-8080.responses.total':
+                106317277,
 
             'upstreams.app_upstream.keepalive': 0,
             'upstreams.app_upstream.peers.1_2_5_3-8080.active': 0,
@@ -158,7 +161,6 @@ class TestNginxCollector(CollectorTestCase):
 
         }
 
-
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
@@ -169,16 +171,16 @@ class TestNginxCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        mockMimeMessage = Mock( **{ 'gettype.return_value': 'text/html'} )
+        mockMimeMessage = Mock(**{'gettype.return_value': 'text/html'})
         mockResponse = Mock(**{
-            'readlines.return_value': self.getFixture('status_blank').readlines(),
+            'readlines.return_value':
+                self.getFixture('status_blank').readlines(),
             'info.return_value': mockMimeMessage,
             }
         )
 
         patch_urlopen = patch('urllib2.urlopen', Mock(
             return_value=mockResponse))
-
 
         patch_urlopen.start()
         self.collector.collect()
