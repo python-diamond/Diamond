@@ -226,7 +226,7 @@ class NginxCollector(diamond.collector.Collector):
                 self.collect_nginx_plus(json.load(handle))
 
             # Plain payload; indicates open source nginx
-            elif handle.info().gettype() == 'text/plain':
+            elif:
                 self.collect_nginx(handle)
 
         except IOError, e:
