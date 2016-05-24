@@ -31,7 +31,7 @@ class TestNginxCollector(CollectorTestCase):
     def test_should_work_with_real_data(self, publish_counter_mock,
                                         publish_gauge_mock, publish_mock):
 
-        mockMimeMessage = Mock( **{ 'gettype.return_value': 'text/plain'} )
+        mockMimeMessage = Mock( **{ 'gettype.return_value': 'text/html'} )
         mockResponse = Mock(**{
             'readlines.return_value': self.getFixture('status').readlines(),
             'info.return_value': mockMimeMessage,
@@ -169,7 +169,7 @@ class TestNginxCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        mockMimeMessage = Mock( **{ 'gettype.return_value': 'text/plain'} )
+        mockMimeMessage = Mock( **{ 'gettype.return_value': 'text/html'} )
         mockResponse = Mock(**{
             'readlines.return_value': self.getFixture('status_blank').readlines(),
             'info.return_value': mockMimeMessage,
