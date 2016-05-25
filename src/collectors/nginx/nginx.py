@@ -35,7 +35,7 @@ For commercial nginx+:
     following content:
     <pre>
     server  {
-        listen *:8080;
+        listen 127.0.0.1:8080;
 
         root /usr/share/nginx/html;
 
