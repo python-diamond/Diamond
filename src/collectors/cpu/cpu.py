@@ -55,7 +55,7 @@ class CPUCollector(diamond.collector.Collector):
         config.update({
             'path':     'cpu',
             'percore':  'True',
-            'xenfix':   None,
+            'xenfix':   'False',
             'simple':   'False',
             'normalize': 'False',
         })
@@ -167,7 +167,9 @@ class CPUCollector(diamond.collector.Collector):
 
             # Check for a bug in xen where the idle time is doubled for guest
             # See https://bugzilla.redhat.com/show_bug.cgi?id=624756
-            if self.config['xenfix'] is None or self.config['xenfix'] is True:
+            # Fixed http://rhn.redhat.com/errata/RHSA-2012-0862.html
+            # Keeping for possibility of users running old Xen systems.
+            if self.config['xenfix'] is True:
                 if os.path.isdir('/proc/xen'):
                     total = 0
                     for metric_name in metrics.keys():
