@@ -109,7 +109,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
         url = 'http://%s:%i/%s' % (host, port, path)
         try:
             request = urllib2.Request(url)
-	    if self.config['user'] and self.config['password']:
+            if self.config['user'] and self.config['password']:
                 base64string = base64.standard_b64encode(
                     '%s:%s' % (self.config['user'], self.config['password']))
                 request.add_header("Authorization", "Basic %s" % base64string)
