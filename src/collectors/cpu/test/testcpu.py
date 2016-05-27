@@ -107,7 +107,7 @@ class TestCPUCollector(CollectorTestCase):
         patch_open.stop()
 
         metrics = {
-            'total.idle': 68.4,
+            'total.idle': 136.8,
             'total.iowait': 0.6,
             'total.nice': 0.0,
             'total.system': 13.7,
