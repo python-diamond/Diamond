@@ -14,6 +14,7 @@ parameter the instance alias will be appended to the
 """
 
 import urllib2
+import base64
 import re
 from diamond.collector import str_to_bool
 
@@ -64,6 +65,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
         config_help.update({
             'host': "",
             'port': "",
+            'user': "Username for Basic/Shield auth",
+            'password': "Password for Basic/Shield auth",
             'instances': "List of instances. When set this overrides "
             "the 'host' and 'port' settings. Instance format: "
             "instance [<alias>@]<hostname>[:<port>]",
@@ -88,6 +91,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
         config.update({
             'host':           '127.0.0.1',
             'port':           9200,
+            'user':           '',
+            'password':       '',
             'instances':      [],
             'path':           'elasticsearch',
             'stats':          ['jvm', 'thread_pool', 'indices'],
@@ -103,7 +108,12 @@ class ElasticSearchCollector(diamond.collector.Collector):
         """
         url = 'http://%s:%i/%s' % (host, port, path)
         try:
-            response = urllib2.urlopen(url)
+            request = urllib2.Request(url)
+	    if self.config['user'] and self.config['password']:
+                base64string = base64.standard_b64encode(
+                    '%s:%s' % (self.config['user'], self.config['password']))
+                request.add_header("Authorization", "Basic %s" % base64string)
+            response = urllib2.urlopen(request)
         except Exception, err:
             self.log.error("%s: %s", url, err)
             return False
