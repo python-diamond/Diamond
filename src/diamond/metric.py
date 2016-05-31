@@ -17,7 +17,7 @@ class Metric(object):
         ]
 
     def __init__(self, path, value, raw_value=None, timestamp=None, precision=0,
-                 host=None, metric_type='COUNTER', ttl=None):
+                 host=None, metric_type='COUNTER', ttl=None, point_tags=None):
         """
         Create new instance of the Metric class
 
@@ -27,6 +27,8 @@ class Metric(object):
             timestamp=[float|int]: the timestamp, in seconds since the epoch
             (as from time.time()) precision=int: the precision to apply.
             Generally the default (2) should work fine.
+            point_tags=dict: key=pair tags which will be applied to this
+            point
         """
 
         # Validate the path, value and metric_type submitted
@@ -69,6 +71,7 @@ class Metric(object):
         self.host = host
         self.metric_type = metric_type
         self.ttl = ttl
+        self.point_tags = point_tags
 
     def __repr__(self):
         """
