@@ -13,7 +13,7 @@ class Metric(object):
     # handlers to flush.
     __slots__ = [
         'path', 'value', 'raw_value', 'timestamp', 'precision',
-        'host', 'metric_type', 'ttl'
+        'host', 'metric_type', 'ttl', 'point_tags'
         ]
 
     def __init__(self, path, value, raw_value=None, timestamp=None, precision=0,
