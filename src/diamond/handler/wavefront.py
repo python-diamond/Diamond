@@ -29,7 +29,9 @@ different problem.
 """
 
 from Handler import Handler
-import socket, re
+import socket
+import re
+
 
 class WavefrontHandler(Handler):
     RETRY = 3
@@ -77,9 +79,11 @@ class WavefrontHandler(Handler):
 
         :returns: a list of key=value pairs
         """
-        if not isinstance(tags, dict): return []
-        return self.quote_point_tags(['%s="%s"' % (k, v) for k,v in
-            tags.items()])
+        if not isinstance(tags, dict):
+            return []
+
+        return self.quote_point_tags(['%s="%s"' % (k, v) for k, v in
+                                     tags.items()])
 
     def quote_point_tags(self, tags):
         """
@@ -92,12 +96,15 @@ class WavefrontHandler(Handler):
         for t in tags:
             try:
                 k, v = t.split('=', 1)
-                if not re.match('^".*"$', k): k = '"%s"' % k
-                if not re.match('^".*"$', v): v = '"%s"' % v
+                if not re.match('^".*"$', k):
+                    k = '"%s"' % k
+
+                if not re.match('^".*"$', v):
+                    v = '"%s"' % v
             except:
                 continue
 
-            ret.append('%s=%s' % (k,v))
+            ret.append('%s=%s' % (k, v))
 
         return ret
 
@@ -155,7 +162,7 @@ class WavefrontHandler(Handler):
             timestamp=metric.timestamp,
             value=metric.value,
             tags=' '.join(self.tags +
-                self.process_point_tags(metric.point_tags))
+                          self.process_point_tags(metric.point_tags))
         )
         # Just send the data as a string
 
