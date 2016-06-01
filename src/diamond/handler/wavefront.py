@@ -192,7 +192,7 @@ class WavefrontHandler(Handler):
                           self.process_point_tags(metric.point_tags))
         )
 
-        self._send(str(metric_str))
+        self._send(str(metric_str) + '\n')
 
     def _send(self, data):
         """
