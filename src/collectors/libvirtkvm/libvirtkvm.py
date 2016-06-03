@@ -11,6 +11,9 @@ Uses libvirt to harvest per KVM instance stats
 
 import diamond.collector
 from diamond.collector import str_to_bool
+
+from string import Template
+
 try:
     from xml.etree import ElementTree
 except ImportError:
@@ -20,7 +23,6 @@ try:
     import libvirt
 except ImportError:
     libvirt = None
-
 
 class LibvirtKVMCollector(diamond.collector.Collector):
     blockStats = {
@@ -40,6 +42,42 @@ class LibvirtKVMCollector(diamond.collector.Collector):
         'tx_errors':  6,
         'tx_drops':   7
     }
+
+    def format_name_using_metadata(self, dom, format):
+        s = Template(format)
+
+        tree = ElementTree.fromstring(dom.metadata(2,'http://openstack.org/xmlns/libvirt/nova/1.0'))
+
+        for target in tree.findall('name'):
+            instance = target.text
+
+        instance_uuid = dom.UUIDString()
+
+        for target in tree.findall('owner/project'):
+            owner_project_uuid = target.get("uuid")
+            owner_project = target.text
+
+        for target in tree.findall('owner/user'):
+            owner_user_uuid = target.get("uuid")
+            owner_user = target.text
+
+        instance      = instance.replace(".","_")
+        owner_project = owner_project.replace(".","_")
+        owner_user    = owner_user.replace(".","_")
+
+        params = {  'owner_project':      owner_project,
+                    'owner_project_uuid': owner_project_uuid,
+                    'owner_user':         owner_user,
+                    'owner_user_uuid':    owner_user_uuid,
+                    'instance':           instance,
+                    'instance_uuid':      instance_uuid}
+
+        try:
+            return s.substitute(params)
+        except KeyError as err:
+            self.log.error('invalid format parameter %s' % err)
+            return instance
+
 
     def get_default_config_help(self):
         config_help = super(LibvirtKVMCollector,
@@ -104,10 +142,21 @@ as cummulative nanoseconds since VM creation if this is True."""
             self.log.error('Unable to import libvirt')
             return {}
 
+        self.log.debug('Connecting to %s' % self.config['uri'])
+
         conn = libvirt.openReadOnly(self.config['uri'])
+
+        if conn == None:
+            self.log.error('Failed to open connection to the hypervisor using %s' % self.config['uri'])
+            return {}
+
         for dom in [conn.lookupByID(n) for n in conn.listDomainsID()]:
             if str_to_bool(self.config['sort_by_uuid']):
                 name = dom.UUIDString()
+
+            elif self.config['format_name_using_metadata']:
+                name = self.format_name_using_metadata(dom, self.config['format_name_using_metadata'])
+
             else:
                 name = dom.name()
 
@@ -163,3 +212,4 @@ as cummulative nanoseconds since VM creation if this is True."""
             self.publish('memory.nominal', mem['actual'] * 1024,
                          instance=name)
             self.publish('memory.rss', mem['rss'] * 1024, instance=name)
+
