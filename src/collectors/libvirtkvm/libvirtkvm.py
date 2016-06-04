@@ -24,6 +24,7 @@ try:
 except ImportError:
     libvirt = None
 
+
 class LibvirtKVMCollector(diamond.collector.Collector):
     blockStats = {
         'read_reqs':   0,
@@ -46,7 +47,9 @@ class LibvirtKVMCollector(diamond.collector.Collector):
     def format_name_using_metadata(self, dom, format):
         s = Template(format)
 
-        tree = ElementTree.fromstring(dom.metadata(2, 'http://openstack.org/xmlns/libvirt/nova/1.0'))
+        tree = ElementTree.fromstring(dom.metadata(
+                        2,
+                        "http://openstack.org/xmlns/libvirt/nova/1.0"))
 
         for target in tree.findall('name'):
             instance = target.text
@@ -61,16 +64,16 @@ class LibvirtKVMCollector(diamond.collector.Collector):
             owner_user_uuid = target.get("uuid")
             owner_user = target.text
 
-        instance      = instance.replace(".", "_")
+        instance = instance.replace(".", "_")
         owner_project = owner_project.replace(".", "_")
-        owner_user    = owner_user.replace(".", "_")
+        owner_user = owner_user.replace(".", "_")
 
-        params = { 'owner_project':      owner_project,
-                    'owner_project_uuid': owner_project_uuid,
-                    'owner_user':         owner_user,
-                    'owner_user_uuid':    owner_user_uuid,
-                    'instance':           instance,
-                    'instance_uuid':      instance_uuid}
+        params = {'owner_project':      owner_project,
+                  'owner_project_uuid': owner_project_uuid,
+                  'owner_user':         owner_user,
+                  'owner_user_uuid':    owner_user_uuid,
+                  'instance':           instance,
+                  'instance_uuid':      instance_uuid}
 
         try:
             return s.substitute(params)
@@ -146,7 +149,8 @@ as cummulative nanoseconds since VM creation if this is True."""
         conn = libvirt.openReadOnly(self.config['uri'])
 
         if conn is None:
-            self.log.error('Failed to open connection to the hypervisor using %s' % self.config['uri'])
+            self.log.error('Failed to open connection to the hypervisor on %s' %
+                           self.config['uri'])
             return {}
 
         for dom in [conn.lookupByID(n) for n in conn.listDomainsID()]:
@@ -154,8 +158,9 @@ as cummulative nanoseconds since VM creation if this is True."""
                 name = dom.UUIDString()
 
             elif self.config['format_name_using_metadata']:
-                name = self.format_name_using_metadata(dom,
-                                                       self.config['format_name_using_metadata'])
+                name = self.format_name_using_metadata(
+                        dom,
+                        self.config['format_name_using_metadata'])
 
             else:
                 name = dom.name()
