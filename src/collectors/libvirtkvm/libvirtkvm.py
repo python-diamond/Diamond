@@ -47,9 +47,9 @@ class LibvirtKVMCollector(diamond.collector.Collector):
     def format_name_using_metadata(self, dom, format):
         s = Template(format)
 
-        tree = ElementTree.fromstring(dom.metadata(
-                        2,
-                        "http://openstack.org/xmlns/libvirt/nova/1.0"))
+        tree = ElementTree.fromstring(
+          dom.metadata(2,
+                       "http://openstack.org/xmlns/libvirt/nova/1.0"))
 
         for target in tree.findall('name'):
             instance = target.text
@@ -159,8 +159,8 @@ as cummulative nanoseconds since VM creation if this is True."""
 
             elif self.config['format_name_using_metadata']:
                 name = self.format_name_using_metadata(
-                        dom,
-                        self.config['format_name_using_metadata'])
+                  dom,
+                  self.config['format_name_using_metadata'])
 
             else:
                 name = dom.name()
