@@ -46,7 +46,7 @@ class LibvirtKVMCollector(diamond.collector.Collector):
     def format_name_using_metadata(self, dom, format):
         s = Template(format)
 
-        tree = ElementTree.fromstring(dom.metadata(2,'http://openstack.org/xmlns/libvirt/nova/1.0'))
+        tree = ElementTree.fromstring(dom.metadata(2, 'http://openstack.org/xmlns/libvirt/nova/1.0'))
 
         for target in tree.findall('name'):
             instance = target.text
@@ -61,11 +61,11 @@ class LibvirtKVMCollector(diamond.collector.Collector):
             owner_user_uuid = target.get("uuid")
             owner_user = target.text
 
-        instance      = instance.replace(".","_")
-        owner_project = owner_project.replace(".","_")
-        owner_user    = owner_user.replace(".","_")
+        instance      = instance.replace(".", "_")
+        owner_project = owner_project.replace(".", "_")
+        owner_user    = owner_user.replace(".", "_")
 
-        params = {  'owner_project':      owner_project,
+        params = { 'owner_project':      owner_project,
                     'owner_project_uuid': owner_project_uuid,
                     'owner_user':         owner_user,
                     'owner_user_uuid':    owner_user_uuid,
@@ -77,7 +77,6 @@ class LibvirtKVMCollector(diamond.collector.Collector):
         except KeyError as err:
             self.log.error('invalid format parameter %s' % err)
             return instance
-
 
     def get_default_config_help(self):
         config_help = super(LibvirtKVMCollector,
@@ -146,7 +145,7 @@ as cummulative nanoseconds since VM creation if this is True."""
 
         conn = libvirt.openReadOnly(self.config['uri'])
 
-        if conn == None:
+        if conn is None:
             self.log.error('Failed to open connection to the hypervisor using %s' % self.config['uri'])
             return {}
 
@@ -155,7 +154,8 @@ as cummulative nanoseconds since VM creation if this is True."""
                 name = dom.UUIDString()
 
             elif self.config['format_name_using_metadata']:
-                name = self.format_name_using_metadata(dom, self.config['format_name_using_metadata'])
+                name = self.format_name_using_metadata(dom,
+                                                       self.config['format_name_using_metadata'])
 
             else:
                 name = dom.name()
@@ -212,4 +212,3 @@ as cummulative nanoseconds since VM creation if this is True."""
             self.publish('memory.nominal', mem['actual'] * 1024,
                          instance=name)
             self.publish('memory.rss', mem['rss'] * 1024, instance=name)
-
