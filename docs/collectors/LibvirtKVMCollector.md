@@ -28,7 +28,7 @@ specific to the compute node | bool
 uri | qemu:///system | The libvirt connection URI. By default it's<br>
 'qemu:///system'. One decent option is<br>
 'qemu+unix:///system?socket=/var/run/libvirt/libvit-sock-ro'. | str
-format_name_using_metadata | False | Use openstack metadata to generate instance name, its useful when do you and to group VMs metrics by project | string, possible options: ${owner_project},${owner_project_uuid},${instance},${instance_uuid}
+format_name_using_metadata | False | Use openstack metadata to generate instance name, its useful when do you and to group VMs metrics by project. Available values: ${owner_project},${owner_project_uuid},${instance},${instance_uuid} | list
 
 #### Example Output
 
