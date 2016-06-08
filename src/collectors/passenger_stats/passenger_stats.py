@@ -61,7 +61,7 @@ class PassengerCollector(diamond.collector.Collector):
             "sudo_cmd":     "/usr/bin/sudo",
             "passenger_status_bin": "/usr/bin/passenger-status",
             "passenger_memory_stats_bin": "/usr/bin/passenger-memory-stats",
-            })
+        })
         return config
 
     def get_passenger_memory_stats(self):
@@ -201,8 +201,6 @@ class PassengerCollector(diamond.collector.Collector):
                 if app_groups_flag == 1 and line_splitted:
                     queue_stats["passenger_queue_size"] = float(line_splitted[3])
 
-            #elif "Processes" or in line:
-            #    gen_info_flag = 0
         return queue_stats
 
     def collect(self):
