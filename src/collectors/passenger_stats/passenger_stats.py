@@ -44,8 +44,10 @@ class PassengerCollector(diamond.collector.Collector):
             "bin":         "The path to the binary",
             "use_sudo":    "Use sudo?",
             "sudo_cmd":    "Path to sudo",
-            "passenger_status_bin":         "The path to the binary passenger-status",
-            "passenger_memory_stats_bin":         "The path to the binary passenger-memory-stats",
+            "passenger_status_bin":
+                           "The path to the binary passenger-status",
+            "passenger_memory_stats_bin":
+                           "The path to the binary passenger-memory-stats",
         })
         return config_help
 
@@ -191,15 +193,18 @@ class PassengerCollector(diamond.collector.Collector):
             if "Application groups" in line:
                 app_groups_flag = 1
             elif re_requests.match(line) and re_topqueue.search(line):
-                # If line starts with Requests and line has top-level queue then store queue size
+                # If line starts with Requests and line has top-level queue then
+                # store queue size
                 line_splitted = line.split()
                 if gen_info_flag == 1 and line_splitted:
-                    queue_stats["top_level_queue_size"] = float(line_splitted[5])
+                    queue_stats["top_level_queue_size"] = float(
+                        line_splitted[5])
             elif re_requests.search(line) and not re_topqueue.search(line):
                 # If line has Requests and nothing else special
                 line_splitted = line.split()
                 if app_groups_flag == 1 and line_splitted:
-                    queue_stats["passenger_queue_size"] = float(line_splitted[3])
+                    queue_stats["passenger_queue_size"] = float(
+                        line_splitted[3])
 
         return queue_stats
 
@@ -224,12 +229,15 @@ class PassengerCollector(diamond.collector.Collector):
         if overall_cpu >= 0:
             self.publish("phusion_passenger_cpu", overall_cpu)
 
-        self.publish("total_passenger_procs", len(dict_stats["passenger_procs"]))
+        self.publish("total_passenger_procs", len(
+            dict_stats["passenger_procs"]))
         self.publish("total_nginx_procs", len(dict_stats["nginx_procs"]))
         self.publish("total_apache_procs", len(dict_stats["apache_procs"]))
         self.publish("total_apache_memory", dict_stats["apache_mem_total"])
         self.publish("total_nginx_memory", dict_stats["nginx_mem_total"])
         self.publish("total_passenger_memory",
                      dict_stats["passenger_mem_total"])
-        self.publish("top_level_queue_size", queue_stats["top_level_queue_size"])
-        self.publish("passenger_queue_size", queue_stats["passenger_queue_size"])
+        self.publish("top_level_queue_size", queue_stats[
+                     "top_level_queue_size"])
+        self.publish("passenger_queue_size", queue_stats[
+                     "passenger_queue_size"])
