@@ -173,7 +173,9 @@ class SNMPCollector(diamond.collector.Collector):
                 return
 
         # Convert to a simple readable format
-        name = name.prettyPrint()
+        # name = name.prettyPrint()
+        name = str(self._from_oid_tuple(name))
+
         name = re.sub(r'^{0}'.format(oid), basename, name)
 
         self.log.debug(
