@@ -150,6 +150,19 @@ class JolokiaCollector(diamond.collector.Collector):
         else:
             self.jolokia_path = self.config['path']
 
+        if not isinstance(self.config['use_canonical_names'], bool):
+            if self.config['use_canonical_names'] == 'True':
+                self.config['use_canonical_names'] = True
+            elif self.config['use_canonical_names'] == 'False':
+                self.config['use_canonical_names'] = False
+            else:
+                self.log.error('Unexpected value "%s" for "use_canonical_names"'
+                               ' setting. Expected "True" or "False". Using'
+                               ' default value.',
+                               self.config['use_canonical_names'])
+                default = self.get_default_config()['use_canonical_names']
+                self.config['use_canonical_names'] = default
+
     def _get_domains(self):
         # if not set it __init__
         if not self.domains:
