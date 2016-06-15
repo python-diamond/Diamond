@@ -144,5 +144,10 @@ setup(
     scripts=['bin/diamond', 'bin/diamond-setup'],
     data_files=data_files,
     install_requires=install_requires,
+    classifiers=[
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
+        ],
     ** setup_kwargs
 )
