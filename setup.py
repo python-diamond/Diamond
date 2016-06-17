@@ -145,6 +145,7 @@ setup(
     data_files=data_files,
     install_requires=install_requires,
     classifiers=[
+<<<<<<< HEAD
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
 <<<<<<< HEAD
@@ -152,5 +153,10 @@ setup(
 =======
         ],
 >>>>>>> Adding trove classifiers.
+=======
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 2',
+    ],
+>>>>>>> indenting for consistency
     ** setup_kwargs
 )
