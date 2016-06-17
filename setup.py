@@ -145,8 +145,8 @@ setup(
     data_files=data_files,
     install_requires=install_requires,
     classifiers=[
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        ],
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 2',
+    ],
     ** setup_kwargs
 )
