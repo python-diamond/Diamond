@@ -147,6 +147,10 @@ setup(
     classifiers=[
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
+<<<<<<< HEAD
     ],
+=======
+        ],
+>>>>>>> Adding trove classifiers.
     ** setup_kwargs
 )
