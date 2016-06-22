@@ -17,6 +17,11 @@ from diamond.utils.signals import signal_to_exception
 from diamond.utils.signals import SIGALRMException
 from diamond.utils.signals import SIGHUPException
 
+def sigint_handler(signum, frame):
+    for child in multiprocessing.active_children():
+        child.terminate()
+    sys.exit(0)
+
 
 def collector_process(collector, metric_queue, log):
     """
@@ -28,6 +33,8 @@ def collector_process(collector, metric_queue, log):
     signal.signal(signal.SIGALRM, signal_to_exception)
     signal.signal(signal.SIGHUP, signal_to_exception)
     signal.signal(signal.SIGUSR2, signal_to_exception)
+    signal.signal(signal.SIGINT, sigint_handler)  # add by gongping2013 20160406
+    signal.signal(signal.SIGTERM, sigint_handler)
 
     interval = float(collector.config['interval'])
 
@@ -106,6 +113,8 @@ def handler_process(handlers, metric_queue, log):
         setproctitle('%s - %s' % (getproctitle(), proc.name))
 
     log.debug('Starting process %s', proc.name)
+    signal.signal(signal.SIGINT, sigint_handler)  # add by gongping2013 20160406
+    signal.signal(signal.SIGTERM, sigint_handler)
 
     while(True):
         metric = metric_queue.get(block=True, timeout=None)
