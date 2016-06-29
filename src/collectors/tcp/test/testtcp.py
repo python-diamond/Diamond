@@ -20,11 +20,12 @@ from tcp import TCPCollector
 
 class TestTCPCollector(CollectorTestCase):
 
-    def setUp(self, allowed_names=None):
+    def setUp(self, allowed_names=None, gauges=None):
         if not allowed_names:
             allowed_names = []
         config = get_collector_config('TCPCollector', {
             'allowed_names': allowed_names,
+            'gauges': gauges,
             'interval': 1
         })
         self.collector = TCPCollector(config, None)
