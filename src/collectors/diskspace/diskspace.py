@@ -24,6 +24,7 @@ import diamond.collector
 import diamond.convertor
 import os
 import re
+from diamond.collector import str_to_bool
 
 try:
     import psutil
@@ -37,6 +38,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
         config_help = super(DiskSpaceCollector, self).get_default_config_help()
         config_help.update({
             'filesystems': "filesystems to examine",
+            'simple': "simple mode; only <disk>.byte_percentfree is reported",
             'exclude_filters':
                 "A list of regex patterns. Any filesystem" +
                 " matching any of these patterns will be excluded from disk" +
@@ -68,7 +70,9 @@ class DiskSpaceCollector(diamond.collector.Collector):
             #       exclude_filters = m,
             # exclude everything that includes the letter "m"
             'exclude_filters': ['^/export/home'],
-
+            # simple
+            #    in simple mode, only diskspace.<disk>.byte_percentfree will be reported
+            'simple': 'True',
             # Default numeric output
             'byte_unit': ['byte']
         })
@@ -240,6 +244,9 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     blocks_free + (blocks_total - blocks_free)) * 100
                 self.publish_gauge(metric_name, metric_value, 2)
 
+                if str_to_bool(self.config['simple']):
+                    continue
+
                 metric_name = '%s.%s_used' % (name, unit)
                 metric_value = float(block_size) * float(
                     blocks_total - blocks_free)
@@ -260,7 +267,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                         value=metric_value, oldUnit='byte', newUnit=unit)
                     self.publish_gauge(metric_name, metric_value, 2)
 
-            if os.name != 'nt':
+            if os.name != 'nt' and not str_to_bool(self.config['simple']):
                 if float(inodes_total) > 0:
                     self.publish_gauge(
                         '%s.inodes_percentfree' % name,
