@@ -212,7 +212,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     self.log.exception(e)
                     continue
 
-                block_size = data.f_bsize
+                block_size = data.f_frsize
 
                 blocks_total = data.f_blocks
                 blocks_free = data.f_bfree
