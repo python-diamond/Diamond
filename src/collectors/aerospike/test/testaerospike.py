@@ -247,7 +247,7 @@ class TestAerospikeCollector(CollectorTestCase):
                                       'statistics': False,
                                       'throughput': False,
                                       'namespaces': True,
-                                      'namespaces_whitelist': [ 'bar' ],
+                                      'namespaces_whitelist': ['bar'],
                                       })
         self.collector.collect()
         patch_Telnet.stop()

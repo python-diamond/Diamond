@@ -28,6 +28,14 @@ class AerospikeCollector(diamond.collector.Collector):
             'latency': 'Collect latency metrics',
             'throughput': 'Collect throughput metrics',
             'namespaces': 'Collect per-namespace metrics',
+            'namespaces_whitelist':
+                'List of namespaces to collect metrics' +
+                ' from (default is to collect from all)',
+            'statistics_whitelist':
+                'List of global statistics values to collect',
+            'namespace_statistics_whitelist':
+                'List of per-namespace statistics values to collect',
+            'path': 'Metric path',
 
         })
         return config_help
@@ -36,11 +44,11 @@ class AerospikeCollector(diamond.collector.Collector):
         default_config = super(AerospikeCollector, self).get_default_config()
         default_config['req_host'] = 'localhost'
         default_config['req_port'] = 3003
-        default_config['statistics'] = True,
-        default_config['latency'] = True,
-        default_config['throughput'] = True,
-        default_config['namespaces'] = True,
-        default_config['namespaces_whitelist'] = False,
+        default_config['statistics'] = True
+        default_config['latency'] = True
+        default_config['throughput'] = True
+        default_config['namespaces'] = True
+        default_config['namespaces_whitelist'] = False
         default_config['statistics_whitelist'] = [
             'total-bytes-memory',
             'total-bytes-disk',
@@ -169,9 +177,10 @@ class AerospikeCollector(diamond.collector.Collector):
 
                     self.log.debug('Polling namespace: %s' % namespace)
                     # Skip namespaces not whitelisted if there is a whitelist
-                    if (self.config['namespaces_whitelist'][0] and
+                    if (self.config['namespaces_whitelist'] and
                        namespace not in self.config['namespaces_whitelist']):
-                        self.log.debug('Skipping non-whitelisted namespace: %s' % namespace)
+                        self.log.debug('Skipping non-whitelisted namespace: %s'
+                                       % namespace)
                         continue
 
                     t.write('namespace/%s\n' % namespace)
