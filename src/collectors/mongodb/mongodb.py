@@ -192,7 +192,6 @@ class MongoDBCollector(diamond.collector.Collector):
                     self._publish_replset(replset_data, base_prefix)
                 except pymongo.errors.OperationFailure as e:
                     self.log.error('error getting replica set status', e)
-            self._publish_transformed(data, base_prefix)
 
             self._publish_dict_with_prefix(data, base_prefix)
             db_name_filter = re.compile(self.config['databases'])
