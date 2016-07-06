@@ -77,6 +77,7 @@ class AerospikeCollector(diamond.collector.Collector):
             'migrate-tx-partitions-remaining',
             'migrate-rx-partitions-initial',
             'migrate-rx-partitions-remaining',
+            'available_pct',
         ]
         default_config['path'] = 'aerospike'
 

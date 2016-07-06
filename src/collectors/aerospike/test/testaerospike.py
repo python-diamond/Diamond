@@ -222,6 +222,7 @@ class TestAerospikeCollector(CollectorTestCase):
             'namespace.foo.migrate-tx-partitions-remaining': 651,
             'namespace.foo.migrate-rx-partitions-initial': 651,
             'namespace.foo.migrate-rx-partitions-remaining': 651,
+            'namespace.foo.available_pct': 60,
         }
 
         self.assertPublishedMany(
