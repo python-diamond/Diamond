@@ -73,12 +73,12 @@ class TestAerospikeCollector(CollectorTestCase):
         }
 
         self.assertPublishedMany(
-                                [publish_mock,
-                                 publish_gauge_mock,
-                                 publish_counter_mock,
-                                 ],
-                                metrics,
-                                )
+            [publish_mock,
+             publish_gauge_mock,
+             publish_counter_mock,
+             ],
+            metrics,
+        )
 
     @patch.object(Collector, 'publish')
     @patch.object(Collector, 'publish_gauge')
@@ -87,19 +87,20 @@ class TestAerospikeCollector(CollectorTestCase):
                         publish_gauge_mock, publish_mock):
 
         mockTelnet = Mock(**{
-                             'read_until.return_value':
-                             self.getFixture('statistics').getvalue()
-                             })
+            'read_until.return_value':
+            self.getFixture('statistics').getvalue()
+        })
 
         patch_Telnet = patch('telnetlib.Telnet', Mock(return_value=mockTelnet))
 
         patch_Telnet.start()
         self.bootStrap(custom_config={
-                                      'latency': False,
-                                      'statistics': True,
-                                      'throughput': False,
-                                      'namespaces': False,
-                                      })
+            'latency': False,
+            'statistics': True,
+            'throughput': False,
+            'namespaces': False,
+        })
+
         self.collector.collect()
         patch_Telnet.stop()
 
@@ -120,12 +121,12 @@ class TestAerospikeCollector(CollectorTestCase):
         }
 
         self.assertPublishedMany(
-                                [publish_mock,
-                                 publish_gauge_mock,
-                                 publish_counter_mock,
-                                 ],
-                                metrics,
-                                )
+            [publish_mock,
+             publish_gauge_mock,
+             publish_counter_mock,
+             ],
+            metrics,
+        )
 
     @patch.object(Collector, 'publish')
     @patch.object(Collector, 'publish_gauge')
@@ -134,19 +135,20 @@ class TestAerospikeCollector(CollectorTestCase):
                         publish_gauge_mock, publish_mock):
 
         mockTelnet = Mock(**{
-                             'read_until.return_value':
-                             self.getFixture('throughput').getvalue()
-                             })
+            'read_until.return_value':
+            self.getFixture('throughput').getvalue()
+        })
 
         patch_Telnet = patch('telnetlib.Telnet', Mock(return_value=mockTelnet))
 
         patch_Telnet.start()
         self.bootStrap(custom_config={
-                                      'latency': False,
-                                      'statistics': False,
-                                      'throughput': True,
-                                      'namespaces': False,
-                                      })
+            'latency': False,
+            'statistics': False,
+            'throughput': True,
+            'namespaces': False,
+        })
+
         self.collector.collect()
         patch_Telnet.stop()
 
@@ -161,12 +163,12 @@ class TestAerospikeCollector(CollectorTestCase):
         }
 
         self.assertPublishedMany(
-                                [publish_mock,
-                                 publish_gauge_mock,
-                                 publish_counter_mock,
-                                 ],
-                                metrics,
-                                )
+            [publish_mock,
+             publish_gauge_mock,
+             publish_counter_mock,
+             ],
+            metrics,
+        )
 
     @patch.object(Collector, 'publish')
     @patch.object(Collector, 'publish_gauge')
@@ -175,34 +177,35 @@ class TestAerospikeCollector(CollectorTestCase):
                         publish_gauge_mock, publish_mock):
 
         mockTelnet = Mock(**{
-                             'read_until.side_effect':
-                             [
-                              self.getFixture('namespaces').getvalue(),
-                              self.getFixture('namespace_foo').getvalue(),
-                              self.getFixture('namespace_bar').getvalue(),
-                              ],
-                             })
+            'read_until.side_effect':
+            [
+                self.getFixture('namespaces').getvalue(),
+                self.getFixture('namespace_foo').getvalue(),
+                self.getFixture('namespace_bar').getvalue(),
+                ],
+        })
 
         patch_Telnet = patch('telnetlib.Telnet', Mock(return_value=mockTelnet))
 
         patch_Telnet.start()
         self.bootStrap(custom_config={
-                                      'latency': False,
-                                      'statistics': False,
-                                      'throughput': False,
-                                      'namespaces': True,
-                                      })
+            'latency': False,
+            'statistics': False,
+            'throughput': False,
+            'namespaces': True,
+        })
+
         self.collector.collect()
         patch_Telnet.stop()
 
         mockTelnet.read_until.assert_any_call('\n', 1)
         mockTelnet.write.assert_has_calls(
-                                          [
-                                           call('namespaces\n'),
-                                           call('namespace/foo\n'),
-                                           call('namespace/bar\n'),
-                                           ],
-                                          )
+            [
+                call('namespaces\n'),
+                call('namespace/foo\n'),
+                call('namespace/bar\n'),
+            ],
+        )
 
         metrics = {
             'namespace.foo.objects': 1841012935,
@@ -222,43 +225,44 @@ class TestAerospikeCollector(CollectorTestCase):
         }
 
         self.assertPublishedMany(
-                                [publish_mock,
-                                 publish_gauge_mock,
-                                 publish_counter_mock,
-                                 ],
-                                metrics,
-                                )
+            [publish_mock,
+             publish_gauge_mock,
+             publish_counter_mock,
+             ],
+            metrics,
+        )
 
     def test_namespace_whitelist(self):
 
         mockTelnet = Mock(**{
-                             'read_until.side_effect':
-                             [
-                              self.getFixture('namespaces').getvalue(),
-                              self.getFixture('namespace_bar').getvalue(),
-                              ],
-                             })
+            'read_until.side_effect':
+            [
+                self.getFixture('namespaces').getvalue(),
+                self.getFixture('namespace_bar').getvalue(),
+            ],
+        })
 
         patch_Telnet = patch('telnetlib.Telnet', Mock(return_value=mockTelnet))
 
         patch_Telnet.start()
         self.bootStrap(custom_config={
-                                      'latency': False,
-                                      'statistics': False,
-                                      'throughput': False,
-                                      'namespaces': True,
-                                      'namespaces_whitelist': ['bar'],
-                                      })
+            'latency': False,
+            'statistics': False,
+            'throughput': False,
+            'namespaces': True,
+            'namespaces_whitelist': ['bar'],
+        })
+
         self.collector.collect()
         patch_Telnet.stop()
 
         mockTelnet.read_until.assert_any_call('\n', 1)
         mockTelnet.write.assert_has_calls(
-                                          [
-                                           call('namespaces\n'),
-                                           call('namespace/bar\n'),
-                                           ],
-                                          )
+            [
+                call('namespaces\n'),
+                call('namespace/bar\n'),
+            ],
+        )
 
 ##########################################################################
 if __name__ == "__main__":
