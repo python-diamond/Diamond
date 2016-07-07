@@ -187,20 +187,19 @@ class TCPCollector(diamond.collector.Collector):
         '/proc/net/snmp'
     ]
 
-    GAUGES = [
-        'CurrEstab',
-        'MaxConn',
-    ]
-
     def process_config(self):
         super(TCPCollector, self).process_config()
         if self.config['allowed_names'] is None:
             self.config['allowed_names'] = []
 
+        if self.config['gauges'] is None:
+            self.config['gauges'] = ['CurrEstab', 'MaxConn']
+
     def get_default_config_help(self):
         config_help = super(TCPCollector, self).get_default_config_help()
         config_help.update({
             'allowed_names': 'list of entries to collect, empty to collect all',
+            'gauges': 'list of metrics to be published as gauges',
         })
         return config_help
 
@@ -217,6 +216,7 @@ class TCPCollector(diamond.collector.Collector):
                 'TCPForwardRetrans, TCPSlowStartRetrans, CurrEstab, ' +
                 'TCPAbortOnMemory, TCPBacklogDrop, AttemptFails, ' +
                 'EstabResets, InErrs, ActiveOpens, PassiveOpens',
+            'gauges': 'CurrEstab, MaxConn',
         })
         return config
 
@@ -271,7 +271,7 @@ class TCPCollector(diamond.collector.Collector):
             value = long(metrics[metric_name])
 
             # Publish the metric
-            if metric_name in self.GAUGES:
+            if metric_name in self.config['gauges']:
                 self.publish_gauge(metric_name, value, 0)
             else:
                 self.publish_counter(metric_name, value, 0)
