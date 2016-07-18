@@ -194,6 +194,12 @@ class ElasticSearchCollector(diamond.collector.Collector):
                          result, ['unassigned_shards'])
         self._add_metric(metrics, 'cluster_health.shards.initializing',
                          result, ['initializing_shards'])
+        self._add_metric(metrics, 'cluster_health.shards.delayed_unassigned',
+                         result, ['delayed_unassigned_shards'])
+        self._add_metric(metrics, 'cluster_health.fetch.inflight',
+                         result, ['number_of_in_flight_fetch'])
+        self._add_metric(metrics, 'cluster_health.tasks.pending',
+                         result, ['number_of_pending_tasks'])
 
         CLUSTER_STATUS = {
             'green': 2,
