@@ -5,7 +5,7 @@ Maintainer: Rob Smith <kormoc@gmail.com>
 Homepage: https://github.com/BrightcoveOS/Diamond
 Vcs-Git: git://github.com/BrightcoveOS/Diamond.git
 Vcs-Browser: https://github.com/BrightcoveOS/Diamond
-Build-Depends: debhelper (>= 7), python (>= 2.4), python-support, python-mock, python-configobj, cdbs
+Build-Depends: debhelper (>= 7), python (>= 2.4), dh-python, python-mock, python-configobj, cdbs
 Standards-Version: 3.9.1
 
 Package: diamond
