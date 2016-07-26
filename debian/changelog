@@ -1,6 +1,6 @@
 diamond (4.0.0-6) unstable; urgency=low
   * fixup debian build for xenial
--- Keith Baker <syzygy@lafayette>  Sun, 13 Mar 2016 20:34:48 -0400
+ -- Keith Baker <syzygy@lafayette>  Sun, 13 Mar 2016 20:34:48 -0400
 
 diamond (4.0.0-5) unstable; urgency=low
   * fixup snmp to work sorta
