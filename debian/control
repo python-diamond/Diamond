@@ -2,11 +2,12 @@ Source: diamond
 Section: misc
 Priority: extra
 Maintainer: Rob Smith <kormoc@gmail.com>
-Homepage: https://github.com/BrightcoveOS/Diamond
-Vcs-Git: git://github.com/BrightcoveOS/Diamond.git
-Vcs-Browser: https://github.com/BrightcoveOS/Diamond
-Build-Depends: debhelper (>= 7), python (>= 2.4), python-support, python-mock, python-configobj, cdbs
+Homepage: https://github.com/python-diamond/Diamond
+Vcs-Git: git://github.com/python-diamond/Diamond.git
+Vcs-Browser: https://github.com/python-diamond/Diamond
+Build-Depends: debhelper (>= 7), python (>= 2.4), dh-python, python-mock, python-configobj, cdbs
 Standards-Version: 3.9.1
+X-Python-Version: >= 2.7
 
 Package: diamond
 Architecture: all

@@ -35,6 +35,10 @@ import diamond.collector
 
 class SNMPCollector(diamond.collector.Collector):
 
+    def __init__(self, *args, **kwargs):
+        super(SNMPCollector, self).__init__(*args, **kwargs)
+        self.snmpCmdGen = cmdgen.CommandGenerator()
+
     def get_default_config_help(self):
         config_help = super(SNMPCollector, self).get_default_config_help()
         config_help.update({
@@ -60,6 +64,13 @@ class SNMPCollector(diamond.collector.Collector):
     def _convert_from_oid(self, oid):
         return ".".join([str(x) for x in oid])
 
+    def collect(self):
+        for device in self.config['devices']:
+            host = self.config['devices'][device]['host']
+            port = self.config['devices'][device].get('port', '161')
+            community = self.config['devices'][device].get('community', 'public')
+            self.collect_snmp(device, host, port, community)
+
     def get(self, oid, host, port, community):
         """
         Perform SNMP get for a given OID
@@ -75,7 +86,10 @@ class SNMPCollector(diamond.collector.Collector):
         host = socket.gethostbyname(host)
 
         # Assemble SNMP Auth Data
-        snmpAuthData = cmdgen.CommunityData('agent', community)
+        snmpAuthData = cmdgen.CommunityData(
+            'agent-{0}'.format(community),
+            community,
+            mpModel = 0)
 
         # Assemble SNMP Transport Data
         snmpTransportData = cmdgen.UdpTransportTarget(
@@ -109,7 +123,10 @@ class SNMPCollector(diamond.collector.Collector):
         host = socket.gethostbyname(host)
 
         # Assemble SNMP Auth Data
-        snmpAuthData = cmdgen.CommunityData('agent', community)
+        snmpAuthData = cmdgen.CommunityData(
+            'agent-{0}'.format(community),
+            community,
+            mpModel = 0)
 
         # Assemble SNMP Transport Data
         snmpTransportData = cmdgen.UdpTransportTarget(
