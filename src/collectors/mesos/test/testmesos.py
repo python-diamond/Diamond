@@ -76,6 +76,8 @@ class TestMesosCollector(CollectorTestCase):
             'staged_tasks': 20,
             'failed_tasks': 6,
             'finished_tasks': 1,
+            'frameworks.marathon-0_7_6.executors.task_name.09b6f20c-b6a9-11e4-99f6-fa163ef210c0.cpus_limit': (0.6, 1),
+            'frameworks.marathon-0_7_6.executors.task_name.06247c78-b6a9-11e4-99f6-fa163ef210c0.cpus_limit': (1.1, 1),
             'frameworks.marathon-0_7_6.executors.task_name.cpus_limit': (1.7, 1),
             'frameworks.marathon-0_7_6.executors.task_name.instances_count': (2, 0),
             'frameworks.marathon-0_7_6.executors.com_domain_group_anotherApp.mem_mapped_file_bytes': 45056,
@@ -91,10 +93,13 @@ class TestMesosCollector(CollectorTestCase):
     def test_should_compute_cpus_utilisation(self, publish_mock):
         self.fixture_cpu_utilisation(publish_mock)
 
-        self.assertPublished(
-            publish_mock,
-            'frameworks.marathon-0_7_6.executors.task_name.cpus_utilisation',
-            0.5)
+        metrics = {
+            'frameworks.marathon-0_7_6.executors.task_name.09b6f20c-b6a9-11e4-99f6-fa163ef210c0.cpus_utilisation': 0.25,
+            'frameworks.marathon-0_7_6.executors.task_name.06247c78-b6a9-11e4-99f6-fa163ef210c0.cpus_utilisation': 0.25,
+            'frameworks.marathon-0_7_6.executors.task_name.cpus_utilisation': 0.5,
+        }
+
+        self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
     def test_should_compute_cpus_percent(self, publish_mock):

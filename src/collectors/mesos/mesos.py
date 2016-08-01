@@ -7,6 +7,7 @@ Collect the Mesos stats for the local node.
  * urlib2
 """
 
+import copy
 import urllib2
 
 try:
@@ -110,7 +111,8 @@ class MesosCollector(diamond.collector.Collector):
                 ts_diff = cur_stats['timestamp'] - prev_stats['timestamp']
                 if ts_diff != 0:
                     cur_stats['cpus_utilisation'] = cpus_time_diff_s / ts_diff
-        self.executors_prev_read = cur_read
+
+            self.executors_prev_read[executor_id] = cur_read[executor_id]
 
     def _add_cpu_percent(self, cur_read):
         """Compute cpu percent basing on the provided utilisation
@@ -132,7 +134,7 @@ class MesosCollector(diamond.collector.Collector):
             if mem_rss_bytes and mem_limit_bytes != 0:
                 stats['mem_percent'] = mem_rss_bytes / float(mem_limit_bytes)
 
-    def _group_tasks_statistics(self, result):
+    def _group_and_publish_tasks_statistics(self, result):
         """This function group statistics of same tasks by adding them.
         It also add 'instances_count' statistic to get information about
         how many instances is running on the server
@@ -141,9 +143,6 @@ class MesosCollector(diamond.collector.Collector):
             result: result of mesos query. List of dictionaries with
             'executor_id', 'framework_id' as a strings and 'statistics'
             as dictionary of labeled numbers
-        Returns:
-            Dictionary of dictionary with executor name as key (executor id
-            reduced to task name without id) and statistics and framework id
         """
         for i in result:
             executor_id = i['executor_id']
@@ -162,7 +161,7 @@ class MesosCollector(diamond.collector.Collector):
         self._add_cpu_usage(r)
         self._add_cpu_percent(r)
         self._add_mem_percent(r)
-        return r
+        self._publish(r)
 
     def _sum_statistics(self, x, y):
         stats = set(x) | set(y)
@@ -181,17 +180,9 @@ class MesosCollector(diamond.collector.Collector):
         if not result:
             return
 
-        result = self._group_tasks_statistics(result)
-        for executor_id, executor in result.iteritems():
-            executor_statistics = executor['statistics']
-            for key in executor_statistics:
-                value = executor_statistics[key]
-                framework_id = self.known_frameworks[executor['framework_id']]
-                framework = self._sanitize_metric_name(framework_id)
-                executor_name = self._sanitize_metric_name(executor_id)
-                metric = 'frameworks.%s.executors.%s.%s' % (
-                    framework, executor_name, key)
-                self.publish(metric, value, precision=self._precision(value))
+        result_copy = copy.deepcopy(result)
+        self._group_and_publish_tasks_statistics(result)
+        self._publish_tasks_statistics(result_copy)
 
     def _get(self, host, port, path):
         """
@@ -225,3 +216,33 @@ class MesosCollector(diamond.collector.Collector):
 
     def _sanitize_metric_name(self, name):
         return name.replace('.', '_').replace('/', '_')
+
+    def _publish_tasks_statistics(self, result):
+        for executor in result:
+            parts = executor['executor_id'].rsplit('.', 1)
+            executor_id = '%s.%s' % (self._sanitize_metric_name(parts[0]), parts[1])
+            metrics = {executor_id: {}}
+            metrics[executor_id]['framework_id'] = executor['framework_id']
+            metrics[executor_id]['statistics'] = executor['statistics']
+
+            self._add_cpu_usage(metrics)
+            self._add_cpu_percent(metrics)
+            self._add_mem_percent(metrics)
+            self._publish(metrics, False)
+
+    def _publish(self, result, sanitize_executor_id = True):
+        for executor_id, executor in result.iteritems():
+            executor_statistics = executor['statistics']
+            for key in executor_statistics:
+                value = executor_statistics[key]
+                framework_id = self.known_frameworks[executor['framework_id']]
+                framework = self._sanitize_metric_name(framework_id)
+
+                if sanitize_executor_id:
+                    executor_name = self._sanitize_metric_name(executor_id)
+                else:
+                    executor_name = executor_id
+
+                metric = 'frameworks.%s.executors.%s.%s' % (
+                    framework, executor_name, key)
+                self.publish(metric, value, precision=self._precision(value))
