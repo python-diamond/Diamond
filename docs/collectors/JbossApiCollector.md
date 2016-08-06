@@ -60,7 +60,7 @@ jvm_buffer_pool_stats = True | False
 jvm_memory_pool_stats = True | False
 jvm_gc_stats = True | False
 jvm_thread_stats = True | False
-
+thread_pool_stats = True | False
 
 
 #### Options
@@ -82,11 +82,20 @@ jvm_thread_stats | True | Collect JVM thread stats | str
 measure_collector_time | False | Collect the collector run time in ms | bool
 metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
 metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
+<<<<<<< HEAD
 thread_pool_stats | True | Collect JBoss thread pool stats | str
+=======
+thread_pool_stats | True | Collect thread pool stats defined by the JBoss threading subsystem | str
+>>>>>>> Collect thread pool stats for jboss api
 
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.jboss.application.thread_pool.bounded-queue-thread-pool.ajp-executor.statistics.largest-thread-count 19
+servers.hostname.jboss.application.thread_pool.bounded-queue-thread-pool.ajp-executor.statistics.current-thread-count 19
+servers.hostname.jboss.application.thread_pool.bounded-queue-thread-pool.ajp-executor.statistics.queue-size 0
+servers.hostname.jboss.application.thread_pool.bounded-queue-thread-pool.ajp-executor.statistics.queue-length 25
+servers.hostname.jboss.application.thread_pool.bounded-queue-thread-pool.ajp-executor.statistics.rejected-count 0
+servers.hostname.jboss.application.thread_pool.bounded-queue-thread-pool.ajp-executor.statistics.max-threads 20
 ```
 
