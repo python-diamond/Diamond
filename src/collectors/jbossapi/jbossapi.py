@@ -65,6 +65,7 @@ import diamond.collector
 import os
 import re
 import subprocess
+import types
 
 try:
     import json
@@ -80,6 +81,7 @@ operational_type = [
     'app',
     'web',
     'jvm',
+    'thread_pool',
 ]
 
 
@@ -178,7 +180,8 @@ class JbossApiCollector(diamond.collector.Collector):
             'jvm_memory_stats': 'True',
             'jvm_gc_stats': 'True',
             'jvm_thread_stats': 'True',
-            'connector_stats': 'True'
+            'connector_stats': 'True',
+            'thread_pool_stats': 'True'
         })
         # Return default config
         return config
@@ -214,6 +217,19 @@ class JbossApiCollector(diamond.collector.Collector):
                             metricValue = datasource[
                                 'statistics']['pool'][metric]
                             self.publish(metricName, float(metricValue))
+
+            if op_type == 'thread_pool' and self.config['thread_pool_stats'] == 'True':
+                if output:
+                    # Grab the stats from each thread pool type
+                    for pool_type in output['result']:
+                        if output['result'][pool_type]:
+                            for pool in output['result'][pool_type]:
+                                for metric in output['result'][pool_type][pool]:
+                                    metricName = '%s.%s.%s.%s.statistics.%s' % (
+                                        interface, op_type, pool_type, pool, metric)
+                                    metricValue = output['result'][pool_type][pool][metric]
+                                    if isinstance(metricValue, (int, long, float)) and type(metricValue) != types.BooleanType:
+                                        self.publish(metricName, float(metricValue))
 
             if op_type == 'web' and self.config['connector_stats'] == 'True':
                 if output:
@@ -311,6 +327,10 @@ class JbossApiCollector(diamond.collector.Collector):
                     '"include-runtime":"true", ' +
                     '"recursive":"true", ' +
                     '"address":["subsystem","datasources"]}')
+
+        if op_type == 'thread_pool':
+            data = ('{"operation":"read-resource", "include-runtime":"true", '
+                    + '"recursive":"true" , "address":["subsystem","threads"]}')
 
         if op_type == 'web':
             data = ('{"operation":"read-resource", ' +
