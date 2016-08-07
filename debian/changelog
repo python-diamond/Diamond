@@ -1,3 +1,11 @@
+diamond (4.0.143) unstable; urgency=low
+
+  * Last Commit: (2015-05-04 16:28:46 +0200)
+    afd3d6a38f55e2cb9ebf584d191beb5c1731775d Lukas Wingerberg
+    <h@xx0r.eu>
+
+ -- root <root@cronix-work.united.domain>  Mon, 04 May 2015 14:35:26 +0000
+
 diamond (3.1.0) unstable; urgency=low
   * new upstream
  -- Rob Smith <kormoc@gmail.com>  Tue, 05 Nov 2012 15:19:00 -0800
