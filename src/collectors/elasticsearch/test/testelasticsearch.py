@@ -10,7 +10,12 @@ from mock import patch
 
 from diamond.collector import Collector
 
-from elasticsearch import ElasticSearchCollector
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
+from diamond import util
+ElasticSearchCollector = util.load_class_from_name(
+    'elasticsearch.ElasticSearchCollector', 'collector_')
 
 ##########################################################################
 

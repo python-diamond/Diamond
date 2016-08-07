@@ -15,7 +15,7 @@ import subprocess
 
 from diamond.metric import Metric
 from diamond.utils.config import load_config
-from error import DiamondException
+from diamond.error import DiamondException
 
 # Detect the architecture of the system and set the counters for MAX_VALUES
 # appropriately. Otherwise, rolling over counters will cause incorrect or
