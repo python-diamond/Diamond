@@ -131,14 +131,21 @@ class KafkaCollector(diamond.collector.Collector):
 
         for attrib in attributes.getiterator(tag='Attribute'):
             atype = attrib.get('type')
+            aval = attrib.get('value')
+            aname = attrib.get('name')
 
             ptype = self.ATTRIBUTE_TYPES.get(atype)
             if not ptype:
-                continue
+                if type(aval).__name__ == float:
+                    ptype = float
+                if type(aval).__name__ == int:
+                    ptype = int
+                else
+                    continue
 
-            value = ptype(attrib.get('value'))
+            value = ptype(aval)
 
-            name = '.'.join([key_prefix, attrib.get('name')])
+            name = '.'.join([key_prefix, aname])
             # Some prefixes and attributes could have spaces, thus we must
             # sanitize them
             name = name.replace(' ', '')
