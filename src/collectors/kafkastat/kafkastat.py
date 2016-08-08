@@ -134,7 +134,12 @@ class KafkaCollector(diamond.collector.Collector):
 
             ptype = self.ATTRIBUTE_TYPES.get(atype)
             if not ptype:
-                continue
+                if type(aval).__name__ == float:
+                    ptype = float
+                if type(aval).__name__ == int:
+                    ptype = int
+                else
+                    continue
 
             value = ptype(attrib.get('value'))
 
