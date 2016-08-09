@@ -140,7 +140,7 @@ class KafkaCollector(diamond.collector.Collector):
                     ptype = float
                 if type(aval).__name__ == int:
                     ptype = int
-                else
+                else:
                     continue
 
             value = ptype(aval)
