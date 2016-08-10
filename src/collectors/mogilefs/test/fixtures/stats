@@ -1,0 +1,11 @@
+uptime 181491
+pending_queries 0
+processing_queries 1
+bored_queryworkers 49
+queries 4353158
+times_out_of_qworkers 2
+work_queue_for_delete 2
+work_queue_for_replicate 0
+work_sent_to_delete 336154
+work_sent_to_replicate 274882
+.
