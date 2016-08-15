@@ -23,16 +23,16 @@ your service's latency. OpenTSDB makes generating such graphs on the fly a
 trivial operation, while manipulating millions of data point for very fine
 grained, real-time monitoring.
 
-One of the key features of OpenTSDB is working with tags. When collecting the 
-same information for multiple instances (let's say the CPU or the number of 
-bytes received on an interface), OpenTSDB uses the same metric name and a 
-variable number of tags to identify what you were collecting. See 
+One of the key features of OpenTSDB is working with tags. When collecting the
+same information for multiple instances (let's say the CPU or the number of
+bytes received on an interface), OpenTSDB uses the same metric name and a
+variable number of tags to identify what you were collecting. See
 http://opentsdb.net/docs/build/html/user_guide/query/timeseries.html for more
 information.
 
-The system per default adds a tag 'hostname' with the hostname where the 
-collection took place. You can add as many as you like. The 'tags' config element
-allows for both comma-separated or space separated key value pairs.
+The system per default adds a tag 'hostname' with the hostname where the
+collection took place. You can add as many as you like. The 'tags' config
+element allows for both comma-separated or space separated key value pairs.
 
 Example :
 tags = environment=test,datacenter=north
@@ -75,12 +75,12 @@ class TSDBHandler(Handler):
         self.port = int(self.config['port'])
         self.timeout = int(self.config['timeout'])
         self.metric_format = str(self.config['format'])
-        self.tags = ""         
-        if isinstance(self.config['tags'],basestring) :
+        self.tags = ""
+        if isinstance(self.config['tags'], basestring):
             self.tags = self.config['tags']
-        elif isinstance(self.config['tags'],list):
-            for tag in self.config['tags']:                   
-                self.tags += " "+tag        
+        elif isinstance(self.config['tags'], list):
+            for tag in self.config['tags']:
+                self.tags += " "+tag
         if not(self.tags == "") and not(self.tags.startswith(' ')):
             self.tags = " "+self.tags
 
@@ -110,12 +110,12 @@ class TSDBHandler(Handler):
         config = super(TSDBHandler, self).get_default_config()
 
         config.update({
-            'host': '',
-            'port': 1234,
-            'timeout': 5,
-            'format': '{Collector}.{Metric} {timestamp} {value} hostname={host}'
-                      '{tags}',
-            'tags': '',
+           'host': '',
+           'port': 1234,
+           'timeout': 5,
+           'format': '{Collector}.{Metric} {timestamp} {value} hostname={host}'
+                     '{tags}',
+           'tags': '',
         })
 
         return config
