@@ -35,7 +35,7 @@ collection took place. You can add as many as you like. The 'tags' config elemen
 allows for both comma-separated or space separated key value pairs.
 
 Example :
-tags = environment=test,facturation_code=666
+tags = environment=test,datacenter=north
 
 ==== Notes
 
@@ -129,7 +129,7 @@ class TSDBHandler(Handler):
     def process(self, metric):
         """
         Process a metric by sending it to TSDB
-        """        
+        """
 
         metric_str = self.metric_format.format(
             Collector=metric.getCollectorPath(),
