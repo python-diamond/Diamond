@@ -103,7 +103,7 @@ class SNMPCollector(diamond.collector.Collector):
         # TODO: Error check
 
         for o, v in varBind:
-            ret[o.prettyPrint()] = v.prettyPrint()
+            ret[str(o)] = v.prettyPrint()
 
         return ret
 
@@ -142,6 +142,6 @@ class SNMPCollector(diamond.collector.Collector):
 
         for varBindTableRow in varBindTable:
             for o, v in varBindTableRow:
-                ret[o.prettyPrint()] = v.prettyPrint()
+                ret[str(o)] = v.prettyPrint()
 
         return ret
