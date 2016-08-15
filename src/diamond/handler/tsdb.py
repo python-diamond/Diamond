@@ -23,6 +23,20 @@ your service's latency. OpenTSDB makes generating such graphs on the fly a
 trivial operation, while manipulating millions of data point for very fine
 grained, real-time monitoring.
 
+One of the key features of OpenTSDB is working with tags. When collecting the 
+same information for multiple instances (let's say the CPU or the number of 
+bytes received on an interface), OpenTSDB uses the same metric name and a 
+variable number of tags to identify what you were collecting. See 
+http://opentsdb.net/docs/build/html/user_guide/query/timeseries.html for more
+information.
+
+The system per default adds a tag 'hostname' with the hostname where the 
+collection took place. You can add as many as you like. The 'tags' config element
+allows for both comma-separated or space separated key value pairs.
+
+Example :
+tags = environment=test,facturation_code=666
+
 ==== Notes
 
 We don't automatically make the metrics via mkmetric, so we recommand you run
@@ -42,7 +56,7 @@ import socket
 
 class TSDBHandler(Handler):
     """
-    Implements the abstract Handler class, sending data to graphite
+    Implements the abstract Handler class, sending data to OpenTSDB
     """
     RETRY = 3
 
@@ -61,7 +75,11 @@ class TSDBHandler(Handler):
         self.port = int(self.config['port'])
         self.timeout = int(self.config['timeout'])
         self.metric_format = str(self.config['format'])
-        self.tags = str(self.config['tags'])
+        self.tags = ""
+        for tag in self.config['tags']:            
+            self.tags += str(tag).replace(',',' ')+" "
+        if not(self.tags == "") and not(self.tags.startswith(' ')):
+            self.tags = " "+self.tags
 
         # Connect
         self._connect()
