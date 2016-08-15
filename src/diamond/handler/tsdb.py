@@ -75,9 +75,12 @@ class TSDBHandler(Handler):
         self.port = int(self.config['port'])
         self.timeout = int(self.config['timeout'])
         self.metric_format = str(self.config['format'])
-        self.tags = ""
-        for tag in self.config['tags']:            
-            self.tags += str(tag).replace(',',' ')+" "
+        self.tags = ""         
+        if isinstance(self.config['tags'],basestring) :
+            self.tags = self.config['tags']
+        elif isinstance(self.config['tags'],list):
+            for tag in self.config['tags']:                   
+                self.tags += " "+tag        
         if not(self.tags == "") and not(self.tags.startswith(' ')):
             self.tags = " "+self.tags
 
@@ -126,7 +129,7 @@ class TSDBHandler(Handler):
     def process(self, metric):
         """
         Process a metric by sending it to TSDB
-        """
+        """        
 
         metric_str = self.metric_format.format(
             Collector=metric.getCollectorPath(),
