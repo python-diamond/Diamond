@@ -30,7 +30,6 @@ def fake_bad_connect(self):
 
 
 class TestTSDBdHandler(unittest.TestCase):
-    
     def setUp(self):
         self.__connect_method = mod.TSDBHandler
         mod.TSDBHandler._connect = fake_connect
@@ -38,11 +37,11 @@ class TestTSDBdHandler(unittest.TestCase):
     def tearDown(self):
         # restore the override
         mod.TSDBHandler._connect = self.__connect_method
-    
+
     def test_single_gauge(self):
         config = configobj.ConfigObj()
         config['host'] = 'localhost'
-        config['port'] = '9999'        
+        config['port'] = '9999'
 
         metric = Metric('servers.myhostname.cpu.cpu_count',
                         123, raw_value=123, timestamp=1234567,
@@ -52,99 +51,107 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        handler.socket.sendall.assert_called_with(expected_data)        
-        
+        handler.socket.sendall.assert_called_with(expected_data)
+
     def test_with_single_tag_no_space_in_front(self):
         config = configobj.ConfigObj()
         config['host'] = 'localhost'
-        config['port'] = '9999'   
+        config['port'] = '9999'
         config['tags'] = 'myTag=myValue'
 
         metric = Metric('servers.myhostname.cpu.cpu_count',
                         123, raw_value=123, timestamp=1234567,
                         host='myhostname', metric_type='GAUGE')
 
-        expected_data = ('put cpu.cpu_count 1234567 123 hostname=myhostname myTag=myValue\n')
+        expected_data = 'put cpu.cpu_count 1234567 123 hostname=myhostname '
+        expected_data += 'myTag=myValue\n'
 
         handler = TSDBHandler(config)
         handler.process(metric)
         handler.socket.sendall.assert_called_with(expected_data)
-        
+
     def test_with_single_tag_space_in_front(self):
         config = configobj.ConfigObj()
         config['host'] = 'localhost'
-        config['port'] = '9999'   
+        config['port'] = '9999'
         config['tags'] = ' myTag=myValue'
 
         metric = Metric('servers.myhostname.cpu.cpu_count',
                         123, raw_value=123, timestamp=1234567,
                         host='myhostname', metric_type='GAUGE')
 
-        expected_data = ('put cpu.cpu_count 1234567 123 hostname=myhostname myTag=myValue\n')
+        expected_data = 'put cpu.cpu_count 1234567 123 hostname=myhostname '
+        expected_data += 'myTag=myValue\n'
 
         handler = TSDBHandler(config)
         handler.process(metric)
         handler.socket.sendall.assert_called_with(expected_data)
-    
+
     def test_with_multiple_tag_no_space_in_front(self):
         config = configobj.ConfigObj()
         config['host'] = 'localhost'
-        config['port'] = '9999'   
+        config['port'] = '9999'
         config['tags'] = 'myTag=myValue mySecondTag=myOtherValue'
 
         metric = Metric('servers.myhostname.cpu.cpu_count',
                         123, raw_value=123, timestamp=1234567,
                         host='myhostname', metric_type='GAUGE')
 
-        expected_data = ('put cpu.cpu_count 1234567 123 hostname=myhostname myTag=myValue mySecondTag=myOtherValue\n')
+        expected_data = 'put cpu.cpu_count 1234567 123 hostname=myhostname '
+        expected_data += 'myTag=myValue mySecondTag=myOtherValue\n'
 
         handler = TSDBHandler(config)
         handler.process(metric)
         handler.socket.sendall.assert_called_with(expected_data)
-        
+
     def test_with_multiple_tag_space_in_front(self):
         config = configobj.ConfigObj()
         config['host'] = 'localhost'
-        config['port'] = '9999'   
+        config['port'] = '9999'
         config['tags'] = ' myTag=myValue mySecondTag=myOtherValue'
 
         metric = Metric('servers.myhostname.cpu.cpu_count',
                         123, raw_value=123, timestamp=1234567,
                         host='myhostname', metric_type='GAUGE')
 
-        expected_data = ('put cpu.cpu_count 1234567 123 hostname=myhostname myTag=myValue mySecondTag=myOtherValue\n')
+        expected_data = 'put cpu.cpu_count 1234567 123 hostname=myhostname '
+        expected_data += 'myTag=myValue mySecondTag=myOtherValue\n'
 
         handler = TSDBHandler(config)
         handler.process(metric)
         handler.socket.sendall.assert_called_with(expected_data)
-        
+
     def test_with_multiple_tag_no_space_in_front_comma(self):
         config = configobj.ConfigObj()
         config['host'] = 'localhost'
-        config['port'] = '9999'   
-        config['tags'] = ['myFirstTag=myValue','mySecondTag=myOtherValue']
+        config['port'] = '9999'
+        config['tags'] = ['myFirstTag=myValue', 'mySecondTag=myOtherValue']
 
         metric = Metric('servers.myhostname.cpu.cpu_count',
                         123, raw_value=123, timestamp=1234567,
                         host='myhostname', metric_type='GAUGE')
 
-        expected_data = ('put cpu.cpu_count 1234567 123 hostname=myhostname myFirstTag=myValue mySecondTag=myOtherValue\n')
+        expected_data = 'put cpu.cpu_count 1234567 123 hostname=myhostname '
+        expected_data += 'myFirstTag=myValue mySecondTag=myOtherValue\n'
 
         handler = TSDBHandler(config)
         handler.process(metric)
         handler.socket.sendall.assert_called_with(expected_data)
-        
+
     def test_with_multiple_tag_no_space_in_front_comma_and_space(self):
         config = configobj.ConfigObj()
         config['host'] = 'localhost'
-        config['port'] = '9999'   
-        config['tags'] = ['myFirstTag=myValue','mySecondTag=myOtherValue myThirdTag=yetAnotherValue']
+        config['port'] = '9999'
+        config['tags'] = ['myFirstTag=myValue',
+                          'mySecondTag=myOtherValue myThirdTag=yetAnotherVal']
 
         metric = Metric('servers.myhostname.cpu.cpu_count',
                         123, raw_value=123, timestamp=1234567,
                         host='myhostname', metric_type='GAUGE')
 
-        expected_data = ('put cpu.cpu_count 1234567 123 hostname=myhostname myFirstTag=myValue mySecondTag=myOtherValue myThirdTag=yetAnotherValue\n')
+        expected_data = 'put cpu.cpu_count 1234567 123 hostname=myhostname '
+        expected_data += 'myFirstTag=myValue mySecondTag=myOtherValue '
+        expected_data += 'myThirdTag=yetAnotherVal\n'
 
         handler = TSDBHandler(config)
         handler.process(metric)
