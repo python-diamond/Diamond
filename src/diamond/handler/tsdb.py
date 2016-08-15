@@ -110,12 +110,12 @@ class TSDBHandler(Handler):
         config = super(TSDBHandler, self).get_default_config()
 
         config.update({
-           'host': '',
-           'port': 1234,
-           'timeout': 5,
-           'format': '{Collector}.{Metric} {timestamp} {value} hostname={host}'
-                     '{tags}',
-           'tags': '',
+            'host': '',
+            'port': 1234,
+            'timeout': 5,
+            'format': '{Collector}.{Metric} {timestamp} {value} hostname={host}'
+                      '{tags}',
+            'tags': '',
         })
 
         return config
