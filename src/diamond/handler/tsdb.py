@@ -47,10 +47,11 @@ yourself.
 
 `    handlers = diamond.handler.tsdb.TSDBHandler
 `
-
+'
 """
 
 from Handler import Handler
+from diamond.metric import Metric
 import socket
 
 
@@ -81,8 +82,10 @@ class TSDBHandler(Handler):
         elif isinstance(self.config['tags'], list):
             for tag in self.config['tags']:
                 self.tags += " "+tag
-        if not(self.tags == "") and not(self.tags.startswith(' ')):
+        if not self.tags == "" and not self.tags.startswith(' '):
             self.tags = " "+self.tags
+        self.skipAggregates = self.config['skipAggregates']
+        self.cleanMetrics = self.config['cleanMetrics']
 
         # Connect
         self._connect()
@@ -99,6 +102,8 @@ class TSDBHandler(Handler):
             'timeout': '',
             'format': '',
             'tags': '',
+            'cleanMetrics': True,
+            'skipAggregates': True,
         })
 
         return config
@@ -116,6 +121,8 @@ class TSDBHandler(Handler):
             'format': '{Collector}.{Metric} {timestamp} {value} hostname={host}'
                       '{tags}',
             'tags': '',
+            'cleanMetrics': True,
+            'skipAggregates': True,
         })
 
         return config
@@ -130,6 +137,14 @@ class TSDBHandler(Handler):
         """
         Process a metric by sending it to TSDB
         """
+        tagsForMetric = self.tags
+
+        if self.cleanMetrics:
+            metric = MetricWrapper(metric, self.log)
+            if self.skipAggregates and metric.isAggregate():
+                return
+            for tagKey in metric.getTags():
+                tagsForMetric += " "+tagKey+"="+metric.getTags()[tagKey]
 
         metric_str = self.metric_format.format(
             Collector=metric.getCollectorPath(),
@@ -138,7 +153,7 @@ class TSDBHandler(Handler):
             host=metric.host,
             timestamp=metric.timestamp,
             value=metric.value,
-            tags=self.tags
+            tags=tagsForMetric
         )
         # Just send the data as a string
         self._send("put " + str(metric_str) + "\n")
@@ -210,3 +225,58 @@ class TSDBHandler(Handler):
         if self.socket is not None:
             self.socket.close()
         self.socket = None
+
+
+"""
+This class wraps a metric and applies the additonal OpenTSDB tagging logic.
+"""
+
+
+class MetricWrapper(Metric):
+
+    def __init__(self, delegate, logger):
+        self.path = delegate.path
+        self.value = delegate.value
+        self.host = delegate.host
+        self.raw_value = delegate.raw_value
+        self.timestamp = delegate.timestamp
+        self.precision = delegate.precision
+        self.ttl = delegate.ttl
+        self.metric_type = delegate.metric_type
+        self.delegate = delegate
+        self.tags = {}
+        self.aggregate = False
+        self.newMetricName = None
+        self.logger = logger
+        # call the handler for that collector
+        self.handlers.get(self.getCollectorPath(),
+                          self.processDefaultMetric)(self)
+
+    def isAggregate(self):
+        return self.aggregate
+
+    def getTags(self):
+        return self.tags
+
+    """
+    This method does nothing and therefore keeps the existing metric unchanged.
+    """
+    def processDefaultMetric(self):
+        self.tags = {}
+        self.aggregate = False
+
+    """
+    Processes a metric of the CPUCollector. It stores the cpuId in a tag and
+    marks all metrics with 'total' as aggregates, so they can be skipped if
+    the skipAggregates feature is active.
+    """
+    def processCpuMetric(self):
+        if len(self.getMetricPath().split('.')) > 1:
+            self.aggregate = self.getMetricPath().split('.')[0] == 'total'
+
+            cpuId = self.delegate.getMetricPath().split('.')[0]
+            self.tags["cpuId"] = cpuId
+            self.path = self.path.replace("."+cpuId, "")
+
+    handlers = {}
+    handlers['cpu'] = processCpuMetric
