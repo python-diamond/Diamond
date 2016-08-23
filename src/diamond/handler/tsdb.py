@@ -234,24 +234,6 @@ This class wraps a metric and applies the additonal OpenTSDB tagging logic.
 
 class MetricWrapper(Metric):
 
-    def __init__(self, delegate, logger):
-        self.path = delegate.path
-        self.value = delegate.value
-        self.host = delegate.host
-        self.raw_value = delegate.raw_value
-        self.timestamp = delegate.timestamp
-        self.precision = delegate.precision
-        self.ttl = delegate.ttl
-        self.metric_type = delegate.metric_type
-        self.delegate = delegate
-        self.tags = {}
-        self.aggregate = False
-        self.newMetricName = None
-        self.logger = logger
-        # call the handler for that collector
-        self.handlers.get(self.getCollectorPath(),
-                          self.processDefaultMetric)(self)
-
     def isAggregate(self):
         return self.aggregate
 
@@ -277,6 +259,47 @@ class MetricWrapper(Metric):
             cpuId = self.delegate.getMetricPath().split('.')[0]
             self.tags["cpuId"] = cpuId
             self.path = self.path.replace("."+cpuId, "")
+    """
+    Processes metrics of the HaProxyCollector. It stores the backend and the
+    server to which the backends send as tags. Counters with 'backend' as
+    backend name are considered aggregates.
+    """
+    def processHaProxyMetric(self):
+        self.logger.error("LEN "+str(len(self.getMetricPath().split('.'))))
+        if len(self.getMetricPath().split('.')) == 3:
+            self.aggregate = self.getMetricPath().split('.')[1] == 'backend'
+            self.logger.error("AGGRE = "+str(self.aggregate))
+
+            backend = self.delegate.getMetricPath().split('.')[0]
+            server = self.delegate.getMetricPath().split('.')[1]
+            self.logger.error("BE = "+backend)
+            self.logger.error("SE= "+server )
+            self.tags["backend"] = backend
+            self.tags["server"] = server
+            self.path = self.path.replace("."+server, "")
+            self.path = self.path.replace("."+backend, "")
 
     handlers = {}
     handlers['cpu'] = processCpuMetric
+    handlers['haproxy'] = processHaProxyMetric
+    handlers['default'] = processDefaultMetric
+
+    def __init__(self, delegate, logger):
+        self.path = delegate.path
+        self.value = delegate.value
+        self.host = delegate.host
+        self.raw_value = delegate.raw_value
+        self.timestamp = delegate.timestamp
+        self.precision = delegate.precision
+        self.ttl = delegate.ttl
+        self.metric_type = delegate.metric_type
+        self.delegate = delegate
+        self.tags = {}
+        self.aggregate = False
+        self.newMetricName = None
+        self.logger = logger
+        # call the handler for that collector
+        handler = self.handlers.get(self.getCollectorPath(),
+                                    self.handlers['default'])
+        self.logger.error("HANDLER = "+str(handler))
+        handler(self)

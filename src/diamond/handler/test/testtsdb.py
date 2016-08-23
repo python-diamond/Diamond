@@ -245,3 +245,46 @@ class TestTSDBdHandler(unittest.TestCase):
             handler = TSDBHandler(config)
             handler.process(metric)
             handler.socket.sendall.assert_called_with(expected_data)
+
+    def test_haproxy_metrics_taghandling_default(self):
+            config = configobj.ConfigObj()
+            config['host'] = 'localhost'
+            config['port'] = '9999'
+            config['tags'] = ['myFirstTag=myValue']
+
+            metricName = 'servers.myhostname.'
+            metricName += 'haproxy.SOME-BACKEND.SOME-SERVER.bin'
+
+            metric = Metric(metricName,
+                            123, raw_value=123, timestamp=1234567,
+                            host='myhostname', metric_type='GAUGE')
+
+            expected_data = 'put haproxy.bin 1234567 123 hostname=myhostname '
+            expected_data += 'myFirstTag=myValue server=SOME-SERVER '
+            expected_data += 'backend=SOME-BACKEND\n'
+
+            handler = TSDBHandler(config)
+            handler.process(metric)
+            handler.socket.sendall.assert_called_with(expected_data)
+
+    def test_haproxy_metrics_taghandling_deactivate(self):
+            config = configobj.ConfigObj()
+            config['host'] = 'localhost'
+            config['port'] = '9999'
+            config['tags'] = ['myFirstTag=myValue']
+            config['cleanMetrics'] = False
+
+            metricName = 'servers.myhostname.'
+            metricName += 'haproxy.SOME-BACKEND.SOME-SERVER.bin'
+
+            metric = Metric(metricName,
+                            123, raw_value=123, timestamp=1234567,
+                            host='myhostname', metric_type='GAUGE')
+
+            expected_data = 'put haproxy.SOME-BACKEND.SOME-SERVER.bin 1234567 '
+            expected_data += '123 hostname=myhostname '
+            expected_data += 'myFirstTag=myValue\n'
+
+            handler = TSDBHandler(config)
+            handler.process(metric)
+            handler.socket.sendall.assert_called_with(expected_data)
