@@ -98,6 +98,8 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
 
     NETSCALER_VSERVER_STATE = "1.3.6.1.4.1.5951.4.1.3.1.1.5"
 
+    NETSCALER_VSERVER_FULLNAME = "1.3.6.1.4.1.5951.4.1.3.1.1.59"
+
     NETSCALER_VSERVER_GUAGES = {
         "vsvrRequestRate": "1.3.6.1.4.1.5951.4.1.3.1.1.43",
         "vsvrRxBytesRate": "1.3.6.1.4.1.5951.4.1.3.1.1.44",
@@ -287,11 +289,20 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
                                    self.config.get('exclude_vserver_state')):
                 continue
 
+            # Get Vserver full name
+            vserverFullNameOid = \
+                ".".join([self.NETSCALER_VSERVER_FULLNAME,
+                          self._convert_from_oid(vserverNameOid)])
+            vserverFullName = \
+                self.get(vserverFullNameOid, host, port,
+                         community)[vserverFullNameOid].strip("\'")
+
             for k, v in self.NETSCALER_VSERVER_GUAGES.items():
                 vserverGuageOid = ".".join(
                     [v, self._convert_from_oid(vserverNameOid)])
                 # Get Metric Name
-                metricName = '.'.join([re.sub(r'\.|\\', '_', vserverName), k])
+                metricName = '.'.join([re.sub(r'\.|\\', '_',
+                                              vserverFullName), k])
                 # Get Metric Value
                 metricValue = int(self.get(vserverGuageOid,
                                            host,
