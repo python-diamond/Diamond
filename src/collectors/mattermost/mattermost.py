@@ -72,6 +72,7 @@ class MattermostCollector(diamond.collector.Collector):
             self.connect()
         if self.conn is not None:
             self.collectUserStats()
+            self.collectTeamStats()
 
     def collectUserStats(self):
         cur = self.conn.cursor()
@@ -81,6 +82,15 @@ class MattermostCollector(diamond.collector.Collector):
 
         cur.execute(query+" and emailverified")
         self.publishMyCounter("users.verified", cur.fetchone()[0])
+
+    def collectTeamStats(self):
+        cur = self.conn.cursor()
+        query = "select count(*) from teams where deleteat = 0"
+        cur.execute(query)
+        self.publishMyCounter("teams.count", cur.fetchone()[0])
+
+        cur.execute(query+" and allowopeninvite")
+        self.publishMyCounter("teams.open", cur.fetchone()[0])
 
     def publishMyCounter(self, metricName, value):
         self.log.debug(metricName+"="+str(value))
