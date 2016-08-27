@@ -43,9 +43,9 @@ class MattermostCollector(diamond.collector.Collector):
             'databasePort':   'port of the server',
             'databaseUser':   'username of the database',
             'databasePwd':    'password of the user',
-            'collectGroups':  'should counters be calculated per group',
-            'collectChannels': 'should counters be calculated per channel',
-            'collectUsers':   'should counters be calculated per user',
+            'collectGroupDetails':  'should details be calculated per group',
+            'collectChannelDetails': 'should details be calculated per channel',
+            'collectUserDetails':   'should details be calculated per user',
         })
         return config_help
 
@@ -60,9 +60,9 @@ class MattermostCollector(diamond.collector.Collector):
             'databasePort':   '5432',
             'databaseUser':   'mmuser',
             'databasePwd':    'mmuser_password',
-            'collectGroups':  True,
-            'collectChannels': True,
-            'collectUsers':   False,
+            'collectGroupDetails':  True,
+            'collectChannelDetails': True,
+            'collectUserDetails':   False,
         })
         # self.log.error("CONFIG "+str(config))
         return config
@@ -73,6 +73,7 @@ class MattermostCollector(diamond.collector.Collector):
         if self.conn is not None:
             self.collectUserStats()
             self.collectTeamStats()
+            self.collectChannelStats()
 
     def collectUserStats(self):
         cur = self.conn.cursor()
@@ -92,9 +93,17 @@ class MattermostCollector(diamond.collector.Collector):
         cur.execute(query+" and allowopeninvite")
         self.publishMyCounter("teams.open", cur.fetchone()[0])
 
+    def collectChannelStats(self):
+        cur = self.conn.cursor()
+        query = "select count(*) from channels where deleteat = 0"
+        cur.execute(query)
+        self.publishMyCounter("channels.count", cur.fetchone()[0])
+
     def publishMyCounter(self, metricName, value):
         self.log.debug(metricName+"="+str(value))
-        self.publish_counter(metricName, value, time_delta=False)
+        self.publish(metricName, value, raw_value=value,
+                     precision=0, metric_type='COUNTER',
+                     instance=None)
 
     def connect(self):
         retry = self.RETRY
