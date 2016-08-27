@@ -25,7 +25,6 @@ only support postgresql.
 
 import diamond.collector
 import psycopg2
-import pdb
 
 
 class MattermostCollector(diamond.collector.Collector):
@@ -56,6 +55,7 @@ class MattermostCollector(diamond.collector.Collector):
         """
         config = super(MattermostCollector, self).get_default_config()
         config.update({
+            'path':     'mattermost',
             'databaseHost':   'localhost',
             'databasePort':   '5432',
             'databaseUser':   'mmuser',
@@ -70,6 +70,21 @@ class MattermostCollector(diamond.collector.Collector):
     def collect(self):
         if self.conn is None:
             self.connect()
+        if self.conn is not None:
+            self.collectUserStats()
+
+    def collectUserStats(self):
+        cur = self.conn.cursor()
+        query = "select count(*) from users where deleteat = 0"
+        cur.execute(query)
+        self.publishMyCounter("users.count", cur.fetchone()[0])
+
+        cur.execute(query+" and emailverified")
+        self.publishMyCounter("users.verified", cur.fetchone()[0])
+
+    def publishMyCounter(self, metricName, value):
+        self.log.debug(metricName+"="+str(value))
+        self.publish_counter(metricName, value, time_delta=False)
 
     def connect(self):
         retry = self.RETRY
