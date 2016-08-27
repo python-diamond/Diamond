@@ -43,7 +43,7 @@ class MattermostCollector(diamond.collector.Collector):
             'databasePort':   'port of the server',
             'databaseUser':   'username of the database',
             'databasePwd':    'password of the user',
-            'collectGroupDetails':  'should details be calculated per group',
+            'collectTeamDetails':  'should details be calculated per team',
             'collectChannelDetails': 'should details be calculated per channel',
             'collectUserDetails':   'should details be calculated per user',
         })
@@ -60,7 +60,7 @@ class MattermostCollector(diamond.collector.Collector):
             'databasePort':   '5432',
             'databaseUser':   'mmuser',
             'databasePwd':    'mmuser_password',
-            'collectGroupDetails':  True,
+            'collectTeamDetails':  True,
             'collectChannelDetails': True,
             'collectUserDetails':   False,
         })
@@ -74,6 +74,8 @@ class MattermostCollector(diamond.collector.Collector):
             self.collectUserStats()
             self.collectTeamStats()
             self.collectChannelStats()
+            if self.config['collectTeamDetails']:
+                self.collectTeamDetails()
 
     def collectUserStats(self):
         cur = self.conn.cursor()
@@ -87,6 +89,7 @@ class MattermostCollector(diamond.collector.Collector):
         cur.execute("select count(*) from sessions")
         self.publishMyCounter("users.logged", cur.fetchone()[0],
                               mtype='GAUGE')
+        cur.close()
 
     def collectTeamStats(self):
         cur = self.conn.cursor()
@@ -96,12 +99,35 @@ class MattermostCollector(diamond.collector.Collector):
 
         cur.execute(query+" and allowopeninvite")
         self.publishMyCounter("teams.open", cur.fetchone()[0])
+        cur.close()
 
     def collectChannelStats(self):
         cur = self.conn.cursor()
         query = "select count(*) from channels where deleteat = 0"
         cur.execute(query)
         self.publishMyCounter("channels.count", cur.fetchone()[0])
+        cur.close()
+
+    def collectTeamDetails(self):
+        cur = self.conn.cursor()
+        query = "select t.displayname, count(*) "
+        query += "from teams t, teammembers tm, users u "
+        query += "where t.id = tm.teamid and tm.userid = u.id and "
+        query += "tm.deleteat = 0 group by t.displayname;"
+        cur.execute(query)
+        for entry in cur.fetchall():
+            teamName = entry[0].replace(" ", "_")
+            self.publishMyCounter("teamdetails."+teamName+".users", entry[1])
+        query = "select t.displayname, count(*) "
+        query += "from teams t, channels c "
+        query += "where t.id = c.teamid and c.deleteat = 0 "
+        query += "group by t.displayname;"
+        cur.execute(query)
+        for entry in cur.fetchall():
+            teamName = entry[0].replace(" ", "_")
+            self.publishMyCounter("teamdetails."+teamName+".channels", entry[1])
+
+        cur.close()
 
     def publishMyCounter(self, metricName, value, mtype='COUNTER'):
         self.log.debug(metricName+"="+str(value))
