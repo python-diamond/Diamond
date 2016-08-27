@@ -84,6 +84,10 @@ class MattermostCollector(diamond.collector.Collector):
         cur.execute(query+" and emailverified")
         self.publishMyCounter("users.verified", cur.fetchone()[0])
 
+        cur.execute("select count(*) from sessions")
+        self.publishMyCounter("users.logged", cur.fetchone()[0],
+                              mtype='GAUGE')
+
     def collectTeamStats(self):
         cur = self.conn.cursor()
         query = "select count(*) from teams where deleteat = 0"
@@ -99,10 +103,10 @@ class MattermostCollector(diamond.collector.Collector):
         cur.execute(query)
         self.publishMyCounter("channels.count", cur.fetchone()[0])
 
-    def publishMyCounter(self, metricName, value):
+    def publishMyCounter(self, metricName, value, mtype='COUNTER'):
         self.log.debug(metricName+"="+str(value))
         self.publish(metricName, value, raw_value=value,
-                     precision=0, metric_type='COUNTER',
+                     precision=0, metric_type=mtype,
                      instance=None)
 
     def connect(self):
