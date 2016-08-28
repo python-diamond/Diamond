@@ -17,8 +17,6 @@ may grow quickly. Also since the collection performs GROUP BY queries for these
 cases, running the collection too frequently may have an impact on the
 performance of your system.
 
-When you use a backend that can do structured aggregation, you can only collect
-the finest level (userDetails) and derive the other values from there.
 
 Mattermost supports both postgresql and mysql. At this moment, the collector
 only support postgresql.
@@ -36,9 +34,9 @@ databaseHost | localhost | the hostname/ip address of the database server | str
 databasePort | 5432 | the port on which the database is running | int
 databaseUser | mmuser | the user to connect to the datbase (see your config.json) | str
 databasePwd | mmuser_password | the password to connect to the datbase (see your config.json) | str
-collectTeamDetails | False | collect details for the teams. Default is false since they can be derived from the userDetails. Set True if your backend can not do the aggregation or you want less detail| bool
-collectChannelDetails | False | collect details for the channels. Default is false since they can be derived from the userDetails. Set True if your backend can not do the aggregation or you want less detail| bool
-collectUserDetails | True | collect details for the individual users. Default is true since this info can be used to derive all info. Set False if you want less detail| bool
+collectTeamDetails | True | collect details for the teams. | bool
+collectChannelDetails | True | collect details for the channels. | bool
+collectUserDetails | True | collect details for the individual users. | bool
 
 
 #### Example Output

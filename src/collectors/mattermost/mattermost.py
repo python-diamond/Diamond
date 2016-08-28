@@ -14,8 +14,6 @@ may grow quickly. Also since the collection performs GROUP BY queries for these
 cases, running the collection too frequently may have an impact on the
 performance of your system.
 
-When you use a backend that can do structured aggregation, you can only collect
-the finest level (userDetails) and derive the other values from there.
 
 Mattermost supports both postgresql and mysql. At this moment, the collector
 only support postgresql.
@@ -63,8 +61,8 @@ class MattermostCollector(diamond.collector.Collector):
             'databasePort':   '5432',
             'databaseUser':   'mmuser',
             'databasePwd':    'mmuser_password',
-            'collectTeamDetails':  False,
-            'collectChannelDetails': False,
+            'collectTeamDetails':  True,
+            'collectChannelDetails': True,
             'collectUserDetails':   True,
         })
         # self.log.error("CONFIG "+str(config))
