@@ -14,6 +14,9 @@ may grow quickly. Also since the collection performs GROUP BY queries for these
 cases, running the collection too frequently may have an impact on the
 performance of your system.
 
+When you use a backend that can do structured aggregation, you can only collect
+the finest level (userDetails) and derive the other values from there.
+
 Mattermost supports both postgresql and mysql. At this moment, the collector
 only support postgresql.
 
@@ -60,9 +63,9 @@ class MattermostCollector(diamond.collector.Collector):
             'databasePort':   '5432',
             'databaseUser':   'mmuser',
             'databasePwd':    'mmuser_password',
-            'collectTeamDetails':  True,
-            'collectChannelDetails': True,
-            'collectUserDetails':   False,
+            'collectTeamDetails':  False,
+            'collectChannelDetails': False,
+            'collectUserDetails':   True,
         })
         # self.log.error("CONFIG "+str(config))
         return config
@@ -74,8 +77,11 @@ class MattermostCollector(diamond.collector.Collector):
             self.collectUserStats()
             self.collectTeamStats()
             self.collectChannelStats()
+            self.collectPostStats()
             if self.config['collectTeamDetails']:
                 self.collectTeamDetails()
+            if self.config['collectChannelDetails']:
+                self.collectChannelDetails()
 
     def collectUserStats(self):
         cur = self.conn.cursor()
@@ -108,6 +114,13 @@ class MattermostCollector(diamond.collector.Collector):
         self.publishMyCounter("channels.count", cur.fetchone()[0])
         cur.close()
 
+    def collectPostStats(self):
+        cur = self.conn.cursor()
+        query = "select count(*) from posts where deleteat = 0"
+        cur.execute(query)
+        self.publishMyCounter("posts.count", cur.fetchone()[0])
+        cur.close()
+
     def collectTeamDetails(self):
         cur = self.conn.cursor()
         query = "select t.displayname, count(*) "
@@ -120,12 +133,49 @@ class MattermostCollector(diamond.collector.Collector):
             self.publishMyCounter("teamdetails."+teamName+".users", entry[1])
         query = "select t.displayname, count(*) "
         query += "from teams t, channels c "
-        query += "where t.id = c.teamid and c.deleteat = 0 "
+        query += "where t.id = c.teamid and t.deleteat = 0 and c.deleteat = 0 "
         query += "group by t.displayname;"
         cur.execute(query)
         for entry in cur.fetchall():
             teamName = entry[0].replace(" ", "_")
             self.publishMyCounter("teamdetails."+teamName+".channels", entry[1])
+        query = "select t.displayname, count(*) "
+        query += "from teams t, channels c, posts p "
+        query += "where t.id = c.teamid and c.id = p.channelid "
+        query += "and t.deleteat = 0 and c.deleteat = 0 and p.deleteat = 0"
+        query += "group by t.displayname;"
+        cur.execute(query)
+        for entry in cur.fetchall():
+            teamName = entry[0].replace(" ", "_")
+            self.publishMyCounter("teamdetails."+teamName+".posts", entry[1])
+        cur.close()
+
+    def collectChannelDetails(self):
+        cur = self.conn.cursor()
+        query = "select t.displayname, c.displayname, count(*) "
+        query += "from teams t, channels c, channelmembers cm "
+        query += "where t.id = c.teamid and c.id = cm.channelid "
+        query += "and t.deleteat = 0 and c.deleteat = 0 "
+        query += "group by t.displayname, c.displayname;"
+        cur.execute(query)
+        for entry in cur.fetchall():
+            teamName = entry[0].replace(" ", "_")
+            channelName = entry[1].replace(" ", "_")
+            metricName = "channeldetails." + teamName + "." + channelName
+            metricName += ".users"
+            self.publishMyCounter(metricName, entry[2])
+        query = "select t.displayname, c.displayname, count(*) "
+        query += "from teams t, channels c, posts p "
+        query += "where t.id = c.teamid and c.id = p.channelid "
+        query += "and t.deleteat = 0 and c.deleteat = 0 and p.deleteat = 0 "
+        query += "group by t.displayname, c.displayname;"
+        cur.execute(query)
+        for entry in cur.fetchall():
+            teamName = entry[0].replace(" ", "_")
+            channelName = entry[1].replace(" ", "_")
+            metricName = "channeldetails." + teamName + "." + channelName
+            metricName += ".posts"
+            self.publishMyCounter(metricName, entry[2])
 
         cur.close()
 
