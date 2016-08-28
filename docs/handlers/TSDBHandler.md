@@ -31,12 +31,30 @@ collection took place. You can add as many as you like via the configuration.
 The 'tags' config element allows for both comma-separated or space separated
 key value pairs.
 
+The collectors specify the metrics with a single axis of navigation and often
+include aggregation counters that OpenTSDB could calculate directly. The openTSDB
+tagging system supports multiple axis and is better suited for dynamical values.
+You can [read here](http://opentsdb.net/docs/build/html/user_guide/query/timeseries.html)
+how OpenTSDB suggests to sepearate tags from metrics. when doing this you also
+want to remove these aggregate values since they would lead to double counting
+when requesting OpenTSDB to do the aggregation based on the tags.
+
+The handler currently provides the ability to extract the tags from a metric
+(and remove aggregate values) for following collectors :
+* CPUCollector
+* HaProxyCollector
+* MattermostCollector
+
 
 ==== Notes
 
-We don't automatically make the metrics via mkmetric, so we recommand you run
-with the null handler and log the output and extract the key values to mkmetric
-yourself.
+We don't automatically make the metrics via **mkmetric**, so either set
+```
+set tsd.core.auto_create_metrics = true
+```
+in your [OpenTSDB configuration](http://opentsdb.net/docs/build/html/user_guide/configuration.html)
+or you can run with the null handler and log the output
+and extract the key values to mkmetric yourself  
 
 - enable it in `diamond.conf` :
 
@@ -54,3 +72,5 @@ port | 1234 |  | int
 server_error_interval | 120 | How frequently to send repeated server errors | int
 tags |  | Tags to be added to each metric. They should be key/value pairs. Example : tags = environment=test,datacenter=north| str
 timeout | 5 |  | int
+cleanMetrics| True | Extract tag values from known collectors and make the metrics more OpenTSDB style | bool
+skipAggregates| True | Only has effect when cleanMetrics is true. Then the metrics that are considered aggregates are removed | bool
