@@ -26,6 +26,12 @@ your service's latency. OpenTSDB makes generating such graphs on the fly a
 trivial operation, while manipulating millions of data point for very fine
 grained, real-time monitoring.
 
+The handler per default adds a tag 'hostname' with the hostname where the
+collection took place. You can add as many as you like via the configuration.
+The 'tags' config element allows for both comma-separated or space separated
+key value pairs.
+
+
 ==== Notes
 
 We don't automatically make the metrics via mkmetric, so we recommand you run
@@ -42,9 +48,9 @@ yourself.
 Setting | Default | Description | Type
 --------|---------|-------------|-----
 format | {Collector}.{Metric} {timestamp} {value} hostname={host}{tags} |  | str
-get_default_config_help |  | get_default_config_help | 
+get_default_config_help |  | get_default_config_help |
 host |  |  | str
 port | 1234 |  | int
 server_error_interval | 120 | How frequently to send repeated server errors | int
-tags |  |  | str
+tags |  | Tags to be added to each metric. They should be key/value pairs. Example : tags = environment=test,datacenter=north| str
 timeout | 5 |  | int
