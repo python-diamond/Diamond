@@ -258,30 +258,53 @@ class MetricWrapper(Metric):
 
             cpuId = self.delegate.getMetricPath().split('.')[0]
             self.tags["cpuId"] = cpuId
-            self.path = self.path.replace("."+cpuId, "")
+            self.path = self.path.replace("."+cpuId+".", ".")
     """
     Processes metrics of the HaProxyCollector. It stores the backend and the
     server to which the backends send as tags. Counters with 'backend' as
     backend name are considered aggregates.
     """
     def processHaProxyMetric(self):
-        self.logger.error("LEN "+str(len(self.getMetricPath().split('.'))))
         if len(self.getMetricPath().split('.')) == 3:
             self.aggregate = self.getMetricPath().split('.')[1] == 'backend'
-            self.logger.error("AGGRE = "+str(self.aggregate))
 
             backend = self.delegate.getMetricPath().split('.')[0]
             server = self.delegate.getMetricPath().split('.')[1]
-            self.logger.error("BE = "+backend)
-            self.logger.error("SE= "+server )
             self.tags["backend"] = backend
             self.tags["server"] = server
-            self.path = self.path.replace("."+server, "")
-            self.path = self.path.replace("."+backend, "")
+            self.path = self.path.replace("."+server+".", ".")
+            self.path = self.path.replace("."+backend+".", ".")
+
+    def processMattermostMetric(self):
+        split = self.getMetricPath().split('.')
+        if len(split) > 2:
+            if split[0] == 'teamdetails' or split[0] == 'channeldetails':
+                team = split[1]
+                self.tags["team"] = team
+                self.path = self.path.replace("."+team+".", ".")
+                # fall through for channeldetails
+            if split[0] == 'channeldetails':
+                channel = split[2]
+                self.tags["channel"] = channel
+                self.path = self.path.replace("."+channel+".", ".")
+            if split[0] == 'userdetails':
+                user = split[1]
+                team = split[2]
+                channel = split[3]
+                self.tags["user"] = user
+                self.tags["team"] = team
+                self.tags["channel"] = channel
+                self.path = self.path.replace("."+user+".", ".")
+                self.path = self.path.replace("."+team+".", ".")
+                self.path = self.path.replace("."+channel+".", ".")
+
+
+
 
     handlers = {}
     handlers['cpu'] = processCpuMetric
     handlers['haproxy'] = processHaProxyMetric
+    handlers['mattermost'] = processMattermostMetric
     handlers['default'] = processDefaultMetric
 
     def __init__(self, delegate, logger):
@@ -301,5 +324,4 @@ class MetricWrapper(Metric):
         # call the handler for that collector
         handler = self.handlers.get(self.getCollectorPath(),
                                     self.handlers['default'])
-        self.logger.error("HANDLER = "+str(handler))
         handler(self)
