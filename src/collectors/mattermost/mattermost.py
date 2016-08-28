@@ -92,8 +92,10 @@ class MattermostCollector(diamond.collector.Collector):
         cur.execute(query+" and emailverified")
         self.publishMyCounter("users.verified", cur.fetchone()[0])
 
-        cur.execute("select count(*) from sessions")
-        self.publishMyCounter("users.logged", cur.fetchone()[0],
+        query = "select count(*) from sessions where lastactivityat > "
+        query += "(extract(epoch from now()) - 3600)*1000"
+        cur.execute(query)
+        self.publishMyCounter("users.active_in_last_hour", cur.fetchone()[0],
                               mtype='GAUGE')
         cur.close()
 
