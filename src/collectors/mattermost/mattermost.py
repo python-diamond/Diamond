@@ -46,9 +46,9 @@ class MattermostCollector(diamond.collector.Collector):
             'databasePort':   'port of the server',
             'databaseUser':   'username of the database',
             'databasePwd':    'password of the user',
-            'collectTeamDetails':  'should details be calculated per team',
-            'collectChannelDetails': 'should details be calculated per channel',
-            'collectUserDetails':   'should details be calculated per user',
+            'collectTeamDetails':  'calculate details per team',
+            'collectChannelDetails': 'calculate details per channel',
+            'collectUserDetails':   'calculate details per user',
         })
         return config_help
 
@@ -82,6 +82,8 @@ class MattermostCollector(diamond.collector.Collector):
                 self.collectTeamDetails()
             if self.config['collectChannelDetails']:
                 self.collectChannelDetails()
+            if self.config['collectUserDetails']:
+                self.collectUserDetails()
 
     def collectUserStats(self):
         cur = self.conn.cursor()
@@ -179,6 +181,23 @@ class MattermostCollector(diamond.collector.Collector):
             metricName += ".posts"
             self.publishMyCounter(metricName, entry[2])
 
+        cur.close()
+
+    def collectUserDetails(self):
+        cur = self.conn.cursor()
+        query = "select u.username, t.displayname, c.displayname, count(*) "
+        query += "from teams t, channels c, posts p, users u where "
+        query += "t.id = c.teamid and c.id = p.channelid and u.id = p.userid "
+        query += "and t.deleteat = 0 and c.deleteat = 0 and p.deleteat = 0 "
+        query += "group by u.username, t.displayname, c.displayname;"
+        cur.execute(query)
+        for entry in cur.fetchall():
+            userName = entry[0].replace(" ", "_")
+            teamName = entry[1].replace(" ", "_")
+            channelName = entry[2].replace(" ", "_")
+            metricName = "userdetails." + userName + "." + teamName + "."
+            metricName += channelName + ".posts"
+            self.publishMyCounter(metricName, entry[3])
         cur.close()
 
     def publishMyCounter(self, metricName, value, mtype='COUNTER'):
