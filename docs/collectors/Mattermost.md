@@ -53,7 +53,8 @@ servers.hostname.mattermost.channeldetails.second_team.Town_Square.users
 servers.hostname.mattermost.channeldetails.second_teamOff-Topic.users
 servers.hostname.mattermost.channeldetails.second_teamTown_Square.users
 servers.hostname.mattermost.channels.count
-servers.hostname.mattermost.posts.count
+servers.hostname.mattermost.posts.in_team.count
+servers.hostname.mattermost.posts.direct.count
 servers.hostname.mattermost.teamdetails.firstTeam.channels
 servers.hostname.mattermost.teamdetails.firstTeam.posts
 servers.hostname.mattermost.teamdetails.firstTeam.users

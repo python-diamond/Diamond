@@ -118,9 +118,15 @@ class MattermostCollector(diamond.collector.Collector):
 
     def collectPostStats(self):
         cur = self.conn.cursor()
-        query = "select count(*) from posts where deleteat = 0"
+        query = "select count(*) from posts p, channels c where p.deleteat = 0"
+        query += " and p.channelid = c.id and c.teamid <> ''"
         cur.execute(query)
-        self.publishMyCounter("posts.count", cur.fetchone()[0])
+        self.publishMyCounter("posts.in_team.count", cur.fetchone()[0])
+
+        query = "select count(*) from posts p, channels c where p.deleteat = 0"
+        query += " and p.channelid = c.id and c.teamid = ''"
+        cur.execute(query)
+        self.publishMyCounter("posts.direct.count", cur.fetchone()[0])
         cur.close()
 
     def collectTeamDetails(self):
@@ -131,7 +137,7 @@ class MattermostCollector(diamond.collector.Collector):
         query += "tm.deleteat = 0 group by t.displayname;"
         cur.execute(query)
         for entry in cur.fetchall():
-            teamName = entry[0].replace(" ", "_")
+            teamName = entry[0].replace(" ", "_").replace(".", "_")
             self.publishMyCounter("teamdetails."+teamName+".users", entry[1])
         query = "select t.displayname, count(*) "
         query += "from teams t, channels c "
@@ -139,7 +145,7 @@ class MattermostCollector(diamond.collector.Collector):
         query += "group by t.displayname;"
         cur.execute(query)
         for entry in cur.fetchall():
-            teamName = entry[0].replace(" ", "_")
+            teamName = entry[0].replace(" ", "_").replace(".", "_")
             self.publishMyCounter("teamdetails."+teamName+".channels", entry[1])
         query = "select t.displayname, count(*) "
         query += "from teams t, channels c, posts p "
@@ -148,7 +154,7 @@ class MattermostCollector(diamond.collector.Collector):
         query += "group by t.displayname;"
         cur.execute(query)
         for entry in cur.fetchall():
-            teamName = entry[0].replace(" ", "_")
+            teamName = entry[0].replace(" ", "_").replace(".", "_")
             self.publishMyCounter("teamdetails."+teamName+".posts", entry[1])
         cur.close()
 
@@ -161,8 +167,8 @@ class MattermostCollector(diamond.collector.Collector):
         query += "group by t.displayname, c.displayname;"
         cur.execute(query)
         for entry in cur.fetchall():
-            teamName = entry[0].replace(" ", "_")
-            channelName = entry[1].replace(" ", "_")
+            teamName = entry[0].replace(" ", "_").replace(".", "_")
+            channelName = entry[1].replace(" ", "_").replace(".", "_")
             metricName = "channeldetails." + teamName + "." + channelName
             metricName += ".users"
             self.publishMyCounter(metricName, entry[2])
@@ -173,8 +179,8 @@ class MattermostCollector(diamond.collector.Collector):
         query += "group by t.displayname, c.displayname;"
         cur.execute(query)
         for entry in cur.fetchall():
-            teamName = entry[0].replace(" ", "_")
-            channelName = entry[1].replace(" ", "_")
+            teamName = entry[0].replace(" ", "_").replace(".", "_")
+            channelName = entry[1].replace(" ", "_").replace(".", "_")
             metricName = "channeldetails." + teamName + "." + channelName
             metricName += ".posts"
             self.publishMyCounter(metricName, entry[2])
@@ -190,9 +196,9 @@ class MattermostCollector(diamond.collector.Collector):
         query += "group by u.username, t.displayname, c.displayname;"
         cur.execute(query)
         for entry in cur.fetchall():
-            userName = entry[0].replace(" ", "_")
-            teamName = entry[1].replace(" ", "_")
-            channelName = entry[2].replace(" ", "_")
+            userName = entry[0].replace(" ", "_").replace(".", "_")
+            teamName = entry[1].replace(" ", "_").replace(".", "_")
+            channelName = entry[2].replace(" ", "_").replace(".", "_")
             metricName = "userdetails." + userName + "." + teamName + "."
             metricName += channelName + ".posts"
             self.publishMyCounter(metricName, entry[3])
