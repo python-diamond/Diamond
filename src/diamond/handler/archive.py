@@ -31,8 +31,8 @@ class ArchiveHandler(Handler):
         # Create Archive Log Handler
         handler = logging.handlers.TimedRotatingFileHandler(
             filename=self.config['log_file'],
-            when='midnight',
-            interval=1,
+            when=self.config['when'],
+            interval=int(self.config['rollover_interval']),
             backupCount=int(self.config['days']),
             encoding=self.config['encoding']
         )
@@ -48,7 +48,9 @@ class ArchiveHandler(Handler):
 
         config.update({
             'log_file': 'Path to the logfile',
+            'when': 'type of interval; S, M, H, D, Weekday, midnight',
             'days': 'How many days to store',
+            'rollover_interval': 'rollover interval length',
             'encoding': '',
             'propagate': 'Pass handled metrics to configured root logger',
         })
@@ -63,7 +65,9 @@ class ArchiveHandler(Handler):
 
         config.update({
             'log_file': '',
+            'when':'midnight',
             'days': 7,
+            'rollover_interval': 1,
             'encoding': None,
             'propagate': False,
         })
