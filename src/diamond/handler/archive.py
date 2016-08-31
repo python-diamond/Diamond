@@ -65,7 +65,7 @@ class ArchiveHandler(Handler):
 
         config.update({
             'log_file': '',
-            'when':'midnight',
+            'when': 'midnight',
             'days': 7,
             'rollover_interval': 1,
             'encoding': None,
