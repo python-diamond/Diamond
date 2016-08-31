@@ -67,6 +67,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             'instances': "List of instances. When set this overrides "
             "the 'host' and 'port' settings. Instance format: "
             "instance [<alias>@]<hostname>[:<port>]",
+            'scheme': "http (default) or https",
             'stats':
                 "Available stats:\n" +
                 " - jvm (JVM information)\n" +
@@ -89,6 +90,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             'host':           '127.0.0.1',
             'port':           9200,
             'instances':      [],
+            'scheme':         'http',
             'path':           'elasticsearch',
             'stats':          ['jvm', 'thread_pool', 'indices'],
             'logstash_mode': False,
@@ -96,12 +98,12 @@ class ElasticSearchCollector(diamond.collector.Collector):
         })
         return config
 
-    def _get(self, host, port, path, assert_key=None):
+    def _get(self, scheme, host, port, path, assert_key=None):
         """
         Execute a ES API call. Convert response into JSON and
         optionally assert its structure.
         """
-        url = 'http://%s:%i/%s' % (host, port, path)
+        url = '%://%s:%i/%s' % (scheme, host, port, path)
         try:
             response = urllib2.urlopen(url)
         except Exception, err:
@@ -176,7 +178,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             metrics[metric_path] = value
 
     def collect_instance_cluster_stats(self, host, port, metrics):
-        result = self._get(host, port, '_cluster/health')
+        result = self._get(scheme, host, port, '_cluster/health')
         if not result:
             return
 
@@ -196,7 +198,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
                          result, ['initializing_shards'])
 
     def collect_instance_index_stats(self, host, port, metrics):
-        result = self._get(host, port,
+        result = self._get(scheme, host, port,
                            '_stats?clear=true&docs=true&store=true&' +
                            'indexing=true&get=true&search=true', '_all')
         if not result:
@@ -217,7 +219,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
                                 index['primaries'])
 
     def collect_instance(self, alias, host, port):
-        result = self._get(host, port, '_nodes/_local/stats?all=true', 'nodes')
+        result = self._get(scheme, host, port, 
+                           '_nodes/_local/stats?all=true', 'nodes')
         if not result:
             return
 
