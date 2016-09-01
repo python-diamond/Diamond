@@ -226,7 +226,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
                                 index['primaries'])
 
     def collect_instance(self, alias, scheme, host, port):
-        result = self._get(scheme, host, port, '_nodes/_local/stats?all=true', 'nodes')
+        result = self._get(scheme, host, port,
+                           '_nodes/_local/stats?all=true', 'nodes')
         if not result:
             return
 
