@@ -68,6 +68,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             "the 'host' and 'port' settings. Instance format: "
             "instance [<alias>@]<hostname>[:<port>]",
             'scheme': "http (default) or https",
+            'cluster': "cluster/node/shard health",
             'stats':
                 "Available stats:\n" +
                 " - jvm (JVM information)\n" +
