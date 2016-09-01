@@ -28,6 +28,7 @@ measure_collector_time | False | Collect the collector run time in ms | bool
 metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
 metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
 port | 9200 |  | int
+scheme | http | http (default) or https | str
 stats | jvm, thread_pool, indices, | Available stats:<br>
  - jvm (JVM information)<br>
  - thread_pool (Thread pool information)<br>
