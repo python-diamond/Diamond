@@ -20,6 +20,7 @@ parameter the instance alias will be appended to the
 Setting | Default | Description | Type
 --------|---------|-------------|-----
 byte_unit | byte | Default numeric output(s) | str
+cluster | False | cluster/node/shard health | bool
 enabled | False | Enable collecting these metrics | bool
 host | 127.0.0.1 |  | str
 instances | , | List of instances. When set this overrides the 'host' and 'port' settings. Instance format: instance [<alias>@]<hostname>[:<port>] | list
