@@ -235,10 +235,15 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
     def collect_instance(self, alias, scheme, host, port):
 <<<<<<< HEAD
+<<<<<<< HEAD
         result = self._get(scheme, host, port, '_nodes/_local/stats', 'nodes')
 =======
         result = self._get(scheme, host, port, '_nodes/_local/stats?all=true', 'nodes')
 >>>>>>> add scheme option to elasticsearch collector to support https
+=======
+        result = self._get(scheme, host, port,
+                           '_nodes/_local/stats?all=true', 'nodes')
+>>>>>>> pep8 format fix
         if not result:
             return
 
