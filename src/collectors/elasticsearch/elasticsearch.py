@@ -415,6 +415,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             self.log.error('Unable to import json')
             return {}
 
+        scheme = self.config['scheme']
         for alias in sorted(self.instances):
             (host, port) = self.instances[alias]
             self.collect_instance(alias, scheme, host, port)
