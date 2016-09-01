@@ -69,9 +69,13 @@ class ElasticSearchCollector(diamond.collector.Collector):
             "instance [<alias>@]<hostname>[:<port>]",
             'scheme': "http (default) or https",
 <<<<<<< HEAD
+<<<<<<< HEAD
             'cluster': "cluster/node/shard health",
 =======
 >>>>>>> add scheme option to elasticsearch collector to support https
+=======
+            'cluster': "cluster/node/shard health",
+>>>>>>> add missing documentation to existing function
             'stats':
                 "Available stats:\n" +
                 " - jvm (JVM information)\n" +
