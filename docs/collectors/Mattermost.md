@@ -17,6 +17,9 @@ may grow quickly. Also since the collection performs GROUP BY queries for these
 cases, running the collection too frequently may have an impact on the
 performance of your system.
 
+Messages outside a team will be marked "no_team.no_channel" to respect the
+structure.
+
 
 Mattermost supports both postgresql and mysql. At this moment, the collector
 only support postgresql.

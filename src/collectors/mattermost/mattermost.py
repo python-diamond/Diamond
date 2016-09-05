@@ -92,8 +92,8 @@ class MattermostCollector(diamond.collector.Collector):
         cur.execute(query+" and emailverified")
         self.publishMyCounter("users.verified", cur.fetchone()[0])
 
-        query = "select count(*) from sessions where lastactivityat > "
-        query += "(extract(epoch from now()) - 3600)*1000"
+        query = "select count(distinct userid) from posts where "
+        query += "createat > (extract(epoch from now()) - 3600)*1000"
         cur.execute(query)
         self.publishMyCounter("users.active_in_last_hour", cur.fetchone()[0],
                               mtype='GAUGE')
@@ -150,7 +150,7 @@ class MattermostCollector(diamond.collector.Collector):
         query = "select t.displayname, count(*) "
         query += "from teams t, channels c, posts p "
         query += "where t.id = c.teamid and c.id = p.channelid "
-        query += "and t.deleteat = 0 and c.deleteat = 0 and p.deleteat = 0"
+        query += "and t.deleteat = 0 and c.deleteat = 0 and p.deleteat = 0 "
         query += "group by t.displayname;"
         cur.execute(query)
         for entry in cur.fetchall():
@@ -194,6 +194,19 @@ class MattermostCollector(diamond.collector.Collector):
         query += "t.id = c.teamid and c.id = p.channelid and u.id = p.userid "
         query += "and t.deleteat = 0 and c.deleteat = 0 and p.deleteat = 0 "
         query += "group by u.username, t.displayname, c.displayname;"
+        cur.execute(query)
+        for entry in cur.fetchall():
+            userName = entry[0].replace(" ", "_").replace(".", "_")
+            teamName = entry[1].replace(" ", "_").replace(".", "_")
+            channelName = entry[2].replace(" ", "_").replace(".", "_")
+            metricName = "userdetails." + userName + "." + teamName + "."
+            metricName += channelName + ".posts"
+            self.publishMyCounter(metricName, entry[3])
+        query = "select u.username, 'no_team' , 'no_channel', count(*) "
+        query += "from  channels c, posts p, users u where "
+        query += "'' = c.teamid and c.id = p.channelid and u.id = p.userid "
+        query += "and  c.deleteat = 0 and p.deleteat = 0 "
+        query += "group by u.username;"
         cur.execute(query)
         for entry in cur.fetchall():
             userName = entry[0].replace(" ", "_").replace(".", "_")
