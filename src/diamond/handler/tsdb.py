@@ -84,6 +84,13 @@ class TSDBHandler(Handler):
                 self.tags += " "+tag
         if not self.tags == "" and not self.tags.startswith(' '):
             self.tags = " "+self.tags
+
+        # OpenTSDB refuses tags with = in the value, so see whether we have
+        # some of them in it..
+        for tag in self.tags.split(" "):
+            if tag.count('=') > 1:
+                raise Exception("Invalid tag name "+tag)
+
         self.skipAggregates = self.config['skipAggregates']
         self.cleanMetrics = self.config['cleanMetrics']
 

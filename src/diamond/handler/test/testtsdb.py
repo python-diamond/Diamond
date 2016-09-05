@@ -220,8 +220,8 @@ class TestTSDBdHandler(unittest.TestCase):
                             123, raw_value=123, timestamp=1234567,
                             host='myhostname', metric_type='GAUGE')
 
-            expected_data = 'put cpu.total.user 1234567 123 hostname=myhostname '
-            expected_data += 'myFirstTag=myValue\n'
+            expected_data = 'put cpu.total.user 1234567 123 hostname=myhostname'
+            expected_data += ' myFirstTag=myValue\n'
 
             handler = TSDBHandler(config)
             handler.process(metric)
@@ -288,3 +288,15 @@ class TestTSDBdHandler(unittest.TestCase):
             handler = TSDBHandler(config)
             handler.process(metric)
             handler.socket.sendall.assert_called_with(expected_data)
+
+    def test_with_invalid_tag(self):
+        config = configobj.ConfigObj()
+        config['host'] = 'localhost'
+        config['port'] = '9999'
+        config['tags'] = ['myFirstTag=myValue',
+                          'mySecondTag=myOtherValue,myThirdTag=yetAnotherVal']
+        try:
+            TSDBHandler(config)
+            fail("Expected an exception")
+        except Exception, e:
+            assert(e)
