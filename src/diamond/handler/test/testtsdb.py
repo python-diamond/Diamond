@@ -156,3 +156,15 @@ class TestTSDBdHandler(unittest.TestCase):
         handler = TSDBHandler(config)
         handler.process(metric)
         handler.socket.sendall.assert_called_with(expected_data)
+
+    def test_with_invalid_tag(self):
+        config = configobj.ConfigObj()
+        config['host'] = 'localhost'
+        config['port'] = '9999'
+        config['tags'] = ['myFirstTag=myValue',
+                          'mySecondTag=myOtherValue,myThirdTag=yetAnotherVal']
+        try:
+            TSDBHandler(config)
+            fail("Expected an exception")
+        except Exception, e:
+            assert(e)

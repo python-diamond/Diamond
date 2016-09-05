@@ -47,7 +47,7 @@ yourself.
 
 `    handlers = diamond.handler.tsdb.TSDBHandler
 `
-
+'
 """
 
 from Handler import Handler
@@ -84,6 +84,11 @@ class TSDBHandler(Handler):
         if not(self.tags == "") and not(self.tags.startswith(' ')):
             self.tags = " "+self.tags
 
+        # OpenTSDB refuses tags with = in the value, so see whether we have
+        # some of them in it..
+        for tag in self.tags.split(" "):
+            if tag.count('=') > 1:
+                raise Exception("Invalid tag name "+tag)
         # Connect
         self._connect()
 
