@@ -298,9 +298,6 @@ class MetricWrapper(Metric):
                 self.path = self.path.replace("."+team+".", ".")
                 self.path = self.path.replace("."+channel+".", ".")
 
-
-
-
     handlers = {}
     handlers['cpu'] = processCpuMetric
     handlers['haproxy'] = processHaProxyMetric
