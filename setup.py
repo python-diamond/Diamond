@@ -61,7 +61,11 @@ else:
                            glob('conf/handlers/*')))
 
         if distro == 'Ubuntu':
-            data_files.append(('/etc/init',
+            if distro_major_version >= 16:
+                data_files.append(('/etc/systemd/system/',
+                                   ['debian/diamond.service']))
+            else:
+                data_files.append(('/etc/init',
                                ['debian/diamond.upstart']))
         if distro in ['centos', 'redhat', 'debian', 'fedora', 'oracle']:
             data_files.append(('/etc/init.d',
