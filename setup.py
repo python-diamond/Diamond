@@ -66,7 +66,7 @@ else:
                                    ['debian/diamond.service']))
             else:
                 data_files.append(('/etc/init',
-                               ['debian/diamond.upstart']))
+                                   ['debian/diamond.upstart']))
         if distro in ['centos', 'redhat', 'debian', 'fedora', 'oracle']:
             data_files.append(('/etc/init.d',
                                ['bin/init.d/diamond']))
