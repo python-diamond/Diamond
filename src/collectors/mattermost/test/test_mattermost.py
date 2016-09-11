@@ -5,7 +5,8 @@ import mattermost as mod
 from mattermost import MattermostCollector
 
 
-# These two methods are used for overriding the TSDBHandler._connect method.
+# These two methods are used for overriding the MattermostCollector._connect
+# method.
 # Please check the Test class' setUp and tearDown methods
 def fake_connect(self):
     # used for 'we can connect' tests
@@ -78,8 +79,8 @@ class MattermostDbCursorFake:
                                  ['user with space', 'team2', 'channel1', 32]]
 
     queries['select u.username, \'no_team\' , \'no_channel\', count(*) ' +
-            'from  channels c, posts p, users u where \'\' = c.teamid and ' +
-            'c.id = p.channelid and u.id = p.userid and  c.deleteat = 0 and ' +
+            'from channels c, posts p, users u where \'\' = c.teamid and ' +
+            'c.id = p.channelid and u.id = p.userid and c.deleteat = 0 and ' +
             'p.deleteat = 0 group by u.username' +
             ';'] = [['user1', 'no_team', 'no_channel', 63],
                     ['user2', 'no_team', 'no_channel', 21],

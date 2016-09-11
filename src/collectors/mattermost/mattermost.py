@@ -65,7 +65,6 @@ class MattermostCollector(diamond.collector.Collector):
             'collectChannelDetails': True,
             'collectUserDetails':   True,
         })
-        # self.log.error("CONFIG "+str(config))
         return config
 
     def collect(self):
@@ -203,9 +202,9 @@ class MattermostCollector(diamond.collector.Collector):
             metricName += channelName + ".posts"
             self.publishMyCounter(metricName, entry[3])
         query = "select u.username, 'no_team' , 'no_channel', count(*) "
-        query += "from  channels c, posts p, users u where "
+        query += "from channels c, posts p, users u where "
         query += "'' = c.teamid and c.id = p.channelid and u.id = p.userid "
-        query += "and  c.deleteat = 0 and p.deleteat = 0 "
+        query += "and c.deleteat = 0 and p.deleteat = 0 "
         query += "group by u.username;"
         cur.execute(query)
         for entry in cur.fetchall():
@@ -218,7 +217,6 @@ class MattermostCollector(diamond.collector.Collector):
         cur.close()
 
     def publishMyCounter(self, metricName, value, mtype='COUNTER'):
-        self.log.debug(metricName+"="+str(value))
         self.publish(metricName, value, raw_value=value,
                      precision=0, metric_type=mtype,
                      instance=None)
@@ -238,5 +236,7 @@ class MattermostCollector(diamond.collector.Collector):
                 self.log.info("Connected to Mattermost DB")
                 retry = -1
             except Exception as e:
-                self.log.error("Cannot connect to "+connectStr+": "+str(e))
+                self.log.error("Cannot connect to " +
+                               self.config['databaseHost'] + ":" +
+                               self.config['databasePort'] + " : "+str(e))
                 retry -= 1
