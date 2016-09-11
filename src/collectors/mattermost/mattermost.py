@@ -92,9 +92,24 @@ class MattermostCollector(diamond.collector.Collector):
         self.publishMyCounter("users.verified", cur.fetchone()[0])
 
         query = "select count(distinct userid) from posts where "
-        query += "createat > (extract(epoch from now()) - 3600)*1000"
+        query += "createat > (extract(epoch from clock_timestamp()) - 3600)"
+        query += " * 1000"
         cur.execute(query)
         self.publishMyCounter("users.active_in_last_hour", cur.fetchone()[0],
+                              mtype='GAUGE')
+
+        query = "select count(distinct userid) from posts where "
+        query += "createat > (extract(epoch from clock_timestamp())"
+        query += " - 24 * 3600) * 1000"
+        cur.execute(query)
+        self.publishMyCounter("users.active_in_last_day", cur.fetchone()[0],
+                              mtype='GAUGE')
+
+        query = "select count(distinct userid) from posts where "
+        query += "createat > (extract(epoch from clock_timestamp())"
+        query += " - 7 * 24 * 3600) * 1000"
+        cur.execute(query)
+        self.publishMyCounter("users.active_in_last_week", cur.fetchone()[0],
                               mtype='GAUGE')
         cur.close()
 

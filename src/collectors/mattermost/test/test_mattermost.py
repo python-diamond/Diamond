@@ -32,7 +32,12 @@ class MattermostDbCursorFake:
     queries['select count(*) from users where deleteat = 0 ' +
             'and emailverified'] = [41]
     queries['select count(distinct userid) from posts where createat > ' +
-            '(extract(epoch from now()) - 3600)*1000'] = [7]
+            '(extract(epoch from clock_timestamp()) - 3600) * 1000'] = [7]
+    queries['select count(distinct userid) from posts where createat > ' +
+            '(extract(epoch from clock_timestamp()) - 24 * 3600) * 1000'] = [17]
+    queries['select count(distinct userid) from posts where createat > ' +
+            '(extract(epoch from clock_timestamp())' +
+            ' - 7 * 24 * 3600) * 1000'] = [40]
     queries['select count(*) from teams where deleteat = 0'] = [5]
     queries['select count(*) from teams where deleteat = 0 and ' +
             'allowopeninvite'] = [4]
@@ -118,6 +123,8 @@ class TestMattermostCollector(CollectorTestCase):
             'users.count': 42,
             'users.verified': 41,
             'users.active_in_last_hour': 7,
+            'users.active_in_last_day': 17,
+            'users.active_in_last_week': 40,
             'teams.count': 5,
             'teams.open': 4,
             'channels.count': 3,
@@ -157,6 +164,8 @@ class TestMattermostCollector(CollectorTestCase):
             'users.count': 42,
             'users.verified': 41,
             'users.active_in_last_hour': 7,
+            'users.active_in_last_day': 17,
+            'users.active_in_last_week': 40,
             'teams.count': 5,
             'teams.open': 4,
             'channels.count': 3,
@@ -176,6 +185,8 @@ class TestMattermostCollector(CollectorTestCase):
             'users.count': 42,
             'users.verified': 41,
             'users.active_in_last_hour': 7,
+            'users.active_in_last_day': 17,
+            'users.active_in_last_week': 40,
             'teams.count': 5,
             'teams.open': 4,
             'channels.count': 3,
@@ -201,6 +212,8 @@ class TestMattermostCollector(CollectorTestCase):
             'users.count': 42,
             'users.verified': 41,
             'users.active_in_last_hour': 7,
+            'users.active_in_last_day': 17,
+            'users.active_in_last_week': 40,
             'teams.count': 5,
             'teams.open': 4,
             'channels.count': 3,
@@ -226,6 +239,8 @@ class TestMattermostCollector(CollectorTestCase):
             'users.count': 42,
             'users.verified': 41,
             'users.active_in_last_hour': 7,
+            'users.active_in_last_day': 17,
+            'users.active_in_last_week': 40,
             'teams.count': 5,
             'teams.open': 4,
             'channels.count': 3,

@@ -66,6 +66,8 @@ servers.hostname.mattermost.userdetails.myUserName.firstTeam.Town_Square.posts
 servers.hostname.mattermost.userdetails.myUserName.firstTeam.channel1.posts
 servers.hostname.mattermost.userdetails.otherUserName.firstTeam.Town_Square.posts
 servers.hostname.mattermost.users.active_in_last_hour
+servers.hostname.mattermost.users.active_in_last_day
+servers.hostname.mattermost.users.active_in_last_week
 servers.hostname.mattermost.users.count
 servers.hostname.mattermost.users.verified
 ```
