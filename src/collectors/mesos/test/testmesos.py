@@ -37,9 +37,9 @@ class TestMesosCollector(CollectorTestCase):
         self.assertEqual(urlopen_mock.new.call_count, 1)
 
         metrics = {
-            'master/elected': (1, 0),
-            "system/mem_free_bytes": (5663678464.1, 0),
-            "registrar/state_store_ms/p9999": (17.8412544, 6)
+            'master.elected': (1, 0),
+            "system.mem_free_bytes": (5663678464.1, 0),
+            "registrar.state_store_ms.p9999": (17.8412544, 6)
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
@@ -70,9 +70,9 @@ class TestMesosCollector(CollectorTestCase):
         self.assertEqual(urlopen_mock.new.call_count, 3)
 
         metrics = {
-            'master/elected': 1,
-            'system/mem_free_bytes': 5663678464.1,
-            'registrar/state_store_ms/p9999': (17.8412544, 6),
+            'master.elected': 1,
+            'system.mem_free_bytes': 5663678464.1,
+            'registrar.state_store_ms.p9999': (17.8412544, 6),
             'staged_tasks': 20,
             'failed_tasks': 6,
             'finished_tasks': 1,

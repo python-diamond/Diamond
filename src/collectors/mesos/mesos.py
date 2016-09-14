@@ -74,7 +74,7 @@ class MesosCollector(diamond.collector.Collector):
 
         for key in result:
             value = result[key]
-            self.publish(key, value, precision=self._precision(value))
+            self.publish(key.replace('/', '.'), value, precision=self._precision(value))
 
     def _collect_slave_state(self):
         result = self._get(
