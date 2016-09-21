@@ -57,7 +57,7 @@ formatter = default
 args = ('/var/log/diamond/diamond.log', 'midnight', 1, 7)
 
 [formatter_default]
-format = [%(asctime)s] [%(threadName)s] %(message)s
+format = [%(asctime)s] [%(levelname)s] [%(threadName)s:%(processName)s] %(message)s
 datefmt =
 ```
 
@@ -86,7 +86,7 @@ For example, a collector called *examplecollector.ExampleCollector* could have i
 
 Example:
 Enable HttpdCollector
-Create a file HttpdCollector.conf and set 
+Create a file HttpdCollector.conf and set
 ```
 enabled = True
 ```
