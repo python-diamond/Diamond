@@ -82,7 +82,7 @@ class UserScriptsCollector(diamond.collector.Collector):
                 self.log.warning("%s return error output: %s" %
                                (absolutescriptpath, err))
             if not out:
-                self.log.info("%s return no output" % absolutescriptpath)
+                self.log.error("%s returned no output; skipping" % absolutescriptpath)
                 continue
             # Use filter to remove empty lines of output
             for line in filter(None, out.split('\n')):
