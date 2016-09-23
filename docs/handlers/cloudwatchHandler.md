@@ -29,6 +29,8 @@ metric = 01
 namespace = MachineLoad
 name = Avg01
 unit = None
+collect_by_instance = True
+collect_without_dimension = False
 
 [[[LoadAvg05]]]
 collector = loadavg
@@ -36,15 +38,17 @@ metric = 05
 namespace = MachineLoad
 name = Avg05
 unit = None
+collect_by_instance = True
+collect_without_dimension = False
 #### Options
 
 Setting | Default | Description | Type
 --------|---------|-------------|-----
+region | us-east-1 |  | str
 collector | loadavg |  | str
-get_default_config_help |  | get_default_config_help | 
 metric | 01 |  | str
 name | Avg01 |  | str
 namespace | MachineLoad |  | str
-region | us-east-1 |  | str
-server_error_interval | 120 | How frequently to send repeated server errors | int
 unit | None |  | str
+collect_by_instance | True | Collect metrics for instances separately | bool
+collect_without_dimension | False | Collect metrics without dimension | bool
