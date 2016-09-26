@@ -20,22 +20,22 @@ Example Config:
 region = us-east-1
 
 [[[LoadAvg01]]]
+collect_by_instance = True
+collect_without_dimension = False
 collector = loadavg
 metric = 01
-namespace = MachineLoad
 name = Avg01
+namespace = MachineLoad
 unit = None
-collect_by_instance = True
-collect_without_dimension = False
 
 [[[LoadAvg05]]]
-collector = loadavg
-metric = 05
-namespace = MachineLoad
-name = Avg05
-unit = None
 collect_by_instance = True
 collect_without_dimension = False
+collector = loadavg
+metric = 05
+name = Avg05
+namespace = MachineLoad
+unit = None
 """
 
 import sys
@@ -131,10 +131,10 @@ class cloudwatchHandler(Handler):
         config.update({
             'region': 'AWS region',
             'metric': 'Diamond metric name',
-            'namespace': 'CloudWatch namespace',
+            'namespace': 'CloudWatch metric namespace',
             'name': 'CloudWatch metric name',
-            'unit': 'CloudWatch unit',
-            'collector': 'Diamond Collector name',
+            'unit': 'CloudWatch metric unit',
+            'collector': 'Diamond collector name',
             'collect_by_instance': 'Collect metrics for instances separately',
             'collect_without_dimension': 'Collect metrics without dimension'
         })
@@ -212,10 +212,16 @@ class cloudwatchHandler(Handler):
                  str(rule['metric']) == metricname)):
 
                 if rule['collect_by_instance'] and self.instance_id:
-                    self.send_metrics_to_cloudwatch(rule, metric, {'InstanceId': self.instance_id})
+                    self.send_metrics_to_cloudwatch(
+                        rule,
+                        metric,
+                        {'InstanceId': self.instance_id})
 
                 if rule['collect_without_dimension']:
-                    self.send_metrics_to_cloudwatch(rule, metric, {})
+                    self.send_metrics_to_cloudwatch(
+                        rule,
+                        metric,
+                        {})
 
     def send_metrics_to_cloudwatch(self, rule, metric, dimensions):
         """

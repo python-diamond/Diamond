@@ -24,31 +24,31 @@ Example Config:
 region = us-east-1
 
 [[[LoadAvg01]]]
+collect_by_instance = True
+collect_without_dimension = False
 collector = loadavg
 metric = 01
-namespace = MachineLoad
 name = Avg01
+namespace = MachineLoad
 unit = None
-collect_by_instance = True
-collect_without_dimension = False
 
 [[[LoadAvg05]]]
-collector = loadavg
-metric = 05
-namespace = MachineLoad
-name = Avg05
-unit = None
 collect_by_instance = True
 collect_without_dimension = False
+collector = loadavg
+metric = 05
+name = Avg05
+namespace = MachineLoad
+unit = None
 #### Options
 
 Setting | Default | Description | Type
 --------|---------|-------------|-----
-region | us-east-1 |  | str
-collector | loadavg |  | str
-metric | 01 |  | str
-name | Avg01 |  | str
-namespace | MachineLoad |  | str
-unit | None |  | str
 collect_by_instance | True | Collect metrics for instances separately | bool
 collect_without_dimension | False | Collect metrics without dimension | bool
+collector | loadavg | Diamond collector name | str
+metric | 01 | Diamond metric name | str
+name | Avg01 | CloudWatch metric name | str
+namespace | MachineLoad | CloudWatch metric namespace | str
+region | us-east-1 | AWS region | str
+unit | None | CloudWatch metric unit | str
