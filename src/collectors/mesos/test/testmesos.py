@@ -54,6 +54,16 @@ class TestMesosCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
+    def test_http(self):
+        self.collector.config['host'] = 'localhost'
+        self.assertEqual('http://localhost:5050/metrics/snapshot',
+                         self.collector._get_url())
+
+    def test_https(self):
+        self.collector.config['host'] = 'https://localhost'
+        self.assertEqual('https://localhost:5050/metrics/snapshot',
+                         self.collector._get_url())
+
     def get_metrics(self):
         return {
             'master.cpus_percent': 0.762166666666667,
