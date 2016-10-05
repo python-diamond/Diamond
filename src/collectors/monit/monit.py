@@ -11,6 +11,8 @@ Collect the monit stats and report on cpu/memory for monitored processes
 
 import urllib2
 import base64
+import sys
+import ssl
 
 from xml.dom.minidom import parseString
 
@@ -40,12 +42,19 @@ class MonitCollector(diamond.collector.Collector):
             'path':         'monit',
             'byte_unit':    ['byte'],
             'send_totals':  False,
+            'scheme':       'http',
+            'selfsigned':   False,
         })
         return config
 
     def collect(self):
-        url = 'http://%s:%i/_status?format=xml' % (self.config['host'],
+        url = '%s://%s:%i/_status?format=xml' % (self.config['scheme'],
+                                                 self.config['host'],
                                                    int(self.config['port']))
+
+        if self.config['selfsigned'] and sys.hexversion >= 0x020709f0 and hasattr(ssl, '_create_unverified_context'):
+                ssl._create_default_https_context = ssl._create_unverified_context
+
         try:
             request = urllib2.Request(url)
 
