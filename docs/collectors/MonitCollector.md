@@ -21,6 +21,8 @@ measure_collector_time | False | Collect the collector run time in ms | bool
 metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
 metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
 send_totals | False | Send cpu and memory totals | bool
+scheme | http | Select scheme http or https | str
+selfsigned | False | Use self-signed certificate | bool
 
 #### Example Output
 
@@ -46,4 +48,3 @@ servers.hostname.monit.rsyslogd.memory.kilobyte_usage 2664
 servers.hostname.monit.sshd.cpu.percent 0.0
 servers.hostname.monit.sshd.memory.kilobyte_usage 2588
 ```
-

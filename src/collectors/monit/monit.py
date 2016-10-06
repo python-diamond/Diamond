@@ -50,10 +50,11 @@ class MonitCollector(diamond.collector.Collector):
     def collect(self):
         url = '%s://%s:%i/_status?format=xml' % (self.config['scheme'],
                                                  self.config['host'],
-                                                   int(self.config['port']))
+                                                 int(self.config['port']))
 
-        if self.config['selfsigned'] and sys.hexversion >= 0x020709f0 and hasattr(ssl, '_create_unverified_context'):
-                ssl._create_default_https_context = ssl._create_unverified_context
+        # 0x020709f0 exactly equal python 2.7.9 final
+        if (self.config['selfsigned'] and sys.hexversion >= 0x020709f0 and hasattr(ssl, '_create_unverified_context')):
+            ssl._create_default_https_context = ssl._create_unverified_context
 
         try:
             request = urllib2.Request(url)
