@@ -282,6 +282,18 @@ class MetricWrapper(Metric):
             self.path = self.path.replace("."+server+".", ".")
             self.path = self.path.replace("."+backend+".", ".")
 
+    """
+    Processes metrics of the DiskspaceCollector. It stores the mountpoint as a
+    tag. There are no aggregates in this collector.
+    """
+    def processDiskspaceMetric(self):
+        if len(self.getMetricPath().split('.')) == 2:
+
+            mountpoint = self.delegate.getMetricPath().split('.')[0]
+
+            self.tags["mountpoint"] = mountpoint
+            self.path = self.path.replace("."+mountpoint+".", ".")
+
     def processMattermostMetric(self):
         split = self.getMetricPath().split('.')
         if len(split) > 2:
@@ -309,6 +321,7 @@ class MetricWrapper(Metric):
     handlers['cpu'] = processCpuMetric
     handlers['haproxy'] = processHaProxyMetric
     handlers['mattermost'] = processMattermostMetric
+    handlers['diskspace'] = processDiskspaceMetric
     handlers['default'] = processDefaultMetric
 
     def __init__(self, delegate, logger):
