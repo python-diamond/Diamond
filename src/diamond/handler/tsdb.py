@@ -294,6 +294,18 @@ class MetricWrapper(Metric):
             self.tags["mountpoint"] = mountpoint
             self.path = self.path.replace("."+mountpoint+".", ".")
 
+    """
+    Processes metrics of the DiskusageCollector. It stores the device as a
+    tag. There are no aggregates in this collector.
+    """
+    def processDiskusageMetric(self):
+        if len(self.getMetricPath().split('.')) == 2:
+
+            device = self.delegate.getMetricPath().split('.')[0]
+
+            self.tags["device"] = device
+            self.path = self.path.replace("."+device+".", ".")
+
     def processMattermostMetric(self):
         split = self.getMetricPath().split('.')
         if len(split) > 2:
@@ -322,6 +334,7 @@ class MetricWrapper(Metric):
     handlers['haproxy'] = processHaProxyMetric
     handlers['mattermost'] = processMattermostMetric
     handlers['diskspace'] = processDiskspaceMetric
+    handlers['iostat'] = processDiskusageMetric
     handlers['default'] = processDefaultMetric
 
     def __init__(self, delegate, logger):
