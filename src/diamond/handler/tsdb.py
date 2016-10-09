@@ -306,6 +306,18 @@ class MetricWrapper(Metric):
             self.tags["device"] = device
             self.path = self.path.replace("."+device+".", ".")
 
+    """
+    Processes metrics of the NetworkCollector. It stores the interface as a
+    tag. There are no aggregates in this collector.
+    """
+    def processNetworkMetric(self):
+        if len(self.getMetricPath().split('.')) == 2:
+
+            interface = self.delegate.getMetricPath().split('.')[0]
+
+            self.tags["interface"] = interface
+            self.path = self.path.replace("."+interface+".", ".")
+
     def processMattermostMetric(self):
         split = self.getMetricPath().split('.')
         if len(split) > 2:
@@ -335,6 +347,7 @@ class MetricWrapper(Metric):
     handlers['mattermost'] = processMattermostMetric
     handlers['diskspace'] = processDiskspaceMetric
     handlers['iostat'] = processDiskusageMetric
+    handlers['network'] = processNetworkMetric
     handlers['default'] = processDefaultMetric
 
     def __init__(self, delegate, logger):

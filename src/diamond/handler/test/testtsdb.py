@@ -375,6 +375,49 @@ class TestTSDBdHandler(unittest.TestCase):
             handler.process(metric)
             handler.socket.sendall.assert_called_with(expected_data)
 
+    def test_network_metrics_taghandling_default(self):
+            config = configobj.ConfigObj()
+            config['host'] = 'localhost'
+            config['port'] = '9999'
+            config['tags'] = ['myFirstTag=myValue']
+
+            metricName = 'servers.myhostname.'
+            metricName += 'network.IF.rx_packets'
+
+            metric = Metric(metricName,
+                            80, raw_value=80, timestamp=1234567,
+                            host='myhostname', metric_type='GAUGE')
+
+            expected_data = 'put network.rx_packets 1234567 80 '
+            expected_data += 'hostname=myhostname '
+            expected_data += 'myFirstTag=myValue interface=IF\n'
+
+            handler = TSDBHandler(config)
+            handler.process(metric)
+            handler.socket.sendall.assert_called_with(expected_data)
+
+    def test_network_metrics_taghandling_deactivate(self):
+            config = configobj.ConfigObj()
+            config['host'] = 'localhost'
+            config['port'] = '9999'
+            config['tags'] = ['myFirstTag=myValue']
+            config['cleanMetrics'] = False
+
+            metricName = 'servers.myhostname.'
+            metricName += 'network.IF.rx_packets'
+
+            metric = Metric(metricName,
+                            80, raw_value=80, timestamp=1234567,
+                            host='myhostname', metric_type='GAUGE')
+
+            expected_data = 'put network.IF.rx_packets 1234567'
+            expected_data += ' 80 hostname=myhostname '
+            expected_data += 'myFirstTag=myValue\n'
+
+            handler = TSDBHandler(config)
+            handler.process(metric)
+            handler.socket.sendall.assert_called_with(expected_data)
+
     def test_with_invalid_tag(self):
         config = configobj.ConfigObj()
         config['host'] = 'localhost'
