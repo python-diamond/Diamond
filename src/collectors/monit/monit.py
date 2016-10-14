@@ -52,8 +52,12 @@ class MonitCollector(diamond.collector.Collector):
                                                  self.config['host'],
                                                  int(self.config['port']))
 
-        # 0x020709f0 exactly equal python 2.7.9 final
-        if (self.config['selfsigned'] and sys.hexversion >= 0x020709f0 and hasattr(ssl, '_create_unverified_context')):
+        if (
+                self.config['selfsigned']
+                # 0x020709f0 exactly equal python 2.7.9 final
+                and sys.hexversion >= 0x020709f0
+                and hasattr(ssl, '_create_unverified_context')
+        ):
             ssl._create_default_https_context = ssl._create_unverified_context
 
         try:

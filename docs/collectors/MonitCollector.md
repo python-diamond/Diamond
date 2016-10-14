@@ -20,9 +20,9 @@ enabled | False | Enable collecting these metrics | bool
 measure_collector_time | False | Collect the collector run time in ms | bool
 metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
 metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
-send_totals | False | Send cpu and memory totals | bool
 scheme | http | Select scheme http or https | str
 selfsigned | False | Use self-signed certificate | bool
+send_totals | False | Send cpu and memory totals | bool
 
 #### Example Output
 
