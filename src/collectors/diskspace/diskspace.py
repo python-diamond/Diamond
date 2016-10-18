@@ -81,7 +81,10 @@ class DiskSpaceCollector(diamond.collector.Collector):
         if isinstance(self.exclude_filters, basestring):
             self.exclude_filters = [self.exclude_filters]
 
-        self.exclude_reg = re.compile('|'.join(self.exclude_filters))
+        if not self.exclude_filters:
+            self.exclude_reg = re.compile('!.*')
+        else:
+            self.exclude_reg = re.compile('|'.join(self.exclude_filters))
 
         self.filesystems = []
         if isinstance(self.config['filesystems'], basestring):
@@ -146,7 +149,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
                      mount_point.startswith('/sys'))):
                     continue
 
-                if '/' in device and mount_point.startswith('/'):
+                if ((('/' in device or device == 'tmpfs') and
+                     mount_point.startswith('/'))):
                     try:
                         stat = os.stat(mount_point)
                         major = os.major(stat.st_dev)
@@ -198,6 +202,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 name = name.replace('.', '_').replace('\\', '')
                 if name == '_':
                     name = 'root'
+                if name == '_tmp':
+                    name = 'tmp'
 
             if hasattr(os, 'statvfs'):  # POSIX
                 try:
@@ -206,7 +212,10 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     self.log.exception(e)
                     continue
 
-                block_size = data.f_bsize
+                # Changed from data.f_bsize as f_frsize seems to be a more
+                # accurate representation of block size on multiple POSIX
+                # operating systems.
+                block_size = data.f_frsize
 
                 blocks_total = data.f_blocks
                 blocks_free = data.f_bfree

@@ -136,24 +136,32 @@ class TestRedisCollector(CollectorTestCase):
 
         patch_collector = patch.object(RedisCollector, '_get_info',
                                        Mock(return_value=data_1))
+        patch_config = patch.object(RedisCollector, '_get_config',
+                                    Mock(return_value={'maxmemory': '2097152'}))
         patch_time = patch('time.time', Mock(return_value=10))
 
         patch_collector.start()
+        patch_config.start()
         patch_time.start()
         self.collector.collect()
         patch_collector.stop()
+        patch_config.stop()
         patch_time.stop()
 
         self.assertPublishedMany(publish_mock, {})
 
         patch_collector = patch.object(RedisCollector, '_get_info',
                                        Mock(return_value=data_2))
+        patch_config = patch.object(RedisCollector, '_get_config',
+                                    Mock(return_value={'maxmemory': '2097152'}))
         patch_time = patch('time.time', Mock(return_value=20))
 
         patch_collector.start()
+        patch_config.start()
         patch_time.start()
         self.collector.collect()
         patch_collector.stop()
+        patch_config.stop()
         patch_time.stop()
 
         metrics = {'6379.process.uptime': 95732,
@@ -178,6 +186,7 @@ class TestRedisCollector(CollectorTestCase):
                    '6379.keys.expired': 0,
                    '6379.keys.evicted': 0,
                    '6379.keyspace.hits': 5700,
+                   '6379.memory.used_percent': 82.31,
                    }
 
         self.assertPublishedMany(publish_mock, metrics)
@@ -291,10 +300,7 @@ class TestRedisCollector(CollectorTestCase):
             self.assertEqual(mock.call_count, expected_call_count,
                              msg='[%s] mock.calls=%d != expected_calls=%d' %
                              (testname, mock.call_count, expected_call_count))
-            for exp_call in data['calls']:
-                # Test expected calls 1 by 1,
-                # because self.instances is a dict (=random order)
-                mock.assert_has_calls(exp_call)
+            mock.assert_has_calls(data['calls'], any_order=True)
 
     @run_only_if_redis_is_available
     @patch.object(Collector, 'publish')
@@ -347,10 +353,7 @@ class TestRedisCollector(CollectorTestCase):
         patch_c.stop()
 
         self.assertEqual(publish_mock.call_count, len(expected_calls))
-        for exp_call in expected_calls:
-            # Test expected calls 1 by 1,
-            # because self.instances is a dict (=random order)
-            publish_mock.assert_has_calls(exp_call)
+        publish_mock.assert_has_calls(expected_calls, any_order=True)
 
 
 ##########################################################################

@@ -100,6 +100,17 @@ class TestElasticSearchCollector(CollectorTestCase):
             'network.tcp.active_opens': 2299,
 
             'jvm.mem.pools.CMS_Old_Gen.used': 530915016,
+
+            'cluster_health.nodes.total': 3,
+            'cluster_health.nodes.data': 3,
+
+            'cluster_health.shards.active_primary': 5,
+            'cluster_health.shards.active': 10,
+            'cluster_health.shards.relocating': 0,
+            'cluster_health.shards.unassigned': 0,
+            'cluster_health.shards.initializing': 0,
+
+            'cluster_health.status': 2,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,

@@ -20,9 +20,11 @@ byte_unit | byte | Default numeric output(s) | str
 enabled | False | Enable collecting these metrics | bool
 ignore_servers | False | Ignore servers, just collect frontend and backend stats | bool
 measure_collector_time | False | Collect the collector run time in ms | bool
+method | http | Method to use for data collection. Possible values: http, unix | str
 metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
 metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
 pass | password | Password | str
+sock | /var/run/haproxy.sock | Path to admin UNIX-domain socket | str
 url | http://localhost/haproxy?stats;csv | Url to stats in csv format | str
 user | admin | Username | str
 

@@ -38,6 +38,7 @@ password | guest | Password | str
 queues |  | Queues to publish. Leave empty to publish all. | 
 queues_ignored |  | A list of queues or regexes for queue names not to report on. | str
 replace_dot | False | A value to replace dot in queue names and vhosts names by | bool
+replace_slash | False | A value to replace a slash in queue names and vhosts names by | bool
 user | guest | Username | str
 vhosts |  | A list of vhosts and queues for which we want to collect | 
 

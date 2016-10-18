@@ -144,6 +144,7 @@ class CPUCollector(diamond.collector.Collector):
             file.close()
 
             metrics = {}
+            metrics['cpu_count'] = ncpus
 
             for cpu in results.keys():
                 stats = results[cpu]
@@ -185,7 +186,8 @@ class CPUCollector(diamond.collector.Collector):
             # Publish Metric Derivative
             for metric_name in metrics.keys():
                 self.publish(metric_name,
-                             metrics[metric_name])
+                             metrics[metric_name],
+                             precision=2)
             return True
 
         else:
@@ -203,46 +205,62 @@ class CPUCollector(diamond.collector.Collector):
                     metric_name + '.user',
                     self.derivative(metric_name + '.user',
                                     cpu_time[i].user,
-                                    self.MAX_VALUES['user']))
+                                    self.MAX_VALUES['user']),
+                    precision=2)
+
                 if hasattr(cpu_time[i], 'nice'):
                     self.publish(
                         metric_name + '.nice',
                         self.derivative(metric_name + '.nice',
                                         cpu_time[i].nice,
-                                        self.MAX_VALUES['nice']))
+                                        self.MAX_VALUES['nice']),
+                        precision=2)
+
                 self.publish(
                     metric_name + '.system',
                     self.derivative(metric_name + '.system',
                                     cpu_time[i].system,
-                                    self.MAX_VALUES['system']))
+                                    self.MAX_VALUES['system']),
+                    precision=2)
+
                 self.publish(
                     metric_name + '.idle',
                     self.derivative(metric_name + '.idle',
                                     cpu_time[i].idle,
-                                    self.MAX_VALUES['idle']))
+                                    self.MAX_VALUES['idle']),
+                    precision=2)
 
             metric_name = 'total'
             self.publish(
                 metric_name + '.user',
                 self.derivative(metric_name + '.user',
                                 total_time.user,
-                                self.MAX_VALUES['user']) / cpu_count)
+                                self.MAX_VALUES['user']) / cpu_count,
+                precision=2)
+
             if hasattr(total_time, 'nice'):
                 self.publish(
                     metric_name + '.nice',
                     self.derivative(metric_name + '.nice',
                                     total_time.nice,
-                                    self.MAX_VALUES['nice']) / cpu_count)
+                                    self.MAX_VALUES['nice']) / cpu_count,
+                    precision=2)
+
             self.publish(
                 metric_name + '.system',
                 self.derivative(metric_name + '.system',
                                 total_time.system,
-                                self.MAX_VALUES['system']) / cpu_count)
+                                self.MAX_VALUES['system']) / cpu_count,
+                precision=2)
+
             self.publish(
                 metric_name + '.idle',
                 self.derivative(metric_name + '.idle',
                                 total_time.idle,
-                                self.MAX_VALUES['idle']) / cpu_count)
+                                self.MAX_VALUES['idle']) / cpu_count,
+                precision=2)
+
+            self.publish('cpu_count', psutil.cpu_count())
 
             return True
 

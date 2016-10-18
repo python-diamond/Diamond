@@ -18,6 +18,8 @@ class VMStatCollector(diamond.collector.Collector):
 
     PROC = '/proc/vmstat'
     MAX_VALUES = {
+        'pgfault': diamond.collector.MAX_COUNTER,
+        'pgmajfault': diamond.collector.MAX_COUNTER,
         'pgpgin': diamond.collector.MAX_COUNTER,
         'pgpgout': diamond.collector.MAX_COUNTER,
         'pswpin': diamond.collector.MAX_COUNTER,
@@ -46,7 +48,7 @@ class VMStatCollector(diamond.collector.Collector):
 
         # open file
         file = open(self.PROC)
-        exp = '^(pgpgin|pgpgout|pswpin|pswpout)\s(\d+)'
+        exp = '^(pgfault|pgmajfault|pgpgin|pgpgout|pswpin|pswpout)\s(\d+)'
         reg = re.compile(exp)
         # Build regex
         for line in file:

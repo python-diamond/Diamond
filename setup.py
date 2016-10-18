@@ -28,7 +28,7 @@ if os.name == 'nt':
     pgm_files = os.environ["ProgramFiles"]
     base_files = os.path.join(pgm_files, 'diamond')
     data_files = [
-        (base_files, ['LICENSE', 'README.md', 'version.txt']),
+        (base_files, ['LICENSE', 'version.txt']),
         (os.path.join(base_files, 'user_scripts'), []),
         (os.path.join(base_files, 'conf'), glob('conf/*.conf.*')),
         (os.path.join(base_files, 'collectors'), glob('conf/collectors/*')),
@@ -38,7 +38,7 @@ if os.name == 'nt':
 
 else:
     data_files = [
-        ('share/diamond', ['LICENSE', 'README.md', 'version.txt']),
+        ('share/diamond', ['LICENSE', 'version.txt']),
         ('share/diamond/user_scripts', []),
     ]
 
@@ -63,15 +63,15 @@ else:
         if distro == 'Ubuntu':
             data_files.append(('/etc/init',
                                ['debian/diamond.upstart']))
-        if distro in ['centos', 'redhat', 'debian', 'fedora']:
+        if distro in ['centos', 'redhat', 'debian', 'fedora', 'oracle']:
             data_files.append(('/etc/init.d',
                                ['bin/init.d/diamond']))
             data_files.append(('/var/log/diamond',
                                ['.keep']))
-            if distro_major_version >= '7' and not distro == 'debian':
+            if distro_major_version >= 7 and not distro == 'debian':
                 data_files.append(('/usr/lib/systemd/system',
                                    ['rpm/systemd/diamond.service']))
-            elif distro_major_version >= '6' and not distro == 'debian':
+            elif distro_major_version >= 6 and not distro == 'debian':
                 data_files.append(('/etc/init',
                                    ['rpm/upstart/diamond.conf']))
 
