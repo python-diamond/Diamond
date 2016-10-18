@@ -148,7 +148,7 @@ class Server(object):
 
         _onInitDone()
 
-        while self.running:
+        while self.running and l_manager._process.is_alive():
             try:
                 active_children = multiprocessing.active_children()
                 running_processes = []
@@ -233,7 +233,7 @@ class Server(object):
 
                 ##############################################################
 
-                time.sleep(1)
+                l_manager.join(1)
 
             except SIGHUPException:
                 # ignore further SIGHUPs for now
