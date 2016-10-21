@@ -40,7 +40,7 @@ class PuppetDBCollector(diamond.collector.Collector):
         config.update({
             'host': 'localhost',
             'port': 8080,
-            'path': 'PuppetDB',
+            'path': 'puppetdb',
             'metric_path': 'metrics/v1/mbeans',
         })
         return config
