@@ -206,9 +206,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
         metrics['cluster_health.status'] = CLUSTER_STATUS[result['status']]
 
     def collect_instance_index_stats(self, scheme, host, port, metrics):
-        result = self._get(scheme, host, port,
-                           '_stats?clear=true&docs=true&store=true&' +
-                           'indexing=true&get=true&search=true', '_all')
+        result = self._get(scheme, host, port, '_stats', '_all')
         if not result:
             return
 
@@ -227,8 +225,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
                                 index['primaries'])
 
     def collect_instance(self, alias, scheme, host, port):
-        result = self._get(scheme, host, port,
-                           '_nodes/_local/stats?all=true', 'nodes')
+        result = self._get(scheme, host, port, '_nodes/_local/stats', 'nodes')
         if not result:
             return
 
