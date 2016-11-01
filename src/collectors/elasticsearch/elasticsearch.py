@@ -214,12 +214,16 @@ class ElasticSearchCollector(diamond.collector.Collector):
 
     def collect_instance_index_stats(self, scheme, host, port, metrics):
 <<<<<<< HEAD
+<<<<<<< HEAD
         result = self._get(scheme, host, port, '_stats', '_all')
 =======
         result = self._get(scheme, host, port,
                            '_stats?clear=true&docs=true&store=true&' +
                            'indexing=true&get=true&search=true', '_all')
 >>>>>>> add scheme option to elasticsearch collector to support https
+=======
+        result = self._get(scheme, host, port, '_stats', '_all')
+>>>>>>> Remove invalid params as of ES 5.0
         if not result:
             return
 
@@ -240,6 +244,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
     def collect_instance(self, alias, scheme, host, port):
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         result = self._get(scheme, host, port, '_nodes/_local/stats', 'nodes')
 =======
         result = self._get(scheme, host, port, '_nodes/_local/stats?all=true', 'nodes')
@@ -248,6 +253,9 @@ class ElasticSearchCollector(diamond.collector.Collector):
         result = self._get(scheme, host, port,
                            '_nodes/_local/stats?all=true', 'nodes')
 >>>>>>> pep8 format fix
+=======
+        result = self._get(scheme, host, port, '_nodes/_local/stats', 'nodes')
+>>>>>>> Remove invalid params as of ES 5.0
         if not result:
             return
 
