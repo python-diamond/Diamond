@@ -4,9 +4,11 @@
 import os
 import sys
 import configobj
+import socket
 if os.name != 'nt':
     import pwd
     import grp
+    import fcntl
 
 try:
     from setproctitle import setproctitle
@@ -138,33 +140,39 @@ def main():
 
     # Switch to using the logging system
     try:
+        if not options.skip_pidfile:
+            if options.foreground and options.collector:
+                options.skip_pidfile = True
+
         # PID MANAGEMENT
         if not options.skip_pidfile:
             # Initialize Pid file
             if not options.pidfile:
                 options.pidfile = str(config['server']['pid_file'])
 
-            # Read existing pid file
-            try:
-                pf = file(options.pidfile, 'r')
-                pid = int(pf.read().strip())
-                pf.close()
-            except (IOError, ValueError):
-                pid = None
+            if os.path.isfile(options.pidfile):
+                with open(options.pidfile, "r") as old_pidfile:
+                    old_pid = old_pidfile.read()
 
-            # Check existing pid file
-            if pid:
-                # Check if pid is real
-                if not os.path.exists("/".join(["/proc", str(pid), "cmdline"])):
-                    # Pid is not real
-                    os.unlink(options.pidfile)
-                    pid = None
-                    print >> sys.stderr, (
-                        "WARN: Bogus pid file was found. I deleted it.")
-                else:
-                    print >> sys.stderr, (
-                        "ERROR: Pidfile exists. Server already running?")
-                    sys.exit(1)
+            # Write pid file
+            try:
+                lockfile = open(options.pidfile, "w")
+
+            except IOError, e:
+                log.error("Failed to write child PID file: %s" % (e))
+                sys.exit(1)
+
+            try:
+                # Try to get an exclusive lock on the file. This will fail
+                # if another process has the file locked.
+                fcntl.flock(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except IOError:
+                log.error("Unable to lock on the pidfile.")
+
+                with open(options.pidfile, "w") as pidfile:
+                    pidfile.write(old_pid)
+
+                sys.exit(1)
 
             # Get final GIDs
             if os.name != 'nt':
@@ -182,15 +190,6 @@ def main():
 
             # Fix up pid permissions
             if not options.foreground and not options.collector:
-                # Write pid file
-                pid = str(os.getpid())
-                try:
-                    pf = file(options.pidfile, 'w+')
-                except IOError, e:
-                    print >> sys.stderr, "Failed to write PID file: %s" % (e)
-                    sys.exit(1)
-                pf.write("%s\n" % pid)
-                pf.close()
                 os.chown(options.pidfile, uid, gid)
                 # Log
                 log.debug("Wrote First PID file: %s" % (options.pidfile))
@@ -222,80 +221,108 @@ def main():
                 os.getgid(),
                 config['server']['group']))
 
+        if not options.skip_fork:
+            if options.foreground:
+                options.skip_fork = True
+
         # DAEMONIZE MANAGEMENT
         if not options.skip_fork:
             # Detatch Process
-            if not options.foreground and not options.collector:
+            if hasattr(signal, 'SIGHUP'):
+                signal.signal(signal.SIGHUP, signal.SIG_IGN)
 
-                # Double fork to serverize process
-                log.info('Detaching Process.')
+            # Double fork to serverize process
+            log.info('Detaching Process.')
+            l_read, l_write = socket.socketpair()
 
-                # Fork 1
-                try:
-                    pid = os.fork()
-                    if pid > 0:
-                        # Exit first paren
+            # Fork 1
+            try:
+                pid = os.fork()
+                if pid > 0:
+                    l_write.close()
+                    l_status = l_read.recv(1)
+
+                    # Exit first paren
+                    if l_status == "r":
                         sys.exit(0)
-                except OSError, e:
-                    print >> sys.stderr, "Failed to fork process." % (e)
-                    sys.exit(1)
-                # Decouple from parent environmen
-                os.setsid()
-                os.umask(0o022)
-                # Fork 2
-                try:
-                    pid = os.fork()
-                    if pid > 0:
-                        # Exit second paren
-                        sys.exit(0)
-                except OSError, e:
-                    print >> sys.stderr, "Failed to fork process." % (e)
-                    sys.exit(1)
-                # Close file descriptors so that we can detach
-                sys.stdout.close()
-                sys.stderr.close()
-                sys.stdin.close()
-                os.close(0)
-                os.close(1)
-                os.close(2)
-                sys.stdout = open(os.devnull, 'w')
-                sys.stderr = open(os.devnull, 'w')
+
+                    else:
+                        sys.exit(1)
+
+            except OSError, e:
+                print >> sys.stderr, "Failed to fork process." % (e)
+                sys.exit(1)
+
+            l_read.close()
+
+            # Decouple from parent environmen
+            os.setsid()
+            os.umask(0o022)
+            # Fork 2
+            try:
+                pid = os.fork()
+                if pid > 0:
+                    # Exit second paren
+                    sys.exit(0)
+            except OSError, e:
+                print >> sys.stderr, "Failed to fork process." % (e)
+                sys.exit(1)
+            # Close file descriptors so that we can detach
+            sys.stdout.close()
+            sys.stderr.close()
+            sys.stdin.close()
+            os.close(0)
+            os.close(1)
+            os.close(2)
+            sys.stdout = open(os.devnull, 'w')
+            sys.stderr = open(os.devnull, 'w')
 
         # PID MANAGEMENT
         if not options.skip_pidfile:
             # Finish Initialize PID file
-            if not options.foreground and not options.collector:
-                # Write pid file
-                pid = str(os.getpid())
-                try:
-                    pf = file(options.pidfile, 'w+')
-                except IOError, e:
-                    log.error("Failed to write child PID file: %s" % (e))
-                    sys.exit(1)
-                pf.write("%s\n" % pid)
-                pf.close()
-                # Log
-                log.debug("Wrote child PID file: %s" % (options.pidfile))
+            try:
+                lockfile.write("%s" % (os.getpid()))
+                lockfile.flush()
+
+            except IOError:
+                log.error("Unable to write pid to the pidfile.")
+                sys.exit(1)
+
+            # Log
+            log.debug("Wrote child PID file: %s" % (options.pidfile))
 
         # Initialize Server
         server = Server(configfile=options.configfile)
 
         def sigint_handler(signum, frame):
             log.info("Signal Received: %d" % (signum))
-            # Delete Pidfile
-            if not options.skip_pidfile and os.path.exists(options.pidfile):
-                os.remove(options.pidfile)
-                # Log
-                log.debug("Removed PID file: %s" % (options.pidfile))
-            for child in multiprocessing.active_children():
-                child.terminate()
-            sys.exit(0)
+            server.running = False
 
         # Set the signal handlers
         signal.signal(signal.SIGINT, sigint_handler)
         signal.signal(signal.SIGTERM, sigint_handler)
 
-        server.run()
+        def __onInitDone():
+            if not options.skip_fork:
+                l_write.sendall("r")
+                l_write.close()
+
+        server.run(__onInitDone)
+
+        for child in multiprocessing.active_children():
+            log.info(child.name)
+
+            while child.is_alive():
+                child.terminate()
+                child.join(0.1)
+
+        # Delete Pidfile
+        if not options.skip_pidfile and os.path.exists(options.pidfile):
+            os.remove(options.pidfile)
+            # Log
+            log.debug("Removed PID file: %s" % (options.pidfile))
+
+        sys.exit(0)
 
     # Pass the exit up stream rather then handle it as an general exception
     except SystemExit, e:

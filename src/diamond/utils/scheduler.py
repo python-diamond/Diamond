@@ -114,3 +114,5 @@ def handler_process(handlers, metric_queue, log):
                 handler._process(metric)
             else:
                 handler._flush()
+
+        metric_queue.task_done()

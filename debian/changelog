@@ -1,3 +1,11 @@
+diamond (4.0.451) unstable; urgency=low
+  * new upstream + playrix patches
+ -- Playrix LLC <support@playrix.com>  Tue, 18 Oct 2016 12:20:00 +0300
+
+diamond (4.0.196) unstable; urgency=low
+  * new upstream + playrix patches
+ -- Playrix LLC <support@playrix.com>  Tue, 18 Oct 2016 11:52:00 +0300
+
 diamond (3.1.0) unstable; urgency=low
   * new upstream
  -- Rob Smith <kormoc@gmail.com>  Tue, 05 Nov 2012 15:19:00 -0800
