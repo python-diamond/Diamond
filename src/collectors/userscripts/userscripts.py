@@ -76,14 +76,14 @@ class UserScriptsCollector(diamond.collector.Collector):
                                (absolutescriptpath, e))
                 continue
             if proc.returncode:
-                self.log.error("%s return exit value %s; skipping" %
+                self.log.error("%s return exit value %s" %
                                (absolutescriptpath, proc.returncode))
-            if not out:
-                self.log.info("%s return no output" % absolutescriptpath)
-                continue
             if err:
-                self.log.error("%s return error output: %s" %
+                self.log.warning("%s return error output: %s" %
                                (absolutescriptpath, err))
+            if not out:
+                self.log.error("%s returned no output; skipping" % absolutescriptpath)
+                continue
             # Use filter to remove empty lines of output
             for line in filter(None, out.split('\n')):
                 # Ignore invalid lines
