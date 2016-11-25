@@ -333,6 +333,7 @@ class MongoDBCollector(diamond.collector.Collector):
             return
         value = data[key]
         keys = prev_keys + [key]
+        keys = [x.replace(" ", "_").replace("-", ".") for x in keys]
         if not publishfn:
             publishfn = self.publish
         if isinstance(value, dict):
