@@ -108,7 +108,7 @@ reltest:
 distrotest:
 	echo ${DISTRO}
 
-pypi: version sdist bdist_wheel
+pypi: clean version sdist bdist_wheel
 	twine upload -s dist/*
 	git tag "v$(shell cat version.txt)"
 	git push --tags
