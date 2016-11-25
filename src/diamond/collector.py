@@ -351,10 +351,13 @@ class Collector(object):
         if suffix:
             prefix = '.'.join((prefix, suffix))
 
-        if path == '.':
-            return '.'.join([prefix, name])
-        else:
-            return '.'.join([prefix, path, name])
+        path_r = [name]
+        if path and path != '.':
+            path_r.insert(0, path)
+        if prefix and prefix != '':
+            path_r.insert(0, prefix)
+
+        return '.'.join(path_r)
 
     def get_hostname(self):
         return get_hostname(self.config)
