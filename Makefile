@@ -113,6 +113,7 @@ pypi: clean version sdist bdist_wheel
 	twine upload -s dist/*
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	git tag "v$(shell cat version.txt)"
 	git push --tags
 =======
@@ -121,6 +122,9 @@ pypi: clean version sdist bdist_wheel
 >>>>>>> make non-annotated tag and push it to github everytime you run the pypi target
 =======
 	git tag "v$(cat version.txt)"
+=======
+	git tag "v$(shell cat version.txt)"
+>>>>>>> Fix makefile issue where tag was not correctly retrieved
 	git push --tags
 >>>>>>> fix spacing on Makefile
 
