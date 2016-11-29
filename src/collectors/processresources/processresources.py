@@ -11,7 +11,7 @@ Example config file ProcessResourcesCollector.conf
 enabled=True
 unit=B
 cpu_interval=0.1
-info_keys='num_ctx_switches','cpu_percent','cpu_times','io_counters','num_threads','num_fds','memory_percent','memory_info_ex'
+info_keys='num_ctx_switches','cpu_percent','cpu_times','io_counters','num_threads','num_fds','memory_percent','memory_info'
 [process]
 [[postgres]]
 exe=^\/usr\/lib\/postgresql\/+d.+d\/bin\/postgres$
@@ -142,7 +142,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
         Default settings are:
             info_keys: ['num_ctx_switches', 'cpu_percent', 'cpu_times',
                         'io_counters', 'num_threads', 'num_fds',
-                        'memory_percent', 'memory_info_ex', ]
+                        'memory_percent', 'memory_info', ]
             path: 'process'
             unit: 'B'
         """
@@ -150,7 +150,7 @@ class ProcessResourcesCollector(diamond.collector.Collector):
         config.update({
             'info_keys': ['num_ctx_switches', 'cpu_percent', 'cpu_times',
                           'io_counters', 'num_threads', 'num_fds',
-                          'memory_percent', 'memory_info_ex', ],
+                          'memory_percent', 'memory_info', ],
             'path': 'process',
             'unit': 'B',
             'process': {},

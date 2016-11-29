@@ -183,7 +183,7 @@ class TestProcessResourcesCollector(CollectorTestCase):
                     'username': 'root',
                     'cpu_times': cputimes(user=0.27, system=1.05),
                     'io_counters': None,
-                    'memory_info_ex': ext_meminfo(rss=self.rss,
+                    'memory_info': ext_meminfo(rss=self.rss,
                                                   vms=self.vms,
                                                   shared=1310720,
                                                   text=188416,
@@ -220,13 +220,13 @@ class TestProcessResourcesCollector(CollectorTestCase):
         patch_psutil_process_iter.stop()
         self.assertPublished(publish_mock, 'foo.uptime', 1234567890)
         self.assertPublished(publish_mock, 'foo.num_fds', 10)
-        self.assertPublished(publish_mock, 'postgres.memory_info_ex.rss',
+        self.assertPublished(publish_mock, 'postgres.memory_info.rss',
                              1000000 + 100000 + 10000 + 1000 + 100)
-        self.assertPublished(publish_mock, 'foo.memory_info_ex.rss', 1)
-        self.assertPublished(publish_mock, 'bar.memory_info_ex.rss', 3)
-        self.assertPublished(publish_mock, 'barexe.memory_info_ex.rss', 3)
+        self.assertPublished(publish_mock, 'foo.memory_info.rss', 1)
+        self.assertPublished(publish_mock, 'bar.memory_info.rss', 3)
+        self.assertPublished(publish_mock, 'barexe.memory_info.rss', 3)
         self.assertPublished(publish_mock,
-                             'diamond-selfmon.memory_info_ex.rss', 1234)
+                             'diamond-selfmon.memory_info.rss', 1234)
         self.assertPublished(publish_mock, 'noprocess.workers_count', 0)
         self.assertUnpublished(publish_mock, 'noprocess.uptime', 0)
 
