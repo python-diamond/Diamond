@@ -22,7 +22,9 @@ def parse_slab_stats(slab_stats):
     Newlines are returned by memcached along with carriage returns
     (i.e. '\r\n').
 
-    >>> parse_slab_stats("STAT 1:chunk_size 96\r\nSTAT 1:chunks_per_page 10922\r\nSTAT active_slabs 1\r\nSTAT total_malloced 1048512\r\nEND\r\n")
+    >>> parse_slab_stats(
+            "STAT 1:chunk_size 96\r\nSTAT 1:chunks_per_page 10922\r\nSTAT "
+            "active_slabs 1\r\nSTAT total_malloced 1048512\r\nEND\r\n")
     {
         'slabs': {
             1: {
