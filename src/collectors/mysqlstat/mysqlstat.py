@@ -62,6 +62,7 @@ class MySQLCollector(diamond.collector.Collector):
         'Slave_open_temp_tables',
         'Threads_cached', 'Threads_connected', 'Threads_created',
         'Threads_running',
+        'Uptime', 'Uptime_since_flush_status',
         # innodb status non counter keys
         'Innodb_bp_created_per_sec',
         'Innodb_bp_pages_evicted_no_access_per_sec',
