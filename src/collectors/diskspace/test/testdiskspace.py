@@ -15,17 +15,6 @@ from diskspace import DiskSpaceCollector
 ##########################################################################
 
 
-def run_only_if_major_is_available(func):
-    try:
-        import os
-        os.major
-        major = True
-    except AttributeError:
-        major = None
-    pred = lambda: major is not None
-    return run_only(func, pred)
-
-
 class TestDiskSpaceCollector(CollectorTestCase):
 
     def setUp(self):
@@ -44,47 +33,32 @@ class TestDiskSpaceCollector(CollectorTestCase):
 
     def run_collection(self, statvfs_mock, os_major, os_minor):
         os_stat_mock = patch('os.stat')
-        os_major_mock = patch('os.major', Mock(return_value=os_major))
-        os_minor_mock = patch('os.minor', Mock(return_value=os_minor))
         os_path_isdir_mock = patch('os.path.isdir', Mock(return_value=False))
         open_mock = patch('__builtin__.open',
                           Mock(return_value=self.getFixture('proc_mounts')))
         os_statvfs_mock = patch('os.statvfs', Mock(return_value=statvfs_mock))
 
         os_stat_mock.start()
-        os_major_mock.start()
-        os_minor_mock.start()
         os_path_isdir_mock.start()
         open_mock.start()
         os_statvfs_mock.start()
         self.collector.collect()
         os_stat_mock.stop()
-        os_major_mock.stop()
-        os_minor_mock.stop()
         os_path_isdir_mock.stop()
         open_mock.stop()
         os_statvfs_mock.stop()
 
-    @run_only_if_major_is_available
     @patch('os.access', Mock(return_value=True))
     def test_get_file_systems(self):
         result = None
 
         os_stat_mock = patch('os.stat')
-        os_major_mock = patch('os.major')
-        os_minor_mock = patch('os.minor')
         os_realpath_mock = patch('os.path.realpath')
         open_mock = patch('__builtin__.open',
                           Mock(return_value=self.getFixture('proc_mounts')))
 
         stat_mock = os_stat_mock.start()
         stat_mock.return_value.st_dev = 42
-
-        major_mock = os_major_mock.start()
-        major_mock.return_value = 9
-
-        minor_mock = os_minor_mock.start()
-        minor_mock.return_value = 0
 
         realpath_mock = os_realpath_mock.start()
         realpath_mock.return_value = '/dev/sda1'
@@ -93,19 +67,15 @@ class TestDiskSpaceCollector(CollectorTestCase):
 
         result = self.collector.get_file_systems()
         os_stat_mock.stop()
-        os_major_mock.stop()
-        os_minor_mock.stop()
         os_realpath_mock.stop()
         open_mock.stop()
 
         stat_mock.assert_called_once_with('/')
-        major_mock.assert_called_once_with(42)
-        minor_mock.assert_called_once_with(42)
         realpath_mock.assert_called_once_with(
             '/dev/disk/by-uuid/81969733-a724-4651-9cf5-64970f86daba')
 
         self.assertEqual(result, {
-            (9, 0): {
+            42: {
                 'device':
                 '/dev/sda1',
                 'fs_type': 'ext3',
@@ -115,7 +85,6 @@ class TestDiskSpaceCollector(CollectorTestCase):
         omock.assert_called_once_with('/proc/mounts')
         return result
 
-    @run_only_if_major_is_available
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
@@ -147,7 +116,6 @@ class TestDiskSpaceCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-    @run_only_if_major_is_available
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_tmpfs(self, publish_mock):
