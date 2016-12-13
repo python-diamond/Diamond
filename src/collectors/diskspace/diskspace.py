@@ -116,7 +116,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
         iostat(1): Each sector has size of 512 bytes.
 
         Returns:
-          (major, minor) -> FileSystem(device, mount_point)
+          st_dev -> FileSystem(device, mount_point)
         """
         result = {}
         if os.access('/proc/mounts', os.R_OK):
@@ -148,17 +148,15 @@ class DiskSpaceCollector(diamond.collector.Collector):
                      mount_point.startswith('/'))):
                     try:
                         stat = os.stat(mount_point)
-                        major = os.major(stat.st_dev)
-                        minor = os.minor(stat.st_dev)
                     except OSError:
                         self.log.debug("Path %s is not mounted - skipping.",
                                        mount_point)
                         continue
 
-                    if (major, minor) in result:
+                    if stat.st_dev in result:
                         continue
 
-                    result[(major, minor)] = {
+                    result[stat.st_dev] = {
                         'device': os.path.realpath(device),
                         'mount_point': mount_point,
                         'fs_type': fs_type
@@ -173,7 +171,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
 
             partitions = psutil.disk_partitions(False)
             for partition in partitions:
-                result[(0, len(result))] = {
+                result[len(result)] = {
                     'device': os.path.realpath(partition.device),
                     'mount_point': partition.mountpoint,
                     'fs_type': partition.fstype
@@ -189,7 +187,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             self.log.error('No diskspace metrics retrieved')
             return None
 
-        for key, info in results.iteritems():
+        for info in results.itervalues():
             if info['device'] in labels:
                 name = labels[info['device']]
             else:
