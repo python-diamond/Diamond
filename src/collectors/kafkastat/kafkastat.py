@@ -121,11 +121,11 @@ class KafkaCollector(diamond.collector.Collector):
                     if "," in key_prefix:
                         key_prefix = key_prefix.split(',')[0]
                 elif i > 0:
-                    key = objectname.split('=')[2]
+                    key = objectname.split('=')[i + 1]
                     if key:
                         if '"' in key:
-                            key = key.split('"')[1]
-                        key_prefix = key_prefix + '.' + key
+                            key = key.split('"')[i]
+                        key_prefix = key_prefix + '.' + key.replace(",", ".")
 
         metrics = {}
 
@@ -134,7 +134,12 @@ class KafkaCollector(diamond.collector.Collector):
 
             ptype = self.ATTRIBUTE_TYPES.get(atype)
             if not ptype:
-                continue
+                try:
+                    int(attrib.get('value'))
+                    ptype = int
+                except Exception:
+                    self.log.info('Failed to guess type %s for %s.%si value %s', atype, key_prefix, attrib.get('name'), attrib.get('value'))
+                    continue
 
             value = ptype(attrib.get('value'))
 
