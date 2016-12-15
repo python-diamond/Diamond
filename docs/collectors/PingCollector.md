@@ -32,7 +32,8 @@ for your targets in pairs like:
 
 'target_1': 'example.org'
 
-We extract out the key after target_ and use it in the graphite node we push.
+The graphite nodes pushed are derived from the pinged hostnames by replacing all
+dots with underscores, i.e. 'www.example.org' becomes 'www_example_org'.
 
 
 #### Options
@@ -52,5 +53,7 @@ use_sudo | False | Use sudo? | bool
 
 ```
 servers.hostname.ping.localhost 11
+servers.hostname.ping.www_example_org 23
+servers.hostname.ping.192_168_0_1 16
 ```
 
