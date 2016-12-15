@@ -139,7 +139,9 @@ class KafkaCollector(diamond.collector.Collector):
                     int(attrib.get('value'))
                     ptype = int
                 except ValueError:
-                    self.log.debug('Failed to guess type %s for %s.%s value %s', atype, key_prefix, attrib.get('name'), attrib.get('value'))
+                    self.log.debug('Failed to guess type %s for %s.%s value %s',
+                                   atype, key_prefix, attrib.get('name'),
+                                   attrib.get('value'))
                     continue
 
             value = ptype(attrib.get('value'))
