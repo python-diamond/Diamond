@@ -32,6 +32,7 @@ publish | resolver, server, zonemgmt, sockets, memory, | Available stats:<br>
  | list
 publish_view_bind | False |  | bool
 publish_view_meta | False |  | bool
+derivative | True | Report derived stats or raw (always incrementing) | bool
 
 #### Example Output
 

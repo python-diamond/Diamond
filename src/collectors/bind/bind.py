@@ -13,6 +13,7 @@ Collects stats from bind 9.5's statistics server
 import diamond.collector
 import sys
 import urllib2
+from diamond.collector import str_to_bool
 
 if sys.version_info >= (2, 5):
     import xml.etree.cElementTree as ElementTree
@@ -35,6 +36,7 @@ class BindCollector(diamond.collector.Collector):
             " - memory (Global memory usage)\n",
             'publish_view_bind': "",
             'publish_view_meta': "",
+            'derivative': "",
         })
         return config_help
 
@@ -63,13 +65,15 @@ class BindCollector(diamond.collector.Collector):
             # By default we don't publish these special views
             'publish_view_bind': False,
             'publish_view_meta': False,
+            'derivative': True,
         })
         return config
 
     def clean_counter(self, name, value):
-        value = self.derivative(name, value)
-        if value < 0:
-            value = 0
+        if str_to_bool(self.config['derivative']):
+            value = self.derivative(name, value)
+            if value < 0:
+                value = 0
         self.publish(name, value)
 
     def collect(self):
