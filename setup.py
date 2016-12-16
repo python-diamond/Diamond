@@ -60,9 +60,6 @@ else:
         data_files.append(('/etc/diamond/handlers',
                            glob('conf/handlers/*')))
 
-        if distro == 'Ubuntu':
-            data_files.append(('/etc/init',
-                               ['debian/diamond.upstart']))
         if distro in ['centos', 'redhat', 'debian', 'fedora', 'oracle']:
             data_files.append(('/etc/init.d',
                                ['bin/init.d/diamond']))
