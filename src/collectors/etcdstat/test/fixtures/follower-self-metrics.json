@@ -1,0 +1,15 @@
+{
+  "name": "my-other-etcd-server",
+  "id": "65c9529291ea35ac",
+  "state": "StateFollower",
+  "startTime": "2016-12-16T10:58:39.85475587+01:00",
+  "leaderInfo": {
+    "leader": "640331e25aeba433",
+    "uptime": "2h47m56.735839145s",
+    "startTime": "2016-12-16T10:58:40.201314756+01:00"
+  },
+  "recvAppendRequestCnt": 79367,
+  "recvPkgRate": 6.557436727874493,
+  "recvBandwidthRate": 527.021189819273,
+  "sendAppendRequestCnt": 0
+}
