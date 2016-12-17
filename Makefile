@@ -108,7 +108,9 @@ reltest:
 distrotest:
 	echo ${DISTRO}
 
-pypi: version sdist bdist_wheel
+pypi: clean version sdist bdist_wheel
 	twine upload -s dist/*
+	git tag "v$(shell cat version.txt)"
+	git push --tags
 
 .PHONY: run watch config test docs sdist bdist bdist_wheel install rpm buildrpm deb sdeb builddeb buildsourcedeb ebuild buildebuild tar clean cleanws version reltest vertest distrotest pypi

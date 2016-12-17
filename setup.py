@@ -136,7 +136,7 @@ setup(
     version=version,
     url='https://github.com/python-diamond/Diamond',
     author='The Diamond Team',
-    author_email='https://github.com/python-diamond/Diamond',
+    author_email='diamond@librelist.com',
     license='MIT License',
     description='Smart data producer for graphite graphing package',
     package_dir={'': 'src'},
@@ -144,5 +144,9 @@ setup(
     scripts=['bin/diamond', 'bin/diamond-setup'],
     data_files=data_files,
     install_requires=install_requires,
+    classifiers=[
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+    ],
     ** setup_kwargs
 )

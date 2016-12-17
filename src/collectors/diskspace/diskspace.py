@@ -212,7 +212,10 @@ class DiskSpaceCollector(diamond.collector.Collector):
                     self.log.exception(e)
                     continue
 
-                block_size = data.f_bsize
+                # Changed from data.f_bsize as f_frsize seems to be a more
+                # accurate representation of block size on multiple POSIX
+                # operating systems.
+                block_size = data.f_frsize
 
                 blocks_total = data.f_blocks
                 blocks_free = data.f_bfree

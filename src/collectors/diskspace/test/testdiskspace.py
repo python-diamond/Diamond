@@ -97,7 +97,7 @@ class TestDiskSpaceCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
         statvfs_mock = Mock()
-        statvfs_mock.f_bsize = 4096
+        statvfs_mock.f_bsize = 1048576
         statvfs_mock.f_frsize = 4096
         statvfs_mock.f_blocks = 360540255
         statvfs_mock.f_bfree = 285953527

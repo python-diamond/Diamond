@@ -75,4 +75,47 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj python-test python-mock tree vim-enhanced MySQL-python"
   end
 
+  config.vm.define "centos7-test" do |c|
+    c.vm.hostname = "centos7-test"
+    c.vm.box = "opscode_centos-7.2"
+    c.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-7.2_chef-provisionerless.box"
+
+    c.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 2
+    end
+
+    c.vm.provision "shell", inline: "sudo rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm"
+    c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj python-test python-mock tree vim-enhanced MySQL-python htop"
+
+    # Install python libraries needed by specific collectors
+    c.vm.provision "shell", inline: "sudo yum install -y postgresql-devel" # req for psycopg2
+    c.vm.provision "shell", inline: "sudo yum install -y Cython" # req for pyutmp
+    c.vm.provision "shell", inline: "sudo yum install -y lm_sensors-devel lm_sensors python-devel" # req for pyutmp
+    c.vm.provision "shell", inline: "sudo yum install -y python-pip"
+    c.vm.provision "shell", inline: "sudo pip install -r /vagrant/.travis.requirements.txt"
+
+    # Setup Diamond to run as a service
+    c.vm.provision "shell", inline: "sudo yum install -y python-setuptools"
+    c.vm.provision "shell", inline: "sudo mkdir /var/log/diamond"
+    c.vm.provision "shell", inline: "sudo ln -s /vagrant/conf/vagrant /etc/diamond"
+    c.vm.provision "shell", inline: "sudo ln -s /vagrant/bin/diamond /usr/bin/diamond"
+    c.vm.provision "shell", inline: "sudo ln -s /vagrant/src/diamond /usr/lib/python2.7/site-packages/diamond"
+    c.vm.provision "shell", inline: "sudo ln -s /vagrant/rpm/systemd/diamond.service /usr/lib/systemd/system/diamond.service"
+
+    # Install other components to test with
+
+    ## Redis
+    c.vm.provision "shell", inline: "sudo yum install -y redis"
+    c.vm.provision "shell", inline: "sudo systemctl start redis.service"
+
+    # Build Diamond docs and run tests
+    c.vm.provision "shell", inline: "sudo pip install pep8==1.5.7"
+    c.vm.provision "shell", inline: "echo 'Build docs...' && python /vagrant/build_doc.py"
+    c.vm.provision "shell", inline: "echo 'Running tests...' && python /vagrant/test.py"
+    c.vm.provision "shell", inline: "echo 'Running pep8...' && pep8 --config=/vagrant/.pep8 /vagrant/src /vagrant/bin/diamond /vagrant/bin/diamond-setup /vagrant/build_doc.py /vagrant/setup.py /vagrant/test.py"
+
+    # Start diamond
+    c.vm.provision "shell", inline: "sudo systemctl start diamond.service"
+  end
 end

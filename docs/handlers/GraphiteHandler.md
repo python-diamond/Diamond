@@ -34,3 +34,4 @@ scope_id | 0 | IPv6 Scope ID | int
 server_error_interval | 120 | How frequently to send repeated server errors | int
 timeout | 15 |  | int
 trim_backlog_multiplier | 4 | Trim down how many batches | int
+reconnect_interval | 0 | How often (in seconds) to reconnect to graphite. Default (0) is never | int

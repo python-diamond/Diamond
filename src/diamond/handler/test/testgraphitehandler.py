@@ -19,7 +19,12 @@ from diamond.metric import Metric
 # Please check the Test class' setUp and tearDown methods
 def fake_connect(self):
     # used for 'we can connect' tests
-    self.socket = Mock()
+    m = Mock()
+    self.socket = m
+    if '__sockets_created' not in self.config:
+        self.config['__sockets_created'] = [m]
+    else:
+        self.config['__sockets_created'].append(m)
 
 
 def fake_bad_connect(self):
@@ -215,6 +220,62 @@ class TestGraphiteHandler(unittest.TestCase):
         self.assertEqual(debug_mock.call_count, 2)
         patch_debug.stop()
         patch_error.stop()
+
+    def test_disconnect_after_flush_disabled__default(self):
+        config = configobj.ConfigObj()
+        handler = mod.GraphiteHandler(config)
+
+        socket_mock = Mock()
+        patch_sock = patch.object(handler, 'socket', socket_mock)
+        send_mock = Mock()
+        patch_send = patch.object(handler, '_send_data', send_mock)
+        check_mock = Mock()
+        patch_check = patch.object(handler, '_time_to_reconnect', check_mock)
+
+        patch_sock.start()
+        patch_send.start()
+
+        handler.process(Metric('foo.bar', 42, timestamp=123))
+        handler.process(Metric('foo.bar', 42, timestamp=124))
+        handler.process(Metric('foo.bar', 42, timestamp=125))
+
+        patch_send.stop()
+        patch_sock.stop()
+
+        self.assertEqual(send_mock.call_count, 3)
+        self.assertEqual(check_mock.call_count, 0)
+        self.assertEqual(len(handler.config['__sockets_created']), 1)
+
+    def test_disconnect_after_flush_enabled(self):
+        config = configobj.ConfigObj()
+        handler = mod.GraphiteHandler(config)
+
+        socket_mock = Mock()
+        patch_sock = patch.object(handler, 'socket', socket_mock)
+        send_mock = Mock()
+        patch_send = patch.object(handler, '_send_data', send_mock)
+
+        # have the reconnect check always return true
+        # so a reconnect is done after every batch send
+        check_mock = Mock(return_value=True)
+        patch_check = patch.object(handler, '_time_to_reconnect', check_mock)
+
+        patch_sock.start()
+        patch_send.start()
+        patch_check.start()
+
+        handler.process(Metric('foo.bar', 42, timestamp=123))
+        handler.process(Metric('foo.bar', 42, timestamp=124))
+        handler.process(Metric('foo.bar', 42, timestamp=125))
+
+        patch_check.stop()
+        patch_send.stop()
+        patch_sock.stop()
+
+        self.assertEqual(send_mock.call_count, 3)
+        self.assertEqual(check_mock.call_count, 3)
+        self.assertEqual(len(handler.config['__sockets_created']), 3)
+
 
 if __name__ == "__main__":
     unittest.main()
