@@ -42,8 +42,8 @@ else:
         ('share/diamond/user_scripts', []),
     ]
 
-    distro = platform.dist()[0]
-    distro_major_version = platform.dist()[1].split('.')[0]
+    distro = platform.linux_distribution()[0]
+    distro_major_version = platform.linux_distribution()[1].split('.')[0]
 
     if running_under_virtualenv():
         data_files.append(('etc/diamond',
