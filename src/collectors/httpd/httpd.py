@@ -70,21 +70,16 @@ class HttpdCollector(diamond.collector.Collector):
                     # Parse Url
                     parts = urlparse.urlparse(url)
 
-                    # Parse host and port
-                    endpoint = parts[1].split(':')
-                    if len(endpoint) > 1:
-                        service_host = endpoint[0]
-                        service_port = int(endpoint[1])
+                    # Set httplib class
+                    if parts.scheme == 'http':
+                        connection = httplib.HTTPConnection(parts.netloc)
+                    elif parts.scheme == 'https':
+                        connection = httplib.HTTPSConnection(parts.netloc)
                     else:
-                        service_host = endpoint[0]
-                        service_port = 80
+                        raise Exception("Invalid scheme: %s" % parts.scheme)
 
                     # Setup Connection
-                    connection = httplib.HTTPConnection(service_host,
-                                                        service_port)
-
-                    url = "%s?%s" % (parts[2], parts[4])
-
+                    url = "%s?%s" % (parts.path, parts.query)
                     connection.request("GET", url)
                     response = connection.getresponse()
                     data = response.read()
@@ -101,8 +96,8 @@ class HttpdCollector(diamond.collector.Collector):
                         raise Exception("Too many redirects!")
             except Exception, e:
                 self.log.error(
-                    "Error retrieving HTTPD stats for host %s:%s, url '%s': %s",
-                    service_host, str(service_port), url, e)
+                    "Error retrieving HTTPD stats for '%s': %s",
+                    url, e)
                 continue
 
             exp = re.compile('^([A-Za-z ]+):\s+(.+)$')
