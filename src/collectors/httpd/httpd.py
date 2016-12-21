@@ -44,6 +44,7 @@ class HttpdCollector(diamond.collector.Collector):
             'urls': "Urls to server-status in auto format, comma seperated," +
                     " Format 'nickname http://host:port/server-status?auto, " +
                     ", nickname http://host:port/server-status?auto, etc'",
+            'redirects': "The maximum number of redirect requests to follow.",
         })
         return config_help
 
@@ -53,8 +54,9 @@ class HttpdCollector(diamond.collector.Collector):
         """
         config = super(HttpdCollector, self).get_default_config()
         config.update({
-            'path':     'httpd',
-            'urls':     ['localhost http://localhost:8080/server-status?auto']
+            'path': 'httpd',
+            'urls': ['localhost http://localhost:8080/server-status?auto'],
+            'redirects': 5,
         })
         return config
 
@@ -63,8 +65,8 @@ class HttpdCollector(diamond.collector.Collector):
             url = self.urls[nickname]
 
             try:
+                redirects = 0
                 while True:
-
                     # Parse Url
                     parts = urlparse.urlparse(url)
 
@@ -93,6 +95,10 @@ class HttpdCollector(diamond.collector.Collector):
                         break
                     url = headers['location']
                     connection.close()
+
+                    redirects += 1
+                    if redirects > self.config['redirects']:
+                        raise Exception("Too many redirects!")
             except Exception, e:
                 self.log.error(
                     "Error retrieving HTTPD stats for host %s:%s, url '%s': %s",
