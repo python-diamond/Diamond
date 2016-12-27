@@ -64,16 +64,14 @@ else:
             data_files.append(('/etc/init',
                                ['debian/diamond.upstart']))
         if distro in ['centos', 'redhat', 'debian', 'fedora', 'oracle']:
-            data_files.append(('/etc/init.d',
-                               ['bin/init.d/diamond']))
             data_files.append(('/var/log/diamond',
                                ['.keep']))
             if distro_major_version >= 7 and not distro == 'debian':
                 data_files.append(('/usr/lib/systemd/system',
                                    ['rpm/systemd/diamond.service']))
-            elif distro_major_version >= 6 and not distro == 'debian':
-                data_files.append(('/etc/init',
-                                   ['rpm/upstart/diamond.conf']))
+            elif distro_major_version <= 6 and not distro == 'debian':
+                data_files.append(('/etc/init.d',
+                                   ['bin/init.d/diamond']))
 
     # Support packages being called differently on different distros
 
