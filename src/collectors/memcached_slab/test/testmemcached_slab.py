@@ -1,9 +1,5 @@
 import os
-import sys
 import unittest
-
-# Make sure we can import the collector, which lives in the directory above.
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import memcached_slab
 
