@@ -1,0 +1,5 @@
+STAT 1:chunk_size 96
+STAT 1:chunks_per_page 10922
+STAT active_slabs 1
+STAT total_malloced 1048512
+END

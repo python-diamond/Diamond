@@ -8,12 +8,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import memcached_slab
 
 
-RAW_SLAB_STATS = """STAT 1:chunk_size 96\r
-STAT 1:chunks_per_page 10922\r
-STAT active_slabs 1\r
-STAT total_malloced 1048512\r
-END\r
-"""
+fixtures = os.path.join(os.path.dirname(__file__), 'fixtures', 'stats')
+with open(fixtures, 'rb') as f:
+    RAW_SLAB_STATS = f.read()
 
 
 class MemcachedSlabCollectorTestCase(unittest.TestCase):
