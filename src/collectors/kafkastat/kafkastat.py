@@ -136,8 +136,8 @@ class KafkaCollector(diamond.collector.Collector):
             ptype = self.ATTRIBUTE_TYPES.get(atype)
             if not ptype:
                 try:
-                    int(attrib.get('value'))
-                    ptype = int
+                    long(attrib.get('value'))
+                    ptype = long
                 except ValueError:
                     self.log.debug('Failed to guess type %s for %s.%s value %s',
                                    atype, key_prefix, attrib.get('name'),

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBean classname="com.yammer.metrics.reporting.JmxReporter$Gauge" description="Information on the management interface of the MBean" objectname="kafka.log:type=Log,name=LogStartOffset,topic=packetbeat,partition=0">
+  <Attribute availability="RO" description="Attribute exposed for management" isnull="false" name="Value" strinit="false" type="java.lang.Object" value="2774314"/>
+</MBean>
