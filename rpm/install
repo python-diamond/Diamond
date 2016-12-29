@@ -4,3 +4,9 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 %endif
+
+CONFIGFILES="
+%config(noreplace) /etc/diamond/*"
+echo "$CONFIGFILES" | cat INSTALLED_FILES - > INSTALLED_FILES.new
+mv INSTALLED_FILES.new INSTALLED_FILES
+
