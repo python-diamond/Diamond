@@ -31,7 +31,7 @@ class MemoryDockerCollector(MemoryCgroupCollector):
 
         self.containers = dict(
             (c['Id'], c['Names'][0][1:])
-            for c in docker.Client().containers(all=True)
+            for c in docker.Client(version='auto').containers(all=True)
             if c['Names'] is not None)
         return super(MemoryDockerCollector, self).collect()
 
