@@ -27,12 +27,14 @@ logstash_mode | False | If 'indices' stats are gathered, remove the YYYY.MM.DD s
 measure_collector_time | False | Collect the collector run time in ms | bool
 metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
 metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
+password |  | Password for Basic/Shield auth | str
 port | 9200 |  | int
 stats | jvm, thread_pool, indices, | Available stats:<br>
  - jvm (JVM information)<br>
  - thread_pool (Thread pool information)<br>
  - indices (Individual index stats)<br>
  | list
+user |  | Username for Basic/Shield auth | str
 
 #### Example Output
 
