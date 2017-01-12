@@ -25,7 +25,7 @@ Example NetAppCollector.conf:
     user = root
     password = strongpassword
 
-````
+```
 
 The primary source for documentation about the API has been
 "NetApp unified storage performance management using open interfaces"
