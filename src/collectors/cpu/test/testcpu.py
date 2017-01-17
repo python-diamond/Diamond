@@ -257,6 +257,54 @@ class TestCPUCollectorNormalize(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, self.expected)
 
+
+class TestCPUCollectorSimple(CollectorTestCase):
+
+    def setUp(self):
+        self.config = get_collector_config('CPUCollector', {
+            'interval': 10,
+            'normalize': False,
+            'simple': True,
+        })
+
+        self.collector = CPUCollector(self.config, None)
+
+    def test_import(self):
+        self.assertTrue(CPUCollector)
+
+    @patch.object(Collector, 'publish')
+    def test_produces_simple_percent(self, publish_mock):
+        # when the simple config option is set, we check the CPU values twice
+        # to calculate a delta, so we need two mock values
+        m = Mock()
+        patch_open = patch('__builtin__.open', m)
+        m.side_effect = [
+            StringIO('cpu 100 200 300 400 500 0 0 0 0 0'),
+            StringIO('cpu 110 220 330 440 550 0 0 0 0 0'),
+        ]
+
+        patch_open.start()
+        self.collector.collect()
+        patch_open.stop()
+
+        self.assertPublishedMany(publish_mock, {})
+
+        m = Mock()
+        patch_open = patch('__builtin__.open', m)
+        m.side_effect = [
+            StringIO('cpu 110 220 330 440 550 0 0 0 0 0'),
+            StringIO('cpu 120 230 340 450 560 0 0 0 0 0'),
+        ]
+
+        patch_open.start()
+        self.collector.collect()
+        patch_open.stop()
+
+        self.assertPublishedMany(publish_mock, {
+            'percent': 75.0
+        })
+
+
 ##########################################################################
 if __name__ == "__main__":
     unittest.main()
