@@ -1,0 +1,1 @@
+{"object": {"retries": 0, "copies_expected": 78642, "missing_2": 1, "missing_3": 0, "pct_found": 98.588540474555586, "overlapping": 0, "copies_found": 77532, "missing_1": 1108}, "container": {"retries": 0, "copies_expected": 78645, "missing_2": 3, "missing_3": 0, "pct_found": 98.574607413058686, "overlapping": 0, "copies_found": 77524, "missing_1": 1115}}

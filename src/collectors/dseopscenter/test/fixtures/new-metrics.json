@@ -1,0 +1,3084 @@
+{
+  "aggregation_function": {
+    "write-ops": "Total",
+    "heap-used": "Average",
+    "solr-errors": "Total",
+    "heap-committed": "Average",
+    "solr-timeouts": "Total",
+    "pending-flushes": "Total",
+    "pending-request-responses": "Total",
+    "pending-hinted-handoff": "Total",
+    "pending-read-ops": "Total",
+    "cf-keycache-hits": "Average",
+    "cf-total-disk-used": "Total",
+    "cf-rowcache-hit-rate": "Average",
+    "solr-requests": "Total",
+    "total-compactions-completed": "Total",
+    "row-cache-hit-rate": "Average",
+    "key-cache-hits": "Average",
+    "solr-avg-time-per-req": "Average",
+    "pending-compaction-tasks": "Total",
+    "cf-rowcache-hits": "Average",
+    "cf-write-ops": "Total",
+    "key-cache-hit-rate": "Average",
+    "key-cache-requests": "Average",
+    "cf-write-latency-op": "Average",
+    "cf-read-ops": "Total",
+    "cf-read-latency-op": "Average",
+    "cf-live-sstables": "Total",
+    "pending-read-repair-tasks": "Total",
+    "pending-internal-responses": "Total",
+    "cms-collection-count": "Total",
+    "cf-keycache-hit-rate": "Average",
+    "pending-flush-sorter-tasks": "Total",
+    "cf-bf-false-ratio": "Average",
+    "pending-memtable-post-flushers": "Total",
+    "read-latency-op": "Average",
+    "heap-max": "Average",
+    "cf-keycache-requests": "Average",
+    "pending-migrations": "Total",
+    "data-load": "Total",
+    "pending-streams": "Total",
+    "cf-live-disk-used": "Total",
+    "cf-bf-space-used": "Average",
+    "row-cache-hits": "Average",
+    "cms-collection-time": "Total",
+    "cf-pending-tasks": "Total",
+    "cf-bf-false-positives": "Average",
+    "total-bytes-compacted": "Total",
+    "nonheap-used": "Average",
+    "pending-repl-on-write-tasks": "Total",
+    "pending-repair-tasks": "Total",
+    "cf-rowcache-requests": "Average",
+    "nonheap-committed": "Average",
+    "pending-misc-tasks": "Total",
+    "write-latency-op": "Average",
+    "nonheap-max": "Average",
+    "row-cache-requests": "Average",
+    "read-ops": "Total",
+    "pending-gossip-tasks": "Total",
+    "pending-write-ops": "Total"
+  },
+  "columnfamilies": [
+    "OpsCenter.events_timeline",
+    "OpsCenter.settings",
+    "OpsCenter.rollups60",
+    "OpsCenter.rollups86400",
+    "OpsCenter.bestpractice_results",
+    "OpsCenter.pdps",
+    "OpsCenter.rollups7200",
+    "OpsCenter.events",
+    "OpsCenter.rollups300",
+    "dse_system.leases"
+  ],
+  "bounds": {
+    "start": 1408374600,
+    "step": 60,
+    "end": 1408374720
+  },
+  "metrics": [
+    "cf-bf-false-positives",
+    "cf-bf-false-ratio",
+    "cf-bf-space-used",
+    "cf-keycache-hit-rate",
+    "cf-keycache-hits",
+    "cf-keycache-requests",
+    "cf-live-disk-used",
+    "cf-live-sstables",
+    "cf-pending-tasks",
+    "cf-read-latency-op",
+    "cf-read-ops",
+    "cf-rowcache-hit-rate",
+    "cf-rowcache-hits",
+    "cf-rowcache-requests",
+    "cf-total-disk-used",
+    "cf-write-latency-op",
+    "cf-write-ops",
+    "cms-collection-count",
+    "cms-collection-time",
+    "data-load",
+    "heap-committed",
+    "heap-max",
+    "heap-used",
+    "key-cache-hit-rate",
+    "key-cache-hits",
+    "key-cache-requests",
+    "nonheap-committed",
+    "nonheap-max",
+    "nonheap-used",
+    "pending-compaction-tasks",
+    "pending-flush-sorter-tasks",
+    "pending-flushes",
+    "pending-gossip-tasks",
+    "pending-hinted-handoff",
+    "pending-internal-responses",
+    "pending-memtable-post-flushers",
+    "pending-migrations",
+    "pending-misc-tasks",
+    "pending-read-ops",
+    "pending-read-repair-tasks",
+    "pending-repair-tasks",
+    "pending-repl-on-write-tasks",
+    "pending-request-responses",
+    "pending-streams",
+    "pending-write-ops",
+    "read-latency-op",
+    "read-ops",
+    "row-cache-hit-rate",
+    "row-cache-hits",
+    "row-cache-requests",
+    "solr-avg-time-per-req",
+    "solr-errors",
+    "solr-requests",
+    "solr-timeouts",
+    "total-bytes-compacted",
+    "total-compactions-completed",
+    "write-latency-op",
+    "write-ops"
+  ],
+  "nodes": [
+    "172.20.0.126",
+    "172.20.0.212",
+    "172.20.0.211",
+    "172.20.0.210",
+    "172.20.0.144",
+    "172.23.0.99",
+    "172.20.0.209",
+    "172.23.0.164",
+    "172.23.0.165",
+    "172.23.0.162",
+    "172.23.0.163",
+    "172.23.0.143"
+  ],
+  "data": {
+    "*": [
+      {
+        "metric": "cf-bf-false-positives",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-positives",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-positives",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-positives",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-positives",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-positives",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-positives",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-positives",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-positives",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-positives",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-ratio",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-ratio",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-ratio",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-ratio",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-ratio",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-ratio",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-ratio",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-ratio",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-ratio",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-false-ratio",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-space-used",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-space-used",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-space-used",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-space-used",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-space-used",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-space-used",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-space-used",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-space-used",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-space-used",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-bf-space-used",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hit-rate",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hit-rate",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hit-rate",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hit-rate",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hit-rate",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hit-rate",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hit-rate",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hit-rate",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hit-rate",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hit-rate",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hits",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hits",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hits",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hits",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hits",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hits",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hits",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hits",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hits",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-hits",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-requests",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-requests",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-requests",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-requests",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-requests",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-requests",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-requests",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-requests",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-requests",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-keycache-requests",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-disk-used",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-disk-used",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-disk-used",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-disk-used",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-disk-used",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-disk-used",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-disk-used",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-disk-used",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-disk-used",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-disk-used",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-sstables",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-sstables",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-sstables",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-sstables",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-sstables",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-sstables",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-sstables",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-sstables",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-sstables",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-live-sstables",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "cf-pending-tasks",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-pending-tasks",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-pending-tasks",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-pending-tasks",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-pending-tasks",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-pending-tasks",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-pending-tasks",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-pending-tasks",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-pending-tasks",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-pending-tasks",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-latency-op",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-latency-op",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-latency-op",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-latency-op",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-latency-op",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-latency-op",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-latency-op",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-latency-op",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-latency-op",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-latency-op",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-ops",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-ops",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-ops",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-ops",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-ops",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-ops",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-ops",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-ops",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-ops",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-read-ops",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hit-rate",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hit-rate",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hit-rate",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hit-rate",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hit-rate",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hit-rate",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hit-rate",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hit-rate",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hit-rate",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hit-rate",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hits",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hits",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hits",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hits",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hits",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hits",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hits",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hits",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hits",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-hits",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-requests",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-requests",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-requests",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-requests",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-requests",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-requests",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-requests",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-requests",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-requests",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-rowcache-requests",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-total-disk-used",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-total-disk-used",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-total-disk-used",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-total-disk-used",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-total-disk-used",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-total-disk-used",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-total-disk-used",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-total-disk-used",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-total-disk-used",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-total-disk-used",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-latency-op",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-latency-op",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-latency-op",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-latency-op",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-latency-op",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-latency-op",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-latency-op",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-latency-op",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-latency-op",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-latency-op",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-ops",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-ops",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-ops",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-ops",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-ops",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-ops",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-ops",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-ops",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-ops",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "cf-write-ops",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "cms-collection-count",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "cms-collection-time",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "data-load",
+        "data-points": [
+          [
+            9667575363
+          ],
+          [
+            9667575619
+          ]
+        ]
+      },
+      {
+        "metric": "heap-committed",
+        "data-points": [
+          [
+            10560995328
+          ],
+          [
+            10560995328
+          ]
+        ]
+      },
+      {
+        "metric": "heap-max",
+        "data-points": [
+          [
+            10560995328
+          ],
+          [
+            10560995328
+          ]
+        ]
+      },
+      {
+        "metric": "heap-used",
+        "data-points": [
+          [
+            2343120373.3333335
+          ],
+          [
+            2285975392
+          ]
+        ]
+      },
+      {
+        "metric": "key-cache-hit-rate",
+        "data-points": [
+          [
+            0.49807348516252303
+          ],
+          [
+            0.5174829595618777
+          ]
+        ]
+      },
+      {
+        "metric": "key-cache-hits",
+        "data-points": [
+          [
+            9.114316945274672
+          ],
+          [
+            26.428499946991604
+          ]
+        ]
+      },
+      {
+        "metric": "key-cache-requests",
+        "data-points": [
+          [
+            38.28847822050253
+          ],
+          [
+            57.268571784098945
+          ]
+        ]
+      },
+      {
+        "metric": "nonheap-committed",
+        "data-points": [
+          [
+            69798570.66666667
+          ],
+          [
+            69798570.66666667
+          ]
+        ]
+      },
+      {
+        "metric": "nonheap-max",
+        "data-points": [
+          [
+            136314880
+          ],
+          [
+            136314880
+          ]
+        ]
+      },
+      {
+        "metric": "nonheap-used",
+        "data-points": [
+          [
+            48491696.666666664
+          ],
+          [
+            48496788
+          ]
+        ]
+      },
+      {
+        "metric": "pending-compaction-tasks",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "pending-flush-sorter-tasks",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "pending-flushes",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "pending-gossip-tasks",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "pending-hinted-handoff",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "pending-internal-responses",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "pending-memtable-post-flushers",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "pending-migrations",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "pending-misc-tasks",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "pending-read-ops",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "pending-read-repair-tasks",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "pending-repair-tasks",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "pending-repl-on-write-tasks",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "pending-request-responses",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "pending-streams",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "pending-write-ops",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "read-latency-op",
+        "data-points": [
+          [
+            3.0879318490381897
+          ],
+          [
+            3.693992668442661
+          ]
+        ]
+      },
+      {
+        "metric": "read-ops",
+        "data-points": [
+          [
+            55.91526222229004
+          ],
+          [
+            71.94280958175659
+          ]
+        ]
+      },
+      {
+        "metric": "row-cache-hit-rate",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "row-cache-hits",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "row-cache-requests",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "solr-avg-time-per-req",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-avg-time-per-req",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-avg-time-per-req",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-avg-time-per-req",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-avg-time-per-req",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-avg-time-per-req",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-avg-time-per-req",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-avg-time-per-req",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-avg-time-per-req",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-avg-time-per-req",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-errors",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-errors",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-errors",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-errors",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-errors",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-errors",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-errors",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-errors",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-errors",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-errors",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-requests",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-requests",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-requests",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-requests",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-requests",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-requests",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-requests",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-requests",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-requests",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-requests",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-timeouts",
+        "columnfamily": "OpsCenter.events_timeline",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-timeouts",
+        "columnfamily": "OpsCenter.settings",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-timeouts",
+        "columnfamily": "OpsCenter.rollups60",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-timeouts",
+        "columnfamily": "OpsCenter.rollups86400",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-timeouts",
+        "columnfamily": "OpsCenter.bestpractice_results",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-timeouts",
+        "columnfamily": "OpsCenter.pdps",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-timeouts",
+        "columnfamily": "OpsCenter.rollups7200",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-timeouts",
+        "columnfamily": "OpsCenter.events",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-timeouts",
+        "columnfamily": "OpsCenter.rollups300",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "solr-timeouts",
+        "columnfamily": "dse_system.leases",
+        "data-points": [
+          [
+            null
+          ],
+          [
+            null
+          ]
+        ]
+      },
+      {
+        "metric": "total-bytes-compacted",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "total-compactions-completed",
+        "data-points": [
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "metric": "write-latency-op",
+        "data-points": [
+          [
+            10.522033135096232
+          ],
+          [
+            10.651831467946371
+          ]
+        ]
+      },
+      {
+        "metric": "write-ops",
+        "data-points": [
+          [
+            104.33786153793335
+          ],
+          [
+            135.20677280426025
+          ]
+        ]
+      }
+    ]
+  }
+}

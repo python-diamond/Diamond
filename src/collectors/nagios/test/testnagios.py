@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
-
-from __future__ import with_statement
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -13,10 +11,11 @@ from mock import patch
 from diamond.collector import Collector
 from nagios import NagiosStatsCollector
 
-################################################################################
+##########################################################################
 
 
 class TestNagiosStatsCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('NagiosStatsCollector', {
             'interval': 10,
@@ -26,13 +25,21 @@ class TestNagiosStatsCollector(CollectorTestCase):
 
         self.collector = NagiosStatsCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(NagiosStatsCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value=(
-            self.getFixture('nagiostat').getvalue(), '')
-        )):
-            self.collector.collect()
+        patch_communicate = patch(
+            'subprocess.Popen.communicate',
+            Mock(return_value=(
+                self.getFixture('nagiostat').getvalue(),
+                '')))
+
+        patch_communicate.start()
+        self.collector.collect()
+        patch_communicate.stop()
 
         metrics = {
             'AVGACTHSTLAT': 196,
@@ -69,6 +76,6 @@ class TestNagiosStatsCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -10,23 +10,26 @@ from mock import patch
 
 try:
     from cStringIO import StringIO
-    StringIO  # workaround for pyflakes issue #13
 except ImportError:
     from StringIO import StringIO
 
 from diamond.collector import Collector
 from slabinfo import SlabInfoCollector
 
-################################################################################
+##########################################################################
 
 
 class TestSlabInfoCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('SlabInfoCollector', {
             'interval': 1
         })
 
         self.collector = SlabInfoCollector(config, None)
+
+    def test_import(self):
+        self.assertTrue(SlabInfoCollector)
 
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
@@ -48,6 +51,6 @@ class TestSlabInfoCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

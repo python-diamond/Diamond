@@ -26,11 +26,19 @@ collectors_path = /usr/share/diamond/collectors/
 # Directory to load collector configs from
 collectors_config_path = /etc/diamond/collectors/
 
+# Number of seconds between each collector load
+# collectors_load_delay = 1.0
+
 # Directory to load handler configs from
 handlers_config_path = /etc/diamond/handlers/
 
-# Interval to reload collectors
-collectors_reload_interval = 3600
+# Directory to load handler modules from
+handlers_path = /usr/share/diamond/handlers/
+
+# Maximum number of metrics waiting to be processed by handlers.
+# When metric queue is full, new metrics are dropped.
+metric_queue_size = 16384
+
 
 ################################################################################
 ### Options for handlers
@@ -54,7 +62,7 @@ days = 7
 ### Options for GraphiteHandler
 
 # Graphite server host
-host = graphite
+host = 127.0.0.1
 
 # Port to send metrics to
 port = 2003
@@ -62,11 +70,14 @@ port = 2003
 # Socket timeout (seconds)
 timeout = 15
 
+# Batch size for metrics
+batch = 1
+
 [[GraphitePickleHandler]]
 ### Options for GraphitePickleHandler
 
 # Graphite server host
-host = graphite
+host = 127.0.0.1
 
 # Port to send metrics to
 port = 2004
@@ -107,6 +118,24 @@ timeout = 15
 user = user@example.com
 apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
 
+[[HostedGraphiteHandler]]
+apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
+timeout = 15
+batch = 1
+
+[[SignalfxHandler]]
+auth_token = abcdefghijklmnopqrstuvwxyz
+
+# And any other config settings from GraphiteHandler are valid here
+
+[[HttpPostHandler]]
+
+### Urp to post the metrics
+url = http://localhost:8888/
+### Metrics batch size
+batch = 100
+
+
 ################################################################################
 ### Options for collectors
 [collectors]
@@ -134,6 +163,9 @@ apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
 # hostname          = `hostname`
 # hostname_rev      = `hostname` in reverse (com.example.www)
 
+# shell             = Run the string set in hostname as a shell command and use its
+#                     output(with spaces trimmed off from both ends) as the hostname.
+
 # hostname_method = smart
 
 # Path Prefix and Suffix
@@ -142,8 +174,37 @@ apikey = abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz01
 # path_prefix = servers
 # path_suffix =
 
+# Path Prefix for Virtual Machines
+# If the host supports virtual machines, collectors may report per
+# VM metrics. Following OpenStack nomenclature, the prefix for
+# reporting per VM metrics is "instances", and metric foo for VM
+# bar will be reported as: instances.bar.foo...
+# instance_prefix = instances
+
 # Default Poll Interval (seconds)
 # interval = 300
+
+################################################################################
+# Default enabled collectors
+################################################################################
+
+[[CPUCollector]]
+enabled = True
+
+[[DiskSpaceCollector]]
+enabled = True
+
+[[DiskUsageCollector]]
+enabled = True
+
+[[LoadAverageCollector]]
+enabled = True
+
+[[MemoryCollector]]
+enabled = True
+
+[[VMStatCollector]]
+enabled = True
 
 ################################################################################
 ### Options for logging
@@ -167,6 +228,7 @@ keys = default
 # to increase verbosity, set DEBUG
 level = INFO
 handlers = rotated_file
+propagate = 1
 
 [handler_rotated_file]
 
@@ -180,4 +242,17 @@ args = ('/var/log/diamond/diamond.log', 'midnight', 1, 7)
 
 format = [%(asctime)s] [%(threadName)s] %(message)s
 datefmt =
+
+################################################################################
+### Options for config merging
+# [configs]
+# path = "/etc/diamond/configs/"
+# extension = ".conf"
+#-------------------------------------------------------------------------------
+# Example:
+# /etc/diamond/configs/net.conf
+# [collectors]
+#
+# [[NetworkCollector]]
+# enabled = True
 

@@ -1,22 +1,34 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
-
-from __future__ import with_statement
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
+from test import run_only
 from mock import Mock
-from mock import patch
+from mock import patch, call
 
 from diamond.collector import Collector
 from redisstat import RedisCollector
 
-################################################################################
+##########################################################################
+
+
+def run_only_if_redis_is_available(func):
+    """Decorator for checking if python-redis is available.
+    Note: this test will be silently skipped if python-redis is missing.
+    """
+    try:
+        import redis
+    except ImportError:
+        redis = None
+    pred = lambda: redis is not None
+    return run_only(func, pred)
 
 
 class TestRedisCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('RedisCollector', {
             'interval': '1',
@@ -25,6 +37,10 @@ class TestRedisCollector(CollectorTestCase):
 
         self.collector = RedisCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(RedisCollector)
+
+    @run_only_if_redis_is_available
     @patch.object(Collector, 'publish')
     def test_real_data(self, publish_mock):
 
@@ -76,6 +92,7 @@ class TestRedisCollector(CollectorTestCase):
                   'used_memory_peak_human': '1700.71K',
                   'bgrewriteaof_in_progress': 4,
                   'connected_slaves': 2,
+                  'master_last_io_seconds_ago': 7,
                   'uptime_in_days': 1,
                   'multiplexing_api': 'epoll',
                   'lru_clock': 5954113,
@@ -117,21 +134,40 @@ class TestRedisCollector(CollectorTestCase):
                   'keyspace_hits': 5700
                   }
 
-        with patch.object(RedisCollector, '_get_info',
-                          Mock(return_value=data_1)):
-            with patch('time.time', Mock(return_value=10)):
-                self.collector.collect()
+        patch_collector = patch.object(RedisCollector, '_get_info',
+                                       Mock(return_value=data_1))
+        patch_config = patch.object(RedisCollector, '_get_config',
+                                    Mock(return_value={'maxmemory': '2097152'}))
+        patch_time = patch('time.time', Mock(return_value=10))
+
+        patch_collector.start()
+        patch_config.start()
+        patch_time.start()
+        self.collector.collect()
+        patch_collector.stop()
+        patch_config.stop()
+        patch_time.stop()
 
         self.assertPublishedMany(publish_mock, {})
 
-        with patch.object(RedisCollector, '_get_info',
-                          Mock(return_value=data_2)):
-            with patch('time.time', Mock(return_value=20)):
-                self.collector.collect()
+        patch_collector = patch.object(RedisCollector, '_get_info',
+                                       Mock(return_value=data_2))
+        patch_config = patch.object(RedisCollector, '_get_config',
+                                    Mock(return_value={'maxmemory': '2097152'}))
+        patch_time = patch('time.time', Mock(return_value=20))
+
+        patch_collector.start()
+        patch_config.start()
+        patch_time.start()
+        self.collector.collect()
+        patch_collector.stop()
+        patch_config.stop()
+        patch_time.stop()
 
         metrics = {'6379.process.uptime': 95732,
                    '6379.pubsub.channels': 1,
                    '6379.slaves.connected': 2,
+                   '6379.slaves.last_io': 7,
                    '6379.process.connections_received': 18764,
                    '6379.clients.longest_output_list': 0,
                    '6379.process.commands_processed': 19764,
@@ -150,6 +186,7 @@ class TestRedisCollector(CollectorTestCase):
                    '6379.keys.expired': 0,
                    '6379.keys.evicted': 0,
                    '6379.keyspace.hits': 5700,
+                   '6379.memory.used_percent': 82.31,
                    }
 
         self.assertPublishedMany(publish_mock, metrics)
@@ -158,6 +195,167 @@ class TestRedisCollector(CollectorTestCase):
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
 
-################################################################################
+    @run_only_if_redis_is_available
+    @patch.object(Collector, 'publish')
+    def test_hostport_or_instance_config(self, publish_mock):
+
+        testcases = {
+            'default': {
+                'config': {},  # test default settings
+                'calls': [call('6379', 'localhost', 6379, None, None)],
+            },
+            'host_set': {
+                'config': {'host': 'myhost'},
+                'calls': [call('6379', 'myhost', 6379, None, None)],
+            },
+            'port_set': {
+                'config': {'port': 5005},
+                'calls': [call('5005', 'localhost', 5005, None, None)],
+            },
+            'hostport_set': {
+                'config': {'host': 'megahost', 'port': 5005},
+                'calls': [call('5005', 'megahost', 5005, None, None)],
+            },
+            'portauth_set': {
+                'config': {'port': 5005, 'auth': 'pass'},
+                'calls': [call('5005', 'localhost', 5005, None, 'pass')],
+            },
+            'unix_socket_host_set': {
+                'config': {'host': 'unix:/var/run/redis/myhost.sock'},
+                'calls': [call('myhost', 'localhost', 6379,
+                               '/var/run/redis/myhost.sock', None)],
+            },
+            'instance_1_host': {
+                'config': {'instances': ['nick@myhost']},
+                'calls': [call('nick', 'myhost', 6379, None, None)],
+            },
+            'unix_socket_instance_1_host': {
+                'config': {'instances': [
+                    'nick@unix:/var/run/redis/myhost.sock'
+                ]},
+                'calls': [call('nick', 'localhost', 6379,
+                               '/var/run/redis/myhost.sock', None)],
+            },
+            'unix_socket_instance_1_hostauth': {
+                'config': {'instances': [
+                    'nick@unix:/var/run/redis/myhost.sock:/pass'
+                ]},
+                'calls': [call('nick', 'localhost', 6379,
+                               '/var/run/redis/myhost.sock', 'pass')],
+            },
+            'instance_1_port': {
+                'config': {'instances': ['nick@:9191']},
+                'calls': [call('nick', 'localhost', 9191, None, None)],
+            },
+            'instance_1_hostport': {
+                'config': {'instances': ['nick@host1:8765']},
+                'calls': [call('nick', 'host1', 8765, None, None)],
+            },
+            'instance_2': {
+                'config': {'instances': [
+                    'foo@hostX',
+                    'bar@:1000/pass',
+                    'unix:/var/run/redis/myhost.sock:1/pass'
+                ]},
+                'calls': [
+                    call('foo', 'hostX', 6379, None, None),
+                    call('bar', 'localhost', 1000, None, 'pass'),
+                    call('myhost', 'localhost', 6379,
+                         '/var/run/redis/myhost.sock', 'pass'),
+                ],
+            },
+            'old_and_new': {
+                'config': {
+                    'host': 'myhost',
+                    'port': 1234,
+                    'instances': [
+                        'foo@hostX',
+                        'bar@:1000',
+                        'hostonly',
+                        ':1234'
+                    ]
+                },
+                'calls': [
+                    call('foo', 'hostX', 6379, None, None),
+                    call('bar', 'localhost', 1000, None, None),
+                    call('6379', 'hostonly', 6379, None, None),
+                    call('1234', 'localhost', 1234, None, None),
+                ],
+            },
+        }
+
+        for testname, data in testcases.items():
+            config = get_collector_config('RedisCollector', data['config'])
+
+            collector = RedisCollector(config, None)
+
+            mock = Mock(return_value={}, name=testname)
+            patch_c = patch.object(RedisCollector, 'collect_instance', mock)
+
+            patch_c.start()
+            collector.collect()
+            patch_c.stop()
+
+            expected_call_count = len(data['calls'])
+            self.assertEqual(mock.call_count, expected_call_count,
+                             msg='[%s] mock.calls=%d != expected_calls=%d' %
+                             (testname, mock.call_count, expected_call_count))
+            mock.assert_has_calls(data['calls'], any_order=True)
+
+    @run_only_if_redis_is_available
+    @patch.object(Collector, 'publish')
+    def test_key_naming_when_using_instances(self, publish_mock):
+
+        config_data = {
+            'instances': [
+                'nick1@host1:1111',
+                'nick2@:2222',
+                'nick3@host3',
+                'nick4@host4:3333/@password',
+                'bla'
+            ]
+        }
+        get_info_data = {
+            'total_connections_received': 200,
+            'total_commands_processed': 100,
+        }
+        expected_calls = [
+            call('nick1.process.connections_received', 200, precision=0,
+                 metric_type='GAUGE'),
+            call('nick1.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
+            call('nick2.process.connections_received', 200, precision=0,
+                 metric_type='GAUGE'),
+            call('nick2.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
+            call('nick3.process.connections_received', 200, precision=0,
+                 metric_type='GAUGE'),
+            call('nick3.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
+            call('nick4.process.connections_received', 200, precision=0,
+                 metric_type='GAUGE'),
+            call('nick4.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
+            call('6379.process.connections_received', 200, precision=0,
+                 metric_type='GAUGE'),
+            call('6379.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
+        ]
+
+        config = get_collector_config('RedisCollector', config_data)
+        collector = RedisCollector(config, None)
+
+        patch_c = patch.object(RedisCollector, '_get_info',
+                               Mock(return_value=get_info_data))
+
+        patch_c.start()
+        collector.collect()
+        patch_c.stop()
+
+        self.assertEqual(publish_mock.call_count, len(expected_calls))
+        publish_mock.assert_has_calls(expected_calls, any_order=True)
+
+
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

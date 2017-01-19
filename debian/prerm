@@ -16,6 +16,8 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
+# Stop diamond if it's running
+stop diamond || true
 
 case "$1" in
     remove|upgrade|deconfigure)

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 import os
 
@@ -13,10 +13,11 @@ from mock import patch
 from diamond.collector import Collector
 from ksm import KSMCollector
 
-################################################################################
+##########################################################################
 
 
 class TestKSMCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('KSMCollector', {
             'interval': 10,
@@ -24,6 +25,9 @@ class TestKSMCollector(CollectorTestCase):
         })
 
         self.collector = KSMCollector(config, None)
+
+    def test_import(self):
+        self.assertTrue(KSMCollector)
 
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
@@ -46,6 +50,6 @@ class TestKSMCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

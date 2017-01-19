@@ -14,7 +14,6 @@ http://ceph.com/docs/master/dev/perf_counters/
 
 try:
     import json
-    json  # workaround for pyflakes issue #13
 except ImportError:
     import simplejson as json
 
@@ -81,8 +80,8 @@ class CephCollector(diamond.collector.Collector):
         with ceph daemons.
         """
         socket_pattern = os.path.join(self.config['socket_path'],
-                                      (self.config['socket_prefix']
-                                       + '*.' + self.config['socket_ext']))
+                                      (self.config['socket_prefix'] +
+                                       '*.' + self.config['socket_ext']))
         return glob.glob(socket_pattern)
 
     def _get_counter_prefix_from_socket_name(self, name):
@@ -133,8 +132,7 @@ class CephCollector(diamond.collector.Collector):
             stats,
             prefix=counter_prefix,
         ):
-            self.log.debug('%s = %s', stat_name, stat_value)
-            self.publish(stat_name, stat_value)
+            self.publish_gauge(stat_name, stat_value)
 
     def collect(self):
         """

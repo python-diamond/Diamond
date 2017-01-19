@@ -37,54 +37,87 @@ class NginxCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(NginxCollector, self).get_default_config_help()
         config_help.update({
+            'precision': 'Number of decimal places to report to',
             'req_host': 'Hostname',
             'req_port': 'Port',
             'req_path': 'Path',
+            'req_ssl': 'SSL Support',
+            'req_host_header': 'HTTP Host header (required for SSL)',
         })
         return config_help
 
     def get_default_config(self):
         default_config = super(NginxCollector, self).get_default_config()
+        default_config['precision'] = 0
         default_config['req_host'] = 'localhost'
         default_config['req_port'] = 8080
         default_config['req_path'] = '/nginx_status'
+        default_config['req_ssl'] = False
+        default_config['req_host_header'] = None
         default_config['path'] = 'nginx'
         return default_config
 
     def collect(self):
+        # Determine what HTTP scheme to use based on SSL usage or not
+        if str(self.config['req_ssl']).lower() == 'true':
+            scheme = 'https'
+        else:
+            scheme = 'http'
+
+        # Add host headers if present (Required for SSL cert validation)
+        if self.config['req_host_header'] is not None:
+            headers = {'Host': str(self.config['req_host_header'])}
+        else:
+            headers = {}
+        url = '%s://%s:%i%s' % (scheme,
+                                self.config['req_host'],
+                                int(self.config['req_port']),
+                                self.config['req_path'])
         activeConnectionsRE = re.compile(r'Active connections: (?P<conn>\d+)')
-        totalConnectionsRE = re.compile('^\s+(?P<conn>\d+)\s+'
-                                        + '(?P<acc>\d+)\s+(?P<req>\d+)')
-        connectionStatusRE = re.compile('Reading: (?P<reading>\d+) '
-                                        + 'Writing: (?P<writing>\d+) '
-                                        + 'Waiting: (?P<waiting>\d+)')
-        req = urllib2.Request('http://%s:%i%s' % (self.config['req_host'],
-                                                  int(self.config['req_port']),
-                                                  self.config['req_path']))
+        totalConnectionsRE = re.compile('^\s+(?P<conn>\d+)\s+' +
+                                        '(?P<acc>\d+)\s+(?P<req>\d+)')
+        connectionStatusRE = re.compile('Reading: (?P<reading>\d+) ' +
+                                        'Writing: (?P<writing>\d+) ' +
+                                        'Waiting: (?P<waiting>\d+)')
+        req = urllib2.Request(url=url, headers=headers)
         try:
             handle = urllib2.urlopen(req)
+            precision = int(self.config['precision'])
             for l in handle.readlines():
                 l = l.rstrip('\r\n')
                 if activeConnectionsRE.match(l):
-                    self.publish(
+                    self.publish_gauge(
                         'active_connections',
-                        int(activeConnectionsRE.match(l).group('conn')))
+                        int(activeConnectionsRE.match(l).group('conn')),
+                        precision)
                 elif totalConnectionsRE.match(l):
                     m = totalConnectionsRE.match(l)
-                    req_per_conn = float(m.group('req')) / float(m.group('acc'))
-                    self.publish('conn_accepted', int(m.group('conn')))
-                    self.publish('conn_handled', int(m.group('acc')))
-                    self.publish('req_handled', int(m.group('req')))
-                    self.publish('req_per_conn', float(req_per_conn))
+                    req_per_conn = float(m.group('req')) / \
+                        float(m.group('acc'))
+                    self.publish_counter('conn_accepted',
+                                         int(m.group('conn')),
+                                         precision)
+                    self.publish_counter('conn_handled',
+                                         int(m.group('acc')),
+                                         precision)
+                    self.publish_counter('req_handled',
+                                         int(m.group('req')),
+                                         precision)
+                    self.publish_gauge('req_per_conn',
+                                       float(req_per_conn),
+                                       precision)
                 elif connectionStatusRE.match(l):
                     m = connectionStatusRE.match(l)
-                    self.publish('act_reads', int(m.group('reading')))
-                    self.publish('act_writes', int(m.group('writing')))
-                    self.publish('act_waits', int(m.group('waiting')))
+                    self.publish_gauge('act_reads',
+                                       int(m.group('reading')),
+                                       precision)
+                    self.publish_gauge('act_writes',
+                                       int(m.group('writing')),
+                                       precision)
+                    self.publish_gauge('act_waits',
+                                       int(m.group('waiting')),
+                                       precision)
         except IOError, e:
-            self.log.error("Unable to open http://%s:%i:%s",
-                           self.config['req_host'],
-                           int(self.config['req_port']),
-                           self.config['req_path'])
+            self.log.error("Unable to open %s" % url)
         except Exception, e:
             self.log.error("Unknown error opening url: %s", e)

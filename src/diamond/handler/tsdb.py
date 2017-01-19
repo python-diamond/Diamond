@@ -60,9 +60,44 @@ class TSDBHandler(Handler):
         self.host = self.config['host']
         self.port = int(self.config['port'])
         self.timeout = int(self.config['timeout'])
+        self.metric_format = str(self.config['format'])
+        self.tags = str(self.config['tags'])
 
         # Connect
         self._connect()
+
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(TSDBHandler, self).get_default_config_help()
+
+        config.update({
+            'host': '',
+            'port': '',
+            'timeout': '',
+            'format': '',
+            'tags': '',
+        })
+
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(TSDBHandler, self).get_default_config()
+
+        config.update({
+            'host': '',
+            'port': 1234,
+            'timeout': 5,
+            'format': '{Collector}.{Metric} {timestamp} {value} hostname={host}'
+                      '{tags}',
+            'tags': '',
+        })
+
+        return config
 
     def __del__(self):
         """
@@ -74,12 +109,18 @@ class TSDBHandler(Handler):
         """
         Process a metric by sending it to TSDB
         """
-        # Acquire lock
-        self.lock.acquire()
+
+        metric_str = self.metric_format.format(
+            Collector=metric.getCollectorPath(),
+            Path=metric.path,
+            Metric=metric.getMetricPath(),
+            host=metric.host,
+            timestamp=metric.timestamp,
+            value=metric.value,
+            tags=self.tags
+        )
         # Just send the data as a string
-        self._send("put " + str(metric))
-        # Release lock
-        self.lock.release()
+        self._send("put " + str(metric_str) + "\n")
 
     def _send(self, data):
         """

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Server>
+  <Domain name="kafka">
+    <MBean classname="kafka.server.BrokerTopicStat" description="Information on the management interface of the MBean" objectname="kafka:type=kafka.BrokerAllTopicStat"/>
+    <MBean classname="kafka.server.BrokerTopicStat" description="Information on the management interface of the MBean" objectname="kafka:type=kafka.BrokerTopicStat.mytopic"/>
+    <MBean classname="kafka.utils.Log4jController" description="Information on the management interface of the MBean" objectname="kafka:type=kafka.Log4jController"/>
+    <MBean classname="kafka.message.LogFlushStats" description="Information on the management interface of the MBean" objectname="kafka:type=kafka.LogFlushStats"/>
+    <MBean classname="kafka.network.SocketServerStats" description="Information on the management interface of the MBean" objectname="kafka:type=kafka.SocketServerStats"/>
+    <MBean classname="kafka.log.LogStats" description="Information on the management interface of the MBean" objectname="kafka:type=kafka.logs.mytopic-0"/>
+    <MBean classname="kafka.log.LogStats" description="Information on the management interface of the MBean" objectname="kafka:type=kafka.logs.mytopic-1"/>
+  </Domain>
+</Server>

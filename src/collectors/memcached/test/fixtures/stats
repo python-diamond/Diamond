@@ -36,6 +36,9 @@ STAT accepting_conns 1
 STAT listen_disabled_num 0
 STAT threads 4
 STAT conn_yields 0
+STAT replication MASTER
+STAT repcached_version 2.3.1
+STAT repcached_qi_free 0
 STAT hash_power_level 16
 STAT hash_bytes 524288
 STAT hash_is_expanding 0

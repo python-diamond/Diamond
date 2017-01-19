@@ -52,9 +52,9 @@ class InterruptCollector(diamond.collector.Collector):
         if not os.access(self.PROC, os.R_OK):
             return False
 
-        #Open PROC file
+        # Open PROC file
         file = open(self.PROC, 'r')
-        #Get data
+        # Get data
         cpuCount = None
         for line in file:
             if not cpuCount:
@@ -74,16 +74,15 @@ class InterruptCollector(diamond.collector.Collector):
                     if len(data[0]) == cpuCount + 1:
                         metric_name = data[0] + '.'
                     elif len(data[0]) == 3:
-                        metric_name = (((data[-2] + ' '
-                                         + data[-1]).replace(' ', '_')) + '.')
+                        metric_name = (
+                            ((data[-2] + ' ' +
+                              data[-1]).replace(' ', '_')) + '.')
                     else:
-                        metric_name = (((data[-2]).replace(' ', '_'))
-                                       + '.'
-                                       + ((data[-1]).replace(', ',
-                                                             '-'
-                                                             ).replace(' ',
-                                                                       '_'))
-                                       + '.' + data[0] + '.')
+                        metric_name = (
+                            ((data[-2]).replace(' ', '_')) +
+                            '.' +
+                            ((data[-1]).replace(', ', '-').replace(' ', '_')) +
+                            '.' + data[0] + '.')
                     total = 0
                     for index, value in enumerate(data):
                         if index == 0 or index >= cpuCount + 1:
@@ -99,5 +98,5 @@ class InterruptCollector(diamond.collector.Collector):
                     metric_name_node = metric_name + 'total'
                     self.publish(metric_name_node, total)
 
-        #Close file
+        # Close file
         file.close()

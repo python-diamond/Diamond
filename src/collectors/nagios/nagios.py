@@ -12,6 +12,7 @@ Shells out to get nagios statistics, which may or may not require sudo access
 import diamond.collector
 import subprocess
 import os
+from diamond.collector import str_to_bool
 
 
 class NagiosStatsCollector(diamond.collector.Collector):
@@ -68,16 +69,16 @@ class NagiosStatsCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        if (not os.access(self.config['bin'], os.X_OK)
-            or (self.config['use_sudo']
-                and not os.access(self.config['sudo_cmd'], os.X_OK))):
+        if ((not os.access(self.config['bin'], os.X_OK) or
+             (str_to_bool(self.config['use_sudo']) and
+              not os.access(self.config['sudo_cmd'], os.X_OK)))):
             return
 
         command = [self.config['bin'],
                    '--data', ",".join(self.config['vars']),
                    '--mrtg']
 
-        if self.config['use_sudo'] == 'True':
+        if str_to_bool(self.config['use_sudo']):
             command.insert(0, self.config['sudo_cmd'])
 
         p = subprocess.Popen(command,

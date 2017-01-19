@@ -28,16 +28,20 @@ path = memory.MemFree
 min = 66020000
 """
 
-__author__ = 'Bruno Clermont'
-__email__ = 'bruno.clermont@gmail.com'
-
 import logging
 import re
 
-import raven.handlers.logging
 from Handler import Handler
 from diamond.collector import get_hostname
 from configobj import Section
+
+try:
+    import raven.handlers.logging
+except ImportError:
+    raven = None
+
+__author__ = 'Bruno Clermont'
+__email__ = 'bruno.clermont@gmail.com'
 
 
 class InvalidRule(ValueError):
@@ -62,6 +66,12 @@ class BaseResult(object):
         """
         self.value = value
         self.threshold = threshold
+
+        if not raven:
+            self.log.error('raven.handlers.logging import failed. '
+                           'Handler disabled')
+            self.enabled = False
+            return
 
     @property
     def verbose_message(self):
@@ -227,6 +237,8 @@ class SentryHandler(Handler):
         @type config: configobj.ConfigObj
         """
         Handler.__init__(self, config)
+        if not raven:
+            return
         # init sentry/raven
         self.sentry_log_handler = raven.handlers.logging.SentryHandler(
             self.config['dsn'])
@@ -237,6 +249,30 @@ class SentryHandler(Handler):
         self.hostname = get_hostname(self.config)
         if not len(self.rules):
             self.log.warning("No rules, this graphite handler is unused")
+
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(SentryHandler, self).get_default_config_help()
+
+        config.update({
+            'dsn': '',
+        })
+
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(SentryHandler, self).get_default_config()
+
+        config.update({
+            'dsn': '',
+        })
+
+        return config
 
     def compile_rules(self):
         """

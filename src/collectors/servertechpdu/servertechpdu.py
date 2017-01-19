@@ -10,6 +10,14 @@ http://www.servertech.com/
 
 import time
 import re
+import os
+import sys
+
+# Fix Path for locating the SNMPCollector
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                             '../',
+                                             'snmp',
+                                             )))
 
 from diamond.metric import Metric
 from snmp import SNMPCollector as parent_SNMPCollector
@@ -76,14 +84,16 @@ class ServerTechPDUCollector(parent_SNMPCollector):
                 # Get Metric Value
                 metricValue = float(gaugeValue)
                 # Get Metric Path
-                metricPath = '.'.join(['devices', device, 'system', metricName])
+                metricPath = '.'.join(
+                    ['devices', device, 'system', metricName])
                 # Create Metric
                 metric = Metric(metricPath, metricValue, timestamp, 2)
                 # Publish Metric
                 self.publish_metric(metric)
 
         # Collect PDU input feed names
-        inputFeedNames = self.walk(self.PDU_INFEED_NAMES, host, port, community)
+        inputFeedNames = self.walk(
+            self.PDU_INFEED_NAMES, host, port, community)
         for o, inputFeedName in inputFeedNames.items():
             # Extract input feed name
             inputFeed = ".".join(o.split(".")[-2:])

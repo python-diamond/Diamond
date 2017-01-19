@@ -1,12 +1,16 @@
 # coding=utf-8
 
+import logging
+import multiprocessing
 import os
+import signal
 import sys
 import time
-import logging
-import traceback
-import configobj
-import inspect
+
+try:
+    from setproctitle import getproctitle, setproctitle
+except ImportError:
+    setproctitle = None
 
 # Path Fix
 sys.path.append(
@@ -14,12 +18,21 @@ sys.path.append(
         os.path.join(
             os.path.dirname(__file__), "../")))
 
-import diamond
+from diamond.utils.classes import initialize_collector
+from diamond.utils.classes import load_collectors
+from diamond.utils.classes import load_dynamic_class
+from diamond.utils.classes import load_handlers
+from diamond.utils.classes import load_include_path
 
-from diamond.collector import Collector
+from diamond.utils.config import load_config
+
+from diamond.utils.scheduler import collector_process
+from diamond.utils.scheduler import handler_process
+
 from diamond.handler.Handler import Handler
-from diamond.scheduler import ThreadedScheduler
-from diamond.util import load_class_from_name
+
+from diamond.utils.signals import signal_to_exception
+from diamond.utils.signals import SIGHUPException
 
 
 class Server(object):
@@ -27,394 +40,181 @@ class Server(object):
     Server class loads and starts Handlers and Collectors
     """
 
-    def __init__(self, config):
+    def __init__(self, configfile):
         # Initialize Logging
         self.log = logging.getLogger('diamond')
         # Initialize Members
-        self.config = config
-        self.running = False
+        self.configfile = configfile
+        self.config = None
         self.handlers = []
+        self.handler_queue = []
         self.modules = {}
-        self.tasks = {}
-        # Initialize Scheduler
-        self.scheduler = ThreadedScheduler()
+        self.metric_queue = None
 
-    def load_config(self):
-        """
-        Load the full config
-        """
-
-        configfile = os.path.abspath(self.config['configfile'])
-        config = configobj.ConfigObj(configfile)
-        config['configfile'] = self.config['configfile']
-
-        # Merge in handler config files into the main config
-        if 'handlers_config_path' in config['server']:
-            files = os.listdir(config['server']['handlers_config_path'])
-            for filename in files:
-                configname = os.path.basename(filename)
-                handlername = configname.split('.')[0]
-                if handlername not in self.config['handlers']:
-                    self.config['handlers'][handlername] = configobj.ConfigObj()
-
-                configfile = os.path.join(
-                    config['server']['handlers_config_path'],
-                    configname)
-                self.config['handlers'][handlername].merge(
-                    configobj.ConfigObj(configfile))
-
-        self.config = config
-
-    def load_handler(self, fqcn):
-        """
-        Load Handler class named fqcn
-        """
-        # Load class
-        cls = load_class_from_name(fqcn)
-        # Check if cls is subclass of Handler
-        if cls == Handler or not issubclass(cls, Handler):
-            raise TypeError("%s is not a valid Handler" % fqcn)
-        # Log
-        self.log.debug("Loaded Handler: %s", fqcn)
-        return cls
-
-    def load_handlers(self):
-        """
-        Load handlers
-        """
-        if type(self.config['server']['handlers']) == str:
-            handlers = [self.config['server']['handlers']]
-            self.config['server']['handlers'] = handlers
-
-        for h in self.config['server']['handlers']:
-            try:
-                # Load Handler Class
-                cls = self.load_handler(h)
-
-                # Initialize Handler config
-                handler_config = configobj.ConfigObj()
-                # Merge default Handler default config
-                handler_config.merge(self.config['handlers']['default'])
-                # Check if Handler config exists
-                if cls.__name__ in self.config['handlers']:
-                    # Merge Handler config section
-                    handler_config.merge(self.config['handlers'][cls.__name__])
-
-                # Initialize Handler class
-                self.handlers.append(cls(handler_config))
-
-            except ImportError:
-                # Log Error
-                self.log.debug("Failed to load handler %s. %s", h,
-                               traceback.format_exc())
-                continue
-
-    def load_collector(self, fqcn):
-        """
-        Load Collector class named fqcn
-        """
-        # Load class
-        cls = load_class_from_name(fqcn)
-        # Check if cls is subclass of Collector
-        if cls == Collector or not issubclass(cls, Collector):
-            raise TypeError("%s is not a valid Collector" % fqcn)
-        # Log
-        self.log.debug("Loaded Collector: %s", fqcn)
-        return cls
-
-    def load_include_path(self, path):
-        """
-        Scan for and add paths to the include path
-        """
-        # Add path to the system path
-        sys.path.append(path)
-        # Load all the files in path
-        for f in os.listdir(path):
-            # Are we a directory? If so process down the tree
-            fpath = os.path.join(path, f)
-            if os.path.isdir(fpath):
-                self.load_include_path(fpath)
-
-    def load_collectors(self, path, filter=None):
-        """
-        Scan for collectors to load from path
-        """
-        # Initialize return value
-        collectors = {}
-
-        # Get a list of files in the directory, if the directory exists
-        if not os.path.exists(path):
-            raise OSError("Directory does not exist: %s" % path)
-
-        if path.endswith('tests') or path.endswith('fixtures'):
-            return collectors
-
-        # Log
-        self.log.debug("Loading Collectors from: %s", path)
-
-        # Load all the files in path
-        for f in os.listdir(path):
-
-            # Are we a directory? If so process down the tree
-            fpath = os.path.join(path, f)
-            if os.path.isdir(fpath):
-                subcollectors = self.load_collectors(fpath)
-                for key in subcollectors:
-                    collectors[key] = subcollectors[key]
-
-            # Ignore anything that isn't a .py file
-            elif (os.path.isfile(fpath)
-                  and len(f) > 3
-                  and f[-3:] == '.py'
-                  and f[0:4] != 'test'):
-
-                # Check filter
-                if filter and os.path.join(path, f) != filter:
-                    continue
-
-                modname = f[:-3]
-
-                # Stat module file to get mtime
-                st = os.stat(os.path.join(path, f))
-                mtime = st.st_mtime
-                # Check if module has been loaded before
-                if modname in self.modules:
-                    # Check if file mtime is newer then the last loaded verison
-                    if mtime <= self.modules[modname]:
-                        # Module hasn't changed
-                        # Log
-                        self.log.debug("Found %s, but it hasn't changed.",
-                                       modname)
-                        continue
-
-                try:
-                    # Import the module
-                    mod = __import__(modname, globals(), locals(), ['*'])
-                except ImportError:
-                    # Log error
-                    self.log.error("Failed to import module: %s. %s", modname,
-                                   traceback.format_exc())
-                    continue
-
-                # Update module mtime
-                self.modules[modname] = mtime
-                # Log
-                self.log.debug("Loaded Module: %s", modname)
-
-                # Find all classes defined in the module
-                for attrname in dir(mod):
-                    attr = getattr(mod, attrname)
-                    # Only attempt to load classes that are infact classes
-                    # are Collectors but are not the base Collector class
-                    if (inspect.isclass(attr)
-                            and issubclass(attr, Collector)
-                            and attr != Collector):
-                        if attrname.startswith('parent_'):
-                            continue
-                        # Get class name
-                        fqcn = '.'.join([modname, attrname])
-                        try:
-                            # Load Collector class
-                            cls = self.load_collector(fqcn)
-                            # Add Collector class
-                            collectors[cls.__name__] = cls
-                        except Exception:
-                            # Log error
-                            self.log.error("Failed to load Collector: %s. %s",
-                                           fqcn, traceback.format_exc())
-                            continue
-
-        # Return Collector classes
-        return collectors
-
-    def init_collector(self, cls):
-        """
-        Initialize collector
-        """
-        collector = None
-        try:
-            # Initialize Collector
-            collector = cls(self.config, self.handlers)
-            # Log
-            self.log.debug("Initialized Collector: %s", cls.__name__)
-        except Exception:
-            # Log error
-            self.log.error("Failed to initialize Collector: %s. %s",
-                           cls.__name__, traceback.format_exc())
-
-        # Return collector
-        return collector
-
-    def schedule_collector(self, c, interval_task=True):
-        """
-        Schedule collector
-        """
-        # Check collector is for realz
-        if c is None:
-            self.log.warn("Skipped loading invalid Collector: %s",
-                          c.__class__.__name__)
-            return
-
-        if c.config['enabled'] != 'True':
-            self.log.warn("Skipped loading disabled Collector: %s",
-                          c.__class__.__name__)
-            return
-
-        # Get collector schedule
-        for name, schedule in c.get_schedule().items():
-            # Get scheduler args
-            func, args, splay, interval = schedule
-
-            # Check if Collecter with same name has already been scheduled
-            if name in self.tasks:
-                self.scheduler.cancel(self.tasks[name])
-                # Log
-                self.log.debug("Canceled task: %s", name)
-
-            method = diamond.scheduler.method.sequential
-
-            if 'method' in c.config:
-                if c.config['method'] == 'Threaded':
-                    method = diamond.scheduler.method.threaded
-                elif c.config['method'] == 'Forked':
-                    method = diamond.scheduler.method.forked
-
-            # Schedule Collector
-            if interval_task:
-                task = self.scheduler.add_interval_task(func,
-                                                        name,
-                                                        splay,
-                                                        interval,
-                                                        method,
-                                                        args,
-                                                        None,
-                                                        True)
-            else:
-                task = self.scheduler.add_single_task(func,
-                                                      name,
-                                                      splay,
-                                                      method,
-                                                      args,
-                                                      None)
-
-            # Log
-            self.log.debug("Scheduled task: %s", name)
-            # Add task to list
-            self.tasks[name] = task
+        # We do this weird process title swap around to get the sync manager
+        # title correct for ps
+        if setproctitle:
+            oldproctitle = getproctitle()
+            setproctitle('%s - SyncManager' % getproctitle())
+        self.manager = multiprocessing.Manager()
+        if setproctitle:
+            setproctitle(oldproctitle)
 
     def run(self):
         """
         Load handler and collector classes and then start collectors
         """
 
-        # Set Running Flag
-        self.running = True
+        #######################################################################
+        # Config
+        #######################################################################
+        self.config = load_config(self.configfile)
 
-        # Load handlers
-        self.load_handlers()
+        collectors = load_collectors(self.config['server']['collectors_path'])
+        metric_queue_size = int(self.config['server'].get('metric_queue_size',
+                                                          16384))
+        self.metric_queue = self.manager.Queue(maxsize=metric_queue_size)
+        self.log.debug('metric_queue_size: %d', metric_queue_size)
 
-        # Load config
-        self.load_config()
+        #######################################################################
+        # Handlers
+        #
+        # TODO: Eventually move each handler to it's own process space?
+        #######################################################################
 
-        # Load collectors
-        collectors_path = self.config['server']['collectors_path']
-        self.load_include_path(collectors_path)
-        collectors = self.load_collectors(collectors_path)
+        if 'handlers_path' in self.config['server']:
+            handlers_path = self.config['server']['handlers_path']
 
-        # Setup Collectors
-        for cls in collectors.values():
-            # Initialize Collector
-            c = self.init_collector(cls)
-            # Schedule Collector
-            self.schedule_collector(c)
+            # Make an list if not one
+            if isinstance(handlers_path, basestring):
+                handlers_path = handlers_path.split(',')
+                handlers_path = map(str.strip, handlers_path)
+                self.config['server']['handlers_path'] = handlers_path
 
-        # Start main loop
-        self.mainloop()
+            load_include_path(handlers_path)
 
-    def run_one(self, file):
-        """
-        Run given collector once and then exit
-        """
-        # Set Running Flag
-        self.running = True
+        if 'handlers' not in self.config['server']:
+            self.log.critical('handlers missing from server section in config')
+            sys.exit(1)
 
-        # Load handlers
-        self.load_handlers()
+        handlers = self.config['server'].get('handlers')
+        if isinstance(handlers, basestring):
+            handlers = [handlers]
 
-        # Overrides collector config dir
-        collector_config_path = os.path.abspath(os.path.dirname(file))
-        self.config['server']['collectors_config_path'] = collector_config_path
+        # Prevent the Queue Handler from being a normal handler
+        if 'diamond.handler.queue.QueueHandler' in handlers:
+            handlers.remove('diamond.handler.queue.QueueHandler')
 
-        # Load config
-        self.load_config()
+        self.handlers = load_handlers(self.config, handlers)
 
-        # Load collectors
-        collectors = self.load_collectors(os.path.dirname(file), file)
+        QueueHandler = load_dynamic_class(
+            'diamond.handler.queue.QueueHandler',
+            Handler
+        )
 
-        # Setup Collectors
-        for cls in collectors.values():
-            # Initialize Collector
-            c = self.init_collector(cls)
+        self.handler_queue = QueueHandler(
+            config=self.config, queue=self.metric_queue, log=self.log)
 
-            # Schedule collector
-            self.schedule_collector(c, False)
+        process = multiprocessing.Process(
+            name="Handlers",
+            target=handler_process,
+            args=(self.handlers, self.metric_queue, self.log),
+        )
 
-        # Start main loop
-        self.mainloop(False)
+        process.daemon = True
+        process.start()
 
-    def mainloop(self, reload=True):
+        #######################################################################
+        # Signals
+        #######################################################################
 
-        # Start scheduler
-        self.scheduler.start()
+        if hasattr(signal, 'SIGHUP'):
+            signal.signal(signal.SIGHUP, signal_to_exception)
 
-        # Log
-        self.log.info('Started task scheduler.')
+        #######################################################################
 
-        # Initialize reload timer
-        time_since_reload = 0
+        while True:
+            try:
+                active_children = multiprocessing.active_children()
+                running_processes = []
+                for process in active_children:
+                    running_processes.append(process.name)
+                running_processes = set(running_processes)
 
-        # Main Loop
-        while self.running:
-            time.sleep(1)
-            time_since_reload += 1
+                ##############################################################
+                # Collectors
+                ##############################################################
 
-            # Check if its time to reload collectors
-            if (reload
-                    and time_since_reload
-                    > int(self.config['server']['collectors_reload_interval'])):
-                self.log.debug("Reloading config.")
-                self.load_config()
-                # Log
-                self.log.debug("Reloading collectors.")
-                # Load collectors
-                collectors_path = self.config['server']['collectors_path']
-                collectors = self.load_collectors(collectors_path)
-                # Setup any Collectors that were loaded
-                for cls in collectors.values():
-                    # Initialize Collector
-                    c = self.init_collector(cls)
-                    # Schedule Collector
-                    self.schedule_collector(c)
+                running_collectors = []
+                for collector, config in self.config['collectors'].iteritems():
+                    if config.get('enabled', False) is not True:
+                        continue
+                    running_collectors.append(collector)
+                running_collectors = set(running_collectors)
 
-                # Reset reload timer
-                time_since_reload = 0
+                # Collectors that are running but shouldn't be
+                for process_name in running_processes - running_collectors:
+                    if 'Collector' not in process_name:
+                        continue
+                    for process in active_children:
+                        if process.name == process_name:
+                            process.terminate()
 
-            # Is the queue empty and we won't attempt to reload it? Exit
-            if not reload and len(self.scheduler.sched._queue) == 0:
-                self.running = False
+                collector_classes = dict(
+                    (cls.__name__.split('.')[-1], cls)
+                    for cls in collectors.values()
+                )
 
-        # Log
-        self.log.debug('Stopping task scheduler.')
-        # Stop scheduler
-        self.scheduler.stop()
-        # Log
-        self.log.info('Stopped task scheduler.')
-        # Log
-        self.log.debug("Exiting.")
+                load_delay = self.config['server'].get('collectors_load_delay',
+                                                       1.0)
+                for process_name in running_collectors - running_processes:
+                    # To handle running multiple collectors concurrently, we
+                    # split on white space and use the first word as the
+                    # collector name to spin
+                    collector_name = process_name.split()[0]
 
-    def stop(self):
-        """
-        Close all connections and terminate threads.
-        """
-        # Set Running Flag
-        self.running = False
+                    if 'Collector' not in collector_name:
+                        continue
+
+                    if collector_name not in collector_classes:
+                        self.log.error('Can not find collector %s',
+                                       collector_name)
+                        continue
+
+                    collector = initialize_collector(
+                        collector_classes[collector_name],
+                        name=process_name,
+                        configfile=self.configfile,
+                        handlers=[self.handler_queue])
+
+                    if collector is None:
+                        self.log.error('Failed to load collector %s',
+                                       process_name)
+                        continue
+
+                    # Splay the loads
+                    time.sleep(float(load_delay))
+
+                    process = multiprocessing.Process(
+                        name=process_name,
+                        target=collector_process,
+                        args=(collector, self.metric_queue, self.log)
+                    )
+                    process.daemon = True
+                    process.start()
+
+                ##############################################################
+
+                time.sleep(1)
+
+            except SIGHUPException:
+                # ignore further SIGHUPs for now
+                original_sighup_handler = signal.getsignal(signal.SIGHUP)
+                signal.signal(signal.SIGHUP, signal.SIG_IGN)
+
+                self.log.info('Reloading state due to HUP')
+                self.config = load_config(self.configfile)
+                collectors = load_collectors(
+                    self.config['server']['collectors_path'])
+                # restore SIGHUP handler
+                signal.signal(signal.SIGHUP, original_sighup_handler)

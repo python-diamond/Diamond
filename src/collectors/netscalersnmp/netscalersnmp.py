@@ -14,8 +14,11 @@ import time
 import struct
 import re
 
-# Fix Path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
+# Fix Path for locating the SNMPCollector
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                             '../',
+                                             'snmp',
+                                             )))
 
 from diamond.metric import Metric
 from snmp import SNMPCollector as parent_SNMPCollector
@@ -128,10 +131,10 @@ class NetscalerSNMPCollector(parent_SNMPCollector):
             'host': 'netscaler dns address',
             'port': 'Netscaler port to collect snmp data',
             'community': 'SNMP community',
-            'exclude_service_type': "list of service types to exclude"
-            + " (see MIB EntityProtocolType)",
-            'exclude_vserver_type': "list of vserver types to exclude"
-            + " (see MIB EntityProtocolType)"
+            'exclude_service_type': "list of service types to exclude" +
+                                    " (see MIB EntityProtocolType)",
+            'exclude_vserver_type': "list of vserver types to exclude" +
+                                    " (see MIB EntityProtocolType)"
         })
         return config_help
 

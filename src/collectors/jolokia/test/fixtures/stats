@@ -1,0 +1,54 @@
+{
+    "timestamp": 1406058643,
+    "status": 200,
+    "request": {
+        "mbean": "java.lang:*",
+        "type": "read"
+    },
+    "value": {
+        "java.lang:name=(ParNew):,type=GarbageCollector": {
+            "Name": "(ParNew)",
+            "LastGcInfo": {
+                "startTime": 14259063,
+                "id": 219,
+                "duration": 2,
+                "memoryUsageBeforeGc": {
+                    "Par Eden Space": {
+                        "max": 25165824,
+                        "committed": 25165824,
+                        "init": 25165824,
+                        "used": 25165824
+                    },
+                    "CMS Old Gen": {
+                        "max": 73400320,
+                        "committed": 73400320,
+                        "init": 73400320,
+                        "used": 5146840
+                    },
+                    "CMS Perm Gen": {
+                        "max": 85983232,
+                        "committed": 23920640,
+                        "init": 21757952,
+                        "used": 23796992
+                    },
+                    "Code Cache": {
+                        "max": 50331648,
+                        "committed": 2686976,
+                        "init": 2555904,
+                        "used": 2600768
+                    },
+                    "Par Survivor Space": {
+                        "max": 3145728,
+                        "committed": 3145728,
+                        "init": 3145728,
+                        "used": 414088
+                    }
+                },
+                "CollectionCount": 219,
+                "MemoryPoolNames": ["Par Eden Space", "Par Survivor Space"],
+                "Valid": true,
+                "CollectionTime": 497
+            }
+        }
+    }
+}

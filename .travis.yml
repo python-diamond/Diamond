@@ -1,15 +1,46 @@
+# http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
+sudo: false
+
 language: python
 python:
+#  - "2.5"
   - "2.6"
   - "2.7"
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install -r .travis.requirements.txt --use-mirrors
+
+cache:
+  directories:
+    - $HOME/.cache/pip
+
+# command to install dependencies, e.g. pip install -r requirements.txt
+install:
+    - pip install -r .travis.requirements.txt
+    - pip install pep8==1.5.7
+    - pip install coveralls
+    - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install unittest2; fi
+
 # command to run tests, e.g. python setup.py test
-script:  python test.py
+script:
+    - coverage run --source=diamond test.py
+    - pep8 --config=.pep8 src bin/diamond bin/diamond-setup build_doc.py setup.py test.py
+
+after_success:
+    coveralls
 
 notifications:
   email:
     recipients:
         - kormoc@gmail.com
+        - gaurav@gauravjain.org
     on_success: change
     on_failure: always
+    on_start: never
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/89213940e8fa57ad256c
+    on_success: change
+    on_failure: always
+    on_start: never
+
+addons:
+    apt_packages:
+    - libsensors4

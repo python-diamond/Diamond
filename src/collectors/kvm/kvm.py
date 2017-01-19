@@ -35,14 +35,14 @@ class KVMCollector(diamond.collector.Collector):
 
     def collect(self):
         if not os.path.isdir(self.PROC):
-            self.log.error('/sys/kernel/debug/kvm is missing. Did you "mount -t'
-                           + ' debugfs debugfs /sys/kernel/debug"?')
+            self.log.error('/sys/kernel/debug/kvm is missing. Did you' +
+                           ' "mount -t debugfs debugfs /sys/kernel/debug"?')
             return {}
 
-        for file in os.listdir(self.PROC):
-            filepath = os.path.abspath(os.path.join(self.PROC, file))
+        for filename in os.listdir(self.PROC):
+            filepath = os.path.abspath(os.path.join(self.PROC, filename))
             fh = open(filepath, 'r')
-            metric_value = self.derivative(file,
+            metric_value = self.derivative(filename,
                                            float(fh.readline()),
                                            4294967295)
-            self.publish(file, metric_value)
+            self.publish(filename, metric_value)

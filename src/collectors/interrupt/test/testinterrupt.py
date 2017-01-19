@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -10,23 +10,26 @@ from mock import patch
 
 try:
     from cStringIO import StringIO
-    StringIO  # workaround for pyflakes issue #13
 except ImportError:
     from StringIO import StringIO
 
 from diamond.collector import Collector
 from interrupt import InterruptCollector
 
-################################################################################
+##########################################################################
 
 
 class TestInterruptCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('InterruptCollector', {
             'interval': 1
         })
 
         self.collector = InterruptCollector(config, None)
+
+    def test_import(self):
+        self.assertTrue(InterruptCollector)
 
     @patch('__builtin__.open')
     @patch('os.access', Mock(return_value=True))
@@ -107,6 +110,6 @@ class TestInterruptCollector(CollectorTestCase):
             'LOC.total': 557993.000000,
         })
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

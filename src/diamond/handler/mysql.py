@@ -4,7 +4,7 @@
 Insert the collected values into a mysql table
 """
 
-from handler import Handler
+from Handler import Handler
 import MySQLdb
 
 
@@ -35,6 +35,28 @@ class MySQLHandler(Handler):
         # Connect
         self._connect()
 
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(MySQLHandler, self).get_default_config_help()
+
+        config.update({
+        })
+
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(MySQLHandler, self).get_default_config()
+
+        config.update({
+        })
+
+        return config
+
     def __del__(self):
         """
         Destroy instance of the MySQLHandler class
@@ -61,10 +83,6 @@ class MySQLHandler(Handler):
                            (data[0], data[2], data[1]))
             cursor.close()
             self.conn.commit()
-            # Insert data
-            pass
-            #self.socket.sendall(data)
-            # Done
         except BaseException, e:
             # Log Error
             self.log.error("MySQLHandler: Failed sending data. %s.", e)

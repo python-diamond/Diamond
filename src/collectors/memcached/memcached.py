@@ -3,6 +3,8 @@
 """
 Collect memcached stats
 
+
+
 #### Dependencies
 
  * subprocess
@@ -16,6 +18,11 @@ MemcachedCollector.conf
     hosts = localhost:11211, app-1@localhost:11212, app-2@localhost:11213, etc
 ```
 
+TO use a unix socket, set a host string like this
+
+```
+    hosts = /path/to/blah.sock, app-1@/path/to/bleh.sock,
+```
 """
 
 import diamond.collector
@@ -24,15 +31,30 @@ import re
 
 
 class MemcachedCollector(diamond.collector.Collector):
+    GAUGES = [
+        'bytes',
+        'connection_structures',
+        'curr_connections',
+        'curr_items',
+        'threads',
+        'reserved_fds',
+        'limit_maxbytes',
+        'hash_power_level',
+        'hash_bytes',
+        'hash_is_expanding',
+        'uptime'
+    ]
 
     def get_default_config_help(self):
         config_help = super(MemcachedCollector, self).get_default_config_help()
         config_help.update({
-            'publish': "Which rows of 'status' you would like to publish."
-            + " Telnet host port' and type stats and hit enter to see the list"
-            + " of possibilities. Leave unset to publish all.",
-            'hosts': "List of hosts, and ports to collect. Set an alias by "
-            + " prefixing the host:port with alias@",
+            'publish':
+                "Which rows of 'status' you would like to publish." +
+                " Telnet host port' and type stats and hit enter to see the" +
+                " list of possibilities. Leave unset to publish all.",
+            'hosts':
+                "List of hosts, and ports to collect. Set an alias by " +
+                " prefixing the host:port with alias@",
         })
         return config_help
 
@@ -48,7 +70,7 @@ class MemcachedCollector(diamond.collector.Collector):
             # 'telnet host port' and type stats and hit enter to see the list of
             # possibilities.
             # Leave unset to publish all
-            #'publish': ''
+            # 'publish': ''
 
             # Connection settings
             'hosts': ['localhost:11211']
@@ -59,30 +81,69 @@ class MemcachedCollector(diamond.collector.Collector):
         data = ''
         # connect
         try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((host, int(port)))
+            if port is None:
+                sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                sock.connect(host)
+            else:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.connect((host, int(port)))
+
+            # give up after a reasonable amount of time
+            sock.settimeout(3)
+
             # request stats
             sock.send('stats\n')
-            # something big enough to get whatever is sent back
-            data = sock.recv(4096)
+
+            # stats can be sent across multiple packets, so make sure we've
+            # read up until the END marker
+            while True:
+                received = sock.recv(4096)
+                if not received:
+                    break
+                data += received
+                if data.endswith('END\r\n'):
+                    break
         except socket.error:
             self.log.exception('Failed to get stats from %s:%s',
                                host, port)
+        sock.close()
         return data
 
     def get_stats(self, host, port):
         # stuff that's always ignored, aren't 'stats'
-        ignored = ('libevent', 'pid', 'pointer_size', 'time', 'version')
+        ignored = ('libevent', 'pointer_size', 'time', 'version',
+                   'repcached_version', 'replication', 'accepting_conns',
+                   'pid')
+        pid = None
 
         stats = {}
-        data = self.get_raw_stats(host, int(port))
+        data = self.get_raw_stats(host, port)
 
         # parse stats
         for line in data.splitlines():
             pieces = line.split(' ')
             if pieces[0] != 'STAT' or pieces[1] in ignored:
                 continue
-            stats[pieces[1]] = pieces[2]
+            elif pieces[1] == 'pid':
+                pid = pieces[2]
+                continue
+            if '.' in pieces[2]:
+                stats[pieces[1]] = float(pieces[2])
+            else:
+                stats[pieces[1]] = int(pieces[2])
+
+        # get max connection limit
+        self.log.debug('pid %s', pid)
+        try:
+            cmdline = "/proc/%s/cmdline" % pid
+            f = open(cmdline, 'r')
+            m = re.search("-c\x00(\d+)", f.readline())
+            if m is not None:
+                self.log.debug('limit connections %s', m.group(1))
+                stats['limit_maxconn'] = m.group(1)
+            f.close()
+        except:
+            self.log.debug("Cannot parse command line options for memcached")
 
         return stats
 
@@ -94,10 +155,10 @@ class MemcachedCollector(diamond.collector.Collector):
             hosts = [hosts]
 
         for host in hosts:
-            matches = re.search('((.+)\@)?([^:]+):(\d+)', host)
+            matches = re.search('((.+)\@)?([^:]+)(:(\d+))?', host)
             alias = matches.group(2)
             hostname = matches.group(3)
-            port = matches.group(4)
+            port = matches.group(5)
 
             if alias is None:
                 alias = hostname
@@ -112,7 +173,11 @@ class MemcachedCollector(diamond.collector.Collector):
                 if stat in stats:
 
                     # we have it
-                    self.publish(alias + "." + stat, stats[stat])
+                    if stat in self.GAUGES:
+                        self.publish_gauge(alias + "." + stat, stats[stat])
+                    else:
+                        self.publish_counter(alias + "." + stat, stats[stat])
+
                 else:
 
                     # we don't, must be somehting configured in publish so we

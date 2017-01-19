@@ -11,13 +11,13 @@ using /proc/net/dev.
 """
 
 import diamond.collector
+from diamond.collector import str_to_bool
 import diamond.convertor
 import os
 import re
 
 try:
     import psutil
-    psutil  # workaround for pyflakes issue #13
 except ImportError:
     psutil = None
 
@@ -25,24 +25,6 @@ except ImportError:
 class NetworkCollector(diamond.collector.Collector):
 
     PROC = '/proc/net/dev'
-
-    MAX_VALUES = {
-        'rx_bytes':      diamond.collector.MAX_COUNTER,
-        'rx_packets':    diamond.collector.MAX_COUNTER,
-        'rx_errors':     diamond.collector.MAX_COUNTER,
-        'rx_drop':       diamond.collector.MAX_COUNTER,
-        'rx_fifo':       diamond.collector.MAX_COUNTER,
-        'rx_frame':      diamond.collector.MAX_COUNTER,
-        'rx_compressed': diamond.collector.MAX_COUNTER,
-        'rx_multicast':  diamond.collector.MAX_COUNTER,
-        'tx_bytes':      diamond.collector.MAX_COUNTER,
-        'tx_packets':    diamond.collector.MAX_COUNTER,
-        'tx_errors':     diamond.collector.MAX_COUNTER,
-        'tx_drop':       diamond.collector.MAX_COUNTER,
-        'tx_fifo':       diamond.collector.MAX_COUNTER,
-        'tx_frame':      diamond.collector.MAX_COUNTER,
-        'tx_compressed': diamond.collector.MAX_COUNTER,
-        'tx_multicast':  diamond.collector.MAX_COUNTER, }
 
     def get_default_config_help(self):
         config_help = super(NetworkCollector, self).get_default_config_help()
@@ -59,8 +41,9 @@ class NetworkCollector(diamond.collector.Collector):
         config = super(NetworkCollector, self).get_default_config()
         config.update({
             'path':         'network',
-            'interfaces':   ['eth', 'bond'],
-            'byte_unit':    ['megabit', 'megabyte'],
+            'interfaces':   ['eth', 'bond', 'em', 'p1p', 'eno', 'enp', 'ens',
+                             'enx'],
+            'byte_unit':    ['bit', 'byte'],
             'greedy':       'true',
         })
         return config
@@ -79,27 +62,27 @@ class NetworkCollector(diamond.collector.Collector):
             file = open(self.PROC)
             # Build Regular Expression
             greed = ''
-            if self.config['greedy'].lower() == 'true':
-                greed = '[0-9]+'
+            if str_to_bool(self.config['greedy']):
+                greed = '\S*'
 
-            exp = ('^(?:\s*)((?:%s)%s):(?:\s*)'
-                   + '(?P<rx_bytes>\d+)(?:\s*)'
-                   + '(?P<rx_packets>\w+)(?:\s*)'
-                   + '(?P<rx_errors>\d+)(?:\s*)'
-                   + '(?P<rx_drop>\d+)(?:\s*)'
-                   + '(?P<rx_fifo>\d+)(?:\s*)'
-                   + '(?P<rx_frame>\d+)(?:\s*)'
-                   + '(?P<rx_compressed>\d+)(?:\s*)'
-                   + '(?P<rx_multicast>\d+)(?:\s*)'
-                   + '(?P<tx_bytes>\d+)(?:\s*)'
-                   + '(?P<tx_packets>\w+)(?:\s*)'
-                   + '(?P<tx_errors>\d+)(?:\s*)'
-                   + '(?P<tx_drop>\d+)(?:\s*)'
-                   + '(?P<tx_fifo>\d+)(?:\s*)'
-                   + '(?P<tx_frame>\d+)(?:\s*)'
-                   + '(?P<tx_compressed>\d+)(?:\s*)'
-                   + '(?P<tx_multicast>\d+)(?:.*)$') % (
-                       ('|'.join(self.config['interfaces'])), greed)
+            exp = (('^(?:\s*)((?:%s)%s):(?:\s*)' +
+                    '(?P<rx_bytes>\d+)(?:\s*)' +
+                    '(?P<rx_packets>\w+)(?:\s*)' +
+                    '(?P<rx_errors>\d+)(?:\s*)' +
+                    '(?P<rx_drop>\d+)(?:\s*)' +
+                    '(?P<rx_fifo>\d+)(?:\s*)' +
+                    '(?P<rx_frame>\d+)(?:\s*)' +
+                    '(?P<rx_compressed>\d+)(?:\s*)' +
+                    '(?P<rx_multicast>\d+)(?:\s*)' +
+                    '(?P<tx_bytes>\d+)(?:\s*)' +
+                    '(?P<tx_packets>\w+)(?:\s*)' +
+                    '(?P<tx_errors>\d+)(?:\s*)' +
+                    '(?P<tx_drop>\d+)(?:\s*)' +
+                    '(?P<tx_fifo>\d+)(?:\s*)' +
+                    '(?P<tx_colls>\d+)(?:\s*)' +
+                    '(?P<tx_carrier>\d+)(?:\s*)' +
+                    '(?P<tx_compressed>\d+)(?:.*)$') %
+                   (('|'.join(self.config['interfaces'])), greed))
             reg = re.compile(exp)
             # Match Interfaces
             for line in file:
@@ -109,7 +92,12 @@ class NetworkCollector(diamond.collector.Collector):
                     results[device] = match.groupdict()
             # Close File
             file.close()
-        elif psutil:
+        else:
+            if not psutil:
+                self.log.error('Unable to import psutil')
+                self.log.error('No network metrics retrieved')
+                return None
+
             network_stats = psutil.network_io_counters(True)
             for device in network_stats.keys():
                 network_stat = network_stats[device]
@@ -127,7 +115,7 @@ class NetworkCollector(diamond.collector.Collector):
                 # Get Metric Value
                 metric_value = self.derivative(metric_name,
                                                long(v),
-                                               self.MAX_VALUES[s])
+                                               diamond.collector.MAX_COUNTER)
 
                 # Convert rx_bytes and tx_bytes
                 if s == 'rx_bytes' or s == 'tx_bytes':

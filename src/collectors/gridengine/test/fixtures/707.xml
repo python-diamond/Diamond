@@ -1,0 +1,13 @@
+<?xml version='1.0'?>
+<job_info  xmlns:xsd="http://gridengine.sunsource.net/source/browse/*checkout*/gridengine/source/dist/util/resources/schemas/qstat/qstat.xsd?revision=1.11">
+  <cluster_queue_summary>
+    <name>all.q</name>
+    <load>1.38464</load>
+    <used>56</used>
+    <resv>0</resv>
+    <available>0</available>
+    <total>56</total>
+    <temp_disabled>0</temp_disabled>
+    <manual_intervention>0</manual_intervention>
+  </cluster_queue_summary>
+</job_info>

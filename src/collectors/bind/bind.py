@@ -16,7 +16,6 @@ import urllib2
 
 if sys.version_info >= (2, 5):
     import xml.etree.cElementTree as ElementTree
-    ElementTree  # workaround for pyflakes issue #13
 else:
     import cElementTree as ElementTree
 
@@ -28,12 +27,12 @@ class BindCollector(diamond.collector.Collector):
         config_help.update({
             'host': "",
             'port': "",
-            'publish': "Available stats: \n"
-            + " - resolver (Per-view resolver and cache statistics) \n"
-            + " - server (Incoming requests and their answers) \n"
-            + " - zonemgmt (Zone management requests/responses)\n"
-            + " - sockets (Socket statistics) \n"
-            + " - memory (Global memory usage) \n",
+            'publish': "Available stats:\n" +
+            " - resolver (Per-view resolver and cache statistics)\n" +
+            " - server (Incoming requests and their answers)\n" +
+            " - zonemgmt (Zone management requests/responses)\n" +
+            " - sockets (Socket statistics)\n" +
+            " - memory (Global memory usage)\n",
             'publish_view_bind': "",
             'publish_view_meta': "",
         })

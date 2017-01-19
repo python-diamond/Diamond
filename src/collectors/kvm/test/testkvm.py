@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
-
-from __future__ import with_statement
+##########################################################################
 
 import os
 
@@ -14,17 +12,17 @@ from mock import patch
 
 try:
     from cStringIO import StringIO
-    StringIO  # workaround for pyflakes issue #13
 except ImportError:
     from StringIO import StringIO
 
 from diamond.collector import Collector
 from kvm import KVMCollector
 
-################################################################################
+##########################################################################
 
 
 class TestKVMCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('KVMCollector', {
             'interval': 10,
@@ -33,14 +31,20 @@ class TestKVMCollector(CollectorTestCase):
         self.collector = KVMCollector(config, None)
         self.collector.PROC = os.path.dirname(__file__) + '/fixtures/'
 
+    def test_import(self):
+        self.assertTrue(KVMCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_synthetic_data(self, publish_mock):
-        with patch('__builtin__.open', Mock(return_value=StringIO(
-            '0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0'
-            + '\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n'
-        ))):
-            self.collector.collect()
+        patch_open = patch('__builtin__.open', Mock(return_value=StringIO(
+            '0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0' +
+            '\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n'
+        )))
+
+        patch_open.start()
+        self.collector.collect()
+        patch_open.stop()
 
         self.assertPublishedMany(publish_mock, {})
 
@@ -86,6 +90,6 @@ class TestKVMCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

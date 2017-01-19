@@ -1,0 +1,18 @@
+UID Light        | 0x0        | discrete   | 0x0180| na        | na        | na        | na        | na        | na
+Health LED       | 0x0        | discrete   | 0x0180| na        | na        | na        | na        | na        | na
+01-Inlet Ambient | 18.000     | degrees C  | ok    | na        | na        | na        | na        | 42.000    | 46.000
+02-CPU           | 40.000     | degrees C  | ok    | na        | na        | na        | na        | 70.000    | na
+03-P1 DIMM 1-2   | 28.000     | degrees C  | ok    | na        | na        | na        | na        | 87.000    | na
+04-HD Max        | na         |            | na    | na        | na        | na        | na        | 60.000    | na
+05-Chipset       | 55.000     | degrees C  | ok    | na        | na        | na        | na        | 105.000   | na
+06-Chipset Zone  | 40.000     | degrees C  | ok    | na        | na        | na        | na        | 68.000    | 73.000
+07-VR P1 Zone    | 45.000     | degrees C  | ok    | na        | na        | na        | na        | 88.000    | 93.000
+08-Supercap Max  | na         |            | na    | na        | na        | na        | na        | 65.000    | na
+09-iLO Zone      | 40.000     | degrees C  | ok    | na        | na        | na        | na        | 72.000    | 77.000
+10-PCI 1         | na         |            | na    | na        | na        | na        | na        | 100.000   | na
+11-PCI 1 Zone    | 36.000     | degrees C  | ok    | na        | na        | na        | na        | 64.000    | 69.000
+12-Sys Exhaust   | 39.000     | degrees C  | ok    | na        | na        | na        | na        | 68.000    | 73.000
+13-LOM           | na         |            | na    | na        | na        | na        | na        | 100.000   | na
+Fan 1            | 15.680     | percent    | ok    | na        | na        | na        | na        | na        | na
+Power Supply 1   | 0x0        | discrete   | 0x0180| na        | na        | na        | na        | na        | na
+Memory           | 0x0        | discrete   | 0x4080| na        | na        | na        | na        | na        | na

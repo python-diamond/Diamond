@@ -2,7 +2,7 @@
 #
 # diamond	Start the diamond statistics collector
 #
-# chkconfig: 2345 99 01
+# chkconfig: 2345 25 75
 # description: Diamond is a daemon and toolset for gathering system statistics \
 #              and publishing them to Graphite.
 # processname: python
@@ -25,10 +25,27 @@ DAEMON=/usr/bin/diamond
 DAEMON_ARGS="-p /var/run/diamond.pid"
 PIDFILE=/var/run/diamond.pid
 SCRIPTNAME=/etc/init.d/diamond
+LOCKDIR=/var/lock/subsys
+LOCKFILE=/var/lock/subsys/diamond
 
 . /etc/rc.d/init.d/functions
 
 start() {
+  if [ -d "${LOCKDIR}" -a -w "${LOCKDIR}" ]
+  then
+    local pid
+    __pids_var_run $NAME || rm -f "${LOCKFILE}"
+    if ( set -o noclobber; echo "$$" > "${LOCKFILE}") 2> /dev/null;
+    then
+      true
+    else
+      echo "Failed to acquire lockfile: ${LOCKFILE}."
+      echo "Held by $(cat ${LOCKFILE})"
+      echo_failure
+      return 1
+    fi
+  fi
+  
   echo -n $"Starting $NAME: "
   daemon --pidfile $PIDFILE $DAEMON $DAEMON_ARGS
   retval=$?
@@ -46,6 +63,14 @@ stop() {
   echo -n $"Stopping $NAME: "
   killproc -p $PIDFILE $NAME
   retval=$?
+  if [ $retval -ne 0 ];
+  then
+    killall -q diamond
+  fi
+  if [ -e "${LOCKFILE}" ]
+  then
+    rm -f "${LOCKFILE}"
+  fi
   echo
   return $retval
 }

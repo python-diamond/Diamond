@@ -3,7 +3,9 @@
 """
 This class collects data on memory utilization
 
-/proc/meminfo is used to gather the data, which is returned in units of kB
+Note that MemFree may report no memory free. This may not actually be the case,
+as memory is allocated to Buffers and Cache as well. See
+[this link](http://www.linuxatemyram.com/) for more details.
 
 #### Dependencies
 
@@ -24,17 +26,20 @@ except ImportError:
 _KEY_MAPPING = [
     'MemTotal',
     'MemFree',
+    'MemAvailable',  # needs kernel 3.14
     'Buffers',
     'Cached',
     'Active',
     'Dirty',
     'Inactive',
+    'Shmem',
     'SwapTotal',
     'SwapFree',
     'SwapCached',
     'VmallocTotal',
     'VmallocUsed',
-    'VmallocChunk'
+    'VmallocChunk',
+    'Committed_AS',
 ]
 
 
@@ -55,12 +60,12 @@ class MemoryCollector(diamond.collector.Collector):
         """
         config = super(MemoryCollector, self).get_default_config()
         config.update({
-            'enabled':  'True',
-            'path':     'memory',
-            'method':   'Threaded',
+            'path': 'memory',
+            'method': 'Threaded',
+            'force_psutil': 'False'
             # Collect all the nodes or just a few standard ones?
             # Uncomment to enable
-            #'detailed': 'True'
+            # 'detailed': 'True'
         })
         return config
 
@@ -68,7 +73,8 @@ class MemoryCollector(diamond.collector.Collector):
         """
         Collect memory stats
         """
-        if os.access(self.PROC, os.R_OK):
+        if ((os.access(self.PROC, os.R_OK) and
+             self.config.get('force_psutil') != 'True')):
             file = open(self.PROC)
             data = file.read()
             file.close()
@@ -79,15 +85,15 @@ class MemoryCollector(diamond.collector.Collector):
                     name = name.rstrip(':')
                     value = int(value)
 
-                    if (name not in _KEY_MAPPING
-                            and 'detailed' not in self.config):
+                    if ((name not in _KEY_MAPPING and
+                         'detailed' not in self.config)):
                         continue
 
                     for unit in self.config['byte_unit']:
                         value = diamond.convertor.binary.convert(value=value,
                                                                  oldUnit=units,
                                                                  newUnit=unit)
-                        self.publish(name, value)
+                        self.publish(name, value, metric_type='GAUGE')
 
                         # TODO: We only support one unit node here. Fix it!
                         break
@@ -95,31 +101,44 @@ class MemoryCollector(diamond.collector.Collector):
                 except ValueError:
                     continue
             return True
-        elif psutil:
-            phymem_usage = psutil.phymem_usage()
-            virtmem_usage = psutil.virtmem_usage()
-            units = 'b'
+        else:
+            if not psutil:
+                self.log.error('Unable to import psutil')
+                self.log.error('No memory metrics retrieved')
+                return None
+
+            # psutil.phymem_usage() and psutil.virtmem_usage() are deprecated.
+            if hasattr(psutil, "phymem_usage"):
+                phymem_usage = psutil.phymem_usage()
+                virtmem_usage = psutil.virtmem_usage()
+            else:
+                phymem_usage = psutil.virtual_memory()
+                virtmem_usage = psutil.swap_memory()
+
+            units = 'B'
 
             for unit in self.config['byte_unit']:
                 value = diamond.convertor.binary.convert(
                     value=phymem_usage.total, oldUnit=units, newUnit=unit)
-                self.publish('MemTotal', value)
+                self.publish('MemTotal', value, metric_type='GAUGE')
+
+                value = diamond.convertor.binary.convert(
+                    value=phymem_usage.available, oldUnit=units, newUnit=unit)
+                self.publish('MemAvailable', value, metric_type='GAUGE')
 
                 value = diamond.convertor.binary.convert(
                     value=phymem_usage.free, oldUnit=units, newUnit=unit)
-                self.publish('MemFree', value)
+                self.publish('MemFree', value, metric_type='GAUGE')
 
                 value = diamond.convertor.binary.convert(
                     value=virtmem_usage.total, oldUnit=units, newUnit=unit)
-                self.publish('SwapTotal', value)
+                self.publish('SwapTotal', value, metric_type='GAUGE')
 
                 value = diamond.convertor.binary.convert(
                     value=virtmem_usage.free, oldUnit=units, newUnit=unit)
-                self.publish('SwapFree', value)
+                self.publish('SwapFree', value, metric_type='GAUGE')
 
                 # TODO: We only support one unit node here. Fix it!
                 break
 
             return True
-
-        return None

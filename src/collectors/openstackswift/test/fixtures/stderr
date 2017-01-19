@@ -1,0 +1,2 @@
+ERROR: 10.90.151.141:6001/dfs1 is unmounted -- This will cause replicas designated for that device to be considered missing until resolved or the ring is updated.
+ERROR: 10.90.151.141:6000/dfs1 is unmounted -- This will cause replicas designated for that device to be considered missing until resolved or the ring is updated.

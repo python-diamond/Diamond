@@ -14,3 +14,6 @@ src/diamond/version.py
 src/*.egg-info
 *.log
 .tox
+gentoo/diamond-*.ebuild
+.vagrant
+.python-version

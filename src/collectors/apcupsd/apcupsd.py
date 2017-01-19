@@ -17,6 +17,7 @@ import diamond.collector
 import socket
 from struct import pack
 import re
+import time
 
 
 class ApcupsdCollector(diamond.collector.Collector):
@@ -26,8 +27,10 @@ class ApcupsdCollector(diamond.collector.Collector):
         config_help.update({
             'hostname': 'Hostname to collect from',
             'port': 'port to collect from. defaults to 3551',
-            'metrics': 'List of metrics. Valid metric keys can be found [here]'
-            + '(http://www.apcupsd.com/manual/manual.html#status-report-fields)'
+            'metrics':
+                'List of metrics. Valid metric keys can be found [here]' +
+                '(http://www.apcupsd.com/manual/' +
+                'manual.html#status-report-fields)'
         })
         return config_help
 
@@ -56,7 +59,8 @@ class ApcupsdCollector(diamond.collector.Collector):
 
         # Ditch the header
         s.recv(1024)
-        data = s.recv(1024)
+        time.sleep(.25)
+        data = s.recv(4096)
 
         # We're done. Close the socket
         s.close()

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-################################################################################
+##########################################################################
 
 import os
 import sys
@@ -7,6 +7,11 @@ import optparse
 import traceback
 
 from configobj import ConfigObj
+
+try:
+    from setproctitle import setproctitle
+except ImportError:
+    setproctitle = None
 
 for path in [
     os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')),
@@ -17,6 +22,7 @@ for path in [
         break
 
 from diamond.collector import Collector
+from diamond.collector import str_to_bool
 
 
 def getIncludePaths(path):
@@ -97,12 +103,7 @@ def stringToType(key, val):
             config_file[key] = val
     elif isinstance(obj.config[key], bool):
         if isinstance(val, basestring):
-            if val.lower() == 'false':
-                config_file[key] = False
-            elif val.lower() == 'true':
-                config_file[key] = True
-            else:
-                raise NotImplementedError("Unknown type!")
+            config_file[key] = str_to_bool(val)
         else:
             config_file[key] = bool(val)
     elif isinstance(obj.config[key], int):
@@ -116,12 +117,7 @@ def stringToType(key, val):
 
 def boolCheck(val):
     if isinstance(val, basestring):
-        if val.lower() == 'false':
-            return False
-        elif val.lower() == 'true':
-            return True
-        else:
-            raise NotImplementedError("Unknown type!")
+        return str_to_bool(val)
     elif isinstance(val, bool):
         return val
     else:
@@ -151,9 +147,12 @@ def configureKey(key):
     except NotImplementedError:
         return
 
-################################################################################
+##########################################################################
 
 if __name__ == "__main__":
+
+    if setproctitle:
+        setproctitle('diamond-setup')
 
     # Initialize Options
     parser = optparse.OptionParser()
@@ -177,7 +176,6 @@ if __name__ == "__main__":
     # Initialize Config
     if os.path.exists(options.configfile):
         config = ConfigObj(os.path.abspath(options.configfile))
-        config['configfile'] = options.configfile
     else:
         print >> sys.stderr, "ERROR: Config file: %s does not exist." % (
             options.configfile)
@@ -198,9 +196,9 @@ if __name__ == "__main__":
 
     getIncludePaths(config['server']['collectors_path'])
     getCollectors(config['server']['collectors_path'])
-
     tests = []
 
+    foundcollector = False
     for collector in collectors:
         if options.collector and collector != options.collector:
             continue
@@ -208,6 +206,8 @@ if __name__ == "__main__":
         # Skip configuring the basic collector object
         if collector == "Collector":
             continue
+
+        foundcollector = True
 
         config_keys = {}
         config_file = ConfigObj()
@@ -237,15 +237,15 @@ if __name__ == "__main__":
             # Manage Keys
             config_keys['enabled'] = True
             config_keys['path'] = False
-            config_keys['method'] = False
             config_keys['path_prefix'] = False
-            config_keys['splay'] = False
+            config_keys['instance_prefix'] = False
             config_keys['interval'] = False
-            config_keys['method'] = False
 
+            print "*" * 60
             print "\n\t\tNow configuring " + collector
             print collectors[collector].__doc__
 
+            print "(%s)" % collector
             configureKey('enabled')
 
             if boolCheck(config_file['enabled']):
@@ -263,3 +263,5 @@ if __name__ == "__main__":
             sys.exit()
         except:
             continue
+    if not foundcollector:
+        print "Collector not found."

@@ -82,53 +82,35 @@ class binary:
         else:
             self.value = float(value)
 
-    def kilobit(self, value=None):
+    def convertb(self, value, source, offset=1):
         if value is None:
-            return self.bit() / 1024
+            return source() / pow(1024, offset)
         else:
-            self.bit(value * 1024)
+            source(value * pow(1024, offset))
+
+    def kilobit(self, value=None):
+        return self.convertb(value, self.bit)
 
     def megabit(self, value=None):
-        if value is None:
-            return self.kilobit() / 1024
-        else:
-            self.kilobit(value * 1024)
+        return self.convertb(value, self.bit, 2)
 
     def gigabit(self, value=None):
-        if value is None:
-            return self.megabit() / 1024
-        else:
-            self.megabit(value * 1024)
+        return self.convertb(value, self.bit, 3)
 
     def terabit(self, value=None):
-        if value is None:
-            return self.gigabit() / 1024
-        else:
-            self.gigabit(value * 1024)
+        return self.convertb(value, self.bit, 4)
 
     def petabit(self, value=None):
-        if value is None:
-            return self.terabit() / 1024
-        else:
-            self.terabit(value * 1024)
+        return self.convertb(value, self.bit, 5)
 
     def exabit(self, value=None):
-        if value is None:
-            return self.petabit() / 1024
-        else:
-            self.petabit(value * 1024)
+        return self.convertb(value, self.bit, 6)
 
     def zettabit(self, value=None):
-        if value is None:
-            return self.exabit() / 1024
-        else:
-            self.exabit(value * 1024)
+        return self.convertb(value, self.bit, 7)
 
     def yottabit(self, value=None):
-        if value is None:
-            return self.zettabit() / 1024
-        else:
-            self.zettabit(value * 1024)
+        return self.convertb(value, self.bit, 8)
 
     def byte(self, value=None):
         if value is None:
@@ -137,49 +119,122 @@ class binary:
             self.value = float(value) * 8
 
     def kilobyte(self, value=None):
-        if value is None:
-            return self.byte() / 1024
-        else:
-            self.byte(value * 1024)
+        return self.convertb(value, self.byte)
 
     def megabyte(self, value=None):
-        if value is None:
-            return self.kilobyte() / 1024
-        else:
-            self.kilobyte(value * 1024)
+        return self.convertb(value, self.byte, 2)
 
     def gigabyte(self, value=None):
-        if value is None:
-            return self.megabyte() / 1024
-        else:
-            self.megabyte(value * 1024)
+        return self.convertb(value, self.byte, 3)
 
     def terabyte(self, value=None):
-        if value is None:
-            return self.gigabyte() / 1024
-        else:
-            self.gigabyte(value * 1024)
+        return self.convertb(value, self.byte, 4)
 
     def petabyte(self, value=None):
-        if value is None:
-            return self.terabyte() / 1024
-        else:
-            self.terabyte(value * 1024)
+        return self.convertb(value, self.byte, 5)
 
     def exabyte(self, value=None):
-        if value is None:
-            return self.petabyte() / 1024
-        else:
-            self.petabyte(value * 1024)
+        return self.convertb(value, self.byte, 6)
 
     def zettabyte(self, value=None):
-        if value is None:
-            return self.exabyte() / 1024
-        else:
-            self.exabyte(value * 1024)
+        return self.convertb(value, self.byte, 7)
 
     def yottabyte(self, value=None):
-        if value is None:
-            return self.zettabyte() / 1024
+        return self.convertb(value, self.byte, 8)
+
+
+class time:
+    """
+    Store the value in miliseconds so we can convert between things easily
+    """
+    value = None
+
+    def __init__(self, value=None, unit=None):
+        self.do(value=value, unit=unit)
+
+    @staticmethod
+    def convert(value=None, oldUnit=None, newUnit=None):
+        convertor = time(value=value, unit=oldUnit)
+        return convertor.get(unit=newUnit)
+
+    def set(self, value, unit=None):
+        return self.do(value=value, unit=unit)
+
+    def get(self, unit=None):
+        return self.do(unit=unit)
+
+    def do(self, value=None, unit=None):
+        if not unit:
+            v = self.millisecond(value=value)
+        elif unit.lower() in ['millisecond', 'milliseconds', 'ms']:
+            v = self.millisecond(value=value)
+        elif unit.lower() in ['second', 'seconds', 's']:
+            v = self.second(value=value)
+        elif unit.lower() in ['minute', 'minutes', 'm']:
+            v = self.minute(value=value)
+        elif unit.lower() in ['hour', 'hours', 'h']:
+            v = self.hour(value=value)
+        elif unit.lower() in ['day', 'days', 'd']:
+            v = self.day(value=value)
+        elif unit.lower() in ['year', 'years', 'y']:
+            v = self.year(value=value)
+        elif unit.lower() in ['microsecond', 'microseconds', 'us']:
+            v = self.microsecond(value=value)
+        elif unit.lower() in ['nanosecond', 'nanoseconds', 'ns']:
+            v = self.nanosecond(value=value)
         else:
-            self.zettabyte(value * 1024)
+            raise NotImplementedError("unit %s" % unit)
+
+        return v
+
+    def millisecond(self, value=None):
+        if value is None:
+            return self.value
+        else:
+            self.value = float(value)
+
+    def second(self, value=None):
+        if value is None:
+            return self.millisecond() / 1000
+        else:
+            self.millisecond(value * 1000)
+
+    def minute(self, value=None):
+        if value is None:
+            return self.second() / 60
+        else:
+            self.millisecond(self.second(value * 60))
+
+    def hour(self, value=None):
+        if value is None:
+            return self.minute() / 60
+        else:
+            self.millisecond(self.minute(value * 60))
+
+    def day(self, value=None):
+        if value is None:
+            return self.hour() / 24
+        else:
+            self.millisecond(self.hour(value * 24))
+
+    def year(self, value=None):
+        """
+        We do *NOT* know for what year we are converting so lets assume the
+        year has 365 days.
+        """
+        if value is None:
+            return self.day() / 365
+        else:
+            self.millisecond(self.day(value * 365))
+
+    def microsecond(self, value=None):
+        if value is None:
+            return self.millisecond() * 1000
+        else:
+            self.millisecond(value / 1000)
+
+    def nanosecond(self, value=None):
+        if value is None:
+            return self.microsecond() * 1000
+        else:
+            self.millisecond(self.microsecond(value / 1000))

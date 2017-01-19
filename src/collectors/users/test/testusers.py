@@ -1,10 +1,11 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
+from test import run_only
 from mock import patch
 
 from diamond.collector import Collector
@@ -13,34 +14,33 @@ from users import UsersCollector
 import sys
 
 
-################################################################################
-
-def run_only(func, predicate):
-    if predicate():
-        return func
-    else:
-        def f(arg):
-            pass
-        return f
+##########################################################################
 
 
 def run_only_if_pyutmp_is_available(func):
     try:
         import pyutmp
-        pyutmp  # workaround for pyflakes issue #13
     except ImportError:
         pyutmp = None
-    pred = lambda: pyutmp is not None
+    try:
+        import utmp
+    except ImportError:
+        utmp = None
+    pred = lambda: pyutmp is not None or utmp is not None
     return run_only(func, pred)
 
 
 class TestUsersCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('UsersCollector', {
             'utmp': self.getFixturePath('utmp.centos6'),
         })
 
         self.collector = UsersCollector(config, None)
+
+    def test_import(self):
+        self.assertTrue(UsersCollector)
 
     @run_only_if_pyutmp_is_available
     @patch.object(Collector, 'publish')
@@ -64,6 +64,6 @@ class TestUsersCollector(CollectorTestCase):
 
             self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

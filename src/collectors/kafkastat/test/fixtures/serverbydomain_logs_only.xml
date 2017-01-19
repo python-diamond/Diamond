@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Server>
+  <Domain name="kafka">
+    <MBean classname="kafka.log.LogStats" description="Information on the management interface of the MBean" objectname="kafka:type=kafka.logs.mytopic-1"/>
+  </Domain>
+</Server>

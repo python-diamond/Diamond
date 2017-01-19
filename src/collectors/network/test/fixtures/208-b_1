@@ -1,0 +1,9 @@
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo:0 0    0    0    0     0          0         0 0 0    0    0    0     0       0          0
+   em1:0 0    0    0    0     0          0  0 0 0    0    0    0     0       0          0
+   em2:0 0    0    0    0     0          0     0        0       0    0    0    0     0       0          0
+   em3:0 0    0    0 0     0          0        0 0 0    0    0    0     0       0          0
+   em4:0   0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+ bond0:0 0    0    0    0     0          0  0 0 0    0    0    0     0       0          0
+ bond1:0 0    0    0 0     0          0        0 0 0    0    0    0     0       0          0

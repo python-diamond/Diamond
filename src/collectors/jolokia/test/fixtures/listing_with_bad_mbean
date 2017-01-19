@@ -1,0 +1,52 @@
+{
+    "timestamp": 1406056048,
+    "status": 200,
+    "request": {
+        "type": "list"
+    },
+    "value": {
+        "xxx.bad.package": {
+            "name=BadMbean": {
+                "desc": "MBean that will throw errors",
+                "attr": {}
+            }
+        },
+        "java.lang": {
+            "name=ParNew,type=GarbageCollector": {
+                "desc": "Information on the management interface of the MBean",
+                "attr": {
+                    "Name": {
+                        "desc": "Name",
+                        "type": "java.lang.String",
+                        "rw": false
+                    },
+                    "LastGcInfo": {
+                        "desc": "LastGcInfo",
+                        "type": "javax.management.openmbean.CompositeData",
+                        "rw": false
+                    },
+                    "MemoryPoolNames": {
+                        "desc": "MemoryPoolNames",
+                        "type": "[Ljava.lang.String;",
+                        "rw": false
+                    },
+                    "CollectionCount": {
+                        "desc": "CollectionCount",
+                        "type": "long",
+                        "rw": false
+                    },
+                    "Valid": {
+                        "desc": "Valid",
+                        "type": "boolean",
+                        "rw": false
+                    },
+                    "CollectionTime": {
+                        "desc": "CollectionTime",
+                        "type": "long",
+                        "rw": false
+                    }
+                }
+            }
+        }
+    }
+}

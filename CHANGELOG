@@ -1,0 +1,21 @@
+This file is a log of any potentially user affecting changes to Diamond.
+
+2014-10-19 new_threading_model
+Collectors are no longer enabled via code. We only enable collectors via config
+files.
+
+2013-03-06 master 390f999274ed3bc9a31264377b48da432824333f
+Changes the layout of the postgresql collector metrics to be layed out correctly
+
+2013-02-14 master 87abc21bbd75dc7b0eeb582e688cf5eadb375347
+Collector processmemory has been renamed processresources
+
+2013-01-21 master 89c1dfff17df5faf621dd942f00056abe7f5d547
+We now default to not allowing negative values returned from derivative.
+Overridable with allow_negative=True
+
+2012-12-06 master 41167b9 
+*** BREAKING CHANGE ***
+This changes the default byte unit for diskspace, network, and snmp interfaces
+to their basic units (bytes/bits). This will change your metric paths if you
+haven't hardcoded a specific setting for these collectors.

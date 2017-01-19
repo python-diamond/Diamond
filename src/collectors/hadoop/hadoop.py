@@ -13,6 +13,7 @@ Diamond collector for Hadoop metrics, see:
 
 from diamond.metric import Metric
 import diamond.collector
+from diamond.collector import str_to_bool
 import glob
 import re
 import os
@@ -25,7 +26,8 @@ class HadoopCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(HadoopCollector, self).get_default_config_help()
         config_help.update({
-            'metrics': "List of paths to process metrics from",
+            'metrics':  "List of paths to process metrics from",
+            'truncate': "Truncate the metrics files after reading them.",
         })
         return config_help
 
@@ -35,9 +37,9 @@ class HadoopCollector(diamond.collector.Collector):
         """
         config = super(HadoopCollector, self).get_default_config()
         config.update({
-            'path':     'hadoop',
-            'method':   'Threaded',
-            'metrics':  ['/var/log/hadoop/*-metrics.out'],
+            'path':      'hadoop',
+            'metrics':   ['/var/log/hadoop/*-metrics.out'],
+            'truncate':  False,
         })
         return config
 
@@ -51,7 +53,11 @@ class HadoopCollector(diamond.collector.Collector):
             self.log.error('HadoopCollector unable to read "%s"', filename)
             return False
 
-        fd = open(filename, 'r')
+        if self.config['truncate']:
+            fd = open(filename, 'r+')
+        else:
+            fd = open(filename, 'r')
+
         for line in fd:
             match = self.re_log.match(line)
             if not match:
@@ -102,10 +108,14 @@ class HadoopCollector(diamond.collector.Collector):
 
                     value = float(metrics[metric])
 
-                    self.publish_metric(Metric(path,
-                                        value,
-                                        timestamp=int(data['timestamp'])))
+                    self.publish_metric(
+                        Metric(path,
+                               value,
+                               timestamp=int(data['timestamp']) / 1000))
 
                 except ValueError:
                     pass
+        if str_to_bool(self.config['truncate']):
+            fd.seek(0)
+            fd.truncate()
         fd.close()

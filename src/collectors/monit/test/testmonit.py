@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
-
-from __future__ import with_statement
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -14,21 +12,28 @@ from diamond.collector import Collector
 
 from monit import MonitCollector
 
-################################################################################
+##########################################################################
 
 
 class TestMonitCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('MonitCollector',
                                       {'byte_unit': 'kilobyte', })
 
         self.collector = MonitCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(MonitCollector)
+
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        with patch('urllib2.urlopen', Mock(
-                return_value=self.getFixture('status.xml'))):
-            self.collector.collect()
+        patch_urlopen = patch('urllib2.urlopen', Mock(
+            return_value=self.getFixture('status.xml')))
+
+        patch_urlopen.start()
+        self.collector.collect()
+        patch_urlopen.stop()
 
         metrics = {
             'app_thin_8101.cpu.percent': 0.9,
@@ -60,12 +65,18 @@ class TestMonitCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        with patch('urllib2.urlopen', Mock(
-                return_value=self.getFixture('status_blank.xml'))):
-            self.collector.collect()
+        patch_urlopen = patch(
+            'urllib2.urlopen',
+            Mock(
+                return_value=self.getFixture(
+                    'status_blank.xml')))
+
+        patch_urlopen.start()
+        self.collector.collect()
+        patch_urlopen.stop()
 
         self.assertPublishedMany(publish_mock, {})
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

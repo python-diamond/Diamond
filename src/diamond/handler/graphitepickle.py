@@ -14,11 +14,6 @@ the e-commerce monitoring system. Today many
 [large companies](http://graphite.readthedocs.org/en/latest/who-is-using.html)
 use it.
 
-- enable it in `diamond.conf` :
-
-`    handlers = diamond.handler.graphitepickle.GraphitePickleHandler
-`
-
 """
 
 import struct
@@ -27,7 +22,6 @@ from graphite import GraphiteHandler
 
 try:
     import cPickle as pickle
-    pickle  # workaround for pyflakes issue #13
 except ImportError:
     import pickle as pickle
 
@@ -37,6 +31,7 @@ class GraphitePickleHandler(GraphiteHandler):
     Overrides the GraphiteHandler class
     Sending data to graphite using batched pickle format
     """
+
     def __init__(self, config=None):
         """
         Create a new instance of the GraphitePickleHandler
@@ -48,9 +43,30 @@ class GraphitePickleHandler(GraphiteHandler):
         # Initialize Options
         self.batch_size = int(self.config['batch'])
 
+    def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this handler
+        """
+        config = super(GraphitePickleHandler, self).get_default_config_help()
+
+        config.update({
+        })
+
+        return config
+
+    def get_default_config(self):
+        """
+        Return the default config for the handler
+        """
+        config = super(GraphitePickleHandler, self).get_default_config()
+
+        config.update({
+            'port': 2004,
+        })
+
+        return config
+
     def process(self, metric):
-        # Acquire lock
-        self.lock.acquire()
         # Convert metric to pickle format
         m = (metric.path, (metric.timestamp, metric.value))
         # Add the metric to the match
@@ -61,13 +77,13 @@ class GraphitePickleHandler(GraphiteHandler):
             self.log.debug("GraphitePickleHandler: Sending batch size: %d",
                            self.batch_size)
             # Pickle the batch of metrics
-            data = self._pickle_batch()
+            self.metrics = [self._pickle_batch()]
             # Send pickled batch
-            self._send(data)
+            self._send()
+            # Flush the metric pack down the wire
+            self.flush()
             # Clear Batch
             self.batch = []
-        # Release lock
-        self.lock.release()
 
     def _pickle_batch(self):
         """

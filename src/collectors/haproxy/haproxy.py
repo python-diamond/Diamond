@@ -14,6 +14,7 @@ import re
 import urllib2
 import base64
 import csv
+import socket
 import diamond.collector
 
 
@@ -22,11 +23,14 @@ class HAProxyCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(HAProxyCollector, self).get_default_config_help()
         config_help.update({
+            'method': "Method to use for data collection. Possible values: " +
+                      "http, unix",
             'url': "Url to stats in csv format",
             'user': "Username",
             'pass': "Password",
-            'ignore_servers': "Ignore servers, just collect frontend and "
-                              + "backend stats",
+            'sock': "Path to admin UNIX-domain socket",
+            'ignore_servers': "Ignore servers, just collect frontend and " +
+                              "backend stats",
         })
         return config_help
 
@@ -36,20 +40,31 @@ class HAProxyCollector(diamond.collector.Collector):
         """
         config = super(HAProxyCollector, self).get_default_config()
         config.update({
+            'method':           'http',
             'path':             'haproxy',
             'url':              'http://localhost/haproxy?stats;csv',
             'user':             'admin',
             'pass':             'password',
+            'sock':             '/var/run/haproxy.sock',
             'ignore_servers':   False,
         })
         return config
 
-    def get_csv_data(self):
+    def _get_config_value(self, section, key):
+        if section:
+            if section not in self.config:
+                self.log.error("Error: Config section '%s' not found", section)
+                return None
+            return self.config[section].get(key, self.config[key])
+        else:
+            return self.config[key]
+
+    def http_get_csv_data(self, section=None):
         """
         Request stats from HAProxy Server
         """
         metrics = []
-        req = urllib2.Request(self.config['url'])
+        req = urllib2.Request(self._get_config_value(section, 'url'))
         try:
             handle = urllib2.urlopen(req)
             return handle.readlines()
@@ -63,8 +78,8 @@ class HAProxyCollector(diamond.collector.Collector):
         authline = e.headers['www-authenticate']
 
         # this regular expression is used to extract scheme and realm
-        authre = (r'''(?:\s*www-authenticate\s*:)?\s*'''
-                  + '''(\w*)\s+realm=['"]([^'"]+)['"]''')
+        authre = (r'''(?:\s*www-authenticate\s*:)?\s*''' +
+                  '''(\w*)\s+realm=['"]([^'"]+)['"]''')
         authobj = re.compile(authre, re.IGNORECASE)
         matchobj = authobj.match(authline)
         if not matchobj:
@@ -81,7 +96,8 @@ class HAProxyCollector(diamond.collector.Collector):
             return metrics
 
         base64string = base64.encodestring(
-            '%s:%s' % (self.config['user'], self.config['pass']))[:-1]
+            '%s:%s' % (self._get_config_value(section, 'user'),
+                       self._get_config_value(section, 'pass')))[:-1]
         authheader = 'Basic %s' % base64string
         req.add_header("Authorization", authheader)
         try:
@@ -90,33 +106,80 @@ class HAProxyCollector(diamond.collector.Collector):
             return metrics
         except IOError, e:
             # here we shouldn't fail if the USER/PASS is right
-            self.log.error("Error retrieving HAProxy stats. (Invalid username "
-                           + "or password?) %s", e)
+            self.log.error("Error retrieving HAProxy stats. " +
+                           "(Invalid username or password?) %s", e)
             return metrics
+
+    def unix_get_csv_data(self):
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        data = str()
+
+        try:
+            sock.connect(self.config['sock'])
+            sock.send('show stat\n')
+            while 1:
+                buf = sock.recv(4096)
+                if not buf:
+                    break
+                data += buf
+        except socket.error, e:
+            self.log.error("Error retrieving HAProxy stats. %s", e)
+            return []
+
+        return data.strip().split('\n')
 
     def _generate_headings(self, row):
         headings = {}
         for index, heading in enumerate(row):
-            headings[index] = heading
+            headings[index] = self._sanitize(heading)
         return headings
 
-    def collect(self):
+    def _collect(self, section=None):
         """
         Collect HAProxy Stats
         """
-        csv_data = self.get_csv_data()
+        if self.config['method'] == 'http':
+            csv_data = self.http_get_csv_data(section)
+        elif self.config['method'] == 'unix':
+            csv_data = self.unix_get_csv_data()
+        else:
+            self.log.error("Unknown collection method: %s",
+                           self.config['method'])
+            csv_data = []
+
         data = list(csv.reader(csv_data))
         headings = self._generate_headings(data[0])
+        section_name = section and self._sanitize(section.lower()) + '.' or ''
 
         for row in data:
-            if (self.config['ignore_servers']
-                    and row[1].lower() not in ['frontend', 'backend']):
+            if ((self._get_config_value(section, 'ignore_servers') and
+                 row[1].lower() not in ['frontend', 'backend'])):
                 continue
-            metric_name = '%s.%s' % (row[0].lower(), row[1].lower())
+
+            part_one = self._sanitize(row[0].lower())
+            part_two = self._sanitize(row[1].lower())
+            metric_name = '%s%s.%s' % (section_name, part_one, part_two)
+
             for index, metric_string in enumerate(row):
                 try:
                     metric_value = float(metric_string)
                 except ValueError:
                     continue
+
                 stat_name = '%s.%s' % (metric_name, headings[index])
-                self.publish(stat_name, metric_value)
+                self.publish(stat_name, metric_value, metric_type='GAUGE')
+
+    def collect(self):
+        if 'servers' in self.config:
+            if isinstance(self.config['servers'], list):
+                for serv in self.config['servers']:
+                    self._collect(serv)
+            else:
+                self._collect(self.config['servers'])
+        else:
+            self._collect()
+
+    def _sanitize(self, s):
+        """Sanitize the name of a metric to remove unwanted chars
+        """
+        return re.sub('[^\w-]', '_', s)

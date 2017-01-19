@@ -30,10 +30,35 @@ form, they need to implement a single method called "collect".
             # Publish Metric
             self.publish(metric_name, metric_value)
 
-To run this collector in test mode you can invoke the diamond server with the
--r option and specify the collector path.
+For testing collectors, create a directory (example below for /tmp/diamond)
+containing your new collector(s), their .conf files, and a copy of diamond.conf
+with the following options in diamond.conf:
 
->  diamond -f -v -r path/to/ExampleCollector.py -c conf/diamond.conf.example
+    [server]
+
+    user = ecuser
+    group = ecuser
+
+    handlers = diamond.handler.archive.ArchiveHandler
+    handlers_config_path = /tmp/diamond/handlers/
+    collectors_path = /tmp/diamond/collectors/
+    collectors_config_path = /tmp/diamond/collectors/
+
+    collectors_reload_interval = 3600
+
+    [handlers]
+
+    [[default]]
+
+    [[ArchiveHandler]]
+    log_file = /dev/stdout
+
+    [collectors]
+    [[default]]
+
+and then run diamond in foreground mode:
+
+    # diamond -f -l --skip-pidfile -c /tmp/diamond/diamond.conf
 
 Diamond supports dynamic addition of collectors. Its configured to scan for new
 collectors on a regular interval (configured in diamond.cfg).

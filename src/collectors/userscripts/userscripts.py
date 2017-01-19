@@ -16,14 +16,14 @@ no metrics are collected.
 
 #### Dependencies
 
- * [commands](http://docs.python.org/library/commands.html)
+ * [subprocess](http://docs.python.org/library/subprocess.html)
 
 """
 
 import diamond.collector
 import diamond.convertor
 import os
-import commands
+import subprocess
 
 
 class UserScriptsCollector(diamond.collector.Collector):
@@ -44,7 +44,7 @@ class UserScriptsCollector(diamond.collector.Collector):
         config.update({
             'path':         '.',
             'scripts_path': '/etc/diamond/user_scripts/',
-            'method':       'Threaded',
+            'floatprecision': 4,
         })
         return config
 
@@ -53,12 +53,49 @@ class UserScriptsCollector(diamond.collector.Collector):
         if not os.access(scripts_path, os.R_OK):
             return None
         for script in os.listdir(scripts_path):
-            if not os.access(os.path.join(scripts_path, script), os.X_OK):
+            absolutescriptpath = os.path.join(scripts_path, script)
+            executable = os.access(absolutescriptpath, os.X_OK)
+            is_file = os.path.isfile(absolutescriptpath)
+            if is_file:
+                if not executable:
+                    self.log.info("%s is not executable" % absolutescriptpath)
+                    continue
+            else:
+                # Don't bother logging skipped non-file files (typically
+                # directories)
                 continue
-            stat, out = commands.getstatusoutput(os.path.join(scripts_path,
-                                                              script))
-            if stat != 0:
+            out = None
+            self.log.debug("Executing %s" % absolutescriptpath)
+            try:
+                proc = subprocess.Popen([absolutescriptpath],
+                                        stdout=subprocess.PIPE,
+                                        stderr=subprocess.PIPE)
+                (out, err) = proc.communicate()
+            except subprocess.CalledProcessError, e:
+                self.log.error("%s error launching: %s; skipping" %
+                               (absolutescriptpath, e))
                 continue
-            for line in out.split('\n'):
+            if proc.returncode:
+                self.log.error("%s return exit value %s; skipping" %
+                               (absolutescriptpath, proc.returncode))
+            if not out:
+                self.log.info("%s return no output" % absolutescriptpath)
+                continue
+            if err:
+                self.log.error("%s returned error output (stderr): %s" %
+                               (absolutescriptpath, err))
+            # Use filter to remove empty lines of output
+            for line in filter(None, out.split('\n')):
+                # Ignore invalid lines
+                try:
+                    name, value = line.split()
+                    float(value)
+                except ValueError:
+                    self.log.error("%s returned invalid/unparsable output: %s" %
+                                   (absolutescriptpath, line))
+                    continue
                 name, value = line.split()
-                self.publish(name, value)
+                floatprecision = 0
+                if "." in value:
+                    floatprecision = self.config['floatprecision']
+                self.publish(name, value, precision=floatprecision)

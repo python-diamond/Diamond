@@ -58,11 +58,32 @@ class OpenVPNCollector(diamond.collector.Collector):
         config = super(OpenVPNCollector, self).get_default_config()
         config.update({
             'path':      'openvpn',
-            'method':    'Threaded',
             'instances': 'file:///var/log/openvpn/status.log',
             'timeout':   '10',
         })
         return config
+
+    def parse_url(self, uri):
+        """
+        Convert urlparse from a python 2.4 layout to a python 2.7 layout
+        """
+        parsed = urlparse.urlparse(uri)
+        if 'scheme' not in parsed:
+            class Object(object):
+                pass
+            newparsed = Object()
+            newparsed.scheme = parsed[0]
+            newparsed.netloc = parsed[1]
+            newparsed.path = parsed[2]
+            newparsed.params = parsed[3]
+            newparsed.query = parsed[4]
+            newparsed.fragment = parsed[5]
+            newparsed.username = ''
+            newparsed.password = ''
+            newparsed.hostname = ''
+            newparsed.port = ''
+            parsed = newparsed
+        return parsed
 
     def collect(self):
         if isinstance(self.config['instances'], basestring):
@@ -71,7 +92,7 @@ class OpenVPNCollector(diamond.collector.Collector):
             instances = self.config['instances']
 
         for uri in instances:
-            parsed = urlparse.urlparse(uri)
+            parsed = self.parse_url(uri)
             collect = getattr(self, 'collect_%s' % (parsed.scheme,), None)
             if collect:
                 collect(uri)
@@ -79,7 +100,7 @@ class OpenVPNCollector(diamond.collector.Collector):
                 self.log.error('OpenVPN no handler for %s', uri)
 
     def collect_file(self, uri):
-        parsed = urlparse.urlparse(uri)
+        parsed = self.parse_url(uri)
         filename = parsed.path
         if '?' in filename:
             filename, name = filename.split('?')
@@ -100,7 +121,7 @@ class OpenVPNCollector(diamond.collector.Collector):
         self.parse(name, lines)
 
     def collect_tcp(self, uri):
-        parsed = urlparse.urlparse(uri)
+        parsed = self.parse_url(uri)
         try:
             host, port = parsed.netloc.split(':')
             port = int(port)
@@ -154,6 +175,7 @@ class OpenVPNCollector(diamond.collector.Collector):
 
         time.sleep(0.5)
 
+        number_connected_clients = 0
         section = ''
         heading = []
         for line in lines:
@@ -186,6 +208,7 @@ class OpenVPNCollector(diamond.collector.Collector):
                         heading = line.strip().split(',')
                     else:
                         info = {}
+                        number_connected_clients += 1
                         for k, v in zip(heading, line.strip().split(',')):
                             info[k.lower()] = v
 
@@ -209,6 +232,7 @@ class OpenVPNCollector(diamond.collector.Collector):
 
             elif line.startswith('END'):
                 break
+        self.publish('%s.clients.connected' % name, number_connected_clients)
 
     def publish_number(self, key, value):
         key = key.replace('/', '-').replace(' ', '_').lower()

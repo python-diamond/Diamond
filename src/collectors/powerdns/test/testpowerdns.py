@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
-
-from __future__ import with_statement
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -13,10 +11,11 @@ from mock import patch
 from diamond.collector import Collector
 from powerdns import PowerDNSCollector
 
-################################################################################
+##########################################################################
 
 
 class TestPowerDNSCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('PowerDNSCollector', {
             'interval': 1,
@@ -26,20 +25,35 @@ class TestPowerDNSCollector(CollectorTestCase):
 
         self.collector = PowerDNSCollector(config, None)
 
+    def test_import(self):
+        self.assertTrue(PowerDNSCollector)
+
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_with_fake_data(self, publish_mock):
-        with patch('subprocess.Popen.communicate', Mock(return_value=(
-                self.getFixture('pdns_control-2.9.22.6-1.el6-A').getvalue(),
-                ''))):
-            self.collector.collect()
+        patch_communicate = patch(
+            'subprocess.Popen.communicate',
+            Mock(return_value=(
+                self.getFixture(
+                    'pdns_control-2.9.22.6-1.el6-A'
+                ).getvalue(),
+                '')))
+
+        patch_communicate.start()
+        self.collector.collect()
+        patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {})
 
-        with patch('subprocess.Popen.communicate', Mock(return_value=(
+        patch_communicate = patch(
+            'subprocess.Popen.communicate',
+            Mock(return_value=(
                 self.getFixture('pdns_control-2.9.22.6-1.el6-B').getvalue(),
-                ''))):
-            self.collector.collect()
+                '')))
+
+        patch_communicate.start()
+        self.collector.collect()
+        patch_communicate.stop()
 
         metrics = {
             'corrupt-packets': 1.0,
@@ -71,6 +85,6 @@ class TestPowerDNSCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,30 @@
+# diamond - A system statistics collector for graphite
+#
+# Diamond is a daemon and toolset for gather system statistics 
+# and publishing them to graphite.
+
+description "Diamond system statistics collector"
+
+start on (local-filesystems and net-device-up IFACE!=lo)
+stop on [!12345]
+
+limit nofile 32768 32768
+kill timeout 5
+
+script
+    # Source /etc/diamond if exists. Otherwise defaults.
+    if [ -f /etc/default/diamond ]; then
+        . /etc/default/diamond
+    else
+        ENABLE_DIAMOND="yes"
+        DIAMOND_PID="/var/run/diamond.pid"
+        DIAMOND_USER="diamond"
+    fi
+    PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+    DAEMON=`which diamond`
+
+    # Launch Diamond if enabled in /etc/default
+    if [ "x$ENABLE_DIAMOND" = "xyes" ]; then
+        exec start-stop-daemon --start --make-pidfile --chuid $DIAMOND_USER --pidfile $DIAMOND_PID --exec $DAEMON -- --foreground --skip-change-user --skip-fork --skip-pidfile
+    fi
+end script

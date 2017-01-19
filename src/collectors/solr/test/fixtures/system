@@ -1,0 +1,56 @@
+{
+  "system": {
+    "uptime": " 15:27:07 up 27 days,  2:19,  2 users,  load average: 0.41, 0.51, 0.58\n",
+    "uname": "Linux precise32 3.2.0-23-generic-pae #36-Ubuntu SMP Tue Apr 10 22:19:09 UTC 2012 i686 i686 i386 GNU/Linux\n",
+    "maxFileDescriptorCount": 4096,
+    "openFileDescriptorCount": 70,
+    "totalSwapSpaceSize": 805302272,
+    "totalPhysicalMemorySize": 1049878528,
+    "name": "Linux",
+    "version": "3.2.0-23-generic-pae",
+    "arch": "i386",
+    "systemLoadAverage": 0.41,
+    "committedVirtualMemorySize": 368361472,
+    "freePhysicalMemorySize": 133099520,
+    "freeSwapSpaceSize": 573865984,
+    "processCpuTime": 4.439e+10
+  },
+  "jvm": {
+    "jmx": {
+      "upTimeMS": 17092094,
+      "startTime": "2014-04-07T08:42:15.497Z",
+      "classpath": "/usr/lib/jsp-2.1/jsp-2.1-jetty-6.1.26.jar",
+      "bootclasspath": "/usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/resources.jar"
+    },
+    "memory": {
+      "used": "19.2 MB (%10.3)",
+      "max": "185.6 MB",
+      "total": "61.9 MB",
+      "free": "42.7 MB"
+    },
+    "processors": 1,
+    "name": "Java HotSpot(TM) Client VM",
+    "version": "20.1-b02"
+  },
+  "lucene": {
+    "lucene-impl-version": "3.6.1 1362471 - thetaphi - 2012-07-17 12:40:12",
+    "lucene-spec-version": "3.6.1",
+    "solr-impl-version": "3.6.1 1362471 - thetaphi - 2012-07-17 12:45:52",
+    "solr-spec-version": "3.6.1"
+  },
+  "core": {
+    "directory": {
+      "index": "/home/vagrant/solr/data/index",
+      "data": "/home/vagrant/solr/data",
+      "instance": "/home/vagrant/solr/."
+    },
+    "start": "2014-04-07T08:42:17.653Z",
+    "now": "2014-04-07T13:27:07.59Z",
+    "host": "precise32",
+    "schema": "example"
+  },
+  "responseHeader": {
+    "QTime": 55,
+    "status": 0
+  }
+}

@@ -1,0 +1,370 @@
+{
+  "ok" : true,
+  "_shards" : {
+    "total" : 30,
+    "successful" : 30,
+    "failed" : 0
+  },
+  "_all" : {
+    "primaries" : {
+      "docs" : {
+        "count" : 35856619,
+        "deleted" : 0
+      },
+      "store" : {
+        "size" : "20.3gb",
+        "size_in_bytes" : 21903813340,
+        "throttle_time" : "0s",
+        "throttle_time_in_millis" : 0
+      },
+      "indexing" : {
+        "index_total" : 35189321,
+        "index_time" : "8.1h",
+        "index_time_in_millis" : 29251475,
+        "index_current" : 0,
+        "delete_total" : 0,
+        "delete_time" : "0s",
+        "delete_time_in_millis" : 0,
+        "delete_current" : 0
+      },
+      "get" : {
+        "total" : 0,
+        "time" : "0s",
+        "time_in_millis" : 0,
+        "exists_total" : 0,
+        "exists_time" : "0s",
+        "exists_time_in_millis" : 0,
+        "missing_total" : 0,
+        "missing_time" : "0s",
+        "missing_time_in_millis" : 0,
+        "current" : 0
+      },
+      "search" : {
+        "query_total" : 4266,
+        "query_time" : "41.2s",
+        "query_time_in_millis" : 41211,
+        "query_current" : 0,
+        "fetch_total" : 4084,
+        "fetch_time" : "6.9s",
+        "fetch_time_in_millis" : 6962,
+        "fetch_current" : 0
+      }
+    },
+    "total" : {
+      "docs" : {
+        "count" : 71713334,
+        "deleted" : 0
+      },
+      "store" : {
+        "size" : "40.7gb",
+        "size_in_bytes" : 43760823305,
+        "throttle_time" : "0s",
+        "throttle_time_in_millis" : 0
+      },
+      "indexing" : {
+        "index_total" : 68457046,
+        "index_time" : "14.6h",
+        "index_time_in_millis" : 52792725,
+        "index_current" : 916,
+        "delete_total" : 0,
+        "delete_time" : "0s",
+        "delete_time_in_millis" : 0,
+        "delete_current" : 0
+      },
+      "get" : {
+        "total" : 0,
+        "time" : "0s",
+        "time_in_millis" : 0,
+        "exists_total" : 0,
+        "exists_time" : "0s",
+        "exists_time_in_millis" : 0,
+        "missing_total" : 0,
+        "missing_time" : "0s",
+        "missing_time_in_millis" : 0,
+        "current" : 0
+      },
+      "search" : {
+        "query_total" : 6935,
+        "query_time" : "1.1m",
+        "query_time_in_millis" : 68362,
+        "query_current" : 0,
+        "fetch_total" : 6622,
+        "fetch_time" : "10.5s",
+        "fetch_time_in_millis" : 10581,
+        "fetch_current" : 0
+      }
+    },
+    "indices" : {
+      "logstash-adm-syslog-2014.01.02" : {
+        "primaries" : {
+          "docs" : {
+            "count" : 18498734,
+            "deleted" : 0
+          },
+          "store" : {
+            "size" : "10.4gb",
+            "size_in_bytes" : 11245619493,
+            "throttle_time" : "0s",
+            "throttle_time_in_millis" : 0
+          },
+          "indexing" : {
+            "index_total" : 18498734,
+            "index_time" : "5.3h",
+            "index_time_in_millis" : 19171477,
+            "index_current" : 0,
+            "delete_total" : 0,
+            "delete_time" : "0s",
+            "delete_time_in_millis" : 0,
+            "delete_current" : 0
+          },
+          "get" : {
+            "total" : 0,
+            "time" : "0s",
+            "time_in_millis" : 0,
+            "exists_total" : 0,
+            "exists_time" : "0s",
+            "exists_time_in_millis" : 0,
+            "missing_total" : 0,
+            "missing_time" : "0s",
+            "missing_time_in_millis" : 0,
+            "current" : 0
+          },
+          "search" : {
+            "query_total" : 4233,
+            "query_time" : "35.7s",
+            "query_time_in_millis" : 35740,
+            "query_current" : 0,
+            "fetch_total" : 4066,
+            "fetch_time" : "6.6s",
+            "fetch_time_in_millis" : 6692,
+            "fetch_current" : 0
+          }
+        },
+        "total" : {
+          "docs" : {
+            "count" : 36997468,
+            "deleted" : 0
+          },
+          "store" : {
+            "size" : "20.9gb",
+            "size_in_bytes" : 22501889195,
+            "throttle_time" : "0s",
+            "throttle_time_in_millis" : 0
+          },
+          "indexing" : {
+            "index_total" : 35075998,
+            "index_time" : "8.9h",
+            "index_time_in_millis" : 32394370,
+            "index_current" : 916,
+            "delete_total" : 0,
+            "delete_time" : "0s",
+            "delete_time_in_millis" : 0,
+            "delete_current" : 0
+          },
+          "get" : {
+            "total" : 0,
+            "time" : "0s",
+            "time_in_millis" : 0,
+            "exists_total" : 0,
+            "exists_time" : "0s",
+            "exists_time_in_millis" : 0,
+            "missing_total" : 0,
+            "missing_time" : "0s",
+            "missing_time_in_millis" : 0,
+            "current" : 0
+          },
+          "search" : {
+            "query_total" : 6865,
+            "query_time" : "57.4s",
+            "query_time_in_millis" : 57403,
+            "query_current" : 0,
+            "fetch_total" : 6592,
+            "fetch_time" : "10s",
+            "fetch_time_in_millis" : 10012,
+            "fetch_current" : 0
+          }
+        }
+      },
+      "logstash-adm-syslog-2014.01.01" : {
+        "primaries" : {
+          "docs" : {
+            "count" : 667738,
+            "deleted" : 0
+          },
+          "store" : {
+            "size" : "389.4mb",
+            "size_in_bytes" : 408411269,
+            "throttle_time" : "0s",
+            "throttle_time_in_millis" : 0
+          },
+          "indexing" : {
+            "index_total" : 174,
+            "index_time" : "506ms",
+            "index_time_in_millis" : 506,
+            "index_current" : 0,
+            "delete_total" : 0,
+            "delete_time" : "0s",
+            "delete_time_in_millis" : 0,
+            "delete_current" : 0
+          },
+          "get" : {
+            "total" : 0,
+            "time" : "0s",
+            "time_in_millis" : 0,
+            "exists_total" : 0,
+            "exists_time" : "0s",
+            "exists_time_in_millis" : 0,
+            "missing_total" : 0,
+            "missing_time" : "0s",
+            "missing_time_in_millis" : 0,
+            "current" : 0
+          },
+          "search" : {
+            "query_total" : 12,
+            "query_time" : "1.3s",
+            "query_time_in_millis" : 1396,
+            "query_current" : 0,
+            "fetch_total" : 3,
+            "fetch_time" : "229ms",
+            "fetch_time_in_millis" : 229,
+            "fetch_current" : 0
+          }
+        },
+        "total" : {
+          "docs" : {
+            "count" : 1335476,
+            "deleted" : 0
+          },
+          "store" : {
+            "size" : "779mb",
+            "size_in_bytes" : 816854213,
+            "throttle_time" : "0s",
+            "throttle_time_in_millis" : 0
+          },
+          "indexing" : {
+            "index_total" : 232,
+            "index_time" : "1.7s",
+            "index_time_in_millis" : 1761,
+            "index_current" : 0,
+            "delete_total" : 0,
+            "delete_time" : "0s",
+            "delete_time_in_millis" : 0,
+            "delete_current" : 0
+          },
+          "get" : {
+            "total" : 0,
+            "time" : "0s",
+            "time_in_millis" : 0,
+            "exists_total" : 0,
+            "exists_time" : "0s",
+            "exists_time_in_millis" : 0,
+            "missing_total" : 0,
+            "missing_time" : "0s",
+            "missing_time_in_millis" : 0,
+            "current" : 0
+          },
+          "search" : {
+            "query_total" : 30,
+            "query_time" : "3.2s",
+            "query_time_in_millis" : 3210,
+            "query_current" : 0,
+            "fetch_total" : 10,
+            "fetch_time" : "507ms",
+            "fetch_time_in_millis" : 507,
+            "fetch_current" : 0
+          }
+        }
+      },
+      "logstash-adm-syslog-2014.01.03" : {
+        "primaries" : {
+          "docs" : {
+            "count" : 16690147,
+            "deleted" : 0
+          },
+          "store" : {
+            "size" : "9.5gb",
+            "size_in_bytes" : 10249782578,
+            "throttle_time" : "0s",
+            "throttle_time_in_millis" : 0
+          },
+          "indexing" : {
+            "index_total" : 16690413,
+            "index_time" : "2.7h",
+            "index_time_in_millis" : 10079492,
+            "index_current" : 0,
+            "delete_total" : 0,
+            "delete_time" : "0s",
+            "delete_time_in_millis" : 0,
+            "delete_current" : 0
+          },
+          "get" : {
+            "total" : 0,
+            "time" : "0s",
+            "time_in_millis" : 0,
+            "exists_total" : 0,
+            "exists_time" : "0s",
+            "exists_time_in_millis" : 0,
+            "missing_total" : 0,
+            "missing_time" : "0s",
+            "missing_time_in_millis" : 0,
+            "current" : 0
+          },
+          "search" : {
+            "query_total" : 21,
+            "query_time" : "4s",
+            "query_time_in_millis" : 4075,
+            "query_current" : 0,
+            "fetch_total" : 15,
+            "fetch_time" : "41ms",
+            "fetch_time_in_millis" : 41,
+            "fetch_current" : 0
+          }
+        },
+        "total" : {
+          "docs" : {
+            "count" : 33380390,
+            "deleted" : 0
+          },
+          "store" : {
+            "size" : "19gb",
+            "size_in_bytes" : 20442079897,
+            "throttle_time" : "0s",
+            "throttle_time_in_millis" : 0
+          },
+          "indexing" : {
+            "index_total" : 33380816,
+            "index_time" : "5.6h",
+            "index_time_in_millis" : 20396594,
+            "index_current" : 0,
+            "delete_total" : 0,
+            "delete_time" : "0s",
+            "delete_time_in_millis" : 0,
+            "delete_current" : 0
+          },
+          "get" : {
+            "total" : 0,
+            "time" : "0s",
+            "time_in_millis" : 0,
+            "exists_total" : 0,
+            "exists_time" : "0s",
+            "exists_time_in_millis" : 0,
+            "missing_total" : 0,
+            "missing_time" : "0s",
+            "missing_time_in_millis" : 0,
+            "current" : 0
+          },
+          "search" : {
+            "query_total" : 40,
+            "query_time" : "7.7s",
+            "query_time_in_millis" : 7749,
+            "query_current" : 0,
+            "fetch_total" : 20,
+            "fetch_time" : "62ms",
+            "fetch_time_in_millis" : 62,
+            "fetch_current" : 0
+          }
+        }
+      }
+    }
+  }
+}
