@@ -86,12 +86,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     c.vm.provision "shell", inline: "sudo rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm"
     c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj python-test python-mock tree vim-enhanced MySQL-python htop gcc"
 =======
     c.vm.provision "shell", inline: "sudo rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm"
     c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj python-test python-mock tree vim-enhanced MySQL-python htop"
 >>>>>>> Add vagrant box to build docs and test collectors
+=======
+    c.vm.provision "shell", inline: "sudo rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm"
+    c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj python-test python-mock tree vim-enhanced MySQL-python htop gcc"
+>>>>>>> Update centos7-test and centos7-devel boxes
 
     # Install python libraries needed by specific collectors
     c.vm.provision "shell", inline: "sudo yum install -y postgresql-devel" # req for psycopg2
