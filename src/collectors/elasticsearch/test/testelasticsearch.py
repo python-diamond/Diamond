@@ -119,6 +119,78 @@ class TestElasticSearchCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
+    def test_should_work_with_real_data_v2(self, publish_mock):
+        returns = [
+            self.getFixture('stats'),
+            self.getFixture('cluster_stats_v2'),
+            self.getFixture('indices_stats'),
+        ]
+        urlopen_mock = patch('urllib2.urlopen', Mock(
+            side_effect=lambda *args: returns.pop(0)))
+
+        self.collector.config['cluster'] = True
+
+        urlopen_mock.start()
+        self.collector.collect()
+        urlopen_mock.stop()
+
+        # check how many fixtures were consumed
+        self.assertEqual(urlopen_mock.new.call_count, 3)
+
+        metrics = {
+            'http.current': 1,
+
+            'indices.docs.count': 11968062,
+            'indices.docs.deleted': 2692068,
+            'indices.datastore.size': 22724243633,
+
+            'indices._all.docs.count': 4,
+            'indices._all.docs.deleted': 0,
+            'indices._all.datastore.size': 2674,
+
+            'indices.test.docs.count': 4,
+            'indices.test.docs.deleted': 0,
+            'indices.test.datastore.size': 2674,
+
+            'process.cpu.percent': 58,
+
+            'process.mem.resident': 5192126464,
+            'process.mem.share': 11075584,
+            'process.mem.virtual': 7109668864,
+
+            'disk.reads.count': 55996,
+            'disk.reads.size': 1235387392,
+            'disk.writes.count': 5808198,
+            'disk.writes.size': 23287275520,
+
+            'thread_pool.generic.threads': 1,
+
+            'network.tcp.active_opens': 2299,
+
+            'jvm.mem.pools.CMS_Old_Gen.used': 530915016,
+
+
+            'cluster_health.nodes.pending_tasks': 266,
+            'cluster_health.nodes.data': 4,
+            'cluster_health.nodes.total': 8,
+
+            'cluster_health.shards.active_primary': 10,
+            'cluster_health.shards.active': 30,
+            'cluster_health.shards.active_percent': 100,
+            'cluster_health.shards.delayed_unassigned': 0,
+            'cluster_health.shards.relocating': 0,
+            'cluster_health.shards.unassigned': 0,
+            'cluster_health.shards.initializing': 0,
+
+            'cluster_health.status': 2,
+        }
+
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=metrics,
+                           defaultpath=self.collector.config['path'])
+        self.assertPublishedMany(publish_mock, metrics)
+
+    @patch.object(Collector, 'publish')
     def test_should_work_with_real_data_logstash_mode(self, publish_mock):
         returns = [
             self.getFixture('stats'),
