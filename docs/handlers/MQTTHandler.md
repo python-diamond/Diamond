@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 MQTTHandler
-====
+=====
 
 Send metrics to an MQTT broker.
 
@@ -59,6 +59,7 @@ which subscribes to an MQTT broker and sends metrics off to Graphite.
   publishes its death at a topic called clients/diamond/<hostname>
 * Support for reconnecting to a broker is implemented and ought to
   work.
+
 
 #### Options
 

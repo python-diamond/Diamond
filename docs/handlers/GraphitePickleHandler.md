@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 GraphitePickleHandler
-====
+=====
 
 Send metrics to a [graphite](http://graphite.wikidot.com/) using the high
 performace pickle interface.
@@ -16,6 +16,7 @@ deployed it at other companies including Sears, where it serves as a pillar of
 the e-commerce monitoring system. Today many
 [large companies](http://graphite.readthedocs.org/en/latest/who-is-using.html)
 use it.
+
 
 #### Options
 

@@ -2,11 +2,12 @@
 Please edit the source to make changes
 -->
 LogentriesDiamondHandler
-====
+=====
 
 [Logentries: Log Management & Analytics Made Easy ](https://logentries.com/).
 Send Diamond stats to your Logentries Account where you can monitor and alert
 based on data in real time.
+
 #### Options
 
 Setting | Default | Description | Type

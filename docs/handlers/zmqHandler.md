@@ -2,9 +2,10 @@
 Please edit the source to make changes
 -->
 zmqHandler
-====
+=====
 
 Output the collected values to a Zer0MQ pub/sub channel
+
 #### Options
 
 Setting | Default | Description | Type

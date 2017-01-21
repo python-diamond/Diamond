@@ -2,9 +2,10 @@
 Please edit the source to make changes
 -->
 NullHandler
-====
+=====
 
 Output the collected values to the debug log channel.
+
 #### Options
 
 Setting | Default | Description | Type
