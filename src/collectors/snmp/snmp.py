@@ -37,7 +37,8 @@ class SNMPCollector(diamond.collector.Collector):
 
     def __init__(self, *args, **kwargs):
         super(SNMPCollector, self).__init__(*args, **kwargs)
-        self.snmpCmdGen = cmdgen.CommandGenerator()
+        if cmdgen is not None:
+            self.snmpCmdGen = cmdgen.CommandGenerator()
 
     def get_default_config_help(self):
         config_help = super(SNMPCollector, self).get_default_config_help()
