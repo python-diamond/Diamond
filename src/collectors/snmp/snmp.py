@@ -38,11 +38,16 @@ class SNMPCollector(diamond.collector.Collector):
     def __init__(self, *args, **kwargs):
         super(SNMPCollector, self).__init__(*args, **kwargs)
 <<<<<<< HEAD
+<<<<<<< HEAD
         if cmdgen is not None:
             self.snmpCmdGen = cmdgen.CommandGenerator()
 =======
         self.snmpCmdGen = cmdgen.CommandGenerator()
 >>>>>>> #219 - changing snmp base collector to actually implement the collect method
+=======
+        if cmdgen is not None:
+            self.snmpCmdGen = cmdgen.CommandGenerator()
+>>>>>>> Fix import error when snmp is not installed
 
     def get_default_config_help(self):
         config_help = super(SNMPCollector, self).get_default_config_help()
