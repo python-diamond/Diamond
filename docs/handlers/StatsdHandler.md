@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 StatsdHandler
-====
+=====
 
 Implements the abstract Handler class, sending data to statsd.
 This is a UDP service, sending datagrams.  They may be lost.
@@ -27,6 +27,7 @@ The handler file is named an odd stats_d.py because of an import issue with
 having the python library called statsd and this handler's module being called
 statsd, so we use an odd name for this handler. This doesn't affect the usage
 of this handler.
+
 
 #### Options
 

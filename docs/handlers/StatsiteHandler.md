@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 StatsiteHandler
-====
+=====
 
 Send metrics to a [Statsite](https://github.com/armon/statsite/)
 using the default interface.
@@ -52,6 +52,7 @@ and aggregated using the Cormode-Muthurkrishnan algorithm from
 This means that the percentile values are not perfectly accurate,
 and are subject to a specifiable error epsilon. This allows us to
 store only a fraction of the samples.
+
 
 #### Options
 

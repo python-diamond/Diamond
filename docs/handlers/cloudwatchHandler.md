@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 cloudwatchHandler
-====
+=====
 
 Output the collected values to AWS CloudWatch
 
@@ -36,6 +36,7 @@ metric = 05
 namespace = MachineLoad
 name = Avg05
 unit = None
+
 #### Options
 
 Setting | Default | Description | Type

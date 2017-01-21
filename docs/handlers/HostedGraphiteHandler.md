@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 HostedGraphiteHandler
-====
+=====
 
 [Hosted Graphite](https://www.hostedgraphite.com/) is the powerful open-source
 application metrics system used by hundreds of companies. We take away the
@@ -16,6 +16,7 @@ Enable this handler
  * handlers = diamond.handler.hostedgraphite.HostedGraphiteHandler,
 
  * apikey = API_KEY
+
 
 #### Options
 

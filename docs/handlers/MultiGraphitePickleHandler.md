@@ -2,11 +2,12 @@
 Please edit the source to make changes
 -->
 MultiGraphitePickleHandler
-====
+=====
 
 Send metrics to a [graphite](http://graphite.wikidot.com/) using the pickle
 interface. Unlike GraphitePickleHandler, this one supports multiple graphite
 servers. Specify them as a list of hosts divided by comma.
+
 #### Options
 
 Setting | Default | Description | Type

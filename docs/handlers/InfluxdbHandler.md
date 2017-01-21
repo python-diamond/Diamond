@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 InfluxdbHandler
-====
+=====
 
 Send metrics to a [influxdb](https://github.com/influxdb/influxdb/) using the
 http interface.
@@ -29,6 +29,7 @@ password = root
 database = graphite
 time_precision = s
 ```
+
 #### Options
 
 Setting | Default | Description | Type

@@ -2,9 +2,10 @@
 Please edit the source to make changes
 -->
 RRDHandler
-====
+=====
 
 Save stats in RRD files using rrdtool.
+
 #### Options
 
 Setting | Default | Description | Type

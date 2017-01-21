@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 SignalfxHandler
-====
+=====
 
 Send metrics to signalfx
 
@@ -19,6 +19,7 @@ Enable this handler
  * auth_token = SIGNALFX_AUTH_TOKEN
  * batch_size = [optional | 300 ] will wait for this many requests before
      posting
+
 #### Options
 
 Setting | Default | Description | Type
