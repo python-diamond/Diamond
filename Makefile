@@ -37,6 +37,7 @@ test:
 
 docs: version
 	./build_doc.py --configfile=conf/diamond.conf
+	make test
 
 sdist: version
 	./setup.py sdist --prune
@@ -65,7 +66,7 @@ deb: builddeb
 
 sdeb: buildsourcedeb
 
-builddeb: version 
+builddeb: version
 	dch --newversion $(VERSION) --distribution unstable --force-distribution -b "Last Commit: $(shell git log -1 --pretty=format:'(%ai) %H %cn <%ce>')"
 	dch --release  "new upstream"
 	./setup.py sdist --prune
@@ -74,7 +75,7 @@ builddeb: version
 	(cd build/$(PROJECT)-$(VERSION) && debuild -us -uc -v$(VERSION))
 	@echo "Package is at build/$(PROJECT)_$(VERSION)_all.deb"
 
-buildsourcedeb: version 
+buildsourcedeb: version
 	dch --newversion $(VERSION)~$(DISTRO) --distribution $(DISTRO) --force-distribution -b "Last Commit: $(shell git log -1 --pretty=format:'(%ai) %H %cn <%ce>')"
 	dch --release  "new upstream"
 	./setup.py sdist --prune
@@ -99,7 +100,7 @@ clean:
 version:
 	./version.sh > version.txt
 
-vertest: version 
+vertest: version
 	echo "${VERSION}"
 
 reltest:
