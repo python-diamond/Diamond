@@ -21,6 +21,13 @@ form, they need to implement a single method called "collect".
     class ExampleCollector(diamond.collector.Collector):
 
         def collect(self):
+        
+            # Set Metric Path. By default it will be the collector's name
+            # (servers.hostname.ExampleCollector.my.example.metric)
+            self.config.update({
+                'path':     'example',
+            })
+            
             # Set Metric Name
             metric_name = "my.example.metric"
 
