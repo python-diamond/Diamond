@@ -108,7 +108,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
         try:
             response = urllib2.urlopen(url)
         except Exception, err:
-            self.log.error("%s: %s", url, err)
+            self.log.error("%s: %s" % (url, err))
             return False
 
         try:
