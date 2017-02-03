@@ -19,14 +19,15 @@ Example Config:
 [[cloudwatchHandler]]
 region = us-east-1
 
-[[[LoadAvg01]]]
+[[[LoadAvg01]]] # this example sends metrics for an autoscaling group
 collector = loadavg
 metric = 01
-namespace = MachineLoad
+namespace = "AWS/AutoScaling"
+autoscaling = true
 name = Avg01
 unit = None
 
-[[[LoadAvg05]]]
+[[[LoadAvg05]]] # this example sends metrics for a single instance
 collector = loadavg
 metric = 05
 namespace = MachineLoad
@@ -37,15 +38,29 @@ unit = None
 import sys
 import datetime
 
-from Handler import Handler
+from diamond.handler.Handler import Handler
 from configobj import Section
 
 try:
     import boto
+    import boto.ec2
     import boto.ec2.cloudwatch
     import boto.utils
 except ImportError:
     boto = None
+
+from json import load
+
+
+class InstanceTypeError(Exception):
+    """
+    This is thrown when the user tries to publish a metric to the
+    wrong instance type
+
+    Example: Trying to publish a metric to AutoScaling for an
+             instance that is not in an AutoScaling Group
+    """
+    pass
 
 
 class cloudwatchHandler(Handler):
@@ -68,22 +83,47 @@ class cloudwatchHandler(Handler):
             return
 
         # Initialize Data
-        self.connection = None
+        self.cloudwatch = None
+        self.cached_aws_info = None
 
-        # Initialize Options
-        self.region = self.config['region']
-        instances = boto.utils.get_instance_metadata()
-        if 'instance-id' not in instances:
-            self.log.error('CloudWatch: Failed to load instance metadata')
-            return
-        self.instance_id = instances['instance-id']
+        try:
+            self.cached_aws_info = self.config['awsinfo']
+            self.log.debug(
+                "Found cached AWS Instance details, I won't call AWS for them"
+            )
+        except KeyError:
+            self.log.debug("Proceeding by calling AWS for instance details")
+
+        if self.cached_aws_info:
+            with open(self.config['awsinfo'], 'r') as f:
+                info = load(f)
+                self.instance_id = info['instance']
+                self.autoscaling_group_name = info['autoscaling_group_name']
+                self.region = info['region']
+                self.log.debug("Grabbed AWS Info from file")
+        else:
+            # Initialize Options
+            self.region = self.config['region']
+            instances = boto.utils.get_instance_metadata()
+            if 'instance-id' not in instances:
+                self.log.error('CloudWatch: Failed to load instance metadata')
+                return
+            self.instance_id = instances['instance-id']
+            self.autoscaling_group_name = None
+            self.log.debug("Grabbed AWS Info from Boto")
         self.log.debug("Setting InstanceId: " + self.instance_id)
 
-        self.valid_config = ('region', 'collector', 'metric', 'namespace',
-                             'name', 'unit')
+        self.valid_config = ('region',
+                             'collector',
+                             'metric',
+                             'namespace',
+                             'name',
+                             'unit',
+                             'autoscaling',
+                             'awsinfo')
 
         self.rules = []
-        for key_name, section in self.config.items():
+        for _, section in self.config.items():
             if section.__class__ is Section:
                 keys = section.keys()
                 rules = {}
@@ -112,6 +152,8 @@ class cloudwatchHandler(Handler):
             'name': '',
             'unit': '',
             'collector': '',
+            'autoscaling': '',
+            'awsinfo': ''
         })
 
         return config
@@ -129,6 +171,8 @@ class cloudwatchHandler(Handler):
             'namespace': 'MachineLoad',
             'name': 'Avg01',
             'unit': 'None',
+            'autoscaling': 'false',
+            'awsinfo': None
         })
 
         return config
@@ -142,10 +186,11 @@ class cloudwatchHandler(Handler):
             "CloudWatch: Attempting to connect to CloudWatch at Region: %s",
             self.region)
         try:
-            self.connection = boto.ec2.cloudwatch.connect_to_region(
+            self.ec2 = boto.ec2.connect_to_region(self.region)
+            self.cloudwatch = boto.ec2.cloudwatch.connect_to_region(
                 self.region)
             self.log.debug(
-                "CloudWatch: Succesfully Connected to CloudWatch at Region: %s",
+                "CloudWatch: Succesfully Connected to CloudWatch Region: %s",
                 self.region)
         except boto.exception.EC2ResponseError:
             self.log.error('CloudWatch: CloudWatch Exception Handler: ')
@@ -155,13 +200,14 @@ class cloudwatchHandler(Handler):
           Destroy instance of the cloudWatchHandler class
         """
         try:
-            self.connection = None
+            self.cloudwatch = None
         except AttributeError:
             pass
 
     def process(self, metric):
         """
           Process a metric and send it to CloudWatch
+          :param metric: Object
         """
         if not boto:
             return
@@ -169,6 +215,30 @@ class cloudwatchHandler(Handler):
         collector = str(metric.getCollectorPath())
         metricname = str(metric.getMetricPath())
         timestamp = datetime.datetime.fromtimestamp(metric.timestamp)
+
+        autoscaling_group = None
+
+        try:
+            if self.config['autoscaling']:
+                if not self.autoscaling_group_name:
+                    self.log.debug(
+                        "Grabbing AutoScaling group name from Boto"
+                    )
+                    instances = self.ec2.get_only_instances([
+                        "%s" % self.instance_id
+                    ])
+                    inst = instances[0]
+                    self.log.debug(inst.tags['aws:autoscaling:groupName'])
+                    autoscaling_group = inst.tags['aws:autoscaling:groupName']
+                else:
+                    self.log.debug(
+                        "AutoScaling group name read from cache, sending to it."
+                    )
+                    autoscaling_group = self.autoscaling_group_name
+        except KeyError:
+            raise InstanceTypeError(
+                'This instance is not in an AutoScaling group'
+            )
 
         # Send the data as ......
 
@@ -193,12 +263,24 @@ class cloudwatchHandler(Handler):
                     str(metric.timestamp)
                 )
                 try:
-                    self.connection.put_metric_data(
+                    if self.config['autoscaling']:
+                        target = {'AutoScalingGroupName': autoscaling_group}
+                        self.log.debug(
+                            'Cloudwatch: Publishing metric to AutoScaling'
+                        )
+                    else:
+                        target = {'InstanceId': self.instance_id}
+                        self.log.debug(
+                            'Cloudwatch: Publishing metric to Instance'
+                        )
+
+                    self.cloudwatch.put_metric_data(
                         str(rule['namespace']),
                         str(rule['name']),
                         str(metric.value),
                         timestamp, str(rule['unit']),
-                        {'InstanceId': self.instance_id})
+                        target)
+
                     self.log.debug(
                         "CloudWatch: Successfully published metric: %s to"
                         " %s with value (%s)",
@@ -206,9 +288,9 @@ class cloudwatchHandler(Handler):
                         rule['namespace'],
                         str(metric.value)
                     )
-                except AttributeError, e:
+                except AttributeError as err:
                     self.log.error(
-                        "CloudWatch: Failed publishing - %s ", str(e))
+                        "CloudWatch: Failed publishing - %s ", str(err))
                 except Exception:  # Rough connection re-try logic.
                     self.log.error(
                         "CloudWatch: Failed publishing - %s ",
