@@ -2,11 +2,12 @@
 Please edit the source to make changes
 -->
 MultiGraphiteHandler
-====
+=====
 
 Send metrics to a [graphite](http://graphite.wikidot.com/) using the default
 interface. Unlike GraphiteHandler, this one supports multiple graphite servers.
 Specify them as a list of hosts divided by comma.
+
 #### Options
 
 Setting | Default | Description | Type

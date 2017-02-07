@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 RiemannHandler
-====
+=====
 
 Send metrics to [Riemann](http://aphyr.github.com/riemann/).
 
@@ -18,6 +18,7 @@ It has these options:
  * `host` - The Riemann host to connect to.
  * `port` - The port it's on.
  * `transport` - Either `tcp` or `udp`. (default: `tcp`)
+
 
 #### Options
 

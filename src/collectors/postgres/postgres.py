@@ -470,7 +470,7 @@ class WalSegmentStats(QueryStats):
     query = """
         SELECT count(*) AS segments
         FROM pg_ls_dir('pg_xlog') t(fn)
-        WHERE fn ~ '^[0-9A-Z]{{24}}\$'
+        WHERE fn ~ '^[0-9A-Z]{24}$'
     """
 
 

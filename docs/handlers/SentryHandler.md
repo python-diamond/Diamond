@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 SentryHandler
-====
+=====
 
 Diamond handler that check if values are too high or too low, if so send an
 alert to a Sentry server
@@ -29,6 +29,7 @@ max = 8.5
 name = Free Memory
 path = memory.MemFree
 min = 66020000
+
 #### Options
 
 Setting | Default | Description | Type

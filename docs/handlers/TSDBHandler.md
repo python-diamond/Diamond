@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 TSDBHandler
-====
+=====
 
 Send metrics to a [OpenTSDB](http://opentsdb.net/) server.
 
@@ -36,6 +36,7 @@ yourself.
 
 `    handlers = diamond.handler.tsdb.TSDBHandler
 `
+
 
 #### Options
 

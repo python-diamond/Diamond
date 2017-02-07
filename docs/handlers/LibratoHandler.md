@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 LibratoHandler
-====
+=====
 
 [Librato](http://librato.com) is an infrastructure software as a service company
 dedicated to delivering beautiful, easy to use tools that make managing your
@@ -11,6 +11,7 @@ operations more fun and efficient.
 #### Dependencies
 
  * [librato-metrics](https://github.com/librato/python-librato)
+
 
 
 #### Options

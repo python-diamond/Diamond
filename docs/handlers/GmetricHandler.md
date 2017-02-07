@@ -2,10 +2,11 @@
 Please edit the source to make changes
 -->
 GmetricHandler
-====
+=====
 
 Emulate a gmetric client for usage with
 [Ganglia Monitoring System](http://ganglia.sourceforge.net/)
+
 #### Options
 
 Setting | Default | Description | Type
