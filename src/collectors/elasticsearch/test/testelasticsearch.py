@@ -185,9 +185,6 @@ class TestElasticSearchCollector(CollectorTestCase):
             'cluster_health.status': 2,
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
