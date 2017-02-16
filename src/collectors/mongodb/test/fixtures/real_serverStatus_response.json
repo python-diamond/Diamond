@@ -1,0 +1,994 @@
+{
+  "metrics": {
+    "commands": {
+      "updateUser": {
+        "failed": 0,
+        "total": 0
+      },
+      "dropRole": {
+        "failed": 0,
+        "total": 0
+      },
+      "renameCollection": {
+        "failed": 0,
+        "total": 0
+      },
+      "planCacheSetFilter": {
+        "failed": 0,
+        "total": 0
+      },
+      "top": {
+        "failed": 0,
+        "total": 0
+      },
+      "usersInfo": {
+        "failed": 0,
+        "total": 0
+      },
+      "applyOps": {
+        "failed": 0,
+        "total": 0
+      },
+      "setParameter": {
+        "failed": 0,
+        "total": 0
+      },
+      "find": {
+        "failed": 0,
+        "total": 0
+      },
+      "compact": {
+        "failed": 0,
+        "total": 0
+      },
+      "createIndexes": {
+        "failed": 0,
+        "total": 0
+      },
+      "handshake": {
+        "failed": 0,
+        "total": 0
+      },
+      "group": {
+        "failed": 0,
+        "total": 0
+      },
+      "moveChunk": {
+        "failed": 0,
+        "total": 0
+      },
+      "_mergeAuthzCollections": {
+        "failed": 0,
+        "total": 0
+      },
+      "explain": {
+        "failed": 0,
+        "total": 0
+      },
+      "_migrateClone": {
+        "failed": 0,
+        "total": 0
+      },
+      "checkShardingIndex": {
+        "failed": 0,
+        "total": 0
+      },
+      "<UNKNOWN>": 0,
+      "logRotate": {
+        "failed": 0,
+        "total": 0
+      },
+      "getPrevError": {
+        "failed": 0,
+        "total": 0
+      },
+      "replSetGetStatus": {
+        "failed": 0,
+        "total": 48579
+      },
+      "grantRolesToUser": {
+        "failed": 0,
+        "total": 0
+      },
+      "shardConnPoolStats": {
+        "failed": 0,
+        "total": 0
+      },
+      "diagLogging": {
+        "failed": 0,
+        "total": 0
+      },
+      "splitChunk": {
+        "failed": 0,
+        "total": 0
+      },
+      "planCacheClear": {
+        "failed": 0,
+        "total": 0
+      },
+      "getCmdLineOpts": {
+        "failed": 0,
+        "total": 0
+      },
+      "insert": {
+        "failed": 0,
+        "total": 1
+      },
+      "replSetInitiate": {
+        "failed": 0,
+        "total": 0
+      },
+      "replSetGetConfig": {
+        "failed": 0,
+        "total": 0
+      },
+      "fsync": {
+        "failed": 0,
+        "total": 0
+      },
+      "appendOplogNote": {
+        "failed": 0,
+        "total": 0
+      },
+      "drop": {
+        "failed": 0,
+        "total": 0
+      },
+      "mapreduce": {
+        "shardedfinish": {
+          "failed": 0,
+          "total": 0
+        }
+      },
+      "_recvChunkAbort": {
+        "failed": 0,
+        "total": 0
+      },
+      "replSetSyncFrom": {
+        "failed": 0,
+        "total": 0
+      },
+      "connectionStatus": {
+        "failed": 0,
+        "total": 0
+      },
+      "touch": {
+        "failed": 0,
+        "total": 0
+      },
+      "_recvChunkStatus": {
+        "failed": 0,
+        "total": 0
+      },
+      "copydbgetnonce": {
+        "failed": 0,
+        "total": 0
+      },
+      "planCacheListPlans": {
+        "failed": 0,
+        "total": 0
+      },
+      "dataSize": {
+        "failed": 0,
+        "total": 0
+      },
+      "dbHash": {
+        "failed": 0,
+        "total": 0
+      },
+      "medianKey": {
+        "failed": 0,
+        "total": 0
+      },
+      "_recvChunkStart": {
+        "failed": 0,
+        "total": 0
+      },
+      "authenticate": {
+        "failed": 0,
+        "total": 0
+      },
+      "cursorInfo": {
+        "failed": 0,
+        "total": 0
+      },
+      "revokeRolesFromRole": {
+        "failed": 0,
+        "total": 0
+      },
+      "grantPrivilegesToRole": {
+        "failed": 0,
+        "total": 0
+      },
+      "geoNear": {
+        "failed": 0,
+        "total": 0
+      },
+      "replSetFresh": {
+        "failed": 0,
+        "total": 2
+      },
+      "planCacheClearFilters": {
+        "failed": 0,
+        "total": 0
+      },
+      "getParameter": {
+        "failed": 0,
+        "total": 0
+      },
+      "dropIndexes": {
+        "failed": 0,
+        "total": 0
+      },
+      "listDatabases": {
+        "failed": 0,
+        "total": 150542
+      },
+      "collStats": {
+        "failed": 0,
+        "total": 3660042
+      },
+      "hostInfo": {
+        "failed": 0,
+        "total": 0
+      },
+      "getShardVersion": {
+        "failed": 0,
+        "total": 0
+      },
+      "cloneCollection": {
+        "failed": 0,
+        "total": 0
+      },
+      "dropDatabase": {
+        "failed": 0,
+        "total": 0
+      },
+      "update": {
+        "failed": 0,
+        "total": 15084
+      },
+      "logout": {
+        "failed": 0,
+        "total": 0
+      },
+      "_transferMods": {
+        "failed": 0,
+        "total": 0
+      },
+      "isMaster": {
+        "failed": 0,
+        "total": 3170842
+      },
+      "getShardMap": {
+        "failed": 0,
+        "total": 0
+      },
+      "shardingState": {
+        "failed": 0,
+        "total": 0
+      },
+      "replSetReconfig": {
+        "failed": 0,
+        "total": 0
+      },
+      "getLog": {
+        "failed": 0,
+        "total": 0
+      },
+      "connPoolSync": {
+        "failed": 0,
+        "total": 0
+      },
+      "revokePrivilegesFromRole": {
+        "failed": 0,
+        "total": 0
+      },
+      "replSetMaintenance": {
+        "failed": 0,
+        "total": 0
+      },
+      "serverStatus": {
+        "failed": 0,
+        "total": 183662
+      },
+      "replSetStepDown": {
+        "failed": 0,
+        "total": 0
+      },
+      "features": {
+        "failed": 0,
+        "total": 0
+      },
+      "connPoolStats": {
+        "failed": 0,
+        "total": 0
+      },
+      "planCacheListQueryShapes": {
+        "failed": 0,
+        "total": 0
+      },
+      "copydb": {
+        "failed": 0,
+        "total": 0
+      },
+      "forceerror": {
+        "failed": 0,
+        "total": 0
+      },
+      "planCacheListFilters": {
+        "failed": 0,
+        "total": 0
+      },
+      "shutdown": {
+        "failed": 0,
+        "total": 0
+      },
+      "listCollections": {
+        "failed": 0,
+        "total": 562238
+      },
+      "currentOpCtx": {
+        "failed": 0,
+        "total": 0
+      },
+      "_getUserCacheGeneration": {
+        "failed": 0,
+        "total": 0
+      },
+      "validate": {
+        "failed": 0,
+        "total": 0
+      },
+      "repairDatabase": {
+        "failed": 0,
+        "total": 0
+      },
+      "saslStart": {
+        "failed": 5,
+        "total": 700240
+      },
+      "distinct": {
+        "failed": 0,
+        "total": 0
+      },
+      "create": {
+        "failed": 0,
+        "total": 0
+      },
+      "splitVector": {
+        "failed": 0,
+        "total": 0
+      },
+      "copydbsaslstart": {
+        "failed": 0,
+        "total": 0
+      },
+      "dropAllRolesFromDatabase": {
+        "failed": 0,
+        "total": 0
+      },
+      "invalidateUserCache": {
+        "failed": 0,
+        "total": 0
+      },
+      "whatsmyuri": {
+        "failed": 0,
+        "total": 454
+      },
+      "geoSearch": {
+        "failed": 0,
+        "total": 0
+      },
+      "updateRole": {
+        "failed": 0,
+        "total": 0
+      },
+      "reIndex": {
+        "failed": 0,
+        "total": 0
+      },
+      "_isSelf": {
+        "failed": 0,
+        "total": 10
+      },
+      "unsetSharding": {
+        "failed": 0,
+        "total": 0
+      },
+      "getnonce": {
+        "failed": 0,
+        "total": 0
+      },
+      "listIndexes": {
+        "failed": 0,
+        "total": 29
+      },
+      "collMod": {
+        "failed": 0,
+        "total": 0
+      },
+      "count": {
+        "failed": 0,
+        "total": 0
+      },
+      "filemd5": {
+        "failed": 0,
+        "total": 0
+      },
+      "setShardVersion": {
+        "failed": 0,
+        "total": 0
+      },
+      "parallelCollectionScan": {
+        "failed": 0,
+        "total": 0
+      },
+      "writebacklisten": {
+        "failed": 0,
+        "total": 0
+      },
+      "delete": {
+        "failed": 0,
+        "total": 0
+      },
+      "rolesInfo": {
+        "failed": 0,
+        "total": 0
+      },
+      "replSetGetRBID": {
+        "failed": 0,
+        "total": 0
+      },
+      "dropUser": {
+        "failed": 0,
+        "total": 0
+      },
+      "resync": {
+        "failed": 0,
+        "total": 0
+      },
+      "saslContinue": {
+        "failed": 0,
+        "total": 1400470
+      },
+      "repairCursor": {
+        "failed": 0,
+        "total": 0
+      },
+      "driverOIDTest": {
+        "failed": 0,
+        "total": 0
+      },
+      "getLastError": {
+        "failed": 0,
+        "total": 121
+      },
+      "convertToCapped": {
+        "failed": 0,
+        "total": 0
+      },
+      "replSetHeartbeat": {
+        "failed": 0,
+        "total": 5672045
+      },
+      "ping": {
+        "failed": 0,
+        "total": 0
+      },
+      "availableQueryOptions": {
+        "failed": 0,
+        "total": 2
+      },
+      "dropAllUsersFromDatabase": {
+        "failed": 0,
+        "total": 0
+      },
+      "cloneCollectionAsCapped": {
+        "failed": 0,
+        "total": 0
+      },
+      "listCommands": {
+        "failed": 0,
+        "total": 0
+      },
+      "profile": {
+        "failed": 0,
+        "total": 0
+      },
+      "replSetElect": {
+        "failed": 0,
+        "total": 0
+      },
+      "cleanupOrphaned": {
+        "failed": 0,
+        "total": 0
+      },
+      "replSetFreeze": {
+        "failed": 0,
+        "total": 0
+      },
+      "clone": {
+        "failed": 0,
+        "total": 0
+      },
+      "mapReduce": {
+        "failed": 0,
+        "total": 0
+      },
+      "eval": {
+        "failed": 0,
+        "total": 0
+      },
+      "createUser": {
+        "failed": 0,
+        "total": 0
+      },
+      "aggregate": {
+        "failed": 0,
+        "total": 0
+      },
+      "replSetUpdatePosition": {
+        "failed": 0,
+        "total": 7710
+      },
+      "mergeChunks": {
+        "failed": 0,
+        "total": 0
+      },
+      "revokeRolesFromUser": {
+        "failed": 0,
+        "total": 0
+      },
+      "createRole": {
+        "failed": 0,
+        "total": 0
+      },
+      "authSchemaUpgrade": {
+        "failed": 0,
+        "total": 0
+      },
+      "findAndModify": {
+        "failed": 0,
+        "total": 694980
+      },
+      "dbStats": {
+        "failed": 0,
+        "total": 504844
+      },
+      "_recvChunkCommit": {
+        "failed": 0,
+        "total": 0
+      },
+      "grantRolesToRole": {
+        "failed": 0,
+        "total": 0
+      },
+      "buildInfo": {
+        "failed": 0,
+        "total": 24477
+      },
+      "resetError": {
+        "failed": 0,
+        "total": 0
+      }
+    },
+    "storage": {
+      "freelist": {
+        "search": {
+          "requests": 0,
+          "scanned": 0,
+          "bucketExhausted": 0
+        }
+      }
+    },
+    "getLastError": {
+      "wtime": {
+        "num": 0,
+        "totalMillis": 0
+      },
+      "wtimeouts": 0
+    },
+    "queryExecutor": {
+      "scanned": 743261553,
+      "scannedObjects": 466031838
+    },
+    "cursor": {
+      "timedOut": 5,
+      "open": {
+        "pinned": 0,
+        "total": 2,
+        "noTimeout": 0
+      }
+    },
+    "record": {
+      "moves": 0
+    },
+    "repl": {
+      "buffer": {
+        "count": 0,
+        "sizeBytes": 0,
+        "maxSizeBytes": 268435456
+      },
+      "apply": {
+        "batches": {
+          "num": 9891,
+          "totalMillis": 102
+        },
+        "ops": 11745
+      },
+      "preload": {
+        "docs": {
+          "num": 0,
+          "totalMillis": 0
+        },
+        "indexes": {
+          "num": 0,
+          "totalMillis": 0
+        }
+      },
+      "network": {
+        "bytes": 27694331,
+        "readersCreated": 2,
+        "getmores": {
+          "num": 614742,
+          "totalMillis": 3037173540
+        },
+        "ops": 11744
+      }
+    },
+    "ttl": {
+      "passes": 63093,
+      "deletedDocuments": 0
+    },
+    "operation": {
+      "writeConflicts": 1,
+      "fastmod": 0,
+      "scanAndOrder": 0,
+      "idhack": 16477061
+    },
+    "document": {
+      "deleted": 0,
+      "updated": 15083,
+      "inserted": 1,
+      "returned": 536691431
+    }
+  },
+  "process": "mongod",
+  "pid": 24513,
+  "connections": {
+    "current": 19,
+    "available": 51181,
+    "totalCreated": 1058339
+  },
+  "locks": {
+    "Metadata": {
+      "acquireCount": {
+        "W": 2
+      }
+    },
+    "oplog": {
+      "acquireCount": {
+        "r": 5128739,
+        "w": 3787496
+      }
+    },
+    "Global": {
+      "timeAcquiringMicros": {
+        "r": 4828463,
+        "W": 348437,
+        "w": 4185050
+      },
+      "acquireWaitCount": {
+        "r": 3418,
+        "W": 2608,
+        "w": 527
+      },
+      "acquireCount": {
+        "R": 9892,
+        "r": 343276732,
+        "W": 279753,
+        "w": 4667086
+      }
+    },
+    "Collection": {
+      "acquireCount": {
+        "r": 164328749,
+        "W": 1,
+        "w": 859721
+      }
+    },
+    "Database": {
+      "timeAcquiringMicros": {
+        "R": 12779182,
+        "r": 8865234573,
+        "W": 4639,
+        "w": 5308
+      },
+      "acquireWaitCount": {
+        "R": 3,
+        "r": 137,
+        "W": 17,
+        "w": 45
+      },
+      "acquireCount": {
+        "R": 1067083,
+        "r": 168103735,
+        "W": 82962,
+        "w": 4584124
+      }
+    }
+  },
+  "cursors": {
+    "clientCursors_size": 2,
+    "pinned": 0,
+    "totalNoTimeout": 0,
+    "timedOut": 5,
+    "note": "deprecated, use server status metrics",
+    "totalOpen": 2
+  },
+  "storageEngine": {
+    "name": "wiredTiger"
+  },
+  "globalLock": {
+    "totalTime": 3787064201000,
+    "currentQueue": {
+      "total": 0,
+      "writers": 0,
+      "readers": 0
+    },
+    "activeClients": {
+      "total": 44,
+      "writers": 0,
+      "readers": 0
+    }
+  },
+  "extra_info": {
+    "note": "fields vary by platform",
+    "page_faults": 51,
+    "heap_usage_bytes": 801236248
+  },
+  "uptime": 3787064,
+  "network": {
+    "numRequests": 142654663,
+    "bytesOut": 519748944825,
+    "bytesIn": 21805915974
+  },
+  "uptimeMillis": 3787064202,
+  "version": "3.0.10",
+  "mem": {
+    "resident": 13548,
+    "supported": true,
+    "virtual": 15241,
+    "mappedWithJournal": 0,
+    "mapped": 0,
+    "bits": 64
+  },
+  "opcountersRepl": {
+    "getmore": 0,
+    "insert": 7465,
+    "update": 4280,
+    "command": 0,
+    "query": 0,
+    "delete": 0
+  },
+  "wiredTiger": {
+    "data-handle": {
+      "session dhandles swept": 624009,
+      "connection sweeps": 378702,
+      "connection sweep dhandles removed from hash list": 24484,
+      "connection data handles currently active": 78,
+      "connection sweep dhandles closed": 0,
+      "session sweep attempts": 25642,
+      "connection sweep candidate became referenced": 0,
+      "connection sweep time-of-death sets": 30506
+    },
+    "reconciliation": {
+      "split bytes currently awaiting free": 70646,
+      "page reconciliation calls for eviction": 9854,
+      "page reconciliation calls": 108068,
+      "split objects currently awaiting free": 11
+    },
+    "cache": {
+      "eviction server evicting pages": 1,
+      "tracked dirty pages in the cache": 0,
+      "pages evicted because they exceeded the in-memory maximum": 4820,
+      "tracked bytes belonging to overflow pages in the cache": 0,
+      "page split during eviction deepened the tree": 11,
+      "pages split during eviction": 5143,
+      "pages walked for eviction": 400154344900,
+      "pages evicted by application threads": 0,
+      "tracked dirty bytes in the cache": 0,
+      "maximum page size at eviction": 10485759,
+      "pages evicted because they had chains of deleted items": 180,
+      "eviction server candidate queue empty when topping up": 1200126,
+      "bytes written from cache": 50375386968,
+      "checkpoint blocked page eviction": 1,
+      "failed eviction of pages that exceeded the in-memory maximum": 22,
+      "tracked bytes belonging to internal pages in the cache": 75373849,
+      "bytes currently in the cache": 12884285300,
+      "pages selected for eviction unable to be evicted": 2320905,
+      "percentage overhead": 8,
+      "eviction server populating queue, but not evicting pages": 6032008,
+      "pages written from cache": 1977395,
+      "tracked bytes belonging to leaf pages in the cache": 16030753511,
+      "eviction worker thread evicting pages": 315557228,
+      "bytes read into cache": 6309171630559,
+      "hazard pointer blocked page eviction": 1832173,
+      "pages read into cache": 313538436,
+      "eviction server candidate queue not empty when topping up": 4831883,
+      "in-memory page splits": 4831,
+      "unmodified pages evicted": 308778431,
+      "maximum bytes configured": 16106127360,
+      "pages currently held in the cache": 444135,
+      "modified pages evicted": 34257,
+      "eviction server unable to reach eviction goal": 0,
+      "internal pages evicted": 11040629
+    },
+    "log": {
+      "record size exceeded maximum": 0,
+      "log sync_dir operations": 27,
+      "log sync operations": 14788,
+      "log bytes written": 33948954624,
+      "log server thread advances write LSN": 53587,
+      "consolidated slot join races": 41,
+      "logging bytes consolidated": 27702144,
+      "records processed by log scan": 0,
+      "total log buffer size": 33554432,
+      "log records too small to compress": 2756460,
+      "log scan operations": 0,
+      "pre-allocated log files used": 320,
+      "total size of compressed records": 30281488983,
+      "total in-memory size of compressed records": 47680229632,
+      "yields waiting for previous log file close": 0,
+      "number of pre-allocated log files to create": 1,
+      "failed to find a slot large enough for record": 0,
+      "log records compressed": 23118217,
+      "slots selected for switching that were unavailable": 1,
+      "log records not compressed": 7257763,
+      "pre-allocated log files prepared": 321,
+      "log write operations": 33132435,
+      "consolidated slot joins": 66174,
+      "log bytes of payload data": 32114699189,
+      "log flush operations": 0,
+      "maximum log file size": 104857600,
+      "log scan records requiring two reads": 0,
+      "log read operations": 0,
+      "consolidated slot join transitions": 3,
+      "log release advances write LSN": 33078670,
+      "consolidated slot closures": 65966
+    },
+    "LSM": {
+      "sleep for LSM merge throttle": 0,
+      "application work units currently queued": 0,
+      "rows merged in an LSM tree": 0,
+      "switch work units currently queued": 0,
+      "merge work units currently queued": 0,
+      "tree maintenance operations discarded": 0,
+      "sleep for LSM checkpoint throttle": 0,
+      "tree maintenance operations executed": 0,
+      "tree maintenance operations scheduled": 0,
+      "tree queue hit maximum": 0
+    },
+    "uri": "statistics:",
+    "transaction": {
+      "transaction checkpoint most recent time (msecs)": 1,
+      "transaction checkpoints": 63116,
+      "transaction checkpoint generation": 63116,
+      "transaction checkpoint currently running": 0,
+      "transaction checkpoint max time (msecs)": 2226,
+      "transaction failures due to cache overflow": 0,
+      "transaction range of IDs currently pinned by a checkpoint": 0,
+      "transaction begins": 173646835,
+      "transaction checkpoint min time (msecs)": 1,
+      "transactions rolled back": 140579184,
+      "transaction checkpoint total time (msecs)": 229177,
+      "transaction range of IDs currently pinned": 0,
+      "transactions committed": 33105713
+    },
+    "cursor": {
+      "cursor update calls": 0,
+      "cursor prev calls": 36695,
+      "cursor insert calls": 33155029,
+      "cursor reset calls": 729312318,
+      "cursor search near calls": 434336026,
+      "cursor search calls": 576100231,
+      "cursor next calls": 661633454,
+      "cursor create calls": 35787631,
+      "cursor remove calls": 5
+    },
+    "connection": {
+      "memory re-allocations": 13098143,
+      "pthread mutex shared lock write-lock calls": 3836973,
+      "memory frees": 3994724435,
+      "pthread mutex condition wait calls": 1223588208,
+      "total read I/Os": 313599534,
+      "files currently open": 81,
+      "memory allocations": 4533756710,
+      "total write I/Os": 35194423,
+      "pthread mutex shared lock read-lock calls": 53835349
+    },
+    "session": {
+      "open session count": 39,
+      "open cursor count": 334
+    },
+    "block-manager": {
+      "bytes read": 3498946195456,
+      "mapped blocks read": 0,
+      "blocks pre-loaded": 796,
+      "bytes written": 21522587648,
+      "mapped bytes read": 0,
+      "blocks written": 2052767,
+      "blocks read": 313542305
+    },
+    "thread-yield": {
+      "page acquire busy blocked": 18173,
+      "page acquire read blocked": 90382366,
+      "page acquire eviction blocked": 22,
+      "page acquire locked blocked": 1379162,
+      "page acquire time sleeping (usecs)": 3022511
+    },
+    "async": {
+      "total insert calls": 0,
+      "total remove calls": 0,
+      "number of operation slots viewed for allocation": 0,
+      "total allocations": 0,
+      "current work queue length": 0,
+      "number of flush calls": 0,
+      "maximum work queue length": 0,
+      "total compact calls": 0,
+      "total update calls": 0,
+      "number of allocation state races": 0,
+      "number of times operation allocation failed": 0,
+      "number of times worker found no work": 0,
+      "total search calls": 0
+    },
+    "concurrentTransactions": {
+      "write": {
+        "available": 128,
+        "totalTickets": 128,
+        "out": 0
+      },
+      "read": {
+        "available": 127,
+        "totalTickets": 128,
+        "out": 1
+      }
+    }
+  },
+  "uptimeEstimate": 3757337,
+  "host": "xpr-mongo-a-repl-003.domain",
+  "repl": {
+    "me": "xpr-mongo-a-repl-003.domain:27017",
+    "ismaster": true,
+    "setName": "rs_pcs",
+    "primary": "xpr-mongo-a-repl-003.domain:27017",
+    "hosts": [
+      "xpr-mongo-a-repl-001.domain:27017",
+      "xpr-mongo-a-repl-002.domain:27017",
+      "xpr-mongo-a-repl-003.domain:27017"
+    ],
+    "electionId": "57720898d0872a45fa1554db",
+    "rbid": 1544920350,
+    "setVersion": 17,
+    "secondary": false
+  },
+  "writeBacksQueued": false,
+  "localTime": "2016-07-06 08:39:28.314000",
+  "opcounters": {
+    "getmore": 850076,
+    "insert": 1,
+    "update": 15084,
+    "command": 16781289,
+    "query": 125030709,
+    "delete": 0
+  },
+  "ok": 1,
+  "asserts": {
+    "msg": 0,
+    "rollovers": 0,
+    "regular": 0,
+    "warning": 0,
+    "user": 6277
+  }
+}
