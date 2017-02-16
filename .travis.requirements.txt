@@ -13,6 +13,7 @@ pymongo<3.0
 # https://github.com/BrightcoveOS/Diamond/issues/650
 #pyrabbit
 statsd
+Cython
 pyutmp
 redis
 simplejson
