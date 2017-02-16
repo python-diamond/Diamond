@@ -168,7 +168,7 @@ class cloudwatchHandler(Handler):
 
         collector = str(metric.getCollectorPath())
         metricname = str(metric.getMetricPath())
-        timestamp = datetime.datetime.fromtimestamp(metric.timestamp)
+        timestamp = datetime.datetime.utcfromtimestamp(metric.timestamp)
 
         # Send the data as ......
 
