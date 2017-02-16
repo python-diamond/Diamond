@@ -156,7 +156,6 @@ class TestDiskSpaceCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-    @run_only_if_major_is_available
     @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
     def test_should_work_in_system_directories(self, publish_mock):
