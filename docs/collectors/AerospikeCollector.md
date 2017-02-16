@@ -24,7 +24,7 @@ latency | True | Collect latency metrics | bool
 measure_collector_time | False | Collect the collector run time in ms | bool
 metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
 metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
-namespace_statistics_whitelist | objects, evicted-objects, expired-objects, used-bytes-memory, data-used-bytes-memory, index-used-bytes-memory, used-bytes-disk, memory-size, total-bytes-memory, total-bytes-disk, migrate-tx-partitions-initial, migrate-tx-partitions-remaining, migrate-rx-partitions-initial, migrate-rx-partitions-remaining, | List of per-namespace statistics values to collect | list
+namespace_statistics_whitelist | objects, evicted-objects, expired-objects, used-bytes-memory, data-used-bytes-memory, index-used-bytes-memory, used-bytes-disk, memory-size, total-bytes-memory, total-bytes-disk, migrate-tx-partitions-initial, migrate-tx-partitions-remaining, migrate-rx-partitions-initial, migrate-rx-partitions-remaining, available_pct, | List of per-namespace statistics values to collect | list
 namespaces | True | Collect per-namespace metrics | bool
 namespaces_whitelist | False | List of namespaces to collect metrics from (default is to collect from all) | bool
 path | aerospike | Metric path | str

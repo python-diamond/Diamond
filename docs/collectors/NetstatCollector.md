@@ -27,6 +27,6 @@ metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusiv
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.netstat.LISTEN 9
 ```
 

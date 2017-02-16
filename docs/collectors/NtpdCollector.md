@@ -20,7 +20,7 @@ enabled | False | Enable collecting these metrics | bool
 measure_collector_time | False | Collect the collector run time in ms | bool
 metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
 metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
-ntpdc_bin | /usr/sbin/ntpdc | Path to ntpdc binary | str
+ntpdc_bin | /usr/bin/ntpdc | Path to ntpdc binary | str
 ntpq_bin | /usr/bin/ntpq | Path to ntpq binary | str
 sudo_cmd | /usr/bin/sudo | Path to sudo | str
 use_sudo | False | Use sudo? | bool

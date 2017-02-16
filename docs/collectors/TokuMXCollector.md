@@ -34,6 +34,9 @@ user | None | Username for authenticated login (optional) | NoneType
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.mongo.localhost_27017.db_keys.db_nested_key 1
+servers.hostname.mongo.localhost_27017.dbkey 2
+servers.hostname.mongo.localhost_27057.db_keys.db_nested_key 1
+servers.hostname.mongo.localhost_27057.dbkey 2
 ```
 

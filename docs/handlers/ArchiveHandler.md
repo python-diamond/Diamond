@@ -16,4 +16,6 @@ encoding | None |  | NoneType
 get_default_config_help |  | get_default_config_help | 
 log_file |  | Path to the logfile | str
 propagate | False | Pass handled metrics to configured root logger | bool
+rollover_interval | 1 | rollover interval length | int
 server_error_interval | 120 | How frequently to send repeated server errors | int
+when | midnight | type of interval; S, M, H, D, Weekday, midnight | str
