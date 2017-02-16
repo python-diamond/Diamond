@@ -1,0 +1,15 @@
+{
+  "name": "my-etcd-server",
+  "id": "fc89b7d53ea5a0e2",
+  "state": "StateLeader",
+  "startTime": "2016-11-22T13:35:23.343775657+01:00",
+  "leaderInfo": {
+    "leader": "fc89b7d53ea5a0e2",
+    "uptime": "19h6m9.317124825s",
+    "startTime": "2016-11-22T13:49:49.748041155+01:00"
+  },
+  "recvAppendRequestCnt": 5870,
+  "sendAppendRequestCnt": 2097127,
+  "sendPkgRate": 11.763588080610418,
+  "sendBandwidthRate": 901.0908469747579
+}
