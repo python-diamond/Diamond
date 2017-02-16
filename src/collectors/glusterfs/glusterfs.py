@@ -34,8 +34,7 @@ class GlusterFSCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(GlusterFSCollector, self).get_default_config_help()
         config_help.update({
-            'gluster_path': 'complete path to gluster binary.' +
-            ' Defaults to /usr/sbin/gluster',
+            'gluster_path': 'complete path to gluster binary.',
             'target_volume': 'which brick to send info on.' +
             ' Defaults to all',
             'target_brick': 'which node/server to send metrics for.' +
