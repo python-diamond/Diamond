@@ -52,8 +52,8 @@ use_sudo | False | Use sudo? | bool
 #### Example Output
 
 ```
+servers.hostname.ping.192_168_0_1 16
 servers.hostname.ping.localhost 11
 servers.hostname.ping.www_example_org 23
-servers.hostname.ping.192_168_0_1 16
 ```
 

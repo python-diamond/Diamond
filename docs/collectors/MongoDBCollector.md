@@ -49,6 +49,7 @@ user | None | Username for authenticated login (optional) | NoneType
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.mongo.db_keys.db_nested_key 1
+servers.hostname.mongo.dbkey 2
 ```
 

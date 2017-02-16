@@ -26,6 +26,8 @@ metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusiv
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.users.kormoc 2
+servers.hostname.users.root 3
+servers.hostname.users.total 5
 ```
 
