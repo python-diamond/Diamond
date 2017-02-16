@@ -197,10 +197,16 @@ class ElasticSearchCollector(diamond.collector.Collector):
                          result, ['number_of_nodes'])
         self._add_metric(metrics, 'cluster_health.nodes.data',
                          result, ['number_of_data_nodes'])
+        self._add_metric(metrics, 'cluster_health.nodes.pending_tasks',
+                         result, ['number_of_pending_tasks'])
         self._add_metric(metrics, 'cluster_health.shards.active_primary',
                          result, ['active_primary_shards'])
         self._add_metric(metrics, 'cluster_health.shards.active',
                          result, ['active_shards'])
+        self._add_metric(metrics, 'cluster_health.shards.active_percent',
+                         result, ['active_shards_percent_as_number'])
+        self._add_metric(metrics, 'cluster_health.shards.delayed_unassigned',
+                         result, ['delayed_unassigned_shards'])
         self._add_metric(metrics, 'cluster_health.shards.relocating',
                          result, ['relocating_shards'])
         self._add_metric(metrics, 'cluster_health.shards.unassigned',
