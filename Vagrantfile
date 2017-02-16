@@ -7,8 +7,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "centos5-build" do |c|
     c.vm.hostname = "centos-build"
-    c.vm.box = "opscode_centos-5.10"
-    c.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-5.10_chef-provisionerless.box"
+    c.vm.box = "bento/centos-5.11"
 
     c.vm.provision "shell", inline: "rpm -qa | grep -qw epel-release  || (cd /tmp && wget http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm && sudo rpm -U epel-release-5*.noarch.rpm)"
     c.vm.provision "shell", inline: "rpm -qa | grep -qw 'git\|rpm-build\|python-configobj' || sudo yum install -y git rpm-build python-configobj"
@@ -21,8 +20,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "centos6-build" do |c|
     c.vm.hostname = "centos-build"
-    c.vm.box = "opscode_centos-6.5"
-    c.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.5_chef-provisionerless.box"
+    c.vm.box = "bento/centos-6.8"
 
     c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj"
     c.vm.provision "shell", inline: "cp -rf /vagrant /tmp/Diamond"
@@ -34,8 +32,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "centos7-build" do |c|
     c.vm.hostname = "centos-build"
-    c.vm.box = "opscode_centos-7.2"
-    c.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-7.2_chef-provisionerless.box"
+    c.vm.box = "bento/centos-7.2"
 
     c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj"
     c.vm.provision "shell", inline: "cp -rf /vagrant /tmp/Diamond"
@@ -47,8 +44,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "ubuntu-build" do |c|
     c.vm.hostname = "ubuntu-build"
-    c.vm.box = "opscode_ubuntu-12.04"
-    c.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-12.04_chef-provisionerless.box"
+    c.vm.box = "bento/ubuntu-12.04"
 
     c.vm.provision "shell", inline: "sudo apt-get update"
     c.vm.provision "shell", inline: "sudo apt-get install -y make git pbuilder python-mock python-configobj python-support cdbs"
@@ -59,8 +55,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "centos6-devel" do |c|
     c.vm.hostname = "centos-devel"
-    c.vm.box = "opscode_centos-6.5"
-    c.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.5_chef-provisionerless.box"
+    c.vm.box = "bento/centos-6.8"
 
     c.vm.provision "shell", inline: "sudo rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
     c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj python-test python-mock tree vim-enhanced"
@@ -68,8 +63,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "centos7-devel" do |c|
     c.vm.hostname = "centos7-devel"
-    c.vm.box = "opscode_centos-7.2"
-    c.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-7.2_chef-provisionerless.box"
+    c.vm.box = "bento/centos-7.2"
 
     c.vm.provision "shell", inline: "sudo rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm"
     c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj python-test python-mock tree vim-enhanced MySQL-python gcc"
@@ -77,8 +71,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "centos7-test" do |c|
     c.vm.hostname = "centos7-test"
-    c.vm.box = "opscode_centos-7.2"
-    c.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-7.2_chef-provisionerless.box"
+    c.vm.box = "bento/centos-7.2"
 
     c.vm.provider "virtualbox" do |v|
       v.memory = 1024
