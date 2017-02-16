@@ -189,7 +189,7 @@ class TestMongoDBCollector(CollectorTestCase):
             call('extra_info.heap_usage_bytes', 801236248),
             call('metrics.document.returned', 536691431),
             call('metrics.commands.saslContinue.total', 1400470),
-            call('wiredTiger.thread-yield.page acquire time sleeping (usecs)',
+            call('wiredTiger.thread.yield.page_acquire_time_sleeping_(usecs)',
                  3022511),
             call('opcounters_per_sec.query', 0, instance=None,
                  metric_type='COUNTER', precision=0, raw_value=125030709),
