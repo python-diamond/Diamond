@@ -17,7 +17,8 @@ user =
 # Leave empty to use the current group
 group =
 
-# Pid file
+# Pid file, on systemd if not using default PID file
+# make sure you also change systemd's diamond unit.
 pid_file = /var/run/diamond.pid
 
 # Directory to load collector modules from
