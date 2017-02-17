@@ -73,6 +73,7 @@ class KafkaCollector(diamond.collector.Collector):
             return None
 
         try:
+            self.log.debug('GET %s', url)
             return ElementTree.fromstring(response.read())
         except ETParseError:
             self.log.error("Unable to parse response from mx4j")
@@ -121,11 +122,11 @@ class KafkaCollector(diamond.collector.Collector):
                     if "," in key_prefix:
                         key_prefix = key_prefix.split(',')[0]
                 elif i > 0:
-                    key = objectname.split('=')[2]
+                    key = objectname.split('=')[i + 1]
                     if key:
                         if '"' in key:
                             key = key.split('"')[1]
-                        key_prefix = key_prefix + '.' + key
+                        key_prefix = key_prefix + '.' + key.replace(",", ".")
 
         metrics = {}
 
@@ -134,7 +135,14 @@ class KafkaCollector(diamond.collector.Collector):
 
             ptype = self.ATTRIBUTE_TYPES.get(atype)
             if not ptype:
-                continue
+                try:
+                    long(attrib.get('value'))
+                    ptype = long
+                except ValueError:
+                    self.log.debug('Failed to guess type %s for %s.%s value %s',
+                                   atype, key_prefix, attrib.get('name'),
+                                   attrib.get('value'))
+                    continue
 
             value = ptype(attrib.get('value'))
 

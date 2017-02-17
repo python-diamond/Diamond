@@ -120,6 +120,22 @@ class TestKafkaCollector(CollectorTestCase):
 
     @run_only_if_ElementTree_is_available
     @patch.object(KafkaCollector, '_get')
+    def test_query_mbean2(self, get_mock):
+        get_mock.return_value = self._get_xml_fixture('mbean2.xml')
+
+        expected_metrics = {
+            'Log.LogStartOffset.topic.packetbeat.partition.0.Value':
+            long('2774314'),
+        }
+
+        metrics = self.collector.query_mbean(
+            'kafka.log:type=Log,name=LogStartOffset,'
+            'topic=packetbeat,partition=0')
+
+        self.assertEqual(metrics, expected_metrics)
+
+    @run_only_if_ElementTree_is_available
+    @patch.object(KafkaCollector, '_get')
     def test_query_mbean_with_prefix(self, get_mock):
         get_mock.return_value = self._get_xml_fixture('mbean.xml')
 
