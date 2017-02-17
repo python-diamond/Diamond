@@ -3,17 +3,24 @@
 """
 The PasengerCollector collects CPU and memory utilization of apache, nginx
 and passenger processes.
+It also collects requests in top-level and passenger applications group queues.
 
 Four key attributes to be published:
 
  * phusion_passenger_cpu
  * total_apache_memory
+ * total_apache_procs
  * total_passenger_memory
+ * total_passenger_procs
  * total_nginx_memory
+ * total_nginx_procs
+ * top_level_queue_size
+ * passenger_queue_size
 
 #### Dependencies
 
  * passenger-memory-stats
+ * passenger-status
 
 """
 import diamond.collector
@@ -37,6 +44,10 @@ class PassengerCollector(diamond.collector.Collector):
             "bin":         "The path to the binary",
             "use_sudo":    "Use sudo?",
             "sudo_cmd":    "Path to sudo",
+            "passenger_status_bin":
+                           "The path to the binary passenger-status",
+            "passenger_memory_stats_bin":
+                           "The path to the binary passenger-memory-stats",
         })
         return config_help
 
@@ -50,6 +61,8 @@ class PassengerCollector(diamond.collector.Collector):
             "bin":          "/usr/lib/ruby-flo/bin/passenger-memory-stats",
             "use_sudo":     False,
             "sudo_cmd":     "/usr/bin/sudo",
+            "passenger_status_bin": "/usr/bin/passenger-status",
+            "passenger_memory_stats_bin": "/usr/bin/passenger-memory-stats",
         })
         return config
 
@@ -58,7 +71,7 @@ class PassengerCollector(diamond.collector.Collector):
         Execute passenger-memory-stats, parse its output, return dictionary with
         stats.
         """
-        command = [self.config["bin"]]
+        command = [self.config["passenger_memory_stats_bin"]]
         if str_to_bool(self.config["use_sudo"]):
             command.insert(0, self.config["sudo_cmd"])
 
@@ -105,8 +118,7 @@ class PassengerCollector(diamond.collector.Collector):
                     dict_stats["nginx_mem_total"] += float(line_splitted[4])
                 elif passenger_flag == 1:
                     dict_stats["passenger_procs"].append(line_splitted[0])
-                    dict_stats[
-                        "passenger_mem_total"] += float(line_splitted[3])
+                    dict_stats["passenger_mem_total"] += float(line_splitted[3])
 
             elif "Processes:" in line:
                 passenger_flag = 0
@@ -145,6 +157,57 @@ class PassengerCollector(diamond.collector.Collector):
 
         return overall_cpu
 
+    def get_passenger_queue_stats(self):
+        """
+        Execute passenger-stats, parse its output, returnand requests in queue
+        """
+        queue_stats = {
+            "top_level_queue_size": 0.0,
+            "passenger_queue_size": 0.0,
+        }
+
+        command = [self.config["passenger_status_bin"]]
+        if str_to_bool(self.config["use_sudo"]):
+            command.insert(0, self.config["sudo_cmd"])
+
+        try:
+            proc1 = subprocess.Popen(command, stdout=subprocess.PIPE)
+            (std_out, std_err) = proc1.communicate()
+
+        except OSError:
+            return {}
+
+        if std_out is None:
+            return {}
+
+        re_colour = re.compile("\x1B\[([0-9]{1,3}((;[0-9]{1,3})*)?)?[m|K]")
+        re_requests = re.compile(r"Requests")
+        re_topqueue = re.compile(r"^top-level")
+
+        gen_info_flag = 0
+        app_groups_flag = 0
+        for raw_line in std_out.splitlines():
+            line = re_colour.sub("", raw_line)
+            if "General information" in line:
+                gen_info_flag = 1
+            if "Application groups" in line:
+                app_groups_flag = 1
+            elif re_requests.match(line) and re_topqueue.search(line):
+                # If line starts with Requests and line has top-level queue then
+                # store queue size
+                line_splitted = line.split()
+                if gen_info_flag == 1 and line_splitted:
+                    queue_stats["top_level_queue_size"] = float(
+                        line_splitted[5])
+            elif re_requests.search(line) and not re_topqueue.search(line):
+                # If line has Requests and nothing else special
+                line_splitted = line.split()
+                if app_groups_flag == 1 and line_splitted:
+                    queue_stats["passenger_queue_size"] = float(
+                        line_splitted[3])
+
+        return queue_stats
+
     def collect(self):
         """
         Collector Passenger stats
@@ -158,11 +221,23 @@ class PassengerCollector(diamond.collector.Collector):
         if len(dict_stats.keys()) == 0:
             return {}
 
+        queue_stats = self.get_passenger_queue_stats()
+        if len(queue_stats.keys()) == 0:
+            return {}
+
         overall_cpu = self.get_passenger_cpu_usage(dict_stats)
         if overall_cpu >= 0:
             self.publish("phusion_passenger_cpu", overall_cpu)
 
+        self.publish("total_passenger_procs", len(
+            dict_stats["passenger_procs"]))
+        self.publish("total_nginx_procs", len(dict_stats["nginx_procs"]))
+        self.publish("total_apache_procs", len(dict_stats["apache_procs"]))
         self.publish("total_apache_memory", dict_stats["apache_mem_total"])
         self.publish("total_nginx_memory", dict_stats["nginx_mem_total"])
         self.publish("total_passenger_memory",
                      dict_stats["passenger_mem_total"])
+        self.publish("top_level_queue_size", queue_stats[
+                     "top_level_queue_size"])
+        self.publish("passenger_queue_size", queue_stats[
+                     "passenger_queue_size"])
