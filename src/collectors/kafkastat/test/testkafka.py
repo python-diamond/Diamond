@@ -108,10 +108,10 @@ class TestKafkaCollector(CollectorTestCase):
         get_mock.return_value = self._get_xml_fixture('mbean.xml')
 
         expected_metrics = {
-            'kafka.logs.mytopic-1.CurrentOffset': long('213500615'),
-            'kafka.logs.mytopic-1.NumAppendedMessages': long('224634137'),
-            'kafka.logs.mytopic-1.NumberOfSegments': int('94'),
-            'kafka.logs.mytopic-1.Size': long('50143615339'),
+            'kafka.kafka.logs.mytopic-1.CurrentOffset': long('213500615'),
+            'kafka.kafka.logs.mytopic-1.NumAppendedMessages': long('224634137'),
+            'kafka.kafka.logs.mytopic-1.NumberOfSegments': int('94'),
+            'kafka.kafka.logs.mytopic-1.Size': long('50143615339'),
         }
 
         metrics = self.collector.query_mbean('kafka:type=kafka.logs.mytopic-1')
@@ -160,20 +160,20 @@ class TestKafkaCollector(CollectorTestCase):
         self.collector.collect()
 
         expected_metrics = {
-            'kafka.logs.mytopic-1.CurrentOffset': 213500615,
-            'kafka.logs.mytopic-1.NumAppendedMessages': 224634137,
-            'kafka.logs.mytopic-1.NumberOfSegments': 94,
-            'kafka.logs.mytopic-1.Size': 50143615339,
-            'Threading.CurrentThreadCpuTime': 0,
-            'Threading.CurrentThreadUserTime': 0,
-            'Threading.DaemonThreadCount': 58,
-            'Threading.PeakThreadCount': 90,
-            'Threading.ThreadCount': 89,
-            'Threading.TotalStartedThreadCount': 228,
-            'GarbageCollector.PSScavenge.CollectionCount': 37577,
-            'GarbageCollector.PSScavenge.CollectionTime': 112293,
-            'GarbageCollector.PSMarkSweep.CollectionCount': 2,
-            'GarbageCollector.PSMarkSweep.CollectionTime': 160,
+            'kafka.kafka.logs.mytopic-1.CurrentOffset': 213500615,
+            'kafka.kafka.logs.mytopic-1.NumAppendedMessages': 224634137,
+            'kafka.kafka.logs.mytopic-1.NumberOfSegments': 94,
+            'kafka.kafka.logs.mytopic-1.Size': 50143615339,
+            'java.lang.Threading.CurrentThreadCpuTime': 0,
+            'java.lang.Threading.CurrentThreadUserTime': 0,
+            'java.lang.Threading.DaemonThreadCount': 58,
+            'java.lang.Threading.PeakThreadCount': 90,
+            'java.lang.Threading.ThreadCount': 89,
+            'java.lang.Threading.TotalStartedThreadCount': 228,
+            'java.lang.GarbageCollector.name_PSScavenge.CollectionCount': 37577,
+            'java.lang.GarbageCollector.name_PSScavenge.CollectionTime': 112293,
+            'java.lang.GarbageCollector.name_PSMarkSweep.CollectionCount': 2,
+            'java.lang.GarbageCollector.name_PSMarkSweep.CollectionTime': 160,
         }
 
         self.assertPublishedMany(publish_mock, expected_metrics)
