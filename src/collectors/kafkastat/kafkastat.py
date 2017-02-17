@@ -112,31 +112,39 @@ class KafkaCollector(diamond.collector.Collector):
             # java.lang:type=Threading
             # "kafka.controller":type="ControllerStats",
             # name="LeaderElectionRateAndTimeMs"
-            split_num = objectname.count('=')
-            for i in range(split_num):
+            key_prefix = ''
+            for i, item in enumerate(objectname.split(',')):
                 if i == 0:
-                    key_prefix = objectname.split('=')[1]
+                    key_prefix = item.split('=')[1]
                     if '"' in key_prefix:
                         key_prefix = key_prefix.split('"')[1]
                     if "," in key_prefix:
                         key_prefix = key_prefix.split(',')[0]
-                elif i > 0:
-                    key = objectname.split('=')[2]
+                else:
+                    key = item.split('=')[1]
                     if key:
                         if '"' in key:
                             key = key.split('"')[1]
-                        key_prefix = key_prefix + '.' + key
+                        key_prefix = key_prefix + '.' + key.replace('.', '_')
 
         metrics = {}
-
         for attrib in attributes.getiterator(tag='Attribute'):
             atype = attrib.get('type')
-
             ptype = self.ATTRIBUTE_TYPES.get(atype)
+
+            if ptype is None:
+                for mbean_attrib in attributes.getiterator(tag='MBean'):
+                    if 'JmxReporter$Gauge' in mbean_attrib.get('classname'):
+                        ptype = float
+                        break
+
             if not ptype:
                 continue
 
-            value = ptype(attrib.get('value'))
+            try:
+                value = ptype(attrib.get('value'))
+            except (TypeError, ValueError):
+                continue
 
             name = '.'.join([key_prefix, attrib.get('name')])
             # Some prefixes and attributes could have spaces, thus we must
