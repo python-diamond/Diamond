@@ -26,13 +26,6 @@ import diamond.collector
 
 
 class KafkaCollector(diamond.collector.Collector):
-    ATTRIBUTE_TYPES = {
-        'double': float,
-        'float': float,
-        'int': int,
-        'long': long,
-    }
-
     def get_default_config_help(self):
         config_help = super(KafkaCollector, self).get_default_config_help()
         config_help.update({
@@ -50,6 +43,7 @@ class KafkaCollector(diamond.collector.Collector):
             'host': '127.0.0.1',
             'port': 8082,
             'path': 'kafka',
+            'method': 'Threaded',
         })
         return config
 
@@ -120,11 +114,11 @@ class KafkaCollector(diamond.collector.Collector):
                         key_prefix = key_prefix.split('"')[1]
                     if "," in key_prefix:
                         key_prefix = key_prefix.split(',')[0]
-                elif i > 0:
-                    key = objectname.split('=')[2]
+                elif i >= 0:
+                    key = objectname.split('=')[i + 1]
                     if key:
-                        if '"' in key:
-                            key = key.split('"')[1]
+                        if ',' in key:
+                            key = key.split(',')[0]
                         key_prefix = key_prefix + '.' + key
 
         metrics = {}
@@ -132,11 +126,10 @@ class KafkaCollector(diamond.collector.Collector):
         for attrib in attributes.getiterator(tag='Attribute'):
             atype = attrib.get('type')
 
-            ptype = self.ATTRIBUTE_TYPES.get(atype)
-            if not ptype:
+            try:
+                value = float(attrib.get('value'))
+            except:
                 continue
-
-            value = ptype(attrib.get('value'))
 
             name = '.'.join([key_prefix, attrib.get('name')])
             # Some prefixes and attributes could have spaces, thus we must
@@ -144,7 +137,6 @@ class KafkaCollector(diamond.collector.Collector):
             name = name.replace(' ', '')
 
             metrics[name] = value
-
         return metrics
 
     def collect(self):
