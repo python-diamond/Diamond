@@ -113,6 +113,72 @@ class TestJolokiaCollector(CollectorTestCase):
         self.assertEqual(domain_with_bang, 'some%21%21domain')
         self.assertEqual(domain_with_quote, 'some%21%22domain')
 
+    def test_canonical_names_setting_not_set(self):
+        config = get_collector_config('JolokiaCollector', {})
+        logger_mock = Mock()
+        patch_logger = patch('logging.getLogger', Mock(
+            return_value=logger_mock))
+        patch_logger.start()
+
+        collector = JolokiaCollector(config, None)
+
+        patch_logger.stop()
+        logger_mock.error.assert_not_called()
+
+    @patch('jolokia.JolokiaCollector._create_request')
+    @patch('urllib2.urlopen')
+    def test_should_handle_canonical_names_setting_True(self, urlopen_mock,
+                                                        create_request_mock):
+        config = get_collector_config('JolokiaCollector', {})
+        config['collectors']['JolokiaCollector']['use_canonical_names'] = 'True'
+        config['collectors']['JolokiaCollector']['domains'] = ['foo']
+        request = Mock()
+        request.read.return_value = "{status: 400}"
+        urlopen_mock.return_value = request
+
+        collector = JolokiaCollector(config, None)
+        collector.collect()
+
+        self.assertIn('canonicalNaming=true',
+                      create_request_mock.call_args[0][0])
+        self.assertIs(collector.config['use_canonical_names'], True)
+
+    @patch('jolokia.JolokiaCollector._create_request')
+    @patch('urllib2.urlopen')
+    def test_should_handle_canonical_names_setting_False(self, urlopen_mock,
+                                                         create_request_mock):
+        config = get_collector_config('JolokiaCollector', {})
+        config['collectors']['JolokiaCollector']['use_canonical_names'] = \
+            'False'
+        config['collectors']['JolokiaCollector']['domains'] = ['foo']
+        request = Mock()
+        request.read.return_value = "{status: 400}"
+        urlopen_mock.return_value = request
+
+        collector = JolokiaCollector(config, None)
+        collector.collect()
+
+        self.assertIn('canonicalNaming=false',
+                      create_request_mock.call_args[0][0])
+        self.assertIs(collector.config['use_canonical_names'], False)
+
+    def test_should_handle_invalid_canonical_names_setting_values(self):
+        config = get_collector_config('JolokiaCollector', {})
+        config['collectors']['JolokiaCollector']['use_canonical_names'] = 'foo'
+        logger_mock = Mock()
+        patch_logger = patch('logging.getLogger', Mock(
+            return_value=logger_mock))
+        patch_logger.start()
+
+        collector = JolokiaCollector(config, None)
+
+        patch_logger.stop()
+        logger_mock.error.assert_called_once_with(
+            'Unexpected value "%s" for "use_canonical_names" setting. '
+            'Expected "True" or "False". Using default value.', 'foo')
+        self.assertEqual(collector.config['use_canonical_names'],
+                         collector.get_default_config()['use_canonical_names'])
+
     def get_metrics(self):
         prefix = 'java.lang.name_ParNew.type_GarbageCollector.LastGcInfo'
         return {
