@@ -148,7 +148,7 @@ class RedisCollector(diamond.collector.Collector):
                 if '/' in hostport:
                     parts = hostport.split('/')
                     hostport = parts[0]
-                    auth = parts[1]
+                    auth = '/'.join(parts[1:])
                 else:
                     auth = None
 
