@@ -343,7 +343,7 @@ class MongoDBCollector(diamond.collector.Collector):
             publishfn('.'.join(keys), value)
         elif isinstance(value, long):
             publishfn('.'.join(keys), float(value))
-	elif isinstance(value, datetime.datetime):
+        elif isinstance(value, datetime.datetime):
             publishfn('.'.join(keys), long(value.strftime('%s')))
 
     def _extract_simple_data(self, data):
