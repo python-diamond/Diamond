@@ -2,6 +2,7 @@
 # coding=utf-8
 ###############################################################################
 import urllib2
+from urlparse import urlparse, parse_qs
 
 try:
     from xml.etree import ElementTree
@@ -144,19 +145,39 @@ class TestKafkaCollector(CollectorTestCase):
 
         self.assertEqual(metrics, None)
 
+    def getKafkaFixture(self, url):
+        url_object = urlparse(url)
+        query_string = parse_qs(url_object.query)
+        querynames = query_string.get('querynames', [])
+        objectnames = query_string.get('objectname', [])
+
+        if url_object.path == '/serverbydomain':
+            if 'java.lang:type=GarbageCollector,name=*' in querynames:
+                return self.getFixture('serverbydomain_gc.xml')
+            elif 'java.lang:type=Threading' in querynames:
+                return self.getFixture('serverbydomain_threading.xml')
+            else:
+                return self.getFixture('serverbydomain_logs_only.xml')
+        elif url_object.path == '/mbean':
+            if ('java.lang:type=GarbageCollector,name=PS MarkSweep'
+                    in objectnames):
+                return self.getFixture('gc_marksweep.xml')
+            elif ('java.lang:type=GarbageCollector,name=PS Scavenge'
+                  in objectnames):
+                return self.getFixture('gc_scavenge.xml')
+            elif 'java.lang:type=Threading' in objectnames:
+                return self.getFixture('threading.xml')
+            else:
+                return self.getFixture('mbean.xml')
+        else:
+            return ''
+
     @run_only_if_ElementTree_is_available
     @patch('urllib2.urlopen')
     @patch.object(Collector, 'publish')
     def test(self, publish_mock, urlopen_mock):
-        urlopen_mock.side_effect = [
-            self.getFixture('serverbydomain_logs_only.xml'),
-            self.getFixture('serverbydomain_gc.xml'),
-            self.getFixture('serverbydomain_threading.xml'),
-            self.getFixture('gc_scavenge.xml'),
-            self.getFixture('gc_marksweep.xml'),
-            self.getFixture('mbean.xml'),
-            self.getFixture('threading.xml'),
-        ]
+        urlopen_mock.side_effect = self.getKafkaFixture
+
         self.collector.collect()
 
         expected_metrics = {
