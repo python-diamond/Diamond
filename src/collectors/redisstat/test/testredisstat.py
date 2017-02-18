@@ -304,6 +304,33 @@ class TestRedisCollector(CollectorTestCase):
 
     @run_only_if_redis_is_available
     @patch.object(Collector, 'publish')
+    def test_process_config_with_instances(self, publish_mock):
+
+        config_data = {
+            'instances': [
+                'nick1@host1:1111',
+                'nick2@:2222',
+                'nick3@host3',
+                'nick4@host4:3333/@pass/word',
+                'bla'
+            ]
+        }
+
+        expected_processed_config = {
+            'nick2': ('localhost', 2222, None, None),
+            'nick3': ('host3', 6379, None, None),
+            'nick1': ('host1', 1111, None, None),
+            'nick4': ('host4', 3333, None, '@pass/word'),
+            '6379': ('bla', 6379, None, None)
+        }
+
+        config = get_collector_config('RedisCollector', config_data)
+        collector = RedisCollector(config, None)
+
+        self.assertEqual(collector.instances, expected_processed_config)
+
+    @run_only_if_redis_is_available
+    @patch.object(Collector, 'publish')
     def test_key_naming_when_using_instances(self, publish_mock):
 
         config_data = {
