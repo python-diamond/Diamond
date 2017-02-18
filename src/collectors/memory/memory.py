@@ -112,9 +112,9 @@ class MemoryCollector(diamond.collector.Collector):
 
             if memory_total is not None and memory_available is not None:
                 memory_used = memory_total - memory_available
-                memory_used_percent = Decimal(100.0 *
+                memory_used_percent = Decimal(str(100.0 *
                                               memory_used /
-                                              memory_total)
+                                              memory_total))
                 self.publish('MemUsedPercentage',
                              round(memory_used_percent, 2),
                              metric_type='GAUGE')
@@ -146,9 +146,9 @@ class MemoryCollector(diamond.collector.Collector):
 
                 memory_used = memory_total - memory_available
 
-                memory_used_percent = Decimal(100.0 *
+                memory_used_percent = Decimal(str(100.0 *
                                               memory_used /
-                                              memory_total)
+                                              memory_total))
                 self.publish('MemUsedPercentage',
                              round(memory_used_percent, 2),
                              metric_type='GAUGE')
