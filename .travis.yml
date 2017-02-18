@@ -45,3 +45,7 @@ notifications:
 addons:
     apt_packages:
     - libsensors4
+
+branches:
+  only:
+    - master
