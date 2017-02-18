@@ -23,6 +23,7 @@ MongoDBCollector.conf
 """
 
 import diamond.collector
+import datetime
 from diamond.collector import str_to_bool
 import re
 import zlib
@@ -342,6 +343,8 @@ class MongoDBCollector(diamond.collector.Collector):
             publishfn('.'.join(keys), value)
         elif isinstance(value, long):
             publishfn('.'.join(keys), float(value))
+        elif isinstance(value, datetime.datetime):
+            publishfn('.'.join(keys), long(value.strftime('%s')))
 
     def _extract_simple_data(self, data):
         return {
