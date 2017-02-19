@@ -1,0 +1,5 @@
+Personalities : [raid1]
+md0 : active raid1 sda1[0] sda2[1](F)
+      102272 blocks super 1.2 [2/1] [U_]
+
+unused devices: <none>

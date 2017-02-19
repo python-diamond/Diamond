@@ -1,0 +1,6 @@
+Personalities : [raid1]
+md0 : active raid1 sda1[1] sda2[0]
+      100171776 blocks super 1.2 [2/2] [UU]
+      bitmap: 1/1 pages [4KB], 65536KB chunk
+
+unused devices: <none>
