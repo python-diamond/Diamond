@@ -71,6 +71,9 @@ class MdStatCollector(diamond.collector.Collector):
         :rtype: dict
         """
 
+        arrays = {}
+        mdstat_array_blocks = ''
+
         try:
             with open(self.MDSTAT_PATH, 'r') as f:
                 lines = f.readlines()
@@ -81,9 +84,7 @@ class MdStatCollector(diamond.collector.Collector):
                     err=err
                 )
             )
-
-        arrays = {}
-        mdstat_array_blocks = ''
+            return arrays
 
         for line in lines[1:-1]:
             # remove first and last line
