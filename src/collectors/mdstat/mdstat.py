@@ -98,16 +98,24 @@ class MdStatCollector(diamond.collector.Collector):
             md_device_name = self.parse_mdstat_device_name(block)
             if md_device_name:
                 # this block contains a whitelisted md device name
+
+                # 'member_count' and 'status' are mandatory keys
                 arrays[md_device_name] = {
                     'member_count': self.parse_array_member_state(block),
                     'status': self.parse_mdstat_array_status(block),
-                    'bitmap': self.parse_mdstat_array_bitmap(block),
-                    'recovery': self.parse_mdstat_array_recovery(block)
                 }
-                if not arrays[md_device_name]['bitmap']:
-                    arrays[md_device_name].pop('bitmap')
-                if not arrays[md_device_name]['recovery']:
-                    arrays[md_device_name].pop('recovery')
+
+                # 'bitmap' and 'recovery' are optional keys
+                bitmap_status = self.parse_mdstat_array_bitmap(block)
+                recovery_status = self.parse_mdstat_array_recovery(block)
+                if bitmap_status:
+                    arrays[md_device_name].update(
+                        {'bitmap': bitmap_status}
+                    )
+                if recovery_status:
+                    arrays[md_device_name].update(
+                        {'recovery': recovery_status}
+                    )
 
         return arrays
 
@@ -143,12 +151,12 @@ class MdStatCollector(diamond.collector.Collector):
         :return: dictionary of states with according count
         :rtype: dict
         """
-        devices = block.split('\n')[0].split(' : ')[1].split(' ')[2:]
+        members = block.split('\n')[0].split(' : ')[1].split(' ')[2:]
 
         device_regexp = re.compile(
-            '^(?P<device_name>.*)'
-            '\[(?P<role_number>\d*)\]'
-            '\(?(?P<device_state>[FS])?\)?$'
+            '^(?P<member_name>.*)'
+            '\[(?P<member_role_number>\d*)\]'
+            '\(?(?P<member_state>[FS])?\)?$'
         )
 
         ret = {
@@ -156,12 +164,12 @@ class MdStatCollector(diamond.collector.Collector):
             'faulty': 0,
             'spare': 0
         }
-        for device in devices:
-            device_dict = device_regexp.match(device).groupdict()
+        for member in members:
+            member_dict = device_regexp.match(member).groupdict()
 
-            if device_dict['device_state'] == 'S':
+            if member_dict['member_state'] == 'S':
                 ret['spare'] += 1
-            elif device_dict['device_state'] == 'F':
+            elif member_dict['member_state'] == 'F':
                 ret['faulty'] += 1
             else:
                 ret['active'] += 1
