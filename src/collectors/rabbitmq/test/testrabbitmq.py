@@ -340,9 +340,6 @@ class TestRabbitMQCollector(CollectorTestCase):
             'cluster.nodes': 3
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
         self.collector.config['query_individual_queues'] = False
@@ -448,9 +445,6 @@ class TestRabbitMQCollector(CollectorTestCase):
             'cluster.nodes': 3
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
         self.collector.config['query_individual_queues'] = False
