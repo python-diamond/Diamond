@@ -1,0 +1,5 @@
+Personalities : [raid1] [raid6] [raid5] [raid4] [linear]
+md0 : active linear sda1[1] sda2[0]
+      199800 blocks super 1.2 999k rounding
+
+unused devices: <none>

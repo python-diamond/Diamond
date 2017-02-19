@@ -1,0 +1,5 @@
+Personalities : [raid1] [raid6] [raid5] [raid4] [linear] [multipath]
+md0 : active multipath sda1[0] sda2[1]
+      102320 blocks super 1.2 [2/2] [UU]
+
+unused devices: <none>
