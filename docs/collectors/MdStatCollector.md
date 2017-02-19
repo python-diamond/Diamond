@@ -17,7 +17,6 @@ https://raid.wiki.kernel.org/index.php/Mdstat
 Setting | Default | Description | Type
 --------|---------|-------------|-----
 byte_unit | byte | Default numeric output(s) | str
-device_filter | ^md[0-9]*$ | A regex pattern.Metrics will be collected for any md device matching the pattern | str
 enabled | False | Enable collecting these metrics | bool
 measure_collector_time | False | Collect the collector run time in ms | bool
 metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
@@ -41,4 +40,3 @@ servers.hostname.mdstat.md0.status.blocks 102272
 servers.hostname.mdstat.md0.status.superblock_version 1.2
 servers.hostname.mdstat.md0.status.total_members 2
 ```
-

@@ -19,11 +19,6 @@ class MdStatCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
         config_help = super(MdStatCollector, self).get_default_config_help()
-        config_help.update({
-            'device_filter': 'A regex pattern.'
-                             'Metrics will be collected for any md device '
-                             'matching the pattern'
-        })
         return config_help
 
     def get_default_config(self):
@@ -33,28 +28,11 @@ class MdStatCollector(diamond.collector.Collector):
         config = super(MdStatCollector, self).get_default_config()
         config.update({
             'path': 'mdstat',
-            'device_filter': '^md[0-9]*$'
         })
         return config
 
     def process_config(self):
         super(MdStatCollector, self).process_config()
-        self.device_filter = self.config['device_filter']
-
-        try:
-            self.device_regexp = re.compile(self.device_filter)
-        except re.error as err:
-            device_filter_default = self.get_default_config['device_filter']
-            self.log.exception(
-                'Error parsing device_filter regexp "{device_filter}": {err}\n'
-                'Using default value regexp "{default_regexp}".'
-                .format(
-                    err=err,
-                    device_filter=self.device_filter,
-                    default_regexp=device_filter_default
-                )
-            )
-            self.device_regexp = re.compile(device_filter_default)
 
     def collect(self):
         """Publish all mdstat metrics."""
@@ -145,11 +123,7 @@ class MdStatCollector(diamond.collector.Collector):
         :return: matched device name or None
         :rtype: string
         """
-        device_name = block.split('\n')[0].split(' : ')[0]
-        if self.device_regexp.match(device_name):
-            return device_name
-        else:
-            return None
+        return block.split('\n')[0].split(' : ')[0]
 
     def parse_array_member_state(self, block):
         """
