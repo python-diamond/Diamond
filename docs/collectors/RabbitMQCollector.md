@@ -36,6 +36,7 @@ metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive w
 metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
 password | guest | Password | str
 queues |  | Queues to publish. Leave empty to publish all. | 
+query_individual_queues | False | If specific queues are set, query their metrics individually. When this is False, queue metrics will be queried in bulk and filtered, which can time out for vhosts with many queues. | bool
 queues_ignored |  | A list of queues or regexes for queue names not to report on. | str
 replace_dot | False | A value to replace dot in queue names and vhosts names by | bool
 replace_slash | False | A value to replace a slash in queue names and vhosts names by | bool
