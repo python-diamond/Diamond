@@ -81,9 +81,6 @@ class TestMdStatCollector(CollectorTestCase):
             'md1.member_count.spare': 0
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
@@ -100,9 +97,6 @@ class TestMdStatCollector(CollectorTestCase):
             'md0.member_count.spare': 0
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
@@ -120,9 +114,6 @@ class TestMdStatCollector(CollectorTestCase):
             'md0.member_count.spare': 0
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
@@ -144,9 +135,6 @@ class TestMdStatCollector(CollectorTestCase):
             'md0.bitmap.chunk_size': 65536
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
@@ -165,9 +153,6 @@ class TestMdStatCollector(CollectorTestCase):
             'md0.member_count.spare': 0
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
@@ -218,9 +203,6 @@ class TestMdStatCollector(CollectorTestCase):
             'md0.bitmap.chunk_size': 65536
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
@@ -242,9 +224,6 @@ class TestMdStatCollector(CollectorTestCase):
             'md0.member_count.spare': 0
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
 if __name__ == "__main__":
