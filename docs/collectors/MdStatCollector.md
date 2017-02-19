@@ -5,12 +5,48 @@ MdStatCollector
 =====
 
 Collect linux RAID/md state by parsing /proc/mdstat.
-https://raid.wiki.kernel.org/index.php/Mdstat
+<https://raid.wiki.kernel.org/index.php/Mdstat>
 
 #### Dependencies
 
- * /proc/mdstat
+- /proc/mdstat
 
+#### Supported metrics
+
+```
+md0 : active raid1 sda1[0] sda2[2](S) sda3[1]
+```
+- member_count.active
+- member_count.faulty
+- member_count.spare
+
+```
+39058432 blocks super 1.2 level 5, 512k chunk, algorithm 2 [3/3] [UUU]
+199800 blocks super 1.2 999k rounding
+```
+- status.blocks
+- status.superblock_version
+- status.raid_level
+- status.chunk_size
+- status.algorithm
+- status.rounding_factor
+- status.actual_members
+- status.total_members
+
+```
+bitmap: 1/1 pages [4KB], 65536KB chunk
+```
+- bitmap.total_pages
+- bitmap.allocated_pages
+- bitmap.page_size
+
+```
+[===================>.]  recovery = 99.5% (102272/102272) finish=13.37min
+                         speed=102272K/sec
+```
+- recovery.percent
+- recovery.speed
+- recovery.remaining_time
 
 #### Options
 

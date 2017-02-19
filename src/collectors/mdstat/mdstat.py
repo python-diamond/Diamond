@@ -2,12 +2,48 @@
 
 """
 Collect linux RAID/md state by parsing /proc/mdstat.
-https://raid.wiki.kernel.org/index.php/Mdstat
+<https://raid.wiki.kernel.org/index.php/Mdstat>
 
 #### Dependencies
 
- * /proc/mdstat
+- /proc/mdstat
 
+#### Supported metrics
+
+```
+md0 : active raid1 sda1[0] sda2[2](S) sda3[1]
+```
+- member_count.active
+- member_count.faulty
+- member_count.spare
+
+```
+39058432 blocks super 1.2 level 5, 512k chunk, algorithm 2 [3/3] [UUU]
+199800 blocks super 1.2 999k rounding
+```
+- status.blocks
+- status.superblock_version
+- status.raid_level
+- status.chunk_size
+- status.algorithm
+- status.rounding_factor
+- status.actual_members
+- status.total_members
+
+```
+bitmap: 1/1 pages [4KB], 65536KB chunk
+```
+- bitmap.total_pages
+- bitmap.allocated_pages
+- bitmap.page_size
+
+```
+[===================>.]  recovery = 99.5% (102272/102272) finish=13.37min
+                         speed=102272K/sec
+```
+- recovery.percent
+- recovery.speed
+- recovery.remaining_time
 """
 
 import diamond.collector
@@ -22,9 +58,6 @@ class MdStatCollector(diamond.collector.Collector):
         return config_help
 
     def get_default_config(self):
-        """
-        Returns the default collector settings
-        """
         config = super(MdStatCollector, self).get_default_config()
         config.update({
             'path': 'mdstat',
@@ -37,6 +70,13 @@ class MdStatCollector(diamond.collector.Collector):
     def collect(self):
         """Publish all mdstat metrics."""
         def traverse(d, metric_name=''):
+            """
+            Traverse the given nested dict using depth-first search.
+
+            If a value is reached it will be published with a metric name
+            consisting of the hierarchically concatenated keys
+            of its branch.
+            """
             for key, value in d.iteritems():
                 if isinstance(value, dict):
                     if metric_name == '':
@@ -86,9 +126,8 @@ class MdStatCollector(diamond.collector.Collector):
             )
             return arrays
 
+        # concatenate all lines except the first and last one
         for line in lines[1:-1]:
-            # remove first and last line
-            # reverse readlines() afterwards
             mdstat_array_blocks += line
 
         if mdstat_array_blocks == '':
@@ -97,7 +136,7 @@ class MdStatCollector(diamond.collector.Collector):
         for block in mdstat_array_blocks.split('\n\n'):
             md_device_name = self.parse_device_name(block)
             if md_device_name:
-                # this block contains a whitelisted md device name
+                # this block begins with a md device name
 
                 # 'member_count' and 'status' are mandatory keys
                 arrays[md_device_name] = {
@@ -121,7 +160,7 @@ class MdStatCollector(diamond.collector.Collector):
 
     def parse_device_name(self, block):
         """
-        Parse and match for a whitelisted md device name.
+        Parse for a md device name.
 
         >>> block = 'md0 : active raid1 sdd2[0] sdb2[2](S) sdc2[1]\n'
         >>>         '      100171776 blocks super 1.2 [2/2] [UU]\n'
@@ -129,14 +168,14 @@ class MdStatCollector(diamond.collector.Collector):
         >>> print parse_device_name(block)
         md0
 
-        :return: matched device name or None
+        :return: parsed device name
         :rtype: string
         """
         return block.split('\n')[0].split(' : ')[0]
 
     def parse_array_member_state(self, block):
         """
-        Parses the state of the the md array members.
+        Parse the state of the the md array members.
 
         >>> block = 'md0 : active raid1 sdd2[0] sdb2[2](S) sdc2[1]\n'
         >>>         '      100171776 blocks super 1.2 [2/2] [UU]\n'
@@ -178,7 +217,7 @@ class MdStatCollector(diamond.collector.Collector):
 
     def parse_array_status(self, block):
         """
-        Parses the status of the md array.
+        Parse the status of the md array.
 
         >>> block = 'md0 : active raid1 sdd2[0] sdb2[2](S) sdc2[1]\n'
         >>>         '      100171776 blocks super 1.2 [2/2] [UU]\n'
@@ -187,9 +226,7 @@ class MdStatCollector(diamond.collector.Collector):
         {
             'total_members': '2',
             'actual_members': '2',
-            'algorithm': None,
             'superblock_version': '1.2',
-            'chunk_size': None,
             'blocks': '100171776'
         }
 
@@ -232,7 +269,7 @@ class MdStatCollector(diamond.collector.Collector):
 
     def parse_array_bitmap(self, block):
         """
-        Parses the bitmap status of the md array.
+        Parse the bitmap status of the md array.
 
         >>> block = 'md0 : active raid1 sdd2[0] sdb2[2](S) sdc2[1]\n'
         >>>         '      100171776 blocks super 1.2 [2/2] [UU]\n'
@@ -245,7 +282,7 @@ class MdStatCollector(diamond.collector.Collector):
             'chunk_size': 67108864
         }
 
-        :return: dictionary of status information
+        :return: dictionary of bitmap status information
         :rtype: dict
         """
         array_bitmap_regexp = re.compile(
@@ -258,11 +295,11 @@ class MdStatCollector(diamond.collector.Collector):
 
         regexp_res = array_bitmap_regexp.search(block)
 
+        # bitmap is optionally in mdstat
         if not regexp_res:
             return None
 
         array_bitmap_dict = regexp_res.groupdict()
-
         array_bitmap_dict_sanitizied = {}
 
         # convert all values to int
@@ -271,17 +308,17 @@ class MdStatCollector(diamond.collector.Collector):
                     continue
                 array_bitmap_dict_sanitizied[key] = int(value)
 
-        # scale page_size to bytes
+        # convert page_size to bytes
         array_bitmap_dict_sanitizied['page_size'] *= 1024
 
-        # scale chunk_size to bytes
+        # convert chunk_size to bytes
         array_bitmap_dict_sanitizied['chunk_size'] *= 1024
 
         return array_bitmap_dict
 
     def parse_array_recovery(self, block):
         """
-        Parses the recovery progress of the md array.
+        Parse the recovery progress of the md array.
 
         >>> block = 'md0 : active raid1 sdd2[0] sdb2[2](S) sdc2[1]\n'
         >>>         '      100171776 blocks super 1.2 [2/2] [UU]\n'
@@ -295,7 +332,7 @@ class MdStatCollector(diamond.collector.Collector):
             'remaining_time': 802199
         }
 
-        :return: dictionary of recovery progress information
+        :return: dictionary of recovery progress status information
         :rtype: dict
         """
         array_recovery_regexp = re.compile(
@@ -307,6 +344,7 @@ class MdStatCollector(diamond.collector.Collector):
 
         regexp_res = array_recovery_regexp.search(block)
 
+        # recovery is optionally in mdstat
         if not regexp_res:
             return None
 
@@ -315,11 +353,11 @@ class MdStatCollector(diamond.collector.Collector):
         array_recovery_dict['percent'] = \
             float(array_recovery_dict['percent'])
 
-        # scale speed to bits
+        # convert speed to bits
         array_recovery_dict['speed'] = \
             int(array_recovery_dict['speed']) * 1024
 
-        # scale minutes to milliseconds
+        # convert minutes to milliseconds
         array_recovery_dict['remaining_time'] = \
             int(float(array_recovery_dict['remaining_time'])*60*1000)
 
