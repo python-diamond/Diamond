@@ -92,11 +92,11 @@ class MdStatCollector(diamond.collector.Collector):
                         precision=1
                     )
 
-        md_state = self.parse_mdstat()
+        md_state = self._parse_mdstat()
 
         traverse(md_state, '')
 
-    def parse_mdstat(self):
+    def _parse_mdstat(self):
         """
         Parse /proc/mdstat.
 
@@ -134,19 +134,19 @@ class MdStatCollector(diamond.collector.Collector):
             # no md arrays found
             return arrays
         for block in mdstat_array_blocks.split('\n\n'):
-            md_device_name = self.parse_device_name(block)
+            md_device_name = self._parse_device_name(block)
             if md_device_name:
                 # this block begins with a md device name
 
                 # 'member_count' and 'status' are mandatory keys
                 arrays[md_device_name] = {
-                    'member_count': self.parse_array_member_state(block),
-                    'status': self.parse_array_status(block),
+                    'member_count': self._parse_array_member_state(block),
+                    'status': self._parse_array_status(block),
                 }
 
                 # 'bitmap' and 'recovery' are optional keys
-                bitmap_status = self.parse_array_bitmap(block)
-                recovery_status = self.parse_array_recovery(block)
+                bitmap_status = self._parse_array_bitmap(block)
+                recovery_status = self._parse_array_recovery(block)
                 if bitmap_status:
                     arrays[md_device_name].update(
                         {'bitmap': bitmap_status}
@@ -158,14 +158,14 @@ class MdStatCollector(diamond.collector.Collector):
 
         return arrays
 
-    def parse_device_name(self, block):
+    def _parse_device_name(self, block):
         """
         Parse for a md device name.
 
         >>> block = 'md0 : active raid1 sdd2[0] sdb2[2](S) sdc2[1]\n'
         >>>         '      100171776 blocks super 1.2 [2/2] [UU]\n'
         >>>         '      bitmap: 1/1 pages [4KB], 65536KB chunk\n\n'
-        >>> print parse_device_name(block)
+        >>> print _parse_device_name(block)
         md0
 
         :return: parsed device name
@@ -173,14 +173,14 @@ class MdStatCollector(diamond.collector.Collector):
         """
         return block.split('\n')[0].split(' : ')[0]
 
-    def parse_array_member_state(self, block):
+    def _parse_array_member_state(self, block):
         """
         Parse the state of the the md array members.
 
         >>> block = 'md0 : active raid1 sdd2[0] sdb2[2](S) sdc2[1]\n'
         >>>         '      100171776 blocks super 1.2 [2/2] [UU]\n'
         >>>         '      bitmap: 1/1 pages [4KB], 65536KB chunk\n\n'
-        >>> print parse_array_member_state(block)
+        >>> print _parse_array_member_state(block)
         {
             'active': 2,
             'faulty': 0,
@@ -215,14 +215,14 @@ class MdStatCollector(diamond.collector.Collector):
 
         return ret
 
-    def parse_array_status(self, block):
+    def _parse_array_status(self, block):
         """
         Parse the status of the md array.
 
         >>> block = 'md0 : active raid1 sdd2[0] sdb2[2](S) sdc2[1]\n'
         >>>         '      100171776 blocks super 1.2 [2/2] [UU]\n'
         >>>         '      bitmap: 1/1 pages [4KB], 65536KB chunk\n\n'
-        >>> print parse_array_status(block)
+        >>> print _parse_array_status(block)
         {
             'total_members': '2',
             'actual_members': '2',
@@ -267,14 +267,14 @@ class MdStatCollector(diamond.collector.Collector):
 
         return array_status_dict_sanitizied
 
-    def parse_array_bitmap(self, block):
+    def _parse_array_bitmap(self, block):
         """
         Parse the bitmap status of the md array.
 
         >>> block = 'md0 : active raid1 sdd2[0] sdb2[2](S) sdc2[1]\n'
         >>>         '      100171776 blocks super 1.2 [2/2] [UU]\n'
         >>>         '      bitmap: 1/1 pages [4KB], 65536KB chunk\n\n'
-        >>> print parse_array_bitmap(block)
+        >>> print _parse_array_bitmap(block)
         {
             'total_pages': '1',
             'allocated_pages': '1',
@@ -316,7 +316,7 @@ class MdStatCollector(diamond.collector.Collector):
 
         return array_bitmap_dict
 
-    def parse_array_recovery(self, block):
+    def _parse_array_recovery(self, block):
         """
         Parse the recovery progress of the md array.
 
@@ -325,7 +325,7 @@ class MdStatCollector(diamond.collector.Collector):
         >>>         '      [===================>.]  recovery = 99.5% '
         >>>         '(102272/102272) finish=13.37min speed=102272K/sec\n'
         >>>         '\n'
-        >>> print parse_array_recovery(block)
+        >>> print _parse_array_recovery(block)
         {
             'percent': '99.5',
             'speed': 104726528,
