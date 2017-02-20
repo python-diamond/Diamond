@@ -241,7 +241,7 @@ args = ('/var/log/diamond/diamond.log', 'midnight', 1, 7)
 
 [formatter_default]
 
-format = [%(asctime)s] [%(threadName)s] %(message)s
+format = [%(asctime)s] [%(levelname)s] [%(threadName)s:%(processName)s] %(message)s
 datefmt =
 
 ################################################################################
