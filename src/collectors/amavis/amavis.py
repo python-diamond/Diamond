@@ -27,8 +27,6 @@ class AmavisCollector(diamond.collector.Collector):
     # db, and I don't even want to get there
 
     matchers = [
-        re.compile(r'^\s*(?P<name>sysUpTime)\s+TimeTicks\s+(?P<time>\d+)\s+'
-                   r'\([\w:\., ]+\)\s*$'),
         re.compile(r'^\s*(?P<name>[\w]+)\s+(?P<time>[\d]+) s\s+'
                    r'(?P<frequency>[\d.]+) s/msg\s+\([\w]+\)\s*$'),
         re.compile(r'^\s*(?P<name>[\w.-]+)\s+(?P<count>[\d]+)\s+'
