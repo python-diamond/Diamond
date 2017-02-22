@@ -280,7 +280,7 @@ def main():
         # Initialize Server
         server = Server(configfile=options.configfile)
 
-        def sigint_handler(signum, frame):
+        def shutdown_handler(signum, frame):
             log.info("Signal Received: %d" % (signum))
             # Delete Pidfile
             if not options.skip_pidfile and os.path.exists(options.pidfile):
@@ -292,8 +292,8 @@ def main():
             sys.exit(0)
 
         # Set the signal handlers
-        signal.signal(signal.SIGINT, sigint_handler)
-        signal.signal(signal.SIGTERM, sigint_handler)
+        signal.signal(signal.SIGINT, shutdown_handler)
+        signal.signal(signal.SIGTERM, shutdown_handler)
 
         server.run()
 
