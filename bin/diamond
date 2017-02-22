@@ -288,7 +288,24 @@ def main():
                 # Log
                 log.debug("Removed PID file: %s" % (options.pidfile))
             for child in multiprocessing.active_children():
-                child.terminate()
+                if 'SyncManager' not in child.name:
+                    # The SyncManager process will immediately shutdown once
+                    # the parent (us) exits. If we explicitly terminate the
+                    # SyncManager here, we can't guarantee that it will exit
+                    # after all collector processes and the handler process have
+                    # exited first. As a result, since the collector and handler
+                    # processes push/retrieve items to/from the shared queue via
+                    # the SyncManager, it's possible for those processes to
+                    # terminate unexpectedly (crash). When this happens, when we
+                    # call exit(), we just hang and never actually terminate
+                    # gracefully. Therefore, do not explicitly terminate the
+                    # SyncManager process here but continue to terminate all
+                    # other processes (collectors and the handler) and perform a
+                    # join() on each of them. This guarantees that the
+                    # SyncManager is terminated last (implicitly as a result of
+                    # us exiting).
+                    child.terminate()
+                    child.join()
             sys.exit(0)
 
         # Set the signal handlers
