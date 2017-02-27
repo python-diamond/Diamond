@@ -15,7 +15,7 @@ from aerospike import AerospikeCollector
 ##########################################################################
 
 
-class TestAerospikeCollector(CollectorTestCase):
+class TestAerospike27Collector(CollectorTestCase):
 
     def bootStrap(self, custom_config={}):
         config = get_collector_config('AerospikeCollector', custom_config)
@@ -31,8 +31,13 @@ class TestAerospikeCollector(CollectorTestCase):
     def test_latency(self, publish_counter_mock,
                      publish_gauge_mock, publish_mock):
 
-        mockTelnet = Mock(**{'read_until.return_value':
-                             self.getFixture('latency').getvalue()})
+        mockTelnet = Mock(**{
+            'read_until.side_effect':
+            [
+                "2.7.1\n",
+                self.getFixture('v2.7/latency').getvalue(),
+            ]
+        })
 
         patch_Telnet = patch('telnetlib.Telnet', Mock(return_value=mockTelnet))
 
@@ -87,8 +92,11 @@ class TestAerospikeCollector(CollectorTestCase):
                         publish_gauge_mock, publish_mock):
 
         mockTelnet = Mock(**{
-            'read_until.return_value':
-            self.getFixture('statistics').getvalue()
+            'read_until.side_effect':
+            [
+                "2.7.1\n",
+                self.getFixture('v2.7/statistics').getvalue()
+                ]
         })
 
         patch_Telnet = patch('telnetlib.Telnet', Mock(return_value=mockTelnet))
@@ -135,8 +143,11 @@ class TestAerospikeCollector(CollectorTestCase):
                         publish_gauge_mock, publish_mock):
 
         mockTelnet = Mock(**{
-            'read_until.return_value':
-            self.getFixture('throughput').getvalue()
+            'read_until.side_effect':
+            [
+                "2.7.1",
+                self.getFixture('v2.7/throughput').getvalue(),
+            ]
         })
 
         patch_Telnet = patch('telnetlib.Telnet', Mock(return_value=mockTelnet))
@@ -179,9 +190,10 @@ class TestAerospikeCollector(CollectorTestCase):
         mockTelnet = Mock(**{
             'read_until.side_effect':
             [
-                self.getFixture('namespaces').getvalue(),
-                self.getFixture('namespace_foo').getvalue(),
-                self.getFixture('namespace_bar').getvalue(),
+                "2.7.1\n",
+                self.getFixture('v2.7/namespaces').getvalue(),
+                self.getFixture('v2.7/namespace_foo').getvalue(),
+                self.getFixture('v2.7/namespace_bar').getvalue(),
                 ],
         })
 
@@ -201,6 +213,7 @@ class TestAerospikeCollector(CollectorTestCase):
         mockTelnet.read_until.assert_any_call('\n', 1)
         mockTelnet.write.assert_has_calls(
             [
+                call('version\n'),
                 call('namespaces\n'),
                 call('namespace/foo\n'),
                 call('namespace/bar\n'),
@@ -238,8 +251,9 @@ class TestAerospikeCollector(CollectorTestCase):
         mockTelnet = Mock(**{
             'read_until.side_effect':
             [
-                self.getFixture('namespaces').getvalue(),
-                self.getFixture('namespace_bar').getvalue(),
+                "2.7.1\n",
+                self.getFixture('v2.7/namespaces').getvalue(),
+                self.getFixture('v2.7/namespace_bar').getvalue(),
             ],
         })
 
@@ -260,10 +274,12 @@ class TestAerospikeCollector(CollectorTestCase):
         mockTelnet.read_until.assert_any_call('\n', 1)
         mockTelnet.write.assert_has_calls(
             [
+                call('version\n'),
                 call('namespaces\n'),
                 call('namespace/bar\n'),
             ],
         )
+
 
 ##########################################################################
 if __name__ == "__main__":
