@@ -31,7 +31,8 @@ class TestAerospike39Collector(CollectorTestCase):
     def test_latency(self, publish_counter_mock,
                      publish_gauge_mock, publish_mock):
 
-        mockTelnet = Mock(**{'read_until.side_effect':
+        mockTelnet = Mock(**{
+            'read_until.side_effect':
             [
                 "3.9",
                 self.getFixture('v3.9/latency').getvalue(),
