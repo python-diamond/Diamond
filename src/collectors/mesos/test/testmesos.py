@@ -1,17 +1,22 @@
 #!/usr/bin/python
 # coding=utf-8
-
-from mock import Mock
-from mock import patch
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
+from mock import Mock
+from mock import patch
+
 from diamond.collector import Collector
+
 from mesos import MesosCollector
+
+##########################################################################
 
 
 class TestMesosCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('MesosCollector', {})
 
@@ -102,6 +107,17 @@ class TestMesosCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
+    def test_should_fail_gracefully(self, publish_mock):
+        patch_urlopen = patch('urllib2.urlopen', Mock(
+                              return_value=self.getFixture('metrics_blank')))
+
+        patch_urlopen.start()
+        self.collector.collect()
+        patch_urlopen.stop()
+
+        self.assertPublishedMany(publish_mock, {})
+
+    @patch.object(Collector, 'publish')
     def test_should_compute_cpus_percent(self, publish_mock):
         self.fixture_cpu_utilisation(publish_mock)
 
@@ -132,6 +148,6 @@ class TestMesosCollector(CollectorTestCase):
         self.collector.collect()
         urlopen_mock.stop()
 
-
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

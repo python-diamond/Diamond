@@ -1,7 +1,17 @@
 # coding=utf-8
 
 """
-Collect the Mesos stats for the local node.
+
+Collects metrics from a mesos instance. By default,
+the collector is set up to query the mesos-master via
+port 5050. Set the port to 5051 for mesos-slaves.
+
+#### Example Configuration
+
+```
+host = localhost
+port = 5050
+```
 
 #### Dependencies
  * urlib2
@@ -35,9 +45,10 @@ class MesosCollector(diamond.collector.Collector):
         config_help = super(MesosCollector,
                             self).get_default_config_help()
         config_help.update({
-            'host': "",
-            'port': "",
-            'master': "True if host is master."
+            'host': 'Hostname, using http scheme by default. For https pass '
+                    'e.g. "https://localhost"',
+            'port': 'Port (default is 5050; please set to 5051 for mesos-slave)',
+            'master': 'True if host is master (default is True).'
         })
         return config_help
 
@@ -47,7 +58,7 @@ class MesosCollector(diamond.collector.Collector):
         """
         config = super(MesosCollector, self).get_default_config()
         config.update({
-            'host': '127.0.0.1',
+            'host': 'localhost',
             'port': 5050,
             'path': 'mesos',
             'master': True
