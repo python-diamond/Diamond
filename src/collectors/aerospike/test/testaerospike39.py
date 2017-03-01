@@ -15,7 +15,7 @@ from aerospike import AerospikeCollector
 ##########################################################################
 
 
-class TestAerospikeCollector(CollectorTestCase):
+class TestAerospike39Collector(CollectorTestCase):
 
     def bootStrap(self, custom_config={}):
         config = get_collector_config('AerospikeCollector', custom_config)
@@ -31,8 +31,13 @@ class TestAerospikeCollector(CollectorTestCase):
     def test_latency(self, publish_counter_mock,
                      publish_gauge_mock, publish_mock):
 
-        mockTelnet = Mock(**{'read_until.return_value':
-                             self.getFixture('latency').getvalue()})
+        mockTelnet = Mock(**{
+            'read_until.side_effect':
+            [
+                "3.9",
+                self.getFixture('v3.9/latency').getvalue(),
+            ]
+        })
 
         patch_Telnet = patch('telnetlib.Telnet', Mock(return_value=mockTelnet))
 
@@ -50,26 +55,22 @@ class TestAerospikeCollector(CollectorTestCase):
         mockTelnet.read_until.assert_any_call('\n', 1)
 
         metrics = {
-            'latency.reads.1ms': 1.75,
-            'latency.reads.8ms': 0.67,
-            'latency.reads.64ms': 0.36,
-            'latency.reads.ops': 54839.0,
-            'latency.writes_master.1ms': 11.69,
-            'latency.writes_master.8ms': 2.54,
-            'latency.writes_master.64ms': 2.06,
-            'latency.writes_master.ops': 8620.1,
-            'latency.proxy.1ms': 1.35,
-            'latency.proxy.8ms': 6.88,
-            'latency.proxy.64ms': 1.37,
-            'latency.proxy.ops': 320.1,
-            'latency.udf.1ms': 1.47,
-            'latency.udf.8ms': 8.64,
-            'latency.udf.64ms': 4.11,
-            'latency.udf.ops': 140.33,
-            'latency.query.1ms': 3.44,
-            'latency.query.8ms': 2.74,
-            'latency.query.64ms': 1.04,
-            'latency.query.ops': 84.12,
+            'latency.foo.read.1ms': 1.00,
+            'latency.foo.read.8ms': 3.00,
+            'latency.foo.read.64ms': 5.00,
+            'latency.foo.read.ops': 2206.8,
+            'latency.bar.read.1ms': 2.00,
+            'latency.bar.read.8ms': 4.00,
+            'latency.bar.read.64ms': 6.00,
+            'latency.bar.read.ops': 4206.8,
+            'latency.foo.write.1ms': 1.28,
+            'latency.foo.write.8ms': 3.01,
+            'latency.foo.write.64ms': 5.01,
+            'latency.foo.write.ops': 1480.4,
+            'latency.bar.write.1ms': 2.28,
+            'latency.bar.write.8ms': 4.01,
+            'latency.bar.write.64ms': 6.01,
+            'latency.bar.write.ops': 2480.4,
         }
 
         self.assertPublishedMany(
@@ -87,8 +88,11 @@ class TestAerospikeCollector(CollectorTestCase):
                         publish_gauge_mock, publish_mock):
 
         mockTelnet = Mock(**{
-            'read_until.return_value':
-            self.getFixture('statistics').getvalue()
+            'read_until.side_effect':
+            [
+                "3.9",
+                self.getFixture('v3.9/statistics').getvalue(),
+                ]
         })
 
         patch_Telnet = patch('telnetlib.Telnet', Mock(return_value=mockTelnet))
@@ -107,17 +111,11 @@ class TestAerospikeCollector(CollectorTestCase):
         mockTelnet.read_until.assert_any_call('\n', 1)
 
         metrics = {
-            'statistics.total-bytes-memory': 345744867328,
-            'statistics.total-bytes-disk': 8801921007616,
-            'statistics.used-bytes-memory': 126136727552,
-            'statistics.used-bytes-disk': 2457236328960,
-            'statistics.free-pct-memory': 63,
-            'statistics.free-pct-disk': 72,
-            'statistics.data-used-bytes-memory': 0,
-            'statistics.index-used-bytes-memory': 126136727552,
-            'statistics.cluster_size': 13,
-            'statistics.objects': 1970886368,
-            'statistics.client_connections': 3014,
+            'statistics.objects': 6816672,
+            'statistics.cluster_size': 3,
+            'statistics.system_free_mem_pct': 87,
+            'statistics.client_connections': 51,
+            'statistics.scans_active': 0,
         }
 
         self.assertPublishedMany(
@@ -135,8 +133,11 @@ class TestAerospikeCollector(CollectorTestCase):
                         publish_gauge_mock, publish_mock):
 
         mockTelnet = Mock(**{
-            'read_until.return_value':
-            self.getFixture('throughput').getvalue()
+            'read_until.side_effect':
+            [
+                "3.9",
+                self.getFixture('v3.9/throughput').getvalue(),
+                ]
         })
 
         patch_Telnet = patch('telnetlib.Telnet', Mock(return_value=mockTelnet))
@@ -155,11 +156,10 @@ class TestAerospikeCollector(CollectorTestCase):
         mockTelnet.read_until.assert_any_call('\n', 1)
 
         metrics = {
-            'throughput.reads': 54563.9,
-            'throughput.writes_master': 9031.0,
-            'throughput.proxy': 884.3,
-            'throughput.udf': 42.3,
-            'throughput.query': 64.3,
+            'throughput.foo.read': 2089.3,
+            'throughput.foo.write': 1478.6,
+            'throughput.bar.read': 3089.3,
+            'throughput.bar.write': 3478.6,
         }
 
         self.assertPublishedMany(
@@ -179,9 +179,10 @@ class TestAerospikeCollector(CollectorTestCase):
         mockTelnet = Mock(**{
             'read_until.side_effect':
             [
-                self.getFixture('namespaces').getvalue(),
-                self.getFixture('namespace_foo').getvalue(),
-                self.getFixture('namespace_bar').getvalue(),
+                "3.9",
+                self.getFixture('v3.9/namespaces').getvalue(),
+                self.getFixture('v3.9/namespace_foo').getvalue(),
+                self.getFixture('v3.9/namespace_bar').getvalue(),
                 ],
         })
 
@@ -201,6 +202,7 @@ class TestAerospikeCollector(CollectorTestCase):
         mockTelnet.read_until.assert_any_call('\n', 1)
         mockTelnet.write.assert_has_calls(
             [
+                call('version\n'),
                 call('namespaces\n'),
                 call('namespace/foo\n'),
                 call('namespace/bar\n'),
@@ -208,21 +210,16 @@ class TestAerospikeCollector(CollectorTestCase):
         )
 
         metrics = {
-            'namespace.foo.objects': 1841012935,
-            'namespace.foo.evicted-objects': 0,
-            'namespace.foo.expired-objects': 167836937,
-            'namespace.foo.used-bytes-memory': 117824827840,
-            'namespace.foo.data-used-bytes-memory': 0,
-            'namespace.foo.index-used-bytes-memory': 117824827840,
-            'namespace.foo.used-bytes-disk': 2401223781248,
-            'namespace.foo.memory-size': 343597383680,
-            'namespace.foo.total-bytes-memory': 343597383680,
-            'namespace.foo.total-bytes-disk': 8801921007616,
-            'namespace.foo.migrate-tx-partitions-initial': 651,
-            'namespace.foo.migrate-tx-partitions-remaining': 651,
-            'namespace.foo.migrate-rx-partitions-initial': 651,
-            'namespace.foo.migrate-rx-partitions-remaining': 651,
-            'namespace.foo.available_pct': 60,
+            'namespace.foo.objects': 6831009,
+            'namespace.foo.memory_free_pct': 86,
+            'namespace.foo.memory-size': 21474836480,
+            'namespace.foo.client_read_error': 0,
+            'namespace.foo.device_free_pct': 88,
+            'namespace.bar.objects': 5831009,
+            'namespace.bar.memory_free_pct': 76,
+            'namespace.bar.memory-size': 31474836480,
+            'namespace.bar.client_read_error': 0,
+            'namespace.bar.device_free_pct': 88,
         }
 
         self.assertPublishedMany(
@@ -238,8 +235,9 @@ class TestAerospikeCollector(CollectorTestCase):
         mockTelnet = Mock(**{
             'read_until.side_effect':
             [
-                self.getFixture('namespaces').getvalue(),
-                self.getFixture('namespace_bar').getvalue(),
+                "3.9",
+                self.getFixture('v3.9/namespaces').getvalue(),
+                self.getFixture('v3.9/namespace_bar').getvalue(),
             ],
         })
 
@@ -260,6 +258,7 @@ class TestAerospikeCollector(CollectorTestCase):
         mockTelnet.read_until.assert_any_call('\n', 1)
         mockTelnet.write.assert_has_calls(
             [
+                call('version\n'),
                 call('namespaces\n'),
                 call('namespace/bar\n'),
             ],

@@ -15,6 +15,7 @@ import socket
 import telnetlib
 import re
 import diamond.collector
+from distutils.version import LooseVersion
 
 
 class AerospikeCollector(diamond.collector.Collector):
@@ -50,6 +51,7 @@ class AerospikeCollector(diamond.collector.Collector):
         default_config['namespaces'] = True
         default_config['namespaces_whitelist'] = False
         default_config['statistics_whitelist'] = [
+            # 2.7 Stats
             'total-bytes-memory',
             'total-bytes-disk',
             'used-bytes-memory',
@@ -61,8 +63,15 @@ class AerospikeCollector(diamond.collector.Collector):
             'objects',
             'client_connections',
             'index-used-bytes-memory',
+            # 3.9 Stats
+            'objects',
+            'cluster_size',
+            'system_free_mem_pct',
+            'client_connections',
+            'scans_active',
         ]
         default_config['namespace_statistics_whitelist'] = [
+            # 2.7 Stats
             'objects',
             'evicted-objects',
             'expired-objects',
@@ -78,6 +87,32 @@ class AerospikeCollector(diamond.collector.Collector):
             'migrate-rx-partitions-initial',
             'migrate-rx-partitions-remaining',
             'available_pct',
+            # 3.9 Stats
+            'client_delete_error',
+            'client_delete_success',
+            'client_read_error',
+            'client_read_success',
+            'client_write_error',
+            'client_write_success',
+            'device_available_pct',
+            'device_free_pct',
+            'device_total_bytes',
+            'device_used_bytes',
+            'expired_objects',
+            'evicted_objects',
+            'memory-size',
+            'memory_free_pct',
+            'memory_used_bytes',
+            'memory_used_data_bytes',
+            'memory_used_index_bytes',
+            'memory_used_sindex_bytes',
+            'migrate_rx_partitions_active',
+            'migrate_rx_partitions_initial',
+            'migrate_rx_partitions_remaining',
+            'migrate_tx_partitions_active',
+            'migrate_tx_partitions_initial',
+            'migrate_tx_partitions_remaining',
+            'objects',
         ]
         default_config['path'] = 'aerospike'
 
@@ -85,25 +120,49 @@ class AerospikeCollector(diamond.collector.Collector):
 
     def collect_latency(self, data):
 
-        # Get individual data lines (every other output line is data)
-        raw_lines = {}
-        (
-            raw_lines['reads'],
-            raw_lines['writes_master'],
-            raw_lines['proxy'],
-            raw_lines['udf'],
-            raw_lines['query'],
-        ) = data.split(';')[1::2]
-
-        # Collapse each type of data line into a dict of metrics
         fields = ['ops', '1ms', '8ms', '64ms']
-        for op_type in raw_lines.keys():
-            metrics = dict(zip(fields, raw_lines[op_type].split(',')[1:]))
 
-            # publish each metric
-            for metric in metrics.keys():
-                self.publish_gauge('latency.%s.%s' %
-                                   (op_type, metric), metrics[metric])
+        if self.config['dialect'] >= 39:
+            # Get "header" section of each histogram
+            labels = data.split(';')[::2]
+            # Get contents of histogram
+            datasets = data.split(';')[1::2]
+            for i, label in enumerate(labels):
+                # Extract namespace and histogram type from header label
+                match = re.match('\{(\w+)\}-(\w+)', label)
+                if match:
+                    namespace = match.group(1)
+                    histogram = match.group(2)
+
+                    # Create metrics dict for the namespace/histogram pair
+                    dataset = datasets[i].split(',')[1:]
+                    metrics = dict(zip(fields, dataset))
+
+                    # Publish a metric for each field in the histogram
+                    for field in fields:
+                        self.publish_gauge('latency.%s.%s.%s' %
+                                           (namespace, histogram, field),
+                                           metrics[field])
+
+        elif self.config['dialect'] < 39:
+            # Get individual data lines (every other output line is data)
+            raw_lines = {}
+            (
+                raw_lines['reads'],
+                raw_lines['writes_master'],
+                raw_lines['proxy'],
+                raw_lines['udf'],
+                raw_lines['query'],
+            ) = data.split(';')[1::2]
+
+            # Collapse each type of data line into a dict of metrics
+            for op_type in raw_lines.keys():
+                metrics = dict(zip(fields, raw_lines[op_type].split(',')[1:]))
+
+                # publish each metric
+                for metric in metrics.keys():
+                    self.publish_gauge('latency.%s.%s' %
+                                       (op_type, metric), metrics[metric])
 
     def collect_statistics(self, data):
 
@@ -118,19 +177,38 @@ class AerospikeCollector(diamond.collector.Collector):
 
     def collect_throughput(self, data):
 
-        # Get individual data lines (every other output line is data)
-        raw_lines = {}
-        (
-            raw_lines['reads'],
-            raw_lines['writes_master'],
-            raw_lines['proxy'],
-            raw_lines['udf'],
-            raw_lines['query'],
-        ) = data.split(';')[1::2]
+        if self.config['dialect'] >= 39:
+            # Get "header" section of each histogram
+            labels = data.split(';')[::2]
+            # Get contents of histogram
+            datasets = data.split(';')[1::2]
+            for i, label in enumerate(labels):
+                # Extract namespace and histogram type from header label
+                match = re.match('\{(\w+)\}-(\w+)', label)
+                if match:
+                    namespace = match.group(1)
+                    histogram = match.group(2)
 
-        for op_type in raw_lines.keys():
-            metric = raw_lines[op_type].split(',')[1]
-            self.publish_gauge('throughput.%s' % op_type, metric)
+                    # Exctract metric from dataset
+                    metric = datasets[i].split(',')[1]
+
+                    self.publish_gauge('throughput.%s.%s' %
+                                       (namespace, histogram), metric)
+
+        elif self.config['dialect'] < 39:
+            # Get individual data lines (every other output line is data)
+            raw_lines = {}
+            (
+                raw_lines['reads'],
+                raw_lines['writes_master'],
+                raw_lines['proxy'],
+                raw_lines['udf'],
+                raw_lines['query'],
+            ) = data.split(';')[1::2]
+
+            for op_type in raw_lines.keys():
+                metric = raw_lines[op_type].split(',')[1]
+                self.publish_gauge('throughput.%s' % op_type, metric)
 
     def collect_namespace(self, namespace, data):
 
@@ -150,6 +228,18 @@ class AerospikeCollector(diamond.collector.Collector):
         t = telnetlib.Telnet(self.config['req_host'], self.config['req_port'])
 
         try:
+
+            # Detect the version of aerospike for later
+            self.log.debug('Checking aerospike version')
+            t.write('version\n')
+            version = t.read_until('\n', 1)
+            if LooseVersion(version) >= LooseVersion("3.9"):
+                self.config['dialect'] = 39
+            else:
+                self.config['dialect'] = 27
+
+            self.log.debug('Got version %s and selecting dialect %s' %
+                           (version, self.config['dialect']))
 
             # Only collect metrics we're asked for
             if (self.config['latency']):
