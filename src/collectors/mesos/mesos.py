@@ -4,7 +4,7 @@
 
 Collects metrics from a mesos instance. By default,
 the collector is set up to query the mesos-master via
-port 5050. Set the port to 5051 for mesos-slaves.
+port 5050. Set the port to 5051 for mesos-agent.
 
 #### Example Configuration
 
@@ -47,7 +47,7 @@ class MesosCollector(diamond.collector.Collector):
         config_help.update({
             'host': 'Hostname, using http scheme by default. For https pass '
                     'e.g. "https://localhost"',
-            'port': 'Port (default is 5050; please set to 5051 for mesos-slave)',
+            'port': 'Port (default is 5050; set to 5051 for mesos-agent)',
             'master': 'True if host is master (default is True).'
         })
         return config_help
@@ -85,7 +85,8 @@ class MesosCollector(diamond.collector.Collector):
 
         for key in result:
             value = result[key]
-            self.publish(key.replace('/', '.'), value, precision=self._precision(value))
+            self.publish(key.replace('/', '.'),
+                         value, precision=self._precision(value))
 
     def _collect_slave_state(self):
         result = self._get(
@@ -136,7 +137,8 @@ class MesosCollector(diamond.collector.Collector):
                 stats['cpus_percent'] = cpus_utilisation / cpus_limit
 
     def _add_mem_percent(self, cur_read):
-        """Compute memory percent utilisation based on the mem_rss_bytes and mem_limit_bytes
+        """Compute memory percent utilisation based on the
+        mem_rss_bytes and mem_limit_bytes
         """
         for executor_id, cur_data in cur_read.items():
             stats = cur_data['statistics']
@@ -231,7 +233,8 @@ class MesosCollector(diamond.collector.Collector):
     def _publish_tasks_statistics(self, result):
         for executor in result:
             parts = executor['executor_id'].rsplit('.', 1)
-            executor_id = '%s.%s' % (self._sanitize_metric_name(parts[0]), parts[1])
+            executor_id = '%s.%s' %
+            (self._sanitize_metric_name(parts[0]), parts[1])
             metrics = {executor_id: {}}
             metrics[executor_id]['framework_id'] = executor['framework_id']
             metrics[executor_id]['statistics'] = executor['statistics']
@@ -241,7 +244,7 @@ class MesosCollector(diamond.collector.Collector):
             self._add_mem_percent(metrics)
             self._publish(metrics, False)
 
-    def _publish(self, result, sanitize_executor_id = True):
+    def _publish(self, result, sanitize_executor_id=True):
         for executor_id, executor in result.iteritems():
             executor_statistics = executor['statistics']
             for key in executor_statistics:
