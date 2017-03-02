@@ -18,12 +18,10 @@ port = 5050
 """
 
 import copy
+import diamond.collector
+import json
 import urllib2
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
+from urlparse import urlparse
 
 import diamond.collector
 
@@ -32,7 +30,6 @@ from diamond.collector import str_to_bool
 
 class MesosCollector(diamond.collector.Collector):
     def __init__(self, config=None, handlers=[], name=None, configfile=None):
-        self.master = True
         self.known_frameworks = {}
         self.executors_prev_read = {}
         super(MesosCollector, self).__init__(config, handlers, name, configfile)
@@ -75,11 +72,7 @@ class MesosCollector(diamond.collector.Collector):
             self._collect_slave_statistics()
 
     def _collect_metrics_snapshot(self):
-        result = self._get(
-            self.config['host'],
-            self.config['port'],
-            'metrics/snapshot'
-        )
+        result = self._get('metrics/snapshot')
         if not result:
             return
 
@@ -89,11 +82,10 @@ class MesosCollector(diamond.collector.Collector):
                          value, precision=self._precision(value))
 
     def _collect_slave_state(self):
-        result = self._get(
-            self.config['host'],
-            self.config['port'],
-            'slave(1)/state.json'
-        )
+        # slave(1) is generated here
+        # https://github.com/apache/mesos/blob/1.1.0/src/slave/slave.cpp#L153
+        # https://github.com/apache/mesos/blob/1.1.0/3rdparty/libprocess/src/process.cpp#L165
+        result = self._get('slave(1)/state')
         if not result:
             return
 
@@ -178,17 +170,14 @@ class MesosCollector(diamond.collector.Collector):
 
     def _sum_statistics(self, x, y):
         stats = set(x) | set(y)
-        summed_stats = {}
-        for k in stats:
-            summed_stats.update({k: x.get(k, 0) + y.get(k, 0)})
+        summed_stats = {
+            key: x.get(key, 0) + y.get(key, 0)
+            for key in stats
+        }
         return summed_stats
 
     def _collect_slave_statistics(self):
-        result = self._get(
-            self.config['host'],
-            self.config['port'],
-            'monitor/statistics.json'
-        )
+        result = self._get('monitor/statistics')
 
         if not result:
             return
@@ -197,11 +186,18 @@ class MesosCollector(diamond.collector.Collector):
         self._group_and_publish_tasks_statistics(result)
         self._publish_tasks_statistics(result_copy)
 
-    def _get(self, host, port, path):
+    def _get_url(self, path):
+        parsed = urlparse(self.config['host'])
+        scheme = parsed.scheme or 'http'
+        host = parsed.hostname or self.config['host']
+        return "%s://%s:%s/%s" % (
+            scheme, host, self.config['port'], path)
+
+    def _get(self, path):
         """
         Execute a Mesos API call.
         """
-        url = 'http://%s:%s/%s' % (host, port, path)
+        url = self._get_url(path)
         try:
             response = urllib2.urlopen(url)
         except Exception, err:
@@ -233,8 +229,8 @@ class MesosCollector(diamond.collector.Collector):
     def _publish_tasks_statistics(self, result):
         for executor in result:
             parts = executor['executor_id'].rsplit('.', 1)
-            executor_id = '%s.%s' %
-            (self._sanitize_metric_name(parts[0]), parts[1])
+            executor_id = '%s.%s' % (self._sanitize_metric_name(parts[0]),
+                                     parts[1])
             metrics = {executor_id: {}}
             metrics[executor_id]['framework_id'] = executor['framework_id']
             metrics[executor_id]['statistics'] = executor['statistics']

@@ -47,9 +47,6 @@ class TestMesosCollector(CollectorTestCase):
             "registrar.state_store_ms.p9999": (17.8412544, 6)
         }
 
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
@@ -156,6 +153,16 @@ class TestMesosCollector(CollectorTestCase):
         publish_mock.reset_mock()
         self.collector.collect()
         urlopen_mock.stop()
+
+    def test_http(self):
+        self.collector.config['host'] = 'localhost'
+        self.assertEqual('http://localhost:5050/metrics/snapshot',
+                         self.collector._get_url("metrics/snapshot"))
+
+    def test_https(self):
+        self.collector.config['host'] = 'https://localhost'
+        self.assertEqual('https://localhost:5050/metrics/snapshot',
+                         self.collector._get_url("metrics/snapshot"))
 
 ##########################################################################
 if __name__ == "__main__":
