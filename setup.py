@@ -84,7 +84,7 @@ else:
     if running_under_virtualenv():
         install_requires = ['configobj', 'psutil', ]
     else:
-        if distro in ['debian', 'ubuntu']:
+        if distro in ['debian', 'Ubuntu']:
             install_requires = ['python-configobj', 'python-psutil', ]
         # Default back to pip style requires
         else:
