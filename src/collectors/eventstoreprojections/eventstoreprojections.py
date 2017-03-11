@@ -21,6 +21,7 @@ import json
 import diamond.collector
 import diamond.pycompat
 
+
 class EventstoreProjectionsCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
@@ -90,7 +91,8 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
             self.config['route']
         )
 
-        req = diamond.pycompat.Request(eventstore_host, headers=self.config['headers'])
+        req = diamond.pycompat.Request(eventstore_host,
+                                       headers=self.config['headers'])
         req.add_header('Content-type', 'application/json')
 
         try:

@@ -231,7 +231,7 @@ class JolokiaCollector(diamond.collector.Collector):
             # timeout is lower than the interval.
             timeout = max(2, float(self.config['interval']) * 2 / 3)
             with closing(diamond.pycompat.urlopen(self._create_request(url),
-                                         timeout=timeout)) as response:
+                         timeout=timeout)) as response:
                 return self._read_json(response)
         except (HTTPError, ValueError) as e:
             self.log.error('Unable to read JSON response: %s', str(e))
@@ -254,7 +254,7 @@ class JolokiaCollector(diamond.collector.Collector):
             # timeout is lower than the interval.
             timeout = max(2, float(self.config['interval']) * 2 / 3)
             with closing(diamond.pycompat.urlopen(self._create_request(url),
-                                         timeout=timeout)) as response:
+                         timeout=timeout)) as response:
                 return self._read_json(response)
         except (HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
