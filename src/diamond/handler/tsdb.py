@@ -77,7 +77,7 @@ class TSDBHandler(Handler):
         self.timeout = int(self.config['timeout'])
         self.metric_format = str(self.config['format'])
         self.tags = ""
-        if isinstance(self.config['tags'], basestring):
+        if isinstance(self.config['tags'], str):
             self.tags = self.config['tags']
         elif isinstance(self.config['tags'], list):
             for tag in self.config['tags']:

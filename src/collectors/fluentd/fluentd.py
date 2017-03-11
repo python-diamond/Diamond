@@ -20,7 +20,7 @@ The FlutendCollector monitors fluentd and data about the kinesis stream.
 """
 
 import diamond.collector
-import urllib2
+import diamond.pycompat
 import json
 
 

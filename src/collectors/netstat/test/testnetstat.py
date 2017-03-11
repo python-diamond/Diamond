@@ -32,7 +32,7 @@ class TestNetstatCollector(CollectorTestCase):
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
-        print publish_mock
+        print(publish_mock)
         self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################

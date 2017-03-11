@@ -139,7 +139,7 @@ class JolokiaCollector(diamond.collector.Collector):
 
         self.domains = []
         if 'domains' in self.config:
-            if isinstance(self.config['domains'], basestring):
+            if isinstance(self.config['domains'], str):
                 for domain in self.config['domains'].split('|'):
                     self.domains.append(domain.strip())
             elif isinstance(self.config['domains'], list):
