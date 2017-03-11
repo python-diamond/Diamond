@@ -24,7 +24,7 @@ class TestSolrCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(SolrCollector)
 
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock, urlopen_mock):
         returns = [self.getFixture('cores'),
@@ -137,7 +137,7 @@ class TestSolrCollector(CollectorTestCase):
             call('http://localhost:8983/solr/admin/system?stats=true&wt=json')
         ])
 
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock, urlopen_mock):
         urlopen_mock.return_value = self.getFixture('stats_blank')

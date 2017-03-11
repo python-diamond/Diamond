@@ -10,6 +10,7 @@ from test import patch
 from test import Mock
 
 from diamond.collector import Collector
+from diamond.pycompat import URLOPEN
 
 from mesos_cgroup import MesosCGroupCollector
 
@@ -91,7 +92,7 @@ class TestMesosCGroupCollector(CollectorTestCase):
                 patch_open.start()
                 return o
 
-        patch_urlopen = patch('urllib2.urlopen', Mock(side_effect=urlopen_se))
+        patch_urlopen = patch(URLOPEN, Mock(side_effect=urlopen_se))
         patch_listdir = patch('os.listdir', Mock(side_effect=listdir_se))
         patch_isdir = patch('os.path.isdir', Mock(side_effect=isdir_se))
         patch_open = patch('__builtin__.open', MagicMock(spec=file,

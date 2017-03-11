@@ -62,7 +62,7 @@ class TestMesosCollector(CollectorTestCase):
             self.getFixture('slave_monitor_statistics.json')
         ]
 
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch(URLOPEN, Mock(
             side_effect=lambda *args: returns.pop(0)))
 
         urlopen_mock.start()
@@ -147,7 +147,7 @@ class TestMesosCollector(CollectorTestCase):
             self.getFixture('slave_metrics_state.json'),
             self.getFixture('slave_monitor_statistics_cpus_utilisation.json'),
         ]
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch(URLOPEN, Mock(
             side_effect=lambda *args: returns.pop(0)))
         urlopen_mock.start()
         self.collector.collect()

@@ -127,7 +127,7 @@ class TestJolokiaCollector(CollectorTestCase):
         logger_mock.error.assert_not_called()
 
     @patch('jolokia.JolokiaCollector._create_request')
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     def test_should_handle_canonical_names_setting_True(self, urlopen_mock,
                                                         create_request_mock):
         config = get_collector_config('JolokiaCollector', {})
@@ -145,7 +145,7 @@ class TestJolokiaCollector(CollectorTestCase):
         self.assertIs(collector.config['use_canonical_names'], True)
 
     @patch('jolokia.JolokiaCollector._create_request')
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     def test_should_handle_canonical_names_setting_False(self, urlopen_mock,
                                                          create_request_mock):
         config = get_collector_config('JolokiaCollector', {})

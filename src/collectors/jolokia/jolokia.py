@@ -239,7 +239,7 @@ class JolokiaCollector(diamond.collector.Collector):
 
     def _read_request(self, domain):
         try:
-            url_path = '/?%s' % urllib.urlencode({
+            url_path = '/?%s' % diamond.pycompat.urlencode({
                 'maxCollectionSize': '0',
                 'ignoreErrors': 'true',
                 'canonicalNaming':
@@ -272,7 +272,7 @@ class JolokiaCollector(diamond.collector.Collector):
         return domain
 
     def _create_request(self, url):
-        req = urllib2.Request(url)
+        req = diamond.pycompat.Request(url)
         username = self.config["username"]
         password = self.config["password"]
         if username is not None and password is not None:

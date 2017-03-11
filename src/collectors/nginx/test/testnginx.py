@@ -79,7 +79,7 @@ class TestNginxCollector(CollectorTestCase):
             }
         )
 
-        patch_urlopen = patch('urllib2.urlopen', Mock(
+        patch_urlopen = patch(URLOPEN, Mock(
             return_value=mockResponse))
 
         patch_urlopen.start()

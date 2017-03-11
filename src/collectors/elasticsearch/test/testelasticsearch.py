@@ -132,7 +132,7 @@ class TestElasticSearchCollector(CollectorTestCase):
             self.getFixture('cluster_stats_v2'),
             self.getFixture('indices_stats'),
         ]
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch(URLOPEN, Mock(
             side_effect=lambda *args: returns.pop(0)))
 
         self.collector.config['cluster'] = True
@@ -272,7 +272,7 @@ class TestElasticSearchCollector(CollectorTestCase):
             self.getFixture('stats'),
             self.getFixture('logstash_hourly_indices_stats'),
         ]
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch(URLOPEN, Mock(
             side_effect=lambda *args: returns.pop(0)))
 
         self.collector.config['logstash_mode'] = True
@@ -430,7 +430,7 @@ class TestElasticSearchCollector(CollectorTestCase):
             self.getFixture('stats1.7'),
             self.getFixture('indices_stats'),
         ]
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch(URLOPEN, Mock(
             side_effect=lambda *args: returns.pop(0)))
 
         urlopen_mock.start()
