@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBean classname="com.yammer.metrics.reporting.JmxReporter$Gauge" description="Information on the management interface of the MBean" objectname="kafka.controller:type=KafkaController,name=ActiveControllerCount">
+   <Attribute availability="RO" description="Attribute exposed for management" isnull="false" name="Value" strinit="false" type="java.lang.Object" value="1" />
+   <Operation description="Operation exposed for management" impact="unknown" name="objectName" return="javax.management.ObjectName" />
+</MBean>

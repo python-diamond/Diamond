@@ -136,6 +136,20 @@ class TestKafkaCollector(CollectorTestCase):
 
         self.assertEqual(metrics, expected_metrics)
 
+
+    @run_only_if_ElementTree_is_available
+    @patch.object(KafkaCollector, '_get')
+    def test_activeController_value(self, get_mock):
+        get_mock.return_value = self._get_xml_fixture('activecontrollercount.xml')
+
+        expected_metrics = {
+            'KafkaController.ActiveControllerCount.Value': 1.0,
+        }
+
+        metrics = self.collector.query_mbean('kafka.controller:type=KafkaController,name=ActiveControllerCount')
+
+        self.assertEqual(metrics, expected_metrics)
+
     @run_only_if_ElementTree_is_available
     @patch.object(KafkaCollector, '_get')
     def test_query_mbean_fail(self, get_mock):
@@ -154,6 +168,8 @@ class TestKafkaCollector(CollectorTestCase):
         if url_object.path == '/serverbydomain':
             if 'java.lang:type=GarbageCollector,name=*' in querynames:
                 return self.getFixture('serverbydomain_gc.xml')
+            elif '*kafka.controller:*' in querynames:
+                return self.getFixture('kafkacontroller.xml')
             elif 'java.lang:type=Threading' in querynames:
                 return self.getFixture('serverbydomain_threading.xml')
             else:
@@ -162,6 +178,9 @@ class TestKafkaCollector(CollectorTestCase):
             if ('java.lang:type=GarbageCollector,name=PS MarkSweep'
                     in objectnames):
                 return self.getFixture('gc_marksweep.xml')
+            elif ('kafka.controller:type=KafkaController,name=ActiveControllerCount'
+                  in objectnames):
+                return self.getFixture('activecontrollercount.xml')
             elif ('java.lang:type=GarbageCollector,name=PS Scavenge'
                   in objectnames):
                 return self.getFixture('gc_scavenge.xml')

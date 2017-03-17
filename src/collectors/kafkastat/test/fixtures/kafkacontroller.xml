@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Server>
+   <Domain name="kafka.controller">
+      <MBean classname="com.yammer.metrics.reporting.JmxReporter$Timer" description="Information on the management interface of the MBean" objectname="kafka.controller:type=ControllerStats,name=LeaderElectionRateAndTimeMs" />
+      <MBean classname="com.yammer.metrics.reporting.JmxReporter$Meter" description="Information on the management interface of the MBean" objectname="kafka.controller:type=ControllerStats,name=UncleanLeaderElectionsPerSec" />
+      <MBean classname="com.yammer.metrics.reporting.JmxReporter$Gauge" description="Information on the management interface of the MBean" objectname="kafka.controller:type=KafkaController,name=ActiveControllerCount" />
+      <MBean classname="com.yammer.metrics.reporting.JmxReporter$Gauge" description="Information on the management interface of the MBean" objectname="kafka.controller:type=KafkaController,name=OfflinePartitionsCount" />
+      <MBean classname="com.yammer.metrics.reporting.JmxReporter$Gauge" description="Information on the management interface of the MBean" objectname="kafka.controller:type=KafkaController,name=PreferredReplicaImbalanceCount" />
+   </Domain>
+</Server>
