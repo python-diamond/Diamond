@@ -11,11 +11,12 @@ Send metrics to signalfx
 #### Configuration
 Enable this handler
 
- * handers = diamond.handler.httpHandler.SignalfxHandler
+ * handlers = diamond.handler.signalfx.SignalfxHandler
 
  * auth_token = SIGNALFX_AUTH_TOKEN
  * batch_size = [optional | 300 ] will wait for this many requests before
      posting
+ * filter_metrics_regex = [optional] comma separated list of collector_name:regex to limit metrics sent to signalfx, default is to send everything
 """
 
 from Handler import Handler
@@ -24,7 +25,7 @@ import json
 import logging
 import time
 import urllib2
-
+import re
 
 class SignalfxHandler(Handler):
 
@@ -32,14 +33,35 @@ class SignalfxHandler(Handler):
     def __init__(self, config=None):
         Handler.__init__(self, config)
         self.metrics = []
+        self.filter_metrics = self.config["filter_metrics_regex"]
         self.batch_size = int(self.config['batch'])
         self.url = self.config['url']
         self.auth_token = self.config['auth_token']
         self.batch_max_interval = self.config['batch_max_interval']
         self.resetBatchTimeout()
+        self._compiled_filters = []
+        for fltr in self.filter_metrics:
+            collector,metric = fltr.split(":")
+            self._compiled_filters.append((collector,
+                                           re.compile(metric),))
         if self.auth_token == "":
             logging.error("Failed to load Signalfx module")
             return
+
+
+
+    def _match_metric(self, metric):
+        """
+        matches the metric path, if the metrics are empty, it shorts to True
+        """
+        if len(self._compiled_filters) == 0:
+            return True
+        for (collector, filter_regex) in self._compiled_filters:
+            if collector != metric.getCollectorPath():
+                continue
+            if filter_regex.match(metric.getMetricPath()):
+                return True
+        return False
 
     def resetBatchTimeout(self):
         self.batch_max_timestamp = int(time.time() + self.batch_max_interval)
@@ -53,6 +75,7 @@ class SignalfxHandler(Handler):
         config.update({
             'url': 'Where to send metrics',
             'batch': 'How many to store before sending',
+            'filter_metrics_regex': 'Comma separated collector:regex to filter on',
             'auth_token': 'Org API token to use when sending metrics',
         })
 
@@ -67,8 +90,9 @@ class SignalfxHandler(Handler):
         config.update({
             'url': 'https://ingest.signalfx.com/v2/datapoint',
             'batch': 300,
-            # Don't wait more than 10 sec between pushes
-            'batch_max_interval': 10,
+            'filter_metrics_regex': '',
+            # Don't wait more than 30 sec between pushes
+            'batch_max_interval': 30,
             'auth_token': '',
         })
 
@@ -78,7 +102,8 @@ class SignalfxHandler(Handler):
         """
         Queue a metric.  Flushing queue if batch size reached
         """
-        self.metrics.append(metric)
+        if self._match_metric(metric):
+            self.metrics.append(metric)
         if self.should_flush():
             self._send()
 
@@ -134,6 +159,7 @@ class SignalfxHandler(Handler):
         self.resetBatchTimeout()
         try:
             urllib2.urlopen(req)
-        except urllib2.URLError:
-            logging.exception("Unable to post signalfx metrics")
+        except urllib2.URLError as err:
+            error_message = err.read()
+            logging.exception("Unable to post signalfx metrics"+  error_message)
             return
