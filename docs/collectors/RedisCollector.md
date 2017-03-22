@@ -100,6 +100,8 @@ servers.hostname.redis.6379.process.connections_received 18764
 servers.hostname.redis.6379.process.uptime 95732
 servers.hostname.redis.6379.pubsub.channels 1
 servers.hostname.redis.6379.pubsub.patterns 0
+servers.hostname.redis.6379.replication.master 1
+servers.hostname.redis.6379.replication.master_sync_in_progress 0
 servers.hostname.redis.6379.slaves.connected 2
 servers.hostname.redis.6379.slaves.last_io 7
 ```
