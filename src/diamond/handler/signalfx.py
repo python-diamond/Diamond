@@ -16,7 +16,8 @@ Enable this handler
  * auth_token = SIGNALFX_AUTH_TOKEN
  * batch_size = [optional | 300 ] will wait for this many requests before
      posting
- * filter_metrics_regex = [optional] comma separated list of collector_name:regex to limit metrics sent to signalfx, default is to send everything
+ * filter_metrics_regex = [optional] comma separated list of collector:regex
+     to limit metrics sent to signalfx,  default is to send everything
 """
 
 from Handler import Handler
@@ -26,6 +27,7 @@ import logging
 import time
 import urllib2
 import re
+
 
 class SignalfxHandler(Handler):
 
@@ -41,14 +43,12 @@ class SignalfxHandler(Handler):
         self.resetBatchTimeout()
         self._compiled_filters = []
         for fltr in self.filter_metrics:
-            collector,metric = fltr.split(":")
+            collector, metric = fltr.split(":")
             self._compiled_filters.append((collector,
                                            re.compile(metric),))
         if self.auth_token == "":
             logging.error("Failed to load Signalfx module")
             return
-
-
 
     def _match_metric(self, metric):
         """
@@ -75,7 +75,7 @@ class SignalfxHandler(Handler):
         config.update({
             'url': 'Where to send metrics',
             'batch': 'How many to store before sending',
-            'filter_metrics_regex': 'Comma separated collector:regex to filter on',
+            'filter_metrics_regex': 'Comma separated collector:regex filters',
             'auth_token': 'Org API token to use when sending metrics',
         })
 
@@ -161,5 +161,5 @@ class SignalfxHandler(Handler):
             urllib2.urlopen(req)
         except urllib2.URLError as err:
             error_message = err.read()
-            logging.exception("Unable to post signalfx metrics"+  error_message)
+            logging.exception("Unable to post signalfx metrics" + error_message)
             return
