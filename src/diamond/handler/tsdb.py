@@ -32,10 +32,10 @@ information.
 
 The system per default adds a tag 'hostname' with the hostname where the
 collection took place. You can add as many as you like. The 'tags' config
-element allows for both comma-separated or space separated key value pairs.
+element allows space separated key value pairs.
 
 Example :
-tags = environment=test,datacenter=north
+tags = environment=test datacenter=north
 
 ==== Notes
 
@@ -48,18 +48,36 @@ yourself.
 `    handlers = diamond.handler.tsdb.TSDBHandler
 `
 '
+We will automatically split bigger packages of metrics. You have to set
+tsd.http.request.enable_chunked = true
+and if pakackes get to big you will also need to adjust
+tsd.http.request.max_chunk which is 4096 by default. Learn more
+[here](http://opentsdb.net/docs/build/html/user_guide/configuration.html).
+
+In your diamond.conf:
+
+You can define how many packages you want to send in one package by setting
+batch<=1. We dont recommend 1 as it may have bigger impact on your CPU.
+
+Compression can be enabled by setting compression to 1-9 while 1 is low and 9 is
+high.
+
 """
 
 from Handler import Handler
 from diamond.metric import Metric
-import socket
+import urllib2
+import StringIO
+import gzip
+import base64
+import json
+import re
 
 
 class TSDBHandler(Handler):
     """
     Implements the abstract Handler class, sending data to OpenTSDB
     """
-    RETRY = 3
 
     def __init__(self, config=None):
         """
@@ -68,34 +86,42 @@ class TSDBHandler(Handler):
         # Initialize Handler
         Handler.__init__(self, config)
 
-        # Initialize Data
-        self.socket = None
-
         # Initialize Options
-        self.host = self.config['host']
+        # host
+        self.host = str(self.config['host'])
         self.port = int(self.config['port'])
         self.timeout = int(self.config['timeout'])
-        self.metric_format = str(self.config['format'])
-        self.tags = ""
-        if isinstance(self.config['tags'], basestring):
-            self.tags = self.config['tags']
-        elif isinstance(self.config['tags'], list):
-            for tag in self.config['tags']:
-                self.tags += " "+tag
-        if not self.tags == "" and not self.tags.startswith(' '):
-            self.tags = " "+self.tags
+        # Authorization
+        self.user = str(self.config['user'])
+        self.password = str(self.config['password'])
+        # data
+        self.batch = int(self.config['batch'])
+        self.compression = int(self.config['compression'])
+        # prefix
+        if self.config['prefix'] != "":
+            self.prefix = str(self.config['prefix'])+'.'
+        else:
+            self.prefix = ""
+        # tags
+        self.tags = []
+        pattern = re.compile(r'([a-zA-Z0-9]+)=([a-zA-Z0-9]+)')
+        for (key, value) in re.findall(pattern, str(self.config['tags'])):
+            self.tags.append([key, value])
 
-        # OpenTSDB refuses tags with = in the value, so see whether we have
-        # some of them in it..
-        for tag in self.tags.split(" "):
-            if tag.count('=') > 1:
-                raise Exception("Invalid tag name "+tag)
+        # headers
+        self.httpheader = {}
+        self.httpheader["Content-Type"] = "application/json"
+        # Authorization
+        if self.user != "":
+            self.httpheader["Authorization"] = "Basic " +\
+                base64.encodestring('%s:%s' % (self.user, self.password))[:-1]
+        # compression
+        if self.compression >= 1:
+            self.httpheader["Content-Encoding"] = "gzip"
+        self.entrys = []
 
         self.skipAggregates = self.config['skipAggregates']
         self.cleanMetrics = self.config['cleanMetrics']
-
-        # Connect
-        self._connect()
 
     def get_default_config_help(self):
         """
@@ -107,8 +133,12 @@ class TSDBHandler(Handler):
             'host': '',
             'port': '',
             'timeout': '',
-            'format': '',
             'tags': '',
+            'prefix': '',
+            'batch': '',
+            'compression': '',
+            'user': '',
+            'password': '',
             'cleanMetrics': True,
             'skipAggregates': True,
         })
@@ -122,12 +152,15 @@ class TSDBHandler(Handler):
         config = super(TSDBHandler, self).get_default_config()
 
         config.update({
-            'host': '',
-            'port': 1234,
+            'host': '127.0.0.1',
+            'port': 4242,
             'timeout': 5,
-            'format': '{Collector}.{Metric} {timestamp} {value} hostname={host}'
-                      '{tags}',
             'tags': '',
+            'prefix': '',
+            'batch': 1,
+            'compression': 0,
+            'user': '',
+            'password': '',
             'cleanMetrics': True,
             'skipAggregates': True,
         })
@@ -138,100 +171,72 @@ class TSDBHandler(Handler):
         """
         Destroy instance of the TSDBHandler class
         """
-        self._close()
+        self.log.debug("Stopping TSDBHandler ...")
 
     def process(self, metric):
         """
         Process a metric by sending it to TSDB
         """
-        tagsForMetric = self.tags
+        entry = {}
+        entry['timestamp'] = metric.timestamp
+        entry['value'] = metric.value
+        entry['metric'] = (self.prefix+metric.getCollectorPath() +
+                           '.'+metric.getMetricPath())
+        entry["tags"] = {}
+        entry["tags"]["hostname"] = metric.host
 
         if self.cleanMetrics:
             metric = MetricWrapper(metric, self.log)
             if self.skipAggregates and metric.isAggregate():
                 return
             for tagKey in metric.getTags():
-                tagsForMetric += " "+tagKey+"="+metric.getTags()[tagKey]
+                entry["tags"][tagKey] = metric.getTags()[tagKey]
 
-        metric_str = self.metric_format.format(
-            Collector=metric.getCollectorPath(),
-            Path=metric.path,
-            Metric=metric.getMetricPath(),
-            host=metric.host,
-            timestamp=metric.timestamp,
-            value=metric.value,
-            tags=tagsForMetric
-        )
-        # Just send the data as a string
-        self._send("put " + str(metric_str) + "\n")
+        for [key, value] in self.tags:
+            entry["tags"][key] = value
 
-    def _send(self, data):
+        self.entrys.append(entry)
+
+        # send data if list is long enough
+        if (len(self.entrys) >= self.batch):
+            # Compress data
+            if self.compression >= 1:
+                data = StringIO.StringIO()
+                with gzip.GzipFile(fileobj=data, compresslevel=self.compression,
+                                   mode="w") as f:
+                    f.write(json.dumps(self.entrys))
+                self._send(data.getvalue())
+            else:
+                # no compression
+                data = json.dumps(self.entrys)
+                self._send(data)
+
+    def _send(self, content):
         """
-        Send data to TSDB. Data that can not be sent will be queued.
+        Send content to TSDB.
         """
-        retry = self.RETRY
-        # Attempt to send any data in the queue
-        while retry > 0:
-            # Check socket
-            if not self.socket:
-                # Log Error
-                self.log.error("TSDBHandler: Socket unavailable.")
-                # Attempt to restablish connection
-                self._connect()
-                # Decrement retry
-                retry -= 1
-                # Try again
-                continue
+        retry = 0
+        success = False
+        while retry < 3 and success is False:
+            self.log.debug(content)
             try:
-                # Send data to socket
-                self.socket.sendall(data)
-                # Done
-                break
-            except socket.error, e:
-                # Log Error
-                self.log.error("TSDBHandler: Failed sending data. %s.", e)
-                # Attempt to restablish connection
-                self._close()
-                # Decrement retry
-                retry -= 1
-                # try again
-                continue
-
-    def _connect(self):
-        """
-        Connect to the TSDB server
-        """
-        # Create socket
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        if socket is None:
-            # Log Error
-            self.log.error("TSDBHandler: Unable to create socket.")
-            # Close Socket
-            self._close()
-            return
-        # Set socket timeout
-        self.socket.settimeout(self.timeout)
-        # Connect to graphite server
-        try:
-            self.socket.connect((self.host, self.port))
-            # Log
-            self.log.debug("Established connection to TSDB server %s:%d",
-                           self.host, self.port)
-        except Exception, ex:
-            # Log Error
-            self.log.error("TSDBHandler: Failed to connect to %s:%i. %s",
-                           self.host, self.port, ex)
-            # Close Socket
-            self._close()
-            return
-
-    def _close(self):
-        """
-        Close the socket
-        """
-        if self.socket is not None:
-            self.socket.close()
-        self.socket = None
+                request = urllib2.Request("http://"+self.host+":" +
+                                          str(self.port)+"/api/put",
+                                          content, self.httpheader)
+                response = urllib2.urlopen(url=request, timeout=self.timeout)
+                if response.getcode() < 301:
+                    self.log.debug(response.read())
+                    # Transaction should be finished
+                    self.log.debug(response.getcode())
+                    success = True
+            except urllib2.HTTPError, e:
+                self.log.error("HTTP Error Code: "+str(e.code))
+                self.log.error("Message : "+str(e.reason))
+            except urllib2.URLError, e:
+                self.log.error("Connection Error: "+str(e.reason))
+            finally:
+                retry += 1
+        self.entrys = []
 
 
 """
