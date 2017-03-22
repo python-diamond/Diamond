@@ -26,10 +26,12 @@ your service's latency. OpenTSDB makes generating such graphs on the fly a
 trivial operation, while manipulating millions of data point for very fine
 grained, real-time monitoring.
 
-The handler per default adds a tag 'hostname' with the hostname where the
-collection took place. You can add as many as you like via the configuration.
-The 'tags' config element allows for both comma-separated or space separated
-key value pairs.
+The system per default adds a tag 'hostname' with the hostname where the
+collection took place. You can add as many as you like. The 'tags' config
+element allows space separated key value pairs.
+
+Example :
+tags = environment=test datacenter=north
 
 The collectors specify the metrics with a single axis of navigation and often
 include aggregation counters that OpenTSDB could calculate directly. The openTSDB
@@ -54,24 +56,40 @@ set tsd.core.auto_create_metrics = true
 ```
 in your [OpenTSDB configuration](http://opentsdb.net/docs/build/html/user_guide/configuration.html)
 or you can run with the null handler and log the output
-and extract the key values to mkmetric yourself  
+and extract the key values to mkmetric yourself
 
 - enable it in `diamond.conf` :
 
 `    handlers = diamond.handler.tsdb.TSDBHandler
 `
+We will automatically split bigger packages of metrics. You have to set
+tsd.http.request.enable_chunked = true
+and if pakackes get to big you will also need to adjust
+tsd.http.request.max_chunk which is 4096 by default. Learn more
+[here](http://opentsdb.net/docs/build/html/user_guide/configuration.html).
+
+In your diamond.conf:
+
+You can define how many packages you want to send in one package by setting
+batch<=1. We dont recommend 1 as it may have bigger impact on your CPU.
+
+Compression can be enabled by setting compression to 1-9 while 1 is low and 9 is
+high.
 
 
 #### Options
 
 Setting | Default | Description | Type
 --------|---------|-------------|-----
-format | {Collector}.{Metric} {timestamp} {value} hostname={host}{tags} |  | str
 get_default_config_help |  | get_default_config_help |
 host |  |  | str
-port | 1234 |  | int
-server_error_interval | 120 | How frequently to send repeated server errors | int
-tags |  | Tags to be added to each metric. They should be key/value pairs. Example : tags = environment=test,datacenter=north| str
+port | 4242 |  | int
+tags |  | Tags to be added to each metric| str
 timeout | 5 |  | int
+prefix | | Is added as a prefix for every metric example: 'diamond' -> diamond.metric.name | str
+batch | 1 | Amount of metrics to send at once | int
+compression | 0 | compression level 1 (low) - 9 (high) | int
+user | | user for Basic Authorization | str
+password | | password for Basic Authorization | str
 cleanMetrics| True | Extract tag values from known collectors and make the metrics more OpenTSDB style | bool
 skipAggregates| True | Only has effect when cleanMetrics is true. Then the metrics that are considered aggregates are removed | bool
