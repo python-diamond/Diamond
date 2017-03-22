@@ -101,6 +101,7 @@ class RedisCollector(diamond.collector.Collector):
              'process.uptime': 'uptime_in_seconds',
              'pubsub.channels': 'pubsub_channels',
              'pubsub.patterns': 'pubsub_patterns',
+             'replication.master_sync_in_progress': 'master_sync_in_progress',
              'slaves.connected': 'connected_slaves',
              'slaves.last_io': 'master_last_io_seconds_ago'}
     _RENAMED_KEYS = {'last_save.changes_since': 'rdb_changes_since_last_save',
@@ -302,6 +303,19 @@ class RedisCollector(diamond.collector.Collector):
         # The structure should include the port for multiple instances per
         # server
         data = dict()
+
+        # Role needs to be handled outside the the _KEYS dict
+        # since the value is a string, not a int / float
+        # Also, master_sync_in_progress is only available if the
+        # redis instance is a slave, so default it here so that
+        # the metric is cleared if the instance flips from slave
+        # to master
+        if 'role' in info.keys():
+            if info['role'] == "master":
+                data['replication.master'] = 1
+                data['replication.master_sync_in_progress'] = 0
+            else:
+                data['replication.master'] = 0
 
         # Connect to redis and get the maxmemory config value
         # Then calculate the % maxmemory of memory used

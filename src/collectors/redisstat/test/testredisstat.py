@@ -165,6 +165,8 @@ class TestRedisCollector(CollectorTestCase):
         patch_time.stop()
 
         metrics = {'6379.process.uptime': 95732,
+                   '6379.replication.master': 1,
+                   '6379.replication.master_sync_in_progress': 0,
                    '6379.pubsub.channels': 1,
                    '6379.slaves.connected': 2,
                    '6379.slaves.last_io': 7,
@@ -343,6 +345,7 @@ class TestRedisCollector(CollectorTestCase):
             ]
         }
         get_info_data = {
+            'role': 'slave',
             'total_connections_received': 200,
             'total_commands_processed': 100,
         }
@@ -351,21 +354,31 @@ class TestRedisCollector(CollectorTestCase):
                  metric_type='GAUGE'),
             call('nick1.process.commands_processed', 100, precision=0,
                  metric_type='GAUGE'),
+            call('nick1.replication.master', 0, precision=0,
+                 metric_type='GAUGE'),
             call('nick2.process.connections_received', 200, precision=0,
                  metric_type='GAUGE'),
             call('nick2.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
+            call('nick2.replication.master', 0, precision=0,
                  metric_type='GAUGE'),
             call('nick3.process.connections_received', 200, precision=0,
                  metric_type='GAUGE'),
             call('nick3.process.commands_processed', 100, precision=0,
                  metric_type='GAUGE'),
+            call('nick3.replication.master', 0, precision=0,
+                 metric_type='GAUGE'),
             call('nick4.process.connections_received', 200, precision=0,
                  metric_type='GAUGE'),
             call('nick4.process.commands_processed', 100, precision=0,
                  metric_type='GAUGE'),
+            call('nick4.replication.master', 0, precision=0,
+                 metric_type='GAUGE'),
             call('6379.process.connections_received', 200, precision=0,
                  metric_type='GAUGE'),
             call('6379.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
+            call('6379.replication.master', 0, precision=0,
                  metric_type='GAUGE'),
         ]
 
