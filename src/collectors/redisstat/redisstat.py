@@ -310,7 +310,7 @@ class RedisCollector(diamond.collector.Collector):
         # redis instance is a slave, so default it here so that
         # the metric is cleared if the instance flips from slave
         # to master
-        if 'role' in info.keys():
+        if 'role' in info:
             if info['role'] == "master":
                 data['replication.master'] = 1
                 data['replication.master_sync_in_progress'] = 0
