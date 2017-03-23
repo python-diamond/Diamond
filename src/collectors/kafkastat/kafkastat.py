@@ -30,6 +30,7 @@ class KafkaCollector(diamond.collector.Collector):
         'double': float,
         'float': float,
         'int': int,
+        'java.lang.Object': float,
         'long': long,
     }
 
@@ -112,40 +113,37 @@ class KafkaCollector(diamond.collector.Collector):
             # java.lang:type=Threading
             # "kafka.controller":type="ControllerStats",
             # name="LeaderElectionRateAndTimeMs"
-            key_prefix = ''
-            for i, item in enumerate(objectname.split(',')):
+            split_num = objectname.count('=')
+            for i in range(split_num):
                 if i == 0:
-                    key_prefix = item.split('=')[1]
+                    key_prefix = objectname.split('=')[1]
                     if '"' in key_prefix:
                         key_prefix = key_prefix.split('"')[1]
                     if "," in key_prefix:
                         key_prefix = key_prefix.split(',')[0]
-                else:
-                    key = item.split('=')[1]
+                elif i > 0:
+                    key = objectname.split('=')[i + 1]
                     if key:
                         if '"' in key:
                             key = key.split('"')[1]
-                        key_prefix = key_prefix + '.' + key.replace('.', '_')
+                        key_prefix = key_prefix + '.' + key
+                        key_prefix = key_prefix.replace(",", ".")
 
         metrics = {}
+
         for attrib in attributes.getiterator(tag='Attribute'):
             atype = attrib.get('type')
+
             ptype = self.ATTRIBUTE_TYPES.get(atype)
-
-            if ptype is None:
-                for mbean_attrib in attributes.getiterator(tag='MBean'):
-                    if 'JmxReporter$Gauge' in mbean_attrib.get('classname'):
-                        ptype = float
-                        break
-
             if not ptype:
                 continue
-
             try:
                 value = ptype(attrib.get('value'))
-            except (TypeError, ValueError):
+            except ValueError:
+                # It will be too busy, so not logging it every time
+                self.log.debug('Unable to parse the value for ' +
+                               atype + " in " + objectname)
                 continue
-
             name = '.'.join([key_prefix, attrib.get('name')])
             # Some prefixes and attributes could have spaces, thus we must
             # sanitize them
@@ -175,7 +173,11 @@ class KafkaCollector(diamond.collector.Collector):
 
         # Query each one for stats
         for mbean in mbeans:
+            if mbean is None:
+                continue
             stats = self.query_mbean(mbean)
+            if stats is None:
+                self.log.error('Failed to get stats for' + mbean)
             metrics.update(stats)
 
         # Publish stats
