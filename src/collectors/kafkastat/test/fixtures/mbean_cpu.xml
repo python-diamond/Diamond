@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBean classname="kafka.log.Log" description="Information on the management interface of the MBean" objectname="kafka.network:type=Processor,name=IdlePercent,networkProcessor=0">
+    <Attribute availability="RO" description="Attribute exposed for management" isnull="false" name="Value" strinit="true" type="java.lang.Object" value="0.9429613639517346"/>
+</MBean>

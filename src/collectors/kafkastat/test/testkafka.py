@@ -105,8 +105,34 @@ class TestKafkaCollector(CollectorTestCase):
 
     @run_only_if_ElementTree_is_available
     @patch.object(KafkaCollector, '_get')
-    def test_query_mbean(self, get_mock):
-        get_mock.return_value = self._get_xml_fixture('mbean.xml')
+    def test_query_mbean_long(self, get_mock):
+        get_mock.return_value = self._get_xml_fixture('mbean_log.xml')
+
+        expected_metrics = {
+            'Topic.mytopic-1.Log.NumLogSegments.1.Value': long('11'),
+        }
+
+        metrics = self.collector.query_mbean('kafka.log:type=Log,name=NumLogSegments,topic=mytopic-1,partition=1')
+
+        self.assertEqual(metrics, expected_metrics)
+
+    @run_only_if_ElementTree_is_available
+    @patch.object(KafkaCollector, '_get')
+    def test_query_mbean_float(self, get_mock):
+        get_mock.return_value = self._get_xml_fixture('mbean_cpu.xml')
+
+        expected_metrics = {
+            'Processor.IdlePercent.0.Value': float('0.9429613639517346'),
+        }
+
+        metrics = self.collector.query_mbean('kafka.network:type=Processor,name=IdlePercent,networkProcessor=0')
+
+        self.assertEqual(metrics, expected_metrics)
+
+    @run_only_if_ElementTree_is_available
+    @patch.object(KafkaCollector, '_get')
+    def test_query_legacy_mbean(self, get_mock):
+        get_mock.return_value = self._get_xml_fixture('mbean_log_legacy.xml')
 
         expected_metrics = {
             'kafka.logs.mytopic-1.CurrentOffset': long('213500615'),
@@ -121,8 +147,8 @@ class TestKafkaCollector(CollectorTestCase):
 
     @run_only_if_ElementTree_is_available
     @patch.object(KafkaCollector, '_get')
-    def test_query_mbean_with_prefix(self, get_mock):
-        get_mock.return_value = self._get_xml_fixture('mbean.xml')
+    def test_query_legacy_mbean_with_prefix(self, get_mock):
+        get_mock.return_value = self._get_xml_fixture('mbean_log_legacy.xml')
 
         expected_metrics = {
             'some.prefix.CurrentOffset': long('213500615'),
@@ -168,7 +194,7 @@ class TestKafkaCollector(CollectorTestCase):
             elif 'java.lang:type=Threading' in objectnames:
                 return self.getFixture('threading.xml')
             else:
-                return self.getFixture('mbean.xml')
+                return self.getFixture('mbean_log_legacy.xml')
         else:
             return ''
 

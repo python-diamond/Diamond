@@ -108,43 +108,71 @@ class KafkaCollector(diamond.collector.Collector):
             return
 
         if key_prefix is None:
-            # Could be 1 or 2 = in the string
+            # Could be multiple ='s in the string, depending on Kafka version
+            #
             # java.lang:type=Threading
+            #
             # "kafka.controller":type="ControllerStats",
             # name="LeaderElectionRateAndTimeMs"
-            key_prefix = ''
-            for i, item in enumerate(objectname.split(',')):
-                if i == 0:
-                    key_prefix = item.split('=')[1]
-                    if '"' in key_prefix:
-                        key_prefix = key_prefix.split('"')[1]
-                    if "," in key_prefix:
-                        key_prefix = key_prefix.split(',')[0]
-                else:
-                    key = item.split('=')[1]
-                    if key:
-                        if '"' in key:
-                            key = key.split('"')[1]
-                        key_prefix = key_prefix + '.' + key.replace('.', '_')
+            #
+            # v0.10+:
+            # kafka.server:type=BrokerTopicMetrics,name=TotalProduceRequestsPerSec,
+            # topic=my_topic_name
+
+            labelset = objectname.split(':')[1]
+            labels = {}
+            for label in labelset.split(','):
+                k,v = label.split('=')
+                if '"' in v:
+                    v = v.split('"')[1]
+                labels[k] = v
+            # Here we specify the order of the labels from Kafka for a
+            # sane data hierarchy
+            vals = [labels[x] for x in ['topic',
+                                        'type',
+                                        'name',
+                                        'brokerHost',
+                                        'brokerPort',
+                                        'broker-id'
+                                        'clientId',
+                                        'client-id',
+                                        'fetcherType',
+                                        'fetcher-id',
+                                        'networkProcessor',
+                                        'request',
+                                        'partition'] if x in labels]
+            key_prefix = '.'.join(vals)
+            if 'topic' in labels:
+                key_prefix = 'Topic.' + key_prefix
 
         metrics = {}
         for attrib in attributes.getiterator(tag='Attribute'):
             atype = attrib.get('type')
-            ptype = self.ATTRIBUTE_TYPES.get(atype)
 
-            if ptype is None:
-                for mbean_attrib in attributes.getiterator(tag='MBean'):
-                    if 'JmxReporter$Gauge' in mbean_attrib.get('classname'):
-                        ptype = float
-                        break
+            if atype == 'java.lang.Object':
+                try:
+                    try:
+                        value = long(attrib.get('value'))
+                    except (TypeError, ValueError):
+                        value = float(attrib.get('value'))
+                except (TypeError, ValueError):
+                    continue
+            else:
+                ptype = self.ATTRIBUTE_TYPES.get(atype)
 
-            if not ptype:
-                continue
+                if ptype is None:
+                    for mbean_attrib in attributes.getiterator(tag='MBean'):
+                        if 'JmxReporter$Gauge' in mbean_attrib.get('classname'):
+                            ptype = float
+                            break
 
-            try:
-                value = ptype(attrib.get('value'))
-            except (TypeError, ValueError):
-                continue
+                if not ptype:
+                    continue
+
+                try:
+                    value = ptype(attrib.get('value'))
+                except (TypeError, ValueError):
+                    continue
 
             name = '.'.join([key_prefix, attrib.get('name')])
             # Some prefixes and attributes could have spaces, thus we must

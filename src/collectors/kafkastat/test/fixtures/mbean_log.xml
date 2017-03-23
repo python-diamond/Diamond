@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBean classname="kafka.log.Log" description="Information on the management interface of the MBean" objectname="kafka.log:type=Log,name=NumLogSegments,topic=mytopic-1,partition=1">
+    <Attribute availability="RO" description="Attribute exposed for management" isnull="false" name="Value" strinit="true" type="java.lang.Object" value="11"/>
+</MBean>

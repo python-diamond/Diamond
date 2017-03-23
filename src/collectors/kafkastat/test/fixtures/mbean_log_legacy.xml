@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBean classname="kafka.log.LogStats" description="Information on the management interface of the MBean" objectname="kafka:type=kafka.logs.mytopic-1">
+    <Attribute availability="RO" description="Attribute exposed for management" isnull="false" name="CurrentOffset" strinit="true" type="long" value="213500615"/>
+    <Attribute availability="RO" description="Attribute exposed for management" isnull="false" name="Name" strinit="true" type="java.lang.String" value="mytopic-1"/>
+    <Attribute availability="RO" description="Attribute exposed for management" isnull="false" name="NumAppendedMessages" strinit="true" type="long" value="224634137"/>
+    <Attribute availability="RO" description="Attribute exposed for management" isnull="false" name="NumberOfSegments" strinit="true" type="int" value="94"/>
+    <Attribute availability="RO" description="Attribute exposed for management" isnull="false" name="Size" strinit="true" type="long" value="50143615339"/>
+</MBean>
