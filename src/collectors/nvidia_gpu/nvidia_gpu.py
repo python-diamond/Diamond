@@ -11,7 +11,6 @@ See https://developer.nvidia.com/nvidia-system-management-interface
  * nvidia-ml-py (Optional)
 """
 
-from itertools import izip
 try:
     import pynvml
     USE_PYTHON_BINDING = True
@@ -71,7 +70,7 @@ class NvidiaGPUCollector(diamond.collector.ProcessCollector):
             stats = result.strip().split(',')
             assert len(stats) == len(stats_config)
             index = stats[0]
-            for stat_name, metric in izip(stats_config[1:], stats[1:]):
+            for stat_name, metric in zip(stats_config[1:], stats[1:]):
                 metric_name = 'gpu_{index}.{stat_name}'.format(
                     index=str(index),
                     stat_name=stat_name

@@ -6,17 +6,12 @@ Collect the elasticsearch stats for the local node.
 Supports multiple instances. When using the 'instances'
 parameter the instance alias will be appended to the
 'path' parameter.
-
-#### Dependencies
-
- * urlib2
-
 """
 
-import urllib2
 import base64
 import re
 from diamond.collector import str_to_bool
+import diamond.pycompat
 
 try:
     import json
@@ -33,7 +28,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
     def process_config(self):
         super(ElasticSearchCollector, self).process_config()
         instance_list = self.config['instances']
-        if isinstance(instance_list, basestring):
+        if isinstance(instance_list, str):
             instance_list = [instance_list]
 
         if len(instance_list) == 0:
@@ -111,13 +106,13 @@ class ElasticSearchCollector(diamond.collector.Collector):
         """
         url = '%s://%s:%i/%s' % (scheme, host, port, path)
         try:
-            request = urllib2.Request(url)
+            request = diamond.pycompat.Request(url)
             if self.config['user'] and self.config['password']:
                 base64string = base64.standard_b64encode(
                     '%s:%s' % (self.config['user'], self.config['password']))
                 request.add_header("Authorization", "Basic %s" % base64string)
-            response = urllib2.urlopen(request)
-        except Exception, err:
+            response = diamond.pycompat.urlopen(request)
+        except Exception as err:
             self.log.error("%s: %s" % (url, err))
             return False
 
@@ -135,13 +130,13 @@ class ElasticSearchCollector(diamond.collector.Collector):
         return doc
 
     def _copy_one_level(self, metrics, prefix, data, filter=lambda key: True):
-        for key, value in data.iteritems():
+        for key, value in data.items():
             if filter(key):
                 metric_path = '%s.%s' % (prefix, key)
                 self._set_or_sum_metric(metrics, metric_path, value)
 
     def _copy_two_level(self, metrics, prefix, data, filter=lambda key: True):
-        for key1, d1 in data.iteritems():
+        for key1, d1 in data.items():
             self._copy_one_level(metrics, '%s.%s' % (prefix, key1), d1, filter)
 
     def _index_metrics(self, metrics, prefix, index):
@@ -236,7 +231,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
         else:
             return
 
-        for name, index in indices.iteritems():
+        for name, index in indices.items():
             self._index_metrics(metrics, 'indices.%s' % name,
                                 index['primaries'])
 
@@ -246,7 +241,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             return
 
         metrics = {}
-        node = result['nodes'].keys()[0]
+        node = list(result['nodes'].keys())[0]
         data = result['nodes'][node]
 
         #
@@ -367,7 +362,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             if 'heap_used_percent' in mem:
                 metrics['jvm.mem.heap_used_percent'] = mem['heap_used_percent']
 
-            for pool, d in mem['pools'].iteritems():
+            for pool, d in mem['pools'].items():
                 pool = pool.replace(' ', '_')
                 metrics['jvm.mem.pools.%s.used' % pool] = d['used_in_bytes']
                 metrics['jvm.mem.pools.%s.max' % pool] = d['max_in_bytes']
@@ -377,7 +372,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             gc = jvm['gc']
             collection_count = 0
             collection_time_in_millis = 0
-            for collector, d in gc['collectors'].iteritems():
+            for collector, d in gc['collectors'].items():
                 metrics['jvm.gc.collection.%s.count' % collector] = d[
                     'collection_count']
                 collection_count += d['collection_count']

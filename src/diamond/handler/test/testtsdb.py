@@ -3,7 +3,7 @@
 ##########################################################################
 
 from test import unittest
-from mock import Mock
+from test import Mock
 
 import configobj
 
@@ -427,5 +427,5 @@ class TestTSDBdHandler(unittest.TestCase):
         try:
             TSDBHandler(config)
             fail("Expected an exception")
-        except Exception, e:
+        except Exception as e:
             assert(e)

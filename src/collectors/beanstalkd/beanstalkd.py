@@ -51,7 +51,7 @@ class BeanstalkdCollector(diamond.collector.Collector):
         try:
             connection = beanstalkc.Connection(self.config['host'],
                                                int(self.config['port']))
-        except beanstalkc.BeanstalkcException, e:
+        except beanstalkc.BeanstalkcException as e:
             self.log.error("Couldn't connect to beanstalkd: %s", e)
             return {}
 

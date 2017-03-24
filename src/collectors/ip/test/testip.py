@@ -5,13 +5,10 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import Mock
-from mock import patch
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
+from test import Mock
+from test import patch
+from test import StringIO
+from test import BUILTIN_OPEN
 
 from ip import IPCollector
 
@@ -33,7 +30,7 @@ class TestIPCollector(CollectorTestCase):
         self.assertTrue(IPCollector)
 
     @patch('os.access', Mock(return_value=True))
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch('diamond.collector.Collector.publish')
     def test_should_open_proc_net_snmp(self, publish_mock, open_mock):
         IPCollector.PROC = ['/proc/net/snmp']
@@ -42,7 +39,7 @@ class TestIPCollector(CollectorTestCase):
         open_mock.assert_called_once_with('/proc/net/snmp')
 
     @patch('os.access', Mock(return_value=True))
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch('diamond.collector.Collector.publish')
     def test_should_work_with_synthetic_data(self, publish_mock, open_mock):
         IPCollector.PROC = ['/proc/net/snmp']

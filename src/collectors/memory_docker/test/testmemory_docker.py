@@ -6,13 +6,10 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 from test import run_only
-from mock import Mock
-from mock import patch
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
+from test import Mock
+from test import patch
+from test import StringIO
+from test import BUILTIN_OPEN
 
 try:
     from docker import Client
@@ -59,7 +56,7 @@ class TestMemoryDockerCollector(CollectorTestCase):
         self.assertTrue(MemoryDockerCollector)
 
     @run_only_if_docker_client_is_available
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch.object(Client, 'containers', Mock(return_value=[]))
     @patch.object(Collector, 'publish')
     def test_should_open_all_cpuacct_stat(self, publish_mock, open_mock):
@@ -71,7 +68,7 @@ class TestMemoryDockerCollector(CollectorTestCase):
         open_mock.assert_any_call(fixtures_path + 'memory.stat')
 
     @run_only_if_docker_client_is_available
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch.object(Client, 'containers')
     @patch.object(Collector, 'publish')
     def test_should_get_containers(self, publish_mock, containers_mock,

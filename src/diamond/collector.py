@@ -16,7 +16,7 @@ import signal
 
 from diamond.metric import Metric
 from diamond.utils.config import load_config
-from error import DiamondException
+from . error import DiamondException
 
 # Detect the architecture of the system and set the counters for MAX_VALUES
 # appropriately. Otherwise, rolling over counters will cause incorrect or
@@ -52,7 +52,10 @@ def get_hostname(config, method=None):
             proc = subprocess.Popen(config['hostname'],
                                     shell=True,
                                     stdout=subprocess.PIPE)
-            hostname = proc.communicate()[0].strip()
+            hostname = proc.communicate()[0]
+            if isinstance(hostname, bytes):
+                hostname = hostname.decode("utf8")
+            hostname = hostname.strip()
             if proc.returncode != 0:
                 raise subprocess.CalledProcessError(proc.returncode,
                                                     config['hostname'])
@@ -144,7 +147,7 @@ def str_to_bool(value):
     Converts string truthy/falsey strings to a bool
     Empty strings are false
     """
-    if isinstance(value, basestring):
+    if isinstance(value, str):
         value = value.strip().lower()
         if value in ['true', 't', 'yes', 'y']:
             return True
@@ -222,7 +225,7 @@ class Collector(object):
         event
         """
         if 'byte_unit' in self.config:
-            if isinstance(self.config['byte_unit'], basestring):
+            if isinstance(self.config['byte_unit'], str):
                 self.config['byte_unit'] = self.config['byte_unit'].split()
 
         if 'enabled' in self.config:
@@ -569,8 +572,13 @@ class ProcessCollector(Collector):
             if str_to_bool(self.config['use_sudo']):
                 command.insert(0, self.config['sudo_cmd'])
 
-            return subprocess.Popen(command,
-                                    stdout=subprocess.PIPE).communicate()
+            p = subprocess.Popen(command, stdout=subprocess.PIPE)
+            stdout, stderr = p.communicate()
+            if isinstance(stdout, bytes):
+                stdout = stdout.decode("utf8")
+            if isinstance(stderr, bytes):
+                stderr = stderr.decode("utf8")
+            return stdout, stderr
         except OSError:
             self.log.exception("Unable to run %s", command)
             return None

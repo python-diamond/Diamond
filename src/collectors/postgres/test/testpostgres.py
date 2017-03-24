@@ -4,8 +4,8 @@
 
 from test import CollectorTestCase
 from test import get_collector_config
-
-from mock import patch, Mock
+from test import patch
+from test import Mock
 from postgres import PostgresqlCollector
 
 

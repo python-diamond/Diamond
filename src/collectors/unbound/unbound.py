@@ -86,5 +86,5 @@ class UnboundCollector(diamond.collector.ProcessCollector):
         if include_hist:
             histogram = self.get_massaged_histogram(raw_histogram)
 
-            for intv, value in histogram.iteritems():
+            for intv, value in histogram.items():
                 self.publish('histogram.' + intv, value)

@@ -10,6 +10,7 @@ The NfsdCollector collects nfsd utilization metrics using /proc/net/rpc/nfsd.
 """
 
 import diamond.collector
+from diamond.pycompat import long
 import os
 
 

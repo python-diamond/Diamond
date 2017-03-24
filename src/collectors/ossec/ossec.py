@@ -54,7 +54,9 @@ class OssecCollector(diamond.collector.Collector):
         try:
             p = subprocess.Popen(command, stdout=subprocess.PIPE)
             res = p.communicate()[0]
-        except Exception, e:
+            if isinstance(res, bytes):
+                res = res.decode("utf8")
+        except Exception as e:
             self.log.error('Unable to exec cmd: %s, because %s'
                            % (' '.join(command), str(e)))
             return

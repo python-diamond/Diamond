@@ -4,7 +4,8 @@
 
 from test import unittest
 from test import run_only
-from mock import patch
+from test import patch
+from test import ANY
 
 import configobj
 

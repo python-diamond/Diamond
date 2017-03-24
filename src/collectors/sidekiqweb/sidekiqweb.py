@@ -5,7 +5,6 @@ Collects data from sidekiq web
 
 #### Dependencies
 
- * urllib2
  * json (or simeplejson)
 
 """
@@ -15,8 +14,8 @@ try:
 except ImportError:
     import simplejson as json
 
-import urllib2
 import diamond.collector
+import diamond.pycompat
 
 
 class SidekiqWebCollector(diamond.collector.Collector):
@@ -42,22 +41,24 @@ class SidekiqWebCollector(diamond.collector.Collector):
 
     def collect(self):
         try:
-            response = urllib2.urlopen("http://%s:%s/dashboard/stats" % (
-                self.config['host'], int(self.config['port'])))
-        except Exception, e:
+            url = "http://%s:%s/dashboard/stats" % (
+                self.config['host'], int(self.config['port']))
+            response = diamond.pycompat.urlopen(url)
+        except Exception as e:
             self.log.error('Couldnt connect to sidekiq-web: %s', e)
             return {}
 
         try:
             j = json.loads(response.read())
-        except Exception, e:
+        except Exception as e:
             self.log.error('Couldnt parse json: %s', e)
             return {}
 
         for k in j:
             for item, value in j[k].items():
 
-                if isinstance(value, (str, unicode)) and 'M' in value:
+                if isinstance(value, (bytes, diamond.pycompat.unicode)) \
+                   and 'M' in value:
                     value = float(value.replace('M', ''))
                     for unit in self.config['byte_unit']:
                         unit_value = diamond.convertor.binary.convert(

@@ -5,7 +5,8 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import call, patch
+from test import patch
+from mock import call
 
 from diamond.collector import Collector
 
@@ -23,7 +24,7 @@ class TestEventstoreProjectionsCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(EventstoreProjectionsCollector)
 
-    @patch('urllib2.urlopen')
+    @patch(URLOPEN)
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock, urlopen_mock):
         returns = [self.getFixture('projections')]

@@ -10,7 +10,7 @@ by their apps, tools and services into actionable insight.
 
 """
 
-from Handler import Handler
+from . Handler import Handler
 import logging
 from collections import deque
 

@@ -58,7 +58,7 @@ def setup_logging(configfile, stdout=False):
             streamHandler.setLevel(rootLogLevel)
             log.addHandler(streamHandler)
 
-    except Exception, e:
+    except Exception as e:
         sys.stderr.write("Error occurs when initialize logging: ")
         sys.stderr.write(str(e))
         sys.stderr.write(os.linesep)

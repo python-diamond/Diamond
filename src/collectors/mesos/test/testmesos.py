@@ -5,10 +5,11 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import Mock
-from mock import patch
+from test import Mock
+from test import patch
 
 from diamond.collector import Collector
+from diamond.pycompat import URLOPEN
 
 from mesos import MesosCollector
 
@@ -31,7 +32,7 @@ class TestMesosCollector(CollectorTestCase):
     @patch.object(Collector, 'publish')
     def test_should_work_for_master_with_real_data(self, publish_mock):
         returns = self.getFixture('master_metrics_snapshot.json')
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch('diamond.pycompat.urlopen', Mock(
             side_effect=lambda *args: returns))
 
         urlopen_mock.start()
@@ -61,7 +62,7 @@ class TestMesosCollector(CollectorTestCase):
             self.getFixture('slave_monitor_statistics.json')
         ]
 
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch(URLOPEN, Mock(
             side_effect=lambda *args: returns.pop(0)))
 
         urlopen_mock.start()
@@ -114,7 +115,7 @@ class TestMesosCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_fail_gracefully(self, publish_mock):
-        patch_urlopen = patch('urllib2.urlopen', Mock(
+        patch_urlopen = patch(URLOPEN, Mock(
                               return_value=self.getFixture('metrics_blank')))
 
         patch_urlopen.start()
@@ -146,7 +147,7 @@ class TestMesosCollector(CollectorTestCase):
             self.getFixture('slave_metrics_state.json'),
             self.getFixture('slave_monitor_statistics_cpus_utilisation.json'),
         ]
-        urlopen_mock = patch('urllib2.urlopen', Mock(
+        urlopen_mock = patch(URLOPEN, Mock(
             side_effect=lambda *args: returns.pop(0)))
         urlopen_mock.start()
         self.collector.collect()

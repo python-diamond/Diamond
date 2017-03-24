@@ -64,7 +64,7 @@ class ZookeeperCollector(diamond.collector.Collector):
         return config
 
     def get_raw_stats(self, host, port):
-        data = ''
+        data = b''
         # connect
         try:
             if port is None:
@@ -74,13 +74,13 @@ class ZookeeperCollector(diamond.collector.Collector):
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.connect((host, int(port)))
             # request stats
-            sock.send('mntr\n')
+            sock.send(b'mntr\n')
             # something big enough to get whatever is sent back
             data = sock.recv(4096)
         except socket.error:
             self.log.exception('Failed to get stats from %s:%s',
                                host, port)
-        return data
+        return data.decode("utf8")
 
     def get_stats(self, host, port):
         # stuff that's always ignored, aren't 'stats'
@@ -118,7 +118,7 @@ class ZookeeperCollector(diamond.collector.Collector):
         hosts = self.config.get('hosts')
 
         # Convert a string config value to be an array
-        if isinstance(hosts, basestring):
+        if isinstance(hosts, str):
             hosts = [hosts]
 
         for host in hosts:

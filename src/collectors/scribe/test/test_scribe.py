@@ -3,7 +3,7 @@ import json
 from test import CollectorTestCase
 from test import get_collector_config
 
-from mock import Mock, patch
+from test import Mock, patch
 
 from scribe import ScribeCollector
 

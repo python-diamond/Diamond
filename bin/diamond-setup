@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 ##########################################################################
+from __future__ import print_function
 
 import os
 import sys
@@ -63,10 +64,10 @@ def getCollectors(path):
                             break
                     except TypeError:
                         continue
-                # print "Imported module: %s %s" % (modname, cls.__name__)
+                # print("Imported module: %s %s" % (modname, cls.__name__))
             except Exception:
-                print "Failed to import module: %s. %s" % (
-                    modname, traceback.format_exc())
+                print("Failed to import module: %s. %s" % (
+                    modname, traceback.format_exc()))
                 collectors[modname] = False
                 continue
 
@@ -77,7 +78,7 @@ def getCollectors(path):
 
 
 def typeToString(key):
-    if isinstance(obj.config[key], basestring):
+    if isinstance(obj.config[key], str):
         user_val = obj.config[key]
     elif isinstance(obj.config[key], bool):
         user_val = str(obj.config[key])
@@ -94,7 +95,7 @@ def typeToString(key):
 def stringToType(key, val):
     if type(obj.config[key]) is type(val):
         config_file[key] = val
-    elif isinstance(obj.config[key], basestring):
+    elif isinstance(obj.config[key], str):
         if val.lower() == 'false':
             config_file[key] = False
         elif val.lower() == 'true':
@@ -102,7 +103,7 @@ def stringToType(key, val):
         else:
             config_file[key] = val
     elif isinstance(obj.config[key], bool):
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             config_file[key] = str_to_bool(val)
         else:
             config_file[key] = bool(val)
@@ -116,7 +117,7 @@ def stringToType(key, val):
 
 
 def boolCheck(val):
-    if isinstance(val, basestring):
+    if isinstance(val, str):
         return str_to_bool(val)
     elif isinstance(val, bool):
         return val
@@ -133,9 +134,9 @@ def configureKey(key):
     except NotImplementedError:
         return
 
-    print "\n"
+    print("\n")
     if key in default_conf_help:
-        print default_conf_help[key]
+        print(default_conf_help[key])
     val = raw_input(key + ' [' + user_val + ']: ')
 
     # Empty user input? Default to current value
@@ -177,18 +178,18 @@ if __name__ == "__main__":
     if os.path.exists(options.configfile):
         config = ConfigObj(os.path.abspath(options.configfile))
     else:
-        print >> sys.stderr, "ERROR: Config file: %s does not exist." % (
-            options.configfile)
-        print >> sys.stderr, ("Please run python config.py -c"
-                              + " /path/to/diamond.conf")
+        print("ERROR: Config file: %s does not exist." % (
+            options.configfile), file=sys.stderr)
+        print("Please run python config.py -c /path/to/diamond.conf",
+              file=sys.stderr)
         parser.print_help(sys.stderr)
         sys.exit(1)
 
     if not options.dump:
-        print ''
-        print 'I will be over writing files in'
-        print config['server']['collectors_config_path']
-        print 'Please type yes to continue'
+        print('')
+        print('I will be over writing files in')
+        print(config['server']['collectors_config_path'])
+        print('Please type yes to continue')
 
         val = raw_input('Are you sure? ')
         if val != 'yes':
@@ -225,7 +226,7 @@ if __name__ == "__main__":
             obj = cls(config=config, handlers={})
 
             if options.dump:
-                print collector + " " + str(obj.config)
+                print(collector + " " + str(obj.config))
                 continue
 
             default_conf = obj.get_default_config()
@@ -241,9 +242,9 @@ if __name__ == "__main__":
             config_keys['instance_prefix'] = False
             config_keys['interval'] = False
 
-            print "*" * 60
-            print "\n\t\tNow configuring " + collector
-            print collectors[collector].__doc__
+            print("*" * 60)
+            print("\n\t\tNow configuring " + collector)
+            print(collectors[collector].__doc__)
 
             print "(%s)" % collector
             configureKey('enabled')
@@ -256,12 +257,12 @@ if __name__ == "__main__":
 
             config_file.write()
 
-        except IOError, (errno, strerror):
-            print "I/O error({0}): {1}".format(errno, strerror)
+        except IOError as err:
+            print("I/O error({0}): {1}".format(err.errno, err.strerror))
         except KeyboardInterrupt:
-            print
+            print("")
             sys.exit()
         except:
             continue
     if not foundcollector:
-        print "Collector not found."
+        print("Collector not found.")

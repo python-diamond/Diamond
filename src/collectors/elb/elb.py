@@ -39,7 +39,11 @@ You can specify an arbitrary amount of regions
 
 """
 import calendar
-import cPickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
 import datetime
 import functools
 import re
@@ -76,7 +80,7 @@ class memoized(object):
 
     def __call__(self, *args, **kwargs):
         # If the function args cannot be used as a cache hash key, fail fast
-        key = cPickle.dumps((args, kwargs))
+        key = pickle.dumps((args, kwargs))
         try:
             return self.cache[key]
         except KeyError:

@@ -5,13 +5,10 @@ import os
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import Mock
-from mock import patch
-
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
+from test import Mock
+from test import patch
+from test import StringIO
+from test import BUILTIN_OPEN
 
 from diamond.collector import Collector
 from memory_cgroup import MemoryCgroupCollector
@@ -28,7 +25,7 @@ class TestMemoryCgroupCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(MemoryCgroupCollector)
 
-    @patch('__builtin__.open')
+    @patch(BUILTIN_OPEN)
     @patch('os.walk', Mock(return_value=iter(fixtures)))
     @patch.object(Collector, 'publish')
     def test_should_open_all_memory_stat(self, publish_mock, open_mock):
@@ -112,9 +109,9 @@ class TestMemoryCgroupCollector(CollectorTestCase):
             'lxc.testcontainer.total_swap': 1,
         }
         [self.assertPublished(publish_mock, k, v)
-         for k, v in should_be_published.iteritems()]
+         for k, v in should_be_published.items()]
         [self.assertUnpublished(publish_mock, k, v)
-         for k, v in should_not_be_published.iteritems()]
+         for k, v in should_not_be_published.items()]
 
 if __name__ == "__main__":
     unittest.main()

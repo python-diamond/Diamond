@@ -6,9 +6,9 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 from test import run_only
-from mock import MagicMock
-from mock import patch
-from mock import call
+from test import MagicMock
+from test import patch
+from test import call
 
 from diamond.collector import Collector
 from tokumx import TokuMXCollector

@@ -5,7 +5,6 @@ Collect statistics from Nginx and Nginx+
 
 #### Dependencies
 
- * urllib2
  * json
 
 #### Usage
@@ -55,11 +54,11 @@ For commercial nginx+:
     </pre>
 
 """
-
-import urllib2
 import re
 import diamond.collector
 import json
+
+import diamond.pycompat
 
 
 class NginxCollector(diamond.collector.Collector):
@@ -217,9 +216,9 @@ class NginxCollector(diamond.collector.Collector):
                                 int(self.config['req_port']),
                                 self.config['req_path'])
 
-        req = urllib2.Request(url=url, headers=headers)
+        req = diamond.pycompat.Request(url=url, headers=headers)
         try:
-            handle = urllib2.urlopen(req)
+            handle = diamond.pycompat.urlopen(req)
 
             # Test for json payload; indicates nginx+
             if handle.info().gettype() == 'application/json':
@@ -228,8 +227,7 @@ class NginxCollector(diamond.collector.Collector):
             # Plain payload; indicates open source nginx
             else:
                 self.collect_nginx(handle)
-
-        except IOError, e:
+        except IOError as e:
             self.log.error("Unable to open %s" % url)
-        except Exception, e:
+        except Exception as e:
             self.log.error("Unknown error opening url: %s", e)

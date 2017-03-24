@@ -4,15 +4,13 @@
 Collect [dropwizard](http://dropwizard.codahale.com/) stats for the local node
 
 """
-
-import urllib2
-
 try:
     import json
 except ImportError:
     import simplejson as json
-
 import diamond.collector
+import diamond.pycompat
+from diamond.pycompat import HTTPError
 
 
 class DropwizardCollector(diamond.collector.Collector):
@@ -45,8 +43,8 @@ class DropwizardCollector(diamond.collector.Collector):
         url = 'http://%s:%i/metrics' % (
             self.config['host'], int(self.config['port']))
         try:
-            response = urllib2.urlopen(url)
-        except urllib2.HTTPError, err:
+            response = diamond.pycompat.urlopen(url)
+        except HTTPError as err:
             self.log.error("%s: %s", url, err)
             return
 

@@ -13,6 +13,7 @@ The InterruptCollector class collects metrics on interrupts from
 import platform
 import os
 import diamond.collector
+from diamond.pycompat import long
 
 # Detect the architecture of the system
 # and set the counters for MAX_VALUES

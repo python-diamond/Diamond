@@ -8,8 +8,6 @@ Collects sidekiq data from Redis
  * redis
 
 """
-from itertools import izip
-
 try:
     import redis
     from redis.sentinel import Sentinel
@@ -89,7 +87,7 @@ class SidekiqCollector(diamond.collector.Collector):
         else:
             sentinel_ports = [None for _ in xrange(len(ports))]
 
-        for port, sentinel_port in izip(ports, sentinel_ports):
+        for port, sentinel_port in zip(ports, sentinel_ports):
             for db in xrange(0, int(databases)):
                 master = self.get_master(
                     host, port, sentinel_port, sentinel_name

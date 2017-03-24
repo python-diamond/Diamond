@@ -170,7 +170,7 @@ class PostgresqlCollector(diamond.collector.Collector):
 
         try:
             conn = psycopg2.connect(**conn_args)
-        except Exception, e:
+        except Exception as e:
             self.log.error(e)
             raise e
 
@@ -220,7 +220,7 @@ class QueryStats(object):
                 # If row > length 2, assume each column name maps to
                 # key => value
                 else:
-                    for key, value in row.iteritems():
+                    for key, value in row.items():
                         if key in ('datname', 'schemaname', 'relname',
                                    'indexrelname', 'funcname',):
                             continue

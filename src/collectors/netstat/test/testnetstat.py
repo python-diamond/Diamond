@@ -5,7 +5,7 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import patch
+from test import patch
 
 from diamond.collector import Collector
 from netstat import NetstatCollector
@@ -32,7 +32,7 @@ class TestNetstatCollector(CollectorTestCase):
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
-        print publish_mock
+        print(publish_mock)
         self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################

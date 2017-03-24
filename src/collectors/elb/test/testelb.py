@@ -2,14 +2,13 @@
 # coding=utf-8
 
 import datetime
-import mock
 
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import patch
+from test import patch
 from test import run_only
-from mock import Mock
+from test import Mock
 
 from diamond.collector import Collector
 from elb import ElbCollector
@@ -99,8 +98,8 @@ class TestElbCollector(CollectorTestCase):
         collector = ElbCollector(config, handlers=[])
 
         target = ts + datetime.timedelta(minutes=1)
-        with mock.patch.object(datetime, 'datetime',
-                               mock.Mock(wraps=datetime.datetime)) as patched:
+        with patch.object(datetime, 'datetime',
+                          Mock(wraps=datetime.datetime)) as patched:
             patched.utcnow.return_value = target
             collector.collect()
 
@@ -175,8 +174,8 @@ class TestElbCollector(CollectorTestCase):
         collector = ElbCollector(config, handlers=[])
 
         target = ts + datetime.timedelta(minutes=1)
-        with mock.patch.object(datetime, 'datetime',
-                               mock.Mock(wraps=datetime.datetime)) as patched:
+        with patch.object(datetime, 'datetime',
+                          Mock(wraps=datetime.datetime)) as patched:
             patched.utcnow.return_value = target
             collector.collect()
 
@@ -203,7 +202,7 @@ def assertRaisesAndContains(excClass, contains_str, callableObj, *args,
                             **kwargs):
     try:
         callableObj(*args, **kwargs)
-    except excClass, e:
+    except excClass as e:
         msg = str(e)
         if contains_str in msg:
             return

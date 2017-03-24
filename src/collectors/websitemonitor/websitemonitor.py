@@ -1,16 +1,12 @@
 # coding=utf-8
 """
 Gather HTTP Response code and Duration of HTTP request
-
-#### Dependencies
-  * urllib2
-
 """
-
-import urllib2
 import time
 from datetime import datetime
 import diamond.collector
+import diamond.pycompat
+from diamond.pycompat import URLError
 
 
 class WebsiteMonitorCollector(diamond.collector.Collector):
@@ -38,8 +34,6 @@ class WebsiteMonitorCollector(diamond.collector.Collector):
         return default_config
 
     def collect(self):
-        req = urllib2.Request('%s' % (self.config['URL']))
-
         try:
             # time in seconds since epoch as a floating number
             start_time = time.time()
@@ -48,7 +42,7 @@ class WebsiteMonitorCollector(diamond.collector.Collector):
                                         ).strftime('%B %d, %Y %H:%M:%S')
             self.log.debug('Start time: %s' % (st))
 
-            resp = urllib2.urlopen(req)
+            resp = diamond.pycompat.urlopen(self.config['URL'])
             # time in seconds since epoch as a floating number
             end_time = time.time()
             # human-readable end time e.eg. November 25, 2013 18:15:56
@@ -59,8 +53,8 @@ class WebsiteMonitorCollector(diamond.collector.Collector):
             # Publish metrics
             self.publish('response_time.%s' % (resp.code), rt,
                          metric_type='COUNTER')
-        # urllib2 will puke on non HTTP 200/OK URLs
-        except urllib2.URLError, e:
+        # urllib will puke on non HTTP 200/OK URLs
+        except URLError as e:
             if e.code != 200:
                 # time in seconds since epoch as a floating number
                 end_time = time.time()
@@ -71,8 +65,8 @@ class WebsiteMonitorCollector(diamond.collector.Collector):
                 self.publish('response_time.%s' % (e.code), rt,
                              metric_type='COUNTER')
 
-        except IOError, e:
+        except IOError as e:
             self.log.error('Unable to open %s' % (self.config['URL']))
 
-        except Exception, e:
+        except Exception as e:
             self.log.error("Unknown error opening url: %s", e)
