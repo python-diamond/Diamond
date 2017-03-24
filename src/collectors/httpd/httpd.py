@@ -123,9 +123,22 @@ class HttpdCollector(diamond.collector.Collector):
                    'Total Accesses', 'IdleWorkers', 'StartingWorkers',
                    'ReadingWorkers', 'WritingWorkers', 'KeepaliveWorkers',
                    'DnsWorkers', 'ClosingWorkers', 'LoggingWorkers',
-                   'FinishingWorkers', 'CleanupWorkers']
+                   'FinishingWorkers', 'CleanupWorkers', 'ConnsAsyncClosing',
+                   'CPUUser', 'CacheSubcaches', 'CacheCurrentEntries',
+                   'CPULoad', 'Total kBytes', 'CacheIndexesPerSubcaches',
+                   'CPUChildrenSystem', 'ConnsAsyncWriting',
+                   'CacheSharedMemory', 'ServerUptimeSeconds',
+                   'CacheStoreCount', 'CacheExpireCount',
+                   'CacheReplaceCount', 'CPUChildrenUser', 'ConnsTotal',
+                   'CacheRetrieveMissCount', 'CacheRetrieveHitCount',
+                   'CacheTimeLeftOldestMax', 'CacheDiscardCount',
+                   'CacheRemoveHitCount', 'CacheTimeLeftOldestMin',
+                   'CPUSystem', 'ConnsAsyncKeepAlive',
+                   'CacheTimeLeftOldestAvg', 'CacheRemoveMissCount',
+                   'CacheIndexUsage', 'CacheUsage']
 
-        metrics_precision = ['ReqPerSec', 'BytesPerSec', 'BytesPerReq']
+        metrics_precision = ['ReqPerSec', 'BytesPerSec', 'BytesPerReq',
+                             'CPULoad', 'CPUUser', 'CPUSystem']
 
         if key in metrics:
             # Get Metric Name
@@ -137,6 +150,12 @@ class HttpdCollector(diamond.collector.Collector):
             # Prefix with the nickname?
             if len(nickname) > 0:
                 metric_name = nickname + '.' + metric_name
+
+            # Strip percent mark from Cache*Usage
+            try:
+                value = value.replace('%', '')
+            except AttributeError:
+                pass
 
             # Use precision for ReqPerSec BytesPerSec BytesPerReq
             if presicion_metric:

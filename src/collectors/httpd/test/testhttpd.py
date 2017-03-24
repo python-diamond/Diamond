@@ -144,6 +144,8 @@ class TestHttpdCollector(CollectorTestCase):
             'LoggingWorkers': 0,
             'FinishingWorkers': 0,
             'CleanupWorkers': 0,
+            'CacheIndexUsage': 0,
+            'CacheUsage': 0,
         }
         self.assertPublishedMany(publish_mock, metrics)
 
