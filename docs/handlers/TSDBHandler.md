@@ -34,9 +34,10 @@ Example :
 tags = environment=test datacenter=north
 
 The collectors specify the metrics with a single axis of navigation and often
-include aggregation counters that OpenTSDB could calculate directly. The openTSDB
-tagging system supports multiple axis and is better suited for dynamical values.
-You can [read here](http://opentsdb.net/docs/build/html/user_guide/query/timeseries.html)
+include aggregation counters that OpenTSDB could calculate directly.
+The openTSDB tagging system supports multiple axis and is better suited
+for dynamical values. You can [read here]
+(http://opentsdb.net/docs/build/html/user_guide/query/timeseries.html)
 how OpenTSDB suggests to sepearate tags from metrics. when doing this you also
 want to remove these aggregate values since they would lead to double counting
 when requesting OpenTSDB to do the aggregation based on the tags.
@@ -54,7 +55,8 @@ We don't automatically make the metrics via **mkmetric**, so either set
 ```
 set tsd.core.auto_create_metrics = true
 ```
-in your [OpenTSDB configuration](http://opentsdb.net/docs/build/html/user_guide/configuration.html)
+in your [OpenTSDB configuration]
+(http://opentsdb.net/docs/build/html/user_guide/configuration.html)
 or you can run with the null handler and log the output
 and extract the key values to mkmetric yourself
 
@@ -79,17 +81,17 @@ high.
 
 #### Options
 
-Setting | Default | Description | Type
---------|---------|-------------|-----
-get_default_config_help |  | get_default_config_help |
-host |  |  | str
-port | 4242 |  | int
-tags |  | Tags to be added to each metric| str
-timeout | 5 |  | int
-prefix | | Is added as a prefix for every metric example: 'diamond' -> diamond.metric.name | str
-batch | 1 | Amount of metrics to send at once | int
-compression | 0 | compression level 1 (low) - 9 (high) | int
-user | | user for Basic Authorization | str
-password | | password for Basic Authorization | str
-cleanMetrics| True | Extract tag values from known collectors and make the metrics more OpenTSDB style | bool
-skipAggregates| True | Only has effect when cleanMetrics is true. Then the metrics that are considered aggregates are removed | bool
+| Setting                 | Default | Description                                                                                            | Type |
+|-------------------------|---------|--------------------------------------------------------------------------------------------------------|------|
+| batch                   | 1       | Amount of metrics to send at once                                                                      | int  |
+| cleanMetrics            | True    | Extract tag values from known collectors and make the metrics more OpenTSDB style                      | bool |
+| compression             | 0       | compression level 1 (low) - 9 (high)                                                                   | int  |
+| get_default_config_help |         | get_default_config_help                                                                                |      |
+| host                    |         |                                                                                                        | str  |
+| password                |         | password for Basic Authorization                                                                       | str  |
+| port                    | 4242    |                                                                                                        | int  |
+| prefix                  |         | Is added as a prefix for every metric example: 'diamond' -> diamond.metric.name                        | str  |
+| skipAggregates          | True    | Only has effect when cleanMetrics is true. Then the metrics that are considered aggregates are removed | bool |
+| tags                    |         | Tags to be added to each metric                                                                        | str  |
+| timeout                 | 5       |                                                                                                        | int  |
+| user                    |         | user for Basic Authorization                                                                           | str  |

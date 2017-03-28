@@ -23,13 +23,6 @@ your service's latency. OpenTSDB makes generating such graphs on the fly a
 trivial operation, while manipulating millions of data point for very fine
 grained, real-time monitoring.
 
-One of the key features of OpenTSDB is working with tags. When collecting the
-same information for multiple instances (let's say the CPU or the number of
-bytes received on an interface), OpenTSDB uses the same metric name and a
-variable number of tags to identify what you were collecting. See
-http://opentsdb.net/docs/build/html/user_guide/query/timeseries.html for more
-information.
-
 The system per default adds a tag 'hostname' with the hostname where the
 collection took place. You can add as many as you like. The 'tags' config
 element allows space separated key value pairs.
@@ -37,17 +30,37 @@ element allows space separated key value pairs.
 Example :
 tags = environment=test datacenter=north
 
+The collectors specify the metrics with a single axis of navigation and often
+include aggregation counters that OpenTSDB could calculate directly.
+The openTSDB tagging system supports multiple axis and is better suited
+for dynamical values. You can [read here]
+(http://opentsdb.net/docs/build/html/user_guide/query/timeseries.html)
+how OpenTSDB suggests to sepearate tags from metrics. when doing this you also
+want to remove these aggregate values since they would lead to double counting
+when requesting OpenTSDB to do the aggregation based on the tags.
+
+The handler currently provides the ability to extract the tags from a metric
+(and remove aggregate values) for following collectors :
+* CPUCollector
+* HaProxyCollector
+* MattermostCollector
+
+
 ==== Notes
 
-We don't automatically make the metrics via mkmetric, so we recommand you run
-with the null handler and log the output and extract the key values to mkmetric
-yourself.
+We don't automatically make the metrics via **mkmetric**, so either set
+```
+set tsd.core.auto_create_metrics = true
+```
+in your [OpenTSDB configuration]
+(http://opentsdb.net/docs/build/html/user_guide/configuration.html)
+or you can run with the null handler and log the output
+and extract the key values to mkmetric yourself
 
 - enable it in `diamond.conf` :
 
 `    handlers = diamond.handler.tsdb.TSDBHandler
 `
-'
 We will automatically split bigger packages of metrics. You have to set
 tsd.http.request.enable_chunked = true
 and if pakackes get to big you will also need to adjust

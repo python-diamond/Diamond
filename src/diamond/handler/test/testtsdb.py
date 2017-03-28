@@ -7,6 +7,8 @@ from mock import patch, Mock
 from diamond.metric import Metric
 import urllib2
 import configobj
+import StringIO
+import gzip
 
 from diamond.handler.tsdb import TSDBHandler
 
@@ -17,6 +19,14 @@ class TestTSDBdHandler(unittest.TestCase):
 
     def setUp(self):
         self.url = 'http://127.0.0.1:4242/api/put'
+
+    def decompress(self, input):
+        infile = StringIO.StringIO()
+        infile.write(input)
+        with gzip.GzipFile(fileobj=infile, mode="r") as f:
+            f.rewind()
+            out = f.read()
+            return out
 
     def test_single_metric(self, mock_urlopen, mock_request):
         config = configobj.ConfigObj()
@@ -31,6 +41,21 @@ class TestTSDBdHandler(unittest.TestCase):
                 '123, "tags": {"hostname": "myhostname"}}]')
         header = {'Content-Type': 'application/json'}
         mock_urlopen.assert_called_with(self.url, body, header)
+
+    def test_compression(self, mock_urlopen, mock_request):
+        config = configobj.ConfigObj()
+        config['host'] = '127.0.0.1'
+        config['port'] = '4242'
+        config['compression'] = 1
+        metric = Metric('servers.myhostname.cpu.cpu_count',
+                        123, raw_value=123, timestamp=1234567,
+                        host='myhostname', metric_type='GAUGE')
+        handler = TSDBHandler(config)
+        handler.process(metric)
+        body = ('[{"timestamp": 1234567, "metric": "cpu.cpu_count", "value": '
+                '123, "tags": {"hostname": "myhostname"}}]')
+        header = {'Content-Type': 'application/json'}
+        assert self.decompress(mock_urlopen.call_args[0][1]) == body
 
     def test_user_password(self, mock_urlopen, mock_request):
         config = configobj.ConfigObj()
