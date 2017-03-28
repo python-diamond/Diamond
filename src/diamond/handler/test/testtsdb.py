@@ -9,6 +9,7 @@ import urllib2
 import configobj
 import StringIO
 import gzip
+import contextlib
 
 from diamond.handler.tsdb import TSDBHandler
 
@@ -23,7 +24,7 @@ class TestTSDBdHandler(unittest.TestCase):
     def decompress(self, input):
         infile = StringIO.StringIO()
         infile.write(input)
-        with gzip.GzipFile(fileobj=infile, mode="r") as f:
+        with contextlib.closing(gzip.GzipFile(fileobj=infile, mode="r")) as f:
             f.rewind()
             out = f.read()
             return out

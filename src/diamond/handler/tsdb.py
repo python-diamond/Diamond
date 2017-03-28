@@ -85,6 +85,7 @@ import gzip
 import base64
 import json
 import re
+import contextlib
 
 
 class TSDBHandler(Handler):
@@ -215,8 +216,9 @@ class TSDBHandler(Handler):
             # Compress data
             if self.compression >= 1:
                 data = StringIO.StringIO()
-                with gzip.GzipFile(fileobj=data, compresslevel=self.compression,
-                                   mode="w") as f:
+                with contextlib.closing(gzip.GzipFile(fileobj=data,
+                                        compresslevel=self.compression,
+                                        mode="w")) as f:
                     f.write(json.dumps(self.entrys))
                 self._send(data.getvalue())
             else:
