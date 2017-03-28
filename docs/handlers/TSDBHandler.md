@@ -81,17 +81,17 @@ high.
 
 #### Options
 
-| Setting                 | Default | Description                                                                                            | Type |
-|-------------------------|---------|--------------------------------------------------------------------------------------------------------|------|
-| batch                   | 1       | Amount of metrics to send at once                                                                      | int  |
-| cleanMetrics            | True    | Extract tag values from known collectors and make the metrics more OpenTSDB style                      | bool |
-| compression             | 0       | compression level 1 (low) - 9 (high)                                                                   | int  |
-| get_default_config_help |         | get_default_config_help                                                                                |      |
-| host                    |         |                                                                                                        | str  |
-| password                |         | password for Basic Authorization                                                                       | str  |
-| port                    | 4242    |                                                                                                        | int  |
-| prefix                  |         | Is added as a prefix for every metric example: 'diamond' -> diamond.metric.name                        | str  |
-| skipAggregates          | True    | Only has effect when cleanMetrics is true. Then the metrics that are considered aggregates are removed | bool |
-| tags                    |         | Tags to be added to each metric                                                                        | str  |
-| timeout                 | 5       |                                                                                                        | int  |
-| user                    |         | user for Basic Authorization                                                                           | str  |
+Setting | Default | Description | Type
+--------|---------|-------------|-----
+batch | 1 | Amount of metrics to send at once | int
+cleanMetrics| True | Extract tag values from known collectors and make the metrics more OpenTSDB style | bool
+compression | 0 | compression level 1 (low) - 9 (high) | int
+get_default_config_help |  | get_default_config_help |
+host |  |  | str
+password | | password for Basic Authorization | str
+port | 4242 |  | int
+prefix | | Is added as a prefix for every metric example: 'diamond' -> diamond.metric.name | str
+skipAggregates| True | Only has effect when cleanMetrics is true. Then the metrics that are considered aggregates are removed | bool
+tags |  | Tags to be added to each metric| str
+timeout | 5 |  | int
+user | | user for Basic Authorization | str
