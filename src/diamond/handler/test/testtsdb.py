@@ -29,6 +29,20 @@ class TestTSDBdHandler(unittest.TestCase):
             out = f.read()
             return out
 
+    def test_HTTPError(self, mock_urlopen, mock_request):
+        config = configobj.ConfigObj()
+        config['host'] = '127.0.0.1'
+        config['port'] = '4242'
+        metric = Metric('servers.myhostname.cpu.cpu_count',
+                        123, raw_value=123, timestamp=1234567,
+                        host='myhostname', metric_type='GAUGE')
+        handler = TSDBHandler(config)
+        header = {'Content-Type': 'application/json'}
+        exception = urllib2.HTTPError(url=self.url, code=404, msg="Error",
+                                      hdrs=header, fp=None)
+        handler.side_effect = exception
+        handler.process(metric)
+
     def test_single_metric(self, mock_urlopen, mock_request):
         config = configobj.ConfigObj()
         config['host'] = '127.0.0.1'
