@@ -228,7 +228,7 @@ class cloudwatchHandler(Handler):
           Send metrics to CloudWatch for the given dimensions
         """
 
-        timestamp = datetime.datetime.fromtimestamp(metric.timestamp)
+        timestamp = datetime.datetime.utcfromtimestamp(metric.timestamp)
 
         self.log.debug(
             "CloudWatch: Attempting to publish metric: %s to %s "
