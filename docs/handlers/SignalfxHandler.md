@@ -28,7 +28,7 @@ Setting | Default | Description | Type
 --------|---------|-------------|-----
 auth_token |  | Org API token to use when sending metrics | str
 batch | 300 | How many to store before sending | int
+filter_metrics_regex | | Comma Separated collector:regex filters| str
 get_default_config_help |  | get_default_config_help |
 server_error_interval | 120 | How frequently to send repeated server errors | int
 url | https://ingest.signalfx.com/v2/datapoint | Where to send metrics | str
-filter_metrics_regex | | Comma Separated collector:regex filters| str
