@@ -5,44 +5,57 @@ Send metrics to signalfx
 
 #### Dependencies
 
- * urllib2
+ * signalfx (pip install signalfx)
 
 
 #### Configuration
 Enable this handler
 
- * handers = diamond.handler.httpHandler.SignalfxHandler
+ * handlers = diamond.handler.signalfx_handler.SignalfxHandler
 
  * auth_token = SIGNALFX_AUTH_TOKEN
+
  * batch_size = [optional | 300 ] will wait for this many requests before
      posting
-"""
 
+ * batch_max_interval = [optional | 10 ] Max interval (secs) to wait before
+     sending
+
+ * timeout = [optional | 1 ] Timeout for the HTTP Post calls.
+"""
 from Handler import Handler
-from diamond.util import get_diamond_version
-import json
+import collections
 import logging
 import time
-import urllib2
+
+try:
+    import signalfx
+except ImportError:
+    raise ImportError("Failed to load signalfx module. "
+                      "Install signalfx module - `pip install signalfx`")
+
+from diamond.util import get_diamond_version
 
 
 class SignalfxHandler(Handler):
 
     # Inititalize Handler with url and batch size
     def __init__(self, config=None):
-        Handler.__init__(self, config)
+        super(SignalfxHandler, self).__init__(config)
         self.metrics = []
+        auth_token = self.config['auth_token']
+        url = self.config['url']
         self.batch_size = int(self.config['batch'])
-        self.url = self.config['url']
-        self.auth_token = self.config['auth_token']
-        self.batch_max_interval = self.config['batch_max_interval']
+        self.batch_max_interval = float(self.config['batch_max_interval'])
+        self.timeout = self.config['timeout']
         self.resetBatchTimeout()
-        if self.auth_token == "":
-            logging.error("Failed to load Signalfx module")
-            return
+        self.signalfx = signalfx.SignalFx(auth_token, ingest_endpoint=url,
+                                          batch_size=self.batch_size,
+                                          timeout=self.timeout,
+                                          user_agents=[self.user_agent()])
 
     def resetBatchTimeout(self):
-        self.batch_max_timestamp = int(time.time() + self.batch_max_interval)
+        self.batch_max_timestamp = time.time() + self.batch_max_interval
 
     def get_default_config_help(self):
         """
@@ -53,6 +66,8 @@ class SignalfxHandler(Handler):
         config.update({
             'url': 'Where to send metrics',
             'batch': 'How many to store before sending',
+            'batch_max_interval': 'Max interval (secs) to wait before sending',
+            'timeout': 'Timeout for the HTTP Post calls.',
             'auth_token': 'Org API token to use when sending metrics',
         })
 
@@ -65,10 +80,11 @@ class SignalfxHandler(Handler):
         config = super(SignalfxHandler, self).get_default_config()
 
         config.update({
-            'url': 'https://ingest.signalfx.com/v2/datapoint',
+            'url': 'https://ingest.signalfx.com/',
             'batch': 300,
             # Don't wait more than 10 sec between pushes
             'batch_max_interval': 10,
+            'timeout': 1,
             'auth_token': '',
         })
 
@@ -113,27 +129,17 @@ class SignalfxHandler(Handler):
         """
         HTTP user agent
         """
-        return "Diamond: %s" % get_diamond_version()
+        return "Diamond/{}".format(get_diamond_version())
 
     def _send(self):
-        # Potentially use protobufs in the future
-        postDictionary = {}
+        datapoint = collections.defaultdict(list)
         for metric in self.metrics:
-            t = metric.metric_type.lower()
-            if t not in postDictionary:
-                postDictionary[t] = []
-            postDictionary[t].append(self.into_signalfx_point(metric))
-
-        self.metrics = []
-        postBody = json.dumps(postDictionary)
-        logging.debug("Body is %s", postBody)
-        req = urllib2.Request(self.url, postBody,
-                              {"Content-type": "application/json",
-                               "X-SF-TOKEN": self.auth_token,
-                               "User-Agent": self.user_agent()})
+            datapoint[metric.metric_type.lower()].append(
+                self.into_signalfx_point(metric))
+        logging.debug('Body - %s', datapoint)
+        self.signalfx.send(gauges=datapoint.get('gauge', {}),
+                           counters=datapoint.get('counter', {}),
+                           cumulative_counters=datapoint.get(
+                               'cumulative_counter', {}))
         self.resetBatchTimeout()
-        try:
-            urllib2.urlopen(req)
-        except urllib2.URLError:
-            logging.exception("Unable to post signalfx metrics")
-            return
+        self.metrics = []
