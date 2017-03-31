@@ -21,6 +21,8 @@ Enable this handler
      posting
  * filter_metrics_regex = [optional] comma separated list of collector:regex
      to limit metrics sent to signalfx,  default is to send everything
+ * url = [optional | https://ingest.signalfx.com/v2/datapoint] where to send
+     metrics
 
 #### Options
 
