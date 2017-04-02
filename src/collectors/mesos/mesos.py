@@ -22,6 +22,7 @@ import diamond.collector
 import json
 import urllib2
 from urlparse import urlparse
+from collections import Counter
 
 import diamond.collector
 
@@ -169,12 +170,7 @@ class MesosCollector(diamond.collector.Collector):
         self._publish(r)
 
     def _sum_statistics(self, x, y):
-        stats = set(x) | set(y)
-        summed_stats = {
-            key: x.get(key, 0) + y.get(key, 0)
-            for key in stats
-        }
-        return summed_stats
+        return dict(Counter(x) + Counter(y))
 
     def _collect_slave_statistics(self):
         result = self._get('monitor/statistics')
