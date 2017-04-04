@@ -40,6 +40,8 @@ handlers_path = /usr/share/diamond/handlers/
 # When metric queue is full, new metrics are dropped.
 metric_queue_size = 16384
 
+# Abort the diamond process if the handler process exits
+abort_on_handlers_process_exit = False
 
 ################################################################################
 ### Options for handlers
