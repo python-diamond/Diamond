@@ -2,7 +2,6 @@
 # coding=utf-8
 ##########################################################################
 
-import json
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -166,10 +165,11 @@ class TestMesosCollector(CollectorTestCase):
                          self.collector._get_url("metrics/snapshot"))
 
     def test_sum_statistics(self):
-        results = json.load(self.getFixture('slave_monitor_statistics.json'))
-        sum = {}
-        for i in results:
-            sum = self.collector._sum_statistics(sum, i['statistics'])
+        metrics_1 = {'cpu': 50, 'mem': 30, 'loadavg': 1}
+        metrics_2 = {'cpu': 10, 'mem': 30, 'network': 10}
+        self.assertEqual(self.collector._sum_statistics(metrics_1, metrics_2),
+                         {'mem': 60, 'loadavg': 1, 'network': 10, 'cpu': 60})
+
 
 ##########################################################################
 if __name__ == "__main__":
