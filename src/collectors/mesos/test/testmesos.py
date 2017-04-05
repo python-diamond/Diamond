@@ -2,6 +2,7 @@
 # coding=utf-8
 ##########################################################################
 
+import json
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -163,6 +164,12 @@ class TestMesosCollector(CollectorTestCase):
         self.collector.config['host'] = 'https://localhost'
         self.assertEqual('https://localhost:5050/metrics/snapshot',
                          self.collector._get_url("metrics/snapshot"))
+
+    def test_sum_statistics(self):
+        results = json.load(self.getFixture('slave_monitor_statistics.json'))
+        sum = {}
+        for i in results:
+            sum = self.collector._sum_statistics(sum, i['statistics'])
 
 ##########################################################################
 if __name__ == "__main__":
