@@ -170,10 +170,8 @@ class MesosCollector(diamond.collector.Collector):
 
     def _sum_statistics(self, x, y):
         stats = set(x) | set(y)
-        summed_stats = {
-            key: x.get(key, 0) + y.get(key, 0)
-            for key in stats
-        }
+        summed_stats = dict([(key, x.get(key, 0) + y.get(key, 0))
+                             for key in stats])
         return summed_stats
 
     def _collect_slave_statistics(self):

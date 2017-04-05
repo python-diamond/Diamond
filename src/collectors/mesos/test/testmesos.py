@@ -164,6 +164,13 @@ class TestMesosCollector(CollectorTestCase):
         self.assertEqual('https://localhost:5050/metrics/snapshot',
                          self.collector._get_url("metrics/snapshot"))
 
+    def test_sum_statistics(self):
+        metrics_1 = {'cpu': 50, 'mem': 30, 'loadavg': 1}
+        metrics_2 = {'cpu': 10, 'mem': 30, 'network': 10}
+        self.assertEqual(self.collector._sum_statistics(metrics_1, metrics_2),
+                         {'mem': 60, 'loadavg': 1, 'network': 10, 'cpu': 60})
+
+
 ##########################################################################
 if __name__ == "__main__":
     unittest.main()
