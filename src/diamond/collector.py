@@ -12,7 +12,6 @@ import configobj
 import time
 import re
 import subprocess
-import signal
 
 from diamond.metric import Metric
 from diamond.utils.config import load_config
@@ -172,10 +171,6 @@ class Collector(object):
             self.name = self.__class__.__name__
         else:
             self.name = name
-
-        # Reset signal handlers of forks/threads
-        signal.signal(signal.SIGINT, signal.SIG_DFL)
-        signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
         self.handlers = handlers
         self.last_values = {}
