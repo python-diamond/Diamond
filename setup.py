@@ -62,6 +62,8 @@ else:
                            glob('conf/collectors/*')))
         data_files.append(('/etc/diamond/handlers',
                            glob('conf/handlers/*')))
+        data_files.append(('/etc/logrotate.d',
+	                   ['debian/logrotate/diamond']))
 
         if distro == 'Ubuntu':
             data_files.append(('/etc/init',
