@@ -230,7 +230,7 @@ class ElbCollector(diamond.collector.Collector):
                     continue
                 elb_names.append(elb_name)
         else:
-            elb_names = region_dict['elb_names']
+            elb_names = [i.rstrip().lstrip() for i in region_dict['elb_names'].split(',')]
         return elb_names
 
     def process_stat(self, region, zone, elb_name, metric, stat, end_time):
