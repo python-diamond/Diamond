@@ -20,6 +20,13 @@ class TestFlumeCollector(CollectorTestCase):
 
         self.collector = FlumeCollector(config, None)
 
+        config = get_collector_config('FlumeCollector', {
+            'interval': 10,
+            'req_port': '19991,19992'
+        })
+
+        self.collector = FlumeCollector(config, None)
+
     def test_import(self):
         self.assertTrue(FlumeCollector)
 
