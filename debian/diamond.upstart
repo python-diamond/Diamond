@@ -8,6 +8,8 @@ description "Diamond system statistics collector"
 start on (local-filesystems and net-device-up IFACE!=lo)
 stop on [!12345]
 
+respawn
+
 limit nofile 32768 32768
 kill timeout 5
 
