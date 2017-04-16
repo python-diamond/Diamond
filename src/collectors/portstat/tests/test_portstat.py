@@ -6,7 +6,7 @@ from unittest import TestCase
 
 from diamond.collector import Collector
 
-from portstat import get_port_stats, PortStatCollector
+from portstat import PortStatCollector
 
 
 class PortStatCollectorTestCase(CollectorTestCase):
@@ -31,7 +31,7 @@ class PortStatCollectorTestCase(CollectorTestCase):
     def test_import(self):
         self.assertTrue(PortStatCollector)
 
-    @patch('portstat.get_port_stats')
+    @patch.object(PortStatCollector, 'get_port_stats')
     @patch.object(Collector, 'publish')
     def test_collect(self, publish_mock, get_port_stats_mock):
 
@@ -62,12 +62,12 @@ class GetPortStatsTestCase(TestCase):
 
         net_connections_mock.return_value = ports
 
-        cnts = get_port_stats(5222)
+        cnts = PortStatCollector.get_port_stats(5222)
 
         self.assertEqual(net_connections_mock.call_count, 1)
         self.assertEqual(cnts, {'ok': 1})
 
-        cnts = get_port_stats(8888)
+        cnts = PortStatCollector.get_port_stats(8888)
 
         self.assertEqual(net_connections_mock.call_count, 2)
         self.assertEqual(cnts, {'ok': 2, 'bad': 1})
