@@ -69,6 +69,8 @@ else:
         if distro in ['centos', 'redhat', 'debian', 'fedora', 'oracle']:
             data_files.append(('/etc/init.d',
                                ['bin/init.d/diamond']))
+            data_files.append(('/etc/sysconfig',
+                               ['rpm/sysconfig/diamond']))
             data_files.append(('/var/log/diamond',
                                ['.keep']))
             if distro_major_version >= 7 and not distro == 'debian':
