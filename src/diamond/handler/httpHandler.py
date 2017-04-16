@@ -17,6 +17,10 @@ class HttpPostHandler(Handler):
         self.metrics = []
         self.batch_size = int(self.config['batch'])
         self.url = self.config.get('url')
+        self.max_backlog_multiplier = int(
+            self.config['max_backlog_multiplier'])
+        self.trim_backlog_multiplier = int(
+            self.config['trim_backlog_multiplier'])
 
     def get_default_config_help(self):
         """
@@ -27,6 +31,8 @@ class HttpPostHandler(Handler):
         config.update({
             'url': 'Fully qualified url to send metrics to',
             'batch': 'How many to store before sending to the graphite server',
+            'max_backlog_multiplier': 'how many batches to store before trimming',  # NOQA
+            'trim_backlog_multiplier': 'Trim down how many batches',
         })
 
         return config
@@ -40,6 +46,8 @@ class HttpPostHandler(Handler):
         config.update({
             'url': 'http://localhost/blah/blah/blah',
             'batch': 100,
+            'max_backlog_multiplier': 5,
+            'trim_backlog_multiplier': 4,
         })
 
         return config
@@ -56,6 +64,17 @@ class HttpPostHandler(Handler):
         self.post()
 
     def post(self):
+        # Don't let too many metrics back up
+        if len(self.metrics) >= (
+                self.batch_size * self.max_backlog_multiplier):
+            trim_offset = (self.batch_size
+                           * self.trim_backlog_multiplier * -1)
+            self.log.warn('HttpPostHandler: Trimming backlog. Removing'
+                          + ' oldest %d and keeping newest %d metrics',
+                          len(self.metrics) - abs(trim_offset),
+                          abs(trim_offset))
+            self.metrics = self.metrics[trim_offset:]
+
         req = urllib2.Request(self.url, "\n".join(self.metrics))
         urllib2.urlopen(req)
         self.metrics = []
