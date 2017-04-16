@@ -255,5 +255,6 @@ class GraphiteHandler(Handler):
         Close the socket
         """
         if self.socket is not None:
+            self.socket.shutdown(socket.SHUT_RDWR)
             self.socket.close()
         self.socket = None
