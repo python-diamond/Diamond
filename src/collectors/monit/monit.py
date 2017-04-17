@@ -40,11 +40,13 @@ class MonitCollector(diamond.collector.Collector):
             'path':         'monit',
             'byte_unit':    ['byte'],
             'send_totals':  False,
+            'scheme':       'http',
         })
         return config
 
     def collect(self):
-        url = 'http://%s:%i/_status?format=xml' % (self.config['host'],
+        url = '%s://%s:%i/_status?format=xml' % (self.config['scheme'],
+                                                 self.config['host'],
                                                    int(self.config['port']))
         try:
             request = urllib2.Request(url)
