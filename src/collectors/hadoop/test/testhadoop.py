@@ -20,6 +20,7 @@ class TestHadoopCollector(CollectorTestCase):
     def setUp(self):
         config = get_collector_config('HadoopCollector', {
             'metrics':  [os.path.dirname(__file__) + '/fixtures/*metrics.log'],
+            'metrics_blacklist': '.*rpc.*RpcProcessingTime_avg_time'
         })
 
         self.collector = HadoopCollector(config, {})
