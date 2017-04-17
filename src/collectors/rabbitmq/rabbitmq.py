@@ -288,13 +288,21 @@ class RabbitMQCollector(diamond.collector.Collector):
         if isinstance(value, dict):
             for new_key in value:
                 self._publish_metrics(name, keys, new_key, value)
-        elif isinstance(value, (float, int, long)):
+        elif isinstance(value, (float, int, long, type(None))):
             joined_keys = '.'.join(keys)
+
             if name:
                 publish_key = '{0}.{1}'.format(name, joined_keys)
             else:
                 publish_key = joined_keys
+
             if isinstance(value, bool):
                 value = int(value)
+
+            if isinstance(value, type(None)):
+                if "consumer_utilisation" in publish_key:
+                    value = 0
+                else:
+                    return False
 
             self.publish(publish_key, value)
