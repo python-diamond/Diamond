@@ -48,6 +48,10 @@ class DiskUsageCollector(diamond.collector.Collector):
                        " Defaults to md, sd, xvd, disk, and dm devices",
             'sector_size': 'The size to use to calculate sector usage',
             'send_zero': 'Send io data even when there is no io',
+            'exclude_devices': "A regex of which devices to exclude from " +
+                               " metrics gathering. This regex is applied" +
+                               " after the devices selection regex." +
+                               " Defaults to include all devices.",
         })
         return config_help
 
@@ -66,6 +70,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                          '|dm\-[0-9]+$'),
             'sector_size': 512,
             'send_zero': False,
+            'exclude_devices': None,
         })
         return config
 
@@ -167,6 +172,10 @@ class DiskUsageCollector(diamond.collector.Collector):
             metrics = {}
             name = info['device']
             if not reg.match(name):
+                continue
+
+            if (self.config['exclude_devices']
+                    and re.match(self.config['exclude_devices'], name)):
                 continue
 
             for key, value in info.iteritems():
