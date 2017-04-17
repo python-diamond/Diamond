@@ -169,10 +169,11 @@ class Server(object):
                 load_delay = self.config['server'].get('collectors_load_delay',
                                                        1.0)
                 for process_name in running_collectors - running_processes:
-                    # To handle running multiple collectors concurrently, we
-                    # split on white space and use the first word as the
-                    # collector name to spin
+                    # To handle running multiple collectors concurrently, fist
+                    # we split on white space, then on dot and use the first
+                    # word as the collector name to spin.
                     collector_name = process_name.split()[0]
+                    collector_name = collector_name.split('.', 1)[0]
 
                     if 'Collector' not in collector_name:
                         continue
