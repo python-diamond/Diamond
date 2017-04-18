@@ -82,7 +82,15 @@ jvm_thread_stats | True | Collect JVM thread stats | str
 measure_collector_time | False | Collect the collector run time in ms | bool
 metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
 metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
+<<<<<<< HEAD
+<<<<<<< HEAD
 thread_pool_stats | True | Collect JBoss thread pool stats | str
+=======
+thread_pool_stats | True | Collect thread pool stats defined by the JBoss threading subsystem | str
+>>>>>>> Collect thread pool stats for jboss api
+=======
+thread_pool_stats | True | Collect JBoss thread pool stats | str
+>>>>>>> Doc updates
 
 #### Example Output
 

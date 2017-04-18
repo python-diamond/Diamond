@@ -350,6 +350,8 @@ class Collector(object):
         if suffix:
             prefix = '.'.join((prefix, suffix))
 
+<<<<<<< HEAD
+<<<<<<< HEAD
         is_path_invalid = path == '.' or not path
 
         if is_path_invalid and prefix:
@@ -357,6 +359,22 @@ class Collector(object):
         elif prefix:
             return '.'.join([prefix, path, name])
         elif is_path_invalid:
+=======
+        if path == '.' and prefix:
+            return '.'.join([prefix, name])
+        elif prefix:
+            return '.'.join([prefix, path, name])
+        elif path == '.':
+>>>>>>> Don't join prefix if empty in Collector.get_metric_path.
+=======
+        is_path_invalid = path == '.' or not path
+
+        if is_path_invalid and prefix:
+            return '.'.join([prefix, name])
+        elif prefix:
+            return '.'.join([prefix, path, name])
+        elif is_path_invalid:
+>>>>>>> [collector] Add tests for get_metric_path, handle case when path is empty.
             return name
         else:
             return '.'.join([path, name])
@@ -371,7 +389,7 @@ class Collector(object):
         raise NotImplementedError()
 
     def publish(self, name, value, raw_value=None, precision=0,
-                metric_type='GAUGE', instance=None):
+                metric_type='GAUGE', instance=None, point_tags=None):
         """
         Publish a metric with the given name
         """
@@ -394,7 +412,8 @@ class Collector(object):
         try:
             metric = Metric(path, value, raw_value=raw_value, timestamp=None,
                             precision=precision, host=self.get_hostname(),
-                            metric_type=metric_type, ttl=ttl)
+                            metric_type=metric_type, ttl=ttl,
+                            point_tags=point_tags)
         except DiamondException:
             self.log.error(('Error when creating new Metric: path=%r, '
                             'value=%r'), path, value)

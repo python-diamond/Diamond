@@ -37,8 +37,17 @@ class SNMPCollector(diamond.collector.Collector):
 
     def __init__(self, *args, **kwargs):
         super(SNMPCollector, self).__init__(*args, **kwargs)
+<<<<<<< HEAD
+<<<<<<< HEAD
         if cmdgen is not None:
             self.snmpCmdGen = cmdgen.CommandGenerator()
+=======
+        self.snmpCmdGen = cmdgen.CommandGenerator()
+>>>>>>> #219 - changing snmp base collector to actually implement the collect method
+=======
+        if cmdgen is not None:
+            self.snmpCmdGen = cmdgen.CommandGenerator()
+>>>>>>> Fix import error when snmp is not installed
 
     def get_default_config_help(self):
         config_help = super(SNMPCollector, self).get_default_config_help()
@@ -87,9 +96,19 @@ class SNMPCollector(diamond.collector.Collector):
         host = socket.gethostbyname(host)
 
         # Assemble SNMP Auth Data
+<<<<<<< HEAD
+<<<<<<< HEAD
         snmpAuthData = cmdgen.CommunityData(
             'agent-{0}'.format(community),
             community)
+=======
+        snmpAuthData = cmdgen.CommunityData('agent-{0}'.format(community), community)
+>>>>>>> Allow SNMP collector to address different communities
+=======
+        snmpAuthData = cmdgen.CommunityData(
+            'agent-{0}'.format(community),
+            community)
+>>>>>>> Line lengths
 
         # Assemble SNMP Transport Data
         snmpTransportData = cmdgen.UdpTransportTarget(
@@ -123,9 +142,19 @@ class SNMPCollector(diamond.collector.Collector):
         host = socket.gethostbyname(host)
 
         # Assemble SNMP Auth Data
+<<<<<<< HEAD
+<<<<<<< HEAD
         snmpAuthData = cmdgen.CommunityData(
             'agent-{0}'.format(community),
             community)
+=======
+        snmpAuthData = cmdgen.CommunityData('agent-{0}'.format(community), community)
+>>>>>>> Allow SNMP collector to address different communities
+=======
+        snmpAuthData = cmdgen.CommunityData(
+            'agent-{0}'.format(community),
+            community)
+>>>>>>> Line lengths
 
         # Assemble SNMP Transport Data
         snmpTransportData = cmdgen.UdpTransportTarget(

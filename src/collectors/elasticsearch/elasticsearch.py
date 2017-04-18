@@ -71,7 +71,14 @@ class ElasticSearchCollector(diamond.collector.Collector):
             "the 'host' and 'port' settings. Instance format: "
             "instance [<alias>@]<hostname>[:<port>]",
             'scheme': "http (default) or https",
+<<<<<<< HEAD
+<<<<<<< HEAD
             'cluster': "cluster/node/shard health",
+=======
+>>>>>>> add scheme option to elasticsearch collector to support https
+=======
+            'cluster': "cluster/node/shard health",
+>>>>>>> add missing documentation to existing function
             'stats':
                 "Available stats:\n" +
                 " - jvm (JVM information)\n" +
@@ -222,7 +229,17 @@ class ElasticSearchCollector(diamond.collector.Collector):
         metrics['cluster_health.status'] = CLUSTER_STATUS[result['status']]
 
     def collect_instance_index_stats(self, scheme, host, port, metrics):
+<<<<<<< HEAD
+<<<<<<< HEAD
         result = self._get(scheme, host, port, '_stats', '_all')
+=======
+        result = self._get(scheme, host, port,
+                           '_stats?clear=true&docs=true&store=true&' +
+                           'indexing=true&get=true&search=true', '_all')
+>>>>>>> add scheme option to elasticsearch collector to support https
+=======
+        result = self._get(scheme, host, port, '_stats', '_all')
+>>>>>>> Remove invalid params as of ES 5.0
         if not result:
             return
 
@@ -241,7 +258,20 @@ class ElasticSearchCollector(diamond.collector.Collector):
                                 index['primaries'])
 
     def collect_instance(self, alias, scheme, host, port):
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
         result = self._get(scheme, host, port, '_nodes/_local/stats', 'nodes')
+=======
+        result = self._get(scheme, host, port, '_nodes/_local/stats?all=true', 'nodes')
+>>>>>>> add scheme option to elasticsearch collector to support https
+=======
+        result = self._get(scheme, host, port,
+                           '_nodes/_local/stats?all=true', 'nodes')
+>>>>>>> pep8 format fix
+=======
+        result = self._get(scheme, host, port, '_nodes/_local/stats', 'nodes')
+>>>>>>> Remove invalid params as of ES 5.0
         if not result:
             return
 
