@@ -96,10 +96,10 @@ class PostgreSQLHandler(Handler):
         """
         self._close()
         self.conn = psycopg2.connect(host=self.hostname,
-                                    port=self.port,
-                                    user=self.username,
-                                    password=self.password,
-                                    dbname=self.database)
+                                     port=self.port,
+                                     user=self.username,
+                                     password=self.password,
+                                     dbname=self.database)
 
     def _close(self):
         """
