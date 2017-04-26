@@ -194,8 +194,6 @@ class TSDBHandler(Handler):
         entry = {}
         entry['timestamp'] = metric.timestamp
         entry['value'] = metric.value
-        entry['metric'] = (self.prefix+metric.getCollectorPath() +
-                           '.'+metric.getMetricPath())
         entry["tags"] = {}
         entry["tags"]["hostname"] = metric.host
 
@@ -205,6 +203,9 @@ class TSDBHandler(Handler):
                 return
             for tagKey in metric.getTags():
                 entry["tags"][tagKey] = metric.getTags()[tagKey]
+
+        entry['metric'] = (self.prefix + metric.getCollectorPath() +
+                           '.' + metric.getMetricPath())
 
         for [key, value] in self.tags:
             entry["tags"][key] = value
