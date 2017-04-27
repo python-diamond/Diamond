@@ -69,8 +69,11 @@ class TestTSDBdHandler(unittest.TestCase):
         handler.process(metric)
         body = ('[{"timestamp": 1234567, "metric": "cpu.cpu_count", "value": '
                 '123, "tags": {"hostname": "myhostname"}}]')
-        header = {'Content-Type': 'application/json'}
-        assert self.decompress(mock_urlopen.call_args[0][1]) == body
+        passed_headers = mock_urlopen.call_args[0][2]
+        passed_body = mock_urlopen.call_args[0][1]
+        assert passed_headers['Content-Encoding'] == 'gzip'
+        assert passed_headers['Content-Type'] == 'application/json'
+        assert self.decompress(passed_body) == body
 
     def test_user_password(self, mock_urlopen, mock_request):
         config = configobj.ConfigObj()
@@ -153,7 +156,7 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "cpu.cpu0.user", "value": '
+        body = ('[{"timestamp": 1234567, "metric": "cpu.user", "value": '
                 '123, "tags": {"cpuId": "cpu0", "myFirstTag": "myValue", '
                 '"hostname": "myhostname"}}]')
         header = {'Content-Type': 'application/json'}
@@ -237,7 +240,7 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "cpu.total.user", "value": '
+        body = ('[{"timestamp": 1234567, "metric": "cpu.user", "value": '
                 '123, "tags": {"cpuId": "total", "myFirstTag": "myValue", '
                 '"hostname": "myhostname"}}]')
         header = {'Content-Type': 'application/json'}
@@ -259,8 +262,8 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "haproxy.SOME-BACKEND.SOME-'
-                'SERVER.bin", "value": 123, "tags": {"backend": "SOME-BACKEND",'
+        body = ('[{"timestamp": 1234567, "metric": "haproxy.bin",'
+                ' "value": 123, "tags": {"backend": "SOME-BACKEND",'
                 ' "myFirstTag": "myValue", "hostname": "myhostname", "server": '
                 '"SOME-SERVER"}}]')
         header = {'Content-Type': 'application/json'}
@@ -305,7 +308,7 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "diskspace.MOUNT_POINT.'
+        body = ('[{"timestamp": 1234567, "metric": "diskspace.'
                 'byte_percentfree", "value": 80, "tags": {"mountpoint": '
                 '"MOUNT_POINT", "myFirstTag": "myValue", "hostname": '
                 '"myhostname"}}]')
@@ -350,8 +353,8 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "iostat.DEV.io_in_progress"'
-                ', "value": 80, "tags": {"device": "DEV", "myFirstTag": '
+        body = ('[{"timestamp": 1234567, "metric": "iostat.io_in_progress", '
+                '"value": 80, "tags": {"device": "DEV", "myFirstTag": '
                 '"myValue", "hostname": "myhostname"}}]')
         header = {'Content-Type': 'application/json'}
         mock_urlopen.assert_called_with(self.url, body, header)
@@ -393,7 +396,7 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "network.IF.rx_packets", '
+        body = ('[{"timestamp": 1234567, "metric": "network.rx_packets", '
                 '"value": 80, "tags": {"interface": "IF", "myFirstTag": '
                 '"myValue", "hostname": "myhostname"}}]')
         header = {'Content-Type': 'application/json'}
