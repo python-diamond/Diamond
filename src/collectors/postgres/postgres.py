@@ -431,7 +431,8 @@ class ConnectionStateStats(QueryStats):
         LEFT JOIN
              (SELECT CASE WHEN wait_event IS NOT NULL THEN 'waiting'
                           WHEN state= 'idle' THEN 'idle'
-                          WHEN state= 'idle in transaction' THEN 'idletransaction'
+                          WHEN state= 'idle in transaction'
+                          THEN 'idletransaction'
                           WHEN state = 'active' THEN 'active'
                           ELSE 'unknown' END AS state,
                      count(*) AS count
@@ -439,7 +440,8 @@ class ConnectionStateStats(QueryStats):
                WHERE pid != pg_backend_pid()
                GROUP BY CASE WHEN wait_event IS NOT NULL THEN 'waiting'
                           WHEN state= 'idle' THEN 'idle'
-                          WHEN state= 'idle in transaction' THEN 'idletransaction'
+                          WHEN state= 'idle in transaction'
+                          THEN 'idletransaction'
                           WHEN state = 'active' THEN 'active'
                           ELSE 'unknown' END
              ) AS tmp2
