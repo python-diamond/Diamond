@@ -199,7 +199,9 @@ class QueryStats(object):
         return datname
 
     def fetch(self, pg_version):
-        if float(pg_version) >= 9.2 and hasattr(self, 'post_92_query'):
+        if float(pg_version) >= 9.6 and hasattr(self, 'post_96_query'):
+            q = self.post_96_query
+        elif float(pg_version) >= 9.2 and hasattr(self, 'post_92_query'):
             q = self.post_92_query
         else:
             q = self.query
