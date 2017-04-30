@@ -111,4 +111,29 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Start diamond
     c.vm.provision "shell", inline: "sudo systemctl start diamond.service"
   end
+
+  config.vm.define "ubuntu1604-test" do |c|
+    c.vm.hostname = "ubuntu1604-test"
+    c.vm.box = "bento/ubuntu-16.04"
+
+    c.vm.provision "shell", inline: "sudo apt-get update"
+    c.vm.provision "shell", inline: "sudo apt-get install -y make git pbuilder python-mock python-configobj dh-python cdbs"
+
+    # Install python libraries needed by specific collectors
+    c.vm.provision "shell", inline: "sudo apt-get install -y libmysqlclient-dev" # req for MySQL-python
+    c.vm.provision "shell", inline: "sudo apt-get install -y lm-sensors" # req for pyutmp
+    c.vm.provision "shell", inline: "sudo apt-get install -y python-pip"
+    c.vm.provision "shell", inline: "sudo pip install -r /vagrant/.travis.requirements.txt"
+
+    # Setup Diamond to run as a service
+    c.vm.provision "shell", inline: "sudo apt-get install -y python-setuptools"
+    c.vm.provision "shell", inline: "sudo mkdir /var/log/diamond"
+    c.vm.provision "shell", inline: "sudo ln -s /vagrant/conf/vagrant /etc/diamond"
+    c.vm.provision "shell", inline: "sudo ln -s /vagrant/bin/diamond /usr/bin/diamond"
+    c.vm.provision "shell", inline: "sudo ln -s /vagrant/src/diamond /usr/lib/python2.7/dist-packages/diamond"
+    c.vm.provision "shell", inline: "sudo ln -s /vagrant/rpm/systemd/diamond.service /lib/systemd/system/diamond.service"
+
+    # Start diamond
+    c.vm.provision "shell", inline: "sudo systemctl start diamond.service"
+  end
 end
