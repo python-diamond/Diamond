@@ -4,7 +4,6 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-
   config.vm.define "centos5-build" do |c|
     c.vm.hostname = "centos-build"
     c.vm.box = "bento/centos-5.11"
@@ -20,7 +19,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "centos6-build" do |c|
     c.vm.hostname = "centos-build"
-    c.vm.box = "bento/centos-6.8"
+    c.vm.box = "bento/centos-6.9"
 
     c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj"
     c.vm.provision "shell", inline: "cp -rf /vagrant /tmp/Diamond"
@@ -32,7 +31,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "centos7-build" do |c|
     c.vm.hostname = "centos-build"
-    c.vm.box = "bento/centos-7.2"
+    c.vm.box = "bento/centos-7.3"
 
     c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj"
     c.vm.provision "shell", inline: "cp -rf /vagrant /tmp/Diamond"
@@ -55,7 +54,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "centos6-devel" do |c|
     c.vm.hostname = "centos-devel"
-    c.vm.box = "bento/centos-6.8"
+    c.vm.box = "bento/centos-6.9"
 
     c.vm.provision "shell", inline: "sudo rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
     c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj python-test python-mock tree vim-enhanced"
@@ -63,7 +62,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "centos7-devel" do |c|
     c.vm.hostname = "centos7-devel"
-    c.vm.box = "bento/centos-7.2"
+    c.vm.box = "bento/centos-7.3"
 
     c.vm.provision "shell", inline: "sudo rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm"
     c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj python-test python-mock tree vim-enhanced MySQL-python gcc"
@@ -71,7 +70,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "centos7-test" do |c|
     c.vm.hostname = "centos7-test"
-    c.vm.box = "bento/centos-7.2"
+    c.vm.box = "bento/centos-7.3"
 
     c.vm.provider "virtualbox" do |v|
       v.memory = 1024
