@@ -48,6 +48,10 @@ else:
         if 'amzn' in platform.uname()[2]:
             distro = 'centos'
 
+    if not distro:
+        if 'amzn' in platform.uname()[2]:
+            distro = 'centos'
+
     if running_under_virtualenv():
         data_files.append(('etc/diamond',
                            glob('conf/*.conf.*')))
@@ -62,6 +66,8 @@ else:
                            glob('conf/collectors/*')))
         data_files.append(('/etc/diamond/handlers',
                            glob('conf/handlers/*')))
+        data_files.append(('/etc/logrotate.d',
+	                   ['debian/logrotate/diamond']))
 
         if distro == 'Ubuntu':
             data_files.append(('/etc/init',
