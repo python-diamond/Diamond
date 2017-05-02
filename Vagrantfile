@@ -68,6 +68,33 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj python-test python-mock tree vim-enhanced MySQL-python gcc"
   end
 
+  config.vm.define "centos6-test" do |c|
+    c.vm.hostname = "centos-devel"
+    c.vm.box = "bento/centos-6.9"
+
+    c.vm.provision "shell", inline: "sudo rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
+    c.vm.provision "shell", inline: "sudo yum install -y git rpm-build python-configobj python-test python-mock tree vim-enhanced MySQL-python htop gcc"
+
+    # Install python libraries needed by specific collectors
+    c.vm.provision "shell", inline: "sudo yum install -y postgresql-devel" # req for psycopg2
+    c.vm.provision "shell", inline: "sudo yum install -y Cython" # req for pyutmp
+    c.vm.provision "shell", inline: "sudo yum install -y lm_sensors-devel lm_sensors python-devel" # req for pyutmp
+    c.vm.provision "shell", inline: "sudo yum install -y python-pip"
+    c.vm.provision "shell", inline: "sudo pip install psycopg2==2.6.2" # 2.7 requires PG 9.1+
+    c.vm.provision "shell", inline: "sudo pip install -r /vagrant/.travis.requirements.txt"
+
+    # Setup Diamond to run as a service
+    c.vm.provision "shell", inline: "sudo yum install -y python-setuptools"
+    c.vm.provision "shell", inline: "sudo mkdir /var/log/diamond"
+    c.vm.provision "shell", inline: "sudo ln -s /vagrant/conf/vagrant /etc/diamond"
+    c.vm.provision "shell", inline: "sudo ln -s /vagrant/bin/diamond /usr/bin/diamond"
+    c.vm.provision "shell", inline: "sudo ln -s /vagrant/src/diamond /usr/lib/python2.6/site-packages/diamond"
+    c.vm.provision "shell", inline: "sudo ln -s /vagrant/bin/init.d/diamond /etc/init.d/diamond"
+
+    # Start diamond
+    c.vm.provision "shell", inline: "sudo service diamond start"
+  end
+
   config.vm.define "centos7-test" do |c|
     c.vm.hostname = "centos7-test"
     c.vm.box = "bento/centos-7.3"
