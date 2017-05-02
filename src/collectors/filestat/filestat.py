@@ -3,6 +3,16 @@
 """
 Uses lsof to collect data on number of open files per user per type
 
+To report the correct values, the user running diamond may need to run lsof as sudo:
+
+Run:
+`sudo visudo -f /etc/sudoers.d/diamond`
+
+And add this content (with user = diamond, and path to lsof = /usr/bin/lsof):
+```
+diamond ALL = NOPASSWD: /usr/bin/lsof
+```
+
 #### Config Options
 
  Check Options table below
@@ -35,8 +45,10 @@ Uses lsof to collect data on number of open files per user per type
 """
 
 import diamond.collector
+from diamond.collector import str_to_bool
 import re
 import os
+import subprocess
 
 _RE = re.compile(r'(\d+)\s+(\d+)\s+(\d+)')
 
@@ -106,7 +118,9 @@ class FilestatCollector(diamond.collector.Collector):
             'uid_max': 65536,
             'type_include': None,
             'type_exclude': None,
-            'collect_user_data': False
+            'collect_user_data': False,
+            'use_sudo': False,
+            'sudo_cmd': '/usr/bin/sudo',
         })
         return config
 
@@ -236,8 +250,20 @@ class FilestatCollector(diamond.collector.Collector):
         d = {}
         for u in users:
             d[u] = {}
-            tmp = os.popen("lsof -wbu %s | awk '{ print $5 }'" % (
-                u)).read().split()
+            command = ['lsof', '-wbu', u]
+            if str_to_bool(self.config['use_sudo']):
+                command.insert(0, self.config['sudo_cmd'])
+            lsof_process = subprocess.Popen(
+                command,
+                stdout=subprocess.PIPE
+            )
+            awk_process = subprocess.Popen(
+                ['awk', '{print $5}'],
+                stdin=lsof_process.stdout,
+                stdout=subprocess.PIPE
+            )
+            lsof_process.stdout.close()
+            tmp = awk_process.communicate()[0].split()
             for t in types:
                 d[u][t] = tmp.count(t)
         return d
