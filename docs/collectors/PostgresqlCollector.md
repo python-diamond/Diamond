@@ -10,6 +10,26 @@ Collect metrics from postgresql
 
  * psycopg2
 
+#### Example configuration
+
+```
+#Section with defaults
+enabled=True
+password=default_password
+port = 5432
+
+#Instance specific configs
+[instances]
+
+[[postgres_a]]
+host = db1.loc
+password = instance_password_a
+
+[[postgres_b]]
+host = db2.loc
+port = 5433
+password = instance_password_b
+```
 
 #### Options
 
