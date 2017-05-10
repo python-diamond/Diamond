@@ -109,8 +109,6 @@ class PostgresqlCollector(diamond.collector.Collector):
 
         for instance in self.config['instances'].keys():
             # Get list of databases
-            #import pdb
-            #pdb.set_trace()
             dbs = self._get_db_names(instance)
             if len(dbs) == 0:
                 self.log.error("I have 0 databases!")
@@ -130,7 +128,8 @@ class PostgresqlCollector(diamond.collector.Collector):
             for metric_name in set(metrics):
                 if metric_name not in metrics_registry:
                     self.log.error(
-                        'metric_name %s not found in metric registry' % metric_name)
+                        'metric_name %s not found in metric registry'
+                        % metric_name)
                     continue
 
                 for dbase in dbs:
@@ -143,11 +142,13 @@ class PostgresqlCollector(diamond.collector.Collector):
                         stat.fetch(self._get_config(instance, 'pg_version'))
                         for metric, value in stat:
                             if value is not None:
-                                self.publish("%s.$s" % (instance, metric), value)
+                                self.publish("%s.%s" % (instance, metric),
+                                             value)
 
-                        # Setting multi_db to True will run this query on all known
-                        # databases. This is bad for queries that hit views like
-                        # pg_database, which are shared across databases.
+                        # Setting multi_db to True will run this query on all
+                        # known databases. This is bad for queries that hit
+                        # views like pg_database, which are shared
+                        # across databases.
                         #
                         # If multi_db is False, bail early after the first query
                         # iteration. Otherwise, continue to remaining databases.
