@@ -38,10 +38,6 @@ class TestPostgresqlCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(PostgresqlCollector)
 
-    def test_config_with_empty_instance(self):
-        result = self.default_collector.collect()
-        self.assertEqual(result, {})
-
     def test_config_override(self):
         self.assertEqual(self.collector._get_config('postgres_a', 'port'), 5432)
 

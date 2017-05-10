@@ -102,12 +102,18 @@ class PostgresqlCollector(diamond.collector.Collector):
             self.log.error('Unable to import module psycopg2')
             return {}
 
-        # Check instances
-        if self.config['instances'] == {}:
-            self.log.error("Instances are not configured!")
-            return {}
+        instances = self.config.get('instances')
 
-        for instance in self.config['instances'].keys():
+        # HACK: setting default with subcategory messes up merging of configs,
+        # so we only set the default if one wasn't provided.
+        if not instances:
+            instances = {
+                'default': {
+                    'host': 'localhost',
+                }
+            }
+
+        for instance in instances:
             # Get list of databases
             dbs = self._get_db_names(instance)
             if len(dbs) == 0:
