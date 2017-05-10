@@ -27,10 +27,26 @@ PIDFILE=/var/run/diamond.pid
 SCRIPTNAME=/etc/init.d/diamond
 LOCKDIR=/var/lock/subsys
 LOCKFILE=/var/lock/subsys/diamond
+CONF=/etc/diamond/diamond.conf
+
+# Exit if the package is not installed
+[ -x $DAEMON ] || exit 0
+
+# Read configuration variable file if it is present
+[ -r /etc/sysconfig/$NAME ] && . /etc/sysconfig/$NAME
+
+# Checking for a config file in place
+if [  ! -e $CONF ]; then
+   echo "/etc/diamond/diamond.conf not found. Please see /etc/diamond/diamond.conf.example"
+   exit 2
+fi
 
 . /etc/rc.d/init.d/functions
 
 start() {
+  if [ "x$ENABLE_DIAMOND" != "xyes" ]; then
+    exit 0
+  fi
   if [ -d "${LOCKDIR}" -a -w "${LOCKDIR}" ]
   then
     local pid
