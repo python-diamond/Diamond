@@ -79,6 +79,7 @@ class PostgresqlCollector(diamond.collector.Collector):
 
         config.update({
             'path': 'postgres',
+            'host': 'localhost',
             'dbname': 'postgres',
             'user': 'postgres',
             'password': 'postgres',
@@ -109,7 +110,7 @@ class PostgresqlCollector(diamond.collector.Collector):
         if not instances:
             instances = {
                 'default': {
-                    'host': 'localhost',
+                    'host': self.config['host'],
                 }
             }
 
@@ -171,7 +172,8 @@ class PostgresqlCollector(diamond.collector.Collector):
         instance_config = self.config['instances'].get(instance)
 
         if instance_config:
-            return instance_config.get(name, self.config.get(name, None))
+            return instance_config.get(name, self.config.get(name, None)
+                                       if name != 'host' else None)
         else:
             return None
 
