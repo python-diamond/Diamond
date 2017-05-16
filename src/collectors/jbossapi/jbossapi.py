@@ -377,6 +377,7 @@ class JbossApiCollector(diamond.collector.Collector):
         return tmp_result.group(1)
 
     def collect(self):
+
         for host in self.config['hosts']:
             matches = re.search(
                 '^([^:]*):([^@]*)@([^:]*):([^:]*):?(.*)', host)
@@ -389,7 +390,7 @@ class JbossApiCollector(diamond.collector.Collector):
             current_proto = matches.group(5)
             current_user = matches.group(1)
             current_pword = matches.group(2)
-            
+
             # Call get_stats for each instance of jboss
             self.get_stats(current_host, current_port, current_proto,
                            current_user, current_pword)
