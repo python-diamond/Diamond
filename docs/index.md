@@ -35,7 +35,7 @@ that any new pull requests and issues be cut against python-diamond. We will kee
 BrightcoveOS updated and still honor issues/tickets cut on that repo.
 
 ## Diamond Related Projects
- * [Related Projects](Related-Projects.md)
+ * [Related Projects](./docs/Related-Projects.md)
 
 ## Contact
  * IRC [#python-diamond](irc://chat.freenode.net:6667/%23python-diamond) on [freenode](http://www.freenode.net). [Webchat](http://webchat.freenode.net/?channels=python-diamond)
