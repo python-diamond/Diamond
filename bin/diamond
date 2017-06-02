@@ -201,6 +201,7 @@ def main():
             try:
                 if gid != -1 and uid != -1:
                     # Manually set the groups since they aren't set by default
+                    user = pwd.getpwuid(uid).pw_name
 
                     # Python 2.7+
                     if hasattr(os, 'initgroups'):
