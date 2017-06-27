@@ -43,10 +43,11 @@ class RiemannHandler(Handler):
         self.host = self.config['host']
         self.port = int(self.config['port'])
         self.transport = self.config['transport']
+        self.timeout = int(self.config['timeout'])
 
         # Initialize client
         if self.transport == 'tcp':
-            self.transport = TCPTransport(self.host, self.port)
+            self.transport = TCPTransport(self.host, self.port, self.timeout)
         else:
             self.transport = UDPTransport(self.host, self.port)
         self.client = Client(self.transport)
@@ -62,6 +63,7 @@ class RiemannHandler(Handler):
             'host': '',
             'port': '',
             'transport': 'tcp or udp',
+            'timeout': 'socket timeout in seconds',
         })
 
         return config
@@ -76,6 +78,7 @@ class RiemannHandler(Handler):
             'host': '',
             'port': 123,
             'transport': 'tcp',
+            'timeout': 120
         })
 
         return config
@@ -88,8 +91,12 @@ class RiemannHandler(Handler):
         try:
             self.client.send_event(event)
         except Exception as e:
-            self.log.error(
+            self.log.exception(
                 "RiemannHandler: Error sending event to Riemann: %s", e)
+
+            # Re-open the transport. The riemann server may have gone away
+            self._close()
+            self._connect()
 
     def _metric_to_riemann_event(self, metric):
         """
