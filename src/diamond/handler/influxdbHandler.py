@@ -135,8 +135,7 @@ class InfluxdbHandler(Handler):
                                                            metric.value])
             self.batch_count += 1
         # If there are sufficient metrics, then pickle and send
-        if self.batch_count >= self.batch_size and (
-                time.time() - self.batch_timestamp) > 2**self.time_multiplier:
+        if self.batch_count >= self.batch_size:
             # Log
             self.log.debug(
                 "InfluxdbHandler: Sending batch sizeof : %d/%d after %fs",
@@ -169,10 +168,19 @@ class InfluxdbHandler(Handler):
                 # build metrics data
                 metrics = []
                 for path in self.batch:
-                    metrics.append({
-                        "points": self.batch[path],
-                        "name": path,
-                        "columns": ["time", "value"]})
+                    pathlist = path.split(".")
+                    tags = {"hostname": pathlist[1]}
+                    if len(pathlist) > 4 and pathlist[3].startswith("cpu"):
+                        cpu = pathlist[3].replace("cpu", "")
+                        tags.update({"cpuid": cpu})
+                    vlist = self.batch[path][0]
+                    name = pathlist[-1]
+                    if not name.startswith(pathlist[2]):
+                        name = pathlist[2]+"_"+pathlist[-1]
+                    measurement = {"time": vlist[0], "tags": tags,
+                                   "measurement": name,
+                                   "fields": {"value": float(vlist[1])}}
+                    metrics.append(measurement)
                 # Send data to influxdb
                 self.log.debug("InfluxdbHandler: writing %d series of data",
                                len(metrics))
