@@ -392,9 +392,10 @@ class Collector(object):
 
         # Create Metric
         try:
-            metric = Metric(path, value, raw_value=raw_value, timestamp=timestamp,
-                            precision=precision, host=self.get_hostname(),
-                            metric_type=metric_type, ttl=ttl)
+            metric = Metric(path, value, raw_value=raw_value,
+                            timestamp=timestamp, precision=precision,
+                            host=self.get_hostname(), metric_type=metric_type,
+                            ttl=ttl)
         except DiamondException:
             self.log.error(('Error when creating new Metric: path=%r, '
                             'value=%r'), path, value)
