@@ -169,20 +169,17 @@ class InfluxdbHandler(Handler):
                 metrics = []
                 for path in self.batch:
                     pathlist = path.split(".")
-                    tags = {"hostname" : pathlist[1]}
+                    tags = {"hostname": pathlist[1]}
                     if len(pathlist) > 4 and pathlist[3].startswith("cpu"):
                         cpu = pathlist[3].replace("cpu", "")
-                        tags.update({"cpuid" : cpu})
+                        tags.update({"cpuid": cpu})
                     vlist = self.batch[path][0]
                     name = pathlist[-1]
                     if not name.startswith(pathlist[2]):
                         name = pathlist[2]+"_"+pathlist[-1]
-                    measurement ={
-                                    "time" : vlist[0],
-                                    "tags" : tags,
-                                    "measurement": name,
-                                    "fields": { "value" : float(vlist[1])}
-                                 }
+                    measurement = {"time": vlist[0], "tags": tags,
+                                   "measurement": name,
+                                   "fields": {"value": float(vlist[1])}}
                     metrics.append(measurement)
                 # Send data to influxdb
                 self.log.debug("InfluxdbHandler: writing %d series of data",
