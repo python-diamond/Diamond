@@ -58,7 +58,7 @@ class TestTSDBdHandler(unittest.TestCase):
                  "value": 123,
                  "tags": {"hostname": "myhostname"}}]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_compression(self, mock_request, mock_urlopen):
         config = configobj.ConfigObj()
@@ -97,7 +97,7 @@ class TestTSDBdHandler(unittest.TestCase):
                  "tags": {"hostname": "myhostname"}}]
         header = {'Content-Type': 'application/json',
                   'Authorization': 'Basic Sm9obiBEb2U6MTIzNDU2Nzg5'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_batch(self, mock_request, mock_urlopen):
         config = configobj.ConfigObj()
@@ -127,7 +127,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_tags(self, mock_request, mock_urlopen):
         config = configobj.ConfigObj()
@@ -152,7 +152,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_prefix(self, mock_request, mock_urlopen):
         config = configobj.ConfigObj()
@@ -173,7 +173,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_cpu_metrics_taghandling_default(self, mock_request, mock_urlopen):
         config = configobj.ConfigObj()
@@ -200,7 +200,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_cpu_metrics_taghandling_0(self, mock_request, mock_urlopen):
         """
@@ -230,7 +230,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_cpu_metrics_taghandling_default(self, mock_request, mock_urlopen):
         """
@@ -277,7 +277,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_cpu_metrics_taghandling_2(self, mock_request, mock_urlopen):
         """
@@ -309,7 +309,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_haproxy_metrics_default(self, mock_request, mock_urlopen):
         """
@@ -341,7 +341,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_haproxy_metrics(self, mock_request, mock_urlopen):
         """
@@ -372,7 +372,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_diskspace_metrics_default(self, mock_request, mock_urlopen):
         """
@@ -403,7 +403,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_diskspace_metrics(self, mock_request, mock_urlopen):
         """
@@ -434,7 +434,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_iostat_metrics_default(self, mock_request, mock_urlopen):
         """
@@ -464,7 +464,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_iostat_metrics(self, mock_request, mock_urlopen):
         """
@@ -495,7 +495,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_network_metrics_default(self,mock_request, mock_urlopen):
         """
@@ -525,7 +525,7 @@ class TestTSDBdHandler(unittest.TestCase):
             }
         ]
         header = {'Content-Type': 'application/json'}
-        self.check_request_param(mock_request, body, header )
+        self.check_request_param(mock_request, body, header)
 
     def test_network_metrics(self, mock_request, mock_urlopen):
         """
