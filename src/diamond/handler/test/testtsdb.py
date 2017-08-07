@@ -3,13 +3,14 @@
 ##########################################################################
 
 from test import unittest
-from mock import patch, Mock
+from mock import patch
 from diamond.metric import Metric
 import urllib2
 import configobj
 import StringIO
 import gzip
 import contextlib
+import json
 
 from diamond.handler.tsdb import TSDBHandler
 
@@ -29,7 +30,7 @@ class TestTSDBdHandler(unittest.TestCase):
             out = f.read()
             return out
 
-    def test_HTTPError(self, mock_urlopen, mock_request):
+    def test_HTTPError(self, mock_request, mock_urlopen):
         config = configobj.ConfigObj()
         config['host'] = '127.0.0.1'
         config['port'] = '4242'
@@ -43,7 +44,7 @@ class TestTSDBdHandler(unittest.TestCase):
         handler.side_effect = exception
         handler.process(metric)
 
-    def test_single_metric(self, mock_urlopen, mock_request):
+    def test_single_metric(self, mock_request, mock_urlopen):
         config = configobj.ConfigObj()
         config['host'] = '127.0.0.1'
         config['port'] = '4242'
@@ -52,12 +53,14 @@ class TestTSDBdHandler(unittest.TestCase):
                         host='myhostname', metric_type='GAUGE')
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "cpu.cpu_count", "value": '
-                '123, "tags": {"hostname": "myhostname"}}]')
+        body = [{"timestamp": 1234567,
+                 "metric": "cpu.cpu_count",
+                 "value": 123,
+                 "tags": {"hostname": "myhostname"}}]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_compression(self, mock_urlopen, mock_request):
+    def test_compression(self, mock_request, mock_urlopen):
         config = configobj.ConfigObj()
         config['host'] = '127.0.0.1'
         config['port'] = '4242'
@@ -67,15 +70,17 @@ class TestTSDBdHandler(unittest.TestCase):
                         host='myhostname', metric_type='GAUGE')
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "cpu.cpu_count", "value": '
-                '123, "tags": {"hostname": "myhostname"}}]')
-        passed_headers = mock_urlopen.call_args[0][2]
-        passed_body = mock_urlopen.call_args[0][1]
+        body = [{"timestamp": 1234567,
+                 "metric": "cpu.cpu_count",
+                 "value": 123,
+                 "tags": {"hostname": "myhostname"}}]
+        passed_headers = mock_request.call_args[0][2]
+        passed_body = mock_request.call_args[0][1]
         assert passed_headers['Content-Encoding'] == 'gzip'
         assert passed_headers['Content-Type'] == 'application/json'
-        assert self.decompress(passed_body) == body
+        assert json.loads(self.decompress(passed_body)) == body
 
-    def test_user_password(self, mock_urlopen, mock_request):
+    def test_user_password(self, mock_request, mock_urlopen):
         config = configobj.ConfigObj()
         config['host'] = '127.0.0.1'
         config['port'] = '4242'
@@ -86,13 +91,15 @@ class TestTSDBdHandler(unittest.TestCase):
                         host='myhostname', metric_type='GAUGE')
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "cpu.cpu_count", "value": '
-                '123, "tags": {"hostname": "myhostname"}}]')
+        body = [{"timestamp": 1234567,
+                 "metric": "cpu.cpu_count",
+                 "value": 123,
+                 "tags": {"hostname": "myhostname"}}]
         header = {'Content-Type': 'application/json',
                   'Authorization': 'Basic Sm9obiBEb2U6MTIzNDU2Nzg5'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_batch(self, mock_urlopen, mock_request):
+    def test_batch(self, mock_request, mock_urlopen):
         config = configobj.ConfigObj()
         config['host'] = '127.0.0.1'
         config['port'] = '4242'
@@ -106,14 +113,23 @@ class TestTSDBdHandler(unittest.TestCase):
         handler = TSDBHandler(config)
         handler.process(metric)
         handler.process(metric2)
-        body = ('[{"timestamp": 1234567, "metric": "cpu.cpu_count", "value": '
-                '123, "tags": {"hostname": "myhostname"}}, {"timestamp": 567891'
-                '0, "metric": "cpu.cpu_time", "value": 123, "tags": {"hostname"'
-                ': "myhostname"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "cpu.cpu_count",
+                "value": 123,
+                "tags": {"hostname": "myhostname"}},
+            {
+                "timestamp": 5678910,
+                "metric": "cpu.cpu_time",
+                "value": 123,
+                "tags": {"hostname": "myhostname"}
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_tags(self, mock_urlopen, mock_request):
+    def test_tags(self, mock_request, mock_urlopen):
         config = configobj.ConfigObj()
         config['host'] = '127.0.0.1'
         config['port'] = '4242'
@@ -123,13 +139,22 @@ class TestTSDBdHandler(unittest.TestCase):
                         host='myhostname', metric_type='GAUGE')
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "cpu.cpu_count", "value": '
-                '123, "tags": {"hostname": "myhostname", "tag1": "tagv1", '
-                '"tag2": "tagv2"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "cpu.cpu_count",
+                "value": 123,
+                "tags": {
+                    "hostname": "myhostname",
+                    "tag1": "tagv1",
+                    "tag2": "tagv2"
+                }
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_prefix(self, mock_urlopen, mock_request):
+    def test_prefix(self, mock_request, mock_urlopen):
         config = configobj.ConfigObj()
         config['host'] = '127.0.0.1'
         config['port'] = '4242'
@@ -139,12 +164,18 @@ class TestTSDBdHandler(unittest.TestCase):
                         host='myhostname', metric_type='GAUGE')
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "diamond.cpu.cpu_count", '
-                '"value": 123, "tags": {"hostname": "myhostname"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "diamond.cpu.cpu_count",
+                "value": 123,
+                "tags": {"hostname": "myhostname"}
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_cpu_metrics_taghandling_default(self, mock_urlopen, mock_request):
+    def test_cpu_metrics_taghandling_default(self, mock_request, mock_urlopen):
         config = configobj.ConfigObj()
         config['host'] = '127.0.0.1'
         config['port'] = '4242'
@@ -156,13 +187,22 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "cpu.user", "value": '
-                '123, "tags": {"cpuId": "cpu0", "myFirstTag": "myValue", '
-                '"hostname": "myhostname"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "cpu.user",
+                "value": 123,
+                "tags": {
+                    "cpuId": "cpu0",
+                    "myFirstTag": "myValue",
+                    "hostname": "myhostname"
+                }
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_cpu_metrics_taghandling_0(self, mock_urlopen, mock_request):
+    def test_cpu_metrics_taghandling_0(self, mock_request, mock_urlopen):
         """
         deactivate
         """
@@ -178,13 +218,21 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "cpu.cpu0.user", "value": '
-                '123, "tags": {"myFirstTag": "myValue", "hostname": '
-                '"myhostname"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "cpu.cpu0.user",
+                "value": 123,
+                "tags": {
+                    "myFirstTag": "myValue",
+                    "hostname": "myhostname"
+                }
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_cpu_metrics_taghandling_default(self, mock_urlopen, mock_request):
+    def test_cpu_metrics_taghandling_default(self, mock_request, mock_urlopen):
         """
         aggregate default
         """
@@ -201,7 +249,7 @@ class TestTSDBdHandler(unittest.TestCase):
         handler.process(metric)
         assert not mock_urlopen.called, "should not process"
 
-    def test_cpu_metrics_taghandling_1(self, mock_urlopen, mock_request):
+    def test_cpu_metrics_taghandling_1(self, mock_request, mock_urlopen):
         """
         aggregate deactivate
         """
@@ -217,13 +265,21 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "cpu.total.user", "value": '
-                '123, "tags": {"myFirstTag": "myValue", "hostname": '
-                '"myhostname"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "cpu.total.user",
+                "value": 123,
+                "tags": {
+                    "myFirstTag": "myValue",
+                    "hostname": "myhostname"
+                }
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_cpu_metrics_taghandling_2(self, mock_urlopen, mock_request):
+    def test_cpu_metrics_taghandling_2(self, mock_request, mock_urlopen):
         """
         aggregate deactivate
         """
@@ -240,13 +296,22 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "cpu.user", "value": '
-                '123, "tags": {"cpuId": "total", "myFirstTag": "myValue", '
-                '"hostname": "myhostname"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "cpu.user",
+                "value": 123,
+                "tags": {
+                    "cpuId": "total",
+                    "myFirstTag": "myValue",
+                    "hostname": "myhostname"
+                }
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_haproxy_metrics_default(self, mock_urlopen, mock_request):
+    def test_haproxy_metrics_default(self, mock_request, mock_urlopen):
         """
         taghandling default
         """
@@ -262,14 +327,23 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "haproxy.bin",'
-                ' "value": 123, "tags": {"backend": "SOME-BACKEND",'
-                ' "myFirstTag": "myValue", "hostname": "myhostname", "server": '
-                '"SOME-SERVER"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "haproxy.bin",
+                "value": 123,
+                "tags": {
+                    "backend": "SOME-BACKEND",
+                    "myFirstTag": "myValue",
+                    "hostname": "myhostname",
+                    "server": "SOME-SERVER"
+                }
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_haproxy_metrics(self, mock_urlopen, mock_request):
+    def test_haproxy_metrics(self, mock_request, mock_urlopen):
         """
         taghandling deactivate
         """
@@ -286,13 +360,21 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "haproxy.SOME-BACKEND.SOME-'
-                'SERVER.bin", "value": 123, "tags": {"myFirstTag": "myValue", '
-                '"hostname": "myhostname"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "haproxy.SOME-BACKEND.SOME-SERVER.bin",
+                "value": 123,
+                "tags": {
+                    "myFirstTag": "myValue",
+                    "hostname": "myhostname"
+                }
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_diskspace_metrics_default(self, mock_urlopen, mock_request):
+    def test_diskspace_metrics_default(self, mock_request, mock_urlopen):
         """
         taghandling default
         """
@@ -308,14 +390,22 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "diskspace.'
-                'byte_percentfree", "value": 80, "tags": {"mountpoint": '
-                '"MOUNT_POINT", "myFirstTag": "myValue", "hostname": '
-                '"myhostname"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "diskspace.byte_percentfree",
+                "value": 80,
+                "tags": {
+                    "mountpoint": "MOUNT_POINT",
+                    "myFirstTag": "myValue",
+                    "hostname": "myhostname"
+                }
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_diskspace_metrics(self, mock_urlopen, mock_request):
+    def test_diskspace_metrics(self, mock_request, mock_urlopen):
         """
         taghandling deactivate
         """
@@ -332,13 +422,21 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "diskspace.MOUNT_POINT'
-                '.byte_percentfree", "value": 80, "tags": {"myFirstTag": '
-                '"myValue", "hostname": "myhostname"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "diskspace.MOUNT_POINT.byte_percentfree",
+                "value": 80,
+                "tags": {
+                    "myFirstTag": "myValue",
+                    "hostname": "myhostname"
+                }
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_iostat_metrics_default(self, mock_urlopen, mock_request):
+    def test_iostat_metrics_default(self, mock_request, mock_urlopen):
         """
         taghandling default
         """
@@ -353,13 +451,22 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "iostat.io_in_progress", '
-                '"value": 80, "tags": {"device": "DEV", "myFirstTag": '
-                '"myValue", "hostname": "myhostname"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "iostat.io_in_progress",
+                "value": 80,
+                "tags": {
+                    "device": "DEV",
+                    "myFirstTag": "myValue",
+                    "hostname": "myhostname"
+                }
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_iostat_metrics(self, mock_urlopen, mock_request):
+    def test_iostat_metrics(self, mock_request, mock_urlopen):
         """
         taghandling deactivate
         """
@@ -375,13 +482,22 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "iostat.DEV.io_in_progress"'
-                ', "value": 80, "tags": {"myFirstTag": "myValue", "hostname": '
-                '"myhostname"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "iostat.DEV.io_in_progress",
+                "value": 80,
+                "tags":
+                    {
+                        "myFirstTag": "myValue",
+                        "hostname": "myhostname"
+                    }
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_network_metrics_default(self, mock_urlopen, mock_request):
+    def test_network_metrics_default(self, mock_request, mock_urlopen):
         """
         taghandling default
         """
@@ -396,13 +512,22 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "network.rx_packets", '
-                '"value": 80, "tags": {"interface": "IF", "myFirstTag": '
-                '"myValue", "hostname": "myhostname"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "network.rx_packets",
+                "value": 80,
+                "tags": {
+                    "interface": "IF",
+                    "myFirstTag": "myValue",
+                    "hostname": "myhostname"
+                }
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
 
-    def test_network_metrics(self, mock_urlopen, mock_request):
+    def test_network_metrics(self, mock_request, mock_urlopen):
         """
         taghandling deactivate
         """
@@ -418,8 +543,24 @@ class TestTSDBdHandler(unittest.TestCase):
 
         handler = TSDBHandler(config)
         handler.process(metric)
-        body = ('[{"timestamp": 1234567, "metric": "network.IF.rx_packets", '
-                '"value": 80, "tags": {"myFirstTag": "myValue", "hostname": '
-                '"myhostname"}}]')
+        body = [
+            {
+                "timestamp": 1234567,
+                "metric": "network.IF.rx_packets",
+                "value": 80,
+                "tags": {
+                    "myFirstTag": "myValue",
+                    "hostname": "myhostname"
+                }
+            }
+        ]
         header = {'Content-Type': 'application/json'}
-        mock_urlopen.assert_called_with(self.url, body, header)
+        self.check_request_param(mock_request, body, header)
+
+    def check_request_param(self, mock, body, header):
+        actual_body = json.loads(mock.call_args[0][1])
+        self.assertEqual(actual_body, body)
+        actual_url = mock.call_args[0][0]
+        self.assertEqual(actual_url, self.url)
+        actual_header = mock.call_args[0][2]
+        self.assertEqual(actual_header, header)
