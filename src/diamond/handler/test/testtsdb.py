@@ -497,7 +497,7 @@ class TestTSDBdHandler(unittest.TestCase):
         header = {'Content-Type': 'application/json'}
         self.check_request_param(mock_request, body, header)
 
-    def test_network_metrics_default(self,mock_request, mock_urlopen):
+    def test_network_metrics_default(self, mock_request, mock_urlopen):
         """
         taghandling default
         """
@@ -564,4 +564,3 @@ class TestTSDBdHandler(unittest.TestCase):
         self.assertEqual(actual_url, self.url)
         actual_header = mock.call_args[0][2]
         self.assertEqual(actual_header, header)
-
