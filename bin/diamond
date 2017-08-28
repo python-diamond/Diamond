@@ -208,7 +208,7 @@ def main():
                     # Python 2.6
                     else:
                         os.setgroups([e.gr_gid for e in grp.getgrall()
-                                      if pwd.getpwuid(uid).pw_name in e.gr_mem] + [gid])
+                            if pwd.getpwuid(uid).pw_name in e.gr_mem] + [gid])
 
                 if gid != -1 and os.getgid() != gid:
                     # Set GID
