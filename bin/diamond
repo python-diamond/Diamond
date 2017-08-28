@@ -204,11 +204,11 @@ def main():
 
                     # Python 2.7+
                     if hasattr(os, 'initgroups'):
-                        os.initgroups(user, gid)
+                        os.initgroups(pwd.getpwuid(uid).pw_name, gid)
                     # Python 2.6
                     else:
                         os.setgroups([e.gr_gid for e in grp.getgrall()
-                                      if user in e.gr_mem] + [gid])
+                                      if pwd.getpwuid(uid).pw_name in e.gr_mem] + [gid])
 
                 if gid != -1 and os.getgid() != gid:
                     # Set GID
