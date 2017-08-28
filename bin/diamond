@@ -207,8 +207,10 @@ def main():
                         os.initgroups(pwd.getpwuid(uid).pw_name, gid)
                     # Python 2.6
                     else:
-                        os.setgroups([e.gr_gid for e in grp.getgrall()
-                            if pwd.getpwuid(uid).pw_name in e.gr_mem] + [gid])
+                        os.setgroups(
+                            [e.gr_gid for e in grp.getgrall() if pwd.getpwuid(
+                                uid).pw_name in e.gr_mem] + [gid]
+                            )
 
                 if gid != -1 and os.getgid() != gid:
                     # Set GID
@@ -332,6 +334,7 @@ def main():
         log.error("Unhandled exception: %s" % str(e))
         log.error("traceback: %s" % traceback.format_exc())
         sys.exit(1)
+
 
 if __name__ == "__main__":
     if setproctitle:
