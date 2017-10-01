@@ -45,7 +45,7 @@ metric = sysUpTimeInstance
 name = Uptime
 namespace = Diamond
 unit = None
-[[[[additional_dimensions]]]]
+[[[[collect_with_dimensions]]]]
 Hostname = foo
 
 """
@@ -102,7 +102,7 @@ class cloudwatchHandler(Handler):
         self.valid_config = ('region', 'collector', 'metric', 'namespace',
                              'name', 'unit', 'collect_by_instance',
                              'collect_without_dimension',
-                             'additional_dimensions')
+                             'collect_with_dimensions')
 
         self.rules = []
         for key_name, section in self.config.items():
@@ -134,7 +134,7 @@ class cloudwatchHandler(Handler):
             'unit': 'None',
             'collect_by_instance': True,
             'collect_without_dimension': False,
-            'additional_dimensions': {}
+            'collect_with_dimensions': {}
         })
         return config
 
@@ -153,8 +153,8 @@ class cloudwatchHandler(Handler):
             'collector': 'Diamond collector name',
             'collect_by_instance': 'Send metric with InstanceId dimension',
             'collect_without_dimension': 'Send metric with no dimension',
-            'additional_dimensions': 'Name/Value additional dimensions to '
-                                     'send with metric'
+            'collect_with_dimensions': 'Name/Value additional dimensions to '
+                                       'send metric with'
         })
 
         return config
@@ -174,7 +174,7 @@ class cloudwatchHandler(Handler):
             'unit': 'None',
             'collect_by_instance': True,
             'collect_without_dimension': False,
-            'additional_dimensions': {}
+            'collect_with_dimensions': {}
         })
 
         return config
@@ -242,14 +242,18 @@ class cloudwatchHandler(Handler):
                         metric,
                         {})
 
+                if len(rule['collect_with_dimensions']) > 0:
+                    self.send_metrics_to_cloudwatch(
+                        rule,
+                        metric,
+                        rule['collect_with_dimensions'])
+
     def send_metrics_to_cloudwatch(self, rule, metric, dimensions):
         """
           Send metrics to CloudWatch for the given dimensions
         """
 
         timestamp = datetime.datetime.utcfromtimestamp(metric.timestamp)
-
-        dimensions.update(rule['additional_dimensions'])
 
         self.log.debug(
             "CloudWatch: Attempting to publish metric: %s to %s "
