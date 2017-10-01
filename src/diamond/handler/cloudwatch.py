@@ -89,7 +89,9 @@ class cloudwatchHandler(Handler):
         # Initialize Options
         self.region = self.config['region']
 
-        instance_metadata = boto.utils.get_instance_metadata()
+        instance_metadata = boto.utils.get_instance_metadata(
+            timeout=1, num_retries=5
+        )
         if 'instance-id' in instance_metadata:
             self.instance_id = instance_metadata['instance-id']
             self.log.debug("Setting InstanceId: " + self.instance_id)
