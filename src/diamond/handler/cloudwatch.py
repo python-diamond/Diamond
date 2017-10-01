@@ -135,8 +135,8 @@ class cloudwatchHandler(Handler):
             'name': 'CloudWatch metric name',
             'unit': 'CloudWatch metric unit',
             'collector': 'Diamond collector name',
-            'collect_by_instance': 'Collect metrics for instances separately',
-            'collect_without_dimension': 'Collect metrics without dimension'
+            'collect_by_instance': 'Send metric with InstanceId dimension',
+            'collect_without_dimension': 'Send metric with no dimension'
         })
 
         return config
