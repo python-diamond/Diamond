@@ -6,7 +6,7 @@ Automatically adds the InstanceId Dimension
 
 #### Dependencies
 
- * [boto](http://boto.readthedocs.org/en/latest/index.html)
+ * [boto3](http://boto3.readthedocs.org/en/latest/)
 
 #### Configuration
 
@@ -57,11 +57,11 @@ from Handler import Handler
 from configobj import Section
 
 try:
-    import boto
-    import boto.ec2.cloudwatch
-    import boto.utils
+    import boto3
+    from botocore.utils import InstanceMetadataFetcher
 except ImportError:
-    boto = None
+    boto3 = None
+    InstanceMetadataFetcher = None
 
 
 class cloudwatchHandler(Handler):
@@ -78,7 +78,7 @@ class cloudwatchHandler(Handler):
         # Initialize Handler
         Handler.__init__(self, config)
 
-        if not boto:
+        if not boto3:
             self.log.error(
                 "CloudWatch: Boto is not installed, please install boto.")
             return
@@ -89,13 +89,15 @@ class cloudwatchHandler(Handler):
         # Initialize Options
         self.region = self.config['region']
 
-        instance_metadata = boto.utils.get_instance_metadata(
-            timeout=1, num_retries=5
-        )
-        if 'instance-id' in instance_metadata:
-            self.instance_id = instance_metadata['instance-id']
+        try:
+            self.instance_id = InstanceMetadataFetcher(
+                timeout=1, num_attempts=5
+            )._get_request(
+                'http://169.254.169.254/latest/meta-data/instance-id',
+                1, num_attempts=5
+            ).text.strip()
             self.log.debug("Setting InstanceId: " + self.instance_id)
-        else:
+        except Exception:
             self.instance_id = None
             self.log.error('CloudWatch: Failed to load instance metadata')
 
@@ -188,12 +190,13 @@ class cloudwatchHandler(Handler):
             "CloudWatch: Attempting to connect to CloudWatch at Region: %s",
             self.region)
         try:
-            self.connection = boto.ec2.cloudwatch.connect_to_region(
-                self.region)
+            self.connection = boto3.client(
+                'cloudwatch', region_name=self.region
+            )
             self.log.debug(
                 "CloudWatch: Succesfully Connected to CloudWatch at Region: %s",
                 self.region)
-        except boto.exception.EC2ResponseError:
+        except boto3.exceptions.Boto3Error:
             self.log.error('CloudWatch: CloudWatch Exception Handler: ')
 
     def __del__(self):
@@ -209,7 +212,7 @@ class cloudwatchHandler(Handler):
         """
           Process a metric and send it to CloudWatch
         """
-        if not boto:
+        if not boto3:
             return
 
         collector = str(metric.getCollectorPath())
@@ -267,11 +270,20 @@ class cloudwatchHandler(Handler):
 
         try:
             self.connection.put_metric_data(
-                str(rule['namespace']),
-                str(rule['name']),
-                str(metric.value),
-                timestamp, str(rule['unit']),
-                dimensions)
+                Namespace=str(rule['namespace']),
+                MetricData=[
+                    {
+                        'MetricName': str(rule['name']),
+                        'Dimensions': [
+                            {'Name': x, 'Value': dimensions[x]}
+                            for x in dimensions.keys()
+                        ],
+                        'Timestamp': timestamp,
+                        'Value': metric.value,
+                        'Unit': str(rule['unit'])
+                    }
+                ]
+            )
             self.log.debug(
                 "CloudWatch: Successfully published metric: %s to"
                 " %s with value (%s) for dimensions %s",
