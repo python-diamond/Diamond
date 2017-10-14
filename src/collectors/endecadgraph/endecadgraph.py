@@ -16,10 +16,7 @@ import urllib2
 from StringIO import StringIO
 import re
 import sys
-if sys.version_info >= (2, 5):
-    import xml.etree.cElementTree as ElementTree
-else:
-    import cElementTree as ElementTree
+import xml.etree.cElementTree as ElementTree
 
 
 class EndecaDgraphCollector(diamond.collector.Collector):
