@@ -161,10 +161,23 @@ class HAProxyCollector(diamond.collector.Collector):
             metric_name = '%s%s.%s' % (section_name, part_one, part_two)
 
             for index, metric_string in enumerate(row):
+                if index < 2:
+                    continue
+
+                metric_string_ok = False
                 try:
                     metric_value = float(metric_string)
                 except ValueError:
-                    continue
+                    if not metric_string:
+                        continue
+                    metric_string_ok = True
+                    metric_value = 1
+
+                if metric_string_ok:
+                    stat_name = '%s.%s.%s' % (metric_name, headings[index],
+                                              self._sanitize(metric_string))
+                else:
+                    stat_name = '%s.%s' % (metric_name, headings[index])
 
                 stat_name = '%s.%s' % (metric_name, headings[index])
                 self.publish(stat_name, metric_value, metric_type='GAUGE')
