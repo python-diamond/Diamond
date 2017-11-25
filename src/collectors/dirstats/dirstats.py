@@ -41,7 +41,7 @@ class Directory(object):
         Log skipped path.
         """
         self.skipped.add(
-            'Dirstats: skipping ' + os_error.filename + \
+            'Dirstats: skipping ' + os_error.filename +
             ' Reason: ' + os_error.strerror)
 
     def get_stats(self):

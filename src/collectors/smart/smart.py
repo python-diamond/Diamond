@@ -84,8 +84,8 @@ class SmartCollector(diamond.collector.Collector):
             'attributes': 'Attributes to publish',
             'aliases': 'Aliases to assign',
             'valtypes': 'Values to publish',
-            'force_prefails': 'If True, fetches all attributes ' \
-            'with pre-fail priority and "attributes" specified ' \
+            'force_prefails': 'If True, fetches all attributes '
+            'with pre-fail priority and "attributes" specified '
             'in config. Otherwise, only "attributes" will be fetched.'})
 
         return config_help
