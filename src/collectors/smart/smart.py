@@ -5,27 +5,89 @@ Collect data from S.M.A.R.T.'s attribute reporting.
 
 #### Dependencies
 
- * [smartmontools](http://sourceforge.net/apps/trac/smartmontools/wiki)
+ * [smartmontools](https://www.smartmontools.org)
 
 """
 
-import diamond.collector
-import subprocess
-import re
 import os
-from diamond.collector import str_to_bool
+import re
+import subprocess
+import diamond.collector
+
+
+class SMARTAttribute(object):
+    """
+    S.M.A.R.T. attribute object.
+    """
+    def __new__(cls,
+                attribute_data,
+                conditions,
+                device):
+
+        obj = super(SMARTAttribute, cls).__new__(cls)
+
+        obj.attribute_data = attribute_data
+        obj.device = device
+        obj.name = obj.attribute_data[1].lower()
+        obj.priority = obj.attribute_data[6].lower()
+
+        if obj.name == 'unknown_attribute':
+            obj.attribute = obj.attribute_data[0]
+        else:
+            obj.attribute = obj.name
+
+        if conditions['force_prefails']:
+            force_fetch_priority = 'pre-fail'
+        else:
+            force_fetch_priority = None
+
+        if obj.priority == force_fetch_priority or \
+           obj.attribute in conditions['attributes'] and \
+           conditions['attributes'][obj.attribute]:
+            return obj
+
+    def __init__(self,
+                 attribute_data,
+                 conditions,
+                 device):
+
+        if self.device in conditions['aliases'] and \
+           self.attribute in conditions['aliases'][self.device]:
+            self.attribute = conditions['aliases'][self.device][self.attribute]
+
+        self.value = int(self.attribute_data[3])
+        self.worst = int(self.attribute_data[4])
+        self.thresh = int(self.attribute_data[5])
+
+        if '/' not in self.attribute_data[9]:
+            self.raw_val = int(self.attribute_data[9])
+        else:
+            try:
+                num, denom = self.attribute_data[9].split('/')
+                self.raw_val = 100*(int(num)/int(denom))
+            except ZeroDivisionError:
+                self.raw_val = 0
 
 
 class SmartCollector(diamond.collector.Collector):
 
     def get_default_config_help(self):
+        """
+        Returns the help text for the configuration options for this collector.
+        """
         config_help = super(SmartCollector, self).get_default_config_help()
         config_help.update({
-            'devices': "device regex to collect stats on",
-            'bin':         'The path to the smartctl binary',
-            'use_sudo':    'Use sudo?',
-            'sudo_cmd':    'Path to sudo',
-        })
+            'devices': 'Devices to collect stats on (regexp)',
+            'bin': 'The path to the smartctl binary',
+            'use_sudo': 'Use sudo?',
+            'sudo_cmd': 'Path to sudo',
+            'attributes': 'Attributes to publish',
+            'aliases': 'Aliases to assign',
+            'valtypes': 'Values to publish',
+            'force_prefails': 'If True, fetches all attributes ' \
+            'with pre-fail priority and "attributes" specified ' \
+            'in config. Otherwise, only "attributes" will be fetched.'})
+
         return config_help
 
     def get_default_config(self):
@@ -35,68 +97,16 @@ class SmartCollector(diamond.collector.Collector):
         config = super(SmartCollector, self).get_default_config()
         config.update({
             'path': 'smart',
-            'bin': 'smartctl',
-            'use_sudo':         False,
-            'sudo_cmd':         '/usr/bin/sudo',
             'devices': '^disk[0-9]$|^sd[a-z]$|^hd[a-z]$',
-        })
+            'bin': 'smartctl',
+            'use_sudo': False,
+            'sudo_cmd': '/usr/bin/sudo',
+            'attributes': {},
+            'aliases': {},
+            'valtypes': ['value', 'worst', 'thresh', 'raw_val'],
+            'force_prefails': False})
+
         return config
-
-    def collect(self):
-        """
-        Collect and publish S.M.A.R.T. attributes
-        """
-        devices = re.compile(self.config['devices'])
-
-        for device in os.listdir('/dev'):
-            if devices.match(device):
-
-                command = [self.config['bin'], "-A", os.path.join('/dev',
-                                                                  device)]
-
-                if str_to_bool(self.config['use_sudo']):
-                    command.insert(0, self.config['sudo_cmd'])
-
-                attributes = subprocess.Popen(
-                    command,
-                    stdout=subprocess.PIPE
-                ).communicate()[0].strip().splitlines()
-
-                metrics = {}
-
-                start_line = self.find_attr_start_line(attributes)
-                for attr in attributes[start_line:]:
-                    attribute = attr.split()
-                    if attribute[1] != "Unknown_Attribute":
-                        metric = "%s.%s" % (device, attribute[1])
-                    else:
-                        metric = "%s.%s" % (device, attribute[0])
-
-                    # 234 Thermal_Throttle (...)  0/0
-                    if '/' in attribute[9]:
-                        expanded = attribute[9].split('/')
-                        for i, subattribute in enumerate(expanded):
-                            submetric = '%s_%d' % (metric, i)
-                            if submetric not in metrics:
-                                metrics[submetric] = subattribute
-                            elif metrics[submetric] == 0 and subattribute > 0:
-                                metrics[submetric] = subattribute
-                    else:
-                        # New metric? Store it
-                        if metric not in metrics:
-                            metrics[metric] = attribute[9]
-                        # Duplicate metric? Only store if it has a larger value
-                        # This happens semi-often with the Temperature_Celsius
-                        # attribute You will have a PASS/FAIL after the real
-                        # temp, so only overwrite if The earlier one was a
-                        # PASS/FAIL (0/1)
-                        elif metrics[metric] == 0 and attribute[9] > 0:
-                            metrics[metric] = attribute[9]
-                        else:
-                            continue
-
-                for metric in metrics.keys():
-                    self.publish(metric, metrics[metric])
 
     def find_attr_start_line(self, lines, min_line=4, max_line=9):
         """
@@ -114,3 +124,44 @@ class SmartCollector(diamond.collector.Collector):
                       % (min_line, max_line))
 
         return max_line + 1
+
+    def publish_metrics(self, smart):
+        """
+        Publish S.M.A.R.T. attributes.
+        """
+        if smart is not None:
+
+            for valtype in self.config['valtypes']:
+                metric = "%s.%s.%s.%s" % (smart.device, smart.priority,
+                                          smart.attribute, valtype)
+
+                self.publish(metric, getattr(smart, valtype))
+
+    def collect(self):
+        """
+        Collect S.M.A.R.T. attributes.
+        """
+        devices = re.compile(self.config['devices'])
+        command = [self.config['bin'], "-A", None]
+
+        if diamond.collector.str_to_bool(self.config['use_sudo']):
+            command.insert(0, self.config['sudo_cmd'])
+
+        for device in os.listdir('/dev'):
+            if devices.match(device):
+
+                command[-1] = os.path.join('/dev', device)
+
+                attributes = subprocess.Popen(
+                    command,
+                    stdout=subprocess.PIPE
+                    ).communicate()[0].strip().splitlines()
+
+                start_line = self.find_attr_start_line(attributes)
+
+                for attr in attributes[start_line:]:
+                    smart = SMARTAttribute(attribute_data=attr.split(),
+                                           conditions=self.config,
+                                           device=device)
+
+                    self.publish_metrics(smart)
