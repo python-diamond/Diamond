@@ -21,7 +21,7 @@ import glob
 import os
 import subprocess
 
-import diamond.collector
+from diamond.collector import Collector
 
 
 def flatten_dictionary(input, sep='.', prefix=None):
@@ -46,10 +46,10 @@ def flatten_dictionary(input, sep='.', prefix=None):
             yield (fullname, value)
 
 
-class CephCollector(diamond.collector.Collector):
+class CephCollector(Collector):
 
     def get_default_config_help(self):
-        config_help = super(CephCollector, self).get_default_config_help()
+        config_help = Collector.get_default_config_help(self)
         config_help.update({
             'socket_path': 'The location of the ceph monitoring sockets.'
                            ' Defaults to "/var/run/ceph"',
@@ -66,7 +66,7 @@ class CephCollector(diamond.collector.Collector):
         """
         Returns the default collector settings
         """
-        config = super(CephCollector, self).get_default_config()
+        config = Collector.get_default_config(self)
         config.update({
             'socket_path': '/var/run/ceph',
             'socket_prefix': 'ceph-',
