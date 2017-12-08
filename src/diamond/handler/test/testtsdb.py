@@ -117,7 +117,7 @@ class TestTSDBdHandler(unittest.TestCase):
         config = configobj.ConfigObj()
         config['host'] = '127.0.0.1'
         config['port'] = '4242'
-        config['tags'] = 'tag1=tagv1 tag2=tagv2'
+        config['tags'] = 'tag1=tagv1 tag2=with-dash tag3=with_under'
         metric = Metric('servers.myhostname.cpu.cpu_count',
                         123, raw_value=123, timestamp=1234567,
                         host='myhostname', metric_type='GAUGE')
@@ -125,7 +125,7 @@ class TestTSDBdHandler(unittest.TestCase):
         handler.process(metric)
         body = ('[{"timestamp": 1234567, "metric": "cpu.cpu_count", "value": '
                 '123, "tags": {"hostname": "myhostname", "tag1": "tagv1", '
-                '"tag2": "tagv2"}}]')
+                '"tag2": "with-dash", "tag3": "with_under"}}]')
         header = {'Content-Type': 'application/json'}
         mock_urlopen.assert_called_with(self.url, body, header)
 

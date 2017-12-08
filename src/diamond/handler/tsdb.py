@@ -118,7 +118,7 @@ class TSDBHandler(Handler):
             self.prefix = ""
         # tags
         self.tags = []
-        pattern = re.compile(r'([a-zA-Z0-9]+)=([a-zA-Z0-9]+)')
+        pattern = re.compile(r'([a-zA-Z0-9]+)=([a-zA-Z0-9_\-]+)')
         for (key, value) in re.findall(pattern, str(self.config['tags'])):
             self.tags.append([key, value])
 
