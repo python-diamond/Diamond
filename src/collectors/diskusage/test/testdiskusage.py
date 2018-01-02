@@ -47,7 +47,8 @@ class TestDiskUsageCollector(CollectorTestCase):
         self.assertEqual(
             sorted(result.keys()),
             [(8,  0), (8,  1), (8, 16), (8, 17), (8, 32),
-                (8, 33), (8, 48), (8, 49), (9,  0)])
+                (8, 33), (8, 48), (8, 49), (9,  0), (259, 0),
+                (259, 1), (259, 2)])
 
         return result
 
@@ -121,6 +122,42 @@ class TestDiskUsageCollector(CollectorTestCase):
 
         metrics = self.getPickledResults(
             'test_verify_supporting_vda_and_xvdb.pkl')
+
+        self.assertPublishedMany(publish_mock, metrics)
+
+    @patch('os.access', Mock(return_value=True))
+    @patch.object(Collector, 'publish')
+    def test_verify_supporting_nvme(self, publish_mock):
+        patch_open = patch(
+            '__builtin__.open',
+            Mock(
+                return_value=self.getFixture(
+                    'proc_diskstats_1_nvme')))
+        patch_time = patch('time.time', Mock(return_value=10))
+
+        patch_open.start()
+        patch_time.start()
+        self.collector.collect()
+        patch_open.stop()
+        patch_time.stop()
+
+        self.assertPublishedMany(publish_mock, {})
+
+        patch_open = patch(
+            '__builtin__.open',
+            Mock(
+                return_value=self.getFixture(
+                    'proc_diskstats_2_nvme')))
+        patch_time = patch('time.time', Mock(return_value=20))
+
+        patch_open.start()
+        patch_time.start()
+        self.collector.collect()
+        patch_open.stop()
+        patch_time.stop()
+
+        metrics = self.getPickledResults(
+            'test_verify_supporting_nvme.pkl')
 
         self.assertPublishedMany(publish_mock, metrics)
 
