@@ -39,7 +39,7 @@ class KafkaCollector(diamond.collector.Collector):
         config_help.update({
             'host': "JMX host to connect. default: localhost",
             'port': "JMX port. default: 8082",
-            'query_paths': "list of metrics to be processed, separated by commas",
+            'query_paths': "list of metrics process, separated by commas",
         })
         return config_help
 
