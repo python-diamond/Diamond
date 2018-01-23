@@ -45,14 +45,9 @@ class LibvirtKVMCollector(diamond.collector.Collector):
         config_help = super(LibvirtKVMCollector,
                             self).get_default_config_help()
         config_help.update({
-            'uri': """The libvirt connection URI. By default it's
-'qemu:///system'. One decent option is
-'qemu+unix:///system?socket=/var/run/libvirt/libvit-sock-ro'.""",
-            'sort_by_uuid': """Use the <uuid> of the instance instead of the
- default <name>, useful in Openstack deploments where <name> is only
-specific to the compute node""",
-            'cpu_absolute': """CPU stats reported as percentage by default, or
-as cummulative nanoseconds since VM creation if this is True."""
+            'uri': """The libvirt connection URI. By default it's 'qemu:///system'. One decent option is 'qemu+unix:///system?socket=/var/run/libvirt/libvit-sock-ro'.""",
+            'sort_by_uuid': """Use the <uuid> of the instance instead of the default <name>, useful in Openstack deploments where <name> is onlyspecific to the compute node""",
+            'cpu_absolute': """CPU stats reported as percentage by default, or as cummulative nanoseconds since VM creation if this is True."""
         })
         return config_help
 
