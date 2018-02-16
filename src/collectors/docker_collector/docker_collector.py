@@ -19,6 +19,7 @@ except ImportError:
     docker = None
 else:
     DockerClient = docker.Client if docker.version < "2" else docker.APIClient
+    
 
 class DockerCollector(diamond.collector.Collector):
 
