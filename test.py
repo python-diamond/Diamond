@@ -182,7 +182,7 @@ class CollectorTestCase(unittest.TestCase):
         return self.assertPublishedMetric(mock, key, value, expected_value)
 
     def assertPublishedMetric(self, mock, key, value, expected_value=1):
-        calls = filter(lambda x: x[0][0].path.find(key) != -1,
+        calls = filter(lambda x: x[0][0].path.endswith(key),
                        mock.call_args_list)
 
         actual_value = len(calls)

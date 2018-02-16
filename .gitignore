@@ -12,9 +12,9 @@ version.txt
 src/diamond/version.py
 .idea
 src/*.egg-info
-*.log
 .tox
 gentoo/diamond-*.ebuild
 .vagrant
 .python-version
 .coverage
+.venv
