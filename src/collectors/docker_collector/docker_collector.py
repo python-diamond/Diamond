@@ -17,7 +17,8 @@ try:
     import docker
 except ImportError:
     docker = None
-
+else:
+    DockerClient = docker.Client if docker.version < "2" else docker.APIClient
 
 class DockerCollector(diamond.collector.Collector):
 
@@ -63,7 +64,7 @@ class DockerCollector(diamond.collector.Collector):
 
         # Collect info
         results = {}
-        client = docker.Client(version='auto')
+        client = DockerClient(version='auto')
 
         # Top level stats
         running_containers = client.containers()
