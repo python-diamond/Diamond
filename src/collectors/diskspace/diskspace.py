@@ -232,8 +232,11 @@ class DiskSpaceCollector(diamond.collector.Collector):
 
             for unit in self.config['byte_unit']:
                 metric_name = '%s.%s_percentfree' % (name, unit)
-                metric_value = float(blocks_free) / float(
-                    blocks_free + (blocks_total - blocks_free)) * 100
+                try:
+                    metric_value = float(blocks_free) / float(
+                        blocks_free + (blocks_total - blocks_free)) * 100
+                except ZeroDivisionError:
+                    metric_value = 0
                 self.publish_gauge(metric_name, metric_value, 2)
 
                 metric_name = '%s.%s_used' % (name, unit)
