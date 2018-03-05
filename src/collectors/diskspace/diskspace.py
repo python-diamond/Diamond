@@ -144,7 +144,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
                                    "exclude_filter list.", mount_point)
                     continue
 
-                if ((('/' in device or device == 'tmpfs') and
+                if ((('/' in device or ':' in device or device == 'tmpfs') and
                      mount_point.startswith('/'))):
                     try:
                         stat = os.stat(mount_point)
