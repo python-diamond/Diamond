@@ -25,7 +25,7 @@ class TestMesosCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(MesosCollector)
 
-    def test_import(self):
+    def test_import2(self):
         self.assertTrue(self.collector.config['path'], 'mesos')
 
     @patch.object(Collector, 'publish')

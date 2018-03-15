@@ -13,10 +13,6 @@ Based on Ricardo Pascal's "netstat in <100 lines of code"
 """
 
 import diamond.collector
-import pwd
-import os
-import re
-import glob
 
 
 class NetstatCollector(diamond.collector.Collector):
@@ -64,7 +60,7 @@ class NetstatCollector(diamond.collector.Collector):
 
     @staticmethod
     def _load():
-        ''' Read the table of tcp connections & remove header  '''
+        """ Read the table of tcp connections & remove header  """
         with open(NetstatCollector.PROC_TCP, 'r') as f:
             content = f.readlines()
             content.pop(0)

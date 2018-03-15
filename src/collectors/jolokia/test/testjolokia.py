@@ -120,7 +120,7 @@ class TestJolokiaCollector(CollectorTestCase):
             return_value=logger_mock))
         patch_logger.start()
 
-        collector = JolokiaCollector(config, None)
+        JolokiaCollector(config, None)
 
         patch_logger.stop()
         logger_mock.error.assert_not_called()

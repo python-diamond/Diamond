@@ -33,6 +33,7 @@ https://communities.netapp.com/docs/DOC-1044
 
 """
 
+from __future__ import print_function
 import sys
 import time
 import re
@@ -319,8 +320,8 @@ class NetAppCollector(diamond.collector.Collector):
                 res = server.invoke_elem(query)
 
                 if(res.results_status() == "failed"):
-                    print "Connection to filer %s failed; %s" % (
-                        device, res.results_reason())
+                    print("Connection to filer %s failed; %s" % (
+                        device, res.results_reason()))
                     return
 
                 num_records = res.child_get_int("records")

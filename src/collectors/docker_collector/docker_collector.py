@@ -51,7 +51,7 @@ class DockerCollector(diamond.collector.Collector):
         cur = dictionary
         for key in keys:
             if not isinstance(cur, dict):
-                raise Exception("metric '{0}' does not exist".format(path))
+                raise Exception("metric '{}' does not exist".format(path))
             cur = cur.get(key)
             if cur is None:
                 break

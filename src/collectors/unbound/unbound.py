@@ -54,7 +54,7 @@ class UnboundCollector(diamond.collector.ProcessCollector):
                 histogram[intv_name] = raw_histogram[intv]
             elif intv == 1.0:
                 histogram['512ms+'] = raw_histogram[intv]
-            elif intv > 1.0 and intv <= 64.0:
+            elif 1.0 < intv <= 64.0:
                 # Convert upper limit into lower limit seconds
                 intv_name = ''.join([str(int(intv / 2)), 's+'])
                 histogram[intv_name] = raw_histogram[intv]

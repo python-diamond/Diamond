@@ -157,7 +157,7 @@ def load_collectors_from_paths(paths):
                 try:
                     # Import the module
                     mod = imp.load_module(modname, fp, pathname, description)
-                except (KeyboardInterrupt, SystemExit), err:
+                except (KeyboardInterrupt, SystemExit) as err:
                     logger.error(
                         "System or keyboard interrupt "
                         "while loading module %s"

@@ -66,7 +66,7 @@ class RabbitMQClient(object):
         try:
             queue = self.do_call(path)
             return queue or None
-        except Exception, e:
+        except Exception as e:
             self.log.error('Error querying queue %s/%s: %s' % (
                 vhost, queue_name, e
             ))
@@ -80,7 +80,7 @@ class RabbitMQClient(object):
         try:
             queues = self.do_call(path)
             return queues or []
-        except Exception, e:
+        except Exception as e:
             self.log.error('Error querying queues %s: %s' % (
                 vhost, e
             ))
@@ -164,7 +164,7 @@ class RabbitMQCollector(diamond.collector.Collector):
             node_name = client.get_overview()['node']
             node_data = client.get_node(node_name)
             for metric in health_metrics:
-                self.publish('health.{0}'.format(metric), node_data[metric])
+                self.publish('health.{}'.format(metric), node_data[metric])
             if self.config['cluster']:
                 self.publish('cluster.partitions',
                              len(node_data['partitions']))
@@ -270,7 +270,7 @@ class RabbitMQCollector(diamond.collector.Collector):
                             queue_name = queue_name.replace(
                                 '/', self.config['replace_slash'])
 
-                        name = '{0}.{1}'.format(prefix, queue_name)
+                        name = '{}.{}'.format(prefix, queue_name)
 
                         self._publish_metrics(name, [], key, queue)
 
@@ -291,7 +291,7 @@ class RabbitMQCollector(diamond.collector.Collector):
         elif isinstance(value, (float, int, long)):
             joined_keys = '.'.join(keys)
             if name:
-                publish_key = '{0}.{1}'.format(name, joined_keys)
+                publish_key = '{}.{}'.format(name, joined_keys)
             else:
                 publish_key = joined_keys
             if isinstance(value, bool):

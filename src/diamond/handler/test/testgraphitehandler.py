@@ -230,7 +230,7 @@ class TestGraphiteHandler(unittest.TestCase):
         send_mock = Mock()
         patch_send = patch.object(handler, '_send_data', send_mock)
         check_mock = Mock()
-        patch_check = patch.object(handler, '_time_to_reconnect', check_mock)
+        patch.object(handler, '_time_to_reconnect', check_mock)
 
         patch_sock.start()
         patch_send.start()

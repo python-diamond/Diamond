@@ -2,6 +2,7 @@
 # coding=utf-8
 ################################################################################
 
+from __future__ import print_function
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -32,7 +33,7 @@ class TestNetstatCollector(CollectorTestCase):
         self.setDocExample(collector=self.collector.__class__.__name__,
                            metrics=metrics,
                            defaultpath=self.collector.config['path'])
-        print publish_mock
+        print(publish_mock)
         self.assertPublishedMany(publish_mock, metrics)
 
 ################################################################################

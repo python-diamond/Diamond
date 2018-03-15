@@ -93,7 +93,7 @@ class HttpdCollector(diamond.collector.Collector):
                         break
                     url = headers['location']
                     connection.close()
-            except Exception, e:
+            except Exception as e:
                 self.log.error(
                     "Error retrieving HTTPD stats for host %s:%s, url '%s': %s",
                     service_host, str(service_port), url, e)
@@ -173,16 +173,14 @@ class HttpdCollector(diamond.collector.Collector):
 
     def _parseScoreboard(self, sb):
 
-        ret = []
-
-        ret.append(('IdleWorkers', sb.count('_')))
-        ret.append(('ReadingWorkers', sb.count('R')))
-        ret.append(('WritingWorkers', sb.count('W')))
-        ret.append(('KeepaliveWorkers', sb.count('K')))
-        ret.append(('DnsWorkers', sb.count('D')))
-        ret.append(('ClosingWorkers', sb.count('C')))
-        ret.append(('LoggingWorkers', sb.count('L')))
-        ret.append(('FinishingWorkers', sb.count('G')))
-        ret.append(('CleanupWorkers', sb.count('I')))
+        ret = [('IdleWorkers', sb.count('_')),
+               ('ReadingWorkers', sb.count('R')),
+               ('WritingWorkers', sb.count('W')),
+               ('KeepaliveWorkers', sb.count('K')),
+               ('DnsWorkers', sb.count('D')),
+               ('ClosingWorkers', sb.count('C')),
+               ('LoggingWorkers', sb.count('L')),
+               ('FinishingWorkers', sb.count('G')),
+               ('CleanupWorkers', sb.count('I'))]
 
         return ret

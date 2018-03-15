@@ -160,7 +160,7 @@ class OpenLDAPCollector(diamond.collector.Collector):
             datapoints = self.get_datapoints(ldap_url,
                                              self.config['username'],
                                              self.config['password'])
-        except Exception, e:
+        except Exception as e:
             self.log.error('Unable to query %s: %s' % (ldap_url, e))
             return {}
 

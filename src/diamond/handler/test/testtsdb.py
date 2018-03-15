@@ -3,7 +3,7 @@
 ##########################################################################
 
 from test import unittest
-from mock import patch, Mock
+from mock import patch
 from diamond.metric import Metric
 import urllib2
 import configobj
@@ -184,7 +184,7 @@ class TestTSDBdHandler(unittest.TestCase):
         header = {'Content-Type': 'application/json'}
         mock_urlopen.assert_called_with(self.url, body, header)
 
-    def test_cpu_metrics_taghandling_default(self, mock_urlopen, mock_request):
+    def test_cpu_metrics_taghandling_default2(self, mock_urlopen, mock_request):
         """
         aggregate default
         """

@@ -37,6 +37,7 @@
 #   Made it work with the Ganglia 3.1 data format
 
 
+from __future__ import print_function
 from xdrlib import Packer, Unpacker
 import socket
 
@@ -93,7 +94,7 @@ class Gmetric:
                                              TMAX,
                                              DMAX,
                                              GROUP)
-        # print msg
+        # print(msg)
 
         self.socket.sendto(meta_msg, self.hostport)
         self.socket.sendto(data_msg, self.hostport)
