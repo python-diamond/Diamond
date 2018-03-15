@@ -2,6 +2,7 @@
 # coding=utf-8
 ###############################################################################
 
+from __future__ import print_function
 import os
 import sys
 import inspect
@@ -105,7 +106,7 @@ class CollectorTestCase(unittest.TestCase):
         path = os.path.join(self.getFixtureDirPath(),
                             fixture_name)
         if not os.access(path, os.R_OK):
-            print "Missing Fixture " + path
+            print("Missing Fixture " + path)
         return path
 
     def getFixture(self, fixture_name):
@@ -240,8 +241,8 @@ def getCollectorTests(path):
                                                      locals(),
                                                      ['*'])
             except Exception:
-                print "Failed to import module: %s. %s" % (
-                    modname, traceback.format_exc())
+                print("Failed to import module: %s. %s" % (
+                    modname, traceback.format_exc()))
                 continue
 
     for f in os.listdir(path):
