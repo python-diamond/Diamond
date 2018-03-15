@@ -36,16 +36,7 @@ def setup_logging(configfile, stdout=False):
     log = logging.getLogger('diamond')
 
     try:
-        if sys.version_info >= (2, 6):
-            logging.config.fileConfig(configfile,
-                                      disable_existing_loggers=False)
-        else:
-            # python <= 2.5 does not have disable_existing_loggers
-            # default was to always disable them, in our case we want to
-            # keep any logger created by handlers
-            logging.config.fileConfig(configfile)
-            for logger in logging.root.manager.loggerDict.values():
-                logger.disabled = 0
+        logging.config.fileConfig(configfile, disable_existing_loggers=False)
 
         # if the stdout flag is set, we use the log level of the root logger
         # for logging to stdout, and keep all loggers defined in the conf file
