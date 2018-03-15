@@ -82,15 +82,13 @@ class TestKafkaCollector(CollectorTestCase):
     def test_get_mbeans(self, get_mock):
         get_mock.return_value = self._get_xml_fixture('serverbydomain.xml')
 
-        expected_names = set([
-            'kafka:type=kafka.BrokerAllTopicStat',
-            'kafka:type=kafka.BrokerTopicStat.mytopic',
-            'kafka:type=kafka.LogFlushStats',
-            'kafka:type=kafka.SocketServerStats',
-            'kafka:type=kafka.logs.mytopic-0',
-            'kafka:type=kafka.logs.mytopic-1',
-            'kafka:type=kafka.Log4jController',
-        ])
+        expected_names = {'kafka:type=kafka.BrokerAllTopicStat',
+                          'kafka:type=kafka.BrokerTopicStat.mytopic',
+                          'kafka:type=kafka.LogFlushStats',
+                          'kafka:type=kafka.SocketServerStats',
+                          'kafka:type=kafka.logs.mytopic-0',
+                          'kafka:type=kafka.logs.mytopic-1',
+                          'kafka:type=kafka.Log4jController'}
 
         found_beans = self.collector.get_mbeans('*')
 
