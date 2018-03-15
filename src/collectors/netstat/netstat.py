@@ -13,10 +13,6 @@ Based on Ricardo Pascal's "netstat in <100 lines of code"
 """
 
 import diamond.collector
-import pwd
-import os
-import re
-import glob
 
 
 class NetstatCollector(diamond.collector.Collector):

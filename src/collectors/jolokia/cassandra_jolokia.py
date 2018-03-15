@@ -22,7 +22,6 @@ CassandraJolokiaCollector.conf
 
 from jolokia import JolokiaCollector
 import math
-import string
 import re
 
 

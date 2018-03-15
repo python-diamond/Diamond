@@ -15,7 +15,6 @@ import diamond.collector
 import urllib2
 from StringIO import StringIO
 import re
-import sys
 import xml.etree.cElementTree as ElementTree
 
 

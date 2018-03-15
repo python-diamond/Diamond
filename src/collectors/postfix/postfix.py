@@ -14,7 +14,6 @@ get realtime cumulative stats.
 """
 
 import socket
-import sys
 
 try:
     import json

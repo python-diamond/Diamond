@@ -11,7 +11,6 @@ Collects stats from bind 9.5's statistics server
 """
 
 import diamond.collector
-import sys
 import urllib2
 import xml.etree.cElementTree as ElementTree
 

@@ -7,7 +7,6 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 
-from diamond.collector import Collector
 from fluentd import FluentdCollector
 
 
