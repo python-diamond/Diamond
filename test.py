@@ -9,12 +9,7 @@ import traceback
 import optparse
 import logging
 import configobj
-
-try:
-    # python 2.6
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 
 try:
     import cPickle as pickle

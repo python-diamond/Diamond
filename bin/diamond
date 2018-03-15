@@ -201,14 +201,7 @@ def main():
             try:
                 if gid != -1 and uid != -1:
                     # Manually set the groups since they aren't set by default
-
-                    # Python 2.7+
-                    if hasattr(os, 'initgroups'):
-                        os.initgroups(user, gid)
-                    # Python 2.6
-                    else:
-                        os.setgroups([e.gr_gid for e in grp.getgrall()
-                                      if user in e.gr_mem] + [gid])
+                    os.initgroups(user, gid)
 
                 if gid != -1 and os.getgid() != gid:
                     # Set GID
