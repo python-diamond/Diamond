@@ -71,7 +71,7 @@ class BindCollector(diamond.collector.Collector):
         try:
             req = urllib2.urlopen('http://%s:%d/' % (
                 self.config['host'], int(self.config['port'])))
-        except Exception, e:
+        except Exception as e:
             self.log.error('Couldnt connect to bind: %s', e)
             return {}
 

@@ -296,7 +296,7 @@ class MySQLCollector(diamond.collector.Collector):
         try:
             cursor.execute(query)
             return cursor.fetchall()
-        except MySQLError, e:
+        except MySQLError as e:
             self.log.error('MySQLCollector could not get db stats', e)
             return ()
 
@@ -304,7 +304,7 @@ class MySQLCollector(diamond.collector.Collector):
         try:
             self.db = MySQLdb.connect(**params)
             self.log.debug('MySQLCollector: Connected to database.')
-        except MySQLError, e:
+        except MySQLError as e:
             self.log.error('MySQLCollector couldnt connect to database %s', e)
             return False
         return True
@@ -403,7 +403,7 @@ class MySQLCollector(diamond.collector.Collector):
                 for key in todo:
                     self.log.debug("MySQLCollector: %s regexp not matched " +
                                    "in innodb status", key)
-            except Exception, innodb_status_error:
+            except Exception as innodb_status_error:
                 self.log.error('MySQLCollector: Couldnt get engine innodb ' +
                                'status, check user permissions: %s',
                                innodb_status_error)
@@ -471,7 +471,7 @@ class MySQLCollector(diamond.collector.Collector):
 
             try:
                 metrics = self.get_stats(params=params)
-            except Exception, e:
+            except Exception as e:
                 try:
                     self.disconnect()
                 except MySQLdb.ProgrammingError:

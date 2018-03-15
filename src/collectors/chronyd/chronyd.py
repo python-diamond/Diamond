@@ -78,7 +78,7 @@ class ChronydCollector(diamond.collector.Collector):
 
             try:
                 value = diamond.convertor.time.convert(offset, unit, 'ms')
-            except NotImplementedError, e:
+            except NotImplementedError as e:
                 self.log.error('Unable to convert %s%s: %s', offset, unit, e)
                 continue
 

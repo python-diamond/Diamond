@@ -172,7 +172,7 @@ def writeDoc(items, type_name, doc_path):
             default_options = obj.get_default_config()
             if type_name is "Handler":
                 os.remove(tmpfile[1])
-        except Exception, e:
+        except Exception as e:
             print "Caught Exception %s" % e
 
         docFile = open(os.path.join(doc_path, item + ".md"), 'w')

@@ -222,7 +222,7 @@ class RedisCollector(diamond.collector.Collector):
                               unix_socket_path=unix_socket)
             cli.ping()
             return cli
-        except Exception, ex:
+        except Exception as ex:
             self.log.error("RedisCollector: failed to connect to %s:%i. %s.",
                            unix_socket or host, port, ex)
 

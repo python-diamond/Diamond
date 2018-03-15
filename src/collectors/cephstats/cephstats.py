@@ -68,7 +68,7 @@ class CephStatsCollector(CephCollector):
         """
         try:
             output = subprocess.check_output(['ceph', '-s'])
-        except subprocess.CalledProcessError, err:
+        except subprocess.CalledProcessError as err:
             self.log.info(
                 'Could not get stats: %s' % err)
             self.log.exception('Could not get stats')

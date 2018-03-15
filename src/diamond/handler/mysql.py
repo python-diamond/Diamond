@@ -83,7 +83,7 @@ class MySQLHandler(Handler):
                            (data[0], data[2], data[1]))
             cursor.close()
             self.conn.commit()
-        except BaseException, e:
+        except BaseException as e:
             # Log Error
             self.log.error("MySQLHandler: Failed sending data. %s.", e)
             # Attempt to restablish connection

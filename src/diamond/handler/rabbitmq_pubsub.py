@@ -156,7 +156,7 @@ class rmqHandler (Handler):
                     durable=self.rmq_durable)
                 # Reset reconnect_interval after a successful connection
                 self.reconnect_interval = 1
-            except Exception, exception:
+            except Exception as exception:
                 self.log.debug("Caught exception in _bind: %s", exception)
                 if rmq_server in self.connections.keys():
                     self._unbind(rmq_server)
@@ -200,7 +200,7 @@ class rmqHandler (Handler):
                 channel = self.channels[rmq_server]
                 channel.basic_publish(exchange=self.rmq_exchange,
                                       routing_key='', body="%s" % metric)
-            except Exception, exception:
+            except Exception as exception:
                 self.log.error(
                     "Failed publishing to %s, attempting reconnect",
                     rmq_server)

@@ -242,10 +242,10 @@ class TSDBHandler(Handler):
                     # Transaction should be finished
                     self.log.debug(response.getcode())
                     success = True
-            except urllib2.HTTPError, e:
+            except urllib2.HTTPError as e:
                 self.log.error("HTTP Error Code: "+str(e.code))
                 self.log.error("Message : "+str(e.reason))
-            except urllib2.URLError, e:
+            except urllib2.URLError as e:
                 self.log.error("Connection Error: "+str(e.reason))
             finally:
                 retry += 1

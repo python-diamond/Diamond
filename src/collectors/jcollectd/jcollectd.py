@@ -131,9 +131,9 @@ class ListenerThread(threading.Thread):
                 try:
                     items = rdr.interpret(poll_interval=self.poll_interval)
                     self.send_to_collector(items)
-                except ValueError, e:
+                except ValueError as e:
                     self.log.warn('Dropping bad packet: {}'.format(e))
-        except Exception, e:
+        except Exception as e:
             self.log.error('caught exception: type={}, exc={}'.format(
                 type(e), e))
 
@@ -149,7 +149,7 @@ class ListenerThread(threading.Thread):
                 self.queue.put(metric)
             except Queue.Full:
                 self.log.error('Queue to collector is FULL')
-            except Exception, e:
+            except Exception as e:
                 self.log.error('B00M! type={}, exception={}'.format(
                     type(e), e))
 
