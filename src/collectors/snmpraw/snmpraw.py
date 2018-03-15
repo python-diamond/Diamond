@@ -98,7 +98,7 @@ class SNMPRawCollector(parent_SNMPCollector):
     def _skip(self, device, oid, reason=None):
         self.skip_list.append((device, oid))
         if reason is not None:
-            self.log.warn('Muted \'{0}\' on \'{1}\', because: {2}'.format(
+            self.log.warn('Muted \'{}\' on \'{}\', because: {}'.format(
                 oid, device, reason))
 
     def _get_value_walk(self, device, oid, host, port, community):
@@ -108,14 +108,14 @@ class SNMPRawCollector(parent_SNMPCollector):
             self._skip(device, oid, 'device down (#2)')
             return
 
-        self.log.debug('Data received from WALK \'{0}\': [{1}]'.format(
+        self.log.debug('Data received from WALK \'{}\': [{}]'.format(
             device, data))
 
         if len(data) != 1:
             self._skip(
                 device,
                 oid,
-                'unexpected response, data has {0} entries'.format(
+                'unexpected response, data has {} entries'.format(
                     len(data)))
             return
 
@@ -130,7 +130,7 @@ class SNMPRawCollector(parent_SNMPCollector):
             self._skip(device, oid, 'device down (#1)')
             return
 
-        self.log.debug('Data received from GET \'{0}\': [{1}]'.format(
+        self.log.debug('Data received from GET \'{}\': [{}]'.format(
             device, data))
 
         if len(data) == 0:
@@ -158,7 +158,7 @@ class SNMPRawCollector(parent_SNMPCollector):
         Collect SNMP interface data from device
         """
         self.log.debug(
-            'Collecting raw SNMP statistics from device \'{0}\''.format(device))
+            'Collecting raw SNMP statistics from device \'{}\''.format(device))
 
         dev_config = self.config['devices'][device]
         if 'oids' in dev_config:
@@ -166,7 +166,7 @@ class SNMPRawCollector(parent_SNMPCollector):
 
                 if (device, oid) in self.skip_list:
                     self.log.debug(
-                        'Skipping OID \'{0}\' ({1}) on device \'{2}\''.format(
+                        'Skipping OID \'{}\' ({}) on device \'{}\''.format(
                             oid, metricName, device))
                     continue
 
@@ -176,7 +176,7 @@ class SNMPRawCollector(parent_SNMPCollector):
                     continue
 
                 self.log.debug(
-                    '\'{0}\' ({1}) on device \'{2}\' - value=[{3}]'.format(
+                    '\'{}\' ({}) on device \'{}\' - value=[{}]'.format(
                         oid, metricName, device, value))
 
                 path = '.'.join([self.config['path_prefix'], device,

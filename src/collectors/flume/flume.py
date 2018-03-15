@@ -72,7 +72,7 @@ class FlumeCollector(diamond.collector.Collector):
         return default_config
 
     def collect(self):
-        url = 'http://{0}:{1}{2}'.format(
+        url = 'http://{}:{}{}'.format(
             self.config['req_host'],
             self.config['req_port'],
             self.config['req_path']
@@ -101,11 +101,11 @@ class FlumeCollector(diamond.collector.Collector):
 
             for item in self._metrics_collect[comp_type]:
                 if item.endswith('Count'):
-                    metric_name = '{0}.{1}'.format(comp_name, item[:-5])
+                    metric_name = '{}.{}'.format(comp_name, item[:-5])
                     metric_value = int(comp_items[item])
                     self.publish_counter(metric_name, metric_value)
                 elif item.endswith('Percentage'):
-                    metric_name = '{0}.{1}'.format(comp_name, item)
+                    metric_name = '{}.{}'.format(comp_name, item)
                     metric_value = float(comp_items[item])
                     self.publish_gauge(metric_name, metric_value)
                 else:

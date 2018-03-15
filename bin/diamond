@@ -304,7 +304,7 @@ def main():
                     # join() on each of them. This guarantees that the
                     # SyncManager is terminated last (implicitly as a result of
                     # us exiting).
-                    child_debug = "Terminating and joining on: {0} ({1})"
+                    child_debug = "Terminating and joining on: {} ({})"
                     log.debug(child_debug.format(child.name, child.pid))
                     child.terminate()
                     child.join()

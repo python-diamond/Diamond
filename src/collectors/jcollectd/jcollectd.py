@@ -121,7 +121,7 @@ class ListenerThread(threading.Thread):
         self.queue = Queue.Queue()
 
     def run(self):
-        self.log.info('ListenerThread started on {0}:{1}(udp)'.format(
+        self.log.info('ListenerThread started on {}:{}(udp)'.format(
             self.host, self.port))
 
         rdr = collectd_network.Reader(self.host, self.port)
@@ -132,10 +132,10 @@ class ListenerThread(threading.Thread):
                     items = rdr.interpret(poll_interval=self.poll_interval)
                     self.send_to_collector(items)
                 except ValueError, e:
-                    self.log.warn('Dropping bad packet: {0}'.format(e))
+                    self.log.warn('Dropping bad packet: {}'.format(e))
         except Exception, e:
-            self.log.error('caught exception: type={0}, exc={1}'.format(type(e),
-                                                                        e))
+            self.log.error('caught exception: type={}, exc={}'.format(
+                type(e), e))
 
         self.log.info('ListenerThread - stop')
 
@@ -150,8 +150,8 @@ class ListenerThread(threading.Thread):
             except Queue.Full:
                 self.log.error('Queue to collector is FULL')
             except Exception, e:
-                self.log.error('B00M! type={0}, exception={1}'.format(type(e),
-                                                                      e))
+                self.log.error('B00M! type={}, exception={}'.format(
+                    type(e), e))
 
     def transform(self, item):
 
