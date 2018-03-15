@@ -227,9 +227,8 @@ class MySQLPerfCollector(diamond.collector.Collector):
             if not matches:
                 continue
 
-            params = {}
+            params = {'host': matches.group(3)}
 
-            params['host'] = matches.group(3)
             try:
                 params['port'] = int(matches.group(4))
             except ValueError:

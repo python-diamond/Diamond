@@ -123,8 +123,7 @@ class TSDBHandler(Handler):
             self.tags.append([key, value])
 
         # headers
-        self.httpheader = {}
-        self.httpheader["Content-Type"] = "application/json"
+        self.httpheader = {"Content-Type": "application/json"}
         # Authorization
         if self.user != "":
             self.httpheader["Authorization"] = "Basic " +\
@@ -191,10 +190,8 @@ class TSDBHandler(Handler):
         """
         Process a metric by sending it to TSDB
         """
-        entry = {}
-        entry['timestamp'] = metric.timestamp
-        entry['value'] = metric.value
-        entry["tags"] = {}
+        entry = {'timestamp': metric.timestamp, 'value': metric.value,
+                 "tags": {}}
         entry["tags"]["hostname"] = metric.host
 
         if self.cleanMetrics:
@@ -362,14 +359,12 @@ class MetricWrapper(Metric):
                 self.path = self.path.replace("."+team+".", ".")
                 self.path = self.path.replace("."+channel+".", ".")
 
-    handlers = {}
-    handlers['cpu'] = processCpuMetric
-    handlers['haproxy'] = processHaProxyMetric
-    handlers['mattermost'] = processMattermostMetric
-    handlers['diskspace'] = processDiskspaceMetric
-    handlers['iostat'] = processDiskusageMetric
-    handlers['network'] = processNetworkMetric
-    handlers['default'] = processDefaultMetric
+    handlers = {'cpu': processCpuMetric, 'haproxy': processHaProxyMetric,
+                'mattermost': processMattermostMetric,
+                'diskspace': processDiskspaceMetric,
+                'iostat': processDiskusageMetric,
+                'network': processNetworkMetric,
+                'default': processDefaultMetric}
 
     def __init__(self, delegate, logger):
         self.path = delegate.path

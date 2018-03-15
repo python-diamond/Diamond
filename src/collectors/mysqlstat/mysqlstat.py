@@ -452,9 +452,8 @@ class MySQLCollector(diamond.collector.Collector):
                     host)
                 continue
 
-            params = {}
+            params = {'host': matches.group(3)}
 
-            params['host'] = matches.group(3)
             try:
                 params['port'] = int(matches.group(4))
             except ValueError:
