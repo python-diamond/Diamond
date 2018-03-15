@@ -64,7 +64,7 @@ class NetstatCollector(diamond.collector.Collector):
 
     @staticmethod
     def _load():
-        ''' Read the table of tcp connections & remove header  '''
+        """ Read the table of tcp connections & remove header  """
         with open(NetstatCollector.PROC_TCP, 'r') as f:
             content = f.readlines()
             content.pop(0)

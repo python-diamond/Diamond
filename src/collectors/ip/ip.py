@@ -51,8 +51,8 @@ class IPCollector(diamond.collector.Collector):
         return config_help
 
     def get_default_config(self):
-        ''' Returns the default collector settings
-        '''
+        """ Returns the default collector settings
+        """
         config = super(IPCollector, self).get_default_config()
         config.update({
             'path': 'ip',
