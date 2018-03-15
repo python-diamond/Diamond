@@ -68,7 +68,6 @@ class SidekiqCollector(diamond.collector.Collector):
 
     def get_redis_client(self):
         """
-        :param db: Redis database index
         :return: Redis client
         """
         host = self.config['host']
