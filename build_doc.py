@@ -177,8 +177,6 @@ def writeDoc(items, type_name, doc_path):
 
         docFile = open(os.path.join(doc_path, item + ".md"), 'w')
 
-        enabled = ''
-
         writeDocHeader(docFile)
         writeDocString(docFile, item, items[item].__doc__)
         writeDocOptionsHeader(docFile)
