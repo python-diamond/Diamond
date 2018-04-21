@@ -56,7 +56,7 @@ class binary:
             if unit in units:
                 # returning self.type_of_unit
                 return self.convertb(value, object_type, counter)
-        return "None"
+        return None
 
     def do(self, value=None, unit=None):
         if not unit:
@@ -65,22 +65,21 @@ class binary:
         if unit in ['bit', 'b']:
             return self.bit(value=value)
         obj = self._object_mapper(unit, value, _LIST_OF_UNITS_BIT, self.bit)
-        if obj != "None":
+        if not obj:
             return obj
 
         if unit in ['byte', 'B']:
             return self.byte(value=value)
         obj = self._object_mapper(unit, value, _LIST_OF_UNITS_BYTE, self.byte)
-        if obj != "None":
+        if not obj:
             return obj
 
         raise NotImplementedError("unit %s" % unit)
 
     def bit(self, value=None):
-        if value is None:
-            return self.value
-        else:
+        if value is not None:
             self.value = float(value)
+        return self.value
 
     def convertb(self, value, source, offset=1):
         if value is None:
