@@ -22,3 +22,4 @@ ID# ATTRIBUTE_NAME          FLAG     VALUE WORST THRESH TYPE      UPDATED  WHEN_
 198 Offline_Uncorrectable   0x0030   200   200   000    Old_age   Offline      -       0
 199 UDMA_CRC_Error_Count    0x0032   200   200   000    Old_age   Always       -       0
 200 Multi_Zone_Error_Rate   0x0008   200   200   000    Old_age   Offline      -       0
+234 Thermal_Throttle        0x0032   100   100   000    Old_age   Always       -       0/0

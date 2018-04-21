@@ -14,7 +14,7 @@ The FlutendCollector monitors fluentd and data about the kinesis stream.
     host = localhost
     port = 24220
     [[[collect]]]
-        kinesis = buffer_queue_length, buffer_total_queued_size, retry_count
+    kinesis = buffer_queue_length, buffer_total_queued_size, retry_count
 ```
 
 """
@@ -54,7 +54,7 @@ class FluentdCollector(diamond.collector.Collector):
         res = urllib2.urlopen(url)
         data = json.load(res)
 
-        result = self.parse_api_output(status)
+        result = self.parse_api_output(data)
         for r in result:
             self.publish(r[0], r[1])
 

@@ -7,6 +7,7 @@ import logging
 import inspect
 import traceback
 import pkg_resources
+import imp
 
 from diamond.util import load_class_from_name
 from diamond.collector import Collector
@@ -151,10 +152,12 @@ def load_collectors_from_paths(paths):
 
                 modname = f[:-3]
 
+                fp, pathname, description = imp.find_module(modname, [path])
+
                 try:
                     # Import the module
-                    mod = __import__(modname, globals(), locals(), ['*'])
-                except (KeyboardInterrupt, SystemExit), err:
+                    mod = imp.load_module(modname, fp, pathname, description)
+                except (KeyboardInterrupt, SystemExit) as err:
                     logger.error(
                         "System or keyboard interrupt "
                         "while loading module %s"
@@ -170,6 +173,9 @@ def load_collectors_from_paths(paths):
                 else:
                     for name, cls in get_collectors_from_module(mod):
                         collectors[name] = cls
+                finally:
+                    if fp:
+                        fp.close()
 
     # Return Collector classes
     return collectors

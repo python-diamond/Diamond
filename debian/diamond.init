@@ -22,11 +22,11 @@ PIDFILE=/var/run/diamond.pid
 SCRIPTNAME=/etc/init.d/diamond
 CONF=/etc/diamond/diamond.conf
 
-# Exit if the package is not installed
-[ -x $DAEMON ] || exit 0
-
 # Read configuration variable file if it is present
 [ -r /etc/default/$NAME ] && . /etc/default/$NAME
+
+# Exit if the package is not installed
+[ -x $DAEMON ] || exit 0
 
 # Checking for a config file in place
 if [  ! -e $CONF ]; then

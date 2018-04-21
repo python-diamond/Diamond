@@ -118,6 +118,8 @@ class TestSmartCollector(CollectorTestCase):
             'sda.Current_Pending_Sector': 0,
             'sda.Reallocated_Sector_Ct': 0,
             'sda.Seek_Error_Rate': 0,
+            'sda.Thermal_Throttle_0': 0,
+            'sda.Thermal_Throttle_1': 0,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,

@@ -25,6 +25,7 @@ from diamond.utils.classes import load_handlers
 from diamond.utils.classes import load_include_path
 
 from diamond.utils.config import load_config
+from diamond.utils.config import str_to_bool
 
 from diamond.utils.scheduler import collector_process
 from diamond.utils.scheduler import handler_process
@@ -115,14 +116,14 @@ class Server(object):
         self.handler_queue = QueueHandler(
             config=self.config, queue=self.metric_queue, log=self.log)
 
-        process = multiprocessing.Process(
+        handlers_process = multiprocessing.Process(
             name="Handlers",
             target=handler_process,
             args=(self.handlers, self.metric_queue, self.log),
         )
 
-        process.daemon = True
-        process.start()
+        handlers_process.daemon = True
+        handlers_process.start()
 
         #######################################################################
         # Signals
@@ -202,6 +203,12 @@ class Server(object):
                     )
                     process.daemon = True
                     process.start()
+
+                if not handlers_process.is_alive():
+                    self.log.error('Handlers process exited')
+                    if (str_to_bool(self.config['server'].get(
+                            'abort_on_handlers_process_exit', 'False'))):
+                        raise Exception('Handlers process exited')
 
                 ##############################################################
 

@@ -14,6 +14,7 @@ parameter the instance alias will be appended to the
 """
 
 import urllib2
+import base64
 import re
 from diamond.collector import str_to_bool
 
@@ -24,7 +25,7 @@ except ImportError:
 
 import diamond.collector
 
-RE_LOGSTASH_INDEX = re.compile('^(.*)-\d\d\d\d\.\d\d\.\d\d$')
+RE_LOGSTASH_INDEX = re.compile('^(.*)-\d{4}(\.\d{2}){2,3}$')
 
 
 class ElasticSearchCollector(diamond.collector.Collector):
@@ -64,9 +65,13 @@ class ElasticSearchCollector(diamond.collector.Collector):
         config_help.update({
             'host': "",
             'port': "",
+            'user': "Username for Basic/Shield auth",
+            'password': "Password for Basic/Shield auth",
             'instances': "List of instances. When set this overrides "
             "the 'host' and 'port' settings. Instance format: "
             "instance [<alias>@]<hostname>[:<port>]",
+            'scheme': "http (default) or https",
+            'cluster': "cluster/node/shard health",
             'stats':
                 "Available stats:\n" +
                 " - jvm (JVM information)\n" +
@@ -88,7 +93,10 @@ class ElasticSearchCollector(diamond.collector.Collector):
         config.update({
             'host':           '127.0.0.1',
             'port':           9200,
+            'user':           '',
+            'password':       '',
             'instances':      [],
+            'scheme':         'http',
             'path':           'elasticsearch',
             'stats':          ['jvm', 'thread_pool', 'indices'],
             'logstash_mode': False,
@@ -96,16 +104,21 @@ class ElasticSearchCollector(diamond.collector.Collector):
         })
         return config
 
-    def _get(self, host, port, path, assert_key=None):
+    def _get(self, scheme, host, port, path, assert_key=None):
         """
         Execute a ES API call. Convert response into JSON and
         optionally assert its structure.
         """
-        url = 'http://%s:%i/%s' % (host, port, path)
+        url = '%s://%s:%i/%s' % (scheme, host, port, path)
         try:
-            response = urllib2.urlopen(url)
-        except Exception, err:
-            self.log.error("%s: %s", url, err)
+            request = urllib2.Request(url)
+            if self.config['user'] and self.config['password']:
+                base64string = base64.standard_b64encode(
+                    '%s:%s' % (self.config['user'], self.config['password']))
+                request.add_header("Authorization", "Basic %s" % base64string)
+            response = urllib2.urlopen(request)
+        except Exception as err:
+            self.log.error("%s: %s" % (url, err))
             return False
 
         try:
@@ -175,8 +188,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
         else:
             metrics[metric_path] = value
 
-    def collect_instance_cluster_stats(self, host, port, metrics):
-        result = self._get(host, port, '_cluster/health')
+    def collect_instance_cluster_stats(self, scheme, host, port, metrics):
+        result = self._get(scheme, host, port, '_cluster/health')
         if not result:
             return
 
@@ -184,10 +197,16 @@ class ElasticSearchCollector(diamond.collector.Collector):
                          result, ['number_of_nodes'])
         self._add_metric(metrics, 'cluster_health.nodes.data',
                          result, ['number_of_data_nodes'])
+        self._add_metric(metrics, 'cluster_health.nodes.pending_tasks',
+                         result, ['number_of_pending_tasks'])
         self._add_metric(metrics, 'cluster_health.shards.active_primary',
                          result, ['active_primary_shards'])
         self._add_metric(metrics, 'cluster_health.shards.active',
                          result, ['active_shards'])
+        self._add_metric(metrics, 'cluster_health.shards.active_percent',
+                         result, ['active_shards_percent_as_number'])
+        self._add_metric(metrics, 'cluster_health.shards.delayed_unassigned',
+                         result, ['delayed_unassigned_shards'])
         self._add_metric(metrics, 'cluster_health.shards.relocating',
                          result, ['relocating_shards'])
         self._add_metric(metrics, 'cluster_health.shards.unassigned',
@@ -195,10 +214,15 @@ class ElasticSearchCollector(diamond.collector.Collector):
         self._add_metric(metrics, 'cluster_health.shards.initializing',
                          result, ['initializing_shards'])
 
-    def collect_instance_index_stats(self, host, port, metrics):
-        result = self._get(host, port,
-                           '_stats?clear=true&docs=true&store=true&' +
-                           'indexing=true&get=true&search=true', '_all')
+        CLUSTER_STATUS = {
+            'green': 2,
+            'yellow': 1,
+            'red': 0
+        }
+        metrics['cluster_health.status'] = CLUSTER_STATUS[result['status']]
+
+    def collect_instance_index_stats(self, scheme, host, port, metrics):
+        result = self._get(scheme, host, port, '_stats', '_all')
         if not result:
             return
 
@@ -216,8 +240,8 @@ class ElasticSearchCollector(diamond.collector.Collector):
             self._index_metrics(metrics, 'indices.%s' % name,
                                 index['primaries'])
 
-    def collect_instance(self, alias, host, port):
-        result = self._get(host, port, '_nodes/_local/stats?all=true', 'nodes')
+    def collect_instance(self, alias, scheme, host, port):
+        result = self._get(scheme, host, port, '_nodes/_local/stats', 'nodes')
         if not result:
             return
 
@@ -386,12 +410,12 @@ class ElasticSearchCollector(diamond.collector.Collector):
         #
         # cluster (optional)
         if str_to_bool(self.config['cluster']):
-            self.collect_instance_cluster_stats(host, port, metrics)
+            self.collect_instance_cluster_stats(scheme, host, port, metrics)
 
         #
         # indices (optional)
         if 'indices' in self.config['stats']:
-            self.collect_instance_index_stats(host, port, metrics)
+            self.collect_instance_index_stats(scheme, host, port, metrics)
 
         #
         # all done, now publishing all metrics
@@ -406,6 +430,7 @@ class ElasticSearchCollector(diamond.collector.Collector):
             self.log.error('Unable to import json')
             return {}
 
+        scheme = self.config['scheme']
         for alias in sorted(self.instances):
             (host, port) = self.instances[alias]
-            self.collect_instance(alias, host, port)
+            self.collect_instance(alias, scheme, host, port)

@@ -44,6 +44,9 @@ else:
 
     distro = platform.dist()[0]
     distro_major_version = platform.dist()[1].split('.')[0]
+    if not distro:
+        if 'amzn' in platform.uname()[2]:
+            distro = 'centos'
 
     if running_under_virtualenv():
         data_files.append(('etc/diamond',
@@ -59,15 +62,19 @@ else:
                            glob('conf/collectors/*')))
         data_files.append(('/etc/diamond/handlers',
                            glob('conf/handlers/*')))
+        data_files.append(('/var/log/diamond',
+                           ['.keep']))
 
         if distro == 'Ubuntu':
-            data_files.append(('/etc/init',
-                               ['debian/diamond.upstart']))
-        if distro in ['centos', 'redhat', 'debian', 'fedora']:
+            if distro_major_version >= 16:
+                data_files.append(('/usr/lib/systemd/system',
+                                   ['rpm/systemd/diamond.service']))
+            else:
+                data_files.append(('/etc/init',
+                                   ['debian/diamond.upstart']))
+        if distro in ['centos', 'redhat', 'debian', 'fedora', 'oracle']:
             data_files.append(('/etc/init.d',
                                ['bin/init.d/diamond']))
-            data_files.append(('/var/log/diamond',
-                               ['.keep']))
             if distro_major_version >= 7 and not distro == 'debian':
                 data_files.append(('/usr/lib/systemd/system',
                                    ['rpm/systemd/diamond.service']))
@@ -81,7 +88,7 @@ else:
     if running_under_virtualenv():
         install_requires = ['configobj', 'psutil', ]
     else:
-        if distro == ['debian', 'ubuntu']:
+        if distro in ['debian', 'Ubuntu']:
             install_requires = ['python-configobj', 'python-psutil', ]
         # Default back to pip style requires
         else:
@@ -136,13 +143,18 @@ setup(
     version=version,
     url='https://github.com/python-diamond/Diamond',
     author='The Diamond Team',
-    author_email='https://github.com/python-diamond/Diamond',
+    author_email='diamond@librelist.com',
     license='MIT License',
     description='Smart data producer for graphite graphing package',
     package_dir={'': 'src'},
     packages=['diamond', 'diamond.handler', 'diamond.utils'],
     scripts=['bin/diamond', 'bin/diamond-setup'],
     data_files=data_files,
+    python_requires='==2.7',
     install_requires=install_requires,
+    classifiers=[
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+    ],
     ** setup_kwargs
 )

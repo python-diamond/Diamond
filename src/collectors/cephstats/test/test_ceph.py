@@ -22,7 +22,7 @@ class TestCephStats(unittest.TestCase):
         Get ceph information from sample data
         """
         f = open('sample.txt')
-        ret = {'rd': '8643', 'wr': '4821', 'iops': '481'}
+        ret = {'rd': '8643000.0', 'wr': '4821000.0', 'iops': '481'}
         self.assertEqual(process_ceph_status(f.read()), ret)
         f.close()
 

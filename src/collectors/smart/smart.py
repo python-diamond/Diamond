@@ -72,18 +72,28 @@ class SmartCollector(diamond.collector.Collector):
                     else:
                         metric = "%s.%s" % (device, attribute[0])
 
-                    # New metric? Store it
-                    if metric not in metrics:
-                        metrics[metric] = attribute[9]
-                    # Duplicate metric? Only store if it has a larger value
-                    # This happens semi-often with the Temperature_Celsius
-                    # attribute You will have a PASS/FAIL after the real temp,
-                    # so only overwrite if The earlier one was a
-                    # PASS/FAIL (0/1)
-                    elif metrics[metric] == 0 and attribute[9] > 0:
-                        metrics[metric] = attribute[9]
+                    # 234 Thermal_Throttle (...)  0/0
+                    if '/' in attribute[9]:
+                        expanded = attribute[9].split('/')
+                        for i, subattribute in enumerate(expanded):
+                            submetric = '%s_%d' % (metric, i)
+                            if submetric not in metrics:
+                                metrics[submetric] = subattribute
+                            elif metrics[submetric] == 0 and subattribute > 0:
+                                metrics[submetric] = subattribute
                     else:
-                        continue
+                        # New metric? Store it
+                        if metric not in metrics:
+                            metrics[metric] = attribute[9]
+                        # Duplicate metric? Only store if it has a larger value
+                        # This happens semi-often with the Temperature_Celsius
+                        # attribute You will have a PASS/FAIL after the real
+                        # temp, so only overwrite if The earlier one was a
+                        # PASS/FAIL (0/1)
+                        elif metrics[metric] == 0 and attribute[9] > 0:
+                            metrics[metric] = attribute[9]
+                        else:
+                            continue
 
                 for metric in metrics.keys():
                     self.publish(metric, metrics[metric])

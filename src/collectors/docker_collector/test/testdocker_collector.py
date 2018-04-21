@@ -13,7 +13,6 @@ try:
 except ImportError:
     Client = None
 
-from diamond.collector import Collector
 from docker_collector import DockerCollector
 
 dirname = os.path.dirname(__file__)

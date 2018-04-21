@@ -133,7 +133,7 @@ class MySQLPerfCollector(diamond.collector.Collector):
 
         try:
             self.db = MySQLdb.connect(**params)
-        except MySQLError, e:
+        except MySQLError as e:
             self.log.error('MySQLPerfCollector couldnt connect to database %s',
                            e)
             return {}
@@ -227,9 +227,8 @@ class MySQLPerfCollector(diamond.collector.Collector):
             if not matches:
                 continue
 
-            params = {}
+            params = {'host': matches.group(3)}
 
-            params['host'] = matches.group(3)
             try:
                 params['port'] = int(matches.group(4))
             except ValueError:

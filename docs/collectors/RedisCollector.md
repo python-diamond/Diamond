@@ -79,6 +79,30 @@ timeout | 5 | Socket timeout | int
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.redis.6379.clients.blocked 8
+servers.hostname.redis.6379.clients.connected 100
+servers.hostname.redis.6379.clients.longest_output_list 0
+servers.hostname.redis.6379.cpu.parent.sys 0.05
+servers.hostname.redis.6379.cpu.parent.user 0.09
+servers.hostname.redis.6379.keys.evicted 0
+servers.hostname.redis.6379.keys.expired 0
+servers.hostname.redis.6379.keyspace.hits 5700
+servers.hostname.redis.6379.keyspace.misses 670
+servers.hostname.redis.6379.last_save.changes_since 759
+servers.hostname.redis.6379.last_save.time 51351718385
+servers.hostname.redis.6379.last_save.time_since -51351718365
+servers.hostname.redis.6379.memory.external_view 17254016
+servers.hostname.redis.6379.memory.fragmentation_ratio 0.99
+servers.hostname.redis.6379.memory.internal_view 1726144
+servers.hostname.redis.6379.memory.used_percent 82.31
+servers.hostname.redis.6379.process.commands_processed 19764
+servers.hostname.redis.6379.process.connections_received 18764
+servers.hostname.redis.6379.process.uptime 95732
+servers.hostname.redis.6379.pubsub.channels 1
+servers.hostname.redis.6379.pubsub.patterns 0
+servers.hostname.redis.6379.replication.master 1
+servers.hostname.redis.6379.replication.master_sync_in_progress 0
+servers.hostname.redis.6379.slaves.connected 2
+servers.hostname.redis.6379.slaves.last_io 7
 ```
 

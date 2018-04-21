@@ -12,6 +12,13 @@ from mock import call
 
 from diamond.collector import Collector
 from mongodb import MongoDBCollector
+from collections import defaultdict
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 
 ##########################################################################
 
@@ -151,6 +158,44 @@ class TestMongoDBCollector(CollectorTestCase):
         connector_mock.return_value = self.connection
         self.connection.db.command.return_value = data
         self.connection.database_names.return_value = ['db1', 'baddb']
+
+    @run_only_if_pymongo_is_available
+    @patch('pymongo.MongoClient')
+    @patch.object(Collector, 'publish')
+    def test_should_publish_keys_from_real_server_stats(self,
+                                                        publish_mock,
+                                                        connector_mock):
+        data = json.load(self.getFixture('real_serverStatus_response.json'))
+        self._annotate_connection(connector_mock, data)
+
+        self.collector.collect()
+        self.connection.db.command.assert_called_with('serverStatus')
+
+        # check for multiple datapoints per metric
+        # should not happen, but it did (once), so lets check it
+        datapoints_per_metric = defaultdict(int)
+        for c in publish_mock.call_args_list:
+            m = c[0][0]
+            datapoints_per_metric[m] += 1
+        dupes = [m for m, n in datapoints_per_metric.iteritems() if n > 1]
+        self.assertEqual(len(dupes), 0,
+                         'BUG: 1+ point for same metric received: %s' %
+                         ', '.join(dupes))
+
+        # just a few samples
+        expected_calls = [
+            call('opcounters.query', 125030709),
+            call('opcountersRepl.insert', 7465),
+            call('extra_info.heap_usage_bytes', 801236248),
+            call('metrics.document.returned', 536691431),
+            call('metrics.commands.saslContinue.total', 1400470),
+            call('wiredTiger.thread.yield.page_acquire_time_sleeping_(usecs)',
+                 3022511),
+            call('opcounters_per_sec.query', 0, instance=None,
+                 metric_type='COUNTER', precision=0, raw_value=125030709),
+        ]
+
+        publish_mock.assert_has_calls(expected_calls, any_order=True)
 
 
 class TestMongoMultiHostDBCollector(CollectorTestCase):

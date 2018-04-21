@@ -18,6 +18,7 @@
 
 """
 
+from __future__ import print_function
 import diamond.collector
 import time
 from diamond.metric import Metric
@@ -273,7 +274,7 @@ class netappDiskCol(object):
             self.log.error(
                 'While using netapp API failed to retrieve '
                 'disk-list-info for netapp filer %s' % self.device)
-            print netapp_data.sprintf()
+            print(netapp_data.sprintf())
             return
         netapp_xml = \
             ET.fromstring(netapp_data.sprintf()).find(sub_element)

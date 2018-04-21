@@ -93,7 +93,7 @@ class HttpdCollector(diamond.collector.Collector):
                         break
                     url = headers['location']
                     connection.close()
-            except Exception, e:
+            except Exception as e:
                 self.log.error(
                     "Error retrieving HTTPD stats for host %s:%s, url '%s': %s",
                     service_host, str(service_port), url, e)
@@ -123,9 +123,22 @@ class HttpdCollector(diamond.collector.Collector):
                    'Total Accesses', 'IdleWorkers', 'StartingWorkers',
                    'ReadingWorkers', 'WritingWorkers', 'KeepaliveWorkers',
                    'DnsWorkers', 'ClosingWorkers', 'LoggingWorkers',
-                   'FinishingWorkers', 'CleanupWorkers']
+                   'FinishingWorkers', 'CleanupWorkers', 'ConnsAsyncClosing',
+                   'CPUUser', 'CacheSubcaches', 'CacheCurrentEntries',
+                   'CPULoad', 'Total kBytes', 'CacheIndexesPerSubcaches',
+                   'CPUChildrenSystem', 'ConnsAsyncWriting',
+                   'CacheSharedMemory', 'ServerUptimeSeconds',
+                   'CacheStoreCount', 'CacheExpireCount',
+                   'CacheReplaceCount', 'CPUChildrenUser', 'ConnsTotal',
+                   'CacheRetrieveMissCount', 'CacheRetrieveHitCount',
+                   'CacheTimeLeftOldestMax', 'CacheDiscardCount',
+                   'CacheRemoveHitCount', 'CacheTimeLeftOldestMin',
+                   'CPUSystem', 'ConnsAsyncKeepAlive',
+                   'CacheTimeLeftOldestAvg', 'CacheRemoveMissCount',
+                   'CacheIndexUsage', 'CacheUsage']
 
-        metrics_precision = ['ReqPerSec', 'BytesPerSec', 'BytesPerReq']
+        metrics_precision = ['ReqPerSec', 'BytesPerSec', 'BytesPerReq',
+                             'CPULoad', 'CPUUser', 'CPUSystem']
 
         if key in metrics:
             # Get Metric Name
@@ -137,6 +150,12 @@ class HttpdCollector(diamond.collector.Collector):
             # Prefix with the nickname?
             if len(nickname) > 0:
                 metric_name = nickname + '.' + metric_name
+
+            # Strip percent mark from Cache*Usage
+            try:
+                value = value.replace('%', '')
+            except AttributeError:
+                pass
 
             # Use precision for ReqPerSec BytesPerSec BytesPerReq
             if presicion_metric:
@@ -154,16 +173,14 @@ class HttpdCollector(diamond.collector.Collector):
 
     def _parseScoreboard(self, sb):
 
-        ret = []
-
-        ret.append(('IdleWorkers', sb.count('_')))
-        ret.append(('ReadingWorkers', sb.count('R')))
-        ret.append(('WritingWorkers', sb.count('W')))
-        ret.append(('KeepaliveWorkers', sb.count('K')))
-        ret.append(('DnsWorkers', sb.count('D')))
-        ret.append(('ClosingWorkers', sb.count('C')))
-        ret.append(('LoggingWorkers', sb.count('L')))
-        ret.append(('FinishingWorkers', sb.count('G')))
-        ret.append(('CleanupWorkers', sb.count('I')))
+        ret = [('IdleWorkers', sb.count('_')),
+               ('ReadingWorkers', sb.count('R')),
+               ('WritingWorkers', sb.count('W')),
+               ('KeepaliveWorkers', sb.count('K')),
+               ('DnsWorkers', sb.count('D')),
+               ('ClosingWorkers', sb.count('C')),
+               ('LoggingWorkers', sb.count('L')),
+               ('FinishingWorkers', sb.count('G')),
+               ('CleanupWorkers', sb.count('I'))]
 
         return ret

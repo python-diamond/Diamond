@@ -17,7 +17,8 @@ user =
 # Leave empty to use the current group
 group =
 
-# Pid file
+# Pid file, on systemd if not using default PID file
+# make sure you also change systemd's diamond unit.
 pid_file = /var/run/diamond.pid
 
 # Directory to load collector modules from
@@ -39,6 +40,8 @@ handlers_path = /usr/share/diamond/handlers/
 # When metric queue is full, new metrics are dropped.
 metric_queue_size = 16384
 
+# Abort the diamond process if the handler process exits
+abort_on_handlers_process_exit = False
 
 ################################################################################
 ### Options for handlers
@@ -240,7 +243,7 @@ args = ('/var/log/diamond/diamond.log', 'midnight', 1, 7)
 
 [formatter_default]
 
-format = [%(asctime)s] [%(threadName)s] %(message)s
+format = [%(asctime)s] [%(levelname)s] [%(threadName)s:%(processName)s] %(message)s
 datefmt =
 
 ################################################################################

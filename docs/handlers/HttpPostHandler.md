@@ -2,9 +2,10 @@
 Please edit the source to make changes
 -->
 HttpPostHandler
-====
+=====
 
 Send metrics to a http endpoint via POST
+
 #### Options
 
 Setting | Default | Description | Type

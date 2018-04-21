@@ -11,13 +11,8 @@ Collects stats from bind 9.5's statistics server
 """
 
 import diamond.collector
-import sys
 import urllib2
-
-if sys.version_info >= (2, 5):
-    import xml.etree.cElementTree as ElementTree
-else:
-    import cElementTree as ElementTree
+import xml.etree.cElementTree as ElementTree
 
 
 class BindCollector(diamond.collector.Collector):
@@ -76,7 +71,7 @@ class BindCollector(diamond.collector.Collector):
         try:
             req = urllib2.urlopen('http://%s:%d/' % (
                 self.config['host'], int(self.config['port'])))
-        except Exception, e:
+        except Exception as e:
             self.log.error('Couldnt connect to bind: %s', e)
             return {}
 

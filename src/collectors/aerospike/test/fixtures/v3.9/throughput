@@ -1,0 +1,1 @@
+{foo}-read:23:37:15-GMT,ops/sec;23:37:25,2089.3;{foo}-write:23:37:15-GMT,ops/sec;23:37:25,1478.6;error-no-data-yet-or-back-too-small;error-no-data-yet-or-back-too-small;{bar}-read:23:37:15-GMT,ops/sec;23:37:25,3089.3;{bar}-write:23:37:15-GMT,ops/sec;23:37:25,3478.6;error-no-data-yet-or-back-too-small;error-no-data-yet-or-back-too-small

@@ -2,10 +2,10 @@
 Please edit the source to make changes
 -->
 GraphiteHandler
-====
+=====
 
-Send metrics to a [graphite](http://graphite.wikidot.com/) using the high
-performace pickle interface.
+Send metrics to a [graphite](http://graphite.wikidot.com/) using the default
+interface.
 
 Graphite is an enterprise-scale monitoring tool that runs well on cheap
 hardware. It was originally designed and written by Chris Davis at Orbitz in
@@ -16,6 +16,7 @@ deployed it at other companies including Sears, where it serves as a pillar of
 the e-commerce monitoring system. Today many
 [large companies](http://graphite.readthedocs.org/en/latest/who-is-using.html)
 use it.
+
 
 #### Options
 
@@ -30,6 +31,7 @@ keepaliveinterval | 10 | How frequently to send keepalives | int
 max_backlog_multiplier | 5 | how many batches to store before trimming | int
 port | 2003 | Port | int
 proto | tcp | udp, udp4, udp6, tcp, tcp4, or tcp6 | str
+reconnect_interval | 0 | How often (seconds) to reconnect to graphite. Default (0) is never | int
 scope_id | 0 | IPv6 Scope ID | int
 server_error_interval | 120 | How frequently to send repeated server errors | int
 timeout | 15 |  | int

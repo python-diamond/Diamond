@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 StatsdHandler
-====
+=====
 
 Implements the abstract Handler class, sending data to statsd.
 This is a UDP service, sending datagrams.  They may be lost.
@@ -28,7 +28,13 @@ having the python library called statsd and this handler's module being called
 statsd, so we use an odd name for this handler. This doesn't affect the usage
 of this handler.
 
+
 #### Options
 
 Setting | Default | Description | Type
 --------|---------|-------------|-----
+batch | 1 |  | int
+get_default_config_help |  | get_default_config_help | 
+host |  |  | str
+port | 1234 |  | int
+server_error_interval | 120 | How frequently to send repeated server errors | int

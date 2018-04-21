@@ -23,6 +23,7 @@ MongoDBCollector.conf
 """
 
 import diamond.collector
+import datetime
 from diamond.collector import str_to_bool
 import re
 import zlib
@@ -60,9 +61,12 @@ class MongoDBCollector(diamond.collector.Collector):
                                   ' MapReduce temporary collections (tmp.mr.*)'
                                   ' are ignored by default.',
             'collection_sample_rate': 'Only send stats for a consistent subset '
-            'of collections. This is applied after collections are ignored via'
-            ' ignore_collections Sampling uses crc32 so it is consistent across'
-            ' replicas. Value between 0 and 1. Default is 1',
+                                      'of collections. This is applied after '
+                                      'collections are ignored via '
+                                      'ignore_collections Sampling uses crc32 '
+                                      'so it is consistent across '
+                                      'replicas. Value between 0 and 1. '
+                                      'Default is 1',
             'network_timeout': 'Timeout for mongodb connection (in'
                                ' milliseconds). There is no timeout by'
                                ' default.',
@@ -70,10 +74,12 @@ class MongoDBCollector(diamond.collector.Collector):
             'translate_collections': 'Translate dot (.) to underscores (_)'
                                      ' in collection names.',
             'ssl': 'True to enable SSL connections to the MongoDB server.'
-                    ' Default is False',
+                   ' Default is False',
             'replica': 'True to enable replica set logging. Reports health of'
                        ' individual nodes as well as basic aggregate stats.'
-                       ' Default is False'
+                       ' Default is False',
+            'replset_node_name': 'Identifier for reporting replset metrics. '
+                                 'Default is _id'
         })
         return config_help
 
@@ -83,10 +89,10 @@ class MongoDBCollector(diamond.collector.Collector):
         """
         config = super(MongoDBCollector, self).get_default_config()
         config.update({
-            'path':      'mongo',
-            'hosts':     ['localhost'],
-            'user':      None,
-            'passwd':      None,
+            'path': 'mongo',
+            'hosts': ['localhost'],
+            'user': None,
+            'passwd': None,
             'databases': '.*',
             'ignore_collections': '^tmp\.mr\.',
             'network_timeout': None,
@@ -94,7 +100,8 @@ class MongoDBCollector(diamond.collector.Collector):
             'translate_collections': 'False',
             'collection_sample_rate': 1,
             'ssl': False,
-            'replica': False
+            'replica': False,
+            'replset_node_name': '_id'
         })
         return config
 
@@ -168,7 +175,7 @@ class MongoDBCollector(diamond.collector.Collector):
                         ssl=self.config['ssl'],
                         read_preference=ReadPreference.SECONDARY,
                     )
-            except Exception, e:
+            except Exception as e:
                 self.log.error('Couldnt connect to mongodb: %s', e)
                 continue
 
@@ -176,7 +183,7 @@ class MongoDBCollector(diamond.collector.Collector):
             if user:
                 try:
                     conn.admin.authenticate(user, passwd)
-                except Exception, e:
+                except Exception as e:
                     self.log.error(
                         'User auth given, but could not autheticate' +
                         ' with host: %s, err: %s' % (host, e))
@@ -192,7 +199,6 @@ class MongoDBCollector(diamond.collector.Collector):
                     self._publish_replset(replset_data, base_prefix)
                 except pymongo.errors.OperationFailure as e:
                     self.log.error('error getting replica set status', e)
-            self._publish_transformed(data, base_prefix)
 
             self._publish_dict_with_prefix(data, base_prefix)
             db_name_filter = re.compile(self.config['databases'])
@@ -237,8 +243,9 @@ class MongoDBCollector(diamond.collector.Collector):
             'total_nodes': total_nodes
         }, prefix)
         for node in data['members']:
-            self._publish_dict_with_prefix(node,
-                                           prefix + ['node', str(node['_id'])])
+            replset_node_name = node[self.config['replset_node_name']]
+            node_name = str(replset_node_name.split('.')[0])
+            self._publish_dict_with_prefix(node, prefix + ['node', node_name])
 
     def _publish_transformed(self, data, base_prefix):
         """ Publish values of type: counter or percent """
@@ -333,6 +340,7 @@ class MongoDBCollector(diamond.collector.Collector):
             return
         value = data[key]
         keys = prev_keys + [key]
+        keys = [x.replace(" ", "_").replace("-", ".") for x in keys]
         if not publishfn:
             publishfn = self.publish
         if isinstance(value, dict):
@@ -342,6 +350,8 @@ class MongoDBCollector(diamond.collector.Collector):
             publishfn('.'.join(keys), value)
         elif isinstance(value, long):
             publishfn('.'.join(keys), float(value))
+        elif isinstance(value, datetime.datetime):
+            publishfn('.'.join(keys), long(value.strftime('%s')))
 
     def _extract_simple_data(self, data):
         return {

@@ -165,7 +165,7 @@ class OpenVPNCollector(diamond.collector.Collector):
             # Bye
             server.close()
 
-        except socket.error, e:
+        except socket.error as e:
             self.log.error('OpenVPN management connection error: %s', e)
             return
 

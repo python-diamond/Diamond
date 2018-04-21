@@ -41,6 +41,7 @@ metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusiv
 network_timeout | None | Timeout for mongodb connection (in milliseconds). There is no timeout by default. | NoneType
 passwd | None | Password for authenticated login (optional) | NoneType
 replica | False | True to enable replica set logging. Reports health of individual nodes as well as basic aggregate stats. Default is False | bool
+replset_node_name | _id | Identifier for reporting replset metrics. Default is _id | str
 simple | False | Only collect the same metrics as mongostat. | str
 ssl | False | True to enable SSL connections to the MongoDB server. Default is False | bool
 translate_collections | False | Translate dot (.) to underscores (_) in collection names. | str
@@ -49,6 +50,7 @@ user | None | Username for authenticated login (optional) | NoneType
 #### Example Output
 
 ```
-__EXAMPLESHERE__
+servers.hostname.mongo.db_keys.db_nested_key 1
+servers.hostname.mongo.dbkey 2
 ```
 

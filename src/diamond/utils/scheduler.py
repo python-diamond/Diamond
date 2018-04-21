@@ -29,6 +29,10 @@ def collector_process(collector, metric_queue, log):
     signal.signal(signal.SIGHUP, signal_to_exception)
     signal.signal(signal.SIGUSR2, signal_to_exception)
 
+    # Reset signal handlers of forks/threads
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    signal.signal(signal.SIGTERM, signal.SIG_DFL)
+
     interval = float(collector.config['interval'])
 
     log.debug('Starting')

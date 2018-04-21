@@ -2,9 +2,10 @@
 Please edit the source to make changes
 -->
 MySQLHandler
-====
+=====
 
 Insert the collected values into a mysql table
+
 #### Options
 
 Setting | Default | Description | Type

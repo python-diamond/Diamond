@@ -60,7 +60,7 @@ class PgQCollector(diamond.collector.Collector):
             self._collect_for_instance(instance, connection)
 
     def _collect_for_instance(self, instance, connection):
-        "Collects metrics for a named connection."
+        """Collects metrics for a named connection."""
         with connection.cursor() as cursor:
             for queue, metrics in self.get_queue_info(instance, cursor):
                 for name, metric in metrics.items():
@@ -82,7 +82,7 @@ class PgQCollector(diamond.collector.Collector):
     """
 
     def get_queue_info(self, instance, cursor):
-        "Collects metrics for all queues on the connected database."
+        """Collects metrics for all queues on the connected database."""
         cursor.execute(self.QUEUE_INFO_STATEMENT)
         for queue_name, ticker_lag, ev_per_sec in cursor:
             yield queue_name, {
@@ -101,7 +101,7 @@ class PgQCollector(diamond.collector.Collector):
     """
 
     def get_consumer_info(self, instance, cursor):
-        "Collects metrics for all consumers on the connected database."
+        """Collects metrics for all consumers on the connected database."""
         cursor.execute(self.CONSUMER_INFO_STATEMENT)
         for queue_name, consumer_name, lag, pending_events, last_seen in cursor:
             yield queue_name, consumer_name, {

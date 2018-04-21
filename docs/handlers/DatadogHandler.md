@@ -2,7 +2,7 @@
 Please edit the source to make changes
 -->
 DatadogHandler
-====
+=====
 
 [Datadog](http://www.datadoghq.com/) is a monitoring service for IT,
 Operations and Development teams who write and run applications
@@ -12,6 +12,7 @@ by their apps, tools and services into actionable insight.
 #### Dependencies
 
   * [dogapi](https://github.com/DataDog/datadogpy)
+
 
 #### Options
 

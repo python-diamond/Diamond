@@ -26,12 +26,12 @@ Collectd network protocol implementation.
 import socket
 import struct
 import select
-import platform
+import sys
 from datetime import datetime
 from copy import deepcopy
 
-if platform.python_version() < '2.8.0':
-    # Python 2.7 and below io.StringIO does not like unicode
+if sys.version_info.major == 2:
+    # Python 2.7 io.StringIO does not like unicode
     from StringIO import StringIO
 else:
     try:

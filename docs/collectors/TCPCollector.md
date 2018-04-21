@@ -185,6 +185,7 @@ Setting | Default | Description | Type
 allowed_names | ListenOverflows, ListenDrops, TCPLoss, TCPTimeouts, TCPFastRetrans, TCPLostRetransmit, TCPForwardRetrans, TCPSlowStartRetrans, CurrEstab, TCPAbortOnMemory, TCPBacklogDrop, AttemptFails, EstabResets, InErrs, ActiveOpens, PassiveOpens | list of entries to collect, empty to collect all | str
 byte_unit | byte | Default numeric output(s) | str
 enabled | False | Enable collecting these metrics | bool
+gauges | CurrEstab, MaxConn | list of metrics to be published as gauges | str
 measure_collector_time | False | Collect the collector run time in ms | bool
 metrics_blacklist | None | Regex to match metrics to block. Mutually exclusive with metrics_whitelist | NoneType
 metrics_whitelist | None | Regex to match metrics to transmit. Mutually exclusive with metrics_blacklist | NoneType
