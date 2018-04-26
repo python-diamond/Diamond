@@ -45,6 +45,7 @@ replset_node_name | _id | Identifier for reporting replset metrics. Default is _
 simple | False | Only collect the same metrics as mongostat. | str
 ssl | False | True to enable SSL connections to the MongoDB server. Default is False | bool
 translate_collections | False | Translate dot (.) to underscores (_) in collection names. | str
+replace_dashes_in_metric_keys | True | Replace dashes (-) to dots (.) in database object names and metrics | str
 user | None | Username for authenticated login (optional) | NoneType
 
 #### Example Output

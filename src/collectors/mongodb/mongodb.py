@@ -73,6 +73,8 @@ class MongoDBCollector(diamond.collector.Collector):
             'simple': 'Only collect the same metrics as mongostat.',
             'translate_collections': 'Translate dot (.) to underscores (_)'
                                      ' in collection names.',
+            'replace_dashes_in_metric_keys': 'Replace dashes (-) to dots (.)'
+                                     ' in database object names and metrics',
             'ssl': 'True to enable SSL connections to the MongoDB server.'
                    ' Default is False',
             'replica': 'True to enable replica set logging. Reports health of'
@@ -98,6 +100,7 @@ class MongoDBCollector(diamond.collector.Collector):
             'network_timeout': None,
             'simple': 'False',
             'translate_collections': 'False',
+            'replace_dashes_in_metric_keys': 'True',
             'collection_sample_rate': 1,
             'ssl': False,
             'replica': False,
@@ -340,7 +343,9 @@ class MongoDBCollector(diamond.collector.Collector):
             return
         value = data[key]
         keys = prev_keys + [key]
-        keys = [x.replace(" ", "_").replace("-", ".") for x in keys]
+        keys = [x.replace(" ", "_") for x in keys]
+        if str_to_bool(self.config['replace_dashes_in_metric_keys']):
+            keys = [x.replace("-", ".") for x in keys]
         if not publishfn:
             publishfn = self.publish
         if isinstance(value, dict):
