@@ -170,7 +170,7 @@ class PostgresqlCollector(diamond.collector.Collector):
 
         try:
             conn = psycopg2.connect(**conn_args)
-        except Exception, e:
+        except Exception as e:
             self.log.error(e)
             raise e
 

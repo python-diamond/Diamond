@@ -101,7 +101,7 @@ class EtcdCollector(diamond.collector.Collector):
                                               self.config['port'], category)
 
             return json.load(urllib2.urlopen(url, **opts))
-        except (urllib2.HTTPError, ValueError), err:
+        except (urllib2.HTTPError, ValueError) as err:
             self.log.error('Unable to read JSON response: %s' % err)
             return {}
 

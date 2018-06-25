@@ -108,6 +108,7 @@ def utc_to_local(utc_dt):
 @memoized
 def get_zones(region, auth_kwargs):
     """
+    :param auth_kwargs:
     :param region: region to get the availability zones for
     :return: list of availability zones
     """

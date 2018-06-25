@@ -88,7 +88,7 @@ class SNMPCollector(diamond.collector.Collector):
 
         # Assemble SNMP Auth Data
         snmpAuthData = cmdgen.CommunityData(
-            'agent-{0}'.format(community),
+            'agent-{}'.format(community),
             community)
 
         # Assemble SNMP Transport Data
@@ -124,7 +124,7 @@ class SNMPCollector(diamond.collector.Collector):
 
         # Assemble SNMP Auth Data
         snmpAuthData = cmdgen.CommunityData(
-            'agent-{0}'.format(community),
+            'agent-{}'.format(community),
             community)
 
         # Assemble SNMP Transport Data

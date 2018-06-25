@@ -88,7 +88,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     c.vm.provision "shell", inline: "sudo mkdir /var/log/diamond"
     c.vm.provision "shell", inline: "sudo ln -s /vagrant/conf/vagrant /etc/diamond"
     c.vm.provision "shell", inline: "sudo ln -s /vagrant/bin/diamond /usr/bin/diamond"
-    c.vm.provision "shell", inline: "sudo ln -s /vagrant/src/diamond /usr/lib/python2.6/site-packages/diamond"
+    c.vm.provision "shell", inline: "sudo ln -s /vagrant/src/diamond /usr/lib/python2.7/site-packages/diamond"
     c.vm.provision "shell", inline: "sudo ln -s /vagrant/bin/init.d/diamond /etc/init.d/diamond"
 
     # Start diamond

@@ -89,7 +89,7 @@ class AmavisCollector(diamond.collector.Collector):
                             if metric in ('count', 'time'):
                                 mtype = 'COUNTER'
                                 precision = 0
-                            self.publish("{0}.{1}".format(name, metric),
+                            self.publish("{}.{}".format(name, metric),
                                          value, metric_type=mtype,
                                          precision=precision)
 

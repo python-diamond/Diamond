@@ -4,7 +4,7 @@
 ### Core
 
 - CentOS or Ubuntu
-- Python 2.4+
+- Python 2.7
 - python-configobj
 - python-setuptools
 - make

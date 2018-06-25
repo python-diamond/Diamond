@@ -79,5 +79,5 @@ class LogentriesDiamondHandler(Handler):
                                   self.log_token, msg)
             try:
                 urllib2.urlopen(req)
-            except urllib2.URLError, e:
+            except urllib2.URLError as e:
                 logging.error("Can't send log message to Logentries %s", e)

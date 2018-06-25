@@ -51,8 +51,7 @@ class UsersCollector(diamond.collector.Collector):
             self.log.error('Unable to import either pyutmp or python-utmp')
             return False
 
-        metrics = {}
-        metrics['total'] = 0
+        metrics = {'total': 0}
 
         if UtmpFile:
             for utmp in UtmpFile(path=self.config['utmp']):

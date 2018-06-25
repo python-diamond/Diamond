@@ -175,7 +175,7 @@ class MongoDBCollector(diamond.collector.Collector):
                         ssl=self.config['ssl'],
                         read_preference=ReadPreference.SECONDARY,
                     )
-            except Exception, e:
+            except Exception as e:
                 self.log.error('Couldnt connect to mongodb: %s', e)
                 continue
 
@@ -183,7 +183,7 @@ class MongoDBCollector(diamond.collector.Collector):
             if user:
                 try:
                     conn.admin.authenticate(user, passwd)
-                except Exception, e:
+                except Exception as e:
                     self.log.error(
                         'User auth given, but could not autheticate' +
                         ' with host: %s, err: %s' % (host, e))

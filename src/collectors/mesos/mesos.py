@@ -198,7 +198,7 @@ class MesosCollector(diamond.collector.Collector):
         url = self._get_url(path)
         try:
             response = urllib2.urlopen(url)
-        except Exception, err:
+        except Exception as err:
             self.log.error("%s: %s", url, err)
             return False
 

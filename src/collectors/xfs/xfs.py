@@ -10,7 +10,6 @@ The XFSCollector collects XFS metrics using /proc/fs/xfs/stat.
 """
 
 import diamond.collector
-import sys
 
 
 class XFSCollector(diamond.collector.Collector):

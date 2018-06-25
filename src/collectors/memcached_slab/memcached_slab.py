@@ -37,8 +37,7 @@ def parse_slab_stats(slab_stats):
         'total_malloced': 1048512,
     }
     """
-    stats_dict = {}
-    stats_dict['slabs'] = defaultdict(lambda: {})
+    stats_dict = {'slabs': defaultdict(lambda: {})}
 
     for line in slab_stats.splitlines():
         if line == 'END':

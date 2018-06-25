@@ -6,7 +6,6 @@ from test import unittest
 from test import run_only
 from mock import Mock
 from mock import patch
-from mock import call
 import configobj
 
 import diamond.handler.riemann as mod

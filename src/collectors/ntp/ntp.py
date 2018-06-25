@@ -22,10 +22,7 @@ $
 
 """
 
-import subprocess
-
 import diamond.collector
-from diamond.collector import str_to_bool
 from diamond import convertor
 
 
@@ -58,8 +55,7 @@ class NtpCollector(diamond.collector.ProcessCollector):
     def get_ntpdate_stats(self):
         output = self.run_command(['-q', self.config['ntp_pool']])
 
-        data = {}
-        data['server.count'] = {'val': 0, 'precision': 0}
+        data = {'server.count': {'val': 0, 'precision': 0}}
 
         for line in output[0].splitlines():
             # Only care about best choice not all servers
