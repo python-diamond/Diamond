@@ -53,6 +53,46 @@ import subprocess
 _RE = re.compile(r'(\d+)\s+(\d+)\s+(\d+)')
 
 
+def parse_lsof_output(file_obj, users, types):
+    """
+    Format for "lsof -F tL":
+
+    p PID
+    L username
+    repeated multiple times:
+        f file descriptor
+        t file type
+    """
+    fd_type = ''
+    user = ''
+
+    d = {}
+
+    for line in file_obj:
+        key = line[0]
+        val = line[1:].rstrip('\n')
+        if key == 'p':
+            user = ''
+            fd_type = ''
+        if key == 'L':
+            user = val
+        if key == 't':
+            fd_type = val
+
+            if user not in users:
+                continue
+            if fd_type not in types:
+                continue
+
+            if user not in d:
+                d[user] = {}
+            if fd_type not in d[user]:
+                d[user][fd_type] = 0
+            d[user][fd_type] += 1
+
+    return d
+
+
 class FilestatCollector(diamond.collector.Collector):
 
     PROC = '/proc/sys/fs/file-nr'
@@ -60,6 +100,8 @@ class FilestatCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(FilestatCollector, self).get_default_config_help()
         config_help.update({
+            'use_sudo': 'Use sudo?',
+            'sudo_cmd': 'Path to sudo',
             'user_include': "This is list of users to collect data for."
                             " If this is left empty, its a wildcard"
                             " to collector for all users"
@@ -109,7 +151,7 @@ class FilestatCollector(diamond.collector.Collector):
         """
         config = super(FilestatCollector, self).get_default_config()
         config.update({
-            'path':     'files',
+            'path': 'files',
             'user_include': None,
             'user_exclude': None,
             'group_include': None,
@@ -123,6 +165,18 @@ class FilestatCollector(diamond.collector.Collector):
             'sudo_cmd': '/usr/bin/sudo',
         })
         return config
+
+    def get_output(self, fmt):
+
+        command = ['lsof', '-F', fmt]
+        if str_to_bool(self.config['use_sudo']):
+            command.insert(0, self.config['sudo_cmd'])
+        process = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        return process.communicate()[0]
 
     def get_userlist(self):
         """
@@ -139,8 +193,12 @@ class FilestatCollector(diamond.collector.Collector):
         if isinstance(self.config['group_exclude'], basestring):
             self.config['group_exclude'] = self.config['group_exclude'].split()
 
-        rawusers = os.popen("lsof | awk '{ print $3 }' | sort | uniq -d"
-                            ).read().split()
+        rawusers = set()
+        for line in self.get_output('L'):
+            if line.startswith('L'):
+                rawusers.add(line[1:].rstrip('\n'))
+        rawusers = list(rawusers)
+
         userlist = []
 
         # remove any not on the user include list
@@ -228,8 +286,12 @@ class FilestatCollector(diamond.collector.Collector):
         # remove any not in include list
         if self.config['type_include'] is None or len(
                 self.config['type_include']) == 0:
-            typelist = os.popen("lsof | awk '{ print $5 }' | sort | uniq -d"
-                                ).read().split()
+
+            typelist = set()
+            for line in self.get_output('t'):
+                if line.startswith('t'):
+                    typelist.add(line[1:].rstrip('\n'))
+            typelist = list(typelist)
         else:
             typelist = self.config['type_include']
 
@@ -247,40 +309,20 @@ class FilestatCollector(diamond.collector.Collector):
         Get the list of users and file types to collect for and collect the
         data from lsof
         """
-        d = {}
-        for u in users:
-            d[u] = {}
-            command = ['lsof', '-wbu', u]
-            if str_to_bool(self.config['use_sudo']):
-                command.insert(0, self.config['sudo_cmd'])
-            lsof_process = subprocess.Popen(
-                command,
-                stdout=subprocess.PIPE
-            )
-            awk_process = subprocess.Popen(
-                ['awk', '{print $5}'],
-                stdin=lsof_process.stdout,
-                stdout=subprocess.PIPE
-            )
-            lsof_process.stdout.close()
-            tmp = awk_process.communicate()[0].split()
-            for t in types:
-                d[u][t] = tmp.count(t)
-        return d
+        return parse_lsof_output(self.get_output('tL'), users, types)
 
     def collect(self):
         if not os.access(self.PROC, os.R_OK):
             return None
 
         # collect total open files
-        file = open(self.PROC)
-        for line in file:
-            match = _RE.match(line)
-            if match:
-                self.publish('assigned', int(match.group(1)))
-                self.publish('unused',   int(match.group(2)))
-                self.publish('max',      int(match.group(3)))
-        file.close()
+        with open(self.PROC) as proc_file:
+            for line in proc_file:
+                match = _RE.match(line)
+                if match:
+                    self.publish('assigned', int(match.group(1)))
+                    self.publish('unused', int(match.group(2)))
+                    self.publish('max', int(match.group(3)))
 
         # collect open files per user per type
         if self.config['collect_user_data']:
