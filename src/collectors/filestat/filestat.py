@@ -176,7 +176,7 @@ class FilestatCollector(diamond.collector.Collector):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
-        return process.communicate()[0]
+        return process.communicate()[0].splitlines()
 
     def get_userlist(self):
         """
