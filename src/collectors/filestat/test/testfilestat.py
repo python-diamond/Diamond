@@ -5,13 +5,9 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import Mock
 from mock import patch
+from mock import mock_open
 
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
 
 from diamond.collector import Collector
 from filestat import FilestatCollector
@@ -31,13 +27,11 @@ class TestFilestatCollector(CollectorTestCase):
     def test_import(self):
         self.assertTrue(FilestatCollector)
 
-    @patch('__builtin__.open')
-    @patch('os.access', Mock(return_value=True))
     @patch.object(Collector, 'publish')
-    def test_should_open_proc_sys_fs_file_nr(self, publish_mock, open_mock):
-        open_mock.return_value = StringIO('')
-        self.collector.collect()
-        open_mock.assert_called_once_with('/proc/sys/fs/file-nr')
+    def test_should_open_proc_sys_fs_file_nr(self, publish_mock):
+        with patch('__builtin__.open', mock_open(read_data='')) as open_mock:
+            self.collector.collect()
+            open_mock.assert_called_once_with('/proc/sys/fs/file-nr')
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
