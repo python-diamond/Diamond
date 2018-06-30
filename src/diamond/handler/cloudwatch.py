@@ -6,7 +6,7 @@ Automatically adds the InstanceId Dimension
 
 #### Dependencies
 
- * [boto](http://boto.readthedocs.org/en/latest/index.html)
+ * [boto3](http://boto3.readthedocs.org/en/latest/)
 
 #### Configuration
 
@@ -36,6 +36,18 @@ metric = 05
 name = Avg05
 namespace = MachineLoad
 unit = None
+
+[[[SnmpUptime]]]
+collect_by_instance = False
+collect_without_dimension = True
+collector = snmpraw
+metric = sysUpTimeInstance
+name = Uptime
+namespace = Diamond
+unit = None
+[[[[collect_with_dimensions]]]]
+Hostname = foo
+
 """
 
 import sys
@@ -45,11 +57,11 @@ from Handler import Handler
 from configobj import Section
 
 try:
-    import boto
-    import boto.ec2.cloudwatch
-    import boto.utils
+    import boto3
+    from botocore.utils import InstanceMetadataFetcher
 except ImportError:
-    boto = None
+    boto3 = None
+    InstanceMetadataFetcher = None
 
 
 class cloudwatchHandler(Handler):
@@ -66,7 +78,7 @@ class cloudwatchHandler(Handler):
         # Initialize Handler
         Handler.__init__(self, config)
 
-        if not boto:
+        if not boto3:
             self.log.error(
                 "CloudWatch: Boto is not installed, please install boto.")
             return
@@ -77,17 +89,22 @@ class cloudwatchHandler(Handler):
         # Initialize Options
         self.region = self.config['region']
 
-        instance_metadata = boto.utils.get_instance_metadata()
-        if 'instance-id' in instance_metadata:
-            self.instance_id = instance_metadata['instance-id']
+        try:
+            self.instance_id = InstanceMetadataFetcher(
+                timeout=1, num_attempts=5
+            )._get_request(
+                'http://169.254.169.254/latest/meta-data/instance-id',
+                1, num_attempts=5
+            ).text.strip()
             self.log.debug("Setting InstanceId: " + self.instance_id)
-        else:
+        except Exception:
             self.instance_id = None
             self.log.error('CloudWatch: Failed to load instance metadata')
 
         self.valid_config = ('region', 'collector', 'metric', 'namespace',
                              'name', 'unit', 'collect_by_instance',
-                             'collect_without_dimension')
+                             'collect_without_dimension',
+                             'collect_with_dimensions')
 
         self.rules = []
         for key_name, section in self.config.items():
@@ -118,7 +135,8 @@ class cloudwatchHandler(Handler):
             'name': '',
             'unit': 'None',
             'collect_by_instance': True,
-            'collect_without_dimension': False
+            'collect_without_dimension': False,
+            'collect_with_dimensions': {}
         })
         return config
 
@@ -135,8 +153,10 @@ class cloudwatchHandler(Handler):
             'name': 'CloudWatch metric name',
             'unit': 'CloudWatch metric unit',
             'collector': 'Diamond collector name',
-            'collect_by_instance': 'Collect metrics for instances separately',
-            'collect_without_dimension': 'Collect metrics without dimension'
+            'collect_by_instance': 'Send metric with InstanceId dimension',
+            'collect_without_dimension': 'Send metric with no dimension',
+            'collect_with_dimensions': 'Name/Value additional dimensions to '
+                                       'send metric with'
         })
 
         return config
@@ -155,7 +175,8 @@ class cloudwatchHandler(Handler):
             'name': 'Avg01',
             'unit': 'None',
             'collect_by_instance': True,
-            'collect_without_dimension': False
+            'collect_without_dimension': False,
+            'collect_with_dimensions': {}
         })
 
         return config
@@ -169,12 +190,13 @@ class cloudwatchHandler(Handler):
             "CloudWatch: Attempting to connect to CloudWatch at Region: %s",
             self.region)
         try:
-            self.connection = boto.ec2.cloudwatch.connect_to_region(
-                self.region)
+            self.connection = boto3.client(
+                'cloudwatch', region_name=self.region
+            )
             self.log.debug(
                 "CloudWatch: Succesfully Connected to CloudWatch at Region: %s",
                 self.region)
-        except boto.exception.EC2ResponseError:
+        except boto3.exceptions.Boto3Error:
             self.log.error('CloudWatch: CloudWatch Exception Handler: ')
 
     def __del__(self):
@@ -190,7 +212,7 @@ class cloudwatchHandler(Handler):
         """
           Process a metric and send it to CloudWatch
         """
-        if not boto:
+        if not boto3:
             return
 
         collector = str(metric.getCollectorPath())
@@ -223,6 +245,12 @@ class cloudwatchHandler(Handler):
                         metric,
                         {})
 
+                if len(rule['collect_with_dimensions']) > 0:
+                    self.send_metrics_to_cloudwatch(
+                        rule,
+                        metric,
+                        rule['collect_with_dimensions'])
+
     def send_metrics_to_cloudwatch(self, rule, metric, dimensions):
         """
           Send metrics to CloudWatch for the given dimensions
@@ -242,11 +270,20 @@ class cloudwatchHandler(Handler):
 
         try:
             self.connection.put_metric_data(
-                str(rule['namespace']),
-                str(rule['name']),
-                str(metric.value),
-                timestamp, str(rule['unit']),
-                dimensions)
+                Namespace=str(rule['namespace']),
+                MetricData=[
+                    {
+                        'MetricName': str(rule['name']),
+                        'Dimensions': [
+                            {'Name': x, 'Value': dimensions[x]}
+                            for x in dimensions.keys()
+                        ],
+                        'Timestamp': timestamp,
+                        'Value': metric.value,
+                        'Unit': str(rule['unit'])
+                    }
+                ]
+            )
             self.log.debug(
                 "CloudWatch: Successfully published metric: %s to"
                 " %s with value (%s) for dimensions %s",
