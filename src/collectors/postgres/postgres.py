@@ -199,7 +199,9 @@ class QueryStats(object):
         return datname
 
     def fetch(self, pg_version):
-        if float(pg_version) >= 9.6 and hasattr(self, 'post_96_query'):
+        if float(pg_version) >= 10.0 and hasattr(self, 'post_100_query'):
+            q = self.post_100_query
+        elif float(pg_version) >= 9.6 and hasattr(self, 'post_96_query'):
             q = self.post_96_query
         elif float(pg_version) >= 9.2 and hasattr(self, 'post_92_query'):
             q = self.post_92_query
@@ -496,6 +498,11 @@ class BackgroundWriterStats(QueryStats):
 class WalSegmentStats(QueryStats):
     path = "wals.%(metric)s"
     multi_db = False
+    post_100_query = """
+        SELECT count(*) AS segments
+        FROM pg_ls_dir('pg_wal') t(fn)
+        WHERE fn ~ '^[0-9A-Z]{24}$'
+    """
     query = """
         SELECT count(*) AS segments
         FROM pg_ls_dir('pg_xlog') t(fn)
