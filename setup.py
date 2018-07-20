@@ -150,7 +150,7 @@ setup(
     packages=['diamond', 'diamond.handler', 'diamond.utils'],
     scripts=['bin/diamond', 'bin/diamond-setup'],
     data_files=data_files,
-    python_requires='==2.7',
+    python_requires='~=2.7',
     install_requires=install_requires,
     classifiers=[
         'Programming Language :: Python',
