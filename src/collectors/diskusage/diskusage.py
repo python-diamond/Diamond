@@ -63,6 +63,7 @@ class DiskUsageCollector(diamond.collector.Collector):
                          '|sd[a-z]+[0-9]*$' +
                          '|x?vd[a-z]+[0-9]*$' +
                          '|disk[0-9]+$' +
+                         '|nvme[0-9]+n[0-9]+$' +
                          '|dm\-[0-9]+$'),
             'sector_size': 512,
             'send_zero': False,
