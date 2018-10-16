@@ -5,6 +5,7 @@ The Collector class is a base class for all metric collectors.
 """
 
 import os
+import platform
 import socket
 import platform
 import logging
@@ -91,14 +92,14 @@ def get_hostname(config, method=None):
         return hostname
 
     if method == 'uname_short':
-        hostname = os.uname()[1].split('.')[0]
+        hostname = platform.uname()[1].split('.')[0]
         get_hostname.cached_results[method] = hostname
         if hostname == '':
             raise DiamondException('Hostname is empty?!')
         return hostname
 
     if method == 'uname_rev':
-        hostname = os.uname()[1].split('.')
+        hostname = platform.uname()[1].split('.')
         hostname.reverse()
         hostname = '.'.join(hostname)
         get_hostname.cached_results[method] = hostname
