@@ -2,6 +2,10 @@
 # coding=utf-8
 ##########################################################################
 
+import json
+
+from collections import namedtuple
+
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
@@ -13,6 +17,9 @@ from diamond.collector import Collector
 from dropwizard import DropwizardCollector
 
 ##########################################################################
+
+
+MockRequest = namedtuple('MockRequest', 'status_code json')
 
 
 class TestDropwizardCollector(CollectorTestCase):
@@ -27,58 +34,94 @@ class TestDropwizardCollector(CollectorTestCase):
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
-        patch_urlopen = patch('urllib2.urlopen',
-                              Mock(return_value=self.getFixture('stats')))
+        return_test_json = lambda: json.load(self.getFixture('stats'))
+        patch_request = patch('requests.get',
+                              Mock(return_value=MockRequest(
+                                        status_code=200,
+                                        json=return_test_json
+                                   )))
 
-        patch_urlopen.start()
+        patch_request.start()
         self.collector.collect()
-        patch_urlopen.stop()
+        patch_request.stop()
 
-        metrics = {
-            'jvm.memory.totalInit': 9.142272E7,
-            'jvm.memory.totalUsed': 1.29674584E8,
-            'jvm.memory.totalMax': 1.13901568E9,
-            'jvm.memory.totalCommitted': 1.62267136E8,
-            'jvm.memory.heapInit': 6.7108864E7,
-            'jvm.memory.heapUsed': 8.3715232E7,
-            'jvm.memory.heapMax': 9.54466304E8,
-            'jvm.memory.heapCommitted': 1.15539968E8,
-            'jvm.memory.heap_usage': 0.08770894441130528,
-            'jvm.memory.non_heap_usage': 0.24903553182428534,
-            'jvm.memory.code_cache': 0.038289388020833336,
-            'jvm.memory.eden_space': 0.1918924383560846,
-            'jvm.memory.old_gen': 0.022127459689416828,
-            'jvm.memory.perm_gen': 0.32806533575057983,
-            'jvm.memory.survivor_space': 1.0,
-            'jvm.daemon_thread_count': 10,
-            'jvm.thread_count': 27,
-            'jvm.fd_usage': 0.014892578125,
-            'jvm.thread_states.timed_waiting': 0.5185185185185185,
-            'jvm.thread_states.runnable': 0.0,
-            'jvm.thread_states.blocked': 0.0,
-            'jvm.thread_states.waiting': 0.2222222222222222,
-            'jvm.thread_states.new': 0.0,
-            'jvm.thread_states.terminated': 0.0
+        # below metrics are not comprehensive
+        published_metrics = {
+            'gauges.jvm.attribute.uptime.value': 76207123,
+            'gauges.jvm.memory.non-heap.init.value': 7667712,
+            'gauges.jvm.memory.non-heap.max.value': -1,
+            'gauges.jvm.memory.non-heap.usage.value': -77628320,
+            'gauges.jvm.memory.non-heap.used.value': 77628320,
+            'gauges.jvm.memory.total.init.value': 263520256,
+            'gauges.jvm.memory.total.max.value': 4085252095,
+            'gauges.jvm.memory.total.used.value': 121300576,
+            'gauges.jvm.threads.blocked.count.value': 0,
+            'gauges.jvm.threads.count.value': 26,
+            'counters.io.dropwizard.jetty.MutableServletContextHandler.active-dispatches.count': 0,
+            'counters.io.dropwizard.jetty.MutableServletContextHandler.active-requests.count': 0,
+            'counters.io.dropwizard.jetty.MutableServletContextHandler.active-suspended.count': 0,
+            'meters.io.dropwizard.jetty.MutableServletContextHandler.1xx-responses.count': 0,
+            'meters.io.dropwizard.jetty.MutableServletContextHandler.1xx-responses.mean_rate': 0,
+            'meters.io.dropwizard.jetty.MutableServletContextHandler.2xx-responses.count': 0,
+            'meters.io.dropwizard.jetty.MutableServletContextHandler.2xx-responses.mean_rate': 0,
+            'meters.io.dropwizard.jetty.MutableServletContextHandler.3xx-responses.count': 2,
+            'meters.io.dropwizard.jetty.MutableServletContextHandler.3xx-responses.mean_rate': 2.624538034865841e-05,
+            'meters.io.dropwizard.jetty.MutableServletContextHandler.4xx-responses.count': 7,
+            'meters.io.dropwizard.jetty.MutableServletContextHandler.4xx-responses.mean_rate': 9.18588313665478e-05,
+            'meters.io.dropwizard.jetty.MutableServletContextHandler.5xx-responses.count': 0,
+            'meters.io.dropwizard.jetty.MutableServletContextHandler.5xx-responses.mean_rate': 0,
+            'timers.io.dropwizard.jetty.MutableServletContextHandler.connect-requests.count': 0,
+            'timers.io.dropwizard.jetty.MutableServletContextHandler.connect-requests.mean':  0,
+            'timers.io.dropwizard.jetty.MutableServletContextHandler.delete-requests.count': 0,
+            'timers.io.dropwizard.jetty.MutableServletContextHandler.delete-requests.mean':  0,
+            'timers.io.dropwizard.jetty.MutableServletContextHandler.dispatches.count': 9,
+            'timers.io.dropwizard.jetty.MutableServletContextHandler.dispatches.mean': 0.0015657667280344347,
+            'timers.io.dropwizard.jetty.MutableServletContextHandler.get-requests.count': 9,
+            'timers.io.dropwizard.jetty.MutableServletContextHandler.get-requests.mean': 0.001565766728034435,
+
+        }
+        excluded_metrics = {
+            'gauges.io.dropwizard.jetty.MutableServletContextHandler.percent-4xx-1m.value': 1,
+            'gauges.jvm.attribute.name.value': 'some-name',
+            'counters.TimeBoundHealthCheck-pool-%d.running.count': 0,
+            'meters.TimeBoundHealthCheck-pool-%d.created.count': 0,
+            'timers.io.dropwizard.jetty.MutableServletContextHandler.connect-requests.mean_rate': 0
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
+                           metrics=published_metrics,
                            defaultpath=self.collector.config['path'])
-        self.assertPublishedMany(publish_mock, metrics)
+        self.assertPublishedMany(publish_mock, published_metrics)
+        self.assertUnpublishedMany(publish_mock, excluded_metrics)
 
     @patch.object(Collector, 'publish')
-    def test_should_fail_gracefully(self, publish_mock):
-        patch_urlopen = patch(
-            'urllib2.urlopen',
-            Mock(
-                return_value=self.getFixture('stats_blank')))
+    def test_should_fail_empty_response(self, publish_mock):
+        return_test_json = lambda: json.load(self.getFixture('stats_blank'))
+        patch_request = patch('requests.get',
+                              Mock(return_value=MockRequest(
+                                        status_code=200,
+                                        json=return_test_json
+                                   )))
 
-        patch_urlopen.start()
+        patch_request.start()
         self.collector.collect()
-        patch_urlopen.stop()
+        patch_request.stop()
 
         self.assertPublishedMany(publish_mock, {})
 
-##########################################################################
+    @patch.object(Collector, 'publish')
+    def test_should_fail_on_404(self, publish_mock):
+        patch_request = patch('requests.get',
+                              Mock(return_value=MockRequest(
+                                        status_code=404,
+                                        json=lambda:{}
+                                   )))
+        patch_request.start()
+        self.collector.collect()
+        patch_request.stop()
+
+        self.assertPublishedMany(publish_mock, {})
+
+#########################################################################
 if __name__ == "__main__":
     unittest.main()
