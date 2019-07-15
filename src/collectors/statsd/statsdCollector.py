@@ -83,7 +83,6 @@ class StatsdCollector(diamond.collector.Collector):
                 break
             except Exception as e:
                 self.log.error('type={}, exception={}'.format(type(e), e))
-            self.log.info('Path: {}, Value: {}'.format(data.path, data.value))
 
     def start_listener(self):
         self.listener_thread = ListenerThread(self.config['listener_host'],
@@ -92,6 +91,9 @@ class StatsdCollector(diamond.collector.Collector):
         self.listener_thread.start()
 
     def stop_listener(self):
+        while not self.listener_thread.queue.empty():
+            data = self.listener_thread.queue.get(block=False)
+            self.publish(data.path, data.value, metric_type=data.metric_type)
         global ALIVE
         ALIVE = False
         self.listener_thread.join()
