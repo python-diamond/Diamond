@@ -13,23 +13,40 @@ This collector starts a UDP server in a separate thread to receive and parse dat
 queue and waits for the collect() method to pull.
 
 """
-
+import re
 import diamond.metric
 import threading
 import socket
 import Queue
+from collections import namedtuple
 
 ALIVE = True
-valid_types = ["g", "ms"]
+valid_types = ["g", "ms", "c"]
+
+NewMetric = namedtuple('NewMetric', ['path', 'value', 'metric_type'])
 
 
-def parse_metric(raw_metrics):
+def _clean_key(k):
+    return re.sub(
+        r'[^a-zA-Z_\-0-9\.]',
+        '',
+        re.sub(
+            r'\s+',
+            '_',
+            k.replace('/', '-').replace(' ', '_')
+        )
+    )
+
+
+def parse_metrics(raw_metrics):
     for raw_metric in raw_metrics.split("\n"):
         data, metric_type = raw_metric.split("|")[:2]
         metric_name, value = data.split(":")
-        metric = NewMetric(metric_name, value)
+        metric_name =_clean_key(metric_name)
+
+        metric = NewMetric(path=metric_name, value=value, metric_type='GAUGE')
         if metric_type == "c":
-            metric.isCounter = True
+            metric.metric_type = 'COUNTER'
         elif metric_type not in valid_types:
             raise ValueError("Metric type %i not recognized/supported" % metric_type)
         yield metric
@@ -59,11 +76,8 @@ class StatsdCollector(diamond.collector.Collector):
 
         while True:
             try:
-                data = self.listener_thread.queue.get(False)
-                if data.isCounter:
-                    self.publish(data.path, data.value, metric_type='COUNTER')
-                else:
-                    self.publish(data.path, data.value)
+                data = self.listener_thread.queue.get(block=True, timeout=0.2)
+                self.publish(data.path, data.value, metric_type=data.metric_type)
             except Queue.Empty:
                 self.log.info('Queue is empty')
                 break
@@ -118,10 +132,10 @@ class ListenerThread(threading.Thread):
                 try:
                     items = self.receive()
                     if items is not None:
-                        items = parse_metric(items)
+                        items = parse_metrics(items)
                         for item in items:
                             try:
-                                self.queue.put(item)
+                                self.queue.put(item, block=True, timeout=0.2)
                             except Queue.Full:
                                 self.log.error("Queue to collector is FULL")
                 except ValueError as e:
@@ -131,14 +145,6 @@ class ListenerThread(threading.Thread):
 
     def receive(self):
         data, addr = self._sock.recvfrom(self.BUFFER_SIZE)
-        if data:
-            return data
-        return None
+        return data or None
 
-
-class NewMetric(object):
-    def __init__(self, path, value):
-        self.path = path
-        self.value = value
-        self.isCounter = False
 
