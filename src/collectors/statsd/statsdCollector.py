@@ -14,11 +14,13 @@ queue and waits for the collect() method to pull.
 
 """
 import re
+import sys
 import diamond.metric
 import threading
 import socket
 import Queue
 from collections import namedtuple
+
 
 ALIVE = True
 valid_types = ["g", "ms", "c"]
@@ -26,6 +28,7 @@ valid_types = ["g", "ms", "c"]
 NewMetric = namedtuple('NewMetric', ['path', 'value', 'metric_type'])
 
 
+#remove non-alphanumeric characters
 def _clean_key(k):
     return re.sub(
         r'[^a-zA-Z_\-0-9\.]',
@@ -46,9 +49,9 @@ def parse_metrics(raw_metrics):
 
         metric = NewMetric(path=metric_name, value=value, metric_type='GAUGE')
         if metric_type == "c":
-            metric.metric_type = 'COUNTER'
+            metric = metric._replace(metric_type='COUNTER')
         elif metric_type not in valid_types:
-            raise ValueError("Metric type %i not recognized/supported" % metric_type)
+            raise ValueError("Metric type %s not recognized/supported" % metric_type)
         yield metric
 
 
@@ -76,7 +79,7 @@ class StatsdCollector(diamond.collector.Collector):
 
         while True:
             try:
-                data = self.listener_thread.queue.get(block=True, timeout=0.2)
+                data = self.listener_thread.queue.get(block=False)
                 self.publish(data.path, data.value, metric_type=data.metric_type)
             except Queue.Empty:
                 self.log.info('Queue is empty')
@@ -119,7 +122,7 @@ class ListenerThread(threading.Thread):
         self.log = log
         self._sock = None
 
-        self.queue = Queue.Queue()
+        self.queue = Queue.Queue(620000)
 
     def run(self):
         self.log.info('ListenerThread started on {}:{}(udp)'.format(
@@ -129,24 +132,23 @@ class ListenerThread(threading.Thread):
         self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._sock.bind((self.host, int(self.port)))
 
-        try:
-            while ALIVE:
-                try:
-                    items = self.receive()
-                    if items is not None:
-                        items = parse_metrics(items)
-                        for item in items:
-                            try:
-                                self.queue.put(item, block=True, timeout=0.2)
-                            except Queue.Full:
-                                self.log.error("Queue to collector is FULL")
-                except ValueError as e:
-                    self.log.warn('Dropping bad packet: {}', format(e))
-        except Exception as e:
-            self.log.error('type={}, exception={}'.format(type(e), e))
+        while ALIVE:
+            try:
+                items = self.receive()
+                if items is not None:
+                    items = parse_metrics(items)
+                    for item in items:
+                        try:
+                            self.queue.put(item, block=False)
+                        except Queue.Full:
+                            self.log.error("Queue to collector is FULL")
+            except ValueError as e:
+                self.log.warn('Dropping bad packet: {}', format(e))
+            except Exception as e:
+                self.log.error('type={}, exception={}'.format(type(e), e))
 
     def receive(self):
-        data, addr = self._sock.recvfrom(self.BUFFER_SIZE)
+        data, addr = self._sock.recv(self.BUFFER_SIZE)
         return data or None
 
 
