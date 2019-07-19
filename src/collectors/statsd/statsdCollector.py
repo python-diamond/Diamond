@@ -94,12 +94,12 @@ class StatsdCollector(diamond.collector.Collector):
         self.listener_thread.start()
 
     def stop_listener(self):
-        while not self.listener_thread.queue.empty():
-            data = self.listener_thread.queue.get(block=False)
-            self.publish(data.path, data.value, metric_type=data.metric_type)
         global ALIVE
         ALIVE = False
         self.listener_thread.join()
+        while not self.listener_thread.queue.empty():
+            data = self.listener_thread.queue.get(block=False)
+            self.publish(data.path, data.value, metric_type=data.metric_type)
         self.log.error('Listener thread is shut down.')
 
     def __del__(self):
