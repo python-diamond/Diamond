@@ -148,7 +148,7 @@ class ListenerThread(threading.Thread):
                 self.log.error('type={}, exception={}'.format(type(e), e))
 
     def receive(self):
-        data, addr = self._sock.recv(self.BUFFER_SIZE)
+        data = self._sock.recv(self.BUFFER_SIZE)
         return data or None
 
 
