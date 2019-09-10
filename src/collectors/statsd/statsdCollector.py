@@ -66,7 +66,7 @@ class StatsdCollector(diamond.collector.Collector):
         for key, value in self.listener_thread.counters.items():
             value = value / (float(self.config['interval']))
             self.publish(key, value, metric_type='COUNTER')
-            self.log.info('COUNTER: ({}, {})'.format(key, value))
+            #self.log.info('COUNTER: ({}, {})'.format(key, value))
             del(self.listener_thread.counters[key])
 
         for key, values in self.listener_thread.timers.items():
