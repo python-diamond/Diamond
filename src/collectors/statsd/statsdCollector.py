@@ -12,6 +12,8 @@ In particular, this collector does not support:
 This collector starts a UDP server in a separate thread to receive and parse data. The server puts the data on a
 queue and waits for the collect() method to pull.
 
+Timer and counter metrics are aggregated and all times are converted to seconds. Clients are expected to send metrics in
+milliseconds.
 """
 import re
 import sys
@@ -19,14 +21,10 @@ import diamond.metric
 import threading
 import socket
 import Queue
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 
 
 ALIVE = True
-valid_types = ["g", "ms", "c"]
-
-NewMetric = namedtuple('NewMetric', ['path', 'value', 'metric_type'])
-
 
 #remove non-alphanumeric characters
 def _clean_key(k):
@@ -39,20 +37,6 @@ def _clean_key(k):
             k.replace('/', '-').replace(' ', '_')
         )
     )
-
-
-def parse_metrics(raw_metrics):
-    for raw_metric in raw_metrics.split("\n"):
-        data, metric_type = raw_metric.split("|")[:2]
-        metric_name, value = data.split(":")
-        metric_name =_clean_key(metric_name)
-
-        metric = NewMetric(path=metric_name, value=value, metric_type='GAUGE')
-        if metric_type == "c":
-            metric = metric._replace(metric_type='COUNTER')
-        elif metric_type not in valid_types:
-            raise ValueError("Metric type %s not recognized/supported" % metric_type)
-        yield metric
 
 
 class StatsdCollector(diamond.collector.Collector):
@@ -70,22 +54,56 @@ class StatsdCollector(diamond.collector.Collector):
             'listener_host': '127.0.0.1',
             'listener_port': 8787,
             'path': 'statsd',
+            'pct_threshold': 90.0,
         })
         return config
+
+    def flush(self):
+        for key, value in self.listener_thread.gauges.items():
+            self.publish(key, value)
+            #self.log.info('GAUGE: ({}, {})'.format(key, value))
+
+        for key, value in self.listener_thread.counters.items():
+            value = value / (float(self.config['interval']))
+            self.publish(key, value, metric_type='COUNTER')
+            self.log.info('COUNTER: ({}, {})'.format(key, value))
+            del(self.listener_thread.counters[key])
+
+        for key, values in self.listener_thread.timers.items():
+            if len(values) > 0:
+                values.sort()
+                if len(values) > 0:
+                # Sort all the received values. We need it to extract percentiles
+                    values.sort()
+                    count = float(len(values))
+                    min_val = values[0]
+                    max_val = values[-1]
+
+                    mean = min_val
+                    max_threshold = max_val
+
+                    if count > 1:
+                        thresh_index = int((float(self.config['pct_threshold']) / 100.0) * count)
+                        max_threshold = values[thresh_index - 1]
+                        total = sum(values)
+                        mean = total / count
+
+                    del(self.listener_thread.timers[key])
+
+                    self.publish(key + '_mean', mean / 1000.0)
+                    #self.log.info('TIMER: ({}, {})'.format(key + '_mean', mean/1000.0))
+                    self.publish(key + '_min', min_val / 1000.0)
+                    #self.log.info('TIMER: ({}, {})'.format(key + '_min', min_val/1000.0))
+                    self.publish(key + '_max', max_val / 1000.0)
+                    self.publish(key + '_count', count)
+                    self.publish(key + '_' + str(self.config['pct_threshold']) + 'pct', max_threshold/1000.0)
+                    #self.log.info('TIMER: ({}, {})'.format(key + str(self.config['pct_threshold']) + 'pct', max_threshold/1000.0))
 
     def collect(self):
         if not self.listener_thread:
             self.start_listener()
 
-        while True:
-            try:
-                data = self.listener_thread.queue.get(block=False)
-                self.publish(data.path, data.value, metric_type=data.metric_type)
-            except Queue.Empty:
-                self.log.info('Queue is empty')
-                break
-            except Exception as e:
-                self.log.error('type={}, exception={}'.format(type(e), e))
+        self.flush()
 
     def start_listener(self):
         self.listener_thread = ListenerThread(self.config['listener_host'],
@@ -97,9 +115,7 @@ class StatsdCollector(diamond.collector.Collector):
         global ALIVE
         ALIVE = False
         self.listener_thread.join()
-        while not self.listener_thread.queue.empty():
-            data = self.listener_thread.queue.get(block=False)
-            self.publish(data.path, data.value, metric_type=data.metric_type)
+        self.flush()
         self.log.error('Listener thread is shut down.')
 
     def __del__(self):
@@ -122,7 +138,9 @@ class ListenerThread(threading.Thread):
         self.log = log
         self._sock = None
 
-        self.queue = Queue.Queue(620000)
+        self.gauges = defaultdict(float)
+        self.counters = defaultdict(float)
+        self.timers = defaultdict(list)
 
     def run(self):
         self.log.info('ListenerThread started on {}:{}(udp)'.format(
@@ -136,12 +154,7 @@ class ListenerThread(threading.Thread):
             try:
                 items = self.receive()
                 if items is not None:
-                    items = parse_metrics(items)
-                    for item in items:
-                        try:
-                            self.queue.put(item, block=False)
-                        except Queue.Full:
-                            self.log.error("Queue to collector is FULL")
+                    self.parse_metrics(items)
             except ValueError as e:
                 self.log.warn('Dropping bad packet: {}', format(e))
             except Exception as e:
@@ -151,4 +164,29 @@ class ListenerThread(threading.Thread):
         data = self._sock.recv(self.BUFFER_SIZE)
         return data or None
 
+    def parse_metrics(self, raw_metrics):
+        raw_metrics.rstrip('\n')
+
+        for metric in raw_metrics.split('\n'):
+            data, mtype = metric.split("|")[:2]
+            key, value = data.split(":")
+            key = _clean_key(key)
+
+            if mtype == 'ms':
+                self.record_timer(key, value)
+            elif mtype == 'g':
+                self.record_gauge(key, value)
+            elif mtype == 'c':
+                self.record_counter(key, value)
+            else:
+                raise ValueError("Metric type %s not recognized/supported" % metric_type)
+
+    def record_timer(self, key, value):
+        self.timers[key].append(float(value) or 0)
+
+    def record_gauge(self, key, value):
+        self.gauges[key] = float(value)
+
+    def record_counter(self, key, value):
+        self.counters[key] += float(value or 1)
 

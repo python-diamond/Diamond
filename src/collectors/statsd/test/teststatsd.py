@@ -6,7 +6,9 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 
-from statsdCollector import StatsdCollector, _clean_key, parse_metrics, NewMetric
+from diamond.collector import Collector
+from statsdCollector import StatsdCollector, _clean_key, ListenerThread
+from mock import Mock, patch
 
 ###############################################################################
 
@@ -27,19 +29,25 @@ class TestStatsdCollector(CollectorTestCase):
         self.assertEqual(_clean_key('@special-remove@'), 'special-remove')
         self.assertEqual(_clean_key('normal.key'), 'normal.key')
 
-    def test_parse_metrics(self):
-        raw_metrics = 'gorets:1|c\nglork:320|ms\ngaugor:333|g'
-        expected_values = [NewMetric(path='gorets', value='1', metric_type='COUNTER'),
-                           NewMetric(path='glork', value='320', metric_type='GAUGE'),
-                           NewMetric(path='gaugor', value='333', metric_type='GAUGE'),]
-        parsed_metrics = parse_metrics(raw_metrics)
-        for metric, expected_value in zip(parsed_metrics, expected_values) :
-            self.assertEqual(metric.path, expected_value.path)
-            self.assertEqual(metric.value, expected_value.value)
-            self.assertEqual(metric.metric_type, expected_value.metric_type)
+    @patch.object(Collector, 'publish')
+    def test_publish_metrics(self, publish_mock):
 
-        with self.assertRaises(ValueError):
-            next(parse_metrics('nuniques:765|s'))
+        self.collector.start_listener()
+        self.collector.listener_thread.parse_metrics('gorets:1|c\nglork:320|ms\ngaugor:333|g\ngorets:1|c\nglork:100|ms')
+        self.collector.stop_listener()
+
+        metrics = {
+        'gaugor': 333.0,
+        'glork_mean': 0.210,
+        'glork_min': 0.1,
+        'glork_max': .320,
+        'glork_count': 2.0,
+        'glork_90.0pct': 0.1,
+        'gorets': 0.00066666667,
+        }
+
+        self.assertPublishedMany(publish_mock, metrics)
+
 
 ###############################################################################
 if __name__ == "__main__":
