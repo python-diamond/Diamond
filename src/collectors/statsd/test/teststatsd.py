@@ -7,7 +7,7 @@ from test import get_collector_config
 from test import unittest
 
 from diamond.collector import Collector
-from statsdCollector import StatsdCollector, _clean_key, ListenerThread
+from statsd import StatsdCollector, _clean_key, ListenerThread
 from mock import Mock, patch
 
 ###############################################################################
