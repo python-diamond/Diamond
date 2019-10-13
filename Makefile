@@ -56,9 +56,13 @@ develop: version
 
 rpm: buildrpm
 
+# If run from Jenkins use the job build number for the release, if not use the count
+# of the previously built RPMs in the dist directory as a build number.
+release = $(if $(BUILD_NUMBER),$(BUILD_NUMBER),$(ls dist/*.noarch.rpm | wc -l))
+
 buildrpm: sdist
 	./setup.py bdist_rpm \
-		--release=`ls dist/*.noarch.rpm | wc -l` \
+		--release=$(release) \
 		--build-requires='python, python-configobj, python-setuptools' \
 		--requires='python, python-configobj, python-setuptools'
 
