@@ -16,27 +16,43 @@ Timer and counter metrics are aggregated and all times are converted to seconds.
 milliseconds.
 """
 import re
-import sys
+import diamond.collector
 import diamond.metric
 import threading
 import socket
-import Queue
-from collections import namedtuple, defaultdict
+from collections import defaultdict
 
 
 ALIVE = True
 
-#remove non-alphanumeric characters
-def _clean_key(k):
+
+# remove non-alphanumeric characters
+def _clean_key(metric_name):
+    # type: (str) -> str
     return re.sub(
         r'[^a-zA-Z_\-0-9\.]',
         '',
         re.sub(
             r'\s+',
             '_',
-            k.replace('/', '-').replace(' ', '_')
+            metric_name.replace('/', '-').replace(' ', '_')
         )
     )
+
+
+# Spark statsd sink includes a unix timestamp in the metric name which causes high cardinality of metric names
+# by removing the timestamp we can significantly reduce this issue
+def _remove_spark_timestamp(metric_name):
+    # type: (str) -> str
+    return re.sub(r'^spark\.[^\.]+\.', 'spark.', metric_name)
+
+
+def _transform_metric_name(metric_name):
+    # type: (str) -> str
+    transformations = [_clean_key, _remove_spark_timestamp]
+    for transformation in transformations:
+        metric_name = transformation(metric_name)
+    return metric_name
 
 
 class StatsdCollector(diamond.collector.Collector):
@@ -170,7 +186,7 @@ class ListenerThread(threading.Thread):
         for metric in raw_metrics.split('\n'):
             data, mtype = metric.split("|")[:2]
             key, value = data.split(":")
-            key = _clean_key(key)
+            key = _transform_metric_name(key)
 
             if mtype == 'ms':
                 self.record_timer(key, value)
@@ -179,7 +195,7 @@ class ListenerThread(threading.Thread):
             elif mtype == 'c':
                 self.record_counter(key, value)
             else:
-                raise ValueError("Metric type %s not recognized/supported" % metric_type)
+                raise ValueError("Metric type %s not recognized/supported".format(mtype))
 
     def record_timer(self, key, value):
         self.timers[key].append(float(value) or 0)
@@ -189,4 +205,3 @@ class ListenerThread(threading.Thread):
 
     def record_counter(self, key, value):
         self.counters[key] += float(value or 1)
-
