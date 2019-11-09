@@ -15,6 +15,7 @@ It has these options:
  * `host` - The Riemann host to connect to.
  * `port` - The port it's on.
  * `transport` - Either `tcp` or `udp`. (default: `tcp`)
+ * `attributes` - Dictionary of additional attributes to send with every event
 
 """
 
@@ -44,6 +45,7 @@ class RiemannHandler(Handler):
         self.port = int(self.config['port'])
         self.transport = self.config['transport']
         self.timeout = int(self.config['timeout'])
+        self.attributes = self.config['attributes'] or {}
 
         # Initialize client
         if self.transport == 'tcp':
@@ -64,6 +66,7 @@ class RiemannHandler(Handler):
             'port': '',
             'transport': 'tcp or udp',
             'timeout': 'socket timeout in seconds',
+            'attributes': 'extra attributes to send upstream to riemann',
         })
 
         return config
@@ -78,7 +81,8 @@ class RiemannHandler(Handler):
             'host': '',
             'port': 123,
             'transport': 'tcp',
-            'timeout': 120
+            'timeout': 120,
+            'attributes': {},
         })
 
         return config
@@ -115,6 +119,7 @@ class RiemannHandler(Handler):
             'time': metric.timestamp,
             'metric_f': float(metric.value),
             'ttl': metric.ttl,
+            'attributes': self.attributes,
         })
 
     def _connect(self):
