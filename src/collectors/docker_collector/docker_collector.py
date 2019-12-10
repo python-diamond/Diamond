@@ -63,35 +63,44 @@ class DockerCollector(diamond.collector.Collector):
 
         # Collect info
         results = {}
-        client = docker.Client(version='auto')
+        try:
+            client = docker.Client(version='auto')
 
-        # Top level stats
-        running_containers = client.containers()
-        results['containers_running_count'] = (
-            len(running_containers), 'GAUGE')
+            # Top level stats
+            running_containers = client.containers()
+            results['containers_running_count'] = (
+                len(running_containers), 'GAUGE')
 
-        all_containers = client.containers(all=True)
-        results['containers_stopped_count'] = (
-            len(all_containers) - len(running_containers), 'GAUGE')
+            all_containers = client.containers(all=True)
+            results['containers_stopped_count'] = (
+                len(all_containers) - len(running_containers), 'GAUGE')
 
-        images_count = len(set(client.images(quiet=True)))
-        results['images_count'] = (images_count, 'GAUGE')
+            images_count = len(set(client.images(quiet=True)))
+            results['images_count'] = (images_count, 'GAUGE')
 
-        dangling_images_count = len(set(client.images(
-            quiet=True, all=True, filters={'dangling': True})))
-        results['images_dangling_count'] = (dangling_images_count, 'GAUGE')
+            dangling_images_count = len(set(client.images(
+                quiet=True, all=True, filters={'dangling': True})))
+            results['images_dangling_count'] = (dangling_images_count, 'GAUGE')
 
-        # Collect memory and cpu stats
-        for container in running_containers:
-            name = "containers." + "".join(container['Names'][0][1:])
-            s = client.stats(container["Id"])
-            stat = json.loads(s.next())
-            for path in self.METRICS:
-                val = self.get_value(path, stat)
-                if val is not None:
-                    metric_key = ".".join([name, self.METRICS.get(path)])
-                    results[metric_key] = (val, 'GAUGE')
-            s.close()
+            # Collect memory and cpu stats
+            for container in running_containers:
+                name = "containers." + "".join(container['Names'][0][1:])
+                try:
+                    s = client.stats(container["Id"])
+                    stat = json.loads(s.next())
+                    for path in self.METRICS:
+                        val = self.get_value(path, stat)
+                        if val is not None:
+                            metric_key = ".".join([name, self.METRICS.get(path)])
+                            results[metric_key] = (val, 'GAUGE')
+                    s.close()
+                except Exception:
+                    self.log.exception('Failed to parse docker stats for {0}'.format(name))
+                    results[name + '.failures'] = (1, 'GAUGE') 
+
+        except Exception: 
+            self.log.exception('Failed to parse docker info')
+            results['docker_collector.failures'] = (1, 'GAUGE')
 
         for name in sorted(results.keys()):
             (value, metric_type) = results[name]
