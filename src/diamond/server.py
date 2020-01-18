@@ -175,12 +175,12 @@ class Server(object):
                     collector_name = process_name.split()[0]
 
                     if 'Collector' not in collector_name:
-                        continue
+                        raise Exception('Failed to load collector %s' % collector_name)
 
                     if collector_name not in collector_classes:
                         self.log.error('Can not find collector %s',
                                        collector_name)
-                        continue
+                        raise Exception('Failed to load collector %s' % collector_name)
 
                     collector = initialize_collector(
                         collector_classes[collector_name],
@@ -191,9 +191,9 @@ class Server(object):
                     if collector is None:
                         self.log.error('Failed to load collector %s',
                                        process_name)
-                        continue
+                        raise Exception('Failed to load collector %s' % collector_name)
 
-                    # Splay the loads
+                # Splay the loads
                     time.sleep(float(load_delay))
 
                     process = multiprocessing.Process(
