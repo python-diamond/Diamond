@@ -204,7 +204,10 @@ class MdStatCollector(diamond.collector.Collector):
             'spare': 0
         }
         for member in members:
-            member_dict = device_regexp.match(member).groupdict()
+            match = device_regexp.match(member)
+            if not match:
+                continue
+            member_dict = match.groupdict()
 
             if member_dict['member_state'] == 'S':
                 ret['spare'] += 1
