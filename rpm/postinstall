@@ -1,3 +1,7 @@
+# set log dir perms
+chown root.root /var/log/diamond
+chmod 0750 /var/log/diamond
+
 # add diamond service upon initial install
 if test "$1" = "1" ; then
     echo "Adding and activating diamond service"

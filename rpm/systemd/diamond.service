@@ -2,6 +2,7 @@
 Description=diamond - A system statistics collector for graphite
 
 [Service]
+UMask=027
 ExecStart=/usr/bin/python /usr/bin/diamond
 Type=forking
 #If not using default pid, make sure you change PIDFile setting
