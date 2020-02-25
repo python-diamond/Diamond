@@ -2,6 +2,8 @@
 Description=diamond - A system statistics collector for graphite
 
 [Service]
+# @CIS 4.2.4 Ensure permissions on all logfiles are configured
+UMask=027
 ExecStart=/usr/bin/python /usr/bin/diamond
 Type=forking
 #If not using default pid, make sure you change PIDFile setting
