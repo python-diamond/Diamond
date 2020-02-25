@@ -11,4 +11,4 @@ echo "$CONFIGFILES" | cat INSTALLED_FILES - > INSTALLED_FILES.new
 mv INSTALLED_FILES.new INSTALLED_FILES
 
 %files
-%attr(0750, root, root) /var/log/diamond
+%dir %attr(0750, root, root) /var/log/diamond
