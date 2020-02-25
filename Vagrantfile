@@ -85,7 +85,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # Setup Diamond to run as a service
     c.vm.provision "shell", inline: "sudo yum install -y python-setuptools"
-    c.vm.provision "shell", inline: "sudo mkdir /var/log/diamond"
+    c.vm.provision "shell", inline: "sudo mkdir -m 0750 /var/log/diamond"
     c.vm.provision "shell", inline: "sudo ln -s /vagrant/conf/vagrant /etc/diamond"
     c.vm.provision "shell", inline: "sudo ln -s /vagrant/bin/diamond /usr/bin/diamond"
     c.vm.provision "shell", inline: "sudo ln -s /vagrant/src/diamond /usr/lib/python2.7/site-packages/diamond"
