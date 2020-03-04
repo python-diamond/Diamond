@@ -6,7 +6,7 @@ from test import get_collector_config
 from test import unittest
 
 from diamond.collector import Collector
-from statsd import StatsdCollector, _remove_spark_timestamp, _clean_key, _transform_metric_name, ListenerThread
+from statsd import StatsdCollector, _transform_metric_name, ListenerThread
 from mock import patch
 
 ###############################################################################
@@ -22,20 +22,11 @@ class TestStatsdCollector(CollectorTestCase):
         self.assertTrue(StatsdCollector)
 
     def test_clean_key(self):
-        self.assertEqual(_clean_key('test/this/key'), 'test-this-key')
-        self.assertEqual(_clean_key('test key'), 'test_key')
-        self.assertEqual(_clean_key('normal_key'), 'normal_key')
-        self.assertEqual(_clean_key('@special-remove@'), 'special-remove')
-        self.assertEqual(_clean_key('normal.key'), 'normal.key')
-
-    def test_remove_spark_timestamp(self):
-        self.assertEqual(_remove_spark_timestamp('spark.local-1573248616155.driver.LiveListenerBus'),
-                         'spark.driver.LiveListenerBus')
-
-    def test_transform_metric_name(self):
-        # just to make sure that all the filters get chained
-        self.assertEqual(_transform_metric_name('@!@#!@spark.local-1573248616155.driver.LiveListenerBus'),
-                         'spark.driver.LiveListenerBus')
+        self.assertEqual(_transform_metric_name('test/this/key'), 'test-this-key')
+        self.assertEqual(_transform_metric_name('test key'), 'test_key')
+        self.assertEqual(_transform_metric_name('normal_key'), 'normal_key')
+        self.assertEqual(_transform_metric_name('@special-remove@'), 'special-remove')
+        self.assertEqual(_transform_metric_name('normal.key'), 'normal.key')
 
     @patch.object(Collector, 'publish')
     def test_publish_metrics(self, publish_mock):

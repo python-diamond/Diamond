@@ -40,16 +40,9 @@ def _clean_key(metric_name):
     )
 
 
-# Spark statsd sink includes a unix timestamp in the metric name which causes high cardinality of metric names
-# by removing the timestamp we can significantly reduce this issue
-def _remove_spark_timestamp(metric_name):
-    # type: (str) -> str
-    return re.sub(r'^spark\.[^\.]+\.', 'spark.', metric_name)
-
-
 def _transform_metric_name(metric_name):
     # type: (str) -> str
-    transformations = [_clean_key, _remove_spark_timestamp]
+    transformations = [_clean_key]
     for transformation in transformations:
         metric_name = transformation(metric_name)
     return metric_name
