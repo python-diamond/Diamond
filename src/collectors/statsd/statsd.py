@@ -70,13 +70,14 @@ class StatsdCollector(diamond.collector.Collector):
     def flush(self):
         for key, value in self.listener_thread.gauges.items():
             self.publish(key, value)
+            self.listener_thread.clear_gauge(key)
             #self.log.info('GAUGE: ({}, {})'.format(key, value))
 
         for key, value in self.listener_thread.counters.items():
             value = value / (float(self.config['interval']))
             self.publish(key, value, metric_type='COUNTER')
             #self.log.info('COUNTER: ({}, {})'.format(key, value))
-            del(self.listener_thread.counters[key])
+            self.listener_thread.clear_counter(key)
 
         for key, values in self.listener_thread.timers.items():
             if len(values) > 0:
@@ -196,5 +197,11 @@ class ListenerThread(threading.Thread):
     def record_gauge(self, key, value):
         self.gauges[key] = float(value)
 
+    def clear_gauge(self, key):
+        del(self.gauges[key])
+
     def record_counter(self, key, value):
         self.counters[key] += float(value or 1)
+
+    def clear_counter(self, key):
+        del(self.counters[key])
