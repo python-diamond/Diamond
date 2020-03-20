@@ -3,7 +3,7 @@
 [![Join the chat at https://gitter.im/python-diamond/Diamond](https://badges.gitter.im/python-diamond/Diamond.svg)](https://gitter.im/python-diamond/Diamond?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/python-diamond/Diamond.svg?branch=master)](https://travis-ci.org/python-diamond/Diamond)
 
-Diamond is a python daemon that collects system metrics and publishes them to [Graphite](handlers/GraphiteHandler.md) (and others).
+Diamond is a python daemon that collects system metrics and publishes them to [Graphite](/docs/handlers/GraphiteHandler.md) (and others).
 It is capable of collecting cpu, memory, network, i/o, load and disk metrics.
 Additionally, it features an API for implementing custom collectors for gathering metrics from almost any source.
 
@@ -35,7 +35,7 @@ that any new pull requests and issues be cut against python-diamond. We will kee
 BrightcoveOS updated and still honor issues/tickets cut on that repo.
 
 ## Diamond Related Projects
- * [Related Projects](Related-Projects.md)
+ * [Related Projects](/docs/Related-Projects.md)
 
 ## Contact
  * IRC [#python-diamond](irc://chat.freenode.net:6667/%23python-diamond) on [freenode](http://www.freenode.net). [Webchat](http://webchat.freenode.net/?channels=python-diamond)
