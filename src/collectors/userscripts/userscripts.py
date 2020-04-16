@@ -58,7 +58,7 @@ class UserScriptsCollector(diamond.collector.Collector):
             is_file = os.path.isfile(absolutescriptpath)
             if is_file:
                 if not executable:
-                    self.log.info("%s is not executable" % absolutescriptpath)
+                    self.log.debug("%s is not executable" % absolutescriptpath)
                     continue
             else:
                 # Don't bother logging skipped non-file files (typically
