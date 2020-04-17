@@ -8,8 +8,8 @@ ExecStart=/usr/bin/python /usr/bin/diamond
 Type=forking
 #If not using default pid, make sure you change PIDFile setting
 PIDFile=/var/run/diamond.pid
-After=network-online.target
-Wants=network-online.target
+#Start as last service so everything else is running first to avoid false errors in the logs
+Type=idle
 
 [Install]
 WantedBy=multi-user.target
