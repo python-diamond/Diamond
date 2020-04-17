@@ -5,6 +5,7 @@ Description=diamond - A system statistics collector for graphite
 # @CIS 4.2.4 Ensure permissions on all logfiles are configured
 UMask=027
 ExecStart=/usr/bin/python /usr/bin/diamond
+ExecReload=/bin/kill -HUP $MAINPID
 Type=forking
 #If not using default pid, make sure you change PIDFile setting
 PIDFile=/var/run/diamond.pid
