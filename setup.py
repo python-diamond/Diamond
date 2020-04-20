@@ -82,17 +82,7 @@ else:
                 data_files.append(('/etc/init',
                                    ['rpm/upstart/diamond.conf']))
 
-    # Support packages being called differently on different distros
-
-    # Are we in a virtenv?
-    if running_under_virtualenv():
-        install_requires = ['configobj', 'psutil', ]
-    else:
-        if distro in ['debian', 'Ubuntu']:
-            install_requires = ['python-configobj', 'python-psutil', ]
-        # Default back to pip style requires
-        else:
-            install_requires = ['configobj', 'psutil', ]
+    install_requires = ['configobj', 'psutil', ]
 
 
 def get_version():
@@ -150,7 +140,7 @@ setup(
     packages=['diamond', 'diamond.handler', 'diamond.utils'],
     scripts=['bin/diamond', 'bin/diamond-setup'],
     data_files=data_files,
-    python_requires='==2.7',
+    python_requires='==2.7.*',
     install_requires=install_requires,
     classifiers=[
         'Programming Language :: Python',
