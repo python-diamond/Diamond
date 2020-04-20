@@ -305,6 +305,9 @@ class Collector(object):
 
             # Blacklist of metrics to let through
             'metrics_blacklist': None,
+
+            # Minimum collection time
+            'min_collection_time': 1
         }
 
     def get_metric_path(self, name, instance=None):

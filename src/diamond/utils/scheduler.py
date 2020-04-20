@@ -34,6 +34,7 @@ def collector_process(collector, metric_queue, log):
     signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
     interval = float(collector.config['interval'])
+    min_collection_time = float(collector.config['min_collection_time'])
 
     log.debug('Starting')
     log.debug('Interval: %s seconds', interval)
@@ -46,11 +47,12 @@ def collector_process(collector, metric_queue, log):
     # Start the next execution at the next window plus some stagger delay to
     # avoid having all collectors running at the same time
     next_window = math.floor(time.time() / interval) * interval
-    stagger_offset = random.uniform(0, interval - 1)
+    stagger_offset = random.uniform(0, interval - min_collection_time)
 
     # Allocate time till the end of the window for the collector to run. With a
-    # minimum of 1 second
-    max_time = int(max(interval - stagger_offset, 1))
+    # minimum of `min_collection_time` second
+    max_time = int(max(interval - stagger_offset, min_collection_time))
+    log.debug('Min collection time: %s seconds', min_collection_time)
     log.debug('Max collection time: %s seconds', max_time)
 
     # Setup stderr/stdout as /dev/null so random print statements in thrid
@@ -86,7 +88,8 @@ def collector_process(collector, metric_queue, log):
             # collector
             stagger_offset = stagger_offset * 0.9
 
-            max_time = int(max(interval - stagger_offset, 1))
+            max_time = int(max(interval - stagger_offset, min_collection_time))
+            log.debug('Min collection time: %s seconds', min_collection_time)
             log.debug('Max collection time: %s seconds', max_time)
 
         except SIGHUPException:

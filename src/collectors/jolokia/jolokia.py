@@ -98,6 +98,7 @@ class JolokiaCollector(diamond.collector.Collector):
                                    ' Default is "True',
             'jolokia_path': 'Path to jolokia.  typically "jmx" or "jolokia".'
                             ' Defaults to the value of "path" variable.',
+            'min_collection_time': 'Minimum collection time. Defaults to 1s. If specified value is more than interval, gets overriden to equal interval',
         })
         return config_help
 
@@ -114,6 +115,7 @@ class JolokiaCollector(diamond.collector.Collector):
             'host': 'localhost',
             'port': 8778,
             'use_canonical_names': True,
+            'min_collection_time': 1,
         })
         return config
 
@@ -162,6 +164,12 @@ class JolokiaCollector(diamond.collector.Collector):
                                self.config['use_canonical_names'])
                 default = self.get_default_config()['use_canonical_names']
                 self.config['use_canonical_names'] = default
+
+        if 'min_collection_time' in self.config:
+            if self.config['min_collection_time'] > self.config['interval']:
+                self.log.warning('`min_collection_time` specified in collector configuration higher than `interval`')
+                self.log.warning('Setting `min_collection_time` equal to `interval`')
+                self.config['min_collection_time'] = self.config['interval']
 
     def _get_domains(self):
         # if not set it __init__
