@@ -182,7 +182,6 @@ class Collector(object):
         """
         Process a configfile, or reload if previously given one.
         """
-
         self.config = configobj.ConfigObj()
 
         # Load in the collector's defaults
@@ -229,8 +228,8 @@ class Collector(object):
                 self.config['measure_collector_time'])
 
         # Raise an error if both whitelist and blacklist are specified
-        if (self.config.get('metrics_whitelist', None)
-                and self.config.get('metrics_blacklist', None)):
+        if ((self.config.get('metrics_whitelist', None) and
+             self.config.get('metrics_blacklist', None))):
             raise DiamondException(
                 'Both metrics_whitelist and metrics_blacklist specified ' +
                 'in file %s' % self.configfile)
@@ -351,10 +350,16 @@ class Collector(object):
         if suffix:
             prefix = '.'.join((prefix, suffix))
 
-        if path == '.':
+        is_path_invalid = path == '.' or not path
+
+        if is_path_invalid and prefix:
             return '.'.join([prefix, name])
-        else:
+        elif prefix:
             return '.'.join([prefix, path, name])
+        elif is_path_invalid:
+            return name
+        else:
+            return '.'.join([path, name])
 
     def get_hostname(self):
         return get_hostname(self.config)
@@ -441,7 +446,7 @@ class Collector(object):
 
             # If we pass in a interval, use it rather then the configured one
             if interval is None:
-                interval = int(self.config['interval'])
+                interval = float(self.config['interval'])
 
             # Get Change in Y (time)
             if time_delta:

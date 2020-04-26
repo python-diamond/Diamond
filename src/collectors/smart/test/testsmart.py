@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,10 +12,11 @@ from mock import patch
 from diamond.collector import Collector
 from smart import SmartCollector
 
-################################################################################
+##########################################################################
 
 
 class TestSmartCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('SmartCollector', {
             'interval': 10,
@@ -117,6 +118,8 @@ class TestSmartCollector(CollectorTestCase):
             'sda.Current_Pending_Sector': 0,
             'sda.Reallocated_Sector_Ct': 0,
             'sda.Seek_Error_Rate': 0,
+            'sda.Thermal_Throttle_0': 0,
+            'sda.Thermal_Throttle_1': 0,
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
@@ -182,6 +185,6 @@ class TestSmartCollector(CollectorTestCase):
         assert_attrs_start_at(7, 'centos5.5_hdd')
         assert_attrs_start_at(8, 'debian_invalid_checksum_warning')
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

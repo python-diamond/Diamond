@@ -34,7 +34,11 @@ class HBaseCollector(diamond.collector.Collector):
         return config
 
     def collect(self):
-        for pattern in self.config['metrics']:
+        metrics = self.config['metrics']
+        if not isinstance(metrics, list):
+            metrics = [str(metrics)]
+
+        for pattern in metrics:
             for filename in glob.glob(pattern):
                 self.collect_from(filename)
 
@@ -94,9 +98,10 @@ class HBaseCollector(diamond.collector.Collector):
 
                     value = float(metrics[metric])
 
-                    self.publish_metric(Metric(path,
-                                        value,
-                                        timestamp=int(data['timestamp'])/1000))
+                    self.publish_metric(
+                        Metric(path,
+                               value,
+                               timestamp=int(data['timestamp']) / 1000))
 
                 except ValueError:
                     pass

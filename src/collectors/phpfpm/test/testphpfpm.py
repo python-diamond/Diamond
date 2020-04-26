@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -11,10 +11,11 @@ from mock import patch
 from diamond.collector import Collector
 from phpfpm import PhpFpmCollector
 
-################################################################################
+##########################################################################
 
 
 class TestPhpFpmCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('PhpFpmCollector', {
             'interval': 10
@@ -60,6 +61,6 @@ class TestPhpFpmCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, {})
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

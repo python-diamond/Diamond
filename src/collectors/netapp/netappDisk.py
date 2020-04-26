@@ -18,6 +18,7 @@
 
 """
 
+from __future__ import print_function
 import diamond.collector
 import time
 from diamond.metric import Metric
@@ -92,7 +93,8 @@ class netappDiskCol(object):
             temp = {}
             for element in instance_data.findall(".//counters/counter-data"):
                 if element.find('name').text in names:
-                    temp[element.find('name').text] = element.find('value').text
+                    temp[element.find('name').text] = element.find(
+                        'value').text
 
             agr_name = temp['raid_name']
             agr_name = agr_name[agr_name.find('/', 0):agr_name.find('/', 1)]
@@ -103,7 +105,8 @@ class netappDiskCol(object):
             temp = {}
             for element in instance_data.findall(".//counters/counter-data"):
                 if element.find('name').text in names:
-                    temp[element.find('name').text] = element.find('value').text
+                    temp[element.find('name').text] = element.find(
+                        'value').text
 
             agr_name = temp['raid_name']
             agr_name = agr_name[agr_name.find('/', 0):agr_name.find('/', 1)]
@@ -271,7 +274,7 @@ class netappDiskCol(object):
             self.log.error(
                 'While using netapp API failed to retrieve '
                 'disk-list-info for netapp filer %s' % self.device)
-            print netapp_data.sprintf()
+            print(netapp_data.sprintf())
             return
         netapp_xml = \
             ET.fromstring(netapp_data.sprintf()).find(sub_element)

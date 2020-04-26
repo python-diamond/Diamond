@@ -13,6 +13,7 @@ from gridengine import GridEngineCollector
 class TestGridEngineCollector(CollectorTestCase):
     """Set up the fixtures for the test
     """
+
     def setUp(self):
         config = get_collector_config('GridEngineCollector', {})
         self.collector = GridEngineCollector(config, None)
@@ -56,6 +57,11 @@ class TestGridEngineCollector(CollectorTestCase):
             'queues.secondary_q.temp_disabled': 1,
             'queues.secondary_q.manual_intervention': 0
         }
+
+        self.setDocExample(collector=self.collector.__class__.__name__,
+                           metrics=published_metrics,
+                           defaultpath=self.collector.config['path'])
+
         self.assertPublishedMany(publish_mock, published_metrics)
 
     @patch.object(GridEngineCollector, '_queue_stats_xml')

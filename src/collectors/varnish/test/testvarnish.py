@@ -16,6 +16,7 @@ from varnish import VarnishCollector
 
 
 class TestVarnishCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('VarnishCollector', {})
 
@@ -213,6 +214,7 @@ class TestVarnishCollector(CollectorTestCase):
             'MAIN.s_pipe_in': 0,
             'MAIN.s_pipe_out': 0,
             'MAIN.sess_closed': 58799,
+            'MAIN.sess_closed_err': 6412,
             'MAIN.sess_pipeline': 53,
             'MAIN.sess_readahead': 17,
             'MAIN.sess_herd': 4924320,

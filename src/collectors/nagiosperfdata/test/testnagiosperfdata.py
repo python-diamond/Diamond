@@ -11,6 +11,7 @@ from nagiosperfdata import NagiosPerfdataCollector
 
 
 class TestNagiosPerfdataCollector(CollectorTestCase):
+
     def setUp(self):
         """Set up the fixtures for the test
         """
@@ -113,7 +114,12 @@ class TestNagiosPerfdataCollector(CollectorTestCase):
             self, publish_mock, remove_mock):
         path = self.getFixturePath('service-perfdata.0')
         self.collector._process_file(path)
-        publish_mock.assert_called_once()
+        expected = {
+            'nagios.testhost.nrpe_._home': 705181 * 1024 * 1024,
+            'nagios.testhost.nrpe_._data': 6090266 * 1024 * 1024,
+            'nagios.testhost.nrpe_._tmp': 6090266 * 1024 * 1024
+        }
+        self.assertPublishedMany(publish_mock, expected)
 
     def test_sanitize_should_sanitize(self):
         orig1 = 'myhost.mydomain'

@@ -120,9 +120,9 @@ class rmqHandler (Handler):
         """
            Create PUB socket and bind
         """
-        if (rmq_server in self.connections.keys()
-                and self.connections[rmq_server] is not None
-                and self.connections[rmq_server].is_open):
+        if ((rmq_server in self.connections.keys() and
+             self.connections[rmq_server] is not None and
+             self.connections[rmq_server].is_open)):
             # It seems we already have this server, so let's try _unbind just
             # to be safe.
             self._unbind(rmq_server)
@@ -143,8 +143,8 @@ class rmqHandler (Handler):
             connection_attempts=3)
 
         self.connections[rmq_server] = None
-        while (self.connections[rmq_server] is None
-                or self.connections[rmq_server].is_open is False):
+        while (self.connections[rmq_server] is None or
+               self.connections[rmq_server].is_open is False):
             try:
                 self.connections[rmq_server] = pika.BlockingConnection(
                     parameters)
@@ -156,7 +156,7 @@ class rmqHandler (Handler):
                     durable=self.rmq_durable)
                 # Reset reconnect_interval after a successful connection
                 self.reconnect_interval = 1
-            except Exception, exception:
+            except Exception as exception:
                 self.log.debug("Caught exception in _bind: %s", exception)
                 if rmq_server in self.connections.keys():
                     self._unbind(rmq_server)
@@ -193,14 +193,14 @@ class rmqHandler (Handler):
         """
         for rmq_server in self.connections.keys():
             try:
-                if (self.connections[rmq_server] is None
-                        or self.connections[rmq_server].is_open is False):
+                if ((self.connections[rmq_server] is None or
+                     self.connections[rmq_server].is_open is False)):
                     self._bind(rmq_server)
 
                 channel = self.channels[rmq_server]
                 channel.basic_publish(exchange=self.rmq_exchange,
                                       routing_key='', body="%s" % metric)
-            except Exception, exception:
+            except Exception as exception:
                 self.log.error(
                     "Failed publishing to %s, attempting reconnect",
                     rmq_server)

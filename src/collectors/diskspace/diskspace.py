@@ -37,9 +37,10 @@ class DiskSpaceCollector(diamond.collector.Collector):
         config_help = super(DiskSpaceCollector, self).get_default_config_help()
         config_help.update({
             'filesystems': "filesystems to examine",
-            'exclude_filters': "A list of regex patterns. Any filesystem"
-            + " matching any of these patterns will be excluded from disk"
-            + " space metrics collection",
+            'exclude_filters':
+                "A list of regex patterns. Any filesystem" +
+                " matching any of these patterns will be excluded from disk" +
+                " space metrics collection",
         })
         return config_help
 
@@ -51,8 +52,8 @@ class DiskSpaceCollector(diamond.collector.Collector):
         config.update({
             'path': 'diskspace',
             # filesystems to examine
-            'filesystems': 'ext2, ext3, ext4, xfs, glusterfs, nfs, ntfs, hfs,'
-            + ' fat32, fat16, btrfs',
+            'filesystems': 'ext2, ext3, ext4, xfs, glusterfs, nfs, nfs4, ' +
+                           ' ntfs, hfs, fat32, fat16, btrfs',
 
             # exclude_filters
             #   A list of regex patterns
@@ -80,7 +81,10 @@ class DiskSpaceCollector(diamond.collector.Collector):
         if isinstance(self.exclude_filters, basestring):
             self.exclude_filters = [self.exclude_filters]
 
-        self.exclude_reg = re.compile('|'.join(self.exclude_filters))
+        if not self.exclude_filters:
+            self.exclude_reg = re.compile('!.*')
+        else:
+            self.exclude_reg = re.compile('|'.join(self.exclude_filters))
 
         self.filesystems = []
         if isinstance(self.config['filesystems'], basestring):
@@ -112,7 +116,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
         iostat(1): Each sector has size of 512 bytes.
 
         Returns:
-          (major, minor) -> FileSystem(device, mount_point)
+          st_dev -> FileSystem(device, mount_point)
         """
         result = {}
         if os.access('/proc/mounts', os.R_OK):
@@ -129,36 +133,30 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 # Skip the filesystem if it is not in the list of valid
                 # filesystems
                 if fs_type not in self.filesystems:
-                    self.log.debug("Ignoring %s since it is of type %s which "
-                                   + " is not in the list of filesystems.",
+                    self.log.debug("Ignoring %s since it is of type %s " +
+                                   " which is not in the list of filesystems.",
                                    mount_point, fs_type)
                     continue
 
                 # Process the filters
                 if self.exclude_reg.search(mount_point):
-                    self.log.debug("Ignoring %s since it is in the "
-                                   + "exclude_filter list.", mount_point)
+                    self.log.debug("Ignoring %s since it is in the " +
+                                   "exclude_filter list.", mount_point)
                     continue
 
-                if (mount_point.startswith('/dev')
-                    or mount_point.startswith('/proc')
-                        or mount_point.startswith('/sys')):
-                    continue
-
-                if '/' in device and mount_point.startswith('/'):
+                if ((('/' in device or device == 'tmpfs') and
+                     mount_point.startswith('/'))):
                     try:
                         stat = os.stat(mount_point)
-                        major = os.major(stat.st_dev)
-                        minor = os.minor(stat.st_dev)
                     except OSError:
                         self.log.debug("Path %s is not mounted - skipping.",
                                        mount_point)
                         continue
 
-                    if (major, minor) in result:
+                    if stat.st_dev in result:
                         continue
 
-                    result[(major, minor)] = {
+                    result[stat.st_dev] = {
                         'device': os.path.realpath(device),
                         'mount_point': mount_point,
                         'fs_type': fs_type
@@ -173,7 +171,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
 
             partitions = psutil.disk_partitions(False)
             for partition in partitions:
-                result[(0, len(result))] = {
+                result[len(result)] = {
                     'device': os.path.realpath(partition.device),
                     'mount_point': partition.mountpoint,
                     'fs_type': partition.fstype
@@ -189,7 +187,7 @@ class DiskSpaceCollector(diamond.collector.Collector):
             self.log.error('No diskspace metrics retrieved')
             return None
 
-        for key, info in results.iteritems():
+        for info in results.itervalues():
             if info['device'] in labels:
                 name = labels[info['device']]
             else:
@@ -197,15 +195,20 @@ class DiskSpaceCollector(diamond.collector.Collector):
                 name = name.replace('.', '_').replace('\\', '')
                 if name == '_':
                     name = 'root'
+                if name == '_tmp':
+                    name = 'tmp'
 
             if hasattr(os, 'statvfs'):  # POSIX
                 try:
                     data = os.statvfs(info['mount_point'])
-                except OSError, e:
+                except OSError as e:
                     self.log.exception(e)
                     continue
 
-                block_size = data.f_bsize
+                # Changed from data.f_bsize as f_frsize seems to be a more
+                # accurate representation of block size on multiple POSIX
+                # operating systems.
+                block_size = data.f_frsize
 
                 blocks_total = data.f_blocks
                 blocks_free = data.f_bfree

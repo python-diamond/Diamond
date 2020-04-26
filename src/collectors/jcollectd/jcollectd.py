@@ -108,6 +108,7 @@ class JCollectdCollector(diamond.collector.Collector):
 
 
 class ListenerThread(threading.Thread):
+
     def __init__(self, host, port, log, poll_interval=0.4):
         super(ListenerThread, self).__init__()
         self.name = 'JCollectdListener'  # thread name
@@ -120,7 +121,7 @@ class ListenerThread(threading.Thread):
         self.queue = Queue.Queue()
 
     def run(self):
-        self.log.info('ListenerThread started on {0}:{1}(udp)'.format(
+        self.log.info('ListenerThread started on {}:{}(udp)'.format(
             self.host, self.port))
 
         rdr = collectd_network.Reader(self.host, self.port)
@@ -130,11 +131,11 @@ class ListenerThread(threading.Thread):
                 try:
                     items = rdr.interpret(poll_interval=self.poll_interval)
                     self.send_to_collector(items)
-                except ValueError, e:
-                    self.log.warn('Dropping bad packet: {0}'.format(e))
-        except Exception, e:
-            self.log.error('caught exception: type={0}, exc={1}'.format(type(e),
-                                                                        e))
+                except ValueError as e:
+                    self.log.warn('Dropping bad packet: {}'.format(e))
+        except Exception as e:
+            self.log.error('caught exception: type={}, exc={}'.format(
+                type(e), e))
 
         self.log.info('ListenerThread - stop')
 
@@ -148,9 +149,9 @@ class ListenerThread(threading.Thread):
                 self.queue.put(metric)
             except Queue.Full:
                 self.log.error('Queue to collector is FULL')
-            except Exception, e:
-                self.log.error('B00M! type={0}, exception={1}'.format(type(e),
-                                                                      e))
+            except Exception as e:
+                self.log.error('B00M! type={}, exception={}'.format(
+                    type(e), e))
 
     def transform(self, item):
 
@@ -203,6 +204,7 @@ def sanitize_word(s):
 
 
 class Datapoint(object):
+
     def __init__(self, host, time, name, value, is_counter):
         self.host = host
         self.time = time

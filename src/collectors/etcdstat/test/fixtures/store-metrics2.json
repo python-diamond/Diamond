@@ -1,0 +1,18 @@
+{
+  "getsSuccess": 396632,
+  "getsFail": 255837,
+  "setsSuccess": 98571,
+  "setsFail": 12,
+  "deleteSuccess": 6,
+  "deleteFail": 6,
+  "updateSuccess": 2,
+  "updateFail": 0,
+  "createSuccess": 1294,
+  "createFail": 0,
+  "compareAndSwapSuccess": 4839,
+  "compareAndSwapFail": 136,
+  "compareAndDeleteSuccess": 1239,
+  "compareAndDeleteFail": 0,
+  "expireCount": 0,
+  "watchers": 0
+}

@@ -9,26 +9,6 @@ operations more fun and efficient.
 
  * [librato-metrics](https://github.com/librato/python-librato)
 
-#### Configuration
-
-Enable this handler
-
- * handlers = diamond.handler.libratohandler.LibratoHandler,
-
- * user = LIBRATO_USERNAME
- * apikey = LIBRATO_API_KEY
-
- * queue_max_size = [optional | 300] max measurements to queue before submitting
- * queue_max_interval [optional | 60] @max seconds to wait before submitting
-     For best behavior, be sure your highest collector poll interval is lower
-     than or equal to the queue_max_interval setting.
-
- * include_filters = [optional | '^.*'] A list of regex patterns.
-     Only measurements whose path matches a filter will be submitted.
-     Useful for limiting usage to *only* desired measurements, e.g.
-       include_filters = "^diskspace\..*\.byte_avail$", "^loadavg\.01"
-       include_filters = "^sockets\.",
-                                     ^ note trailing comma to indicate a list
 
 """
 
@@ -80,11 +60,20 @@ class LibratoHandler(Handler):
         config = super(LibratoHandler, self).get_default_config_help()
 
         config.update({
-            'user': '',
-            'apikey': '',
-            'queue_max_size': '',
-            'queue_max_interval': '',
-            'include_filters': '',
+            'user': 'Librato username',
+            'apikey': 'Librato API key',
+            'apply_metric_prefix': 'Allow diamond to apply metric prefix',
+            'queue_max_size': 'Max measurements to queue before submitting',
+            'queue_max_interval':
+                'Max seconds to wait before submitting. For best behavior, '
+                'be sure your highest collector poll interval is lower than '
+                'or equal to the queue_max_interval setting.',
+            'include_filters':
+                'A list of regex patterns. Only measurements whose path '
+                'matches a filter will be submitted. Useful for limiting '
+                'usage to *only* desired measurements, e.g. '
+                '`"^diskspace\..*\.byte_avail$", "^loadavg\.01"` or '
+                '`"^sockets\.",` (note trailing comma to indicate a list)',
         })
 
         return config
@@ -98,6 +87,7 @@ class LibratoHandler(Handler):
         config.update({
             'user': '',
             'apikey': '',
+            'apply_metric_prefix': False,
             'queue_max_size': 300,
             'queue_max_interval': 60,
             'include_filters': ['^.*'],
@@ -112,6 +102,8 @@ class LibratoHandler(Handler):
         path = metric.getCollectorPath()
         path += '.'
         path += metric.getMetricPath()
+        if self.config['apply_metric_prefix']:
+            path = metric.getPathPrefix() + '.' + path
 
         if self.include_reg.match(path):
             if metric.metric_type == 'GAUGE':

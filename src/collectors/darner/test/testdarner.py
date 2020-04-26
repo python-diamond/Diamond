@@ -15,6 +15,7 @@ from darner import DarnerCollector
 
 
 class TestDarnerCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('DarnerCollector', {
             'interval': 10,

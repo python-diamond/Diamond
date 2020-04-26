@@ -17,6 +17,7 @@ class WebsiteMonitorCollector(diamond.collector.Collector):
     """
     Gather HTTP response code and Duration of HTTP request
     """
+
     def get_default_config_help(self):
         config_help = super(WebsiteMonitorCollector,
                             self).get_default_config_help()
@@ -59,7 +60,7 @@ class WebsiteMonitorCollector(diamond.collector.Collector):
             self.publish('response_time.%s' % (resp.code), rt,
                          metric_type='COUNTER')
         # urllib2 will puke on non HTTP 200/OK URLs
-        except urllib2.URLError, e:
+        except urllib2.URLError as e:
             if e.code != 200:
                 # time in seconds since epoch as a floating number
                 end_time = time.time()
@@ -70,8 +71,8 @@ class WebsiteMonitorCollector(diamond.collector.Collector):
                 self.publish('response_time.%s' % (e.code), rt,
                              metric_type='COUNTER')
 
-        except IOError, e:
+        except IOError as e:
             self.log.error('Unable to open %s' % (self.config['URL']))
 
-        except Exception, e:
+        except Exception as e:
             self.log.error("Unknown error opening url: %s", e)

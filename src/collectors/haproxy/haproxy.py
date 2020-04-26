@@ -14,6 +14,7 @@ import re
 import urllib2
 import base64
 import csv
+import socket
 import diamond.collector
 
 
@@ -22,11 +23,14 @@ class HAProxyCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(HAProxyCollector, self).get_default_config_help()
         config_help.update({
+            'method': "Method to use for data collection. Possible values: " +
+                      "http, unix",
             'url': "Url to stats in csv format",
             'user': "Username",
             'pass': "Password",
-            'ignore_servers': "Ignore servers, just collect frontend and "
-                              + "backend stats",
+            'sock': "Path to admin UNIX-domain socket",
+            'ignore_servers': "Ignore servers, just collect frontend and " +
+                              "backend stats",
         })
         return config_help
 
@@ -36,10 +40,12 @@ class HAProxyCollector(diamond.collector.Collector):
         """
         config = super(HAProxyCollector, self).get_default_config()
         config.update({
+            'method':           'http',
             'path':             'haproxy',
             'url':              'http://localhost/haproxy?stats;csv',
             'user':             'admin',
             'pass':             'password',
+            'sock':             '/var/run/haproxy.sock',
             'ignore_servers':   False,
         })
         return config
@@ -53,7 +59,7 @@ class HAProxyCollector(diamond.collector.Collector):
         else:
             return self.config[key]
 
-    def get_csv_data(self, section=None):
+    def http_get_csv_data(self, section=None):
         """
         Request stats from HAProxy Server
         """
@@ -62,7 +68,7 @@ class HAProxyCollector(diamond.collector.Collector):
         try:
             handle = urllib2.urlopen(req)
             return handle.readlines()
-        except Exception, e:
+        except Exception as e:
             if not hasattr(e, 'code') or e.code != 401:
                 self.log.error("Error retrieving HAProxy stats. %s", e)
                 return metrics
@@ -72,8 +78,8 @@ class HAProxyCollector(diamond.collector.Collector):
         authline = e.headers['www-authenticate']
 
         # this regular expression is used to extract scheme and realm
-        authre = (r'''(?:\s*www-authenticate\s*:)?\s*'''
-                  + '''(\w*)\s+realm=['"]([^'"]+)['"]''')
+        authre = (r'''(?:\s*www-authenticate\s*:)?\s*''' +
+                  '''(\w*)\s+realm=['"]([^'"]+)['"]''')
         authobj = re.compile(authre, re.IGNORECASE)
         matchobj = authobj.match(authline)
         if not matchobj:
@@ -98,11 +104,29 @@ class HAProxyCollector(diamond.collector.Collector):
             handle = urllib2.urlopen(req)
             metrics = handle.readlines()
             return metrics
-        except IOError, e:
+        except IOError as e:
             # here we shouldn't fail if the USER/PASS is right
-            self.log.error("Error retrieving HAProxy stats. (Invalid username "
-                           + "or password?) %s", e)
+            self.log.error("Error retrieving HAProxy stats. " +
+                           "(Invalid username or password?) %s", e)
             return metrics
+
+    def unix_get_csv_data(self):
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        data = str()
+
+        try:
+            sock.connect(self.config['sock'])
+            sock.send('show stat\n')
+            while 1:
+                buf = sock.recv(4096)
+                if not buf:
+                    break
+                data += buf
+        except socket.error as e:
+            self.log.error("Error retrieving HAProxy stats. %s", e)
+            return []
+
+        return data.strip().split('\n')
 
     def _generate_headings(self, row):
         headings = {}
@@ -114,14 +138,22 @@ class HAProxyCollector(diamond.collector.Collector):
         """
         Collect HAProxy Stats
         """
-        csv_data = self.get_csv_data(section)
+        if self.config['method'] == 'http':
+            csv_data = self.http_get_csv_data(section)
+        elif self.config['method'] == 'unix':
+            csv_data = self.unix_get_csv_data()
+        else:
+            self.log.error("Unknown collection method: %s",
+                           self.config['method'])
+            csv_data = []
+
         data = list(csv.reader(csv_data))
         headings = self._generate_headings(data[0])
         section_name = section and self._sanitize(section.lower()) + '.' or ''
 
         for row in data:
-            if (self._get_config_value(section, 'ignore_servers')
-                    and row[1].lower() not in ['frontend', 'backend']):
+            if ((self._get_config_value(section, 'ignore_servers') and
+                 row[1].lower() not in ['frontend', 'backend'])):
                 continue
 
             part_one = self._sanitize(row[0].lower())

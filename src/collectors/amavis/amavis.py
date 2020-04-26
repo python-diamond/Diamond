@@ -15,6 +15,7 @@ import re
 
 import diamond.collector
 import diamond.convertor
+from diamond.collector import str_to_bool
 
 
 class AmavisCollector(diamond.collector.Collector):
@@ -26,8 +27,6 @@ class AmavisCollector(diamond.collector.Collector):
     # db, and I don't even want to get there
 
     matchers = [
-        re.compile(r'^\s*(?P<name>sysUpTime)\s+TimeTicks\s+(?P<time>\d+)\s+'
-                   r'\([\w:\., ]+\)\s*$'),
         re.compile(r'^\s*(?P<name>[\w]+)\s+(?P<time>[\d]+) s\s+'
                    r'(?P<frequency>[\d.]+) s/msg\s+\([\w]+\)\s*$'),
         re.compile(r'^\s*(?P<name>[\w.-]+)\s+(?P<count>[\d]+)\s+'
@@ -64,7 +63,7 @@ class AmavisCollector(diamond.collector.Collector):
         Collect memory stats
         """
         try:
-            if self.config['use_sudo']:
+            if str_to_bool(self.config['use_sudo']):
                 # Use -u instead of --user as the former is more portable. Not
                 # all versions of sudo support the long form --user.
                 cmdline = [
@@ -86,10 +85,13 @@ class AmavisCollector(diamond.collector.Collector):
                             if metric == 'name':
                                 continue
                             mtype = 'GAUGE'
+                            precision = 2
                             if metric in ('count', 'time'):
                                 mtype = 'COUNTER'
-                            self.publish("{0}.{1}".format(name, metric),
-                                         value, metric_type=mtype)
+                                precision = 0
+                            self.publish("{}.{}".format(name, metric),
+                                         value, metric_type=mtype,
+                                         precision=precision)
 
         except OSError as err:
             self.log.error("Could not run %s: %s",

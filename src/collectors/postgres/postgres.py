@@ -28,13 +28,16 @@ class PostgresqlCollector(diamond.collector.Collector):
         """
         Return help text for collector
         """
-        config_help = super(PostgresqlCollector, self).get_default_config_help()
+        config_help = super(PostgresqlCollector,
+                            self).get_default_config_help()
         config_help.update({
             'host': 'Hostname',
             'dbname': 'DB to connect to in order to get list of DBs in PgSQL',
             'user': 'Username',
             'password': 'Password',
             'port': 'Port number',
+            'password_provider': "Whether to auth with supplied password or"
+            " .pgpass file  <password|pgpass>",
             'sslmode': 'Whether to use SSL - <disable|allow|require|...>',
             'underscore': 'Convert _ to .',
             'extended': 'Enable collection of extended database stats.',
@@ -58,6 +61,7 @@ class PostgresqlCollector(diamond.collector.Collector):
             'user': 'postgres',
             'password': 'postgres',
             'port': 5432,
+            'password_provider': 'password',
             'sslmode': 'disable',
             'underscore': False,
             'extended': False,
@@ -160,9 +164,13 @@ class PostgresqlCollector(diamond.collector.Collector):
         else:
             conn_args['database'] = 'postgres'
 
+        # libpq will use ~/.pgpass only if no password supplied
+        if self.config['password_provider'] == 'pgpass':
+            del conn_args['password']
+
         try:
             conn = psycopg2.connect(**conn_args)
-        except Exception, e:
+        except Exception as e:
             self.log.error(e)
             raise e
 
@@ -191,7 +199,9 @@ class QueryStats(object):
         return datname
 
     def fetch(self, pg_version):
-        if float(pg_version) >= 9.2 and hasattr(self, 'post_92_query'):
+        if float(pg_version) >= 9.6 and hasattr(self, 'post_96_query'):
+            q = self.post_96_query
+        elif float(pg_version) >= 9.2 and hasattr(self, 'post_92_query'):
             q = self.post_92_query
         else:
             q = self.query
@@ -410,6 +420,33 @@ class ConnectionStateStats(QueryStats):
              ) AS tmp2
         ON tmp.mstate=tmp2.mstate ORDER BY 1
     """
+    post_96_query = """
+        SELECT tmp.state AS key,COALESCE(count,0) FROM
+               (VALUES ('active'),
+                       ('waiting'),
+                       ('idle'),
+                       ('idletransaction'),
+                       ('unknown')
+                ) AS tmp(state)
+        LEFT JOIN
+             (SELECT CASE WHEN wait_event IS NOT NULL THEN 'waiting'
+                          WHEN state= 'idle' THEN 'idle'
+                          WHEN state= 'idle in transaction'
+                          THEN 'idletransaction'
+                          WHEN state = 'active' THEN 'active'
+                          ELSE 'unknown' END AS state,
+                     count(*) AS count
+               FROM pg_stat_activity
+               WHERE pid != pg_backend_pid()
+               GROUP BY CASE WHEN wait_event IS NOT NULL THEN 'waiting'
+                          WHEN state= 'idle' THEN 'idle'
+                          WHEN state= 'idle in transaction'
+                          THEN 'idletransaction'
+                          WHEN state = 'active' THEN 'active'
+                          ELSE 'unknown' END
+             ) AS tmp2
+        ON tmp.state=tmp2.state ORDER BY 1
+    """
 
 
 class LockStats(QueryStats):
@@ -462,7 +499,7 @@ class WalSegmentStats(QueryStats):
     query = """
         SELECT count(*) AS segments
         FROM pg_ls_dir('pg_xlog') t(fn)
-        WHERE fn ~ '^[0-9A-Z]{{24}}\$'
+        WHERE fn ~ '^[0-9A-Z]{24}$'
     """
 
 

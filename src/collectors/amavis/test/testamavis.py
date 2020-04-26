@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 import os
 
@@ -12,12 +12,13 @@ from mock import patch
 import amavis
 from diamond.collector import Collector
 
-################################################################################
+##########################################################################
 
 MOCK_PATH = os.path.join(os.path.dirname(__file__), 'mock-amavisd-agent')
 
 
 class TestAmavisCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('AmavisCollector', {
             'amavisd_exe': MOCK_PATH,
@@ -31,7 +32,6 @@ class TestAmavisCollector(CollectorTestCase):
 
         # a couple of the metrics contained in mock-amavisd-agent
         metrics = {
-            'sysUpTime.time': 198103058,
             'OutMsgsSizeProtoSMTP.size': 116,
             'OutMsgsSizeProtoSMTP.frequency': 0,
             'OutMsgsSizeProtoSMTP.percentage': 96.4,
@@ -77,6 +77,6 @@ class TestAmavisCollector(CollectorTestCase):
         )
 
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

@@ -67,16 +67,16 @@ class NtpdCollector(diamond.collector.Collector):
 
             parts = line[1:].split()
 
-            data['stratum'] = parts[2]
-            data['when'] = parts[4]
-            if data['when'] == '-':
+            data['stratum'] = {'val': parts[2], 'precision': 0}
+            data['when'] = {'val': parts[4], 'precision': 0}
+            if data['when']['val'] == '-':
                 # sometimes, ntpq returns value '-' for 'when', continuos
                 # and try other system peer
                 continue
-            data['poll'] = parts[5]
-            data['reach'] = parts[6]
-            data['delay'] = parts[7]
-            data['jitter'] = parts[9]
+            data['poll'] = {'val': parts[5], 'precision': 0}
+            data['reach'] = {'val': parts[6], 'precision': 0}
+            data['delay'] = {'val': parts[7], 'precision': 6}
+            data['jitter'] = {'val': parts[9], 'precision': 6}
 
         def convert_to_second(when_ntpd_ouput):
             value = float(when_ntpd_ouput[:-1])
@@ -88,20 +88,20 @@ class NtpdCollector(diamond.collector.Collector):
                 return value * 86400
 
         if 'when' in data:
-            if data['when'] == '-':
+            if data['when']['val'] == '-':
                 self.log.warning('ntpq returned bad value for "when"')
                 return []
 
-            if data['when'].endswith(('m', 'h', 'd')):
-                data['when'] = convert_to_second(data['when'])
+            if data['when']['val'].endswith(('m', 'h', 'd')):
+                data['when']['val'] = convert_to_second(data['when']['val'])
 
         return data.items()
 
-    def get_ntpdc_output(self):
+    def get_ntpdc_kerninfo_output(self):
         return self.run_command([self.config['ntpdc_bin'], '-c', 'kerninfo'])
 
-    def get_ntpdc_stats(self):
-        output = self.get_ntpdc_output()
+    def get_ntpdc_kerninfo_stats(self):
+        output = self.get_ntpdc_kerninfo_output()
 
         data = {}
 
@@ -110,19 +110,46 @@ class NtpdCollector(diamond.collector.Collector):
             val = float(val.split()[0])
 
             if key == 'pll offset':
-                data['offset'] = val
+                data['offset'] = {'val': val, 'precision': 10}
             elif key == 'pll frequency':
-                data['frequency'] = val
+                data['frequency'] = {'val': val, 'precision': 6}
             elif key == 'maximum error':
-                data['max_error'] = val
+                data['max_error'] = {'val': val, 'precision': 6}
             elif key == 'estimated error':
-                data['est_error'] = val
+                data['est_error'] = {'val': val, 'precision': 6}
+            elif key == 'status':
+                data['status'] = {'val': val, 'precision': 0}
+
+        return data.items()
+
+    def get_ntpdc_sysinfo_output(self):
+        return self.run_command([self.config['ntpdc_bin'], '-c', 'sysinfo'])
+
+    def get_ntpdc_sysinfo_stats(self):
+        output = self.get_ntpdc_sysinfo_output()
+
+        data = {}
+
+        for line in output.splitlines():
+            key, val = line.split(':')[0:2]
+            try:
+                val = float(val.split()[0])
+
+                if key == 'root distance':
+                    data['root_distance'] = {'val': val, 'precision': 6}
+                elif key == 'root dispersion':
+                    data['root_dispersion'] = {'val': val, 'precision': 6}
+            except Exception:
+                pass
 
         return data.items()
 
     def collect(self):
-        for stat, val in self.get_ntpq_stats():
-            self.publish(stat, val)
+        for stat, v in self.get_ntpq_stats():
+            self.publish(stat, v['val'], precision=v['precision'])
 
-        for stat, val in self.get_ntpdc_stats():
-            self.publish(stat, val)
+        for stat, v in self.get_ntpdc_kerninfo_stats():
+            self.publish(stat, v['val'], precision=v['precision'])
+
+        for stat, v in self.get_ntpdc_sysinfo_stats():
+            self.publish(stat, v['val'], precision=v['precision'])

@@ -60,7 +60,7 @@ class SupervisordCollector(diamond.collector.Collector):
         server = None
         protocol = self.config['xmlrpc_server_protocol']
         path = self.config['xmlrpc_server_path']
-        uri = '{0}://{1}'.format(protocol, path)
+        uri = '{}://{}'.format(protocol, path)
 
         self.log.debug(
             'Attempting to connect to XML-RPC server "%s"', uri)
@@ -69,7 +69,7 @@ class SupervisordCollector(diamond.collector.Collector):
             server = xmlrpclib.ServerProxy(
                 'http://127.0.0.1',
                 supervisor.xmlrpc.SupervisorTransport(None, None, uri)
-                ).supervisor
+            ).supervisor
 
         elif protocol == 'http':
             server = xmlrpclib.Server(uri).supervisor

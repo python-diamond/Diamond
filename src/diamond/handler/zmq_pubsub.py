@@ -19,7 +19,6 @@ class zmqHandler (Handler):
     """
 
     def __init__(self, config=None):
-
         """
           Create a new instance of zmqHandler class
         """

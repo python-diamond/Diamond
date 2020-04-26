@@ -18,6 +18,7 @@ use it.
 
 from Handler import Handler
 import socket
+import time
 
 
 class GraphiteHandler(Handler):
@@ -39,7 +40,7 @@ class GraphiteHandler(Handler):
         self.proto = self.config['proto'].lower().strip()
         self.host = self.config['host']
         self.port = int(self.config['port'])
-        self.timeout = int(self.config['timeout'])
+        self.timeout = float(self.config['timeout'])
         self.keepalive = bool(self.config['keepalive'])
         self.keepaliveinterval = int(self.config['keepaliveinterval'])
         self.batch_size = int(self.config['batch'])
@@ -50,6 +51,8 @@ class GraphiteHandler(Handler):
         self.flow_info = self.config['flow_info']
         self.scope_id = self.config['scope_id']
         self.metrics = []
+        self.reconnect_interval = int(self.config['reconnect_interval'])
+        self.last_connect_timestamp = -1
 
         # Connect
         self._connect()
@@ -72,6 +75,8 @@ class GraphiteHandler(Handler):
             'keepaliveinterval': 'How frequently to send keepalives',
             'flow_info': 'IPv6 Flow Info',
             'scope_id': 'IPv6 Scope ID',
+            'reconnect_interval': 'How often (seconds) to reconnect to '
+                                  'graphite. Default (0) is never',
         })
 
         return config
@@ -94,6 +99,7 @@ class GraphiteHandler(Handler):
             'keepaliveinterval': 10,
             'flow_info': 0,
             'scope_id': 0,
+            'reconnect_interval': 0,
         })
 
         return config
@@ -135,6 +141,13 @@ class GraphiteHandler(Handler):
                 return
             self._reset_errors()
 
+    def _time_to_reconnect(self):
+        if self.reconnect_interval > 0:
+            if time.time() > (
+                    self.last_connect_timestamp + self.reconnect_interval):
+                return True
+        return False
+
     def _send(self):
         """
         Send data to graphite. Data that can not be sent will be queued.
@@ -152,6 +165,8 @@ class GraphiteHandler(Handler):
                     # Send data to socket
                     self._send_data(''.join(self.metrics))
                     self.metrics = []
+                    if self._time_to_reconnect():
+                        self._close()
             except Exception:
                 self._close()
                 self._throttle_error("GraphiteHandler: Error sending metrics.")
@@ -159,10 +174,10 @@ class GraphiteHandler(Handler):
         finally:
             if len(self.metrics) >= (
                     self.batch_size * self.max_backlog_multiplier):
-                trim_offset = (self.batch_size
-                               * self.trim_backlog_multiplier * -1)
-                self.log.warn('GraphiteHandler: Trimming backlog. Removing'
-                              + ' oldest %d and keeping newest %d metrics',
+                trim_offset = (self.batch_size *
+                               self.trim_backlog_multiplier * -1)
+                self.log.warn('GraphiteHandler: Trimming backlog. Removing' +
+                              ' oldest %d and keeping newest %d metrics',
                               len(self.metrics) - abs(trim_offset),
                               abs(trim_offset))
                 self.metrics = self.metrics[trim_offset:]
@@ -187,7 +202,7 @@ class GraphiteHandler(Handler):
             connection_struct = (self.host, self.port)
             try:
                 addrinfo = socket.getaddrinfo(self.host, self.port, 0, stream)
-            except socket.gaierror, ex:
+            except socket.gaierror as ex:
                 self.log.error("GraphiteHandler: Error looking up graphite host"
                                " '%s' - %s",
                                self.host, ex)
@@ -226,7 +241,8 @@ class GraphiteHandler(Handler):
             self.log.debug("GraphiteHandler: Established connection to "
                            "graphite server %s:%d.",
                            self.host, self.port)
-        except Exception, ex:
+            self.last_connect_timestamp = time.time()
+        except Exception as ex:
             # Log Error
             self._throttle_error("GraphiteHandler: Failed to connect to "
                                  "%s:%i. %s.", self.host, self.port, ex)

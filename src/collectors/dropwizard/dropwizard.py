@@ -3,10 +3,6 @@
 """
 Collect [dropwizard](http://dropwizard.codahale.com/) stats for the local node
 
-#### Dependencies
-
- * urlib2
-
 """
 
 import urllib2
@@ -50,15 +46,15 @@ class DropwizardCollector(diamond.collector.Collector):
             self.config['host'], int(self.config['port']))
         try:
             response = urllib2.urlopen(url)
-        except urllib2.HTTPError, err:
+        except urllib2.HTTPError as err:
             self.log.error("%s: %s", url, err)
             return
 
         try:
             result = json.load(response)
         except (TypeError, ValueError):
-            self.log.error("Unable to parse response from elasticsearch as a"
-                           + " json object")
+            self.log.error("Unable to parse response from elasticsearch as" +
+                           " a json object")
             return
 
         metrics = {}

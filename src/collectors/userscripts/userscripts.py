@@ -71,7 +71,7 @@ class UserScriptsCollector(diamond.collector.Collector):
                                         stdout=subprocess.PIPE,
                                         stderr=subprocess.PIPE)
                 (out, err) = proc.communicate()
-            except subprocess.CalledProcessError, e:
+            except subprocess.CalledProcessError as e:
                 self.log.error("%s error launching: %s; skipping" %
                                (absolutescriptpath, e))
                 continue
@@ -82,7 +82,7 @@ class UserScriptsCollector(diamond.collector.Collector):
                 self.log.info("%s return no output" % absolutescriptpath)
                 continue
             if err:
-                self.log.error("%s return error output: %s" %
+                self.log.error("%s returned error output (stderr): %s" %
                                (absolutescriptpath, err))
             # Use filter to remove empty lines of output
             for line in filter(None, out.split('\n')):
@@ -91,7 +91,7 @@ class UserScriptsCollector(diamond.collector.Collector):
                     name, value = line.split()
                     float(value)
                 except ValueError:
-                    self.log.error("%s returned error output: %s" %
+                    self.log.error("%s returned invalid/unparsable output: %s" %
                                    (absolutescriptpath, line))
                     continue
                 name, value = line.split()

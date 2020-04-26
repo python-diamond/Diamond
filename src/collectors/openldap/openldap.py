@@ -98,7 +98,7 @@ class OpenLDAPCollector(diamond.collector.Collector):
         'threads.backload': {
             'base': 'cn=Backload,cn=Threads,cn=Monitor',
             'attr': 'monitoredInfo'},
-        }
+    }
 
     def get_default_config_help(self):
         config_help = super(OpenLDAPCollector, self).get_default_config_help()
@@ -160,7 +160,7 @@ class OpenLDAPCollector(diamond.collector.Collector):
             datapoints = self.get_datapoints(ldap_url,
                                              self.config['username'],
                                              self.config['password'])
-        except Exception, e:
+        except Exception as e:
             self.log.error('Unable to query %s: %s' % (ldap_url, e))
             return {}
 

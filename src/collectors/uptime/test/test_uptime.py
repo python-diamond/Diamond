@@ -19,6 +19,7 @@ from uptime import UptimeCollector
 
 
 class TestUptimeCollector(CollectorTestCase):
+
     def setUp(self, config=None):
         if config is None:
             config = get_collector_config('UptimeCollector', {

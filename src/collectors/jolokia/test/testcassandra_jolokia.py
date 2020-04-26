@@ -1,21 +1,21 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import Mock
 from mock import patch
 
 from diamond.collector import Collector
 
 from cassandra_jolokia import CassandraJolokiaCollector
 
-################################################################################
+##########################################################################
 
 
 class TestCassandraJolokiaCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('CassandraJolokiaCollector', {})
 
@@ -23,13 +23,13 @@ class TestCassandraJolokiaCollector(CollectorTestCase):
 
     # Used for all the tests so the expected numbers are all the same.
     def fixture_a(self):
-        values = [0]*92
+        values = [0] * 92
         values[30:56] = [3, 3, 1, 1, 8, 5, 6, 1, 6, 5, 3, 8, 9, 10, 7, 8, 7, 5,
                          5, 5, 3, 3, 2, 2, 2]
         return values
 
     def empty_fixture_values(self):
-        return [0]*91
+        return [0] * 91
 
     def expected_fixture_a_p(self, percentile_key):
         return {
@@ -129,6 +129,6 @@ class TestCassandraJolokiaCollector(CollectorTestCase):
             self.expected_fixture_a_p('p99')
         })
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

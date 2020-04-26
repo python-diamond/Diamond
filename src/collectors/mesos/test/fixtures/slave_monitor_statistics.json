@@ -1,0 +1,53 @@
+[
+  {
+    "executor_id": "task_name.09b6f20c-b6a9-11e4-99f6-fa163ef210c0",
+    "executor_name": "Command Executor (Task: task_name.09b6f20c-b6a9-11e4-99f6-fa163ef210c0) (Command: sh -c 'task-0....')",
+    "framework_id": "105146",
+    "source": "task_name.09b6f20c-b6a9-11e4-99f6-fa163ef210c0",
+    "statistics": {
+      "cpus_limit": 0.6,
+      "cpus_system_time_secs": 1.11,
+      "cpus_user_time_secs": 7.52,
+      "mem_anon_bytes": 101916672,
+      "mem_file_bytes": 970752,
+      "mem_limit_bytes": 557842432,
+      "mem_mapped_file_bytes": 32768,
+      "mem_rss_bytes": 102981632,
+      "timestamp": 1422535725.82341
+    }
+  },
+  {
+    "executor_id": "task_name.06247c78-b6a9-11e4-99f6-fa163ef210c0",
+    "executor_name": "Command Executor (Task: task_name.06247c78-b6a9-11e4-99f6-fa163ef210c0) (Command: sh -c 'task-0....')",
+    "framework_id": "105146",
+    "source": "task_name.06247c78-b6a9-11e4-99f6-fa163ef210c0",
+    "statistics": {
+      "cpus_limit": 1.1,
+      "cpus_system_time_secs": 0.56,
+      "cpus_user_time_secs": 10.65,
+      "mem_anon_bytes": 220131328,
+      "mem_file_bytes": 45056,
+      "mem_limit_bytes": 1107296256,
+      "mem_mapped_file_bytes": 32768,
+      "mem_rss_bytes": 220176384,
+      "timestamp": 1424179791.66802
+    }
+  },
+  {
+    "executor_id": "com.domain.group_anotherApp.08002432371b",
+    "executor_name": "Command Executor (Task: com.domain.group_anotherApp.08002432371b) (Command: sh -c 'start...')",
+    "framework_id": "105146",
+    "source": "com.domain.group_anotherApp.08002432371b",
+    "statistics": {
+      "cpus_limit": 1.6,
+      "cpus_system_time_secs": 2.19,
+      "cpus_user_time_secs": 7.74,
+      "mem_anon_bytes": 103370752,
+      "mem_file_bytes": 86016,
+      "mem_limit_bytes": 557842432,
+      "mem_mapped_file_bytes": 45056,
+      "mem_rss_bytes": 103456768,
+      "timestamp": 1422535725.82344
+    }
+  }
+]

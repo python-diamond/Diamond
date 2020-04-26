@@ -1,20 +1,22 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
+from mock import MagicMock
 from mock import Mock
 from mock import patch
 
 from diamond.collector import Collector
 from memcached import MemcachedCollector
 
-################################################################################
+##########################################################################
 
 
 class TestMemcachedCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('MemcachedCollector', {
             'interval': 10,
@@ -25,6 +27,15 @@ class TestMemcachedCollector(CollectorTestCase):
 
     def test_import(self):
         self.assertTrue(MemcachedCollector)
+
+    @patch('socket.socket')
+    def test_get_raw_stats_works_across_packet_boundaries(self, socket_mock):
+        socket_instance = MagicMock()
+        socket_mock.return_value = socket_instance
+        stats_packets = ['stat foo 1\r\n', 'END\r\n']
+        socket_instance.recv.side_effect = stats_packets
+        stats = self.collector.get_raw_stats('', None)
+        self.assertEqual(stats, ''.join(stats_packets))
 
     @patch.object(Collector, 'publish')
     def test_should_work_with_real_data(self, publish_mock):
@@ -89,6 +100,6 @@ class TestMemcachedCollector(CollectorTestCase):
                            defaultpath=self.collector.config['path'])
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

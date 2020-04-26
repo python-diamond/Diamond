@@ -11,6 +11,7 @@ class Handler(object):
     """
     Handlers process metrics that are collected by Collectors.
     """
+
     def __init__(self, config=None, log=None):
         """
         Create a new instance of the Handler class
@@ -35,7 +36,8 @@ class Handler(object):
         self.config.merge(config)
 
         # error logging throttling
-        self.server_error_interval = float(self.config['server_error_interval'])
+        self.server_error_interval = float(
+            self.config['server_error_interval'])
         self._errors = {}
 
         # Initialize Lock

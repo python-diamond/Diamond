@@ -14,7 +14,6 @@ get realtime cumulative stats.
 """
 
 import socket
-import sys
 
 try:
     import json
@@ -25,11 +24,7 @@ import diamond.collector
 
 from diamond.collector import str_to_bool
 
-if sys.version_info < (2, 6):
-    from string import maketrans
-    DOTS_TO_UNDERS = maketrans('.', '_')
-else:
-    DOTS_TO_UNDERS = {ord(u'.'): u'_'}
+DOTS_TO_UNDERS = {ord(u'.'): u'_'}
 
 
 class PostfixCollector(diamond.collector.Collector):
@@ -108,7 +103,7 @@ class PostfixCollector(diamond.collector.Collector):
 
                 dvalue = self.derivative(metric, value)
 
-                self.publish(metric, dvalue)
+                self.publish(metric, dvalue, precision=4)
 
         for action in (u'in', u'recv', u'send'):
             if action not in data:
@@ -122,7 +117,7 @@ class PostfixCollector(diamond.collector.Collector):
 
                     dvalue = self.derivative(metric, value)
 
-                    self.publish(metric, dvalue)
+                    self.publish(metric, dvalue, precision=4)
 
         if u'local' in data:
             for key, value in data[u'local'].iteritems():
@@ -130,4 +125,4 @@ class PostfixCollector(diamond.collector.Collector):
 
                 dvalue = self.derivative(metric, value)
 
-                self.publish(metric, dvalue)
+                self.publish(metric, dvalue, precision=4)

@@ -20,8 +20,10 @@ import diamond.collector
 
 
 class SidekiqWebCollector(diamond.collector.Collector):
+
     def get_default_config_help(self):
-        config_help = super(SidekiqWebCollector, self).get_default_config_help()
+        config_help = super(SidekiqWebCollector,
+                            self).get_default_config_help()
         config_help.update({
         })
         return config_help
@@ -42,13 +44,13 @@ class SidekiqWebCollector(diamond.collector.Collector):
         try:
             response = urllib2.urlopen("http://%s:%s/dashboard/stats" % (
                 self.config['host'], int(self.config['port'])))
-        except Exception, e:
+        except Exception as e:
             self.log.error('Couldnt connect to sidekiq-web: %s', e)
             return {}
 
         try:
             j = json.loads(response.read())
-        except Exception, e:
+        except Exception as e:
             self.log.error('Couldnt parse json: %s', e)
             return {}
 

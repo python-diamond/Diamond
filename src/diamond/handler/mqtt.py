@@ -59,9 +59,6 @@ which subscribes to an MQTT broker and sends metrics off to Graphite.
 
 """
 
-__author__ = 'Jan-Piet Mens'
-__email__ = 'jpmens@gmail.com'
-
 from Handler import Handler
 from diamond.collector import get_hostname
 import os
@@ -75,6 +72,9 @@ try:
     import mosquitto
 except ImportError:
     mosquitto = None
+
+__author__ = 'Jan-Piet Mens'
+__email__ = 'jpmens@gmail.com'
 
 
 class MQTTHandler(Handler):
@@ -141,8 +141,8 @@ class MQTTHandler(Handler):
                     tls_version=3,
                     ciphers=None)
             except:
-                self.log.error("MQTTHandler: Cannot set up TLS "
-                               + "configuration. Files missing?")
+                self.log.error("MQTTHandler: Cannot set up TLS " +
+                               "configuration. Files missing?")
 
         self.mqttc.will_set("clients/diamond/%s" % (self.hostname),
                             payload="Adios!", qos=0, retain=False)

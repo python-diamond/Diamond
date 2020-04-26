@@ -8,6 +8,7 @@ import os
 
 
 class DebugFormatter(logging.Formatter):
+
     def __init__(self, fmt=None):
         if fmt is None:
             fmt = ('%(created)s\t' +
@@ -34,27 +35,23 @@ class DebugFormatter(logging.Formatter):
 def setup_logging(configfile, stdout=False):
     log = logging.getLogger('diamond')
 
-    if stdout:
-        log.setLevel(logging.DEBUG)
-        streamHandler = logging.StreamHandler(sys.stdout)
-        streamHandler.setFormatter(DebugFormatter())
-        streamHandler.setLevel(logging.DEBUG)
-        log.addHandler(streamHandler)
-    else:
-        try:
-            if sys.version_info >= (2, 6):
-                logging.config.fileConfig(configfile,
-                                          disable_existing_loggers=False)
-            else:
-                # python <= 2.5 does not have disable_existing_loggers
-                # default was to always disable them, in our case we want to
-                # keep any logger created by handlers
-                logging.config.fileConfig(configfile)
-                for logger in logging.root.manager.loggerDict.values():
-                    logger.disabled = 0
-        except Exception, e:
-            sys.stderr.write("Error occurs when initialize logging: ")
-            sys.stderr.write(str(e))
-            sys.stderr.write(os.linesep)
+    try:
+        logging.config.fileConfig(configfile, disable_existing_loggers=False)
+
+        # if the stdout flag is set, we use the log level of the root logger
+        # for logging to stdout, and keep all loggers defined in the conf file
+        if stdout:
+            rootLogLevel = logging.getLogger().getEffectiveLevel()
+
+            log.setLevel(rootLogLevel)
+            streamHandler = logging.StreamHandler(sys.stdout)
+            streamHandler.setFormatter(DebugFormatter())
+            streamHandler.setLevel(rootLogLevel)
+            log.addHandler(streamHandler)
+
+    except Exception as e:
+        sys.stderr.write("Error occurs when initialize logging: ")
+        sys.stderr.write(str(e))
+        sys.stderr.write(os.linesep)
 
     return log

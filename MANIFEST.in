@@ -1,9 +1,9 @@
 include         LICENSE
-include         README.md
 include         MANIFEST.in
 include         version.txt
 include         .keep
 include         rpm/upstart/diamond.conf
+include         rpm/systemd/diamond.service
 graft           bin
 graft           debian
 graft           conf

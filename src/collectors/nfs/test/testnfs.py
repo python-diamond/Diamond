@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -16,10 +16,11 @@ except ImportError:
 from diamond.collector import Collector
 from nfs import NfsCollector
 
-################################################################################
+##########################################################################
 
 
 class TestNfsCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('NfsCollector', {
             'interval': 1
@@ -248,6 +249,6 @@ class TestNfsCollector(CollectorTestCase):
 
         self.assertPublishedMany(publish_mock, metrics)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

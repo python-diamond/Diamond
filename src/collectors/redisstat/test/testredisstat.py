@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -12,7 +12,7 @@ from mock import patch, call
 from diamond.collector import Collector
 from redisstat import RedisCollector
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_redis_is_available(func):
@@ -28,6 +28,7 @@ def run_only_if_redis_is_available(func):
 
 
 class TestRedisCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('RedisCollector', {
             'interval': '1',
@@ -135,27 +136,37 @@ class TestRedisCollector(CollectorTestCase):
 
         patch_collector = patch.object(RedisCollector, '_get_info',
                                        Mock(return_value=data_1))
+        patch_config = patch.object(RedisCollector, '_get_config',
+                                    Mock(return_value={'maxmemory': '2097152'}))
         patch_time = patch('time.time', Mock(return_value=10))
 
         patch_collector.start()
+        patch_config.start()
         patch_time.start()
         self.collector.collect()
         patch_collector.stop()
+        patch_config.stop()
         patch_time.stop()
 
         self.assertPublishedMany(publish_mock, {})
 
         patch_collector = patch.object(RedisCollector, '_get_info',
                                        Mock(return_value=data_2))
+        patch_config = patch.object(RedisCollector, '_get_config',
+                                    Mock(return_value={'maxmemory': '2097152'}))
         patch_time = patch('time.time', Mock(return_value=20))
 
         patch_collector.start()
+        patch_config.start()
         patch_time.start()
         self.collector.collect()
         patch_collector.stop()
+        patch_config.stop()
         patch_time.stop()
 
         metrics = {'6379.process.uptime': 95732,
+                   '6379.replication.master': 1,
+                   '6379.replication.master_sync_in_progress': 0,
                    '6379.pubsub.channels': 1,
                    '6379.slaves.connected': 2,
                    '6379.slaves.last_io': 7,
@@ -177,6 +188,7 @@ class TestRedisCollector(CollectorTestCase):
                    '6379.keys.expired': 0,
                    '6379.keys.evicted': 0,
                    '6379.keyspace.hits': 5700,
+                   '6379.memory.used_percent': 82.31,
                    }
 
         self.assertPublishedMany(publish_mock, metrics)
@@ -290,10 +302,34 @@ class TestRedisCollector(CollectorTestCase):
             self.assertEqual(mock.call_count, expected_call_count,
                              msg='[%s] mock.calls=%d != expected_calls=%d' %
                              (testname, mock.call_count, expected_call_count))
-            for exp_call in data['calls']:
-                # Test expected calls 1 by 1,
-                # because self.instances is a dict (=random order)
-                mock.assert_has_calls(exp_call)
+            mock.assert_has_calls(data['calls'], any_order=True)
+
+    @run_only_if_redis_is_available
+    @patch.object(Collector, 'publish')
+    def test_process_config_with_instances(self, publish_mock):
+
+        config_data = {
+            'instances': [
+                'nick1@host1:1111',
+                'nick2@:2222',
+                'nick3@host3',
+                'nick4@host4:3333/@pass/word',
+                'bla'
+            ]
+        }
+
+        expected_processed_config = {
+            'nick2': ('localhost', 2222, None, None),
+            'nick3': ('host3', 6379, None, None),
+            'nick1': ('host1', 1111, None, None),
+            'nick4': ('host4', 3333, None, '@pass/word'),
+            '6379': ('bla', 6379, None, None)
+        }
+
+        config = get_collector_config('RedisCollector', config_data)
+        collector = RedisCollector(config, None)
+
+        self.assertEqual(collector.instances, expected_processed_config)
 
     @run_only_if_redis_is_available
     @patch.object(Collector, 'publish')
@@ -309,6 +345,7 @@ class TestRedisCollector(CollectorTestCase):
             ]
         }
         get_info_data = {
+            'role': 'slave',
             'total_connections_received': 200,
             'total_commands_processed': 100,
         }
@@ -317,21 +354,31 @@ class TestRedisCollector(CollectorTestCase):
                  metric_type='GAUGE'),
             call('nick1.process.commands_processed', 100, precision=0,
                  metric_type='GAUGE'),
+            call('nick1.replication.master', 0, precision=0,
+                 metric_type='GAUGE'),
             call('nick2.process.connections_received', 200, precision=0,
                  metric_type='GAUGE'),
             call('nick2.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
+            call('nick2.replication.master', 0, precision=0,
                  metric_type='GAUGE'),
             call('nick3.process.connections_received', 200, precision=0,
                  metric_type='GAUGE'),
             call('nick3.process.commands_processed', 100, precision=0,
                  metric_type='GAUGE'),
+            call('nick3.replication.master', 0, precision=0,
+                 metric_type='GAUGE'),
             call('nick4.process.connections_received', 200, precision=0,
                  metric_type='GAUGE'),
             call('nick4.process.commands_processed', 100, precision=0,
                  metric_type='GAUGE'),
+            call('nick4.replication.master', 0, precision=0,
+                 metric_type='GAUGE'),
             call('6379.process.connections_received', 200, precision=0,
                  metric_type='GAUGE'),
             call('6379.process.commands_processed', 100, precision=0,
+                 metric_type='GAUGE'),
+            call('6379.replication.master', 0, precision=0,
                  metric_type='GAUGE'),
         ]
 
@@ -346,12 +393,9 @@ class TestRedisCollector(CollectorTestCase):
         patch_c.stop()
 
         self.assertEqual(publish_mock.call_count, len(expected_calls))
-        for exp_call in expected_calls:
-            # Test expected calls 1 by 1,
-            # because self.instances is a dict (=random order)
-            publish_mock.assert_has_calls(exp_call)
+        publish_mock.assert_has_calls(expected_calls, any_order=True)
 
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

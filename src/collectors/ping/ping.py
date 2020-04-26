@@ -29,7 +29,8 @@ for your targets in pairs like:
 
 'target_1': 'example.org'
 
-We extract out the key after target_ and use it in the graphite node we push.
+The graphite nodes pushed are derived from the pinged hostnames by replacing all
+dots with underscores, i.e. 'www.example.org' becomes 'www_example_org'.
 
 """
 
@@ -77,4 +78,4 @@ class PingCollector(diamond.collector.ProcessCollector):
                 else:
                     metric_value = 10000
 
-                self.publish(metric_name, metric_value)
+                self.publish(metric_name, metric_value, precision=3)

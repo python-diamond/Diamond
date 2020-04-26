@@ -48,11 +48,13 @@ class MemcachedCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(MemcachedCollector, self).get_default_config_help()
         config_help.update({
-            'publish': "Which rows of 'status' you would like to publish."
-            + " Telnet host port' and type stats and hit enter to see the list"
-            + " of possibilities. Leave unset to publish all.",
-            'hosts': "List of hosts, and ports to collect. Set an alias by "
-            + " prefixing the host:port with alias@",
+            'publish':
+                "Which rows of 'status' you would like to publish." +
+                " Telnet host port' and type stats and hit enter to see the" +
+                " list of possibilities. Leave unset to publish all.",
+            'hosts':
+                "List of hosts, and ports to collect. Set an alias by " +
+                " prefixing the host:port with alias@",
         })
         return config_help
 
@@ -85,13 +87,26 @@ class MemcachedCollector(diamond.collector.Collector):
             else:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.connect((host, int(port)))
+
+            # give up after a reasonable amount of time
+            sock.settimeout(3)
+
             # request stats
             sock.send('stats\n')
-            # something big enough to get whatever is sent back
-            data = sock.recv(4096)
+
+            # stats can be sent across multiple packets, so make sure we've
+            # read up until the END marker
+            while True:
+                received = sock.recv(4096)
+                if not received:
+                    break
+                data += received
+                if data.endswith('END\r\n'):
+                    break
         except socket.error:
             self.log.exception('Failed to get stats from %s:%s',
                                host, port)
+        sock.close()
         return data
 
     def get_stats(self, host, port):

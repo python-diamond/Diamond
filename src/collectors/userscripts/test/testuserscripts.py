@@ -1,9 +1,8 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 import os
-import sys
 
 from test import CollectorTestCase
 from test import get_collector_config
@@ -14,22 +13,17 @@ from mock import patch
 from diamond.collector import Collector
 from userscripts import UserScriptsCollector
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_kitchen_is_available(func):
-    if sys.version_info < (2, 7):
-        try:
-            from kitchen.pycompat27 import subprocess
-        except ImportError:
-            subprocess = None
-    else:
-        import subprocess
+    import subprocess
     pred = lambda: subprocess is not None
     return run_only(func, pred)
 
 
 class TestUserScriptsCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('UserScriptsCollector', {
             'interval': 10,
@@ -64,6 +58,6 @@ class TestUserScriptsCollector(CollectorTestCase):
         # be due to raising an exception. Meh.
         assert publish_mock.call_args_list
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

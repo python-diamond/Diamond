@@ -25,6 +25,7 @@ from diamond.utils.classes import load_handlers
 from diamond.utils.classes import load_include_path
 
 from diamond.utils.config import load_config
+from diamond.utils.config import str_to_bool
 
 from diamond.utils.scheduler import collector_process
 from diamond.utils.scheduler import handler_process
@@ -49,6 +50,7 @@ class Server(object):
         self.handlers = []
         self.handler_queue = []
         self.modules = {}
+        self.metric_queue = None
 
         # We do this weird process title swap around to get the sync manager
         # title correct for ps
@@ -58,25 +60,28 @@ class Server(object):
         self.manager = multiprocessing.Manager()
         if setproctitle:
             setproctitle(oldproctitle)
-        self.metric_queue = self.manager.Queue()
 
     def run(self):
         """
         Load handler and collector classes and then start collectors
         """
 
-        ########################################################################
+        #######################################################################
         # Config
-        ########################################################################
+        #######################################################################
         self.config = load_config(self.configfile)
 
         collectors = load_collectors(self.config['server']['collectors_path'])
+        metric_queue_size = int(self.config['server'].get('metric_queue_size',
+                                                          16384))
+        self.metric_queue = self.manager.Queue(maxsize=metric_queue_size)
+        self.log.debug('metric_queue_size: %d', metric_queue_size)
 
-        ########################################################################
+        #######################################################################
         # Handlers
         #
         # TODO: Eventually move each handler to it's own process space?
-        ########################################################################
+        #######################################################################
 
         if 'handlers_path' in self.config['server']:
             handlers_path = self.config['server']['handlers_path']
@@ -106,27 +111,28 @@ class Server(object):
         QueueHandler = load_dynamic_class(
             'diamond.handler.queue.QueueHandler',
             Handler
-            )
+        )
 
         self.handler_queue = QueueHandler(
             config=self.config, queue=self.metric_queue, log=self.log)
 
-        process = multiprocessing.Process(
+        handlers_process = multiprocessing.Process(
             name="Handlers",
             target=handler_process,
             args=(self.handlers, self.metric_queue, self.log),
         )
 
-        process.daemon = True
-        process.start()
+        handlers_process.daemon = True
+        handlers_process.start()
 
-        ########################################################################
+        #######################################################################
         # Signals
-        ########################################################################
+        #######################################################################
 
-        signal.signal(signal.SIGHUP, signal_to_exception)
+        if hasattr(signal, 'SIGHUP'):
+            signal.signal(signal.SIGHUP, signal_to_exception)
 
-        ########################################################################
+        #######################################################################
 
         while True:
             try:
@@ -160,6 +166,8 @@ class Server(object):
                     for cls in collectors.values()
                 )
 
+                load_delay = self.config['server'].get('collectors_load_delay',
+                                                       1.0)
                 for process_name in running_collectors - running_processes:
                     # To handle running multiple collectors concurrently, we
                     # split on white space and use the first word as the
@@ -186,22 +194,34 @@ class Server(object):
                         continue
 
                     # Splay the loads
-                    time.sleep(1)
+                    time.sleep(float(load_delay))
 
                     process = multiprocessing.Process(
                         name=process_name,
                         target=collector_process,
                         args=(collector, self.metric_queue, self.log)
-                        )
+                    )
                     process.daemon = True
                     process.start()
+
+                if not handlers_process.is_alive():
+                    self.log.error('Handlers process exited')
+                    if (str_to_bool(self.config['server'].get(
+                            'abort_on_handlers_process_exit', 'False'))):
+                        raise Exception('Handlers process exited')
 
                 ##############################################################
 
                 time.sleep(1)
 
             except SIGHUPException:
+                # ignore further SIGHUPs for now
+                original_sighup_handler = signal.getsignal(signal.SIGHUP)
+                signal.signal(signal.SIGHUP, signal.SIG_IGN)
+
                 self.log.info('Reloading state due to HUP')
                 self.config = load_config(self.configfile)
                 collectors = load_collectors(
                     self.config['server']['collectors_path'])
+                # restore SIGHUP handler
+                signal.signal(signal.SIGHUP, original_sighup_handler)

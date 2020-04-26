@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
-################################################################################
+##########################################################################
 
 import os
 import time
@@ -13,7 +13,7 @@ from mock import patch
 from diamond.collector import Collector
 from processresources import ProcessResourcesCollector
 
-################################################################################
+##########################################################################
 
 
 def run_only_if_psutil_is_available(func):
@@ -40,6 +40,10 @@ class TestProcessResourcesCollector(CollectorTestCase):
             },
             'barexe': {
                 'exe': 'bar$'
+            },
+            'noprocess': {
+                'name': 'noproc',
+                'count_workers': 'true'
             },
             'diamond-selfmon': {
                 'selfmon': 'true',
@@ -138,6 +142,7 @@ class TestProcessResourcesCollector(CollectorTestCase):
         ]
 
         class ProcessMock:
+
             def __init__(self, pid, name, rss, vms, exe=None):
                 self.pid = pid
                 self.name = name
@@ -149,7 +154,7 @@ class TestProcessResourcesCollector(CollectorTestCase):
                 self.cmdline = [self.exe]
                 self.create_time = 0
 
-            def as_dict(self):
+            def as_dict(self, attrs=None, ad_value=None):
                 from collections import namedtuple
                 meminfo = namedtuple('meminfo', 'rss vms')
                 ext_meminfo = namedtuple('meminfo',
@@ -178,13 +183,13 @@ class TestProcessResourcesCollector(CollectorTestCase):
                     'username': 'root',
                     'cpu_times': cputimes(user=0.27, system=1.05),
                     'io_counters': None,
-                    'ext_memory_info': ext_meminfo(rss=self.rss,
-                                                   vms=self.vms,
-                                                   shared=1310720,
-                                                   text=188416,
-                                                   lib=0,
-                                                   data=868352,
-                                                   dirty=0),
+                    'memory_info_ex': ext_meminfo(rss=self.rss,
+                                                  vms=self.vms,
+                                                  shared=1310720,
+                                                  text=188416,
+                                                  lib=0,
+                                                  data=868352,
+                                                  dirty=0),
                     'threads': [thread(id=1, user_time=0.27, system_time=1.04)],
                     'open_files': None,
                     'name': self.name,
@@ -215,14 +220,16 @@ class TestProcessResourcesCollector(CollectorTestCase):
         patch_psutil_process_iter.stop()
         self.assertPublished(publish_mock, 'foo.uptime', 1234567890)
         self.assertPublished(publish_mock, 'foo.num_fds', 10)
-        self.assertPublished(publish_mock, 'postgres.ext_memory_info.rss',
+        self.assertPublished(publish_mock, 'postgres.memory_info_ex.rss',
                              1000000 + 100000 + 10000 + 1000 + 100)
-        self.assertPublished(publish_mock, 'foo.ext_memory_info.rss', 1)
-        self.assertPublished(publish_mock, 'bar.ext_memory_info.rss', 3)
-        self.assertPublished(publish_mock, 'barexe.ext_memory_info.rss', 3)
+        self.assertPublished(publish_mock, 'foo.memory_info_ex.rss', 1)
+        self.assertPublished(publish_mock, 'bar.memory_info_ex.rss', 3)
+        self.assertPublished(publish_mock, 'barexe.memory_info_ex.rss', 3)
         self.assertPublished(publish_mock,
-                             'diamond-selfmon.ext_memory_info.rss', 1234)
+                             'diamond-selfmon.memory_info_ex.rss', 1234)
+        self.assertPublished(publish_mock, 'noprocess.workers_count', 0)
+        self.assertUnpublished(publish_mock, 'noprocess.uptime', 0)
 
-################################################################################
+##########################################################################
 if __name__ == "__main__":
     unittest.main()

@@ -20,6 +20,7 @@ from vmstat import VMStatCollector
 
 
 class TestVMStatCollector(CollectorTestCase):
+
     def setUp(self):
         config = get_collector_config('VMStatCollector', {
             'interval': 10
@@ -49,6 +50,8 @@ class TestVMStatCollector(CollectorTestCase):
         self.collector.collect()
 
         metrics = {
+            'pgfault': 71.1,
+            'pgmajfault': 0.0,
             'pgpgin': 0.0,
             'pgpgout': 9.2,
             'pswpin': 0.0,
