@@ -11,6 +11,9 @@ Type=forking
 PIDFile=/var/run/diamond.pid
 #Start as last service so everything else is running first to avoid false errors in the logs
 Type=idle
+MemoryHigh=150M
+MemoryMax=250M
+MemorySwapMax=0
 
 [Install]
 WantedBy=multi-user.target
