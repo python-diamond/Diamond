@@ -13,3 +13,5 @@ if test "$1" = "0" ; then
         exit 0
     fi
 fi
+
+[[ -d /var/lib/diamond ]] && rm -rf /var/lib/diamond
