@@ -157,7 +157,7 @@ class ListenerThread(threading.Thread):
             self.host, self.port))
 
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, socket.SO_REUSEPORT, 1)
         self._sock.bind((self.host, int(self.port)))
 
         while ALIVE:
