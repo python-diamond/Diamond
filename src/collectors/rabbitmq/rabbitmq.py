@@ -171,7 +171,7 @@ class RabbitMQCollector(diamond.collector.Collector):
                 content = client.get_nodes()
                 self.publish('cluster.nodes', len(content))
         except:
-            self.log.exception('Couldnt connect to rabbitmq')
+            self.log.exception('Could not connect to rabbitmq')
             return {}
 
     def get_queue_metrics(self, client, vhost, queues):
