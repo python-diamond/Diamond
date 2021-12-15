@@ -53,5 +53,6 @@ chmod +x /usr/bin/diamond
 
 # Log / Run directory permissions
 chown -R diamond:diamond /var/log/diamond
+chmod 0750 /var/log/diamond
 
 exit 0
