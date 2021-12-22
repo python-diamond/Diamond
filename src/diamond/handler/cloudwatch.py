@@ -36,6 +36,9 @@ metric = 05
 name = Avg05
 namespace = MachineLoad
 unit = None
+[[[[dimensions]]]]
+environment = dev
+
 """
 
 import sys
@@ -87,7 +90,7 @@ class cloudwatchHandler(Handler):
 
         self.valid_config = ('region', 'collector', 'metric', 'namespace',
                              'name', 'unit', 'collect_by_instance',
-                             'collect_without_dimension')
+                             'collect_without_dimension', 'dimensions')
 
         self.rules = []
         for key_name, section in self.config.items():
@@ -118,7 +121,8 @@ class cloudwatchHandler(Handler):
             'name': '',
             'unit': 'None',
             'collect_by_instance': True,
-            'collect_without_dimension': False
+            'collect_without_dimension': False,
+            'dimensions': {}
         })
         return config
 
@@ -136,7 +140,8 @@ class cloudwatchHandler(Handler):
             'unit': 'CloudWatch metric unit',
             'collector': 'Diamond collector name',
             'collect_by_instance': 'Collect metrics for instances separately',
-            'collect_without_dimension': 'Collect metrics without dimension'
+            'collect_without_dimension': 'Collect metrics without dimension',
+            'dimensions': 'Additional dimensions to pass (Up to 10)'
         })
 
         return config
@@ -212,10 +217,12 @@ class cloudwatchHandler(Handler):
                  str(rule['metric']) == metricname)):
 
                 if rule['collect_by_instance'] and self.instance_id:
+                    dimensions = rule['dimensions']
+                    dimensions['InstanceId'] = self.instance_id
                     self.send_metrics_to_cloudwatch(
                         rule,
                         metric,
-                        {'InstanceId': self.instance_id})
+                        dimensions)
 
                 if rule['collect_without_dimension']:
                     self.send_metrics_to_cloudwatch(
