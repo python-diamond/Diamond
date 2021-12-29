@@ -292,6 +292,9 @@ class Collector(object):
             # Default Poll Interval (seconds)
             'interval': 300,
 
+            # Staggering collector runs is enabled by default
+            'stagger_collection': True,
+
             # Default Event TTL (interval multiplier)
             'ttl_multiplier': 2,
 
