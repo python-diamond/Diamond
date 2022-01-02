@@ -52,7 +52,7 @@ def collector_process(collector, metric_queue, log):
     # avoid having all collectors running at the same time
     next_window = math.floor(time.time() / interval) * interval
 
-    if str_to_bool(self.config['stagger_collection']):
+    if str_to_bool(collector.config['stagger_collection']):
         stagger_offset = random.uniform(0, interval - 1)
 
     # Allocate time till the end of the window for the collector to run. With a
