@@ -166,6 +166,7 @@ class TestRedisCollector(CollectorTestCase):
 
         metrics = {'6379.process.uptime': 95732,
                    '6379.replication.master': 1,
+                   '6379.replication.master_link_status': 0,
                    '6379.replication.master_sync_in_progress': 0,
                    '6379.pubsub.channels': 1,
                    '6379.slaves.connected': 2,

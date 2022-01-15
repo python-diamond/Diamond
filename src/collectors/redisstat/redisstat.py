@@ -306,16 +306,25 @@ class RedisCollector(diamond.collector.Collector):
 
         # Role needs to be handled outside the the _KEYS dict
         # since the value is a string, not a int / float
-        # Also, master_sync_in_progress is only available if the
-        # redis instance is a slave, so default it here so that
-        # the metric is cleared if the instance flips from slave
-        # to master
+        # Also, master_sync_in_progress and master_link_status
+        # are only available if the redis instance is a slave,
+        # so default it here so that the metric is cleared if
+        # the instance flips from slave to master
         if 'role' in info:
             if info['role'] == "master":
                 data['replication.master'] = 1
                 data['replication.master_sync_in_progress'] = 0
+                data['replication.master_link_status'] = 0
             else:
                 data['replication.master'] = 0
+
+        # Master link status needs to be handled outside the
+        # _KEYS dict since the value is a string, not a int / float
+        if 'master_link_status' in info:
+            if info['master_link_status'] == 'up':
+                data['replication.master_link_status'] = 1
+            else:
+                data['replication.master_link_status'] = 0
 
         # Connect to redis and get the maxmemory config value
         # Then calculate the % maxmemory of memory used
