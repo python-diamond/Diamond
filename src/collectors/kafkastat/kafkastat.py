@@ -37,8 +37,9 @@ class KafkaCollector(diamond.collector.Collector):
     def get_default_config_help(self):
         config_help = super(KafkaCollector, self).get_default_config_help()
         config_help.update({
-            'host': "",
-            'port': "",
+            'host': "JMX host to connect. default: localhost",
+            'port': "JMX port. default: 8082",
+            'query_paths': "list of metrics process, separated by commas",
         })
         return config_help
 
@@ -51,6 +52,7 @@ class KafkaCollector(diamond.collector.Collector):
             'host': '127.0.0.1',
             'port': 8082,
             'path': 'kafka',
+            'query_paths': "*kafka*:*",
         })
         return config
 
@@ -158,12 +160,14 @@ class KafkaCollector(diamond.collector.Collector):
             self.log.error('Failed to import xml.etree.ElementTree')
             return
 
+        query_elements = self.config['query_paths'].split(',')
         # Get list of gatherable stats
         query_list = [
-            '*kafka*:*',
             'java.lang:type=GarbageCollector,name=*',
             'java.lang:type=Threading'
         ]
+
+        query_list = query_elements + query_list
         mbeans = set()
         for pattern in query_list:
             match = self.get_mbeans(pattern)
