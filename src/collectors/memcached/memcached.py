@@ -115,6 +115,7 @@ class MemcachedCollector(diamond.collector.Collector):
                    'repcached_version', 'replication', 'accepting_conns',
                    'pid')
         pid = None
+        cmdline = None
 
         stats = {}
         data = self.get_raw_stats(host, port)
@@ -127,6 +128,9 @@ class MemcachedCollector(diamond.collector.Collector):
             elif pieces[1] == 'pid':
                 pid = pieces[2]
                 continue
+            elif pieces[1] == 'commandargs':
+                cmdline = pieces[2]
+                continue
             if '.' in pieces[2]:
                 stats[pieces[1]] = float(pieces[2])
             else:
@@ -135,13 +139,13 @@ class MemcachedCollector(diamond.collector.Collector):
         # get max connection limit
         self.log.debug('pid %s', pid)
         try:
-            cmdline = "/proc/%s/cmdline" % pid
-            f = open(cmdline, 'r')
-            m = re.search("-c\x00(\d+)", f.readline())
+            if cmdline is None:
+                with open("/proc/%s/cmdline" % pid, 'r') as f:
+                    cmdline = f.readline()
+            m = re.search("-(?:c|-max-conns)\x00(\d+)", cmdline)
             if m is not None:
                 self.log.debug('limit connections %s', m.group(1))
                 stats['limit_maxconn'] = m.group(1)
-            f.close()
         except:
             self.log.debug("Cannot parse command line options for memcached")
 
