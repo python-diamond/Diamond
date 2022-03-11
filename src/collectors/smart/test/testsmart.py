@@ -21,6 +21,23 @@ class TestSmartCollector(CollectorTestCase):
         config = get_collector_config('SmartCollector', {
             'interval': 10,
             'bin': 'true',
+            'valtypes': ['value', 'worst', 'thresh', 'raw_val'],
+            'attributes': {
+                'spin_up_time': True,
+                'power_cycle_count': True,
+                'temperature_celsius': True,
+                'udma_crc_error_count': True,
+                '172': True,
+                '174': True,
+                '234': True},
+            'aliases': {
+                'disk0': {
+                    '172': 'some_attribute',
+                    '174': 'and_other_one',
+                    '234': 'and_another_one'},
+                'sda': {
+                    'udma_crc_error_count': 'udma_crc_errs'}},
+            'force_prefails': True
         })
 
         self.collector = SmartCollector(config, None)
@@ -61,27 +78,57 @@ class TestSmartCollector(CollectorTestCase):
         patch_communicate.stop()
 
         self.assertPublishedMany(publish_mock, {
-            'disk0.172': 0,
-            'disk0.Head_Amplitude': 100,
-            'disk0.Reallocated_Sector_Ct': 0,
-            'disk0.Temperature_Celsius': 128,
-            'disk0.174': 3,
-            'disk0.Reported_Uncorrect': 0,
-            'disk0.Raw_Read_Error_Rate': 5849487,
-            'disk0.Power_On_Hours': 199389561752279,
-            'disk0.Total_LBAs_Read': 17985,
-            'disk0.Power_Cycle_Count': 381,
-            'disk0.Hardware_ECC_Recovered': 5849487,
-            'disk0.171': 0,
-            'disk0.Soft_Read_Error_Rate': 5849487,
-            'disk0.234': 2447,
-            'disk0.Program_Fail_Cnt_Total': 0,
-            'disk0.Media_Wearout_Indicator': 4881,
-            'disk0.Erase_Fail_Count_Total': 0,
-            'disk0.Wear_Leveling_Count': 2,
-            'disk0.Reallocated_Event_Count': 0,
-            'disk0.Total_LBAs_Written': 2447,
-            'disk0.Soft_ECC_Correction': 5849487,
+
+            # attributes
+
+            'disk0.old_age.power_cycle_count.value': 100,
+            'disk0.old_age.power_cycle_count.worst': 100,
+            'disk0.old_age.power_cycle_count.thresh': 0,
+            'disk0.old_age.power_cycle_count.raw_val': 381,
+
+            'disk0.pre-fail.temperature_celsius.value': 100,
+            'disk0.pre-fail.temperature_celsius.worst': 100,
+            'disk0.pre-fail.temperature_celsius.thresh': 10,
+            'disk0.pre-fail.temperature_celsius.raw_val': 0,
+
+            # value {force_prefails}
+
+            'disk0.pre-fail.head_amplitude.value': 100,
+            'disk0.pre-fail.reallocated_sector_ct.value': 100,
+            'disk0.pre-fail.raw_read_error_rate.value': 92,
+
+            # worst {force_prefails}
+
+            'disk0.pre-fail.head_amplitude.worst': 100,
+            'disk0.pre-fail.reallocated_sector_ct.worst': 100,
+            'disk0.pre-fail.raw_read_error_rate.worst': 92,
+
+            # thresh {force_prefails}
+
+            'disk0.pre-fail.head_amplitude.thresh': 000,
+            'disk0.pre-fail.reallocated_sector_ct.thresh': 3,
+            'disk0.pre-fail.raw_read_error_rate.thresh': 50,
+
+            # raw_val {force_prefails}
+
+            'disk0.pre-fail.head_amplitude.raw_val': 100,
+            'disk0.pre-fail.reallocated_sector_ct.raw_val': 0,
+            'disk0.pre-fail.raw_read_error_rate.raw_val': 5849487,
+
+            # aliases
+
+            'disk0.old_age.some_attribute.value': 0,
+            'disk0.old_age.and_other_one.value': 0,
+            'disk0.old_age.and_another_one.value': 0,
+            'disk0.old_age.some_attribute.worst': 0,
+            'disk0.old_age.and_other_one.worst': 0,
+            'disk0.old_age.and_another_one.worst': 0,
+            'disk0.old_age.some_attribute.thresh': 0,
+            'disk0.old_age.and_other_one.thresh': 0,
+            'disk0.old_age.and_another_one.thresh': 0,
+            'disk0.old_age.some_attribute.raw_val': 0,
+            'disk0.old_age.and_other_one.raw_val': 3,
+            'disk0.old_age.and_another_one.raw_val': 2447
         })
 
     @patch('os.access', Mock(return_value=True))
@@ -101,25 +148,50 @@ class TestSmartCollector(CollectorTestCase):
         patch_communicate.stop()
 
         metrics = {
-            'sda.Temperature_Celsius': 28,
-            'sda.Power_On_Hours': 6827,
-            'sda.Power_Cycle_Count': 7,
-            'sda.Power-Off_Retract_Count': 5,
-            'sda.UDMA_CRC_Error_Count': 0,
-            'sda.Load_Cycle_Count': 2,
-            'sda.Calibration_Retry_Count': 0,
-            'sda.Spin_Up_Time': 3991,
-            'sda.Spin_Retry_Count': 0,
-            'sda.Multi_Zone_Error_Rate': 0,
-            'sda.Raw_Read_Error_Rate': 0,
-            'sda.Reallocated_Event_Count': 0,
-            'sda.Start_Stop_Count': 8,
-            'sda.Offline_Uncorrectable': 0,
-            'sda.Current_Pending_Sector': 0,
-            'sda.Reallocated_Sector_Ct': 0,
-            'sda.Seek_Error_Rate': 0,
-            'sda.Thermal_Throttle_0': 0,
-            'sda.Thermal_Throttle_1': 0,
+
+            # attributes
+
+            'sda.pre-fail.spin_up_time.value': 140,
+            'sda.pre-fail.spin_up_time.worst': 140,
+            'sda.pre-fail.spin_up_time.thresh': 21,
+            'sda.pre-fail.spin_up_time.raw_val': 3991,
+
+            'sda.old_age.power_cycle_count.value': 100,
+            'sda.old_age.power_cycle_count.worst': 100,
+            'sda.old_age.power_cycle_count.thresh': 0,
+            'sda.old_age.power_cycle_count.raw_val': 7,
+
+            'sda.old_age.temperature_celsius.value': 115,
+            'sda.old_age.temperature_celsius.worst': 110,
+            'sda.old_age.temperature_celsius.thresh': 0,
+            'sda.old_age.temperature_celsius.raw_val': 28,
+
+            # value {force_prefails}
+
+            'sda.pre-fail.raw_read_error_rate.value': 200,
+            'sda.pre-fail.reallocated_sector_ct.value': 200,
+
+            # worst {force_prefails}
+
+            'sda.pre-fail.raw_read_error_rate.worst': 200,
+            'sda.pre-fail.reallocated_sector_ct.worst': 200,
+
+            # thresh {force_prefails}
+
+            'sda.pre-fail.raw_read_error_rate.thresh': 51,
+            'sda.pre-fail.reallocated_sector_ct.thresh': 140,
+
+            # raw_val {force_prefails}
+
+            'sda.pre-fail.raw_read_error_rate.raw_val': 0,
+            'sda.pre-fail.reallocated_sector_ct.raw_val': 0,
+
+            # aliases
+
+            'sda.old_age.udma_crc_errs.value': 200,
+            'sda.old_age.udma_crc_errs.worst': 200,
+            'sda.old_age.udma_crc_errs.thresh': 0,
+            'sda.old_age.udma_crc_errs.raw_val': 0
         }
 
         self.setDocExample(collector=self.collector.__class__.__name__,
@@ -144,23 +216,50 @@ class TestSmartCollector(CollectorTestCase):
         patch_communicate.stop()
 
         metrics = {
-            'sda.Raw_Read_Error_Rate': 0,
-            'sda.Spin_Up_Time': 4225,
-            'sda.Start_Stop_Count': 13,
-            'sda.Reallocated_Sector_Ct': 0,
-            'sda.Seek_Error_Rate': 0,
-            'sda.Power_On_Hours': 88,
-            'sda.Spin_Retry_Count': 0,
-            'sda.Calibration_Retry_Count': 0,
-            'sda.Power_Cycle_Count': 13,
-            'sda.Power-Off_Retract_Count': 7,
-            'sda.Load_Cycle_Count': 5,
-            'sda.Temperature_Celsius': 35,
-            'sda.Reallocated_Event_Count': 0,
-            'sda.Current_Pending_Sector': 0,
-            'sda.Offline_Uncorrectable': 0,
-            'sda.UDMA_CRC_Error_Count': 0,
-            'sda.Multi_Zone_Error_Rate': 0,
+
+            # attributes
+
+            'sda.pre-fail.spin_up_time.value': 175,
+            'sda.pre-fail.spin_up_time.worst': 175,
+            'sda.pre-fail.spin_up_time.thresh': 21,
+            'sda.pre-fail.spin_up_time.raw_val': 4225,
+
+            'sda.old_age.power_cycle_count.value': 100,
+            'sda.old_age.power_cycle_count.worst': 100,
+            'sda.old_age.power_cycle_count.thresh': 0,
+            'sda.old_age.power_cycle_count.raw_val': 13,
+
+            'sda.old_age.temperature_celsius.value': 112,
+            'sda.old_age.temperature_celsius.worst': 111,
+            'sda.old_age.temperature_celsius.thresh': 0,
+            'sda.old_age.temperature_celsius.raw_val': 35,
+
+            # value {force_prefails}
+
+            'sda.pre-fail.raw_read_error_rate.value': 200,
+            'sda.pre-fail.reallocated_sector_ct.value': 200,
+
+            # worst {force_prefails}
+
+            'sda.pre-fail.raw_read_error_rate.worst': 200,
+            'sda.pre-fail.reallocated_sector_ct.worst': 200,
+
+            # thresh {force_prefails}
+
+            'sda.pre-fail.raw_read_error_rate.thresh': 51,
+            'sda.pre-fail.reallocated_sector_ct.thresh': 140,
+
+            # raw_val {force_prefails}
+
+            'sda.pre-fail.raw_read_error_rate.raw_val': 0,
+            'sda.pre-fail.reallocated_sector_ct.raw_val': 0,
+
+            # aliases
+
+            'sda.old_age.udma_crc_errs.value': 200,
+            'sda.old_age.udma_crc_errs.worst': 200,
+            'sda.old_age.udma_crc_errs.thresh': 0,
+            'sda.old_age.udma_crc_errs.raw_val': 0
         }
 
         header_call = call('sda.ATTRIBUTE_NAME', 'RAW_VALUE')
