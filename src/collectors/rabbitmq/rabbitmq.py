@@ -21,11 +21,11 @@ Collects data from RabbitMQ through the admin interface
   **
 """
 
+from urllib.request import Request, urlopen
 import diamond.collector
 import re
-from urlparse import urljoin
+from urllib import urljoin
 from urllib import quote
-import urllib2
 from base64 import b64encode
 
 try:
@@ -47,9 +47,9 @@ class RabbitMQClient(object):
 
     def do_call(self, path):
         url = urljoin(self.base_url, path)
-        req = urllib2.Request(url)
+        req = Request(url)
         req.add_header('Authorization', self._authorization)
-        return json.load(urllib2.urlopen(req, timeout=self.timeout))
+        return json.load(urlopen(req, timeout=self.timeout))
 
     def get_all_vhosts(self):
         return self.do_call('vhosts')
@@ -288,7 +288,7 @@ class RabbitMQCollector(diamond.collector.Collector):
         if isinstance(value, dict):
             for new_key in value:
                 self._publish_metrics(name, keys, new_key, value)
-        elif isinstance(value, (float, int, long)):
+        elif isinstance(value, (float, int)):
             joined_keys = '.'.join(keys)
             if name:
                 publish_key = '{}.{}'.format(name, joined_keys)

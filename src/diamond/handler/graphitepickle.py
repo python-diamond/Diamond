@@ -18,7 +18,7 @@ use it.
 
 import struct
 
-from graphite import GraphiteHandler
+from diamond.handler.graphite import GraphiteHandler
 
 try:
     import cPickle as pickle

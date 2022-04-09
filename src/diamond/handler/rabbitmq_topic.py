@@ -6,7 +6,7 @@ This allows for 'subscribing' to messages based on the routing key, which is
 the metric path
 """
 
-from Handler import Handler
+from diamond.handler.Handler import Handler
 
 try:
     import pika

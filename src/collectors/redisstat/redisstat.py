@@ -111,7 +111,7 @@ class RedisCollector(diamond.collector.Collector):
         super(RedisCollector, self).process_config()
         instance_list = self.config['instances']
         # configobj make str of single-element list, let's convert
-        if isinstance(instance_list, basestring):
+        if isinstance(instance_list, str):
             instance_list = [instance_list]
 
         # process original single redis instance

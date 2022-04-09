@@ -10,7 +10,7 @@ Collect metrics from Puppet DB Dashboard
 
 """
 
-import urllib2
+from urllib.request import urlopen
 import diamond.collector
 from diamond.convertor import time as time_convertor
 
@@ -90,7 +90,7 @@ class PuppetDBCollector(diamond.collector.Collector):
         try:
             url = "http://%s:%s/%s" % (
                 self.config['host'], int(self.config['port']), url)
-            response = urllib2.urlopen(url)
+            response = urlopen(url)
         except Exception as e:
             self.log.error('Couldn\'t connect to puppetdb: %s -> %s', url, e)
             return {}

@@ -1,6 +1,6 @@
 import diamond.collector
 
-import urllib2
+from urllib.request import urlopen
 
 
 class AuroraCollector(diamond.collector.Collector):
@@ -32,7 +32,7 @@ class AuroraCollector(diamond.collector.Collector):
                                    self.config['host'],
                                    self.config['port'])
 
-        response = urllib2.urlopen(url)
+        response = urlopen(url)
 
         for line in response.readlines():
             properties = line.split()

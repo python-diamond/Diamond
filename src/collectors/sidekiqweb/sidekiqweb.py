@@ -15,7 +15,7 @@ try:
 except ImportError:
     import simplejson as json
 
-import urllib2
+from urllib.request import urlopen
 import diamond.collector
 
 
@@ -42,7 +42,7 @@ class SidekiqWebCollector(diamond.collector.Collector):
 
     def collect(self):
         try:
-            response = urllib2.urlopen("http://%s:%s/dashboard/stats" % (
+            response = urlopen("http://%s:%s/dashboard/stats" % (
                 self.config['host'], int(self.config['port'])))
         except Exception as e:
             self.log.error('Couldnt connect to sidekiq-web: %s', e)

@@ -44,7 +44,7 @@ environment = dev
 import sys
 import datetime
 
-from Handler import Handler
+from diamond.handler.Handler import Handler
 from configobj import Section
 
 try:

@@ -36,7 +36,7 @@ try:
 except ImportError:
     import simplejson as json
 
-import urllib2
+from urllib.request import urlopen
 import diamond.collector
 
 
@@ -72,7 +72,7 @@ class PhpFpmCollector(diamond.collector.Collector):
             self.config['uri'] = self.config['uri'][1:]
 
         try:
-            response = urllib2.urlopen("http://%s:%s/%s?json" % (
+            response = urlopen("http://%s:%s/%s?json" % (
                 self.config['host'], int(self.config['port']),
                 self.config['uri']))
         except Exception as e:

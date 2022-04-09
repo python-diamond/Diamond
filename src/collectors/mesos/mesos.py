@@ -18,10 +18,10 @@ port = 5050
 """
 
 import copy
+from urllib.request import urlopen
 import diamond.collector
 import json
-import urllib2
-from urlparse import urlparse
+from urllib import urlparse
 
 import diamond.collector
 
@@ -197,7 +197,7 @@ class MesosCollector(diamond.collector.Collector):
         """
         url = self._get_url(path)
         try:
-            response = urllib2.urlopen(url)
+            response = urlopen(url)
         except Exception as err:
             self.log.error("%s: %s", url, err)
             return False

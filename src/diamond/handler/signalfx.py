@@ -22,12 +22,13 @@ Enable this handler
      metrics
 """
 
-from Handler import Handler
+from urllib.error import URLError
+from urllib.request import Request, urlopen
+from diamond.handler.Handler import Handler
 from diamond.util import get_diamond_version
 import json
 import logging
 import time
-import urllib2
 import re
 
 
@@ -154,14 +155,14 @@ class SignalfxHandler(Handler):
         self.metrics = []
         postBody = json.dumps(postDictionary)
         logging.debug("Body is %s", postBody)
-        req = urllib2.Request(self.url, postBody,
+        req = Request(self.url, postBody,
                               {"Content-type": "application/json",
                                "X-SF-TOKEN": self.auth_token,
                                "User-Agent": self.user_agent()})
         self.resetBatchTimeout()
         try:
-            urllib2.urlopen(req)
-        except urllib2.URLError as err:
+            urlopen(req)
+        except URLError as err:
             error_message = err.read()
             logging.exception("Unable to post signalfx metrics" + error_message)
             return

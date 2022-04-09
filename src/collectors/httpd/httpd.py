@@ -25,7 +25,7 @@ class HttpdCollector(diamond.collector.Collector):
             self.config['urls'].append(self.config['url'])
 
         self.urls = {}
-        if isinstance(self.config['urls'], basestring):
+        if isinstance(self.config['urls'], str):
             self.config['urls'] = self.config['urls'].split(',')
 
         for url in self.config['urls']:

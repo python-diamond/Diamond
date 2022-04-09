@@ -16,7 +16,7 @@ use it.
 
 """
 
-from Handler import Handler
+from diamond.handler.Handler import Handler
 import socket
 import time
 

@@ -8,7 +8,8 @@ Collect stats via MX4J from Kafka
  * urllib2
  * xml.etree
 """
-import urllib2
+from urllib.error import URLError
+from urllib.request import urlopen
 
 from urllib import urlencode
 
@@ -70,8 +71,8 @@ class KafkaCollector(diamond.collector.Collector):
             path, urlencode(qargs))
 
         try:
-            response = urllib2.urlopen(url)
-        except urllib2.URLError as err:
+            response = urlopen(url)
+        except URLError as err:
             self.log.error("%s: %s", url, err)
             return None
 

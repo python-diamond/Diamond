@@ -56,7 +56,6 @@ For commercial nginx+:
 
 """
 
-import urllib2
 import re
 import diamond.collector
 import json

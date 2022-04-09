@@ -2,12 +2,11 @@
 # coding=utf-8
 ##########################################################################
 
+from io import StringIO
+from unittest.mock import patch
 from test import unittest
-from mock import patch
 from diamond.metric import Metric
-import urllib2
 import configobj
-import StringIO
 import gzip
 import contextlib
 
@@ -22,7 +21,7 @@ class TestTSDBdHandler(unittest.TestCase):
         self.url = 'http://127.0.0.1:4242/api/put'
 
     def decompress(self, input):
-        infile = StringIO.StringIO()
+        infile = StringIO()
         infile.write(input)
         with contextlib.closing(gzip.GzipFile(fileobj=infile, mode="r")) as f:
             f.rewind()
