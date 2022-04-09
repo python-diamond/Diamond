@@ -145,7 +145,7 @@ class StatsiteHandler(Handler):
                 # Send data to socket
                 data = data.split()
                 data = data[0] + ":" + data[1] + "|kv\n"
-                self.socket.sendall(data)
+                self.socket.sendall(data.encode())
                 # Done
                 break
             except socket.error as e:
