@@ -17,3 +17,4 @@ setproctitle
 psycopg2
 PySensors
 pysnmp
+distro

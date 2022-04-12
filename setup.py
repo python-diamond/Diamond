@@ -42,8 +42,14 @@ else:
         ('share/diamond/user_scripts', []),
     ]
 
-    distro = platform.dist()[0]
-    distro_major_version = platform.dist()[1].split('.')[0]
+    if hasattr(platform, 'dist'):
+        distro = platform.dist()[0].lower()
+        distro_major_version = int(platform.dist()[1].split('.')[0])
+    else:
+        import distro as Distro
+        distro = Distro.name().lower()
+        distro_major_version = int(Distro.version_parts()[0])
+
     if not distro:
         if 'amzn' in platform.uname()[2]:
             distro = 'centos'
@@ -65,7 +71,7 @@ else:
         data_files.append(('/var/log/diamond',
                            ['.keep']))
 
-        if distro == 'Ubuntu':
+        if distro == 'ubuntu':
             if distro_major_version >= 16:
                 data_files.append(('/usr/lib/systemd/system',
                                    ['rpm/systemd/diamond.service']))
@@ -88,7 +94,7 @@ else:
     if running_under_virtualenv():
         install_requires = ['configobj', 'psutil', ]
     else:
-        if distro in ['debian', 'Ubuntu']:
+        if distro in ['debian', 'ubuntu']:
             install_requires = ['python-configobj', 'python-psutil', ]
         # Default back to pip style requires
         else:
