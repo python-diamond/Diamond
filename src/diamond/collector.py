@@ -375,7 +375,7 @@ class Collector(object):
         raise NotImplementedError()
 
     def publish(self, name, value, raw_value=None, precision=0,
-                metric_type='GAUGE', instance=None):
+                metric_type='GAUGE', instance=None, point_tags=None):
         """
         Publish a metric with the given name
         """
@@ -398,7 +398,8 @@ class Collector(object):
         try:
             metric = Metric(path, value, raw_value=raw_value, timestamp=None,
                             precision=precision, host=self.get_hostname(),
-                            metric_type=metric_type, ttl=ttl)
+                            metric_type=metric_type, ttl=ttl,
+                            point_tags=point_tags)
         except DiamondException:
             self.log.error(('Error when creating new Metric: path=%r, '
                             'value=%r'), path, value)
