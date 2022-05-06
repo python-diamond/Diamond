@@ -9,7 +9,8 @@ Collect the monit stats and report on cpu/memory for monitored processes
 
 """
 
-import urllib2
+from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 import base64
 
 from xml.dom.minidom import parseString
@@ -47,15 +48,15 @@ class MonitCollector(diamond.collector.Collector):
         url = 'http://%s:%i/_status?format=xml' % (self.config['host'],
                                                    int(self.config['port']))
         try:
-            request = urllib2.Request(url)
+            request = Request(url)
 
             #
             # shouldn't need to check this
             base64string = base64.encodestring('%s:%s' % (
                 self.config['user'], self.config['passwd'])).replace('\n', '')
             request.add_header("Authorization", "Basic %s" % base64string)
-            response = urllib2.urlopen(request)
-        except urllib2.HTTPError as err:
+            response = urlopen(request)
+        except HTTPError as err:
             self.log.error("%s: %s", err, url)
             return
 

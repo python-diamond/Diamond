@@ -60,7 +60,7 @@ class MountStatsCollector(diamond.collector.Collector):
     def process_config(self):
         super(MountStatsCollector, self).process_config()
         self.exclude_filters = self.config['exclude_filters']
-        if isinstance(self.exclude_filters, basestring):
+        if isinstance(self.exclude_filters, str):
             self.exclude_filters = [self.exclude_filters]
 
         if len(self.exclude_filters) > 0:
@@ -69,7 +69,7 @@ class MountStatsCollector(diamond.collector.Collector):
             self.exclude_reg = None
 
         self.include_filters = self.config['include_filters']
-        if isinstance(self.include_filters, basestring):
+        if isinstance(self.include_filters, str):
             self.include_filters = [self.include_filters]
 
         if len(self.include_filters) > 0:

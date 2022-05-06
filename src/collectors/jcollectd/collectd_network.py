@@ -367,7 +367,7 @@ class Reader(object):
             if iterable is None:
                 return None
 
-        if isinstance(iterable, basestring):
+        if isinstance(iterable, str):
             iterable = self.decode(poll_interval, iterable)
 
         return interpret_opcodes(iterable)

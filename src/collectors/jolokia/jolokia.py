@@ -48,13 +48,14 @@ an mbean.
 ```
 """
 
+from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 import diamond.collector
 import base64
 from contextlib import closing
 import json
 import re
 import urllib
-import urllib2
 
 
 class JolokiaCollector(diamond.collector.Collector):
@@ -120,7 +121,7 @@ class JolokiaCollector(diamond.collector.Collector):
     def __init__(self, *args, **kwargs):
         super(JolokiaCollector, self).__init__(*args, **kwargs)
         self.mbeans = []
-        if isinstance(self.config['mbeans'], basestring):
+        if isinstance(self.config['mbeans'], str):
             for mbean in self.config['mbeans'].split('|'):
                 self.mbeans.append(mbean.strip())
         elif isinstance(self.config['mbeans'], list):
@@ -139,7 +140,7 @@ class JolokiaCollector(diamond.collector.Collector):
 
         self.domains = []
         if 'domains' in self.config:
-            if isinstance(self.config['domains'], basestring):
+            if isinstance(self.config['domains'], str):
                 for domain in self.config['domains'].split('|'):
                     self.domains.append(domain.strip())
             elif isinstance(self.config['domains'], list):
@@ -230,10 +231,10 @@ class JolokiaCollector(diamond.collector.Collector):
             # need some time to process the downloaded metrics, so that's why
             # timeout is lower than the interval.
             timeout = max(2, float(self.config['interval']) * 2 / 3)
-            with closing(urllib2.urlopen(self._create_request(url),
+            with closing(urlopen(self._create_request(url),
                                          timeout=timeout)) as response:
                 return self._read_json(response)
-        except (urllib2.HTTPError, ValueError) as e:
+        except (HTTPError, ValueError) as e:
             self.log.error('Unable to read JSON response: %s', str(e))
             return {}
 
@@ -253,10 +254,10 @@ class JolokiaCollector(diamond.collector.Collector):
             # need some time to process the downloaded metrics, so that's why
             # timeout is lower than the interval.
             timeout = max(2, float(self.config['interval']) * 2 / 3)
-            with closing(urllib2.urlopen(self._create_request(url),
+            with closing(urlopen(self._create_request(url),
                                          timeout=timeout)) as response:
                 return self._read_json(response)
-        except (urllib2.HTTPError, ValueError):
+        except (HTTPError, ValueError):
             self.log.error('Unable to read JSON response.')
             return {}
 
@@ -272,7 +273,7 @@ class JolokiaCollector(diamond.collector.Collector):
         return domain
 
     def _create_request(self, url):
-        req = urllib2.Request(url)
+        req = Request(url)
         username = self.config["username"]
         password = self.config["password"]
         if username is not None and password is not None:
@@ -288,7 +289,7 @@ class JolokiaCollector(diamond.collector.Collector):
 
     def collect_bean(self, prefix, obj):
         for k, v in obj.iteritems():
-            if type(v) in [int, float, long]:
+            if type(v) in [int, float]:
                 key = "%s.%s" % (prefix, k)
                 key = self.clean_up(key)
                 if key != "":

@@ -27,7 +27,7 @@ of this handler.
 
 """
 
-from Handler import Handler
+from diamond.handler.Handler import Handler
 import logging
 try:
     import statsd

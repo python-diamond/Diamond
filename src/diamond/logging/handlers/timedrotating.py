@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from logging.handlers import TimedRotatingFileHandler as TRFH
+from diamond.logging.handlers import TimedRotatingFileHandler as TRFH
 import sys
 
 

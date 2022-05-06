@@ -78,7 +78,7 @@ def getCollectors(path):
 
 
 def typeToString(key):
-    if isinstance(obj.config[key], basestring):
+    if isinstance(obj.config[key], str):
         user_val = obj.config[key]
     elif isinstance(obj.config[key], bool):
         user_val = str(obj.config[key])
@@ -95,7 +95,7 @@ def typeToString(key):
 def stringToType(key, val):
     if type(obj.config[key]) is type(val):
         config_file[key] = val
-    elif isinstance(obj.config[key], basestring):
+    elif isinstance(obj.config[key], str):
         if val.lower() == 'false':
             config_file[key] = False
         elif val.lower() == 'true':
@@ -103,7 +103,7 @@ def stringToType(key, val):
         else:
             config_file[key] = val
     elif isinstance(obj.config[key], bool):
-        if isinstance(val, basestring):
+        if isinstance(val, str):
             config_file[key] = str_to_bool(val)
         else:
             config_file[key] = bool(val)
@@ -117,7 +117,7 @@ def stringToType(key, val):
 
 
 def boolCheck(val):
-    if isinstance(val, basestring):
+    if isinstance(val, str):
         return str_to_bool(val)
     elif isinstance(val, bool):
         return val
@@ -137,7 +137,7 @@ def configureKey(key):
     print("\n")
     if key in default_conf_help:
         print(default_conf_help[key])
-    val = raw_input(key + ' [' + user_val + ']: ')
+    val = input(key + ' [' + user_val + ']: ')
 
     # Empty user input? Default to current value
     if len(val) == 0:
@@ -191,7 +191,7 @@ if __name__ == "__main__":
         print(config['server']['collectors_config_path'])
         print('Please type yes to continue')
 
-        val = raw_input('Are you sure? ')
+        val = input('Are you sure? ')
         if val != 'yes':
             sys.exit()
 
@@ -257,8 +257,8 @@ if __name__ == "__main__":
 
             config_file.write()
 
-        except IOError as (errno, strerror):
-            print("I/O error({}): {}".format(errno, strerror))
+        except IOError as err:
+            print("I/O error({}): {}".format(err.errno, err.strerror))
         except KeyboardInterrupt:
             print()
             sys.exit()

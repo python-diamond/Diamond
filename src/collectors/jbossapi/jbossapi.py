@@ -363,7 +363,7 @@ class JbossApiCollector(diamond.collector.Collector):
         return output
 
     def is_number(self, value):
-        return (isinstance(value, (int, long, float)) and
+        return (isinstance(value, (int, float)) and
                 not isinstance(value, bool))
 
     def string_fix(self, s):

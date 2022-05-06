@@ -25,7 +25,11 @@ See https://github.com/emicklei/jcollectd for an up-to-date jcollect fork.
 
 import threading
 import re
-import Queue
+try:
+    import Queue
+except ImportError:
+    import queue as queue
+
 
 import diamond.collector
 import diamond.metric

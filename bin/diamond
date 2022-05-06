@@ -148,7 +148,7 @@ def main():
 
             # Read existing pid file
             try:
-                pf = file(options.pidfile, 'r')
+                pf = open(options.pidfile, 'r')
                 pid = int(pf.read().strip())
                 pf.close()
             except (IOError, ValueError):
@@ -187,7 +187,7 @@ def main():
                 # Write pid file
                 pid = str(os.getpid())
                 try:
-                    pf = file(options.pidfile, 'w+')
+                    pf = open(options.pidfile, 'w+')
                 except IOError as e:
                     print("Failed to write PID file: %s" % (e), file=sys.stderr)
                     sys.exit(1)
@@ -271,7 +271,7 @@ def main():
                 # Write pid file
                 pid = str(os.getpid())
                 try:
-                    pf = file(options.pidfile, 'w+')
+                    pf = open(options.pidfile, 'w+')
                 except IOError as e:
                     log.error("Failed to write child PID file: %s" % (e))
                     sys.exit(1)

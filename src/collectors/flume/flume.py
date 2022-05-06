@@ -10,7 +10,8 @@ Collect statistics from Flume
 
 """
 
-import urllib2
+from urllib.error import URLError
+from urllib.request import urlopen
 import diamond.collector
 
 try:
@@ -79,7 +80,7 @@ class FlumeCollector(diamond.collector.Collector):
         )
 
         try:
-            resp = urllib2.urlopen(url)
+            resp = urlopen(url)
             try:
                 j = json.loads(resp.read())
                 resp.close()
@@ -87,7 +88,7 @@ class FlumeCollector(diamond.collector.Collector):
                 resp.close()
                 self.log.error('Cannot load json data: %s', e)
                 return None
-        except urllib2.URLError as e:
+        except URLError as e:
             self.log.error('Failed to open url: %s', e)
             return None
         except Exception as e:

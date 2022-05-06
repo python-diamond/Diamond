@@ -261,7 +261,7 @@ class TokuMXCollector(diamond.collector.Collector):
                 self._publish_metrics(keys, new_key, value)
         elif isinstance(value, int) or isinstance(value, float):
             publishfn('.'.join(keys), value)
-        elif isinstance(value, long):
+        elif isinstance(value, int):
             publishfn('.'.join(keys), float(value))
 
     def _extract_simple_data(self, data):

@@ -22,9 +22,10 @@ you're going to have a bad time.
 ```
 """
 
+from urllib.error import HTTPError
+from urllib.request import urlopen
 import diamond.collector
 import json
-import urllib2
 import os
 
 
@@ -125,8 +126,8 @@ class MesosCGroupCollector(diamond.collector.Collector):
                                        self.config['port'],
                                        self.config['mesos_state_path'])
 
-            return json.load(urllib2.urlopen(url))
-        except (urllib2.HTTPError, ValueError) as err:
+            return json.load(urlopen(url))
+        except (HTTPError, ValueError) as err:
             self.log.error('Unable to read JSON response: %s' % err)
             return {}
 

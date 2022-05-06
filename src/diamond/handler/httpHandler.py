@@ -5,8 +5,8 @@
 Send metrics to a http endpoint via POST
 """
 
-from Handler import Handler
-import urllib2
+from urllib.request import Request, urlopen
+from diamond.handler.Handler import Handler
 
 
 class HttpPostHandler(Handler):
@@ -56,6 +56,6 @@ class HttpPostHandler(Handler):
         self.post()
 
     def post(self):
-        req = urllib2.Request(self.url, "\n".join(self.metrics))
-        urllib2.urlopen(req)
+        req = Request(self.url, "\n".join(self.metrics))
+        urlopen(req)
         self.metrics = []

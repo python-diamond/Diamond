@@ -5,7 +5,8 @@ Collect [dropwizard](http://dropwizard.codahale.com/) stats for the local node
 
 """
 
-import urllib2
+from urllib.error import HTTPError
+from urllib.request import urlopen
 
 try:
     import json
@@ -45,8 +46,8 @@ class DropwizardCollector(diamond.collector.Collector):
         url = 'http://%s:%i/metrics' % (
             self.config['host'], int(self.config['port']))
         try:
-            response = urllib2.urlopen(url)
-        except urllib2.HTTPError as err:
+            response = urlopen(url)
+        except HTTPError as err:
             self.log.error("%s: %s", url, err)
             return
 

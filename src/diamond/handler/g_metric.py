@@ -5,7 +5,7 @@ Emulate a gmetric client for usage with
 [Ganglia Monitoring System](http://ganglia.sourceforge.net/)
 """
 
-from Handler import Handler
+from diamond.handler.Handler import Handler
 import logging
 try:
     import gmetric

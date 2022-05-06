@@ -1,8 +1,7 @@
 #!/usr/bin/python
 # coding=utf-8
 ###############################################################################
-import urllib2
-from urlparse import urlparse, parse_qs
+from urllib import urlparse, parse_qs
 
 try:
     from xml.etree import ElementTree

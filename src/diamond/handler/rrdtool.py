@@ -7,9 +7,13 @@ Save stats in RRD files using rrdtool.
 import os
 import re
 import subprocess
-import Queue
+try:
+    import Queue
+except ImportError:
+    import queue as Queue
 
-from Handler import Handler
+
+from diamond.handler.Handler import Handler
 
 #
 # Constants for RRD file creation.

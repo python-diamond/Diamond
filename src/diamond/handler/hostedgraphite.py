@@ -16,8 +16,8 @@ Enable this handler
 
 """
 
-from Handler import Handler
-from graphite import GraphiteHandler
+from diamond.handler.Handler import Handler
+from diamond.handler.graphite import GraphiteHandler
 
 
 class HostedGraphiteHandler(Handler):
