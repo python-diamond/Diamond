@@ -16,5 +16,6 @@ simplejson
 setproctitle
 psycopg2
 PySensors
+influxdb
 pysnmp
 distro
