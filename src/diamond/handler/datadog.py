@@ -98,7 +98,7 @@ class DatadogHandler(Handler):
             topic, value, timestamp = str(metric).split()
             logging.debug(
                 "Sending.. topic[%s], value[%s], timestamp[%s]",
-                path,
+                topic,
                 value,
                 timestamp
             )
