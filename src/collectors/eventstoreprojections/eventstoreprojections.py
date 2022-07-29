@@ -31,7 +31,7 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
         config_help.update({
             'path': "name of the metric in the metricpath",
             'protocol': 'protocol used to connect to eventstore',
-            'hostname': 'hostname of the eventstore instance',
+            'server': 'hostname or ipaddress of the eventstore server',
             'route': 'route in eventstore for projections',
             'port': 'tcp port where eventstore is listening',
             'headers': 'Header variable if needed',
@@ -48,7 +48,7 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
         default_config.update({
             'path': "eventstore",
             'protocol': 'http://',
-            'hostname': 'localhost',
+            'server': 'localhost',
             'route': '/projections/all-non-transient',
             'port': 2113,
             'headers': {'User-Agent': 'Diamond Eventstore metrics collector'},
@@ -86,7 +86,7 @@ class EventstoreProjectionsCollector(diamond.collector.Collector):
     def collect(self):
         eventstore_host = "%s%s:%s%s" % (
             self.config['protocol'],
-            self.config['hostname'],
+            self.config['server'],
             self.config['port'],
             self.config['route']
         )
