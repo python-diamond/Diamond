@@ -110,12 +110,12 @@ class HAProxyCollector(diamond.collector.Collector):
                            "(Invalid username or password?) %s", e)
             return metrics
 
-    def unix_get_csv_data(self):
+    def unix_get_csv_data(self, section=None):
+        socket_path = self._get_config_value(section, 'sock')
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         data = str()
-
         try:
-            sock.connect(self.config['sock'])
+            sock.connect(socket_path)
             sock.send('show stat\n')
             while 1:
                 buf = sock.recv(4096)
@@ -138,13 +138,14 @@ class HAProxyCollector(diamond.collector.Collector):
         """
         Collect HAProxy Stats
         """
-        if self.config['method'] == 'http':
+        method = self._get_config_value(section, 'method')
+
+        if method == 'http':
             csv_data = self.http_get_csv_data(section)
-        elif self.config['method'] == 'unix':
-            csv_data = self.unix_get_csv_data()
+        elif method == 'unix':
+            csv_data = self.unix_get_csv_data(section)
         else:
-            self.log.error("Unknown collection method: %s",
-                           self.config['method'])
+            self.log.error("Unknown collection method: %s", method)
             csv_data = []
 
         data = list(csv.reader(csv_data))
