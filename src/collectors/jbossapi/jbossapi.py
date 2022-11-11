@@ -208,6 +208,9 @@ class JbossApiCollector(diamond.collector.Collector):
             if op_type == 'app' and self.config['app_stats'] == 'True':
                 if output:
                     # Grab the pool stats for each Instance
+                    if 'xa-data-source' in output['result']:
+                        output['result']['data-source'].update(output['result']['xa-data-source'])
+
                     for instance in output['result']['data-source']:
                         datasource = output['result']['data-source'][instance]
                         for metric in datasource['statistics']['pool']:
