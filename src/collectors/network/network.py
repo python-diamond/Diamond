@@ -48,6 +48,12 @@ class NetworkCollector(diamond.collector.Collector):
         })
         return config
 
+    def _sanitize_device_name(self, device):
+        """
+        Return a sanitized device name (remove dots)
+        """
+        return device.replace('.', '_')
+
     def collect(self):
         """
         Collect network interface stats.
@@ -111,7 +117,7 @@ class NetworkCollector(diamond.collector.Collector):
             stats = results[device]
             for s, v in stats.items():
                 # Get Metric Name
-                metric_name = '.'.join([device, s])
+                metric_name = '.'.join([self._sanitize_device_name(device), s])
                 # Get Metric Value
                 metric_value = self.derivative(metric_name,
                                                long(v),
