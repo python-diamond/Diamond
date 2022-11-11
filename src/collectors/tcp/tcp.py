@@ -272,6 +272,6 @@ class TCPCollector(diamond.collector.Collector):
 
             # Publish the metric
             if metric_name in self.config['gauges']:
-                self.publish_gauge(metric_name, value, 0)
+                self.publish_gauge(metric_name, value, 2)
             else:
-                self.publish_counter(metric_name, value, 0)
+                self.publish_counter(metric_name, value, 2)
