@@ -46,25 +46,18 @@ class NetstatCollector(diamond.collector.Collector):
         Overrides the Collector.collect method
         """
 
-        content = self._load()
-        result = dict((self.STATE[num], 0) for num in self.STATE)
+        result = {self.STATE[num]: 0 for num in self.STATE}
 
-        for line in content:
-            line_array = self._remove_empty(line.split(' '))
-            state = self.STATE[line_array[3]]
+        with open(NetstatCollector.PROC_TCP, 'r') as f:
+            next(f)
+            for line in f:
+                line_array = line.split()
+                state = self.STATE[line_array[3]]
 
-            result[state] += 1
+                result[state] = result.get(state, 0) + 1
 
         for state in result:
             self.publish(state, result[state])
-
-    @staticmethod
-    def _load():
-        """ Read the table of tcp connections & remove header  """
-        with open(NetstatCollector.PROC_TCP, 'r') as f:
-            content = f.readlines()
-            content.pop(0)
-        return content
 
     @staticmethod
     def _hex2dec(s):
@@ -77,10 +70,6 @@ class NetstatCollector(diamond.collector.Collector):
               (NetstatCollector._hex2dec(s[2:4])),
               (NetstatCollector._hex2dec(s[0:2]))]
         return '.'.join(ip)
-
-    @staticmethod
-    def _remove_empty(array):
-        return [x for x in array if x != '']
 
     @staticmethod
     def _convert_ip_port(array):
