@@ -23,6 +23,20 @@ class TestBindCollector(CollectorTestCase):
 
         self.collector = BindCollector(config, None)
 
+        config_xml_v3 = get_collector_config('BindCollector', {
+            'interval': 10,
+            'data_format': 'xml_v3',
+        })
+
+        self.collector_xml_v3 = BindCollector(config_xml_v3, None)
+
+        config_json_v1 = get_collector_config('BindCollector', {
+            'interval': 10,
+            'data_format': 'json_v1',
+        })
+
+        self.collector_json_v1 = BindCollector(config_json_v1, None)
+
     def test_import(self):
         self.assertTrue(BindCollector)
 
@@ -33,6 +47,20 @@ class TestBindCollector(CollectorTestCase):
 
         patch_urlopen.start()
         self.collector.collect()
+        patch_urlopen.stop()
+
+        patch_urlopen = patch('urllib2.urlopen', Mock(
+            return_value=self.getFixture('bind_v3.xml')))
+
+        patch_urlopen.start()
+        self.collector_xml_v3.collect()
+        patch_urlopen.stop()
+
+        patch_urlopen = patch('urllib2.urlopen', Mock(
+            return_value=self.getFixture('bind_v1.json')))
+
+        patch_urlopen.start()
+        self.collector_json_v1.collect()
         patch_urlopen.stop()
 
         metrics = {
