@@ -3,7 +3,7 @@
 
 from test import CollectorTestCase
 from test import get_collector_config
-from mock import patch
+from mock import patch, call
 import os
 
 from diamond.collector import Collector
@@ -109,7 +109,7 @@ class TestNagiosPerfdataCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, expected)
 
     @patch('os.remove')
-    @patch.object(Collector, 'publish')
+    @patch.object(Collector, 'publish', autospec=True, spec_set=True)
     def test_process_file_should_work_with_real_service_perfdata(
             self, publish_mock, remove_mock):
         path = self.getFixturePath('service-perfdata.0')
