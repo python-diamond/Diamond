@@ -9,7 +9,7 @@ Collect stats via MX4J from Kafka
  * xml.etree
 """
 import urllib2
-
+import string
 from urllib import urlencode
 
 try:
@@ -132,7 +132,8 @@ class KafkaCollector(diamond.collector.Collector):
                         key_prefix = key_prefix.replace(",", ".")
 
         metrics = {}
-
+        trans_table = string.maketrans(', ','__')
+        
         for attrib in attributes.getiterator(tag='Attribute'):
             atype = attrib.get('type')
 
@@ -149,7 +150,7 @@ class KafkaCollector(diamond.collector.Collector):
             name = '.'.join([key_prefix, attrib.get('name')])
             # Some prefixes and attributes could have spaces, thus we must
             # sanitize them
-            name = name.replace(' ', '')
+            name = name.translate(trans_table)
 
             metrics[name] = value
 
