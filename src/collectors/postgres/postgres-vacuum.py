@@ -221,15 +221,28 @@ class VacuumPhase(QueryStats):
     """
 
 
+class VacuumProgressStat(QueryStats):
+    path = "progress_stat.%(metric)s"
+    multi_db = False
+    query = """
+        SELECT heap_blks_total, heap_blks_scanned, heap_blks_vacuumed, 
+            index_vacuum_count, max_dead_tuples, num_dead_tuples
+        FROM pg_stat_progress_vacuum
+    """
+
+
 metrics_registry = {
     'VacuumPhase': VacuumPhase,
+    'VacuumProgressStat': VacuumProgressStat,
 }
 
 registry = {
     'basic': [
         'VacuumPhase',
+        'VacuumProgressStat',
     ],
     'extended': [
         'VacuumPhase',
+        'VacuumProgressStat'
     ],
 }
