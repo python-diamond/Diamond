@@ -19,7 +19,7 @@ except ImportError:
     psycopg2 = None
 
 
-class PostgresqlCollector(diamond.collector.Collector):
+class PostgresqlVacuumCollector(diamond.collector.Collector):
     """
     PostgreSQL collector class
     """
@@ -28,7 +28,7 @@ class PostgresqlCollector(diamond.collector.Collector):
         """
         Return default config.
         """
-        config = super(PostgresqlCollector, self).get_default_config()
+        config = super(PostgresqlVacuumCollector, self).get_default_config()
         config.update({
             'path': 'postgres-vacuum',
         })
