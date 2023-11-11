@@ -203,7 +203,7 @@ def main():
             try:
                 if gid != -1 and uid != -1:
                     # Manually set the groups since they aren't set by default
-                    os.initgroups(user, gid)
+                    os.initgroups(config['server']['user'], gid)
 
                 if gid != -1 and os.getgid() != gid:
                     # Set GID
