@@ -41,7 +41,7 @@ class SignalfxHandler(Handler):
         self.batch_size = int(self.config['batch'])
         self.url = self.config['url']
         self.auth_token = self.config['auth_token']
-        self.batch_max_interval = self.config['batch_max_interval']
+        self.batch_max_interval = int(self.config['batch_max_interval'])
         self.resetBatchTimeout()
         self._compiled_filters = []
         for fltr in self.filter_metrics:
@@ -66,7 +66,7 @@ class SignalfxHandler(Handler):
         return False
 
     def resetBatchTimeout(self):
-        self.batch_max_timestamp = int(time.time() + self.batch_max_interval)
+        self.batch_max_timestamp = time.time() + self.batch_max_interval
 
     def get_default_config_help(self):
         """
