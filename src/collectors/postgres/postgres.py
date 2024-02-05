@@ -180,6 +180,9 @@ class PostgresqlCollector(diamond.collector.Collector):
 
 
 class QueryStats(object):
+    SPECIAL_COLUMNS = set(('datname', 'schemaname', 'relname', 'indexrelname',
+                           'funcname'))
+
     query = None
     path = None
 
@@ -198,6 +201,39 @@ class QueryStats(object):
             datname = datname.replace("_", ".")
         return datname
 
+    def _parse_row(self, kv_pairs):
+        """
+        :param kv_pairs: list of (column name, value) pairs
+        :type  kv_pairs: list
+        :returns: (special-columns-dict, unknown-kv-pairs-list)
+        :rtype:   (dict, list)
+
+        >>> import pprint
+        >>> pprint.pprint(QueryStats(dbname="myDB", conn=None)._parse_row([('queue_size', 123)]))
+        ({'datname': 'myDB'}, [('queue_size', 123)])
+        >>> pprint.pprint(QueryStats(dbname="myDB", conn=None)._parse_row([('datname', 'wordpress'), ('state', 'running'), ('count', 100)]))
+        ({'datname': 'wordpress'}, [('state', 'running'), ('count', 100)])
+        >>> pprint.pprint(QueryStats(dbname="myDB", conn=None)._parse_row([('datname', 'wordpress'), ('schemaname', 'public'), ('relname', 'posts'), ('rows', 3), ('locks', 0)]))
+        ({'datname': 'wordpress', 'relname': 'posts', 'schemaname': 'public'},
+         [('rows', 3), ('locks', 0)])
+        """
+
+        special_dict = dict()
+        remaining_kv_pairs = list()
+
+        for key, value in kv_pairs:
+            if key in self.SPECIAL_COLUMNS:
+                special_dict[key] = value
+            else:
+                remaining_kv_pairs.append((key, value))
+
+        # handle 'datname' specially:
+        datname = special_dict.get('datname', self.dbname)
+        if datname is not None:
+            special_dict['datname'] = self._translate_datname(datname)
+
+        return (special_dict, remaining_kv_pairs)
+
     def fetch(self, pg_version):
         if float(pg_version) >= 10.0 and hasattr(self, 'post_100_query'):
             q = self.post_100_query
@@ -212,33 +248,27 @@ class QueryStats(object):
         try:
             cursor.execute(q, self.parameters)
             rows = cursor.fetchall()
-            for row in rows:
-                # If row is length 2, assume col1, col2 forms key: value
-                if len(row) == 2:
-                    self.data.append({
-                        'datname': self._translate_datname(self.dbname),
-                        'metric': row[0],
-                        'value': row[1],
-                    })
+            columns = [d[0] for d in cursor.description]
+            columns_set = set(columns)
 
-                # If row > length 2, assume each column name maps to
-                # key => value
-                else:
-                    for key, value in row.iteritems():
-                        if key in ('datname', 'schemaname', 'relname',
-                                   'indexrelname', 'funcname',):
-                            continue
+            # If we have exactly 2 unfamiliar columns, assume they form a
+            # (key, value) pair:
+            if len(columns_set.difference(self.SPECIAL_COLUMNS)) == 2:
+                for row in rows:
+                    special_dict, remaining_kv_pairs = self._parse_row(zip(columns, row))
 
-                        self.data.append({
-                            'datname': self._translate_datname(row.get(
-                                'datname', self.dbname)),
-                            'schemaname': row.get('schemaname', None),
-                            'relname': row.get('relname', None),
-                            'indexrelname': row.get('indexrelname', None),
-                            'funcname': row.get('funcname', None),
-                            'metric': key,
-                            'value': value,
-                        })
+                    data_dict = special_dict
+                    data_dict['metric'] = remaining_kv_pairs[0][1]
+                    data_dict['value'] = remaining_kv_pairs[1][1]
+                    self.data.append(data_dict)
+            else:
+                # Assume each non-special column is a separate metric:
+                for row in rows:
+                    special_dict, remaining_kv_pairs = self._parse_row(zip(columns, row))
+
+                    for column, value in remaining_kv_pairs:
+                        data_dict = dict(special_dict, metric=column, value=value)
+                        self.data.append(data_dict)
 
         # Clean up
         finally:
@@ -360,68 +390,60 @@ class UserIndexIOStats(QueryStats):
 
 class ConnectionStateStats(QueryStats):
     path = "%(datname)s.connections.%(metric)s"
-    multi_db = True
+    multi_db = False
     query = """
-        SELECT tmp.state AS key,COALESCE(count,0) FROM
-               (VALUES ('active'),
-                       ('waiting'),
-                       ('idle'),
-                       ('idletransaction'),
-                       ('unknown')
-                ) AS tmp(state)
-        LEFT JOIN
-             (SELECT CASE WHEN waiting THEN 'waiting'
-                          WHEN current_query = '<IDLE>' THEN 'idle'
-                          WHEN current_query = '<IDLE> in transaction'
-                              THEN 'idletransaction'
-                          WHEN current_query = '<insufficient privilege>'
-                              THEN 'unknown'
-                          ELSE 'active' END AS state,
-                     count(*) AS count
-               FROM pg_stat_activity
-               WHERE procpid != pg_backend_pid()
-               GROUP BY CASE WHEN waiting THEN 'waiting'
-                             WHEN current_query = '<IDLE>' THEN 'idle'
-                             WHEN current_query = '<IDLE> in transaction'
-                                 THEN 'idletransaction'
-                             WHEN current_query = '<insufficient privilege>'
-                                 THEN 'unknown' ELSE 'active' END
-             ) AS tmp2
-        ON tmp.state=tmp2.state ORDER BY 1
+        WITH tr(current_query, state_pretty) AS (
+          VALUES ('<IDLE>',                        'idle'),
+                 ('<IDLE> in transaction',         'idle_in_transaction'),
+                 ('<insufficient privilege>',      'unknown'),
+                 ('running',                       'blocked'),
+                 ('blocked',                       'running')
+        ),
+        tmp AS (
+          SELECT datname,
+                 COALESCE(CASE WHEN waiting THEN 'blocked' ELSE tr.state_pretty END, 'running') AS state_pretty,
+                 count(*)
+          FROM pg_stat_activity
+          LEFT JOIN tr USING (current_query)
+          WHERE procpid != pg_backend_pid()
+          GROUP by 1, 2
+        )
+        SELECT d.datname,
+               pretty_states.state_pretty,
+               COALESCE(tmp.count, 0) AS count
+        FROM pg_database d
+        CROSS JOIN (SELECT DISTINCT state_pretty from tr) AS pretty_states(state_pretty)
+        LEFT JOIN tmp USING (datname, state_pretty)
+        WHERE d.datname NOT IN ('template0', 'template1', 'postgres', 'rdsadmin')
+        ORDER by 1, 2
     """
     post_92_query = """
-        SELECT tmp.mstate AS state,COALESCE(count,0) FROM
-               (VALUES ('active'),
-                       ('waiting'),
-                       ('idle'),
-                       ('idletransaction'),
-                       ('unknown')
-               ) AS tmp(mstate)
-        LEFT JOIN
-             (SELECT CASE WHEN waiting THEN 'waiting'
-                          WHEN state = 'idle' THEN 'idle'
-                          WHEN state LIKE 'idle in transaction%'
-                              THEN 'idletransaction'
-                          WHEN state = 'disabled'
-                              THEN 'unknown'
-                          WHEN query = '<insufficient privilege>'
-                              THEN 'unknown'
-                          ELSE 'active' END AS mstate,
-                     count(*) AS count
-               FROM pg_stat_activity
-               WHERE pid != pg_backend_pid()
-               GROUP BY CASE WHEN waiting THEN 'waiting'
-                             WHEN state = 'idle' THEN 'idle'
-                             WHEN state LIKE 'idle in transaction%'
-                                 THEN 'idletransaction'
-                             WHEN state = 'disabled'
-                                 THEN 'unknown'
-                             WHEN query = '<insufficient privilege>'
-                                 THEN 'unknown'
-                             ELSE 'active'
-                        END
-             ) AS tmp2
-        ON tmp.mstate=tmp2.mstate ORDER BY 1
+        WITH tr(state, state_pretty) AS (
+          VALUES ('active',                        'running'),
+                 ('idle',                          'idle'),
+                 ('idle in transaction',           'idle_in_transaction'),
+                 ('idle in transaction (aborted)', 'idle_in_transaction_aborted'),
+                 ('fastpath function call',        'fastpath_function_call'),
+                 ('blocked',                       'blocked'),
+                 (NULL,                            'unknown')
+        ),
+        tmp AS (
+          SELECT datname,
+                 COALESCE(CASE WHEN state = 'active' AND waiting THEN 'blocked' ELSE tr.state_pretty END, 'unknown') AS state_pretty,
+                 count(*)
+          FROM pg_stat_activity
+          LEFT JOIN tr USING (state)
+          WHERE pid != pg_backend_pid()
+          GROUP by 1, 2
+        )
+        SELECT d.datname,
+               pretty_states.state_pretty,
+               COALESCE(tmp.count, 0) AS count
+        FROM pg_database d
+        CROSS JOIN (SELECT DISTINCT state_pretty from tr) AS pretty_states(state_pretty)
+        LEFT JOIN tmp USING (datname, state_pretty)
+        WHERE d.datname NOT IN ('template0', 'template1', 'postgres', 'rdsadmin')
+        ORDER by 1, 2
     """
     post_96_query = """
         SELECT tmp.state AS key,COALESCE(count,0) FROM
@@ -560,24 +582,25 @@ class LongestRunningQueries(QueryStats):
 
 class UserConnectionCount(QueryStats):
     path = "%(datname)s.user_connections.%(metric)s"
-    multi_db = True
+    multi_db = False
     query = """
-        SELECT usename,
+        SELECT datname,
+               usename,
                count(*) as count
         FROM pg_stat_activity
         WHERE procpid != pg_backend_pid()
-        GROUP BY usename
-        ORDER BY 1
+        GROUP BY 1, 2
+        ORDER BY 1, 2
     """
     post_92_query = query.replace('procpid', 'pid')
 
 
 class DatabaseConnectionCount(QueryStats):
-    path = "database.%(metric)s.connections"
+    path = "%(datname)s.total_connections"
     multi_db = False
     query = """
         SELECT datname,
-               count(datname) as connections
+               count(datname)
         FROM pg_stat_activity
         GROUP BY pg_stat_activity.datname
     """
