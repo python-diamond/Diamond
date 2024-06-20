@@ -32,6 +32,11 @@ publish | resolver, server, zonemgmt, sockets, memory, | Available stats:<br>
  | list
 publish_view_bind | False |  | bool
 publish_view_meta | False |  | bool
+data_format | xml_v2 | Bind stats version:<br>
+ - xml_v2 (Original bind stats version from 9.5)<br>
+ - xml_v3 (New xml version)<br>
+ - json_v1 (JSON replacement for XML)<br>
+ | str
 
 #### Example Output
 

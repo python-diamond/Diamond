@@ -1,0 +1,3387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/bind9.xsl"?>
+<statistics version="3.8">
+	<server>
+		<boot-time>2016-12-07T01:14:37.013Z</boot-time>
+		<config-time>2016-12-15T19:58:17.915Z</config-time>
+		<current-time>2016-12-15T19:59:05.029Z</current-time>
+		<version>9.11.0</version>
+		<counters type="opcode">
+			<counter name="QUERY">2467877</counter>
+			<counter name="IQUERY">0</counter>
+			<counter name="STATUS">0</counter>
+			<counter name="RESERVED3">0</counter>
+			<counter name="NOTIFY">21860</counter>
+			<counter name="UPDATE">0</counter>
+			<counter name="RESERVED6">0</counter>
+			<counter name="RESERVED7">0</counter>
+			<counter name="RESERVED8">0</counter>
+			<counter name="RESERVED9">0</counter>
+			<counter name="RESERVED10">0</counter>
+			<counter name="RESERVED11">0</counter>
+			<counter name="RESERVED12">0</counter>
+			<counter name="RESERVED13">0</counter>
+			<counter name="RESERVED14">0</counter>
+			<counter name="RESERVED15">0</counter>
+		</counters>
+		<counters type="rcode">
+			<counter name="NOERROR">2470371</counter>
+			<counter name="FORMERR">0</counter>
+			<counter name="SERVFAIL">0</counter>
+			<counter name="NXDOMAIN">18220</counter>
+			<counter name="NOTIMP">0</counter>
+			<counter name="REFUSED">1148</counter>
+			<counter name="YXDOMAIN">0</counter>
+			<counter name="YXRRSET">0</counter>
+			<counter name="NXRRSET">0</counter>
+			<counter name="NOTAUTH">0</counter>
+			<counter name="NOTZONE">0</counter>
+			<counter name="RESERVED11">0</counter>
+			<counter name="RESERVED12">0</counter>
+			<counter name="RESERVED13">0</counter>
+			<counter name="RESERVED14">0</counter>
+			<counter name="RESERVED15">0</counter>
+			<counter name="BADVERS">0</counter>
+			<counter name="17">0</counter>
+			<counter name="18">0</counter>
+			<counter name="19">0</counter>
+			<counter name="20">0</counter>
+			<counter name="21">0</counter>
+			<counter name="22">0</counter>
+			<counter name="BADCOOKIE">0</counter>
+		</counters>
+		<counters type="qtype">
+			<counter name="RESERVED0">4</counter>
+			<counter name="A">1649698</counter>
+			<counter name="NS">14053</counter>
+			<counter name="CNAME">2652</counter>
+			<counter name="SOA">6</counter>
+			<counter name="PTR">14242</counter>
+			<counter name="MX">784</counter>
+			<counter name="TXT">302</counter>
+			<counter name="AAAA">785725</counter>
+			<counter name="SRV">26</counter>
+			<counter name="A6">242</counter>
+			<counter name="DS">10</counter>
+			<counter name="TLSA">1</counter>
+			<counter name="SPF">8</counter>
+			<counter name="ANY">124</counter>
+		</counters>
+		<counters type="nsstat">
+			<counter name="Requestv4">2489739</counter>
+			<counter name="Requestv6">0</counter>
+			<counter name="ReqEdns0">1772066</counter>
+			<counter name="ReqBadEDNSVer">0</counter>
+			<counter name="ReqTSIG">0</counter>
+			<counter name="ReqSIG0">0</counter>
+			<counter name="ReqBadSIG">0</counter>
+			<counter name="ReqTCP">41</counter>
+			<counter name="AuthQryRej">1449</counter>
+			<counter name="RecQryRej">57</counter>
+			<counter name="XfrRej">0</counter>
+			<counter name="UpdateRej">0</counter>
+			<counter name="Response">2489739</counter>
+			<counter name="TruncatedResp">9</counter>
+			<counter name="RespEDNS0">1772066</counter>
+			<counter name="RespTSIG">0</counter>
+			<counter name="RespSIG0">0</counter>
+			<counter name="QrySuccess">1845829</counter>
+			<counter name="QryAuthAns">2466698</counter>
+			<counter name="QryNoauthAns">31</counter>
+			<counter name="QryReferral">31</counter>
+			<counter name="QryNxrrset">602649</counter>
+			<counter name="QrySERVFAIL">0</counter>
+			<counter name="QryFORMERR">0</counter>
+			<counter name="QryNXDOMAIN">18220</counter>
+			<counter name="QryRecursion">0</counter>
+			<counter name="QryDuplicate">0</counter>
+			<counter name="QryDropped">0</counter>
+			<counter name="QryFailure">1148</counter>
+			<counter name="XfrReqDone">0</counter>
+			<counter name="UpdateReqFwd">0</counter>
+			<counter name="UpdateRespFwd">0</counter>
+			<counter name="UpdateFwdFail">0</counter>
+			<counter name="UpdateDone">0</counter>
+			<counter name="UpdateFail">0</counter>
+			<counter name="UpdateBadPrereq">0</counter>
+			<counter name="RecursClients">0</counter>
+			<counter name="DNS64">0</counter>
+			<counter name="RateDropped">0</counter>
+			<counter name="RateSlipped">0</counter>
+			<counter name="RPZRewrites">0</counter>
+			<counter name="QryUDP">2466691</counter>
+			<counter name="QryTCP">38</counter>
+			<counter name="NSIDOpt">0</counter>
+			<counter name="ExpireOpt">0</counter>
+			<counter name="OtherOpt">12</counter>
+			<counter name="CookieIn">5184</counter>
+			<counter name="CookieNew">2313</counter>
+			<counter name="CookieBadSize">0</counter>
+			<counter name="CookieBadTime">0</counter>
+			<counter name="CookieNoMatch">363</counter>
+			<counter name="CookieMatch">2508</counter>
+			<counter name="ECSOpt">1182</counter>
+			<counter name="QryNXRedir">0</counter>
+			<counter name="QryNXRedirRLookup">0</counter>
+			<counter name="QryBADCOOKIE">0</counter>
+		</counters>
+		<counters type="zonestat">
+			<counter name="NotifyOutv4">21860</counter>
+			<counter name="NotifyOutv6">0</counter>
+			<counter name="NotifyInv4">21860</counter>
+			<counter name="NotifyInv6">0</counter>
+			<counter name="NotifyRej">0</counter>
+			<counter name="SOAOutv4">0</counter>
+			<counter name="SOAOutv6">0</counter>
+			<counter name="AXFRReqv4">0</counter>
+			<counter name="AXFRReqv6">0</counter>
+			<counter name="IXFRReqv4">0</counter>
+			<counter name="IXFRReqv6">0</counter>
+			<counter name="XfrSuccess">0</counter>
+			<counter name="XfrFail">0</counter>
+		</counters>
+		<counters type="resstat"/>
+	</server>
+	<views>
+		<view name="InstartOffice">
+			<counters type="resqtype">
+				<counter name="NS">6868</counter>
+				<counter name="DNSKEY">6869</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1974</counter>
+				<counter name="Queryv6">11763</counter>
+				<counter name="Responsev4">1973</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">987</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12756</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">1</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">491</counter>
+				<counter name="ValOk">491</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">2</counter>
+				<counter name="QryRTT100">977</counter>
+				<counter name="QryRTT500">695</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">237</counter>
+				<counter name="QryRTT1600+">62</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13735</counter>
+				<counter name="ServerCookieOut">1</counter>
+				<counter name="CookieIn">2</counter>
+				<counter name="CookieClientOk">2</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="InstartOffice">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26897</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">33600</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="BritishColumbia">
+			<counters type="resqtype">
+				<counter name="NS">6864</counter>
+				<counter name="DNSKEY">6874</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1972</counter>
+				<counter name="Queryv6">11766</counter>
+				<counter name="Responsev4">1970</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">985</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12756</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">2</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">492</counter>
+				<counter name="ValOk">492</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">0</counter>
+				<counter name="QryRTT100">976</counter>
+				<counter name="QryRTT500">680</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">241</counter>
+				<counter name="QryRTT1600+">73</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13735</counter>
+				<counter name="ServerCookieOut">3</counter>
+				<counter name="CookieIn">6</counter>
+				<counter name="CookieClientOk">6</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="BritishColumbia">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26948</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">33824</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="US-South">
+			<counters type="resqtype">
+				<counter name="NS">6864</counter>
+				<counter name="DNSKEY">6876</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1976</counter>
+				<counter name="Queryv6">11764</counter>
+				<counter name="Responsev4">1976</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">988</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12757</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">493</counter>
+				<counter name="ValOk">493</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">1</counter>
+				<counter name="QryRTT100">976</counter>
+				<counter name="QryRTT500">643</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">282</counter>
+				<counter name="QryRTT1600+">74</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13740</counter>
+				<counter name="ServerCookieOut">0</counter>
+				<counter name="CookieIn">0</counter>
+				<counter name="CookieClientOk">0</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="US-South">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26897</counter>
+				<counter name="CacheMisses">56</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">33600</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="NewYork">
+			<counters type="resqtype">
+				<counter name="NS">6866</counter>
+				<counter name="DNSKEY">6864</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1970</counter>
+				<counter name="Queryv6">11760</counter>
+				<counter name="Responsev4">1970</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">985</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12750</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">490</counter>
+				<counter name="ValOk">490</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">2</counter>
+				<counter name="QryRTT100">974</counter>
+				<counter name="QryRTT500">622</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">300</counter>
+				<counter name="QryRTT1600+">72</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13730</counter>
+				<counter name="ServerCookieOut">0</counter>
+				<counter name="CookieIn">0</counter>
+				<counter name="CookieClientOk">0</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="NewYork">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26896</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">32848</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Canada-NE">
+			<counters type="resqtype">
+				<counter name="NS">6862</counter>
+				<counter name="DNSKEY">6878</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1974</counter>
+				<counter name="Queryv6">11766</counter>
+				<counter name="Responsev4">1974</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">987</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12758</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">492</counter>
+				<counter name="ValOk">492</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">2</counter>
+				<counter name="QryRTT100">971</counter>
+				<counter name="QryRTT500">590</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">324</counter>
+				<counter name="QryRTT1600+">87</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13739</counter>
+				<counter name="ServerCookieOut">1</counter>
+				<counter name="CookieIn">2</counter>
+				<counter name="CookieClientOk">2</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Canada-NE">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26948</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">33600</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="US-Illinois">
+			<counters type="resqtype">
+				<counter name="NS">6868</counter>
+				<counter name="DNSKEY">6872</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1976</counter>
+				<counter name="Queryv6">11764</counter>
+				<counter name="Responsev4">1975</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">988</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12758</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">1</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">492</counter>
+				<counter name="ValOk">492</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">0</counter>
+				<counter name="QryRTT100">973</counter>
+				<counter name="QryRTT500">674</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">255</counter>
+				<counter name="QryRTT1600+">73</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13737</counter>
+				<counter name="ServerCookieOut">2</counter>
+				<counter name="CookieIn">4</counter>
+				<counter name="CookieClientOk">4</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="US-Illinois">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26898</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">33600</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="US-Florida">
+			<counters type="resqtype">
+				<counter name="NS">6878</counter>
+				<counter name="DNSKEY">6883</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1993</counter>
+				<counter name="Queryv6">11768</counter>
+				<counter name="Responsev4">1990</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">996</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12778</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">3</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">493</counter>
+				<counter name="ValOk">493</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">0</counter>
+				<counter name="QryRTT100">985</counter>
+				<counter name="QryRTT500">560</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">349</counter>
+				<counter name="QryRTT1600+">96</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13755</counter>
+				<counter name="ServerCookieOut">4</counter>
+				<counter name="CookieIn">8</counter>
+				<counter name="CookieClientOk">8</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="US-Florida">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26947</counter>
+				<counter name="CacheMisses">56</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">33600</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="US-West">
+			<counters type="resqtype">
+				<counter name="NS">6866</counter>
+				<counter name="DNSKEY">6864</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1970</counter>
+				<counter name="Queryv6">11760</counter>
+				<counter name="Responsev4">1970</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">985</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12750</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">490</counter>
+				<counter name="ValOk">490</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">0</counter>
+				<counter name="QryRTT100">977</counter>
+				<counter name="QryRTT500">552</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">349</counter>
+				<counter name="QryRTT1600+">92</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13730</counter>
+				<counter name="ServerCookieOut">0</counter>
+				<counter name="CookieIn">0</counter>
+				<counter name="CookieClientOk">0</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="US-West">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26920</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">24</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">32848</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="HongKong">
+			<counters type="resqtype">
+				<counter name="NS">6870</counter>
+				<counter name="DNSKEY">6881</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1986</counter>
+				<counter name="Queryv6">11765</counter>
+				<counter name="Responsev4">1986</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">993</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12769</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">492</counter>
+				<counter name="ValOk">492</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">2</counter>
+				<counter name="QryRTT100">979</counter>
+				<counter name="QryRTT500">467</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">428</counter>
+				<counter name="QryRTT1600+">110</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13749</counter>
+				<counter name="ServerCookieOut">2</counter>
+				<counter name="CookieIn">4</counter>
+				<counter name="CookieClientOk">4</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="HongKong">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26923</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">33600</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="India">
+			<counters type="resqtype">
+				<counter name="NS">6870</counter>
+				<counter name="DNSKEY">6871</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1978</counter>
+				<counter name="Queryv6">11763</counter>
+				<counter name="Responsev4">1976</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">988</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12760</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">2</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">491</counter>
+				<counter name="ValOk">491</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">1</counter>
+				<counter name="QryRTT100">977</counter>
+				<counter name="QryRTT500">707</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">229</counter>
+				<counter name="QryRTT1600+">62</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13741</counter>
+				<counter name="ServerCookieOut">0</counter>
+				<counter name="CookieIn">0</counter>
+				<counter name="CookieClientOk">0</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="India">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26922</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">33816</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Israel">
+			<counters type="resqtype">
+				<counter name="NS">6880</counter>
+				<counter name="DNSKEY">6887</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">2002</counter>
+				<counter name="Queryv6">11765</counter>
+				<counter name="Responsev4">2001</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">1001</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12785</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">1</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">492</counter>
+				<counter name="ValOk">492</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">4</counter>
+				<counter name="QryRTT100">992</counter>
+				<counter name="QryRTT500">239</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">513</counter>
+				<counter name="QryRTT1600+">253</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13761</counter>
+				<counter name="ServerCookieOut">5</counter>
+				<counter name="CookieIn">10</counter>
+				<counter name="CookieClientOk">10</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Israel">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26921</counter>
+				<counter name="CacheMisses">56</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">32848</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="USA">
+			<counters type="resqtype">
+				<counter name="NS">6868</counter>
+				<counter name="DNSKEY">6873</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1976</counter>
+				<counter name="Queryv6">11765</counter>
+				<counter name="Responsev4">1976</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">988</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12760</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">491</counter>
+				<counter name="ValOk">491</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">3</counter>
+				<counter name="QryRTT100">979</counter>
+				<counter name="QryRTT500">627</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">301</counter>
+				<counter name="QryRTT1600+">66</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13741</counter>
+				<counter name="ServerCookieOut">0</counter>
+				<counter name="CookieIn">0</counter>
+				<counter name="CookieClientOk">0</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="USA">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26922</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">33592</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Canada">
+			<counters type="resqtype">
+				<counter name="NS">6874</counter>
+				<counter name="DNSKEY">6879</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1986</counter>
+				<counter name="Queryv6">11767</counter>
+				<counter name="Responsev4">1986</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">993</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12769</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">494</counter>
+				<counter name="ValOk">494</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">4</counter>
+				<counter name="QryRTT100">979</counter>
+				<counter name="QryRTT500">516</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">382</counter>
+				<counter name="QryRTT1600+">105</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13753</counter>
+				<counter name="ServerCookieOut">0</counter>
+				<counter name="CookieIn">0</counter>
+				<counter name="CookieClientOk">0</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Canada">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26950</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">33592</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Mexico">
+			<counters type="resqtype">
+				<counter name="NS">6878</counter>
+				<counter name="DNSKEY">6895</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">2006</counter>
+				<counter name="Queryv6">11767</counter>
+				<counter name="Responsev4">2006</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">1003</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12789</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">494</counter>
+				<counter name="ValOk">494</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">12</counter>
+				<counter name="QryRTT100">984</counter>
+				<counter name="QryRTT500">468</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">430</counter>
+				<counter name="QryRTT1600+">112</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13773</counter>
+				<counter name="ServerCookieOut">0</counter>
+				<counter name="CookieIn">0</counter>
+				<counter name="CookieClientOk">0</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Mexico">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26923</counter>
+				<counter name="CacheMisses">56</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">33592</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Japan">
+			<counters type="resqtype">
+				<counter name="NS">6870</counter>
+				<counter name="DNSKEY">6878</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1982</counter>
+				<counter name="Queryv6">11766</counter>
+				<counter name="Responsev4">1982</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">991</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12766</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">492</counter>
+				<counter name="ValOk">492</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">4</counter>
+				<counter name="QryRTT100">974</counter>
+				<counter name="QryRTT500">572</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">340</counter>
+				<counter name="QryRTT1600+">92</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13747</counter>
+				<counter name="ServerCookieOut">1</counter>
+				<counter name="CookieIn">2</counter>
+				<counter name="CookieClientOk">2</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Japan">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26898</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">33592</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Korea">
+			<counters type="resqtype">
+				<counter name="NS">6876</counter>
+				<counter name="DNSKEY">6886</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1996</counter>
+				<counter name="Queryv6">11766</counter>
+				<counter name="Responsev4">1996</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">998</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12780</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">492</counter>
+				<counter name="ValOk">492</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">6</counter>
+				<counter name="QryRTT100">985</counter>
+				<counter name="QryRTT500">299</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">491</counter>
+				<counter name="QryRTT1600+">215</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13761</counter>
+				<counter name="ServerCookieOut">1</counter>
+				<counter name="CookieIn">2</counter>
+				<counter name="CookieClientOk">2</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Korea">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26921</counter>
+				<counter name="CacheMisses">56</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">33592</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Turkey">
+			<counters type="resqtype">
+				<counter name="NS">6870</counter>
+				<counter name="DNSKEY">6880</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1984</counter>
+				<counter name="Queryv6">11766</counter>
+				<counter name="Responsev4">1984</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">992</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12767</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">493</counter>
+				<counter name="ValOk">493</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">10</counter>
+				<counter name="QryRTT100">976</counter>
+				<counter name="QryRTT500">469</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">430</counter>
+				<counter name="QryRTT1600+">99</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13749</counter>
+				<counter name="ServerCookieOut">1</counter>
+				<counter name="CookieIn">2</counter>
+				<counter name="CookieClientOk">2</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Turkey">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26899</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">33592</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="EasternEurope">
+			<counters type="resqtype">
+				<counter name="NS">6870</counter>
+				<counter name="DNSKEY">6889</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1988</counter>
+				<counter name="Queryv6">11771</counter>
+				<counter name="Responsev4">1988</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">994</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12775</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">494</counter>
+				<counter name="ValOk">494</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">6</counter>
+				<counter name="QryRTT100">978</counter>
+				<counter name="QryRTT500">264</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">527</counter>
+				<counter name="QryRTT1600+">213</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13756</counter>
+				<counter name="ServerCookieOut">3</counter>
+				<counter name="CookieIn">6</counter>
+				<counter name="CookieClientOk">6</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="EasternEurope">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26975</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">33600</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Europe">
+			<counters type="resqtype">
+				<counter name="NS">6887</counter>
+				<counter name="DNSKEY">6886</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">2009</counter>
+				<counter name="Queryv6">11764</counter>
+				<counter name="Responsev4">2008</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">1004</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12792</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">1</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">491</counter>
+				<counter name="ValOk">491</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">3</counter>
+				<counter name="QryRTT100">1001</counter>
+				<counter name="QryRTT500">197</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">474</counter>
+				<counter name="QryRTT1600+">333</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13771</counter>
+				<counter name="ServerCookieOut">2</counter>
+				<counter name="CookieIn">4</counter>
+				<counter name="CookieClientOk">4</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Europe">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26897</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">33592</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="SW-Europe">
+			<counters type="resqtype">
+				<counter name="NS">6890</counter>
+				<counter name="DNSKEY">6891</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">2018</counter>
+				<counter name="Queryv6">11763</counter>
+				<counter name="Responsev4">2018</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">1009</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12799</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">492</counter>
+				<counter name="ValOk">492</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">3</counter>
+				<counter name="QryRTT100">1007</counter>
+				<counter name="QryRTT500">209</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">502</counter>
+				<counter name="QryRTT1600+">297</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13779</counter>
+				<counter name="ServerCookieOut">2</counter>
+				<counter name="CookieIn">4</counter>
+				<counter name="CookieClientOk">4</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="SW-Europe">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26923</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">33600</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="UK">
+			<counters type="resqtype">
+				<counter name="NS">6886</counter>
+				<counter name="DNSKEY">6899</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">2017</counter>
+				<counter name="Queryv6">11768</counter>
+				<counter name="Responsev4">2015</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">1008</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12803</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">2</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">492</counter>
+				<counter name="ValOk">492</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">14</counter>
+				<counter name="QryRTT100">985</counter>
+				<counter name="QryRTT500">230</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">476</counter>
+				<counter name="QryRTT1600+">310</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13781</counter>
+				<counter name="ServerCookieOut">3</counter>
+				<counter name="CookieIn">6</counter>
+				<counter name="CookieClientOk">6</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="UK">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26923</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">32848</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="N-Europe">
+			<counters type="resqtype">
+				<counter name="NS">6870</counter>
+				<counter name="DNSKEY">6882</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1984</counter>
+				<counter name="Queryv6">11768</counter>
+				<counter name="Responsev4">1984</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">992</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12769</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">493</counter>
+				<counter name="ValOk">493</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">2</counter>
+				<counter name="QryRTT100">981</counter>
+				<counter name="QryRTT500">420</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">474</counter>
+				<counter name="QryRTT1600+">107</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13750</counter>
+				<counter name="ServerCookieOut">2</counter>
+				<counter name="CookieIn">4</counter>
+				<counter name="CookieClientOk">4</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="N-Europe">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26924</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">33600</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Netherlands">
+			<counters type="resqtype">
+				<counter name="NS">6886</counter>
+				<counter name="DNSKEY">6900</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">2017</counter>
+				<counter name="Queryv6">11769</counter>
+				<counter name="Responsev4">2015</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">1008</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12803</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">2</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">493</counter>
+				<counter name="ValOk">493</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">21</counter>
+				<counter name="QryRTT100">989</counter>
+				<counter name="QryRTT500">234</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">512</counter>
+				<counter name="QryRTT1600+">259</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13784</counter>
+				<counter name="ServerCookieOut">1</counter>
+				<counter name="CookieIn">2</counter>
+				<counter name="CookieClientOk">2</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Netherlands">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26972</counter>
+				<counter name="CacheMisses">56</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">3</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31640</counter>
+				<counter name="TreeMemMax">32856</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Italy">
+			<counters type="resqtype">
+				<counter name="NS">6870</counter>
+				<counter name="DNSKEY">6876</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1984</counter>
+				<counter name="Queryv6">11762</counter>
+				<counter name="Responsev4">1984</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">992</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12765</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">491</counter>
+				<counter name="ValOk">491</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">0</counter>
+				<counter name="QryRTT100">982</counter>
+				<counter name="QryRTT500">534</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">372</counter>
+				<counter name="QryRTT1600+">96</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13745</counter>
+				<counter name="ServerCookieOut">1</counter>
+				<counter name="CookieIn">2</counter>
+				<counter name="CookieClientOk">2</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Italy">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26897</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">32848</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Spain">
+			<counters type="resqtype">
+				<counter name="NS">6866</counter>
+				<counter name="DNSKEY">6875</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1980</counter>
+				<counter name="Queryv6">11761</counter>
+				<counter name="Responsev4">1980</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">990</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12760</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">491</counter>
+				<counter name="ValOk">491</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">2</counter>
+				<counter name="QryRTT100">976</counter>
+				<counter name="QryRTT500">402</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">483</counter>
+				<counter name="QryRTT1600+">117</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13739</counter>
+				<counter name="ServerCookieOut">2</counter>
+				<counter name="CookieIn">4</counter>
+				<counter name="CookieClientOk">4</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Spain">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26922</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">32848</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Scandanavia">
+			<counters type="resqtype">
+				<counter name="NS">6882</counter>
+				<counter name="DNSKEY">6882</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">2002</counter>
+				<counter name="Queryv6">11762</counter>
+				<counter name="Responsev4">2002</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">1001</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12782</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">492</counter>
+				<counter name="ValOk">492</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">6</counter>
+				<counter name="QryRTT100">987</counter>
+				<counter name="QryRTT500">224</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">480</counter>
+				<counter name="QryRTT1600+">305</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13762</counter>
+				<counter name="ServerCookieOut">2</counter>
+				<counter name="CookieIn">4</counter>
+				<counter name="CookieClientOk">4</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Scandanavia">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26923</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">32856</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="UAE">
+			<counters type="resqtype">
+				<counter name="NS">6882</counter>
+				<counter name="DNSKEY">6899</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">2018</counter>
+				<counter name="Queryv6">11763</counter>
+				<counter name="Responsev4">2015</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">1008</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12799</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">3</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">492</counter>
+				<counter name="ValOk">492</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">14</counter>
+				<counter name="QryRTT100">995</counter>
+				<counter name="QryRTT500">207</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">359</counter>
+				<counter name="QryRTT1600+">440</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13779</counter>
+				<counter name="ServerCookieOut">1</counter>
+				<counter name="CookieIn">2</counter>
+				<counter name="CookieClientOk">2</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="UAE">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26921</counter>
+				<counter name="CacheMisses">56</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">3</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31632</counter>
+				<counter name="TreeMemMax">33592</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="NewZealand">
+			<counters type="resqtype">
+				<counter name="NS">6874</counter>
+				<counter name="DNSKEY">6878</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1990</counter>
+				<counter name="Queryv6">11762</counter>
+				<counter name="Responsev4">1989</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">995</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12771</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">1</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">491</counter>
+				<counter name="ValOk">491</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">5</counter>
+				<counter name="QryRTT100">982</counter>
+				<counter name="QryRTT500">414</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">449</counter>
+				<counter name="QryRTT1600+">139</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13749</counter>
+				<counter name="ServerCookieOut">2</counter>
+				<counter name="CookieIn">4</counter>
+				<counter name="CookieClientOk">4</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="NewZealand">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26897</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">32856</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Asia">
+			<counters type="resqtype">
+				<counter name="NS">6878</counter>
+				<counter name="DNSKEY">6874</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1989</counter>
+				<counter name="Queryv6">11763</counter>
+				<counter name="Responsev4">1988</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">994</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12771</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">1</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">491</counter>
+				<counter name="ValOk">491</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">2</counter>
+				<counter name="QryRTT100">988</counter>
+				<counter name="QryRTT500">400</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">472</counter>
+				<counter name="QryRTT1600+">126</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13752</counter>
+				<counter name="ServerCookieOut">0</counter>
+				<counter name="CookieIn">0</counter>
+				<counter name="CookieClientOk">0</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Asia">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26922</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">32848</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Oceania">
+			<counters type="resqtype">
+				<counter name="NS">6871</counter>
+				<counter name="DNSKEY">6867</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1975</counter>
+				<counter name="Queryv6">11763</counter>
+				<counter name="Responsev4">1974</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">987</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12757</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">1</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">491</counter>
+				<counter name="ValOk">491</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">6</counter>
+				<counter name="QryRTT100">972</counter>
+				<counter name="QryRTT500">631</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">286</counter>
+				<counter name="QryRTT1600+">79</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13738</counter>
+				<counter name="ServerCookieOut">0</counter>
+				<counter name="CookieIn">0</counter>
+				<counter name="CookieClientOk">0</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Oceania">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26922</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">3</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31632</counter>
+				<counter name="TreeMemMax">33592</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Brazil-AWS">
+			<counters type="resqtype">
+				<counter name="NS">6890</counter>
+				<counter name="DNSKEY">6909</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">2032</counter>
+				<counter name="Queryv6">11767</counter>
+				<counter name="Responsev4">2031</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">1016</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12817</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">1</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">492</counter>
+				<counter name="ValOk">492</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">4</counter>
+				<counter name="QryRTT100">1008</counter>
+				<counter name="QryRTT500">231</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">377</counter>
+				<counter name="QryRTT1600+">411</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13795</counter>
+				<counter name="ServerCookieOut">3</counter>
+				<counter name="CookieIn">6</counter>
+				<counter name="CookieClientOk">6</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Brazil-AWS">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26921</counter>
+				<counter name="CacheMisses">56</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">32856</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Brazil">
+			<counters type="resqtype">
+				<counter name="NS">6874</counter>
+				<counter name="DNSKEY">6884</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">1993</counter>
+				<counter name="Queryv6">11765</counter>
+				<counter name="Responsev4">1992</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">996</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12775</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">1</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">493</counter>
+				<counter name="ValOk">493</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">2</counter>
+				<counter name="QryRTT100">979</counter>
+				<counter name="QryRTT500">388</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">490</counter>
+				<counter name="QryRTT1600+">133</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13753</counter>
+				<counter name="ServerCookieOut">5</counter>
+				<counter name="CookieIn">10</counter>
+				<counter name="CookieClientOk">10</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Brazil">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26897</counter>
+				<counter name="CacheMisses">56</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">33592</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Chile">
+			<counters type="resqtype">
+				<counter name="NS">6886</counter>
+				<counter name="DNSKEY">6888</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">2014</counter>
+				<counter name="Queryv6">11760</counter>
+				<counter name="Responsev4">2014</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">1007</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12794</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">490</counter>
+				<counter name="ValOk">490</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">10</counter>
+				<counter name="QryRTT100">989</counter>
+				<counter name="QryRTT500">209</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">392</counter>
+				<counter name="QryRTT1600+">414</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13770</counter>
+				<counter name="ServerCookieOut">4</counter>
+				<counter name="CookieIn">8</counter>
+				<counter name="CookieClientOk">8</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Chile">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26896</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">32848</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="SouthAfrica">
+			<counters type="resqtype">
+				<counter name="NS">6886</counter>
+				<counter name="DNSKEY">6888</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">2008</counter>
+				<counter name="Queryv6">11766</counter>
+				<counter name="Responsev4">2008</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">1004</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12792</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">492</counter>
+				<counter name="ValOk">492</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">9</counter>
+				<counter name="QryRTT100">995</counter>
+				<counter name="QryRTT500">199</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">384</counter>
+				<counter name="QryRTT1600+">421</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13773</counter>
+				<counter name="ServerCookieOut">1</counter>
+				<counter name="CookieIn">2</counter>
+				<counter name="CookieClientOk">2</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="SouthAfrica">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26921</counter>
+				<counter name="CacheMisses">56</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31416</counter>
+				<counter name="TreeMemMax">33600</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="China">
+			<counters type="resqtype">
+				<counter name="NS">6884</counter>
+				<counter name="DNSKEY">6893</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">2012</counter>
+				<counter name="Queryv6">11765</counter>
+				<counter name="Responsev4">2012</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">1006</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12793</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">494</counter>
+				<counter name="ValOk">494</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">6</counter>
+				<counter name="QryRTT100">998</counter>
+				<counter name="QryRTT500">196</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">509</counter>
+				<counter name="QryRTT1600+">303</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13775</counter>
+				<counter name="ServerCookieOut">2</counter>
+				<counter name="CookieIn">4</counter>
+				<counter name="CookieClientOk">4</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="China">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26923</counter>
+				<counter name="CacheMisses">56</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">32848</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="Default">
+			<counters type="resqtype">
+				<counter name="NS">6886</counter>
+				<counter name="DNSKEY">6900</counter>
+			</counters>
+			<counters type="resstats">
+				<counter name="Queryv4">2020</counter>
+				<counter name="Queryv6">11766</counter>
+				<counter name="Responsev4">2020</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">1010</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">12803</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">493</counter>
+				<counter name="ValOk">493</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">4</counter>
+				<counter name="QryRTT100">1000</counter>
+				<counter name="QryRTT500">201</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">407</counter>
+				<counter name="QryRTT1600+">408</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">13783</counter>
+				<counter name="ServerCookieOut">3</counter>
+				<counter name="CookieIn">6</counter>
+				<counter name="CookieClientOk">6</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="Default">
+				<rrset>
+					<name>NS</name>
+					<counter>1</counter>
+				</rrset>
+				<rrset>
+					<name>RRSIG</name>
+					<counter>2</counter>
+				</rrset>
+				<rrset>
+					<name>DNSKEY</name>
+					<counter>1</counter>
+				</rrset>
+			</cache>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">26</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">14</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">26999</counter>
+				<counter name="CacheMisses">54</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">1</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">31408</counter>
+				<counter name="TreeMemMax">32848</counter>
+				<counter name="HeapMemTotal">270336</counter>
+				<counter name="HeapMemInUse">9216</counter>
+				<counter name="HeapMemMax">9216</counter>
+			</counters>
+		</view>
+		<view name="_bind">
+			<counters type="resqtype"/>
+			<counters type="resstats">
+				<counter name="Queryv4">0</counter>
+				<counter name="Queryv6">0</counter>
+				<counter name="Responsev4">0</counter>
+				<counter name="Responsev6">0</counter>
+				<counter name="NXDOMAIN">0</counter>
+				<counter name="SERVFAIL">0</counter>
+				<counter name="FORMERR">0</counter>
+				<counter name="OtherError">0</counter>
+				<counter name="EDNS0Fail">0</counter>
+				<counter name="Mismatch">0</counter>
+				<counter name="Truncated">0</counter>
+				<counter name="Lame">0</counter>
+				<counter name="Retry">0</counter>
+				<counter name="QueryAbort">0</counter>
+				<counter name="QuerySockFail">0</counter>
+				<counter name="QueryCurUDP">0</counter>
+				<counter name="QueryCurTCP">0</counter>
+				<counter name="QueryTimeout">0</counter>
+				<counter name="GlueFetchv4">0</counter>
+				<counter name="GlueFetchv6">0</counter>
+				<counter name="GlueFetchv4Fail">0</counter>
+				<counter name="GlueFetchv6Fail">0</counter>
+				<counter name="ValAttempt">0</counter>
+				<counter name="ValOk">0</counter>
+				<counter name="ValNegOk">0</counter>
+				<counter name="ValFail">0</counter>
+				<counter name="QryRTT10">0</counter>
+				<counter name="QryRTT100">0</counter>
+				<counter name="QryRTT500">0</counter>
+				<counter name="QryRTT800">0</counter>
+				<counter name="QryRTT1600">0</counter>
+				<counter name="QryRTT1600+">0</counter>
+				<counter name="NumFetch">0</counter>
+				<counter name="BucketSize">31</counter>
+				<counter name="REFUSED">0</counter>
+				<counter name="ClientCookieOut">0</counter>
+				<counter name="ServerCookieOut">0</counter>
+				<counter name="CookieIn">0</counter>
+				<counter name="CookieClientOk">0</counter>
+				<counter name="BadEDNSVersion">0</counter>
+				<counter name="BadCookieRcode">0</counter>
+				<counter name="ZoneQuota">0</counter>
+				<counter name="ServerQuota">0</counter>
+				<counter name="NextItem">0</counter>
+			</counters>
+			<cache name="_bind"/>
+			<counters type="adbstat">
+				<counter name="nentries">1021</counter>
+				<counter name="entriescnt">0</counter>
+				<counter name="nnames">1021</counter>
+				<counter name="namescnt">0</counter>
+			</counters>
+			<counters type="cachestats">
+				<counter name="CacheHits">0</counter>
+				<counter name="CacheMisses">0</counter>
+				<counter name="QueryHits">0</counter>
+				<counter name="QueryMisses">0</counter>
+				<counter name="DeleteLRU">0</counter>
+				<counter name="DeleteTTL">0</counter>
+				<counter name="CacheNodes">0</counter>
+				<counter name="CacheBuckets">64</counter>
+				<counter name="TreeMemTotal">287408</counter>
+				<counter name="TreeMemInUse">29312</counter>
+				<counter name="TreeMemMax">29312</counter>
+				<counter name="HeapMemTotal">262144</counter>
+				<counter name="HeapMemInUse">1024</counter>
+				<counter name="HeapMemMax">1024</counter>
+			</counters>
+		</view>
+	</views>
+</statistics>
