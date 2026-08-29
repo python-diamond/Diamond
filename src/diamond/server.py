@@ -7,6 +7,16 @@ import signal
 import sys
 import time
 
+# Diamond hands live collector and handler objects, which own thread locks and
+# open sockets, straight to child processes, so it needs fork semantics. Python
+# 3.14 made forkserver the default on Linux, which pickles those arguments
+# instead and fails. Pin the context rather than the global start method so we
+# do not change behaviour for anything embedding diamond.
+if 'fork' in multiprocessing.get_all_start_methods():
+    mp_context = multiprocessing.get_context('fork')
+else:
+    mp_context = multiprocessing.get_context()
+
 try:
     from setproctitle import getproctitle, setproctitle
 except ImportError:
@@ -57,7 +67,7 @@ class Server(object):
         if setproctitle:
             oldproctitle = getproctitle()
             setproctitle('%s - SyncManager' % getproctitle())
-        self.manager = multiprocessing.Manager()
+        self.manager = mp_context.Manager()
         if setproctitle:
             setproctitle(oldproctitle)
 
@@ -116,7 +126,7 @@ class Server(object):
         self.handler_queue = QueueHandler(
             config=self.config, queue=self.metric_queue, log=self.log)
 
-        handlers_process = multiprocessing.Process(
+        handlers_process = mp_context.Process(
             name="Handlers",
             target=handler_process,
             args=(self.handlers, self.metric_queue, self.log),
@@ -196,7 +206,7 @@ class Server(object):
                     # Splay the loads
                     time.sleep(float(load_delay))
 
-                    process = multiprocessing.Process(
+                    process = mp_context.Process(
                         name=process_name,
                         target=collector_process,
                         args=(collector, self.metric_queue, self.log)
