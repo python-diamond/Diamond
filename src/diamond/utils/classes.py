@@ -6,8 +6,9 @@ import sys
 import logging
 import inspect
 import traceback
-import pkg_resources
-import imp
+import importlib.util
+
+from importlib.metadata import entry_points
 
 from diamond.util import load_class_from_name
 from diamond.collector import Collector
@@ -150,12 +151,16 @@ def load_collectors_from_paths(paths):
                   f[0] != '.'):
                 modname = f[:-3]
 
-                fp, pathname, description = imp.find_module(modname, [path])
-
                 try:
                     # Import the module
-                    mod = imp.load_module(modname, fp, pathname, description)
+                    spec = importlib.util.spec_from_file_location(modname,
+                                                                  fpath)
+                    mod = importlib.util.module_from_spec(spec)
+                    # Register before exec so the module can import itself
+                    sys.modules[modname] = mod
+                    spec.loader.exec_module(mod)
                 except (KeyboardInterrupt, SystemExit) as err:
+                    sys.modules.pop(modname, None)
                     logger.error(
                         "System or keyboard interrupt "
                         "while loading module %s"
@@ -164,6 +169,7 @@ def load_collectors_from_paths(paths):
                         sys.exit(err.code)
                     raise KeyboardInterrupt
                 except Exception:
+                    sys.modules.pop(modname, None)
                     # Log error
                     logger.error("Failed to import module: %s. %s",
                                  modname,
@@ -171,9 +177,6 @@ def load_collectors_from_paths(paths):
                 else:
                     for name, cls in get_collectors_from_module(mod):
                         collectors[name] = cls
-                finally:
-                    if fp:
-                        fp.close()
 
     # Return Collector classes
     return collectors
@@ -184,7 +187,7 @@ def load_collectors_from_entry_point(path):
     Load collectors that were installed into an entry_point.
     """
     collectors = {}
-    for ep in pkg_resources.iter_entry_points(path):
+    for ep in entry_points(group=path):
         try:
             mod = ep.load()
         except Exception:

@@ -1,0 +1,5 @@
+# setup.py imports distro at build time, so it must be present in pip's
+# isolated build environment.
+[build-system]
+requires = ["setuptools>=61", "wheel", "distro"]
+build-backend = "setuptools.build_meta"

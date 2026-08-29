@@ -18,12 +18,9 @@ def running_under_virtualenv():
     return False
 
 
-if os.environ.get('USE_SETUPTOOLS'):
-    from setuptools import setup
-    setup_kwargs = dict(zip_safe=0)
-else:
-    from distutils.core import setup
-    setup_kwargs = dict()
+# distutils was removed in Python 3.12, so setuptools is no longer optional.
+from setuptools import setup
+setup_kwargs = dict(zip_safe=0)
 
 if os.name == 'nt':
     pgm_files = os.environ["ProgramFiles"]
