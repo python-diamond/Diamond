@@ -290,14 +290,18 @@ class MySQLCollector(diamond.collector.Collector):
         })
         return config
 
-    def get_db_stats(self, query):
+    def get_db_stats(self, query, log_errors=True):
         cursor = self.db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
 
         try:
             cursor.execute(query)
             return cursor.fetchall()
         except MySQLError as e:
-            self.log.error('MySQLCollector could not get db stats', e)
+            # log_errors=False is for probe queries that are expected to fail
+            # on some server versions (SHOW REPLICA STATUS pre-8.0.22, SHOW
+            # SLAVE STATUS post-8.4); their fallback runs with logging on.
+            if log_errors:
+                self.log.error('MySQLCollector could not get db stats', e)
             return ()
 
     def connect(self, params):
@@ -316,10 +320,30 @@ class MySQLCollector(diamond.collector.Collector):
         return self.get_db_stats('SHOW GLOBAL STATUS')
 
     def get_db_master_status(self):
-        return self.get_db_stats('SHOW MASTER STATUS')
+        # MySQL 8.4 removed SHOW MASTER STATUS; 8.2+ knows the new form.
+        # get_db_stats returns () on error, so fall back on empty.
+        rows = self.get_db_stats('SHOW BINARY LOG STATUS', log_errors=False)
+        if not rows:
+            rows = self.get_db_stats('SHOW MASTER STATUS')
+        return rows
+
+    # 8.4 renamed every *_Master/Master_* column to Source. Dashboards and
+    # alerts predate that, so translate back and publish the legacy names.
+    def _legacy_replica_keys(self, row):
+        out = {}
+        for key, value in row.items():
+            out[key.replace('_Source', '_Master').replace('Source_', 'Master_')
+                   .replace('Replica_', 'Slave_')] = value
+        return out
 
     def get_db_slave_status(self):
-        return self.get_db_stats('SHOW SLAVE STATUS')
+        # MySQL 8.4 removed SHOW SLAVE STATUS; 8.0.22+ knows the new form.
+        # An empty result here is normal on a primary (no channel), so only
+        # the errored/ancient-server case reaches the legacy query.
+        rows = self.get_db_stats('SHOW REPLICA STATUS', log_errors=False)
+        if rows:
+            return [self._legacy_replica_keys(r) for r in rows]
+        return self.get_db_stats('SHOW SLAVE STATUS', log_errors=False)
 
     def get_db_innodb_status(self):
         return self.get_db_stats('SHOW ENGINE INNODB STATUS')
