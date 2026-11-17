@@ -20,7 +20,7 @@ class BaseCollectorTest(unittest.TestCase):
             'hostname': 'custom.localhost',
         }
         c = Collector(config, [])
-        self.assertEquals('custom.localhost', c.get_hostname())
+        self.assertEqual('custom.localhost', c.get_hostname())
 
     def test_SetHostnameViaShellCmd(self):
         config = configobj.ConfigObj()
@@ -32,7 +32,7 @@ class BaseCollectorTest(unittest.TestCase):
             'hostname_method': 'shell',
         }
         c = Collector(config, [])
-        self.assertEquals('custom.localhost', c.get_hostname())
+        self.assertEqual('custom.localhost', c.get_hostname())
 
     @patch('diamond.collector.get_hostname')
     def test_get_metric_path_no_prefix(self, get_hostname_mock):

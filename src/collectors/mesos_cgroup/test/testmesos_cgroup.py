@@ -5,7 +5,7 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import MagicMock, mock_open
+from unittest.mock import MagicMock, mock_open
 from test import patch
 from test import Mock
 

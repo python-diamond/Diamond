@@ -10,7 +10,7 @@ from test import patch
 from test import call
 from test import BUILTIN_OPEN
 
-from collections import Iterator
+from collections.abc import Iterator
 from diamond.collector import Collector
 from sockstat import SockstatCollector
 import sys

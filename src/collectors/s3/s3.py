@@ -1,20 +1,18 @@
 # coding=utf-8
 
 """
-The S3BucketCollector collects bucket size using boto
+The S3BucketCollector collects bucket size using boto3
 
 #### Dependencies
 
-  * boto (https://github.com/boto/boto)
+  * boto3 (https://github.com/boto/boto3)
 """
 
 import diamond.collector
 try:
-    import boto
-    boto
-    from boto.s3.connection import S3Connection
+    import boto3
 except ImportError:
-    boto = None
+    boto3 = None
 
 
 class S3BucketCollector(diamond.collector.Collector):
@@ -39,12 +37,13 @@ class S3BucketCollector(diamond.collector.Collector):
     def getBucket(self, aws_access, aws_secret, bucket_name):
         self.log.info("S3: Open Bucket, %s, %s, %s" % (bucket_name, aws_access,
                                                        aws_secret))
-        s3 = S3Connection(aws_access, aws_secret)
-        return s3.lookup(bucket_name)
+        s3 = boto3.resource('s3', aws_access_key_id=aws_access,
+                            aws_secret_access_key=aws_secret)
+        return s3.Bucket(bucket_name)
 
     def getBucketSize(self, bucket):
         total_bytes = 0
-        for key in bucket:
+        for key in bucket.objects.all():
             total_bytes += key.size
         return total_bytes
 
@@ -52,8 +51,8 @@ class S3BucketCollector(diamond.collector.Collector):
         """
         Collect s3 bucket stats
         """
-        if boto is None:
-            self.log.error("Unable to import boto python module")
+        if boto3 is None:
+            self.log.error("Unable to import boto3 python module")
             return {}
         for s3instance in self.config['s3']:
             self.log.info("S3: byte_unit: %s" % self.config['byte_unit'])

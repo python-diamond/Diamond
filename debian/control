@@ -5,13 +5,13 @@ Maintainer: Rob Smith <kormoc@gmail.com>
 Homepage: https://github.com/BrightcoveOS/Diamond
 Vcs-Git: git://github.com/BrightcoveOS/Diamond.git
 Vcs-Browser: https://github.com/BrightcoveOS/Diamond
-Build-Depends: debhelper (>= 7), python3.8, python3-configobj, cdbs
+Build-Depends: debhelper (>= 7), python3.12, python3-configobj, cdbs
 Standards-Version: 3.9.1
-X-Python-Version: >=3.8
+X-Python-Version: >=3.12
 
 Package: diamond
 Architecture: all
-Depends: ${misc:Depends}, ${python3:Depends}, python3.8, python3-configobj
+Depends: ${misc:Depends}, ${python3:Depends}, python3.12, python3-configobj
 Description: System statistics collector for Graphite.
  Diamond is a daemon and toolset for gathering system statistics
  and publishing them to Graphite.

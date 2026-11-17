@@ -2,7 +2,7 @@
 # coding=utf-8
 ##########################################################################
 
-from mock import call
+from unittest.mock import call
 from rabbitmq import RabbitMQCollector
 
 from diamond.collector import Collector

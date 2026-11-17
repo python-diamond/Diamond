@@ -8,7 +8,7 @@ from test import unittest
 from test import run_only
 from test import Mock
 from test import patch
-from mock import call
+from unittest.mock import call
 
 from diamond.collector import Collector
 from redisstat import RedisCollector

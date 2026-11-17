@@ -6,11 +6,10 @@ collect data about docker and the containers.
 
 #### Dependencies
 
-* docker -- Install via `pip install docker-py`
+* docker -- Install via `pip install docker`
   Source https://github.com/docker/docker-py
 """
 
-import json
 import diamond.collector
 
 try:
@@ -18,7 +17,7 @@ try:
 except ImportError:
     docker = None
 else:
-    DockerClient = docker.Client if docker.version < "2" else docker.APIClient
+    DockerClient = docker.APIClient
 
 
 class DockerCollector(diamond.collector.Collector):
@@ -86,8 +85,8 @@ class DockerCollector(diamond.collector.Collector):
         # Collect memory and cpu stats
         for container in running_containers:
             name = "containers." + "".join(container['Names'][0][1:])
-            s = client.stats(container["Id"])
-            stat = json.loads(s.next())
+            s = client.stats(container["Id"], decode=True)
+            stat = next(s)
             for path in self.METRICS:
                 val = self.get_value(path, stat)
                 if val is not None:

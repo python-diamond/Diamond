@@ -85,7 +85,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       c.vm.provision "shell", inline: "sudo apt-get install libpq-dev -y"
       c.vm.provision "shell", inline: "sudo apt-get install python3-dev -y"
       c.vm.provision "shell", inline: "sudo apt-get install libpython3.8-dev -y"
-      c.vm.provision "shell", inline: "sudo pip3 install -r /vagrant/.travis.requirements3.txt"
+      c.vm.provision "shell", inline: "sudo pip3 install -r /vagrant/requirements.txt"
 
       # Build Diamond
       c.vm.provision "shell", inline: "cp -rf /vagrant /tmp/Diamond"
@@ -171,7 +171,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     c.vm.provision "shell", inline: "sudo yum install -y Cython" # req for pyutmp
     c.vm.provision "shell", inline: "sudo yum install -y lm_sensors-devel lm_sensors python-devel" # req for pyutmp
     c.vm.provision "shell", inline: "sudo yum install -y python3-pip"
-    c.vm.provision "shell", inline: "sudo pip3 install -r /vagrant/.travis.requirements3.txt"
+    c.vm.provision "shell", inline: "sudo pip3 install -r /vagrant/requirements.txt"
 
     # Setup Diamond to run as a service
     c.vm.provision "shell", inline: "sudo yum install -y python-setuptools"
@@ -226,7 +226,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Install python libraries needed by specific collectors
     c.vm.provision "shell", inline: "sudo dnf install -y postgresql-devel" # req for psycopg2
     c.vm.provision "shell", inline: "sudo dnf install -y lm_sensors-devel lm_sensors" # req for pyutmp
-    c.vm.provision "shell", inline: "sudo pip3 install -r /vagrant/.travis.requirements3.txt"
+    c.vm.provision "shell", inline: "sudo pip3 install -r /vagrant/requirements.txt"
 
     # Setup Diamond to run as a service
     c.vm.provision "shell", inline: "sudo dnf install -y python3-setuptools"
@@ -302,7 +302,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     c.vm.provision "shell", inline: "sudo apt-get install libpq-dev -y"
     c.vm.provision "shell", inline: "sudo apt-get install python3-dev -y"
     c.vm.provision "shell", inline: "sudo apt-get install libpython3.8-dev -y"
-    c.vm.provision "shell", inline: "sudo pip3 install -r /vagrant/.travis.requirements3.txt"
+    c.vm.provision "shell", inline: "sudo pip3 install -r /vagrant/requirements.txt"
 
     # Setup Diamond to run as a service
     c.vm.provision "shell", inline: "sudo apt-get install -y python-setuptools"
@@ -352,7 +352,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     c.vm.provision "shell", inline: "sudo apt-get install libpq-dev -y"
     c.vm.provision "shell", inline: "sudo apt-get install python3-dev -y"
     c.vm.provision "shell", inline: "sudo apt-get install libpython3.8-dev -y"
-    c.vm.provision "shell", inline: "sudo pip3 install -r /vagrant/.travis.requirements3.txt"
+    c.vm.provision "shell", inline: "sudo pip3 install -r /vagrant/requirements.txt"
 
     # Setup Diamond to run as a service
     c.vm.provision "shell", inline: "sudo apt-get install -y python-setuptools"
@@ -395,7 +395,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     c.vm.provision "shell", inline: "sudo apt-get install -y postgresql-server-dev-all" # req for psycopg2
     c.vm.provision "shell", inline: "sudo apt-get install -y lm-sensors" # req for pyutmp
     c.vm.provision "shell", inline: "sudo rm /usr/bin/lsb_release"  # lsb_release caused pip error
-    c.vm.provision "shell", inline: "sudo pip3.8 install -r /vagrant/.travis.requirements3.txt"
+    c.vm.provision "shell", inline: "sudo pip3.8 install -r /vagrant/requirements.txt"
 
     # Setup Diamond to run as a service
     c.vm.provision "shell", inline: "sudo mkdir /var/log/diamond"

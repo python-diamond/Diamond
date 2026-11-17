@@ -5,7 +5,7 @@
 from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
-from mock import call
+from unittest.mock import call
 from test import Mock
 from test import patch
 

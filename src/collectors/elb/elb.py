@@ -35,7 +35,7 @@ You can specify an arbitrary amount of regions
 
 #### Dependencies
 
- * boto
+ * boto3
 
 """
 import calendar
@@ -57,10 +57,9 @@ from diamond.collector import str_to_bool
 from diamond.metric import Metric
 
 try:
-    import boto.ec2.elb
-    from boto.ec2 import cloudwatch
+    import boto3
 except ImportError:
-    cloudwatch = False
+    boto3 = None
 
 
 class memoized(object):
@@ -116,8 +115,9 @@ def get_zones(region, auth_kwargs):
     :param region: region to get the availability zones for
     :return: list of availability zones
     """
-    ec2_conn = boto.ec2.connect_to_region(region, **auth_kwargs)
-    return [zone.name for zone in ec2_conn.get_all_zones()]
+    ec2_client = boto3.client('ec2', region_name=region, **auth_kwargs)
+    zones = ec2_client.describe_availability_zones()['AvailabilityZones']
+    return [zone['ZoneName'] for zone in zones]
 
 
 class ElbCollector(diamond.collector.Collector):
@@ -162,13 +162,13 @@ class ElbCollector(diamond.collector.Collector):
             }
         else:
             # If creds not present, assume we're using IAM roles with
-            # instance profiles. Boto will automatically take care of using
+            # instance profiles. Boto3 will automatically take care of using
             # the creds from the instance metatdata.
             self.auth_kwargs = {}
 
     def check_boto(self):
-        if not cloudwatch:
-            self.log.error("boto module not found!")
+        if not boto3:
+            self.log.error("boto3 module not found!")
             return False
         return True
 
@@ -219,10 +219,13 @@ class ElbCollector(diamond.collector.Collector):
         # up the changes.
         region_dict = config.get('regions', {}).get(region, {})
         if 'elb_names' not in region_dict:
-            elb_conn = boto.ec2.elb.connect_to_region(region,
-                                                      **self.auth_kwargs)
-            full_elb_names = \
-                [elb.name for elb in elb_conn.get_all_load_balancers()]
+            elb_client = boto3.client('elb', region_name=region,
+                                      **self.auth_kwargs)
+            paginator = elb_client.get_paginator('describe_load_balancers')
+            full_elb_names = [
+                elb['LoadBalancerName']
+                for page in paginator.paginate()
+                for elb in page['LoadBalancerDescriptions']]
 
             # Regular expressions for ELBs we DO NOT want to get metrics on.
             matchers = \
@@ -254,19 +257,19 @@ class ElbCollector(diamond.collector.Collector):
             precision=metric.precision,
             timestamp=time.mktime(utc_to_local(end_time).timetuple()))
 
-    def process_metric(self, region_cw_conn, zone, start_time, end_time,
+    def process_metric(self, cw_client, region, zone, start_time, end_time,
                        elb_name, metric):
-        stats = region_cw_conn.get_metric_statistics(
-            self.config['interval'],
-            start_time,
-            end_time,
-            metric.name,
-            namespace='AWS/ELB',
-            statistics=[metric.aws_type],
-            dimensions={
-                'LoadBalancerName': elb_name,
-                'AvailabilityZone': zone
-            })
+        stats = cw_client.get_metric_statistics(
+            Namespace='AWS/ELB',
+            MetricName=metric.name,
+            Dimensions=[
+                {'Name': 'LoadBalancerName', 'Value': elb_name},
+                {'Name': 'AvailabilityZone', 'Value': zone},
+            ],
+            StartTime=start_time,
+            EndTime=end_time,
+            Period=self.config['interval'],
+            Statistics=[metric.aws_type])['Datapoints']
 
         # create a fake stat if the current metric should default to zero when
         # a stat is not returned. Cloudwatch just skips the metric entirely
@@ -279,29 +282,27 @@ class ElbCollector(diamond.collector.Collector):
             })
 
         for stat in stats:
-            self.process_stat(region_cw_conn.region.name, zone, elb_name,
-                              metric, stat, end_time)
+            self.process_stat(region, zone, elb_name, metric, stat, end_time)
 
-    def process_elb(self, region_cw_conn, zone,
+    def process_elb(self, cw_client, region, zone,
                     start_time, end_time, elb_name):
         for metric in self.metrics:
-            self.process_metric(region_cw_conn, zone, start_time, end_time,
+            self.process_metric(cw_client, region, zone, start_time, end_time,
                                 elb_name, metric)
 
-    def process_zone(self, region_cw_conn, zone, start_time, end_time):
-        for elb_name in self.get_elb_names(region_cw_conn.region.name,
-                                           self.config):
-            self.process_elb(region_cw_conn, zone, start_time, end_time,
+    def process_zone(self, region, zone, start_time, end_time):
+        # Create a new client for each thread.
+        cw_client = boto3.client('cloudwatch', region_name=region,
+                                 **self.auth_kwargs)
+        for elb_name in self.get_elb_names(region, self.config):
+            self.process_elb(cw_client, region, zone, start_time, end_time,
                              elb_name)
 
-    def process_region(self, region_cw_conn, start_time, end_time):
+    def process_region(self, region, start_time, end_time):
         threads = []
-        for zone in get_zones(region_cw_conn.region.name, self.auth_kwargs):
-            # Create a new connection for each thread, Boto isn't threadsafe.
-            t_conn = cloudwatch.connect_to_region(region_cw_conn.region.name,
-                                                  **self.auth_kwargs)
+        for zone in get_zones(region, self.auth_kwargs):
             zone_thread = threading.Thread(target=self.process_zone,
-                                           args=(t_conn, zone,
+                                           args=(region, zone,
                                                  start_time, end_time))
             zone_thread.start()
 
@@ -322,6 +323,4 @@ class ElbCollector(diamond.collector.Collector):
         start_time = end_time - datetime.timedelta(seconds=self.interval)
 
         for region in self.config['regions'].keys():
-            region_cw_conn = cloudwatch.connect_to_region(region,
-                                                          **self.auth_kwargs)
-            self.process_region(region_cw_conn, start_time, end_time)
+            self.process_region(region, start_time, end_time)

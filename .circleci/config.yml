@@ -1,8 +1,8 @@
-version: 2
+version: 2.1
 jobs:
   test:
     docker:
-      - image: hostedgraphite/pythonbuild:focal_build3
+      - image: hostedgraphite/pythonbuild:noble_build312
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
     steps:
@@ -10,30 +10,27 @@ jobs:
       - run: mkdir -p $CIRCLE_ARTIFACTS
       - run: apt-get update
       - run: apt-get install -y libpq-dev lm-sensors
-      - run: pip install -r .travis.requirements3.txt
-      - run: make install
       - run: tox
       - run: cp -r htmlcov $CIRCLE_ARTIFACTS
       - store_artifacts:
           path: /tmp/artifacts
       - save_cache:
-          key: dep-pip-{{ .Branch }}-{{ checksum ".travis.requirements3.txt" }}
+          key: dep-pip-{{ .Branch }}-{{ checksum "requirements.txt" }}
           paths:
             - "/root/.cache"
   build:
     docker:
-      - image: hostedgraphite/pythonbuild:focal_build3
+      - image: hostedgraphite/pythonbuild:noble_build312
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
     steps:
       - checkout
       - restore_cache:
           keys:
-            - dep-pip-{{ .Branch }}-{{ checksum ".travis.requirements3.txt" }}
+            - dep-pip-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run: mkdir -p $CIRCLE_ARTIFACTS
       - run: apt-get update
-      - run: apt-get install -y libpq-dev lm-sensors python3-configobj cdbs
-      - run: pip install -r .travis.requirements3.txt
+      - run: apt-get install -y libpq-dev lm-sensors python3-configobj python3-distro cdbs
       - run: make deb
       - run: cp build/*.deb $CIRCLE_ARTIFACTS
       - store_artifacts:

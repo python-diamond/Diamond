@@ -6,7 +6,7 @@ Automatically adds the InstanceId Dimension
 
 #### Dependencies
 
- * [boto](http://boto.readthedocs.org/en/latest/index.html)
+ * [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html)
 
 #### Configuration
 
@@ -43,16 +43,38 @@ environment = dev
 
 import sys
 import datetime
+import urllib.request
 
 from . Handler import Handler
 from configobj import Section
 
 try:
-    import boto
-    import boto.ec2.cloudwatch
-    import boto.utils
+    import boto3
+    import botocore.exceptions
 except ImportError:
-    boto = None
+    boto3 = None
+
+METADATA_URL = 'http://169.254.169.254/latest'
+
+
+def get_instance_id(timeout=2):
+    """
+    Return the EC2 instance id from the instance metadata service (IMDSv2),
+    or None if it cannot be retrieved.
+    """
+    try:
+        token_request = urllib.request.Request(
+            METADATA_URL + '/api/token', method='PUT',
+            headers={'X-aws-ec2-metadata-token-ttl-seconds': '60'})
+        with urllib.request.urlopen(token_request, timeout=timeout) as resp:
+            token = resp.read().decode()
+        id_request = urllib.request.Request(
+            METADATA_URL + '/meta-data/instance-id',
+            headers={'X-aws-ec2-metadata-token': token})
+        with urllib.request.urlopen(id_request, timeout=timeout) as resp:
+            return resp.read().decode()
+    except OSError:
+        return None
 
 
 class cloudwatchHandler(Handler):
@@ -69,9 +91,9 @@ class cloudwatchHandler(Handler):
         # Initialize Handler
         Handler.__init__(self, config)
 
-        if not boto:
+        if not boto3:
             self.log.error(
-                "CloudWatch: Boto is not installed, please install boto.")
+                "CloudWatch: Boto3 is not installed, please install boto3.")
             return
 
         # Initialize Data
@@ -80,12 +102,10 @@ class cloudwatchHandler(Handler):
         # Initialize Options
         self.region = self.config['region']
 
-        instance_metadata = boto.utils.get_instance_metadata()
-        if 'instance-id' in instance_metadata:
-            self.instance_id = instance_metadata['instance-id']
+        self.instance_id = get_instance_id()
+        if self.instance_id:
             self.log.debug("Setting InstanceId: " + self.instance_id)
         else:
-            self.instance_id = None
             self.log.error('CloudWatch: Failed to load instance metadata')
 
         self.valid_config = ('region', 'collector', 'metric', 'namespace',
@@ -174,12 +194,12 @@ class cloudwatchHandler(Handler):
             "CloudWatch: Attempting to connect to CloudWatch at Region: %s",
             self.region)
         try:
-            self.connection = boto.ec2.cloudwatch.connect_to_region(
-                self.region)
+            self.connection = boto3.client('cloudwatch',
+                                           region_name=self.region)
             self.log.debug(
                 "CloudWatch: Succesfully Connected to CloudWatch at Region: %s",
                 self.region)
-        except boto.exception.EC2ResponseError:
+        except botocore.exceptions.BotoCoreError:
             self.log.error('CloudWatch: CloudWatch Exception Handler: ')
 
     def __del__(self):
@@ -195,7 +215,7 @@ class cloudwatchHandler(Handler):
         """
           Process a metric and send it to CloudWatch
         """
-        if not boto:
+        if not boto3:
             return
 
         collector = str(metric.getCollectorPath())
@@ -235,7 +255,8 @@ class cloudwatchHandler(Handler):
           Send metrics to CloudWatch for the given dimensions
         """
 
-        timestamp = datetime.datetime.utcfromtimestamp(metric.timestamp)
+        timestamp = datetime.datetime.fromtimestamp(
+            metric.timestamp, datetime.timezone.utc)
 
         self.log.debug(
             "CloudWatch: Attempting to publish metric: %s to %s "
@@ -249,11 +270,15 @@ class cloudwatchHandler(Handler):
 
         try:
             self.connection.put_metric_data(
-                str(rule['namespace']),
-                str(rule['name']),
-                str(metric.value),
-                timestamp, str(rule['unit']),
-                dimensions)
+                Namespace=str(rule['namespace']),
+                MetricData=[{
+                    'MetricName': str(rule['name']),
+                    'Dimensions': [{'Name': str(name), 'Value': str(value)}
+                                   for name, value in dimensions.items()],
+                    'Timestamp': timestamp,
+                    'Value': float(metric.value),
+                    'Unit': str(rule['unit']),
+                }])
             self.log.debug(
                 "CloudWatch: Successfully published metric: %s to"
                 " %s with value (%s) for dimensions %s",

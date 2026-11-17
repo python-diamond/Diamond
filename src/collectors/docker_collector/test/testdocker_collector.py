@@ -9,7 +9,7 @@ from test import unittest
 from test import run_only
 
 try:
-    from docker import Client
+    from docker import APIClient as Client
 except ImportError:
     Client = None
 
@@ -21,7 +21,7 @@ fixtures_path = os.path.join(dirname, 'fixtures/')
 
 def run_only_if_docker_client_is_available(func):
     try:
-        from docker import Client
+        from docker import APIClient as Client
     except ImportError:
         Client = None
 

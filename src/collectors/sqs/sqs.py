@@ -26,15 +26,15 @@ restart diamond.
 
 #### Dependencies
 
- * boto
+ * boto3
 
 """
 
 import diamond.collector
 try:
-    from boto import sqs
+    import boto3
 except ImportError:
-    sqs = False
+    boto3 = None
 
 
 class SqsCollector(diamond.collector.Collector):
@@ -60,18 +60,20 @@ class SqsCollector(diamond.collector.Collector):
                    'MessageRetentionPeriod',
                    'ReceiveMessageWaitTimeSeconds',
                    'VisibilityTimeout']
-        if not sqs:
-            self.log.error("boto module not found!")
+        if not boto3:
+            self.log.error("boto3 module not found!")
             return
         for (region, region_cfg) in self.config['regions'].items():
             assert 'queues' in region_cfg
             auth_kwargs = _get_auth_kwargs(config=region_cfg)
             queues = region_cfg['queues'].split(',')
             for queue_name in queues:
-                conn = sqs.connect_to_region(region, **auth_kwargs)
-                queue = conn.get_queue(queue_name)
+                client = boto3.client('sqs', region_name=region, **auth_kwargs)
+                queue_url = client.get_queue_url(
+                    QueueName=queue_name)['QueueUrl']
+                d = client.get_queue_attributes(
+                    QueueUrl=queue_url, AttributeNames=attribs)['Attributes']
                 for attrib in attribs:
-                    d = queue.get_attributes(attrib)
                     self.publish(
                         '%s.%s.%s' % (region, queue_name, attrib),
                         d[attrib]
@@ -82,7 +84,7 @@ def _get_auth_kwargs(config):
     """Generate the kwargs for the AWS keys from a configuration dictionary.
 
     If credentials are not present in the config, then assume that
-    we're using IAM roles with instance profiles. :mod:`boto` will
+    we're using IAM roles with instance profiles. :mod:`boto3` will
     automatically take care of using the credentials from the instance
     metadata if not provided with kwargs.
 
@@ -90,7 +92,7 @@ def _get_auth_kwargs(config):
         provided AWS credentials.
     :type config: dict
 
-    :returns: The kwargs for use with :mod:`boto` connect functions.
+    :returns: The kwargs for use with :mod:`boto3` connect functions.
     :rtype: dict
     """
     if not ('access_key_id' in config and 'secret_access_key' in config):

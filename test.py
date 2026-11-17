@@ -31,10 +31,7 @@ try:
 except ImportError:
     setproctitle = None
 
-try:
-    from mock import ANY, call, MagicMock, Mock, mock_open, patch
-except ImportError:
-    from unittest.mock import ANY, call, MagicMock, Mock, mock_open, patch
+from unittest.mock import ANY, call, MagicMock, Mock, mock_open, patch
 
 try:  # py3k way
     import builtins
@@ -88,7 +85,7 @@ class CollectorTestCase(unittest.TestCase):
             return False
 
         try:
-            with open(filePath, 'Ur') as fp:
+            with open(filePath, 'r') as fp:
                 content = fp.readlines()
 
             with open(filePath, 'w') as fp:

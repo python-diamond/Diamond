@@ -15,10 +15,13 @@ import socket
 import telnetlib
 import re
 import diamond.collector
-from distutils.version import LooseVersion
 
 
 class AerospikeCollector(diamond.collector.Collector):
+
+    @staticmethod
+    def _version_tuple(version):
+        return tuple(int(part) for part in re.findall(r'\d+', version))
 
     def get_default_config_help(self):
         config_help = super(AerospikeCollector, self).get_default_config_help()
@@ -233,7 +236,7 @@ class AerospikeCollector(diamond.collector.Collector):
             self.log.debug('Checking aerospike version')
             t.write('version\n')
             version = t.read_until('\n', 1)
-            if LooseVersion(version) >= LooseVersion("3.9"):
+            if self._version_tuple(version) >= (3, 9):
                 self.config['dialect'] = 39
             else:
                 self.config['dialect'] = 27

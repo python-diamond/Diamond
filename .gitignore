@@ -18,3 +18,5 @@ gentoo/diamond-*.ebuild
 .vagrant
 .python-version
 .coverage
+htmlcov
+.venv

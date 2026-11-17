@@ -85,7 +85,7 @@ class KafkaCollector(diamond.collector.Collector):
 
         found_beans = set()
 
-        for mbean in mbeans.getiterator(tag='MBean'):
+        for mbean in mbeans.iter(tag='MBean'):
             objectname = mbean.get('objectname')
 
             if objectname:
@@ -128,7 +128,7 @@ class KafkaCollector(diamond.collector.Collector):
 
         metrics = {}
 
-        for attrib in attributes.getiterator(tag='Attribute'):
+        for attrib in attributes.iter(tag='Attribute'):
             atype = attrib.get('type')
 
             ptype = self.ATTRIBUTE_TYPES.get(atype)
